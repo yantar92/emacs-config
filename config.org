@@ -525,7 +525,8 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   (setq boon-insert-state-major-mode-list
-	'(notmuch-message-mode eshell-mode shell-mode calc-mode term-mode))
+	'(notmuch-message-mode eshell-mode shell-mode calc-mode term-mode
+			       magit-popup-mode))
   (add-hook 'boon-local-mode-hook
 	    (lambda() (when (and boon-local-mode
 			    (member major-mode boon-insert-state-major-mode-list))
@@ -854,9 +855,7 @@ saving all the buffers, is executed.
       :config
       (add-to-list 'meta-functions-meta-down-alist '(magit-status-mode . magit-section-forward))
       (add-to-list 'meta-functions-meta-up-alist '(magit-status-mode . magit-section-backward))
-      (add-to-list 'meta-functions-meta-down-element-alist '(magit-status-mode . magit-section-forward-sibling))
-      (add-to-list 'meta-functions-meta-up-element-alist '(magit-status-mode . magit-section-backward-sibling))
-      (meta-functions-update-function-definitions)))
+      (meta-functions-update-function-definitions))))
 #+END_SRC
 ** Text highlight & coloring
 *** Highlight text in buffer
