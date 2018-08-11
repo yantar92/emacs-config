@@ -844,6 +844,8 @@ saving all the buffers, is executed.
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :ensure t
+  :init
+  (setq vc-handled-backends nil)
   :config
   (use-package boon :config
     (bind-key "g" magit-file-mode-map boon-x-map)
