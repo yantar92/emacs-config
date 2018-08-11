@@ -521,7 +521,7 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 			notmuch-search-mode notmuch-show-mode elfeed-search-mode
                         elfeed-show-mode pomidor-mode mingus-mode
                         notmuch-hello-mode ledger-report-mode help-mode
-                        dired-mode pdf-view-mode helpful-mode magit-file-mode magit-status-mode))
+                        dired-mode pdf-view-mode helpful-mode magit-file-mode magit-status-mode magit-revision-mode))
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   (setq boon-insert-state-major-mode-list
@@ -848,13 +848,15 @@ saving all the buffers, is executed.
   (use-package boon :config
     (bind-key "g" magit-file-mode-map boon-x-map)
     (bind-keys :map magit-file-mode-map
-	       ("g" . magit-status magit-file-mode-map)
-	       ("G" . magit-dispatch-popup magit-file-mode-map)
-	       ("M-g" .magit-file-popup magit-file-mode-map))
+	       ("g" . magit-status)
+	       ("G" . magit-dispatch-popup)
+	       ("M-g" . magit-file-popup))
     (use-package meta-functions
       :config
-      (add-to-list 'meta-functions-meta-down-alist '(magit-status-mode . magit-section-forward))
-      (add-to-list 'meta-functions-meta-up-alist '(magit-status-mode . magit-section-backward))
+      (add-to-list 'meta-functions-meta-down-element-alist '(magit-status-mode . magit-section-forward))
+      (add-to-list 'meta-functions-meta-up-element-alist '(magit-status-mode . magit-section-backward))
+      (add-to-list 'meta-functions-meta-down-element-alist '(magit-revision-mode . magit-section-forward))
+      (add-to-list 'meta-functions-meta-up-element-alist '(magit-revision-mode . magit-section-backward))
       (meta-functions-update-function-definitions))))
 #+END_SRC
 ** Text highlight & coloring
