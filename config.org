@@ -203,13 +203,11 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 (use-package centered-window
   :if init-flag
   :diminish centered-window-mode
-  :init
-  ;; (require 'centered-window)
+  :hook ((prog-mode text-mode) . centered-window-mode)
   :config
   (use-package boon 
     :config
-    (bind-keys :map boon-x-map ("w" . centered-window-mode)))
-  (centered-window-mode t))
+    (bind-keys :map boon-x-map ("w" . centered-window-mode))))
 #+end_src
 **** TODO Long lines handling
 :PROPERTIES:
@@ -221,7 +219,11 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 #+begin_src emacs-lisp
 (setq-default truncate-lines t)
 (add-hook 'org-mode-hook (lambda()
+			   (toggle-truncate-lines 0)
 			   (toggle-word-wrap +1)))
+(bind-key* "C-x l" #'toggle-truncate-lines)
+(use-package boon :config
+  (bind-key "l" #'toggle-truncate-lines boon-x-map))
 #+end_src
 *** Text in buffers
 **** Coding system
@@ -328,9 +330,12 @@ Show some text in buffer differently
   :config
   (global-prettify-symbols-mode t))
 #+end_src
-*** Mode line
+*** TODO Mode line
 :PROPERTIES:
 :ID:       ca75c464-f35c-43ed-a90e-d78d4cfaa99a
+:END:
+:LOGBOOK:
+- State "TODO"       from              [2018-09-05 Wed 08:57]
 :END:
 - =Powerline= + =smart-mode-line=
   - triangular arrow shape
@@ -339,6 +344,7 @@ Show some text in buffer differently
 (use-package powerline
   :if init-flag
   :ensure t
+  :disabled t
   :config
   (powerline-vim-theme)
   (custom-set-faces
@@ -348,6 +354,43 @@ Show some text in buffer differently
     :config
     (setq powerline-arrow-shape 'arrow14)
     (sml/setup)))
+
+(use-package spaceline
+  :ensure t
+  :init
+  (setq powerline-default-separator 'arrow-fade
+        spaceline-minor-modes-separator " ")
+  (require 'spaceline-config)
+  (spaceline-spacemacs-theme)
+  (spaceline-helm-mode))
+
+(use-package spaceline-all-the-icons
+  :after spaceline
+  :ensure t
+  :init
+  (defvar spaceline-segment-max-region 10000
+    "Maximum region size to show in mode-line.")
+  (spaceline-define-segment all-the-icons-region-info
+    "An `all-the-icons' indicator of the currently highlighted region"
+    (let ((lines (if (< (- (region-end) (region-beginning)) spaceline-segment-max-region)
+		     (count-lines (region-beginning) (region-end))
+                   "∞"))
+	  (words (if (< (- (region-end) (region-beginning)) spaceline-segment-max-region)
+		     (count-words (region-beginning) (region-end))
+                   "∞"))
+
+	  (height (if spaceline-all-the-icons-slim-render 0.9 0.8))
+	  (display (if spaceline-all-the-icons-slim-render 0.1 0.2))
+	  (region-format (if spaceline-all-the-icons-slim-render "%s:%s" "(%s, %s)")))
+      (concat
+       (propertize (format "%s " (all-the-icons-octicon "pencil" :v-adjust 0.1))
+                   'face `(:family ,(all-the-icons-octicon-family) :inherit))
+       (propertize (format region-format lines words)
+                   'face `(:height ,height :inherit)
+                   'display `(raise ,display))))
+    :when mark-active :tight t)
+  :config
+  (spaceline-all-the-icons-theme))
     #+end_src
 - Show column numbers
   #+begin_src emacs-lisp
@@ -364,6 +407,7 @@ Show some text in buffer differently
   :defer t
   :config
   (use-package boon-powerline
+    :disabled t  
     :config
     (boon-powerline-theme)))
   #+end_src
@@ -521,7 +565,10 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 			notmuch-search-mode notmuch-show-mode elfeed-search-mode
                         elfeed-show-mode pomidor-mode mingus-mode
                         notmuch-hello-mode ledger-report-mode help-mode
-                        dired-mode pdf-view-mode helpful-mode magit-file-mode magit-status-mode magit-revision-mode))
+                        dired-mode pdf-view-mode helpful-mode magit-file-mode
+                        magit-status-mode magit-revision-mode
+                        mingus-playlist-mode mingus-browse-mode
+                        mingus-help-mode))
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   (setq boon-insert-state-major-mode-list
@@ -530,7 +577,7 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
   (add-hook 'boon-local-mode-hook
 	    (lambda() (when (and boon-local-mode
 			    (member major-mode boon-insert-state-major-mode-list))
-		   (boon-insert)))
+		   (boon-set-state 'boon-insert-state)))
 	    'append))
   #+end_src
 
@@ -543,11 +590,17 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
   "Force setting boon-special-mode when mode is in `boon-special-mode-list' and only in it. No exceptions."
   (memq major-mode boon-special-mode-list)))
 #+END_SRC
-**** TODO Use key chords
+**** CANCELLED Use key chords                                  :CANCELLED:
+CLOSED: [2018-08-18 Sat 16:18]
 :PROPERTIES:
 :ID:       de456dca-9bf0-48b9-90cf-0191e6e65d4e
 :END:
-#+begin_src emacs-lisp
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"       [2018-08-18 Sat 16:18]
+:END:
+I have found that key chords are slowing down the input quite significantly. 
+Earlier, I only used it for a single key combination. Hence, I do not see a point...
+#+begin_src emacs-lisp :tangle no
 (use-package key-chord
   :if init-flag
   :ensure t
@@ -577,33 +630,33 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 :ID:       943917fe-aecf-45a7-bc0d-591492d17898
 :END:
 #+begin_src emacs-lisp
-;; (use-package reverse-im :ensure t
-;;   :if init-flag
-;;   :config
-;;   (reverse-im-activate "russian-computer"))
-(when init-flag
-  (cl-loop
-   for from across "йцукенгшщзхїфівапролджєячсмитьбюЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ№"
-   for to   across "qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>#"
-   do
-   (eval `(define-key local-function-key-map
-	    (kbd ,(concat "C-"
-			  (string from)))
-	    (kbd ,(concat "C-"
-			  (string to)))))
-   (eval `(define-key local-function-key-map
-	    (kbd ,(concat "M-"
-			  (string from)))
-	    (kbd ,(concat "M-"
-			  (string to)))))
-   (eval `(define-key local-function-key-map
-	    (kbd ,(concat "C-M-"
-			  (string from)))
-	    (kbd ,(concat "C-M-"
-			  (string to)))))
-   (eval `(define-key local-function-key-map
-	    (kbd ,(string from))
-	    (kbd ,(string to))))))
+(use-package reverse-im :ensure t
+  :if init-flag
+  :config
+  (reverse-im-activate "russian-computer"))
+;; (when init-flag
+;;   (cl-loop
+;;    for from across "йцукенгшщзхїфівапролджєячсмитьбюЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ№"
+;;    for to   across "qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>#"
+;;    do
+;;    (eval `(define-key local-function-key-map
+;; 	    (kbd ,(concat "C-"
+;; 			  (string from)))
+;; 	    (kbd ,(concat "C-"
+;; 			  (string to)))))
+;;    (eval `(define-key local-function-key-map
+;; 	    (kbd ,(concat "M-"
+;; 			  (string from)))
+;; 	    (kbd ,(concat "M-"
+;; 			  (string to)))))
+;;    (eval `(define-key local-function-key-map
+;; 	    (kbd ,(concat "C-M-"
+;; 			  (string from)))
+;; 	    (kbd ,(concat "C-M-"
+;; 			  (string to)))))
+;;    (eval `(define-key local-function-key-map
+;; 	    (kbd ,(string from))
+;; 	    (kbd ,(string to))))))
 #+end_src
 ***** TODO Make it work everywhere
 - +This does not work with things like =C-c 'symbol= for now.+
@@ -637,6 +690,8 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 	 ("C-h" . backward-delete-char-untabify)
 	 :map helm-find-files-map
 	 ("M-l" . nil)
+         :map boon-goto-map
+         ("e" . helm-resume)
 	 )
   :defines helm-global-mode
   :config
@@ -668,7 +723,7 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
   :if init-flag
   :ensure t
   :diminish company-mode
-  :hook (after-init . global-company-mode)
+  :hook ((prog-mode ledger-mode) . company-mode)
   :bind (
 	 ("M-/" . company-complete)
 	 ("C-/" . hippie-expand)
@@ -677,7 +732,7 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 	 ("M-k" . company-select-previous)
 	 ("C-h" . backward-delete-char-untabify)
          ("C-M-h" . backward-kill-word)
-         ("M-l" . company-show-location)
+         ("M-l" . nil)
          ("M-h" . company-show-doc-buffer))
   :init
   (setq company-idle-delay 0
@@ -836,10 +891,12 @@ saving all the buffers, is executed.
 #+begin_src emacs-lisp 
 (global-auto-revert-mode)
 (setq revert-without-query '(".*"))
+(bind-key* "M-r" #'revert-buffer)
 #+end_src
 *** Magit
 :PROPERTIES:
 :CREATED:  [2018-08-11 Sat 20:47]
+:ID:       6e9f1b1e-bcd9-4927-894f-7a3ff773fb8c
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package magit
@@ -848,8 +905,7 @@ saving all the buffers, is executed.
   (setq vc-handled-backends nil)
   :config
   (use-package boon :config
-    (bind-key "g" magit-file-mode-map boon-x-map)
-    (bind-keys :map magit-file-mode-map
+    (bind-keys :map boon-x-map
 	       ("g" . magit-status)
 	       ("G" . magit-dispatch-popup)
 	       ("M-g" . magit-file-popup))
@@ -860,6 +916,22 @@ saving all the buffers, is executed.
       (add-to-list 'meta-functions-meta-down-element-alist '(magit-revision-mode . magit-section-forward))
       (add-to-list 'meta-functions-meta-up-element-alist '(magit-revision-mode . magit-section-backward))
       (meta-functions-update-function-definitions))))
+#+END_SRC
+
+Interaction with Github
+
+#+BEGIN_SRC emacs-lisp
+(use-package magithub
+  :ensure t
+  :after magit
+  :config
+  (magithub-feature-autoinject t)
+  ;; Workaround for https://github.com/vermiculus/magithub/issues/71
+  (defun magithub-issue--sort (issues)
+    "Sort ISSUES by issue number."
+    (sort issues
+          (lambda (a b) (> (plist-get a :number)
+                      (plist-get b :number))))))
 #+END_SRC
 ** Text highlight & coloring
 *** Highlight text in buffer
@@ -887,7 +959,7 @@ saving all the buffers, is executed.
   :if init-flag
   :ensure t
   :after org
-  :hook ((text-mode org-mode latex-mode notmuch-message-mode) . flyspell-mode)
+  :hook ((notmuch-message-mode) . flyspell-mode)
   :bind (("<f8>" . ispell-word)
 	 ("M-<f8>" . ispell-buffer)
          :map boon-forward-search-map
@@ -896,7 +968,7 @@ saving all the buffers, is executed.
   (use-package boon)
   :config
   (setq ispell-program-name "/usr/bin/ispell-aspell")
-  (setq ispell-dictionary "american")
+  (setq ispell-dictionary "british")
   (setq ispell-personal-dictionary "~/.emacs.d/dict")
   (defun flyspell-emacs-popup-textual (event poss word)
     "A textual flyspell popup menu.
@@ -1340,7 +1412,7 @@ If we use boon, it is possible to bind =M-digit= to manage windows.
 	auto-revert-verbose nil
 	dired-dwim-target t
 	dired-du-size-format t ;; show human readable size
-	dired-listing-switches "--time-style=locale -DhgGBF --group-directories-first")
+	dired-listing-switches "--time-style=locale -DhgGBFU --group-directories-first")
   :config
   (use-package dired-du :ensure t)
   (bind-key "." 'dired-hide-dotfiles-mode dired-mode-map)
@@ -1480,6 +1552,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 ****** Dired icons
 :PROPERTIES:
 :CREATED:  [2018-08-06 Mon 22:59]
+:ID:       dd9e95d3-97cc-45b8-bf78-bceed526b263
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package all-the-icons :ensure t
@@ -1497,10 +1570,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   :if init-flag
   :defer t
   :config
-  (use-package key-chord
-    :defer t
-    :config
-    (key-chord-define boon-insert-map "jk" 'boon-set-command-state)))
+  (bind-key "M-l" 'boon-set-command-state boon-insert-map))
     
 #+end_src
 *** Multiple cursors =insert state=
@@ -2132,7 +2202,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   (setq elfeed-search-title-max-width 100)
   (setq elfeed-search-date-format '("%d %b, %a, %H:%M" 20 :left))
   (unless (boundp 'elfeed-search-mode-hook) (setq elfeed-search-mode-hook nil))
-  (add-hook elfeed-search-mode-hook (lambda () (setq truncate-lines t)))
+  (add-hook 'elfeed-search-mode-hook (lambda () (toggle-truncate-lines +1)))
   (use-package elfeed-org
     :ensure t
     :config
@@ -2168,6 +2238,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 	       ("r" . notmuch-refresh-this-buffer)
 	       ("C-c C-u" . notmuch-search-unread)
 	       ("C-c C-d" . notmuch-search-done)
+               ("C-c C-a" . notmuch-search-hide)
                ("C-c C-f" . notmuch-search-nolist)
 	       ("C-c C-S-d" . notmuch-search-delete)
 	       :map notmuch-show-mode-map
@@ -2176,6 +2247,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 	       ("K" . notmuch-show-previous-message)
 	       ("C-c C-u" . notmuch-show-unread)
 	       ("C-c C-d" . notmuch-show-done)
+               ("C-c C-a" . notmuch-show-hide)
                ("C-c C-f" . notmuch-show-nolist)
 	       ("C-c C-S-d" . notmuch-show-delete))))
 #+end_src
@@ -2272,6 +2344,12 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 (defun notmuch-show-done()
   (interactive)
   (notmuch-show-tag-message "-todo" "-inbox" "-listinbox"))
+(defun notmuch-show-hide()
+  (interactive)
+  (notmuch-show-tag-message "-todo"))
+(defun notmuch-search-hide()
+  (interactive)
+  (notmuch-search-tag '("-todo")))
 (defun notmuch-search-delete () 
   (interactive) 
   (notmuch-search-tag '("+deleted" "-inbox" "-todo" "-listinbox")))
@@ -2537,11 +2615,15 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     )
   (bind-key "t" 'bh/capture-mail notmuch-show-mode-map))
 #+end_src
-***** Org mode list functionality when writing messages
+***** TODO Org mode list functionality when writing messages
 :PROPERTIES:
 :CREATED:  [2017-12-23 Sat 16:16]
 :ID:       119b23b6-1881-4446-847d-7baffbfc2c89
 :END:
+:LOGBOOK:
+- State "TODO"       from              [2018-09-06 Thu 10:11]
+:END:
+Use =orgalist=.
 #+begin_src emacs-lisp
 (use-package org
   :if init-flag
@@ -2549,7 +2631,8 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   :pin org
   :defer t
   :config
-  (add-hook 'message-mode-hook 'turn-on-orgstruct++))
+  (use-package orgalist :ensure t :init
+    (add-hook 'message-mode-hook 'orgalist-mode)))
 #+end_src
 
 ** Org mode
@@ -2590,6 +2673,7 @@ I need to deal with many projects running at the same time in my work. Hence, I 
 			    ("NODEADLINE" . ?d)
 			    ("SKIP" . ?s)
                             ("NOARCHIVE" . ?a)
+                            ("ARCHIVEALL" . ?A)
                             ("NOCLOCK" . ?k)
 			    ("ignore" . ?g))))
 #+end_src
@@ -2619,7 +2703,8 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =NODEADLINE= :: Do not show these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view 
 - =SKIP= :: Some projects contains tasks, which can be done independently on each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belongs to has =NEXT= tasks.  
 - =NOARCHIVE= :: Do not archive a task. This in not inherited.
-- =ARCHIVE= :: Prevent task from unfolding (e.g. task contains bulky data, I do not want to see) 
+- =ARCHIVE= :: Prevent task from unfolding (e.g. task contains bulky data, I do not want to see)
+- =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only do it all together.
 - =NOCLOCK= :: prevent entry from being clocked in automatically (after child task clock out [[id:d1afb1ae-a3a4-45b4-8186-8e7242e0edc1][Clocking & logging]]). This is not inherited. 
 ***** TODO Tags for everything
 ***** TODO try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
@@ -2853,6 +2938,7 @@ The project with parent projects.
               #+end_src
 - articles.org :: notes on research articles
 - rss.org :: rss entries for [[id:9bc385e2-0ed2-460b-875e-be9ad19144a3][Elfeed]]
+- *contacts.org* :: my contacts /via/ =org-contacts=
 - *.org :: project specific entries
 - all of it is in =agenda_files=
 - we can add new org files and remove existing
@@ -2992,6 +3078,7 @@ I achieve it by forcing the path in =file= links to not contain symlinks /via/ a
   :ensure t
   :config
   (setq org-latex-prefer-user-labels t)
+  (setq org-ref-show-broken-links nil) ;; it makes typing very slow if 't
   (use-package org-ref-pdf)
   (use-package org-ref-url-utils)
   (setq org-ref-bibliography-notes "~/Books/articles/articles.org"
@@ -3032,6 +3119,26 @@ I achieve it by forcing the path in =file= links to not contain symlinks /via/ a
 	    (if (< (nth 0 currenttime) (nth 0 showfromtime))
 		next-headline
 	      nil)))))))
+     #+end_src
+- =:SHOWFROMDATE:= (always inheriting) :: The purpose of this is to be able to postpone the scheduled tasks for future if I cannot do it. The property is formatted as an org date.
+     This property is especially useful if there is something more pressing, so that there is a temptation to reschedule less pressing event to another day. If the more pressing task is done earlier than expected, the postponed tasks can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
+     #+begin_src emacs-lisp
+(add-to-list 'org-default-properties "SHOWFROMDATE")
+(defun org-set-SHOWFROMDATE-property (PROMPT &rest args)
+  "Read :SHOWFROMDATE: property."
+  (org-read-date 'with-time nil nil PROMPT))
+(add-to-list 'org-property-set-functions-alist '("SHOWFROMDATE" . org-set-SHOWFROMDATE-property))
+(defun org-agenda-skip-before-SHOWFROMDATE-property ()
+  "Skip agenda item if :SHOWFROMDATE: property is set and the day is before it"
+  (save-restriction
+    (widen)
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      (let ((showfromdate (org-read-date 't 't (or (org-entry-get (point) "SHOWFROMDATE" 'inherit)
+						   "")))
+	    (currenttime (org-read-date 't 't "")))
+	(if (time-less-p currenttime showfromdate)
+	    next-headline
+	  nil)))))
      #+end_src
 - =:SHOWDATES:= (always inheriting) :: It contains dairy =sexps= to set when the project should be shown. For example, I may want to work on Saturday once or twice, but the working items should not be shown on weekend normally. Hence, I can define it. Or some things can only be done on specific dates (say, going to some shop, which is open few days a week only) 
      #+begin_src emacs-lisp
@@ -3124,6 +3231,8 @@ Use `default-directory' if nil.")
 
 (defvar yant/org-attach-attachments-symlink-directory "_data"
   "Name of the symlink to the attach file folder.")
+(defvar yant/org-attach-attachments-symlink-hidden-directory "._data"
+  "Name of the hidden symlink to the attach file folder.")
 (defvar yant/org-attach-symlinks-directory ".org.symlinks"
   "Name of the folder containing symlinks to the entry children attach folders.")
 
@@ -3147,6 +3256,14 @@ Use `default-directory' if nil.")
 	   (_ ,variable)))
      (error (format "Not a directory: %s" ,directory))))
 
+(defun org-attach-dir-empty-p (dir)
+  "Return non nil if the attach dir is not empty."
+  (let ((symlinks-directory (f-join dir
+				    yant/org-attach-symlinks-directory)))
+    (seq-empty-p (remove (f-join dir dir-locals-file)
+			 (remove symlinks-directory
+				 (f-entries dir))))))
+
 (define-advice org-attach-dir (:filter-return (dir) yant/org-attach-ensure-attach-dir-symlink)
   "Make sure that the attach DIR for the current entry has a link in the org structure based directory structure.
 The advise also sets directory-local variable `org-attach-parent-ids'.
@@ -3162,6 +3279,8 @@ The DIR is ensured to be in the symlink mirror dir structure for the entry."
 						  yant/org-attach-symlinks-directory)))
              (attachments-symlink-directory (f-slash (f-join symlinks-directory
 							     yant/org-attach-attachments-symlink-directory)))
+             (attachments-symlink-hidden-directory (f-slash (f-join symlinks-directory
+								    yant/org-attach-attachments-symlink-hidden-directory)))
 	     (org-id (org-id-get))
              (entry-name (replace-regexp-in-string "[/<>|:&/]" "-" ;; make sure that entry title can be used as a directory name
 						   (org-get-heading 'NO-TAGS 'NO-TODO 'NO-PRIORITY 'NO-COMMENT)))
@@ -3174,33 +3293,27 @@ The DIR is ensured to be in the symlink mirror dir structure for the entry."
 	(when (and (f-exists-p attachments-symlink-directory)
 		   (not (f-symlink-p (directory-file-name attachments-symlink-directory))))
           (error (format "Not a symlink: %s" attachments-symlink-directory)))
+	(when (and (f-exists-p attachments-symlink-hidden-directory)
+		   (not (f-symlink-p (directory-file-name attachments-symlink-hidden-directory))))
+          (error (format "Not a symlink: %s" attachments-symlink-hidden-directory)))
 
 	;; create dirs
 	(unless (f-exists-p symlinks-directory)
           (f-mkdir symlinks-directory))
-	(unless (f-exists-p attachments-symlink-directory)
+	(unless (f-exists-p attachments-symlink-hidden-directory)
+          (f-symlink attach-path (directory-file-name attachments-symlink-hidden-directory)))
+	(unless (or (f-exists-p attachments-symlink-directory)
+		    (org-attach-dir-empty-p attach-path))
           (f-symlink attach-path (directory-file-name attachments-symlink-directory)))
-
+	(when (and (f-exists-p attachments-symlink-directory)
+		   (org-attach-dir-empty-p attach-path))
+          (f-delete (directory-file-name attachments-symlink-directory)))
+        
 	;; set local-vars
 	(unless (member org-id (yant/get-dir-variable (f-canonical attach-path) 'yant/org-attach-parent-ids))
 	  (yant/set-dir-variable attach-path nil 'yant/org-attach-parent-ids
 				 (add-to-list 'yant/org-attach-parent-ids org-id));; propagate for all the files in the attach dir, including `yant/org-attach-symlinks-directory'
 	  )
-
-	;; add to parent entry attachment dir
-	(unless (seq-empty-p entry-name) ;; prevent empty folders
-          (org-with-wide-buffer
-           (let ((entry-symlink-name (if (org-up-heading-safe)
-					 (directory-file-name (f-join (f-join (org-attach-dir 'CREATE)
-									      yant/org-attach-symlinks-directory)
-                                                                      entry-name))
-                                       (directory-file-name (f-join (or yant/org-attach-file-symlink-path
-									default-directory)
-								    entry-name)))))
-             (if (not (f-exists-p entry-symlink-name))
-		 (f-symlink symlinks-directory entry-symlink-name)
-               (unless (f-symlink-p entry-symlink-name)
-		 (error (format "File exists: %s" entry-symlink-name)))))))
 
 	;; check children
 	(let ((child-ids '()))
@@ -3210,19 +3323,41 @@ The DIR is ensured to be in the symlink mirror dir structure for the entry."
              (forward-line 1)
              (re-search-forward "^\*+" subtree-end t)
              (while (< (point) subtree-end)
-               (let ((ID (org-id-get)))
+	       (let ((ID (org-id-get)))
 		 (when ID
 		   (add-to-list 'child-ids ID)))
-               (or (outline-get-next-sibling)
+	       (or (outline-get-next-sibling)
 		   (goto-char subtree-end)))))
           (mapc (lambda (d)
 		  (let ((dir (f-long d)))
 		    (unless (or (string= (f-slash dir) (f-slash attachments-symlink-directory))
+				(string= (f-slash dir) (f-slash attachments-symlink-hidden-directory))
 				(not (f-symlink-p (directory-file-name dir))))
                       (let ((ids (yant/get-dir-variable (f-canonical dir) 'yant/org-attach-parent-ids)))
-			(when (seq-empty-p (seq-intersection ids child-ids))
-			  (f-delete dir))))))
-		(f-directories symlinks-directory)))))))
+			(if (seq-empty-p (seq-intersection ids child-ids))
+			    (f-delete dir) ;; delete the dirs, which do not point to children
+                          )))
+                    (when (and (string= (f-slash dir) (f-slash attachments-symlink-directory))
+			       (org-attach-dir-empty-p dir))
+		      (f-delete dir) ;; delete attachment directory symlink if no attachments
+		      )))
+		(f-directories symlinks-directory)))
+
+	;; add to parent entry attachment dir
+	(unless (seq-empty-p entry-name) ;; prevent empty folders
+          (org-with-wide-buffer
+           (let ((entry-symlink-name (if (org-up-heading-safe)
+					 (directory-file-name (f-join (f-join (org-attach-dir 'CREATE)
+									      yant/org-attach-symlinks-directory)
+                                                                      entry-name))
+				       (directory-file-name (f-join (or yant/org-attach-file-symlink-path
+									default-directory)
+								    entry-name)))))
+             (if (not (f-exists-p entry-symlink-name))
+		 (f-symlink symlinks-directory entry-symlink-name)
+	       (unless (f-symlink-p entry-symlink-name)
+		 (error (format "File exists: %s" entry-symlink-name)))))))
+        ))))
 
 (defun org-attach-dir-symlink (&optional create-if-not-exists-p no-data-dir)
   "Return symlink based path to the attach dir of current entry.
@@ -3232,7 +3367,7 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
          (entry-name (replace-regexp-in-string " *\\[.+\\] *" "" ;; remove statistics cookies
 					       entry-name
 					       ))
-         (entry-path (f-join entry-name (if no-data-dir "" yant/org-attach-attachments-symlink-directory))))
+         (entry-path (f-join entry-name (if no-data-dir "" yant/org-attach-attachments-symlink-hidden-directory))))
 
     (unless (seq-empty-p entry-name) ;; prevent empty folders
       (org-with-wide-buffer
@@ -3246,6 +3381,7 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
 (define-advice org-attach-reveal (:around (OLDFUN &optional if-exists) reveal-symlink)
   "Go to symlink attach dir structure instead of an actual attach dir."
   (org-attach-dir (not if-exists))
+  (org-attach-sync)
   (letf (((symbol-function 'org-attach-dir) #'org-attach-dir-symlink))
     (funcall OLDFUN if-exists)))
 
@@ -3270,14 +3406,6 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 ***** TODO honor inherit export directory
 :PROPERTIES:
 :CREATED: [2018-07-09 Mon 13:01]
-:END:
-***** DONE make org-attach-dir give trailing "/" [[pdfview:/home/yantar92/Org/_data/63/b9ca36-f366-4048-acdf-5f92ec8c44d2/Lab2.Sandwich-composites.pdf::2][/home/yantar92/Org/_data/63/b9ca36-f366-4048-acdf-5f92ec8c44d2/Lab2.Sandwich-composites.pdf]]
-CLOSED: [2018-07-11 Wed 16:54]
-:PROPERTIES:
-:CREATED: [2018-07-09 Mon 14:43]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"       [2018-07-11 Wed 16:54]
 :END:
 **** NEXT Saving web pages into notes
 :PROPERTIES:
@@ -3321,6 +3449,7 @@ CLOSED: [2018-07-11 Wed 16:54]
 (setq org-agenda-restore-windows-after-quit t)
 (setq org-agenda-window-setup 'only-window)
 (setq org-agenda-todo-list-sublevels t)
+(setq org-agenda-show-inherited-tags nil)
 (setq org-directory "~/Org")
 (setq org-agenda-files "~/Org/agenda_files")
 (setq org-deadline-warning-days 30)
@@ -3331,7 +3460,7 @@ CLOSED: [2018-07-11 Wed 16:54]
 				    (search category-keep)))
 (setq org-agenda-tags-todo-honor-ignore-options t)
 (setf org-agenda-sticky t)
-(setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+(setq org-agenda-skip-scheduled-if-deadline-is-shown 'not-today)
 (setq org-habit-show-habits-only-for-today t) ; do not show habits in future if scheduled withing agenda time range. E.g. do not show future habits in week view/calendar
 #+end_src
 - I use several agenda views
@@ -3451,6 +3580,7 @@ CLOSED: [2018-07-11 Wed 16:54]
   #+end_src
   #+begin_src emacs-lisp
 (defvar bh/hide-scheduled-and-waiting-next-tasks 't)
+(setq org-agenda-skip-function nil)
 (setq org-agenda-custom-commands
       (quote (
 	      ("p" "Projects" tags-todo "-CANCELLED/!"
@@ -3637,13 +3767,17 @@ This agenda show the items for the current day and time.
      )
 					;  if day and time are appropriate
     (org-agenda-skip-before-SHOWFROMTIME-property)
+    (org-agenda-skip-before-SHOWFROMDATE-property)
     (org-agenda-skip-noshowdates))
    (or
     (org-agenda-skip-not-today) ; and items, scheduled for today
     (org-agenda-skip-before-SHOWFROMTIME-property) ; if time is appropriate (day is, since it is scheduled)
+    (org-agenda-skip-before-SHOWFROMDATE-property)
     )
-   (org-agenda-skip-deadlines-before-schedule) ; always show deadlines, unless scheduled in future
-   ))
+   (or (org-agenda-skip-deadlines-before-schedule) ; always show deadlines, unless scheduled in future
+       (org-agenda-skip-before-SHOWFROMTIME-property)
+       (org-agenda-skip-before-SHOWFROMDATE-property)
+       )))
   #+end_src
 **** Normal daily agenda
 :PROPERTIES:
@@ -4098,7 +4232,19 @@ scheduled items with an hour specification like [h]h:mm."
 	      (push item scheduled-items))))))
     (nreverse scheduled-items)))
 #+end_src
-
+*** TODO Contacts
+:PROPERTIES:
+:CREATED:  [2018-09-05 Wed 06:39]
+:ID:       8074623d-bc14-43c7-908c-28213b2b6149
+:END:
+#+BEGIN_SRC emacs-lisp
+(use-package org-contacts
+  :init
+  (setq org-contacts-files '("/home/yantar92/Org/contacts.org"))
+  :config
+  (use-package helm-org-contacts)
+  )
+#+END_SRC
 *** TODO Column mode
 :PROPERTIES:
 :ID:       0d6d40dd-e4cb-4297-8695-6b66f2a1a706
@@ -4216,7 +4362,7 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
 (defun bh/clock-in-parent-task ()
   "Move point to the parent (project) task if any and does not have local tag NOCLOCK and clock in."
   (let ((parent-task))
-    (save-excursion
+    (save-mark-and-excursion
       (save-restriction
         (widen)
         (while (and (not parent-task) (org-up-heading-safe))
@@ -4306,7 +4452,7 @@ I do not show current task in Emacs, instead I use =awesome wm= widget. Hence ne
 (defun yant/task-fulltitle ()
   "Construct full path for the task at point."
   (when (fboundp 'org-mode)
-    (save-excursion
+    (save-mark-and-excursion
       (save-restriction
 	(org-back-to-heading)
 	(mapconcat #'identity (org-get-outline-path 'with-self 'cache) "||")))))
@@ -4323,7 +4469,7 @@ I do not show current task in Emacs, instead I use =awesome wm= widget. Hence ne
   "Save info, that there is no clocked in entry."
   (use-package org-clock)
   (save-current-buffer
-    (save-excursion
+    (save-mark-and-excursion
       (let ((buf (find-file-noselect yant/org-clocking-info-file)))
 	(set-buffer buf)
 	(erase-buffer)
@@ -4334,7 +4480,7 @@ I do not show current task in Emacs, instead I use =awesome wm= widget. Hence ne
 (defun yant/save-clocked ()
   "Save current clocked state into file."
   (if (org-clock-is-active)
-      (save-excursion
+      (save-mark-and-excursion
 	(save-restriction
 	  (let* ((buf yant/org-clocking-info-file)
 		 (str (org-clock-get-clock-string))
@@ -4357,12 +4503,31 @@ Sometimes I need to jump to some urgent task. After it is done, I hate searching
 (setq org-clock-history-length 23)
 (use-package boon
   :config
-  (defun yant/org-clock-in-history-select nil
-    "Force select entry to clock in from clocking history."
-    (interactive)
-    (org-clock-in '(4)))
-  (bind-keys :map boon-goto-map
-	     ("I" . yant/org-clock-in-history-select)))
+  (use-package helm-org
+    :bind (:map boon-goto-map
+		("p" . yant/resume-orcall-helm-org-agenda-files-headings))
+    :init
+    (defun yant/resume-orcall-helm-org-agenda-files-headings ()
+      "Try to resume `helm-org-agenda-files-headings' session or call a new one if not exists."
+      (interactive)
+      (let ((buffer-name "*helm org headings*"))
+	(if (bufferp (get-buffer buffer-name))
+	    (helm-resume buffer-name)
+          (helm-org-agenda-files-headings))))
+    :config
+    (defun dfeich/helm-org-clock-in (marker)
+      "Clock into the item at MARKER"
+      (with-current-buffer (marker-buffer marker)
+	(goto-char (marker-position marker))
+	(org-clock-in)))
+    (nconc helm-org-headings-actions
+           (list
+            (cons "Clock into task" #'dfeich/helm-org-clock-in)))
+    (bind-key "C-c i" #'dfeich/helm-org-clock-in helm-org-headings-map)
+    (setq helm-org-format-outline-path t
+	  helm-org-show-filename t
+          helm-org-ignore-autosaves t)
+    ))
 #+end_src
 **** Pomodoro technique
 :PROPERTIES:
@@ -4397,9 +4562,39 @@ Instead, I use =ORG-TIME-BONUS-ON-DONE= property to add fixed extra time for fin
 The initial calculation is a time consuming procedure (=org-map-entries=) and =org-time-balance= is updated in the =org-clock-in/out= hooks/advises.
 The resulting value of =org-time-balance= contains the balanced time from *one month before its initial value calculation* till the current moment of time.
 
+*************** TODO The bonus is not calculated correctly for the habits now. Fix it.
+*************** END
+
+
 #+begin_src emacs-lisp 
 (defvar org-time-balance nil
   "Weighted time spent for all the tasks in agenda files.")
+(defvar org-time-balance-persistant-p t
+  "Non nil means that `org-time-balance' is saved between emacs sessions.")
+(defvar org-time-balance-save-time nil
+  "Time of the last save of `org-time-balance'.")
+
+(defun org-load-time-balance-session ()
+  "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
+  (when org-time-balance-persistant-p
+    (require 'savehist)
+    (unless (and (boundp 'savehist-mode)
+		 savehist-mode)
+      (savehist-mode +1))
+    (savehist-load)))
+
+(defun org-save-time-balance-session ()
+  "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
+  (when (and org-time-balance-persistant-p
+	     org-time-balance)
+    (require 'savehist)
+    (unless (and (boundp 'savehist-mode)
+		 savehist-mode)
+      (savehist-mode +1))
+    (add-to-list 'savehist-additional-variables 'org-time-balance)
+    (add-to-list 'savehist-additional-variables 'org-time-balance-save-time)
+    (setq org-time-balance-save-time (current-time))
+    (savehist-save 'autosave)))
 
 (defun org-get-time-balance-multiplier-at-point ()
   "Get value of :ORG-TIME-BALANCE-MULTIPLIER property of an item at point or return 1."
@@ -4428,7 +4623,8 @@ Just return the value at point if RETURN is not nil."
     (let* ((daynr (string-to-number (format-time-string "%d" (current-time))))
 	   (a-month-ago (* 60 60 24 (+ daynr 1)))
 	   (last-month (time-subtract (current-time) (seconds-to-time a-month-ago)))
-           (value-at-point (* (org-clock-sum-current-item last-month)
+           (value-at-point (* (org-clock-sum-current-item (or org-time-balance-save-time
+							      last-month))
                               (org-get-time-balance-multiplier-at-point))))
       (when (string= (org-get-todo-state) "DONE")
 	(setq value-at-point (+ value-at-point (org-get-org-time-bonus-on-done-at-point))))
@@ -4437,12 +4633,15 @@ Just return the value at point if RETURN is not nil."
 	(setq org-time-balance (+ org-time-balance value-at-point))))))
 
 (defun org-get-total-weighted-time (&optional force scope)
-  "Calculate total weighted time clocked in all agenda files.
+  "Calculate total weighted time clocked in all agenda files or in SCOPE.
 Ignore current value if FORCE is not nil.
-If FORCE is non nil calculate the time in SCOPE if it is not nil."
+If FORCE is non nil recalculate the time in SCOPE if it is not nil."
   (when (or force (not org-time-balance))
     (setq org-time-balance 0)
-    (org-map-entries #'org-accumulate-weighted-time t (or scope 'agenda)))
+    (setq org-time-balance-save-time nil)
+    (unless force (org-load-time-balance-session))
+    (org-map-entries #'org-accumulate-weighted-time t (or scope 'agenda))
+    (org-save-time-balance-session))
   org-time-balance)
 
 (define-advice org-clock-out (:around (OLDFUN &rest args) yant/org-increment-weighted-time)
@@ -4461,12 +4660,18 @@ If FORCE is non nil calculate the time in SCOPE if it is not nil."
 
 (define-advice org-todo (:around (OLDFUN &rest args) yant/org-increment-weighted-time)
   "Probably add the current item time bonus to `org-time-balance'."
-  (setq org-time-balance (- org-time-balance
-			    (org-accumulate-weighted-time 'return)))
-  (apply OLDFUN args)
-  (setq org-time-balance (+ org-time-balance
-			    (org-accumulate-weighted-time 'return)))
-  (yant/save-clocked))
+  (let ((old-weighted-time (org-accumulate-weighted-time 'return)))
+    (setq org-time-balance (- org-time-balance
+			      old-weighted-time))
+    (apply OLDFUN args)
+    (let ((new-weighted-time (org-accumulate-weighted-time 'return)))
+      (when (and (string= (org-entry-get (point) "STYLE") "habit") 
+		 (< new-weighted-time old-weighted-time))
+        (setq new-weighted-time (+ old-weighted-time
+				   (- old-weighted-time new-weighted-time)))) ;; habits can change from done back to next without penalty
+      (setq org-time-balance (+ org-time-balance
+				new-weighted-time))
+      (yant/save-clocked))))
 
 
 
@@ -4485,12 +4690,17 @@ If FORCE is non nil calculate the time in SCOPE if it is not nil."
 (add-to-list 'org-default-properties "ORG-TIME-BALANCE-MULTIPLIER")
 (add-to-list 'org-default-properties "ORG-TIME-BONUS-ON-DONE")
 #+end_src
-***** NEXT [#A] recalc balanced time on refile
-SCHEDULED: <2018-08-13 Mon>
+***** CANCELLED [#A] recalc balanced time on refile           :CANCELLED:
+CLOSED: [2018-08-18 Sat 22:16] SCHEDULED: <2018-08-13 Mon>
 :PROPERTIES:
 :CREATED: [2018-07-24 Tue 12:27]
 :END:
 :LOGBOOK:
+- State "CANCELLED"  from "NEXT"       [2018-08-18 Sat 22:16] \\
+  Too cubersome, especially since refiling can be done on region.
+CLOCK: [2018-08-18 Sat 22:08]--[2018-08-18 Sat 22:16] =>  0:08
+
+CLOCK: [2018-08-18 Sat 21:33]--[2018-08-18 Sat 21:48] =>  0:15
 - State "NEXT"       from "TODO"       [2018-07-24 Tue 12:27]
 :END:
 **** =__epilogue=
@@ -5201,12 +5411,12 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
       "")))
 (defun yant/format-time-balance-multiplier ()
   "Format :ORG-TIME-BALANCE-MULTIPLIER: into agenda."
-  (let ((mult (when (and (org-at-heading-p)
-			 (member (nth 2 (org-heading-components)) org-todo-keywords-for-agenda))
-		(org-get-time-balance-multiplier-at-point))))
-    (if mult
-	(format "%sx" mult)
-      "")))
+  (when (and (org-at-heading-p)
+	     (member (nth 2 (org-heading-components)) org-todo-keywords-for-agenda))
+    (let ((mult (org-get-time-balance-multiplier-at-point))
+	  (bonus (org-get-org-time-bonus-on-done-at-point)))
+      (format "%s%s" (if mult (format "%sx" mult) "")
+	      (if (and bonus (> bonus 0)) (format "+%s" bonus) "")))))
 (setq org-agenda-prefix-format "%-12s\t%-12.12:c\t%?-12t%(concat (yant/format-summary-for-agenda) (yant/format-time-balance-multiplier) \"\\t\")")
   #+end_src
 **** Babel
@@ -5311,7 +5521,6 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
  ("C-c c" . org-clock-goto)
  :map boon-goto-map
  ("a" . org-agenda)
- ("p" . references-open)
  ("t" . gtd-open)
  ("n" . notes-open)
  )
