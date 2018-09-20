@@ -9,6 +9,7 @@
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
 :END:
 :LOGBOOK:
+- State "NEXT"       from "NEXT"       [2018-09-06 Thu 21:10]
 CLOCK: [2018-07-23 Mon 00:16]--[2018-07-23 Mon 00:23] =>  0:07
 - State "NEXT"       from "NEXT"       [2018-07-11 Wed 18:17]
 - State "NEXT"       from "NEXT"       [2018-07-09 Mon 21:47]
@@ -73,6 +74,19 @@ Init file, which is loads this file.
   #+BEGIN_SRC emacs-lisp
 (put 'kill-emacs 'disabled t)
   #+END_SRC
+** Performance 
+:PROPERTIES:
+:CREATED:  [2018-09-12 Wed 19:48]
+:ID:       45c70cb5-df2f-4e86-8ccd-42c1881a7dbf
+:END:
+Elisp is not the fastest language in the world. 
+There are various options, which can improve the performance.
+
+- Bidirectional text is not something I use frequently (never used up until writing this)
+#+BEGIN_SRC emacs-lisp
+(setq bidi-display-reordering nil)
+#+END_SRC
+
 ** Package management & configuration
 :PROPERTIES:
 :ID:       4c0a06f9-9e69-4ead-b570-e3143fa0d61d
@@ -163,6 +177,10 @@ Init file, which is loads this file.
 					    :foundry "adobe"
 					    :family "source code pro"))))))
   #+end_src
+- Secondary selection is the same color with some symbols in =org-agenda=
+#+BEGIN_SRC emacs-lisp
+(set-face-background 'secondary-selection "#aae59c")
+#+END_SRC
 *** No startup message
 :PROPERTIES:
 :ID:       5450bef9-a57a-4afb-85f3-893dbcb5f4ba
@@ -203,7 +221,7 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 (use-package centered-window
   :if init-flag
   :diminish centered-window-mode
-  :hook ((prog-mode text-mode) . centered-window-mode)
+  :hook ((org-mode) . centered-window-mode)
   :config
   (use-package boon 
     :config
@@ -361,13 +379,16 @@ Show some text in buffer differently
   (setq powerline-default-separator 'arrow-fade
         spaceline-minor-modes-separator " ")
   (require 'spaceline-config)
-  (spaceline-spacemacs-theme)
+  (spaceline-emacs-theme)
   (spaceline-helm-mode))
 
 (use-package spaceline-all-the-icons
   :after spaceline
-  :ensure t
+  :ensure nil
   :init
+  (setq spaceline-all-the-icons-separator-type 'arrow)
+  (setq spaceline-all-the-icons-separator-scale 1.55)
+  (setq spaceline-all-the-icons-clock-always-visible nil)
   (defvar spaceline-segment-max-region 10000
     "Maximum region size to show in mode-line.")
   (spaceline-define-segment all-the-icons-region-info
@@ -390,7 +411,8 @@ Show some text in buffer differently
                    'display `(raise ,display))))
     :when mark-active :tight t)
   :config
-  (spaceline-all-the-icons-theme))
+  (spaceline-all-the-icons-theme)
+  )
     #+end_src
 - Show column numbers
   #+begin_src emacs-lisp
@@ -553,32 +575,37 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
   It should be noted, that the same can be done via setting the proper bindings for "j", "k", etc. in the mode itself. The problem is that it may mess up the cases when want to set special meanings for the single keys in =command-mode=, but leave the normal editing on in the =insert-mode=.
   
   #+begin_src emacs-lisp
-(use-package boon
-  :if init-flag
-  :ensure t
-  :diminish boon-local-mode
-  :config
-  (use-package boon-qwerty)
-  (boon-mode)
-  (setq boon-special-mode-list
-	'(debugger-mode ediff-mode org-agenda-mode cfw:calendar-mode
-			notmuch-search-mode notmuch-show-mode elfeed-search-mode
-                        elfeed-show-mode pomidor-mode mingus-mode
-                        notmuch-hello-mode ledger-report-mode help-mode
-                        dired-mode pdf-view-mode helpful-mode magit-file-mode
-                        magit-status-mode magit-revision-mode
-                        mingus-playlist-mode mingus-browse-mode
-                        mingus-help-mode))
-  (defvar boon-insert-state-major-mode-list '()
-    "List of major modes started with insert state active.")
-  (setq boon-insert-state-major-mode-list
-	'(notmuch-message-mode eshell-mode shell-mode calc-mode term-mode
-			       magit-popup-mode))
-  (add-hook 'boon-local-mode-hook
-	    (lambda() (when (and boon-local-mode
-			    (member major-mode boon-insert-state-major-mode-list))
-		   (boon-set-state 'boon-insert-state)))
-	    'append))
+    (use-package boon
+      :if init-flag
+      :ensure t
+      :diminish boon-local-mode
+      :init
+      (use-package magit)
+      :config
+      (setq boon-special-mode-list
+	    '(debugger-mode ediff-mode org-agenda-mode cfw:calendar-mode
+			    notmuch-search-mode notmuch-show-mode elfeed-search-mode
+			    elfeed-show-mode pomidor-mode mingus-mode
+			    notmuch-hello-mode ledger-report-mode help-mode
+			    dired-mode pdf-view-mode helpful-mode magit-file-mode
+			    magit-status-mode magit-revision-mode
+			    mingus-playlist-mode mingus-browse-mode
+			    mingus-help-mode))
+      (defvar boon-insert-state-major-mode-list '()
+	"List of major modes started with insert state active.")
+      (setq boon-insert-state-major-mode-list
+	    '(notmuch-message-mode eshell-mode shell-mode calc-mode term-mode
+				   magit-popup-mode))
+      (add-hook 'boon-local-mode-hook
+		(lambda() (when (and boon-local-mode
+				(member major-mode boon-insert-state-major-mode-list))
+		       (boon-set-state 'boon-insert-state)))
+		'append)
+      (defun boon-set-insert-state ()
+	"Switch to insert state."
+	(boon-set-state 'boon-insert-state))
+      (use-package boon-qwerty)
+      (boon-mode))
   #+end_src
 
   Also, I do not like default implementation of =boon-special-mode-p=, which force setting special mode for terminal-modes. I prefer to rewrite it
@@ -2021,45 +2048,53 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :ID:       201475d1-64b3-4e1d-8e78-d850c6067761
 :END:
 #+begin_src emacs-lisp
-  (use-package pdf-tools
-    :if init-flag
-    :ensure t
-    :magic ("%PDF" . pdf-view-mode)
-    :bind (:map pdf-view-mode-map
-		("v w" . pdf-view-fit-width-to-window)
-		("v h" . pdf-view-fit-height-to-window))
-    :hook ((pdf-view-mode . (lambda () (centered-window-mode -1))))
-    :init
-    (defun yant/pdf-view-down nil
-      "Go down document in pdf-view."
-      (interactive)
-      (pdf-view-next-line-or-next-page 5))
-    (defun yant/pdf-view-up nil
-      "Go up document in pdf-view."
-      (interactive)
-      (pdf-view-previous-line-or-previous-page 5))
-    (use-package pdf-annot)
-    (use-package pdf-occur)
-    (use-package pdf-history)
-    (use-package pdf-links)
-    (use-package pdf-outline)
-    (use-package pdf-sync)
-    (use-package pdf-isearch)
-    (use-package pdf-cache)
+(use-package pdf-tools
+  :if init-flag
+  :ensure t
+  :magic ("%PDF" . pdf-view-mode)
+  :bind (:map pdf-view-mode-map
+	      ("v w" . pdf-view-fit-width-to-window)
+	      ("v h" . pdf-view-fit-height-to-window))
+  :hook ((pdf-view-mode . (lambda () (centered-window-mode -1))))
+  :init
+  (defun yant/pdf-view-down nil
+    "Go down document in pdf-view."
+    (interactive)
+    (pdf-view-next-line-or-next-page 5))
+  (defun yant/pdf-view-up nil
+    "Go up document in pdf-view."
+    (interactive)
+    (pdf-view-previous-line-or-previous-page 5))
+  (use-package pdf-annot)
+  (use-package pdf-occur)
+  (use-package pdf-history)
+  (use-package pdf-links)
+  (use-package pdf-outline)
+  (use-package pdf-sync)
+  (use-package pdf-isearch)
+  (use-package pdf-cache)
+  :config
+  (pdf-tools-install)
+  (add-hook 'pdf-view-mode-hook #'pdf-view-fit-width-to-window 'APPEND)
+  (add-hook 'pdf-view-mode-hook #'pdf-tools-enable-minor-modes 'APPEND)
+  (use-package meta-functions
     :config
-    (pdf-tools-install)
-    (add-hook 'pdf-view-mode-hook #'pdf-view-fit-width-to-window 'APPEND)
-    (add-hook 'pdf-view-mode-hook #'pdf-tools-enable-minor-modes 'APPEND)
-    (use-package meta-functions
-      :config
-      (add-to-list 'meta-functions-meta-down-alist '(pdf-view-mode . yant/pdf-view-down))
-      (add-to-list 'meta-functions-meta-up-alist '(pdf-view-mode . yant/pdf-view-up))
-      (add-to-list 'meta-functions-meta-scroll-down-alist '(pdf-view-mode . pdf-view-scroll-down-or-previous-page))
-      (add-to-list 'meta-functions-meta-scroll-up-alist '(pdf-view-mode . pdf-view-scroll-up-or-next-page))
-      (add-to-list 'meta-functions-meta-down-alist '(pdf-annot-list-mode . tablist-next-line))
-      (add-to-list 'meta-functions-meta-up-alist '(pdf-annot-list-mode . tablist-previous-line)))
-    (bind-keys :map pdf-view-mode-map
-	       ("q" . (lambda() (interactive) (quit-window 'KILL)))))
+    (add-to-list 'meta-functions-meta-down-alist '(pdf-view-mode . yant/pdf-view-down))
+    (add-to-list 'meta-functions-meta-up-alist '(pdf-view-mode . yant/pdf-view-up))
+    (add-to-list 'meta-functions-meta-scroll-down-alist '(pdf-view-mode . pdf-view-scroll-down-or-previous-page))
+    (add-to-list 'meta-functions-meta-scroll-up-alist '(pdf-view-mode . pdf-view-scroll-up-or-next-page))
+    (add-to-list 'meta-functions-meta-down-alist '(pdf-annot-list-mode . tablist-next-line))
+    (add-to-list 'meta-functions-meta-up-alist '(pdf-annot-list-mode . tablist-previous-line)))
+  (defun yant/jump-to-bookmark ()
+    "Jump to the bookmark names as `buffer-file-name'."
+    (interactive)
+    (bookmark-jump (list buffer-file-name (alist-get buffer-file-name bookmark-alist nil nil #'string=))))  
+  (bind-keys :map pdf-view-mode-map
+	     ("<M-f6>" . yant/jump-to-bookmark)	     
+	     ("q" . (lambda()
+		      (interactive)
+                      (bookmark-set buffer-file-name)
+		      (quit-window 'KILL)))))
 #+end_src
 *** Pdf rotate
 :PROPERTIES:
@@ -2192,11 +2227,28 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 	      ("R" . elfeed-search-fetch)
 	      ("t" . elfeed-search-untag-all-unread)
               ("T" . elfeed-search-tag-all-unread)
-              ("b" . (lambda () (interactive)
+              ("b" . yant/elfeed-capture-entry)
+              ("B" . (lambda () (interactive)
 		       (elfeed-search-tag-all 'opened)
 		       (meta-up)
-                       (elfeed-search-browse-url))))
+		       (elfeed-search-browse-url))))
   :init
+  (defun yant/elfeed-capture-entry ()
+    "Capture selected entries into inbox."
+    (interactive)
+    (elfeed-search-tag-all 'opened)
+    (meta-up)
+    (let ((entries (elfeed-search-selected)))
+      (cl-loop for entry in entries
+               do (elfeed-untag entry 'unread)
+               when (elfeed-entry-link entry)
+               do (org-protocol-capture (list :template "B"
+					      :url it
+                                              :title (format "%s: %s"
+							     (elfeed-feed-title (elfeed-entry-feed entry))
+							     (elfeed-entry-title entry)))))
+      (mapc #'elfeed-search-update-entry entries)
+      (unless (use-region-p) (forward-line))))
   (setq elfeed-search-filter "+unread -video -science")
   (setq elfeed-sort-order 'ascending)
   (setq elfeed-search-title-max-width 100)
@@ -2693,7 +2745,7 @@ I need to deal with many projects running at the same time in my work. Hence, I 
            The purpose of this tag is reduce the file size: I had a large database of books, which I've read/will read. The file with all the authors included was more than =2Mb=, which
            took forever to open and, more importantly, made my agenda view build/update time *few minutes*. So, I created separate project for different authors and kept the links to that
            projects with =ORG= tag assigned, so that I can add the author book list to file/agenda view if the project is =NEXT=.
-*************** NEXT need to implement this
+*************** NEXT need to implement this (ORG tag)
 :PROPERTIES:
 :ID:       648e5339-0732-4464-80de-90a8f5f72467
 :END:
@@ -2747,8 +2799,8 @@ The task is any item with todo keyword and no subtask.
 - keywords for not done tasks: =TODO=, =NEXT=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=
   #+begin_src emacs-lisp
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t!)" "NEXT(n!)" "|" "DONE(d!)" "FAILED(f@/!)" "MERGED(m!)" )
-	      (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" ))))
+      (quote ((sequence "TODO(t!)" "NEXT(n!)" "|" "DONE(d!)" "FAILED(f!)" "MERGED(m!)" )
+	      (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c!)" ))))
 ;; set the tags assigned to specific keywords. Not nesessary, but used by a lot of code for filtering later - hence why not
 (setq org-todo-state-tags-triggers
       (quote (("CANCELLED" ("CANCELLED" . t))
@@ -2909,8 +2961,7 @@ The project with parent projects.
       (save-excursion
 	(while (org-up-heading-safe)
 	  (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-	    (if (bh/is-subproject-p)
-		(org-todo "NEXT")
+	    (unless (string= (org-get-todo-state) "NEXT")
 	      (org-todo "NEXT"))))))
     (when (member mystate (list "TODO"))
       (save-excursion
@@ -3124,6 +3175,36 @@ I achieve it by forcing the path in =file= links to not contain symlinks /via/ a
      This property is especially useful if there is something more pressing, so that there is a temptation to reschedule less pressing event to another day. If the more pressing task is done earlier than expected, the postponed tasks can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
      #+begin_src emacs-lisp
 (add-to-list 'org-default-properties "SHOWFROMDATE")
+(bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-mode-map)
+(bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-agenda-mode-map)
+(defun org-command-set-SHOWFROMDATE-property ()
+  "Command to set :SHOWFROMDATE property for the org entry at point.
+  If NOT-IN-AGENDA is not nil, do not check whether we are in agenda now."
+  (interactive)
+  (if (equal major-mode 'org-agenda-mode)
+      (progn    
+	(org-agenda-check-no-diary)
+	(let* ((hdmarker (or (org-get-at-bol 'org-hd-marker)
+			     (org-agenda-error)))
+	       (buffer (marker-buffer hdmarker))
+	       (pos (marker-position hdmarker))
+	       (inhibit-read-only t)
+	       newhead)
+	  (org-with-remote-undo buffer
+	    (with-current-buffer buffer
+	      (widen)
+	      (goto-char pos)
+	      (org-show-context 'agenda)
+	      (call-interactively 'org-command-set-SHOWFROMDATE-property)))))
+    (let ((property "SHOWFROMDATE"))
+      (let ((value (org-read-property-value property))
+	    (fn (cdr (assoc-string property org-properties-postprocess-alist t))))
+	(setq org-last-set-property property)
+	(setq org-last-set-property-value (concat property ": " value))
+	;; Possibly postprocess the inserted value:
+	(when fn (setq value (funcall fn value)))
+	(unless (equal (org-entry-get nil property) value)
+	  (org-entry-put nil property value))))))
 (defun org-set-SHOWFROMDATE-property (PROMPT &rest args)
   "Read :SHOWFROMDATE: property."
   (org-read-date 'with-time nil nil PROMPT))
@@ -3407,12 +3488,14 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :PROPERTIES:
 :CREATED: [2018-07-09 Mon 13:01]
 :END:
-**** NEXT Saving web pages into notes
+**** DONE Saving web pages into notes
+CLOSED: [2018-09-06 Thu 20:53]
 :PROPERTIES:
 :CREATED:  [2017-12-30 Sat 22:20]
 :ID:       8e1af85e-3e47-40c3-9b33-34a5e848b483
 :END:
 :LOGBOOK:
+- State "DONE"       from "NEXT"       [2018-09-06 Thu 20:53]
 - State "TODO"       from              [2017-12-30 Sat 22:20]
 :END:
 #+BEGIN_SRC emacs-lisp
@@ -3582,7 +3665,11 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 (defvar bh/hide-scheduled-and-waiting-next-tasks 't)
 (setq org-agenda-skip-function nil)
 (setq org-agenda-custom-commands
-      (quote (
+      (quote (("a" nil
+	       agenda "-HOLD-WAITING/!"
+	       ((org-agenda-skip-function '(or (org-agenda-skip-before-SHOWFROMDATE-property)
+					       (org-agenda-skip-before-SHOWFROMTIME-property)
+					       (org-agenda-skip-noshowdates)))))
 	      ("p" "Projects" tags-todo "-CANCELLED/!"
 	       ((org-agenda-overriding-header "Project list")
 		(org-agenda-prefix-format "%?-12t")
@@ -3803,8 +3890,10 @@ This is a standard org mode agenda showing deadlines, schedules, diary items and
 5. Project list
 6. Waiting and hold tasks, which are not scheduled
 7. Other tasks which are not part of project or has =SKIP= tag. Useful to catch wrong refiles and look for the new things to do. Blocked tasks are not shown here.
-*************** NEXT I actually want to see independent tasks and non blocked by edna TODO tasks from subtree with NEXT tasks grouped under subtree name
+*************** CANCELLED I actually want to see independent tasks and non blocked by edna TODO tasks from subtree with NEXT tasks grouped under subtree name :CANCELLED:
+CLOSED: [2018-09-06 Thu 20:54]
 :LOGBOOK:
+- State "CANCELLED"  from "NEXT"       [2018-09-06 Thu 20:54]
 CLOCK: [2017-12-29 Fri 07:36]--[2017-12-29 Fri 07:37] =>  0:01
 CLOCK: [2017-12-29 Fri 07:26]--[2017-12-29 Fri 07:36] =>  0:10
 CLOCK: [2017-12-29 Fri 07:17]--[2017-12-29 Fri 07:26] =>  0:09
@@ -4573,11 +4662,15 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
   "Non nil means that `org-time-balance' is saved between emacs sessions.")
 (defvar org-time-balance-save-time nil
   "Time of the last save of `org-time-balance'.")
+(defvar org-time-balance-update-time nil
+  "Time of the last update of `org-time-balance'.")
+(require 'savehist)
+(add-to-list 'savehist-additional-variables 'org-time-balance)
+(add-to-list 'savehist-additional-variables 'org-time-balance-save-time)
 
 (defun org-load-time-balance-session ()
   "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
   (when org-time-balance-persistant-p
-    (require 'savehist)
     (unless (and (boundp 'savehist-mode)
 		 savehist-mode)
       (savehist-mode +1))
@@ -4586,15 +4679,10 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
 (defun org-save-time-balance-session ()
   "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
   (when (and org-time-balance-persistant-p
-	     org-time-balance)
-    (require 'savehist)
-    (unless (and (boundp 'savehist-mode)
-		 savehist-mode)
-      (savehist-mode +1))
-    (add-to-list 'savehist-additional-variables 'org-time-balance)
-    (add-to-list 'savehist-additional-variables 'org-time-balance-save-time)
-    (setq org-time-balance-save-time (current-time))
-    (savehist-save 'autosave)))
+	     org-time-balance
+             org-time-balance-update-time)
+    (setq org-time-balance-save-time org-time-balance-update-time)
+    (savehist-save)))
 
 (defun org-get-time-balance-multiplier-at-point ()
   "Get value of :ORG-TIME-BALANCE-MULTIPLIER property of an item at point or return 1."
@@ -4615,6 +4703,16 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
 	    0
 	  (string-to-number bonus))))))
 
+(defun org-get-org-time-bonus-at-point ()
+  "Get value of :ORG-TIME-BONUS property of an item at point or return 0."
+  (save-excursion
+    (save-restriction
+      (org-back-to-heading)
+      (let  ((bonus (org-entry-get (point) "ORG-TIME-BONUS")))
+	(if (seq-empty-p bonus)
+	    0
+	  (string-to-number bonus))))))
+
 (defun org-accumulate-weighted-time (&optional return)
   "Aggregate `org-time-balance' counter at point for a month.
 Use :ORG-TIME-BALANCE-MULTIPLIER: property to set the weight.
@@ -4626,21 +4724,30 @@ Just return the value at point if RETURN is not nil."
            (value-at-point (* (org-clock-sum-current-item (or org-time-balance-save-time
 							      last-month))
                               (org-get-time-balance-multiplier-at-point))))
-      (when (string= (org-get-todo-state) "DONE")
-	(setq value-at-point (+ value-at-point (org-get-org-time-bonus-on-done-at-point))))
+      (setq value-at-point (+ value-at-point (org-get-org-time-bonus-at-point)))
+      (unless (string= (org-entry-get (point) "STYLE") "habit")
+	(when (string= (org-get-todo-state) "DONE")
+          (setq value-at-point (+ value-at-point (org-get-org-time-bonus-on-done-at-point)))))
       (if return
 	  value-at-point
 	(setq org-time-balance (+ org-time-balance value-at-point))))))
 
-(defun org-get-total-weighted-time (&optional force scope)
-  "Calculate total weighted time clocked in all agenda files or in SCOPE.
+(defun org-get-total-weighted-time (&optional force)
+  "Calculate total weighted time clocked in all agenda files.
 Ignore current value if FORCE is not nil.
-If FORCE is non nil recalculate the time in SCOPE if it is not nil."
+If FORCE is non nil recalculate the time in all the agenda files."
   (when (or force (not org-time-balance))
     (setq org-time-balance 0)
     (setq org-time-balance-save-time nil)
     (unless force (org-load-time-balance-session))
-    (org-map-entries #'org-accumulate-weighted-time t (or scope 'agenda))
+    (cl-loop for file in (org-agenda-files) do
+	     (with-current-buffer (find-file-noselect file)
+               (goto-char (point-min))
+               (cl-loop until (eobp)
+			do (when (outline-next-heading)
+			     (org-accumulate-weighted-time)))))
+    ;; (org-map-entries #'org-accumulate-weighted-time t (or scope 'agenda))
+    (setq org-time-balance-update-time (current-time))
     (org-save-time-balance-session))
   org-time-balance)
 
@@ -4653,25 +4760,30 @@ If FORCE is non nil recalculate the time in SCOPE if it is not nil."
       (goto-char org-clock-marker)
       (setq org-time-balance (- org-time-balance
 				(org-accumulate-weighted-time 'return)))
+      (org-set-regexps-and-options) ;; `org-complex-heading-regexp' is sometimes nil when I try to change todo state in agenda buffer
       (apply OLDFUN args)
+      (setq org-time-balance-update-time (current-time))
       (setq org-time-balance (+ org-time-balance
-				(org-accumulate-weighted-time 'return)))
-      (yant/save-clocked))))
+				(org-accumulate-weighted-time 'return)))))
+  (yant/save-clocked))
 
 (define-advice org-todo (:around (OLDFUN &rest args) yant/org-increment-weighted-time)
   "Probably add the current item time bonus to `org-time-balance'."
   (let ((old-weighted-time (org-accumulate-weighted-time 'return)))
     (setq org-time-balance (- org-time-balance
 			      old-weighted-time))
+    (when (and (string= (org-entry-get (point) "STYLE") "habit")
+	       (string= (org-get-todo-state) "DONE"))
+      (org-set-property "ORG-TIME-BONUS" (format "%s"
+						 (+ (org-get-org-time-bonus-at-point)
+                                                    (org-get-org-time-bonus-on-done-at-point)))))
+    (org-set-regexps-and-options) ;; `org-complex-heading-regexp' is sometimes nil when I try to change todo state in agenda buffer
     (apply OLDFUN args)
     (let ((new-weighted-time (org-accumulate-weighted-time 'return)))
-      (when (and (string= (org-entry-get (point) "STYLE") "habit") 
-		 (< new-weighted-time old-weighted-time))
-        (setq new-weighted-time (+ old-weighted-time
-				   (- old-weighted-time new-weighted-time)))) ;; habits can change from done back to next without penalty
+      (setq org-time-balance-update-time (current-time))
       (setq org-time-balance (+ org-time-balance
-				new-weighted-time))
-      (yant/save-clocked))))
+				new-weighted-time))))
+  (yant/save-clocked))
 
 
 
@@ -4758,37 +4870,38 @@ All these templates generally record the creation time in =:CREATED:=
   - Meeting/Event :: Scheduled event. It is saved to =org-gcal= org file.
   - Project :: I need literature review, reports and ideas in most of the cases.
   - Conference presentation/poster :: I mark this with =conference= tag. Typical workflow here is:
-      1. Write an abstract
-      2. Revise abstract (habit, since it is multiple times most likely)
-      3. Submit abstract
-      4. Get accepted
-      5. Handle finance
-         - Apply for funding
-         - Book flight
-         - Book hotel
-         - Register for conference
-      6. Make presentation/poster
-      7. Do trial + further revisions (habit)
-      8. Print poster if it is poster
-      9. Present
-      10. Reimburse money
+    1. Write an abstract
+    2. Revise abstract (habit, since it is multiple times most likely)
+    3. Submit abstract
+    4. Get accepted
+    5. Handle finance
+       - Apply for funding
+       - Book flight
+       - Book hotel
+       - Register for conference
+    6. Make presentation/poster
+    7. Do trial + further revisions (habit)
+    8. Print poster if it is poster
+    9. Present
+    10. Reimburse money
   - Research publication :: I mark this with =publication= tag. Typical workflow here is:
-      1. Write outline
-         1. Introduction
-         2. Methodology
-         3. Results
-         4. Discussion
-         5. Conclusions
-         6. Abstract
-      2. Revise (habit)
-      3. Write cover letter
-      4. Submit
-      5. Revise according to comments (habit)
-      6. Get accepted
-      7. Publish in ArXiv before journal take over the copyright
-      8. Publish in journal
-      9. Add to publication list
+    1. Write outline
+       1. Introduction
+       2. Methodology
+       3. Results
+       4. Discussion
+       5. Conclusions
+       6. Abstract
+    2. Revise (habit)
+    3. Write cover letter
+    4. Submit
+    5. Revise according to comments (habit)
+    6. Get accepted
+    7. Publish in ArXiv before journal take over the copyright
+    8. Publish in journal
+    9. Add to publication list
   - Link from browser :: It has =:SOURCE:= with URL of the page and page title in headline. =:SOURCE:= is the only place, where the URL is shown. I tag the entry with tag =BOOKMARK= to make it clear.
+  - Generic link :: Same as link from browser, but silent (don't raise the capture buffer)
   - Selection from browser :: Same as previous, but selection is used as headline 
   - Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=. 
         #+begin_src emacs-lisp
@@ -4804,7 +4917,9 @@ All these templates generally record the creation time in =:CREATED:=
 	("e" "Email" entry (file "~/Org/inbox.org")
 	 "* TODO %? email |- %:from: %:subject :EMAIL:\n:PROPERTIES:\n:CREATED: %U\n:EMAIL-SOURCE: %l\n:END:\n%U\n" :clock-in t :clock-resume t)
 	("b" "Link from browser" entry (file "~/Org/inbox.org")
-	 "* TODO %? |- (%:description) :BOOKMARK:\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :clock-in t :clock-resume t)
+	 "* TODO %? |- (%:description) :BOOKMARK:\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :immediate-finish)
+	("B" "Generic link" entry (file "~/Org/inbox.org")
+	 "* TODO url |- (%:description) :BOOKMARK:\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :immediate-finish t)
 	("s" "Selection from browser" entry (file "~/Org/inbox.org")
 	 "* TODO %? :BOOKMARK:\n%(replace-regexp-in-string \"\n.*\" \"\" \"%i\")\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :clock-in t :clock-resume t)
 	("h" "Habit" entry (file "~/Org/inbox.org")
@@ -4903,7 +5018,8 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 (setq org-export-default-inline-image-rule '(("file" . "\\.\\(gif\\|jp\\(?:e?g\\)\\|p\\(?:bm\\|gm\\|ng\\|pm\\)\\|tiff?\\|x\\(?:[bp]m\\)\\)\\'")))
   #+end_src
   #+begin_src emacs-lisp
-(setq org-export-use-babel nil)
+(setq org-export-use-babel t)
+(setf (alist-get :eval org-babel-default-header-args) "never-export") 
   #+end_src
 **** Ignore some headlines in a sense that it will not be exported as =\section=. 
 :PROPERTIES:
@@ -5414,8 +5530,9 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
   (when (and (org-at-heading-p)
 	     (member (nth 2 (org-heading-components)) org-todo-keywords-for-agenda))
     (let ((mult (org-get-time-balance-multiplier-at-point))
-	  (bonus (org-get-org-time-bonus-on-done-at-point)))
-      (format "%s%s" (if mult (format "%sx" mult) "")
+	  (bonus (org-get-org-time-bonus-on-done-at-point))
+          (scheduled? (string-match-p "\\." (or (org-entry-get (point) "SCHEDULED") ""))))
+      (format "%s%s%s" (if scheduled? "↻" " ") (if mult (format "%sx" mult) "")
 	      (if (and bonus (> bonus 0)) (format "+%s" bonus) "")))))
 (setq org-agenda-prefix-format "%-12s\t%-12.12:c\t%?-12t%(concat (yant/format-summary-for-agenda) (yant/format-time-balance-multiplier) \"\\t\")")
   #+end_src
@@ -5448,66 +5565,78 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 (setq org-startup-folded nil)
 #+end_src
 
-*** TODO Notmuch interaction
+*** Notmuch interaction
 :PROPERTIES:
 :ID:       e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326
 :END:
+:LOGBOOK:
+CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
+:END:
+
 #+begin_src emacs-lisp
 (use-package org-notmuch)
-;; (use-package helm-notmuch
-;;   :config
-;;   (let (helm-source-notmuch-action (plist-get helm-source-notmuch :action))
-;;     (plist-put helm-source-notmuch :action
-;; 	       (add-to-list helm-source-notmuch-action '("Copy message link" . (lambda (id)
-;; 										 (format "notmuch:%s" id)))))
-;;     ))
+(use-package helm-notmuch
+  :ensure t
+  :config
+  (let ((helm-source-notmuch-action (alist-get 'action helm-source-notmuch)))
+    (setf (alist-get 'action helm-source-notmuch)
+	  (append helm-source-notmuch-action (list '("Copy message link" . org-store-notmuch-link))))))
+
+(defun org-store-notmuch-link (CANDIDATE)
+  "Store CANDIDATE org link to notmuch message."
+  (let ((link (format "notmuch:%s" CANDIDATE)))
+    (interactive)
+    (org-open-link-from-string link)
+    (set-buffer (first (buffer-list)))
+    (let ((desc (replace-regexp-in-string "\\[\\|\\]" "" (notmuch-show-get-subject))))
+      (notmuch-bury-or-kill-this-buffer)
+      (push (list (format "notmuch:%s" CANDIDATE) desc) org-stored-links))))
+
 
 (defun yant/add-email-to-task (&optional ARG)
   "Add an email into :EMAIL-SOURCE: property of the task.
        C-u argument means that we add the last link from link ring."
   (interactive)
-  (if (not (eq ARG 4))
-      (progn
-	(bookmark-set "ADD-EMAIL-BKMRK")
-	(bind-key "C-c l" '(lambda ()
-			     (interactive)
-			     (bind-key "C-c l" 'org-store-link)
-			     (call-interactively 'org-store-link)
-			     (bookmark-jump "ADD-EMAIL-BKMRK")
-			     (yant/add-email-to-task 4)
-			     )
-		  )
-	(notmuch-search "tag:todo"))
-    (progn
+  (if (eq ARG '4)
       (let ((last-link (car (car org-stored-links)))
 	    (last-description (cadr (car org-stored-links))))
 	(if (string-match "^notmuch.*$" last-link)
-	    (org-set-property "EMAIL-SOURCE" (concat "[[" last-link "][" last-description "]]"))
-	  (message "Link \"%s\" is not a message link." last-link)))
-      (yant/mark-linked-email-after-todo-state-change))))
+            (progn
+	      (org-set-property "EMAIL-SOURCE" (concat "[[" last-link "][" last-description "]]"))
+              (org-back-to-heading)
+              (org-set-tags-to (append (org-get-tags) '("EMAIL"))))
+	  (message "Link \"%s\" is not a message link." last-link))
+        (yant/mark-linked-email-after-todo-state-change))
+    (let ((helm-source-tmp (copy-alist helm-source-notmuch)))
+      (setf (alist-get 'action helm-source-tmp) (list '("Copy message link" . org-store-notmuch-link)))
+      (setf (alist-get 'header-line helm-source-tmp) "C-j: Associate the task with an email")
+      (helm :sources helm-source-tmp
+	    :buffer "*helm notmuch*"
+	    :truncate-lines t))
+    (yant/add-email-to-task '4)))
 
-(defun yant/mark-linked-email-after-todo-state-change ()
-  "Remove inbox tag from a linked email :EMAIL-SOURCE: after the task is marked as finished."
-  (let ((mystate (or (and (fboundp 'org-state)
-			  state)
-		     (nth 2 (org-heading-components))))
-	(email-link (org-entry-get nil "EMAIL-SOURCE"))
-        (done-keywords org-done-keywords))
-    (when (not (or (not email-link)
-		   (eq email-link "")))
-      (progn
-	(interactive)
-	(org-open-link-from-string email-link)
-	(switch-to-buffer (first (buffer-list)))
-	(if (member mystate done-keywords)
-	    (notmuch-show-tag-message "-inbox" "-todo" "-listinbox")
-	  (if mystate
-	      (notmuch-show-tag-message "-listinbox" "+inbox" "-todo")
-	    (if (member "inbox" (notmuch-show-get-tags))
-		(notmuch-show-tag-message "-listinbox" "+inbox" "+todo"))))
-	(notmuch-bury-or-kill-this-buffer)))))
-(add-hook 'org-after-todo-state-change-hook 'yant/mark-linked-email-after-todo-state-change 'append)
-(add-hook 'org-capture-before-finalize-hook 'yant/mark-linked-email-after-todo-state-change 'append)
+  (defun yant/mark-linked-email-after-todo-state-change ()
+    "Remove inbox tag from a linked email :EMAIL-SOURCE: after the task is marked as finished."
+    (let ((mystate (or (and (fboundp 'org-state)
+			    state)
+		       (nth 2 (org-heading-components))))
+	  (email-link (org-entry-get nil "EMAIL-SOURCE"))
+	  (done-keywords org-done-keywords))
+      (when (not (or (not email-link)
+		     (eq email-link "")))
+	(progn
+	  (interactive)
+	  (org-open-link-from-string email-link)
+	  (set-buffer (first (buffer-list)))
+	  (if (member mystate done-keywords)
+	      (notmuch-show-tag-message "-inbox" "-todo" "-listinbox")
+	    (if mystate
+		(notmuch-show-tag-message "-listinbox" "+inbox" "-todo")
+	      (if (member "inbox" (notmuch-show-get-tags))
+		  (notmuch-show-tag-message "-listinbox" "+inbox" "+todo"))))
+	  (notmuch-bury-or-kill-this-buffer)))))
+  (add-hook 'org-after-todo-state-change-hook 'yant/mark-linked-email-after-todo-state-change 'append)
+  (add-hook 'org-capture-before-finalize-hook 'yant/mark-linked-email-after-todo-state-change 'append)
 #+end_src
 *** TODO Key combinations
 :PROPERTIES:
@@ -5580,6 +5709,9 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 
 #+end_src
 *************** NEXT change =C-c e= to something proper
+:LOGBOOK:
+CLOCK: [2018-09-06 Thu 20:55]--[2018-09-06 Thu 21:06] =>  0:11
+:END:
 *************** END
 **** Boon integration
 :PROPERTIES:
