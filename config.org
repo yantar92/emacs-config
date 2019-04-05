@@ -1225,11 +1225,13 @@ From https://www.emacswiki.org/emacs/FlySpell"
 :END:
 
 #+begin_src emacs-lisp
-(use-package diff-hl
+(use-package git-gutter-fringe
   :if init-flag
   :ensure t
+  :init
+  (setq git-gutter-fr:side 'right-fringe)
   :config
-  (global-diff-hl-mode))
+  (add-hook 'magit-mode-hook #'git-gutter-mode))
 #+end_src
 
 ** Fold & narrow
