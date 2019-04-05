@@ -2,7 +2,7 @@
 #+AUTHOR: Ihor Radchenko
 #+EMAIL: yantar92@gmail.com
 #+PROPERTY: header-args+ :tangle yes :comments link
-  
+
 * NEXT Emacs configuration                                     :EMACS:COMMON:
 :PROPERTIES:
 :ID:       a27092a6-25a6-417f-818f-7f83325b58b3
@@ -26,12 +26,15 @@ CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 This Emacs configuration allows to load Emacs in both interactive and batch modes. It is controlled by special variables, identifying startup mode:
 - =init-flag= :: normal startup, load all the visual packages and options
 - =org-export-flag= :: load necessary options for org-export
+- =org-tangle-flag= :: load necessary options for org-tangle
      One important note about this configuration is that I do not use desktop save mode and similar things. I do it because everything I intend to do is kept in my org files, which are automatically loaded by org agenda command. 
 #+begin_src emacs-lisp
 (defvar init-flag nil
   "Do normal init if not nil.")
 (defvar org-export-flag nil
-  "Set up org export in if not nil.")
+  "Set up org export if not nil.")
+(defvar org-tangle-flag nil
+  "Set up org tangle if not nil.")
 #+end_src
 ** =Init.el=
 :PROPERTIES:
@@ -44,6 +47,22 @@ Init file, which is loads this file.
 (setq init-flag t)
 (load "~/.emacs.d/config.el" nil nil nil t)
 #+end_src
+** NEXT Debugging current issues
+:PROPERTIES:
+:CREATED:  [2019-04-03 Wed 10:42]
+:ID:       d7431e10-411b-456f-ab6e-76aa07300712
+:END:
+:LOGBOOK:
+- State "NEXT"       from "TODO"       [2019-04-03 Wed 10:42]
+- State "TODO"       from              [2019-04-03 Wed 10:42]
+:END:
+
+Trying to debug "Re-entering top level after C stack overflow", as suggested in [[https://www.reddit.com/r/emacs/comments/9fs8pp/reentering_top_level_after_c_stack_overflow/][reddit]]
+#+begin_src emacs-lisp
+(setq max-lisp-eval-depth 600
+      max-specpdl-size 600)
+#+end_src
+
 ** Emacs server settings
 :PROPERTIES:
 :ID:       5d8e1dca-a849-4980-bfde-cbf02801e92b
@@ -117,8 +136,10 @@ There are various options, which can improve the performance.
   (setq load-path (append '("~/.emacs.d/site-lisp/") load-path))
   (setq load-path (append (directory-files "~/.emacs.d/site-lisp/" t "^[^.]" t) load-path))
   (setq load-path (append (directory-files package-user-dir t "^[^.]" t) load-path))
-  (add-hook 'after-init-hook #'package-initialize)
-  (package-initialize 'NO-ACTIVATE))
+  ;; (add-hook 'after-init-hook #'package-initialize)
+  ;; (package-initialize 'NO-ACTIVATE)
+  (package-initialize)
+  )
 #+end_src
 
 - enforce =use-package=
@@ -249,12 +270,22 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 **** TODO Long lines handling
 :PROPERTIES:
 :ID:       827dc236-fee4-43b8-bfbe-05026d7e3e6d
+:CREATED:  [2019-03-20 Wed 12:07]
 :END:
 :LOGBOOK:
 - State "TODO"       from              [2018-03-12 Mon 14:24]
 :END:
 #+begin_src emacs-lisp
-(bind-keys :map boon-x-map ("l" . toggle-truncate-lines))
+(when init-flag
+(bind-keys :map boon-x-map ("l" . toggle-truncate-lines)))
+#+end_src
+**** Buffer boundaries
+:PROPERTIES:
+:ID:       00975142-2491-4f85-bd0b-f1f6c2938e36
+:END:
+
+#+begin_src emacs-lisp
+(setq-default indicate-buffer-boundaries 'left)
 #+end_src
 *** Text in buffers
 **** Coding system
@@ -423,9 +454,10 @@ Show some text in buffer differently
 :END:
 
 #+begin_src emacs-lisp 
+(when init-flag
 (global-eldoc-mode)
 (diminish 'eldoc-mode)
-(mapc #'eldoc-add-command '(meta-up meta-up-element meta-down meta-down-element meta-backward meta-backward-element meta-forward meta-forward-element meta-scroll-down meta-scroll-up self-insert-command))
+(mapc #'eldoc-add-command '(meta-up meta-up-element meta-down meta-down-element meta-backward meta-backward-element meta-forward meta-forward-element meta-scroll-down meta-scroll-up self-insert-command)))
 #+end_src
 
 *** Cursor
@@ -521,13 +553,13 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 ;; This will define meta-function-1 and meta-function-2 to automatically
 ;; choose the right real functions depending on the major mode.
 
-  ;;; Code:
+;;; Code:
 
 (defvar meta-functions-list '()
   "A list of meta function names, corresponding functions to be called by default, and their description.
-    Each function may have meta-functions-metafunctionname-alist variable containing pairs of major mode names
-    and corresponding function to be called by meta-function in that major mode.
-    The default functions will be called if the major mode is not in the alist")
+Each function may have meta-functions-metafunctionname-alist variable containing pairs of major mode names
+and corresponding function to be called by meta-function in that major mode.
+The default functions will be called if the major mode is not in the alist")
 
 (defun meta-functions-add-meta-function (&rest args)
   "Add meta function or a list of metafunctions as in `meta-functions-list' and update the definitions."
@@ -579,6 +611,31 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
   :demand t)
 #+END_SRC
 
+#+begin_src emacs-lisp
+(use-package meta-functions
+  :if init-flag
+  :config
+  (meta-functions-add-meta-function '(meta-down next-logical-line "Move down.")
+				    '(meta-up previous-logical-line "Move up.")
+				    '(meta-down-element forward-paragraph "Move down one element.")
+				    '(meta-up-element backward-paragraph "Move up one element.")
+				    '(meta-forward forward-char "Move forward.")
+				    '(meta-backward backward-char "Move backward.")
+				    '(meta-forward-element forward-word "Move forward one element.")
+				    '(meta-backward-element backward-word "Move backward one element.")
+				    '(meta-scroll-up scroll-up "Scroll up.")
+				    '(meta-scroll-down scroll-down "Scroll down.")
+				    '(meta-undo undo "Undo.")
+				    '(meta-occur helm-occur "Occur.")
+				    '(meta-goto helm-imenu "Goto place in document.")
+				    '(meta-next-buffer next-buffer "Go forward in buffer.")
+				    '(meta-previous-buffer previous-buffer "Go backward in buffer.")
+				    '(meta-insert-enclosure-new-line ignore "Insert beg/end passive structure in the line below.")
+				    '(meta-insert-active-enclosure-new-line ignore "Isert beg/end active structure in the line below.")
+				    '(meta-new-line boon-newline-dwim "Insert new line."))
+  )
+#+end_src
+
 It should be noted, that the same can be done via setting the proper bindings for "j", "k", etc. in the mode itself. The problem is that it may mess up the cases when want to set special meanings for the single keys in =command-mode=, but leave the normal editing on in the =insert-mode=.
   
 #+begin_src emacs-lisp
@@ -605,8 +662,8 @@ It should be noted, that the same can be done via setting the proper bindings fo
 			       magit-popup-mode))
   (add-hook 'boon-local-mode-hook
 	    (lambda() (when (and boon-local-mode
-				 (member major-mode boon-insert-state-major-mode-list))
-			(boon-set-state 'boon-insert-state)))
+			    (member major-mode boon-insert-state-major-mode-list))
+		   (boon-set-state 'boon-insert-state)))
 	    'append)
   (defun boon-set-insert-state ()
     "Switch to insert state."
@@ -720,6 +777,7 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 	 ("M-o" . helm-next-source)
 	 ("M-i" . helm-previous-source)
 	 ("M-l" . helm-execute-persistent-action)
+	 ("C-u" . helm-execute-persistent-action)
 	 ("C-M-h" . backward-kill-word)
 	 ("M-h" . backward-kill-word)
 	 ("C-h" . backward-delete-char-untabify)
@@ -837,14 +895,19 @@ saving all the buffers, is executed.
 (defvar yant/never-save-buffer-list nil
   "The buffers, matching any of the regexps in this list will never be saved.")
 #+end_src
-*** Undo tree
+*** FAILED Undo tree
+CLOSED: [2019-04-03 Wed 10:40]
 :PROPERTIES:
 :ID:       85e15d5a-65f0-4283-93e4-7997fe9fa1a3
+:END:
+:LOGBOOK:
+- State "FAILED"     from              [2019-04-03 Wed 10:40]
 :END:
 #+begin_src emacs-lisp
 (use-package undo-tree
   :if init-flag
   :ensure t
+  :disabled t
   ;;:diminish undo-tree-mode
   :hook ((org-mode text-mode prog-mode) .  undo-tree-mode)
   :config
@@ -901,21 +964,24 @@ saving all the buffers, is executed.
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :ensure t
+  :if init-flag
   :init
   (setq vc-handled-backends nil)
+  (use-package transient :ensure t)
   :config
   (use-package boon :config
-	       (bind-keys :map boon-x-map
-			  ("g" . magit-status)
-			  ("G" . magit-dispatch-popup)
-			  ("M-g" . magit-file-popup))
-	       (use-package meta-functions
-		 :config
-		 (add-to-list 'meta-functions-meta-down-element-alist '(magit-status-mode . magit-section-forward))
-		 (add-to-list 'meta-functions-meta-up-element-alist '(magit-status-mode . magit-section-backward))
-		 (add-to-list 'meta-functions-meta-down-element-alist '(magit-revision-mode . magit-section-forward))
-		 (add-to-list 'meta-functions-meta-up-element-alist '(magit-revision-mode . magit-section-backward))
-		 (meta-functions-update-function-definitions))))
+    (bind-keys :map boon-x-map
+	       ("g" . magit-status)
+	       ("G" . magit-dispatch-popup)
+	       ("M-g" . magit-file-popup))
+    (use-package meta-functions
+      :config
+      (meta-functions-update-function-definitions)
+      (add-to-list 'meta-functions-meta-down-element-alist '(magit-status-mode . magit-section-forward))
+      (add-to-list 'meta-functions-meta-up-element-alist '(magit-status-mode . magit-section-backward))
+      (add-to-list 'meta-functions-meta-down-element-alist '(magit-revision-mode . magit-section-forward))
+      (add-to-list 'meta-functions-meta-up-element-alist '(magit-revision-mode . magit-section-backward))
+      (meta-functions-update-function-definitions))))
 #+END_SRC
 
 Interaction with Github
@@ -1148,6 +1214,20 @@ From https://www.emacswiki.org/emacs/FlySpell"
 	      ("r" . er/expand-region)))
 
 #+END_SRC
+*** Highlight uncommited changes in version-controlled files and dirs
+:PROPERTIES:
+:CREATED:  [2019-04-05 Fri 16:37]
+:ID:       c5fc942a-d468-4102-9c90-6275fd605e92
+:END:
+
+#+begin_src emacs-lisp
+(use-package diff-hl
+  :if init-flag
+  :ensure t
+  :config
+  (global-diff-hl-mode))
+#+end_src
+
 ** Fold & narrow
 :PROPERTIES:
 :ID:       7f5795bc-6bc1-4095-b31c-ed724bbc942c
@@ -1188,23 +1268,6 @@ From https://www.emacswiki.org/emacs/FlySpell"
   :if init-flag
   :defer t
   :config
-  (use-package meta-functions
-    :if init-flag
-    :config
-    (meta-functions-add-meta-function '(meta-down next-logical-line "Move down."))
-    (meta-functions-add-meta-function '(meta-up previous-logical-line "Move up."))
-    (meta-functions-add-meta-function '(meta-down-element forward-paragraph "Move down one element."))
-    (meta-functions-add-meta-function '(meta-up-element backward-paragraph "Move up one element."))
-    (meta-functions-add-meta-function '(meta-forward forward-char "Move forward."))
-    (meta-functions-add-meta-function '(meta-backward backward-char "Move backward."))
-    (meta-functions-add-meta-function '(meta-forward-element forward-word "Move forward one element."))
-    (meta-functions-add-meta-function '(meta-backward-element backward-word "Move backward one element."))
-    (meta-functions-add-meta-function '(meta-scroll-up scroll-up "Scroll up."))
-    (meta-functions-add-meta-function '(meta-scroll-down scroll-down "Scroll down."))
-    (meta-functions-add-meta-function '(meta-undo undo-tree-undo "Undo."))
-    (meta-functions-add-meta-function '(meta-occur helm-occur "Occur."))
-    (meta-functions-add-meta-function '(meta-goto helm-imenu "Goto place in document."))
-    )
   (bind-keys ("C-M-S-j" . scroll-other-window)
 	     ("C-M-S-k" . scroll-other-window-down)
 	     :map boon-x-map
@@ -1373,6 +1436,7 @@ Imenu allows navigating through the buffer structure, according to the major mod
 #+BEGIN_SRC emacs-lisp
 (use-package bm
   :ensure t
+  :when init-flag
   :demand t
 
   :init
@@ -1493,10 +1557,6 @@ Imenu allows navigating through the buffer structure, according to the major mod
   (use-package boon
     :defer t
     :config
-    (use-package meta-functions
-      :config
-      (meta-functions-add-meta-function '(meta-next-buffer next-buffer "Go forward in buffer."))
-      (meta-functions-add-meta-function '(meta-previous-buffer previous-buffer "Go backward in buffer.")))
     (bind-keys
      ("M-`" . winner-undo)
      ("M-~" . winner-redo)
@@ -1618,7 +1678,7 @@ Undo window configuration changes
 	auto-revert-verbose nil
 	dired-dwim-target t
 	dired-du-size-format t ;; show human readable size
-	dired-listing-switches "--time-style=locale -DhgGBF --group-directories-first")
+	dired-listing-switches "--time-style=locale -ADhgGBF --group-directories-first")
   :config
   (put 'dired-find-alternate-file 'disabled nil)
   (defalias 'dired-find-file #'dired-find-alternate-file)
@@ -1641,6 +1701,7 @@ Undo window configuration changes
 
 #+end_src
 ****** NEXT Dired+
+SCHEDULED: <2019-02-02 Sat>
 :PROPERTIES:
 :CREATED:  [2018-10-08 Mon 14:53]
 :ID:       f7f3a852-237e-491d-9de7-786807aa63cb
@@ -1801,10 +1862,42 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+BEGIN_SRC emacs-lisp
 (define-advice dired-find-file (:around (OLDFUN &rest args) disable-abbreviate-file-name)
   "Disable `abbreviate-file-name' in dired."
-  (flet ((abbreviate-file-name (filename) "" filename))
+  (cl-flet ((abbreviate-file-name (filename) ""
+			       (if (f-directory? filename)
+				   (f-slash filename)
+                                 filename)))
     (apply OLDFUN args)))
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
+**** FTP
+:PROPERTIES:
+:CREATED:  [2018-12-07 Fri 14:58]
+:ID:       54e5a53e-cebe-4449-a854-27bd586ca55d
+:END:
+
+#+begin_src emacs-lisp
+(setq ange-ftp-dumb-unix-host-regexp "58\\.206\\.96\\.91")
+#+end_src
+*** NEXT Hyperbole
+:PROPERTIES:
+:CREATED:  [2019-03-21 Thu 13:52]
+:ID:       40c2aac3-517c-45cd-bfe4-aa5465e4c3e6
+:END:
+:LOGBOOK:
+- State "NEXT"       from "TODO"       [2019-03-21 Thu 13:52]
+:END:
+
+#+begin_src emacs-lisp
+(use-package hyperbole
+  :ensure t
+  :disabled
+  :config
+  (bind-key* "<tab>" #'action-key)
+  (bind-key* "<backtab>" #'assist-key)
+  )
+#+end_src
+
+
 ** Editing
 :PROPERTIES:
 :ID:       6d0859b5-5d38-42a6-a676-aebec0867681
@@ -1919,9 +2012,6 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 (use-package meta-functions
   :if init-flag
   :config
-  (meta-functions-add-meta-function  '(meta-insert-enclosure-new-line ignore "Insert beg/end passive structure in the line below.")
-				     '(meta-insert-active-enclosure-new-line ignore "Isert beg/end active structure in the line below.")
-                                     '(meta-new-line boon-newline-dwim "Insert new line."))
   (use-package boon
     :bind (:map boon-command-map
 		("<RET>" . meta-new-line)
@@ -2092,6 +2182,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+begin_src emacs-lisp 
 (use-package boon
   :defer t
+  :if init-flag
   :config
   (use-package meta-functions
     :config
@@ -2107,6 +2198,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+begin_src emacs-lisp 
 (use-package boon
   :defer t
+  :if init-flag
   :config
   (use-package meta-functions
     :config
@@ -2131,20 +2223,20 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   (use-package boon
     :defer t
     :config
+    
     (bind-keys :map boon-goto-map
 	       ("f" . helpful-function)
 	       ("v" . helpful-at-point)
 	       ("d" . helpful-variable)
 	       ("s" . helpful-symbol)
-               ("b" . helm-descbinds)
+	       ("b" . helm-descbinds)
 	       ("h m" . woman)
-               ("h i" . helm-info-elisp)
-               ("h o" . helm-info-org)
-               ("h e" . helm-info-emacs)
-               ("h t" . helm-info-auctex)
-               ("h t" . helm-info-texinfo))))
-
-
+	       ("h n" . tldr)
+	       ("h i" . helm-info-elisp)
+	       ("h o" . helm-info-org)
+	       ("h e" . helm-info-emacs)
+	       ("h t" . helm-info-auctex)
+	       ("h T" . helm-info-texinfo))))
 #+end_src
 **** Man
 :PROPERTIES:
@@ -2160,6 +2252,16 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (add-to-list 'meta-functions-meta-down-element-alist '(woman-mode . Man-next-section))
     (add-to-list 'meta-functions-meta-up-element-alist '(woman-mode . Man-previous-section))))
 #+end_src
+**** TLDR - short practical version of man
+:PROPERTIES:
+:CREATED:  [2019-01-20 Sun 02:28]
+:ID:       fd10055f-2a65-4c7e-a1e9-3d95e7d8ea72
+:END:
+
+#+begin_src emacs-lisp
+(use-package tldr :ensure t)
+#+end_src
+
 **** Helpful - better help buffers
 :PROPERTIES:
 :CREATED:  [2018-03-29 Thu 23:16]
@@ -2267,11 +2369,13 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   (setq ledger-reports
 	'(("bal" "ledger --pedantic -f %(ledger-file) bal not Equity")
 	  ("balsg" "ledger --pedantic -f %(ledger-file) bal not Equity -X S$")
+	  ("balcny" "ledger --pedantic -f %(ledger-file) bal not Equity -X CNY")
 	  ("balall" "ledger --pedantic -f %(ledger-file) bal not Equity:Opening")
 	  ("reg" "ledger --pedantic --pending -f %(ledger-file) reg not Equity")
 	  ("payee" "ledger --pedantic -f %(ledger-file) reg @%(payee)")
 	  ("account" "ledger --pedantic -f %(ledger-file) reg %(account)")
 	  ("budget" "ledger --pedantic -f %(ledger-file) bal --budget")
+          ("budgetcny" "ledger --pedantic -f %(ledger-file) bal --budget -X CNY")
 	  ("budgetsg" "ledger --pedantic -f %(ledger-file) bal --budget -X S$"))
 	ledger-report-auto-refresh t)
   (use-package meta-functions
@@ -2281,6 +2385,16 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (meta-functions-update-function-definitions))
   )
 #+end_src
+*** Do not end the completions with string
+:PROPERTIES:
+:CREATED:  [2019-03-23 Sat 07:31]
+:ID:       af89ed91-0fc7-4d03-b08a-478c08ad0558
+:END:
+
+#+begin_src emacs-lisp
+(add-hook 'ledger-mode-hook (lambda () (setq-local pcomplete-termination-string "")))
+#+end_src
+
 ** Wolfram Mathematica
 :PROPERTIES:
 :CREATED:  [2018-07-23 Mon 17:37]
@@ -2463,7 +2577,8 @@ When listening a new band/album, I usually go through all the songs and delete w
 #+begin_src emacs-lisp
 (use-package mingus
   :defer t
-  :config 
+  :if init-flag
+  :config
   (defun yant/mingus-delete-currently-playing ()
     "Remove currently playing song from playlist."
     (interactive)
@@ -2485,6 +2600,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 
 #+begin_src emacs-lisp
 (use-package meta-functions
+  :if init-flag
   :config
   (add-to-list 'meta-functions-meta-move-line-down-alist '(mingus-playlist-mode . mingus-move-down))
   (add-to-list 'meta-functions-meta-move-line-up-alist '(mingus-playlist-mode . mingus-move-up))
@@ -2636,10 +2752,23 @@ When listening a new band/album, I usually go through all the songs and delete w
 			 ("yantar92@gmail.com" . "Gmail/Sent +sent -unread")))
   #+end_src
 - automatic email signing
+  I have to skip signing for some email accounts, because the server appends some text to messages. Even though the resulting message is correct, but some email clients are not able to open these messages properly. They show the appended text and unreadable attachment.
   #+begin_src emacs-lisp
 (setq mml-default-sign-method "pgp")
 (setq notmuch-crypto-process-mime t)
-(add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
+
+(defvar yant/mml-do-not-sign-accounts-list '("ihor_radchenko@alumni.sutd.edu.sg")
+  "List of accounts, where the messaged should not be signed.")
+
+(defun yant/mml-secure-message-sign-pgpmime-maybe ()
+  "Sign the message unless the sending account is in `yant/mml-do-not-sign-accounts-list'."
+  (let ((from (save-restriction
+		(message-narrow-to-headers)
+                (message-fetch-field "from"))))
+    (unless (-first (lambda (el) (string-match el from)) yant/mml-do-not-sign-accounts-list)
+      (mml-secure-message-sign-pgpmime))))
+
+(add-hook 'message-send-hook #'yant/mml-secure-message-sign-pgpmime-maybe)
   #+end_src
 - async mail sending 
 *************** TODO Make it work
@@ -3005,7 +3134,7 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 *************** END
 #+begin_src emacs-lisp
 (use-package org
-  :if (or init-flag org-export-flag)
+  :if (or init-flag org-export-flag org-tangle-flag)
   :ensure org-plus-contrib
   :pin org
   :mode ("\\.org$" . org-mode)
@@ -3161,13 +3290,7 @@ I use inline tasks to add temporary todo state (instead of notes). It should be 
 It seems that inline tasks interfers with =org-outline-regexp=.
 Fix it:
 
-*************** DONE report to org email list
-CLOSED: [2018-11-05 Mon 16:10] SCHEDULED: <2018-11-05 Mon>
-:LOGBOOK:
-- State "DONE"       from "NEXT"       [2018-11-05 Mon 16:10]
-- State "NEXT"       from "TODO"       [2018-11-04 Sun 18:07]
-:END:
-*************** END
+
 
 #+begin_src emacs-lisp
 (defun org-outline-regexp-no-inline ()
@@ -3311,6 +3434,7 @@ The project with parent projects.
   #+end_src
 ***** TODO Standard projects
 *** NEXT Journal
+SCHEDULED: <2019-02-02 Sat>
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 18:19]
 :ID:       46346e6b-4ed8-4570-bf4c-05639c125046
@@ -3330,13 +3454,6 @@ I can write notes, run shell commands, calculations, etc without loosing what I 
 I may not even need to run terminal in such a case! 
 
 #+begin_src emacs-lisp
-(use-package org-journal
-  :ensure t
-  :bind (:map boon-goto-map
-	      ("9" . org-journal-new-entry))
-  :init
-  (setq org-journal-dir "~/Org/Journal")
-  (add-hook 'org-journal-after-entry-create-hook #'delete-other-windows))
 #+end_src
 
 *** TODO Files
@@ -3674,7 +3791,7 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 		next-headline
 	      nil)))))))
      #+end_src
-- =:SHOWFROMDATE:= (always inheriting) :: The purpose of this is to be able to postpone the scheduled tasks for future if I cannot do it. The property is formatted as an org date.
+- =:SHOWFROMDATE:= :: The purpose of this is to be able to postpone the scheduled tasks for future if I cannot do it. The property is formatted as an org date.
      This property is especially useful if there is something more pressing, so that there is a temptation to reschedule less pressing event to another day. If the more pressing task is done earlier than expected, the postponed tasks can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
      #+begin_src emacs-lisp
      (add-to-list 'org-default-properties "SHOWFROMDATE")
@@ -3689,18 +3806,20 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
   (if (equal major-mode 'org-agenda-mode)
       (progn
 	(org-agenda-check-no-diary)
-	(let* ((hdmarker (or (org-get-at-bol 'org-hd-marker)
-			     (org-agenda-error)))
-	       (buffer (marker-buffer hdmarker))
-	       (pos (marker-position hdmarker))
+	(let* ((marker (or (org-get-at-bol 'org-marker)
+			   (org-agenda-error)))
+	       (buffer (marker-buffer marker))
+	       (pos (marker-position marker))
 	       (inhibit-read-only t)
-	       newhead)
+	       ts)
 	  (org-with-remote-undo buffer
 	    (with-current-buffer buffer
 	      (widen)
 	      (goto-char pos)
 	      (org-show-context 'agenda)
-	      (call-interactively 'org-command-set-SHOWFROMDATE-property)))))
+	      (call-interactively 'org-command-set-SHOWFROMDATE-property)
+              (setq ts (org-entry-get (point) "SHOWFROMDATE")))
+            (org-agenda-show-new-time marker ts " P"))))
     (let ((property "SHOWFROMDATE"))
       (let ((value (org-read-property-value property))
 	    (fn (cdr (assoc-string property org-properties-postprocess-alist t))))
@@ -3710,10 +3829,13 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 	(when fn (setq value (funcall fn value)))
 	(unless (equal (org-entry-get nil property) value)
 	  (org-entry-put nil property value))))))
+
 (defun org-set-SHOWFROMDATE-property (PROMPT &rest args)
   "Read :SHOWFROMDATE: property."
   (org-read-date 'with-time nil nil PROMPT))
+
 (add-to-list 'org-property-set-functions-alist '("SHOWFROMDATE" . org-set-SHOWFROMDATE-property))
+
 (defun org-agenda-skip-before-SHOWFROMDATE-property ()
   "Skip agenda item if :SHOWFROMDATE: property is set and the day is before it"
   (save-restriction
@@ -3843,6 +3965,7 @@ For the implementation, the idea is keeping all the actual attachments in a comm
 (setq org-attach-method 'mv)
 (setq org-attach-store-link-p 't)
 (setq org-attach-directory "~/.data/")
+(require 'f)
 (setq org-id-locations-file
       (f-join org-attach-directory ".org-id-locations"))
 #+end_src
@@ -3876,6 +3999,14 @@ Use `default-directory' if nil.")
 		    (remove symlinks-directory
 			    filelist)))))
 
+(defun yant/outline-get-next-sibling (&optional subtree-end)
+  "A faster version of `outline-get-next-sibling'.
+Bound search by SUBTREE-END if non nil."
+  (let* ((level (funcall outline-level))
+	 (sibling-regex (concat "^\\*\\{" (format "%d" level) "\\}[^*]"))
+         (bound (or subtree-end (point-max))))
+    (re-search-forward sibling-regex bound 'noerror)))
+
 (defun yant/org-entry-name-cleanup-for-dir ()
   "Format entry name to make a directory. Return nil if the entry name is empty."
   (org-with-wide-buffer
@@ -3899,7 +4030,10 @@ Use `default-directory' if nil.")
   "Return non nil if the task at point has an attached file."
   (org-with-wide-buffer
    (when (eq major-mode 'org-mode) (org-back-to-heading))
-   (member org-attach-auto-tag (org-get-tags))))
+   (member org-attach-auto-tag (org-get-tags nil t))))
+
+(defvar yant/--processed-entry-ids nil
+  "Variable used to store processed entry ids in `org-attach-dir@yant/org-attach-ensure-attach-dir-symlink'")
 
 (define-advice org-attach-dir (:filter-return (dir) yant/org-attach-ensure-attach-dir-symlink)
   "Make sure that the attach DIR for the current entry has a link in the org structure based directory structure.
@@ -3908,85 +4042,85 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
   (prog1
       (and dir
 	   (f-slash dir))
-    
+
     (when (and (equal major-mode 'org-mode)
 	       dir
-               (not (bound-and-true-p org-attach-dir-suppress-extra-checks)) ;; an option to make `org-attach-dir' faster if needed
-               (f-exists-p dir)
-               (f-dir-p dir))
+	       (not (bound-and-true-p org-attach-dir-suppress-extra-checks)) ;; an option to make `org-attach-dir' faster if needed
+	       (f-exists-p dir)
+	       (f-dir-p dir))
       (let* ((attach-path dir)
 	     (symlinks-directory (f-slash (f-join dir
 						  yant/org-attach-symlinks-directory)))
-             (attachments-symlink-directory (f-slash (f-join symlinks-directory
+	     (attachments-symlink-directory (f-slash (f-join symlinks-directory
 							     yant/org-attach-attachments-symlink-directory)))
-	     (org-id (org-id-get))
-             (entry-name (yant/org-entry-name-cleanup-for-dir))
-             (attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
+	     (org-id (org-id-get nil 'create))
+	     (entry-name (yant/org-entry-name-cleanup-for-dir))
+	     (attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
 					  (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil)))) ;; only consider if the entry is the child
-             (processed-entry-ids (when (boundp 'processed-entry-ids) processed-entry-ids))) ;; keep track of the processed entries to avoid infinite recursion
-	(unless (or (member org-id processed-entry-ids)
-		    attach-dir-inherited-p)
-          
-          (add-to-list 'processed-entry-ids org-id)
-          
-	  (when (f-file-p symlinks-directory)
-            (error (format "File exist in place of dir: %s" symlinks-directory)))
-	  (when (and (f-exists-p attachments-symlink-directory)
-		     (not (f-symlink-p (directory-file-name attachments-symlink-directory))))
-            (error (format "Not a symlink: %s" attachments-symlink-directory)))
+	     ;; (processed-entry-ids (when (boundp 'processed-entry-ids) processed-entry-ids)) ; keep track of the processed entries to avoid infinite recursion
+	     (org-attach-dir-recursive-p (bound-and-true-p org-attach-dir-recursive-p))) ;; keep track if this is the initial call of the function
+	(unless org-attach-dir-recursive-p (setq yant/--processed-entry-ids nil))
+	(unless (member org-id yant/--processed-entry-ids)
+	  (add-to-list 'yant/--processed-entry-ids org-id)
+	  (unless attach-dir-inherited-p
+	    (when (f-file-p symlinks-directory)
+	      (error (format "File exist in place of dir: %s" symlinks-directory)))
+	    (when (and (f-exists-p attachments-symlink-directory)
+		       (not (f-symlink-p (directory-file-name attachments-symlink-directory))))
+	      (error (format "Not a symlink: %s" attachments-symlink-directory)))
 
-	  ;; update dirs
-	  (unless (f-exists-p symlinks-directory)
-            (f-mkdir symlinks-directory))
-	  (unless (or (f-exists-p attachments-symlink-directory)
-		      (not (yant/org-task-has-attachments-p)))
-            (f-symlink attach-path (directory-file-name attachments-symlink-directory)))
-	  (when (and (f-exists-p attachments-symlink-directory)
-		     (not (yant/org-task-has-attachments-p)))
-            (f-delete (directory-file-name attachments-symlink-directory)))
+	    ;; update dirs
+	    (unless (f-exists-p symlinks-directory)
+	      (f-mkdir symlinks-directory))
+	    (unless (or (f-exists-p attachments-symlink-directory)
+			(not (yant/org-task-has-attachments-p)))
+	      (f-symlink attach-path (directory-file-name attachments-symlink-directory)))
+	    (when (and (f-exists-p attachments-symlink-directory)
+		       (not (yant/org-task-has-attachments-p)))
+	      (f-delete (directory-file-name attachments-symlink-directory)))
 
-	  ;; add to parent entry attachment dir
-	  (unless (or (seq-empty-p entry-name) ;; prevent empty folder names
-		      (not (yant/org-subtree-has-attachments-p)))
-	    (org-with-wide-buffer
-	     (let ((entry-symlink-name (if (org-up-heading-safe)
-					   (directory-file-name (f-join (f-join (org-attach-dir 'CREATE)
-										yant/org-attach-symlinks-directory)
-									entry-name))
-                                         (or yant/org-attach-file-symlink-path (hack-local-variables))
-					 (directory-file-name (f-join (or yant/org-attach-file-symlink-path
-									  default-directory)
-								      entry-name)))))
-               (if (not (f-exists-p entry-symlink-name))
-		   (f-symlink symlinks-directory entry-symlink-name)
-		 (unless (f-symlink-p entry-symlink-name)
-		   (error (format "File exists: %s" entry-symlink-name)))))))
-          
-	  ;; check children
-	  (let ((dirs (delete (directory-file-name attachments-symlink-directory)
-			      (f-directories symlinks-directory))))
-	    (org-with-wide-buffer
-             (org-back-to-heading)
-             (let ((subtree-end (save-excursion (org-end-of-subtree))))
-	       (forward-line 1)
-	       (when (re-search-forward "^\*+" subtree-end t)
-		 (while (< (point) subtree-end)
-                   (when (yant/org-entry-name-cleanup-for-dir)
-		     (let ((child-dir (f-join symlinks-directory (yant/org-entry-name-cleanup-for-dir))))
-		       (when (yant/org-subtree-has-attachments-p)
-			 (unless (member child-dir dirs)
-			   (org-attach-dir 'create) ;; call recursively
-			   )
-			 (setq dirs (delete child-dir dirs)))))
-		   (or (outline-get-next-sibling)
-		       (goto-char subtree-end))))))
-            (mapc (lambda (d)
-		    (let ((dir (f-long d)))
-		      (when (f-symlink-p (directory-file-name dir))
-			(f-delete dir) ;; delete the dirs, which do not point to children
-			)))
-		  dirs)))))))
-
+	    ;; add to parent entry attachment dir
+	    (unless (seq-empty-p entry-name) ;; prevent empty folder names
+	      (org-with-wide-buffer
+	       (let ((entry-symlink-name (if (org-up-heading-safe)
+					     (directory-file-name (f-join (let ((org-attach-dir-recursive-p t))
+									    (org-attach-dir 'CREATE))
+									  yant/org-attach-symlinks-directory
+									  entry-name))
+					   (or yant/org-attach-file-symlink-path (hack-local-variables))
+					   (directory-file-name (f-join (or yant/org-attach-file-symlink-path
+									    default-directory)
+									entry-name)))))
+		 (if (not (f-exists-p entry-symlink-name))
+		     (f-symlink symlinks-directory entry-symlink-name)
+		   (unless (f-symlink-p entry-symlink-name)
+		     (error (format "File exists: %s" entry-symlink-name)))))))
+	    
+	    ;; check children
+            (when (yant/org-subtree-has-attachments-p)
+	      (let ((dirs (delete (directory-file-name attachments-symlink-directory)
+				  (f-directories symlinks-directory))))
+		(org-with-wide-buffer
+		 (org-back-to-heading)
+		 (let ((subtree-end (save-excursion (org-end-of-subtree))))
+		   (forward-line 1)
+		   (when (re-search-forward org-heading-regexp subtree-end t)
+		     (while (< (point) subtree-end)
+		       (when (yant/org-entry-name-cleanup-for-dir)
+			 (let ((child-dir (f-join symlinks-directory (yant/org-entry-name-cleanup-for-dir))))
+			   (when (yant/org-subtree-has-attachments-p)
+			     (unless (member child-dir dirs)
+			       (org-attach-dir 'create) ; call recursively
+			       )
+			     (setq dirs (delete child-dir dirs)))))
+		       (or (yant/outline-get-next-sibling subtree-end)
+			   (goto-char subtree-end))))))
+		(mapc (lambda (d)
+			(let ((dir (f-long d)))
+			  (when (f-symlink-p (directory-file-name dir))
+			    (f-delete dir) ; delete the dirs, which do not point to children
+			    )))
+		      dirs)))))))))
 #+END_SRC
 
 Now, when I have the mirror attach folder structure, it make sense to open this structure on =org-attach-reveal= instead of opening the actual attach dirs. 
@@ -3996,20 +4130,30 @@ Now, when I have the mirror attach folder structure, it make sense to open this 
   "Return symlink based path to the attach dir of current entry.
 Do not append symlink to data directory if NO-DATA-dir is not nil."
   (let* ((entry-name (yant/org-entry-name-cleanup-for-dir))
+	 (attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
+				      (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))));; only consider if the entry is the child
          (entry-path (f-join entry-name (if no-data-dir "" yant/org-attach-attachments-symlink-directory))))
-    (unless (seq-empty-p entry-name) ;; prevent empty folders
-      (org-with-wide-buffer
-       (if (org-up-heading-safe)
-	   (let ((head-path (org-attach-dir-symlink 'create 'no-data-dir)))
-	     (when head-path (f-join head-path entry-path)))
-         (f-join (or yant/org-attach-file-symlink-path
-		     default-directory)
-		 entry-path))))))
+    (if attach-dir-inherited-p
+	(progn
+          (org-up-heading-safe) ;; if this is false, something went really wrong
+	  (org-attach-dir-symlink))
+      (unless (seq-empty-p entry-name) ;; prevent empty folders
+	(org-with-wide-buffer
+	 (if (org-up-heading-safe)
+	     (let ((head-path (org-attach-dir-symlink 'create 'no-data-dir)))
+	       (when head-path (f-join head-path entry-path)))
+           (f-join (or yant/org-attach-file-symlink-path
+		       default-directory)
+		   entry-path)))))))
 
 (define-advice org-attach-reveal (:around (OLDFUN &optional if-exists) reveal-symlink)
   "Go to symlink attach dir structure instead of an actual attach dir."
-  (let ((dir (org-attach-dir (not if-exists))))
+  (let ((dir (org-attach-dir (not if-exists)))
+	(attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
+				     (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))));; only consider if the entry is the child
+	)
     (org-attach-sync)
+    (when attach-dir-inherited-p (org-attach-tag 'off))
     (letf (((symbol-function 'org-attach-dir) (if (yant/org-task-has-attachments-p)
 						  #'org-attach-dir-symlink
 						(lambda (&rest args)
@@ -4039,6 +4183,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :CREATED:  [2018-07-09 Mon 13:01]
 :END:
 ***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
+SCHEDULED: <2019-02-02 Sat>
 :PROPERTIES:
 :CREATED:  [2018-08-26 Sun 22:40]
 :END:
@@ -4097,7 +4242,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 (setq org-agenda-files "~/Org/agenda_files")
 (setq org-deadline-warning-days 30)
 (setq org-agenda-span 'day)
-(setq org-agenda-sorting-strategy '((agenda deadline-up time-up habit-up priority-down timestamp-down category-keep)
+(setq org-agenda-sorting-strategy '((agenda deadline-down time-up habit-up priority-down timestamp-down category-keep)
 				    (todo priority-down category-keep)
 				    (tags priority-down category-keep)
 				    (search category-keep)))
@@ -4129,7 +4274,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 	      (save-excursion
 		(forward-line 1)
 		(while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-		  (unless (member "WAITING" (org-get-tags-at))
+		  (unless (member "WAITING" (org-get-tags nil t))
 		    (setq has-next t))))
 	      (if has-next
 		  next-headline
@@ -4171,12 +4316,23 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
        (t
 	next-headline)))))
 
+(defun yant/org-is-habit-p (&optional subtree-end pom)
+  "Faster implementation of `org-is-habit-p'.
+Returns t if entry at POM is habit.
+SUBTREE-END is used as end of the entry if not nil."
+  (org-with-wide-buffer
+   (and pom (goto-char pom))
+   (re-search-forward "^:STYLE: +habit"
+		      (or subtree-end
+			  (save-excursion (or (outline-next-heading) (point-max))))
+		      t)))
+
 (defun bh/skip-habits ()
   "Skip habits"
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-      (if (org-is-habit-p)
+      (if (yant/org-is-habit-p next-headline)
 	  next-headline
 	nil))))
 
@@ -4185,7 +4341,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-      (if (org-is-habit-p)
+      (if (yant/org-is-habit-p next-headline)
 	  nil
 	next-headline))))
 
@@ -4198,7 +4354,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
        ((org-is-habit-p)
 	next-headline)
        ((and bh/hide-scheduled-and-waiting-next-tasks
-	     (member "WAITING" (org-get-tags-at)))
+	     (member "WAITING" (org-get-tags nil t)))
 	next-headline)
        ((bh/is-project-p)
 	next-headline)
@@ -4214,10 +4370,10 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 				   (point))
 			      (save-excursion (org-back-to-heading)))))
     (if others
-	(if (not (member tag (org-get-tags-at current-headline)))
+	(if (not (member tag (org-get-tags current-headline)))
 	    next-headline
 	  nil)
-      (if (member tag (org-get-tags-at current-headline))
+      (if (member tag (org-get-tags current-headline))
 	  next-headline
 	nil))))
   #+end_src
@@ -4245,52 +4401,52 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 	       ((tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "Inbox")
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'notscheduled)))
-		       (org-agenda-prefix-format "S\t\t%-12.12:c\t%?-12t")
+		       (org-agenda-prefix-format "S\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))
 		(tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "")
 		       (org-agenda-block-separator nil)
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'notdeadline)))
-		       (org-agenda-prefix-format "D\t\t%-12.12:c\t%?-12t")
+		       (org-agenda-prefix-format "D\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))
 		(tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "")
 		       (org-agenda-block-separator nil)
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'scheduled 'deadline)))
-		       (org-agenda-prefix-format "\t\t%-12.12:c\t%?-12t")
+		       (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))))
 	      (" " "Agenda"
 	       ((agenda ""
-			((org-agenda-prefix-format "%-12s\t%-12.12:c\t%?-12t")
+			((org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t")
 			 (org-agenda-skip-function '(zin/org-agenda-skip-tag "HOLD"))))
 		(tags-todo "INBOX-DEFAULT"
 			   ((org-agenda-overriding-header "Inbox")
 			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'notscheduled))
-			    (org-agenda-prefix-format "S\t\t%-12.12:c\t%?-12t")
+			    (org-agenda-prefix-format "S\t\t%-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels nil)))
 		(tags-todo "INBOX-DEFAULT"
 			   ((org-agenda-overriding-header "")
 			    (org-agenda-block-separator nil)
 			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))
-			    (org-agenda-prefix-format "D\t\t%-12.12:c\t%?-12t")
+			    (org-agenda-prefix-format "D\t\t%-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels nil)))
 		(tags-todo "INBOX-DEFAULT"
 			   ((org-agenda-overriding-header "")
 			    (org-agenda-block-separator nil)
 			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline))
-			    (org-agenda-prefix-format "\t\t%-12.12:c\t%?-12t")
+			    (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels nil)))
 		(tags-todo "-CANCELLED-WAITING-HOLD/!"
 			   ((org-agenda-overriding-header "Stuck Projects")
 			    (org-agenda-dim-blocked-tasks nil)
-			    (org-agenda-prefix-format "%-12.12:c\t%?-12t")
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
 			    (org-agenda-skip-function 'bh/skip-non-stuck-projects-and-non-next-subprojects)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
 		(tags-todo "-CANCELLED+WAITING|HOLD/!"
 			   ((org-agenda-overriding-header (concat "Waiting and Hold Tasks" ""))
-			    (org-agenda-prefix-format "%-12.12:c\t%?-12t")
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
 			    (org-use-tag-inheritance nil)
 			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
 			    (org-tags-match-list-sublevels nil)
@@ -4301,7 +4457,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
-			    (org-agenda-prefix-format "%-12.12:c\t%?-12t")
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
 			    (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
@@ -4311,7 +4467,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 			     '(priority-down todo-state-down effort-up category-keep))))
 		(tags "/"
 		      ((org-agenda-overriding-header "Tasks to Archive")
-		       (org-agenda-prefix-format "%-12.12:c\t%?-12t")
+		       (org-agenda-prefix-format "%-12:c\t%?-12t")
 		       (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
 		       (org-tags-match-list-sublevels nil)))
 		(tags-todo "-CANCELLED/!"
@@ -4324,7 +4480,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT/!"
 			   ((org-agenda-overriding-header "All other active tasks")
 			    (org-agenda-dim-blocked-tasks 'invisible)
-			    (org-agenda-prefix-format "%-12.12:c\t%?-12t")
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-skip-function '(lambda()
 							 (or
@@ -4482,14 +4638,31 @@ These items should have =:INBOX:= tag. Also, if both project and subproject have
       (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point)))
 	    (next-headline (save-excursion (or (outline-next-heading) (point-max))))
 	    result)
-	(if (not (member "INBOX" (org-get-tags-at (point))))
+	(if (not (member "INBOX" (org-get-tags)))
 	    next-headline
 	  (while (and (not result)
 		      (org-up-heading-safe))
-	    (when (member "INBOX" (org-get-tags-at (point)))
+	    (when (member "INBOX" (org-get-tags))
 	      (setq result next-headline)))
 	  result)))))
 #+END_SRC
+
+Since my org files are really very large, it usually takes a lot of time to rebuild agenda. In the case of refiling, the =org-agenda-refile= rebuilds the agenda after each refiling, which really slows down my refile workflow. Hence, I disable redoing the current agenda after running =org-agenda-refile= or =org-agenda-bulk-action=.
+
+#+begin_src emacs-lisp
+(defun yant/org-agenda-refile (&optional arg)
+  (interactive "P")
+  (funcall-interactively #'org-agenda-refile arg nil 'no-update))
+
+(bind-key "C-c C-w" #'yant/org-agenda-refile org-agenda-mode-map)
+(bind-key "C-c w" #'yant/org-agenda-refile org-agenda-mode-map)
+
+(define-advice org-agenda-bulk-action (:around (oldfun &optional arg) disable-org-agenda-redo)
+  "Disable `org-agenda-redo' for all the bulk actions."
+  (flet ((org-agenda-redo () "" nil))
+    (funcall oldfun)))
+#+end_src
+
 **** TODO Ever standing project list
 **** =CalFW=
 :PROPERTIES:
@@ -5024,7 +5197,7 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
         (widen)
         (while (and (not parent-task) (org-up-heading-safe))
           (when (and (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-		     (not (member "NOCLOCK" (org-get-tags-at (point) 'LOCAL))))
+		     (not (member "NOCLOCK" (org-get-tags nil 'LOCAL))))
             (setq parent-task (point))))
         (if parent-task
             (org-with-point-at parent-task
@@ -5425,6 +5598,7 @@ New frame for capturing. The frame should only have capture buffer in it.
 :END:
 All these templates generally record the creation time in =:CREATED:=
 - TODO item :: Normal TODO item.
+- singular TODO item :: Normal TODO item with time bonus on done (60 minutes) - used for the items, which are unlikely to be time tracked.
 - Habit :: Habit. I default it to no logging.
 - Meeting/Event :: Scheduled event. It is saved to =org-gcal= org file.
 - Project :: I need literature review, reports and ideas in most of the cases.
@@ -5467,6 +5641,8 @@ All these templates generally record the creation time in =:CREATED:=
 (setq org-capture-templates
       '(("n" "TODO item" entry (file "~/Org/inbox.org")
 	 "* TODO %? %a\n:PROPERTIES:\n:CREATED: %U\n:END:\n" :clock-in t :clock-resume t)
+        ("m" "singular TODO item" entry (file "~/Org/inbox.org")
+	 "* TODO %? %a\n:PROPERTIES:\n:CREATED: %U\n:ORG-TIME-BONUS-ON-DONE: 60\n:END:\n" :clock-in t :clock-resume t)
 	("p" "Conference presentation/poster" entry (file "~/Org/inbox.org")
 	 "* NEXT [presentation/poster] %^{Title of presentation/poster} :conference:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n** NEXT Write an abstract\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Submit abstract\nDEADLINE: %^t\n** TODO Get accepted\n** TODO Finance matters\n*** TODO Apply for conference funding\n*** TODO Book a flight\n*** TODO Book accomodation\n*** TODO Register for a conference\n** TODO Make presentation/poster\n** TODO Trial presentation\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Print poster/slides\n** TODO Present\n** TODO Submit the claim\n** Get reimbursement\n" :clock-in t :clock-resume t)
 	("j" "Journal publication" entry (file "~/Org/inbox.org")
@@ -5483,7 +5659,7 @@ All these templates generally record the creation time in =:CREATED:=
 	 "* TODO %? :BOOKMARK:\n%(replace-regexp-in-string \"\n.*\" \"\" \"%i\")\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :clock-in t :clock-resume t)
 	("h" "Habit" entry (file "~/Org/inbox.org")
 	 "* NEXT %?\nSCHEDULED: <%<%Y-%m-%d %a .+1d>>\n:PROPERTIES:\n:CREATED: %U\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:LOGGING: DONE(!)\n:ARCHIVE: %%s_archive::* Habits\n:END:\n%U\n")
-	("m" "Scheduled event/Meeting" entry (file "~/Org/schedule.org")
+	("M" "Scheduled event/Meeting" entry (file "~/Org/schedule.org")
 	 "* %?\n")
 	("C" "Contacts" entry (file "~/Org/contacts.org")
 	 "* %(org-contacts-template-name)
@@ -5757,10 +5933,10 @@ In the case if I want to keep the task and notes, I just add =:NOARCHIVE:= tag t
     ;; Consider only tasks with done todo headings as archivable candidates
     (let* ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
 	   (subtree-end (save-excursion (org-end-of-subtree t)))
-           (next-item (if (member "ARCHIVEALL" (org-get-tags-at))
+           (next-item (if (member "ARCHIVEALL" (org-get-tags))
 			  subtree-end ; do not archive subtasks
 			next-headline)))
-      (if (member "NOARCHIVE" (org-get-tags-at))
+      (if (member "NOARCHIVE" (org-get-tags))
 	  subtree-end
 	(if (member (org-get-todo-state) org-done-keywords)
 	    (let* ((daynr (string-to-number (format-time-string "%d" (current-time))))
@@ -5830,7 +6006,9 @@ Otherwise, I'd rather keep the task in place to avoid hanging files.
   "Maybe delete subtree attachments when archiving.
 This function is called by `org-archive-hook'.  The option
 `org-attach-archive-delete' controls its behavior."
-  (when (member org-attach-auto-tag (org-get-tags));; do not ask if no attachments
+  (when (and (org-at-heading-p)
+	     (member org-attach-auto-tag (org-get-tags nil t));; do not ask if no attachments
+	     )
     (when (if (eq org-attach-archive-delete 'query)
 	      (yes-or-no-p (format "%s: Delete all attachments? " (s-truncate 20 (org-get-heading
 										  'notags 'notodo 'nopriority 'nocomment))))
@@ -5994,7 +6172,7 @@ The source code editing is usually done in a new buffer. However, I do not like 
 
 For convenience, add =header-args= property to completion 
 
-#+begin_src emacs-lisp
+,#+begin_src emacs-lisp
 (add-to-list 'org-default-properties "header-args")
 #+end_src
 
@@ -6004,25 +6182,30 @@ For convenience, add =header-args= property to completion
 :ID:       c9773614-0fec-4d7d-8ee3-72155d16d91c
 :END:
 
-Structure templates are useful to quickly type the src blocks:
+I can just type =<el<TAB>= to enter elisp code block. 
+It can be done using =org-tempo=.
 
-#+BEGIN_SRC emacs-lisp
-(setq org-structure-template-alist
-      '(("s" "#+begin_src ?\n\n#+end_src" "<src lang=\"?\">\n\n</src>")
-	("e" "#+begin_src emacs-lisp\n?\n#+end_src" "<src lang=\"emacs-lisp\">\n?\n</src>")	
-        ("q" "#+begin_quote\n?\n#+end_quote" "<quote>\n?\n</quote>")
-        ("v" "#+BEGIN_VERSE\n?\n#+END_VERSE" "<verse>\n?\n</verse>")
-        ("c" "#+BEGIN_COMMENT\n?\n#+END_COMMENT")
-        ("p" "#+BEGIN_PRACTICE\n?\n#+END_PRACTICE")
-        ("l" "#+begin_src emacs-lisp\n?\n#+end_src" "<src lang=\"emacs-lisp\">\n?\n</src>")
-        ("L" "#+latex: " "<literal style=\"latex\">?</literal>")
-        ("h" "#+begin_html\n?\n#+end_html" "<literal style=\"html\">\n?\n</literal>")
-        ("H" "#+html: " "<literal style=\"html\">?</literal>")
-        ("a" "#+begin_ascii\n?\n#+end_ascii")
-        ("A" "#+ascii: ")
-        ("i" "#+index: ?" "#+index: ?")
-        ("I" "#+include %file ?" "<include file=%file markup=\"?\">")))
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package org-tempo
+  :config
+  (push (cons "el" "src emacs-lisp") org-structure-template-alist))
+#+end_src
+
+However, =org-tempo= does not allow much customization. I prefer to enter source block editing mode right after expanding the template. I redefine =org-tempo-add-block= to enter edit mode after expanding.
+Since I use [[id:e90d8071-a7ed-4aba-a694-a78aa5fded78][Boon navigation & search]], I also switch to insert state after running =org-edit-special=.
+
+
+#+begin_src emacs-lisp
+(use-package org-tempo
+  :if init-flag
+  :init
+  (define-advice org-tempo-complete-tag (:filter-return (return) yant/org-tempo-enter-src-edit)
+    "Run `org-edit-special' and switch to `boon-insert' state after completion."
+    (when return
+      (org-edit-special)
+      (boon-set-insert-state))))
+#+end_src
+
 **** Source block editing functions from scimax
 :PROPERTIES:
 :CREATED:  [2018-10-22 Mon 20:55]
@@ -6105,7 +6288,6 @@ I use it to activate alternative major modes in source blocks.
 #+begin_src emacs-lisp
 (use-package polymode
   :ensure t
-  :disabled
   :init
   (use-package poly-org
     :ensure t
@@ -6127,9 +6309,6 @@ I use it to activate alternative major modes in source blocks.
 				   :head-adjust-face nil
 				   :mode-matcher #'org-source-block-major-mode
 				 :indent-offset org-edit-src-content-indentation))
-    (use-package org-journal
-      :config
-      (add-hook 'org-journal-mode-hook #'poly-org-mode))
     ))
 #+end_src
 
@@ -6240,18 +6419,21 @@ I hate when org is cluttering org file directory with generated files (=:file=).
 *************** TODO we cannot do it using default-directory because expand-file-name is going recursive if org-babel-execute-src-block calls expand-file-name inside
 *************** END
 
-#+BEGIN_SRC emacs-lisp :tangle no
-(define-advice org-babel-execute-src-block (:filter-args (&rest ARGS) set-detault-dir-to-org-attach-path)
+#+BEGIN_SRC emacs-lisp
+(define-advice org-babel-execute-src-block (:filter-args (&optional args) set-detault-dir-to-org-attach-path)
   "Set working directory to the current entry's attach directory."
   (if (eq major-mode 'org-mode)
       (let* ((directory (file-name-as-directory (org-attach-dir 'create-if-none)))
-	     (args (car ARGS))
 	     (arg (car args))
              (info (cadr args))
-             (params (cddr args))
-             (eval-params (nth 2 info)))
-        (setf (alist-get :dir eval-params) directory)
-	(list arg (list (nth 0 info) (nth 1 info) eval-params) params))
+             (params (caddr args))
+             (dir-param (alist-get :dir params)))
+        (unless (and dir-param (f-absolute-p dir-param))
+          (setf (alist-get :dir params)
+		(if dir-param
+                    (f-join directory (alist-get :dir params))
+                  directory)))
+	(list arg info params))
     (list arg info params)))
 #+END_SRC
 
@@ -6289,7 +6471,7 @@ I had to modify =org-babel-expand-body:gnuplot= to make it respect =:dir= proper
            (timefmt (cdr (assq :timefmt params)))
            (time-ind (or (cdr (assq :timeind params))
                          (when timefmt 1)))
-	   (directory (or (assq :dir params)
+	   (directory (or (alist-get :dir params)
 			  default-directory))
 	   (add-to-body (lambda (text) (setq body (concat text "\n" body)))))
       ;; append header argument settings to body
@@ -6354,10 +6536,69 @@ I had to modify =org-babel-expand-body:gnuplot= to make it respect =:dir= proper
   )
 #+end_src
 **** TODO Tangle
+:PROPERTIES:
+:ID:       6e72e3ca-4679-4caf-9af4-2291096eab58
+:END:
 I have a lot of small scripts and programs written at some point for some purpose I do not remember anymore. Hence, I prefer to use org files instead of all kinds of script files in the system. There are few things, which I need to make it work comfortably:
 - make sure that the script are tangled when I save org file, because it is easy to forget tangling of some files after editing.
 *************** TODO Auto tangle on save
 *************** END
+
+#+begin_src emacs-lisp 
+(defun yant/org-babel-tangle-async (file &optional target-file lang)
+  "Ivoke `org-babel-tangle-file' asynchronously."
+  (require 'async)
+  (async-start
+   (let ((args (list file target-file lang)))
+     `(lambda ()
+	(setq org-tangle-flag t)
+	(load "~/.emacs.d/config.el" nil nil nil t)
+	(apply #'org-babel-tangle-file ',args)))
+   (let ((message-sting (format "Tangling (%S %S %S) completed." file target-file lang)))
+     `(lambda (result) (message ,message-sting))))
+  )
+
+(defvar yant/auto-tangle-list nil
+  "List of files, which can be safely tangled on save.
+The list is saved between Emacs sessions.")
+
+(when init-flag
+  (use-package savehist
+    :config
+    (add-to-list 'savehist-additional-variables 'yant/auto-tangle-list))
+  (savehist-mode +1)
+  (defun yant/toggle-buffer-auto-tangle (arg)
+    "Toggle auto tangling of a buffer."
+    (interactive "P")
+    (if (not (eq major-mode 'org-mode))
+	(message "Org-mode is not active in buffer \"%s\"" (buffer-name))
+      (cond ((not arg)
+	     (if (member (buffer-file-name) yant/auto-tangle-list)
+		 (progn (setq yant/auto-tangle-list (delete (buffer-file-name) yant/auto-tangle-list))
+			(message "Auto tangling disabled for %s" (buffer-file-name)))
+	       (add-to-list 'yant/auto-tangle-list (buffer-file-name))
+               (message "Auto tangling enabled for %s" (buffer-file-name))))
+            ((or (and (not (listp arg)) (> arg 0))
+		 (equal arg '(4)))
+             (add-to-list 'yant/auto-tangle-list (buffer-file-name))
+             (message "Auto tangling enabled for %s" (buffer-file-name)))
+            (t
+             (setq yant/auto-tangle-list (delete (buffer-file-name) yant/auto-tangle-list))
+	     (message "Auto tangling disabled for %s" (buffer-file-name))))))
+
+  (bind-key "C-c C-*" #'yant/toggle-buffer-auto-tangle org-mode-map)
+  )
+
+  (defun yant/org-babel-tangle-current-buffer-async ()
+    "Tangle current buffer asynchronously."
+    (when (and (eq major-mode 'org-mode)
+	       (member (buffer-file-name) yant/auto-tangle-list))
+      (yant/org-babel-tangle-async (buffer-file-name))))
+
+(add-hook 'after-save-hook #'yant/org-babel-tangle-current-buffer-async)
+#+end_src
+
+
 **** Export
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 15:47]
@@ -6517,10 +6758,10 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
       (let ((mult (org-get-time-balance-multiplier-at-point))
 	    (bonus (org-get-org-time-bonus-on-done-at-point))
             (scheduled? (string-match-p "\\." (or (org-entry-get (point) "SCHEDULED") ""))))
-	(format "%s%s%s" (if scheduled? "↻" " ") (if mult (format "%sx" mult) "")
+	(format "%s%s%s" (if scheduled? "↰" " ") (if mult (format "%sx" mult) "")
 		(if (and bonus (> bonus 0)) (format "+%s" bonus) "")))
     (error "")))
-(setq org-agenda-prefix-format "%-12s\t%-12.12:c\t%?-12t%(concat (yant/format-summary-for-agenda) (yant/format-time-balance-multiplier) \"\\t\")")
+(setq org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t%(concat (yant/format-summary-for-agenda) (yant/format-time-balance-multiplier) \"\\t\")")
   #+end_src
 **** Babel
 :PROPERTIES:
@@ -6566,7 +6807,7 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 	(isearch . lineage)
 	))
 #+end_src
-**** Org element cache
+**** COMMENT Org element cache
 :PROPERTIES:
 :CREATED:  [2018-11-18 Sun 13:04]
 :ID:       7c1c828b-3a77-4e79-b07a-4ad173a5f87a
@@ -6576,7 +6817,7 @@ I was irritated by org-mode behaviour when =flycheck= is turned on. org-mode int
 Turning on org element cache in attempt to make it faster.
 
 #+begin_src emacs-lisp
-(custom-set-variables '(org-element-use-cache t))
+(custom-set-variables '(org-element-use-cache nil))
 #+end_src
 
 *************** TODO check if it is good enough
@@ -6622,7 +6863,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
             (progn
 	      (org-set-property "EMAIL-SOURCE" (concat "[[" last-link "][" last-description "]]"))
               (org-back-to-heading)
-              (org-set-tags-to (append (org-get-tags) '("EMAIL"))))
+              (org-set-tags-to (append (org-get-tags nil t) '("EMAIL"))))
 	  (message "Link \"%s\" is not a message link." last-link))
         (yant/mark-linked-email-after-todo-state-change))
     (let ((helm-source-tmp (copy-alist helm-source-notmuch)))
@@ -6664,6 +6905,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 =Imenu= appears to be slower in =org-mode= in comparison with =org-goto=
 #+begin_src emacs-lisp
 (use-package meta-functions
+  :if init-flag
   :config
   (setq org-goto-interface 'outline-path-completion)
   (add-to-list 'meta-functions-meta-goto-alist '(org-mode . org-goto))
@@ -6677,6 +6919,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :EMAIL-SOURCE: [[notmuch:id:0100015f833663f9-95881448-4653-4709-a5bb-bfa94f3f0bff-000000@email.amazonses.com][Email from Amazon com: Leave Packaging Feedback for y]]
 :END:
 #+begin_src emacs-lisp
+(when init-flag
 (bind-keys 
  ("C-c C-S-l" . org-store-link)
  ("C-c m" . org-capture)
@@ -6751,6 +6994,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
   (add-to-list 'meta-functions-meta-down-alist '(org-agenda-mode . org-agenda-next-line))
   (meta-functions-update-function-definitions))
 
+)
 #+end_src
 
 **** Boon integration
