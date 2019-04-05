@@ -441,6 +441,10 @@ Show some text in buffer differently
   (use-package boon-powerline
     :config
     (custom-set-faces '(mode-line-inactive ((t (:background "#dfe4ea" :foreground "dim gray" :box nil)))))
+    (set-face-foreground 'boon-modeline-cmd "white")
+    (set-face-foreground 'boon-modeline-ins "white")
+    (set-face-foreground 'boon-modeline-spc "white")
+    (set-face-foreground 'boon-modeline-off "white")
     (boon-powerline-theme)))
   #+end_src
 *** Minibuffer
