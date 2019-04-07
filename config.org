@@ -4138,7 +4138,8 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
   (let* ((entry-name (yant/org-entry-name-cleanup-for-dir))
 	 (attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
 				      (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))));; only consider if the entry is the child
-         (entry-path (f-join entry-name (if no-data-dir "" yant/org-attach-attachments-symlink-directory))))
+         (entry-path (and entry-name
+			  (f-join entry-name (if no-data-dir "" yant/org-attach-attachments-symlink-directory)))))
     (if attach-dir-inherited-p
 	(progn
           (org-up-heading-safe) ;; if this is false, something went really wrong
