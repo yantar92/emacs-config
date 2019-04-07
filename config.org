@@ -4018,7 +4018,10 @@ Bound search by SUBTREE-END if non nil."
   (org-with-wide-buffer
    (let* ((entry-name (replace-regexp-in-string "[/<>|:&/]" "-" ;; make sure that entry title can be used as a directory name
 						(org-get-heading 'NO-TAGS 'NO-TODO 'NO-PRIORITY 'NO-COMMENT)))
-          (entry-name (replace-regexp-in-string " *\\[.+\\] *" "" ;; remove statistics cookies
+          (entry-name (replace-regexp-in-string " +\\[.+\\]$" "" ;; remove statistics cookies
+						entry-name
+						))
+          (entry-name (replace-regexp-in-string org-bracket-link-analytic-regexp "\\5" ;; only leave the link names
 						entry-name
 						)))
      (unless (seq-empty-p entry-name) ;; prevent empty folders
