@@ -4512,7 +4512,7 @@ This agenda show the items for the current day and time.
   "Skip tasks, with deadline and scheduled in future and tasks without deadline."
   (require 'org-agenda)
   (org-with-wide-buffer
-   (let* ((tmp-deadline-time (flet ((org-back-to-heading () nil)) ; we should be at heading already and it consumes too much times otherwise
+   (let* ((tmp-deadline-time (flet ((org-back-to-heading (&rest args) t)) ; we should be at heading already and it consumes too much times otherwise
 			       (org-get-deadline-time (point))))
 	  (tmp-scheduled-time (org-get-scheduled-time (point)))
 	  (tmp-cur-deadline (time-to-days tmp-deadline-time))
