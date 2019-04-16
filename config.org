@@ -3201,7 +3201,8 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =NOARCHIVE= :: Do not archive a task. This in not inherited.
 - =ARCHIVE= :: Prevent task from unfolding (e.g. task contains bulky data, I do not want to see)
 - =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only do it all together.
-- =NOCLOCK= :: prevent entry from being clocked in automatically (after child task clock out [[id:d1afb1ae-a3a4-45b4-8186-8e7242e0edc1][Clocking & logging]]). This is not inherited. 
+- =NOCLOCK= :: prevent entry from being clocked in automatically (after child task clock out [[id:d1afb1ae-a3a4-45b4-8186-8e7242e0edc1][Clocking & logging]]). This is not inherited.
+- =DEFAULT= :: Do not list the task in GTD agenda
 ***** TODO Tags for everything
 ***** TODO try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
 :PROPERTIES:
