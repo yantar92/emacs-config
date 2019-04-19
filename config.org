@@ -1384,7 +1384,7 @@ BEG and END narrow the scope where candidates are searched."
                            (regexp-quote (concat str (string char2))))
 			  (t
 			   (concat "\\b" str (string char2))))))
-	(avy--generic-jump regex arg avy-style beg end))))
+        (avy-jump regex :beg beg :end end))))
   )
 #+END_SRC
 
