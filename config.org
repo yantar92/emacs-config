@@ -651,7 +651,7 @@ It should be noted, that the same can be done via setting the proper bindings fo
   (use-package magit)
   :config
   (setq boon-special-mode-list
-	'(debugger-mode ediff-mode org-agenda-mode cfw:calendar-mode
+	'(debugger-mode edebug-mode ediff-mode org-agenda-mode cfw:calendar-mode
 			notmuch-search-mode notmuch-show-mode elfeed-search-mode
 			elfeed-show-mode pomidor-mode mingus-mode
 			notmuch-hello-mode ledger-report-mode help-mode
