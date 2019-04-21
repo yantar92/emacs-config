@@ -6432,7 +6432,7 @@ I hate when org is cluttering org file directory with generated files (=:file=).
       (let* ((directory (file-name-as-directory (org-attach-dir 'create-if-none)))
 	     (arg (car args))
              (info (cadr args))
-             (params (caddr args))
+             (params (org-babel-merge-params (nth 2 info) (caddr args)))
              (dir-param (alist-get :dir params)))
         (unless (and dir-param (f-absolute-p dir-param))
           (setf (alist-get :dir params)
