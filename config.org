@@ -254,6 +254,7 @@ There are various options, which can improve the performance.
 ***** Automatic buffer arrangement
 :PROPERTIES:
 :CREATED:  [2019-04-24 Wed 00:02]
+:ID:       99a905eb-92c9-4e40-9ceb-b81acf4b76d9
 :END:
 
 #+begin_src emacs-lisp
@@ -3594,12 +3595,14 @@ Copy paste from https://github.com/jkitchin/scimax/blob/master/scimax-inkscape.e
 (use-package scimax-inkscape)
 #+END_SRC
 
-***** TODO Links to attached files
+***** DONE Links to attached files
+CLOSED: [2019-04-24 Wed 17:15]
 :PROPERTIES:
 :CREATED:  [2018-07-09 Mon 21:46]
 :ID:       1460419f-52b8-4687-955c-936a1f99ae7c
 :END:
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2019-04-24 Wed 17:15]
 - State "TODO"       from              [2018-07-23 Mon 15:33]
 - State "TODO"       from              [2018-07-10 Tue 22:49]
 CLOCK: [2018-07-09 Mon 21:47]--[2018-07-09 Mon 23:02] =>  1:15
@@ -3607,7 +3610,7 @@ CLOCK: [2018-07-09 Mon 21:47]--[2018-07-09 Mon 23:02] =>  1:15
 :END:
 
 I have symlinks to the attached files stored in the directory tree mimicking org file structure (see [[id:9361bc68-010b-45f1-bddd-4638d6344758][Store files in folder structure, following my org tree structure]])
-However, they are moved upon refiling. 
+However, they can be moved upon refiling. 
 Hence, it is better to avoid symlinks in =file= links to the attached files.
 I achieve it by forcing the path in =file= links to not contain symlinks /via/ advising [[file:/usr/share/emacs/26.1/lisp/files.el::(defun%20abbreviate-file-name%20(filename)][abbreviate-file-name]], which is called during the =file= link storing in [[file:/usr/share/emacs/site-lisp/org-mode/org.el::(defun%20org-store-link%20(arg)][org-store-link]].
 
@@ -3652,6 +3655,63 @@ Therefore, I define a new link type to the attached files of the current entry.
 (org-link-set-parameters "att" 
 			 :complete #'org-att-link-complete)
 #+END_SRC
+
+Just links to the current entry are not always sufficient. I sometimes want to link a file from another entry. 
+
+#+begin_src emacs-lisp
+(defun yant/process-att-id-abbrev (arg)
+  "Return `org-attach-dir' for the entryin att-id: link type."
+  (let ((id (car (s-split ":" arg)))
+        (file (cadr (s-split ":" arg))))
+    (s-concat (let ((org-attach-dir-suppress-extra-checks t))
+		(org-with-point-at (org-id-find id 'marker)
+		  (org-attach-dir 'CREATE)))
+	      file)))
+
+(add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
+
+
+(defun org-att-id-skip-function ()
+  "Test if an entry contains attachments. Move point to next candidate location."
+  (if (yant/org-task-has-attachments-p)
+      't
+    (and (search-forward org-attach-auto-tag nil 'noerror)
+	 (beginning-of-line)
+         (backward-char))))
+
+(defvar org-att-id-history nil
+  "ID completion history for att-id: link type.")
+
+(defvar org-att-id-cache nil
+  "ID completion cache for att-id: link type.")
+
+(defun org-att-id-prompt-id ()
+"Prompt for the id during completion of att-id: link."
+(let ((org-refile-history org-att-id-history)
+      (org-refile-cache org-att-id-cache)
+      (org-refile-target-verify-function #'org-att-id-skip-function))
+  (let ((prompt-ans (org-refile-get-location "Link to attachment from")))
+    (prog1
+	(org-id-get (seq-find #'markerp
+			      prompt-ans))
+      (setq org-att-id-history org-refile-history)
+      (setq org-att-id-cache org-refile-cache)))))
+
+
+(defun org-att-id-link-complete (&optional arg)
+  "Completion function for att-id: link."
+  (let* ((id (org-att-id-prompt-id))
+	 (ref-dir (org-with-point-at (org-id-find id 'marker)
+		    (org-attach-dir 'CREATE)))
+	 (filelink (let ((default-directory ref-dir))
+		     (org-file-complete-link)))
+	 (filepath (apply #'s-concat (cdr (s-split ":" filelink)))))
+    (format "att-id:%s:%s" id filepath)))
+
+(org-link-set-parameters "att-id" 
+			 :complete #'org-att-id-link-complete)
+
+#+end_src
 
 **** Internal
 :PROPERTIES:
@@ -3921,6 +3981,7 @@ The property is set to TIME if it is supplied."
 :ID:       bb8263f5-8ef4-4444-941c-9ffbb338185d
 :END:
 :LOGBOOK:
+CLOCK: [2019-04-24 Wed 15:43]--[2019-04-24 Wed 15:46] =>  0:03
 - State "NEXT"       from "TODO"       [2018-09-20 Thu 22:31]
 - State "TODO"       from "NEXT"       [2018-09-20 Thu 22:17]
 :END:
@@ -4231,13 +4292,15 @@ SCHEDULED: <2019-02-02 Sat>
 
 Sometimes, I want to save certain interesting online articles to disk to make sure that all the content and comments are preserved regardless of the website changes. 
 
-***** NEXT [#A] org-webtools
-SCHEDULED: <2019-04-24 Wed>
+***** DONE [#A] org-webtools
+CLOSED: [2019-04-24 Wed 15:43] SCHEDULED: <2019-04-24 Wed>
 :PROPERTIES:
 :CREATED:  [2019-04-23 Tue 23:44]
+:ID:       f8a52437-48d9-418a-a00d-c1af5680c230
 :END:
 :LOGBOOK:
-CLOCK: [2019-04-24 Wed 15:23]
+- State "DONE"       from "NEXT"       [2019-04-24 Wed 15:43]
+CLOCK: [2019-04-24 Wed 15:23]--[2019-04-24 Wed 15:43] =>  0:20
 - State "NEXT"       from "TODO"       [2019-04-23 Tue 23:45]
 :END:
 
