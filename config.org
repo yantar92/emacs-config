@@ -4228,26 +4228,33 @@ SCHEDULED: <2019-02-02 Sat>
 - State "DONE"       from "NEXT"       [2018-09-06 Thu 20:53]
 - State "TODO"       from              [2017-12-30 Sat 22:20]
 :END:
-=org-board= allows to download save web pages as attachment. I use it from time to time.
 
-#+BEGIN_SRC emacs-lisp
-(use-package org-board
+Sometimes, I want to save certain interesting online articles to disk to make sure that all the content and comments are preserved regardless of the website changes. 
+
+***** NEXT [#A] org-webtools
+SCHEDULED: <2019-04-24 Wed>
+:PROPERTIES:
+:CREATED:  [2019-04-23 Tue 23:44]
+:END:
+:LOGBOOK:
+CLOCK: [2019-04-24 Wed 15:23]
+- State "NEXT"       from "TODO"       [2019-04-23 Tue 23:45]
+:END:
+
+With =org-webtools=, I can download and attach web pages to an entry or even insert them converted into org format.
+
+#+begin_src emacs-lisp
+(use-package org-web-tools
+  :if init-flag
   :ensure t
+  :bind (:map org-mode-map
+	      ("C-c C-S-u a" . org-web-tools-archive-attach)
+              ("C-c C-S-u o" . org-web-tools-archive-view)
+              ("C-c C-S-u i" . org-web-tools-insert-web-page-as-entry))
   :init
-  (setq org-board-default-browser 'system)
-  :config
-  (bind-key "C-c C-S-o" org-board-keymap org-mode-map))
-#+END_SRC
-
-=org-board= uses =URL= property, while I use =Source= property. At least, it make sense to default the prompt of =org-board-new= to the value of =Source= property.
-
-#+BEGIN_SRC emacs-lisp
-(define-advice org-board-new (:around (OLDFUN &optional URL) org-board-new-default-to-Source)
-  "Set default prompt in `org-board-new' to value of :Source: property of the entry."
-  (interactive)
-  (let ((URL (or URL (completing-read "URL: " nil nil nil (org-entry-get nil "Source")))))
-    (funcall OLDFUN URL)))
-#+END_SRC
+  (setq org-web-tools-pandoc-sleep-time 1.0)
+  )
+#+end_src
 
 **** =_epilogue=
 :PROPERTIES:
