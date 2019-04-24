@@ -1697,8 +1697,7 @@ Undo window configuration changes
 	 ((dired-mode) . dired-hide-dotfiles-mode))
   :init
   (use-package autorevert)
-  (setq global-auto-revert-non-file-buffers t
-	auto-revert-verbose nil
+  (setq auto-revert-verbose nil
 	dired-dwim-target t
 	dired-du-size-format t ;; show human readable size
 	dired-listing-switches "--time-style=locale -ADhgGBF --group-directories-first")
