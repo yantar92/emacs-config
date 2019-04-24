@@ -4163,9 +4163,9 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
          (entry-path (and entry-name
 			  (f-join entry-name (if no-data-dir "" yant/org-attach-attachments-symlink-directory)))))
     (if attach-dir-inherited-p
-	(progn
-          (org-up-heading-safe) ;; if this is false, something went really wrong
-	  (org-attach-dir-symlink))
+	(org-with-wide-buffer
+         (org-up-heading-safe) ;; if this is false, something went really wrong
+	 (org-attach-dir-symlink))
       (unless (seq-empty-p entry-name) ;; prevent empty folders
 	(org-with-wide-buffer
 	 (if (org-up-heading-safe)
@@ -4182,7 +4182,6 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
 				     (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))));; only consider if the entry is the child
 	)
     (org-attach-sync)
-    (when attach-dir-inherited-p (org-attach-tag 'off))
     (letf (((symbol-function 'org-attach-dir) (if (yant/org-task-has-attachments-p)
 						  #'org-attach-dir-symlink
 						(lambda (&rest args)
@@ -4190,6 +4189,7 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
                                                       (org-attach-dir-symlink 't 't)
                                                     dir
                                                     )))))
+      (when attach-dir-inherited-p (org-attach-tag 'off))
       (funcall OLDFUN if-exists))))
 
 (define-advice org-attach-reveal-in-emacs (:around (OLDFUN &rest args) reveal-symlink)
