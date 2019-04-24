@@ -247,6 +247,23 @@ There are various options, which can improve the performance.
       window-divider-default-right-width 2)
 (window-divider-mode +1)
 #+END_SRC
+**** Buffer arrangement
+:PROPERTIES:
+:CREATED:  [2019-04-24 Wed 00:02]
+:END:
+***** Automatic buffer arrangement
+:PROPERTIES:
+:CREATED:  [2019-04-24 Wed 00:02]
+:END:
+
+#+begin_src emacs-lisp
+(use-package zoom
+:if init-flag
+:ensure t
+:config
+(zoom-mode))
+#+end_src
+
 *** Buffer
 **** Centered window mode
 :PROPERTIES:
