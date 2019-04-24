@@ -3751,6 +3751,8 @@ The src block should be in the same org file."
 (use-package org-ref
   :if init-flag
   :ensure t
+  :init
+  (use-package lv :ensure t)
   :config
   (setq org-latex-prefer-user-labels t)
   (setq org-ref-show-broken-links nil) ;; it makes typing very slow if 't
