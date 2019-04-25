@@ -4387,7 +4387,7 @@ Returns t if entry at POM is habit.
 SUBTREE-END is used as end of the entry if not nil."
   (org-with-wide-buffer
    (and pom (goto-char pom))
-   (re-search-forward "^:STYLE: +habit"
+   (re-search-forward "^ *:STYLE: +habit"
 		      (or subtree-end
 			  (save-excursion (or (outline-next-heading) (point-max))))
 		      t)))
