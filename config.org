@@ -3598,28 +3598,7 @@ CLOCK: [2018-07-09 Mon 21:47]--[2018-07-09 Mon 23:02] =>  1:15
 
 I have symlinks to the attached files stored in the directory tree mimicking org file structure (see [[id:9361bc68-010b-45f1-bddd-4638d6344758][Store files in folder structure, following my org tree structure]])
 However, they can be moved upon refiling. 
-Hence, it is better to avoid symlinks in =file= links to the attached files.
-I achieve it by forcing the path in =file= links to not contain symlinks /via/ advising [[file:/usr/share/emacs/26.1/lisp/files.el::(defun%20abbreviate-file-name%20(filename)][abbreviate-file-name]], which is called during the =file= link storing in [[file:/usr/share/emacs/site-lisp/org-mode/org.el::(defun%20org-store-link%20(arg)][org-store-link]].
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(define-advice abbreviate-file-name (:filter-args (filename) readlink-on-filepath)
-  "Process all the filepaths with readlink command to avoid symlinks."
-  (pcase filename
-    ((pred stringp)
-     (let* (
-	    (result (and (f-exists-p filename)
-			 (shell-command-to-string (format "readlink -qmn '%s'" (expand-file-name filename))))))
-       (if (seq-empty-p result)
-	   filename
-	 (if (f-directory-p result)
-             (file-name-as-directory result)
-           result))))
-    ((pred listp)
-     (mapcar #'abbreviate-file-name@readlink-on-filepath filename))
-    (_ filename)))
-#+END_SRC
-
-Even if all the file links are guaranteed to not contain symlinks, changing variables like [[id:9361bc68-010b-45f1-bddd-4638d6344758][yant/org-attach-file-symlink-path]] would lead to broken file links.
+Hence, it is better to avoid =file= links to the attached files.
 Therefore, I define a new link type to the attached files of the current entry.
 
 #+BEGIN_SRC emacs-lisp
