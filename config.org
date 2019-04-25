@@ -2740,6 +2740,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 :END:
 - multiple accounts
   #+begin_src emacs-lisp
+(setq send-mail-function 'sendmail-send-it)
 ;;autochoose account name for msmtp
 (defun cg-feed-msmtp ()
   (if (message-mail-p)
