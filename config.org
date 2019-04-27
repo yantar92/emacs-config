@@ -59,8 +59,8 @@ Init file, which is loads this file.
 
 Trying to debug "Re-entering top level after C stack overflow", as suggested in [[https://www.reddit.com/r/emacs/comments/9fs8pp/reentering_top_level_after_c_stack_overflow/][reddit]]
 #+begin_src emacs-lisp
-(setq max-lisp-eval-depth 600
-      max-specpdl-size 600)
+(setq max-lisp-eval-depth 6000
+      max-specpdl-size 6000)
 #+end_src
 
 ** Emacs server settings
@@ -281,7 +281,8 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 :END:
 #+begin_src emacs-lisp
 (when init-flag
-(bind-keys :map boon-x-map ("l" . toggle-truncate-lines)))
+  (bind-keys :map boon-x-map ("l" . toggle-truncate-lines)))
+(setq-default truncate-lines 't)
 #+end_src
 **** Buffer boundaries
 :PROPERTIES:
@@ -5651,6 +5652,49 @@ New frame for capturing. The frame should only have capture buffer in it.
 	     (equal "org-capture-pop-frame" (frame-parameter nil 'name)))
 	(delete-frame))))
 #+end_src
+
+*************** TODO report bug
+*************** END
+
+Currently =org-capture-pop-frame= resets the line truncation state, which is rather annoying. Denying it:
+#+begin_src emacs-lisp
+(use-package org-capture-pop-frame
+  :if init-flag 
+  :defer t
+  :init
+  (defun ocpf--org-capture (orig-fun &optional goto keys)
+    "Create a new frame and run org-capture."
+    (interactive)
+    (let ((frame-window-system
+           (cond ((eq system-type 'darwin) 'ns)
+		 ((eq system-type 'gnu/linux) 'x)
+		 ((eq system-type 'windows-nt) 'w32)))
+          (after-make-frame-functions
+           #'(lambda (frame)
+               (progn
+		 (select-frame frame)
+		 ;; (setq word-wrap nil)
+		 ;; (setq truncate-lines nil)
+		 (funcall orig-fun goto keys)
+		 (setq header-line-format
+                       (list "Capture buffer. "
+                             (propertize (substitute-command-keys "Finish \\[org-capture-finalize], ")
+					 'mouse-face 'mode-line-highlight
+					 'keymap
+					 (let ((map (make-sparse-keymap)))
+                                           (define-key map [header-line mouse-1] 'org-capture-finalize)
+                                           map))
+                             (propertize (substitute-command-keys "abort \\[org-capture-kill]. ")
+					 'mouse-face 'mode-line-highlight
+					 'keymap
+					 (let ((map (make-sparse-keymap)))
+                                           (define-key map [header-line mouse-1] 'org-capture-kill)
+                                           map))))))))
+      (make-frame
+       `((window-system . ,frame-window-system)
+	 ,@ocpf-frame-parameters)))))
+#+end_src
+
 **** Capture templates
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 21:51]
