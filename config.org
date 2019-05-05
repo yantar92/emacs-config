@@ -4595,47 +4595,47 @@ This agenda show the items for the current day and time.
 (defun org-agenda-skip-deadlines-before-schedule ()
   "Skip tasks, with deadline and scheduled in future and tasks without deadline."
   (require 'org-agenda)
-  (org-with-wide-buffer
-   (let* ((tmp-deadline-time (flet ((org-back-to-heading (&rest args) t)) ; we should be at heading already and it consumes too much times otherwise
-			       (org-get-deadline-time (point))))
-	  (tmp-scheduled-time (org-get-scheduled-time (point)))
-	  (tmp-cur-deadline (time-to-days tmp-deadline-time))
-	  (tmp-cur-schedule (time-to-days tmp-scheduled-time))
-	  (tmp-cur-day (time-to-days (apply #'encode-time
-					    (append '(0 0 0)
-						    (list (nth 1 org-agenda-current-date))
-						    (list (nth 0 org-agenda-current-date))
-						    (list (nth 2 org-agenda-current-date)))))))
-     (when (or
-	    (not tmp-deadline-time)
-	    (and
-	     tmp-scheduled-time
-	     tmp-deadline-time
-	     (> tmp-cur-schedule tmp-cur-day)
-	     ;;(> tmp-cur-deadline tmp-cur-day)
-	     ))
-       (re-search-forward (org-get-limited-outline-regexp) nil 'noerror)
-       (point)))))
+  (save-restriction
+    (let* ((tmp-deadline-time (flet ((org-back-to-heading (&rest args) t)) ; we should be at heading already and it consumes too much times otherwise
+				(org-get-deadline-time (point))))
+	   (tmp-scheduled-time (org-get-scheduled-time (point)))
+	   (tmp-cur-deadline (time-to-days tmp-deadline-time))
+	   (tmp-cur-schedule (time-to-days tmp-scheduled-time))
+	   (tmp-cur-day (time-to-days (apply #'encode-time
+					     (append '(0 0 0)
+						     (list (nth 1 org-agenda-current-date))
+						     (list (nth 0 org-agenda-current-date))
+						     (list (nth 2 org-agenda-current-date)))))))
+      (when (or
+	     (not tmp-deadline-time)
+	     (and
+	      tmp-scheduled-time
+	      tmp-deadline-time
+	      (> tmp-cur-schedule tmp-cur-day)
+	      ;;(> tmp-cur-deadline tmp-cur-day)
+	      ))
+	(re-search-forward (org-get-limited-outline-regexp) nil 'noerror)
+	(point)))))
   #+end_src
   
 + all [#A] priority items, with matching =:SHOWDATES:= and =:SHOWFROMTIME:=, unless they are scheduled in the future
   #+begin_src emacs-lisp
 (defun org-agenda-skip-nonurgent ()
-  (org-with-wide-buffer
-   (let* ((cur-priority (org-entry-get (point) "PRIORITY"))
-	  (tmp-scheduled-time (org-get-scheduled-time (point)))
-	  (tmp-cur-schedule (time-to-days tmp-scheduled-time))
-	  (tmp-cur-day (time-to-days (apply #'encode-time
-					    (append '(0 0 0)
-						    (list (nth 1 org-agenda-current-date))
-						    (list (nth 0 org-agenda-current-date))
-						    (list (nth 2 org-agenda-current-date)))))))
-     (unless (and (string-equal cur-priority "A")
-		  (or (not tmp-scheduled-time)
-		      (<= tmp-cur-schedule tmp-cur-day)))
-       (unless (re-search-forward "^\\*.+\\[#A\\]" nil 'noerror)
-	 (re-search-forward (org-get-limited-outline-regexp) nil 'noerror))
-       (point)))))
+  (save-excursion
+    (let* ((cur-priority (org-entry-get (point) "PRIORITY"))
+	   (tmp-scheduled-time (org-get-scheduled-time (point)))
+	   (tmp-cur-schedule (time-to-days tmp-scheduled-time))
+	   (tmp-cur-day (time-to-days (apply #'encode-time
+					     (append '(0 0 0)
+						     (list (nth 1 org-agenda-current-date))
+						     (list (nth 0 org-agenda-current-date))
+						     (list (nth 2 org-agenda-current-date)))))))
+      (unless (and (string-equal cur-priority "A")
+		   (or (not tmp-scheduled-time)
+		       (<= tmp-cur-schedule tmp-cur-day)))
+	(unless (re-search-forward "^\\*.+\\[#A\\]" nil 'noerror)
+	  (re-search-forward (org-get-limited-outline-regexp) nil 'noerror))
+	(point)))))
   #+end_src
 + none of [#C] priority items
 #+BEGIN_SRC emacs-lisp
