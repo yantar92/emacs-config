@@ -2788,7 +2788,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 (setq mml-default-sign-method "pgp")
 (setq notmuch-crypto-process-mime t)
 
-(defvar yant/mml-do-not-sign-accounts-list '("ihor_radchenko@alumni.sutd.edu.sg")
+(defvar yant/mml-do-not-sign-accounts-list '("ihor_radchenko@alumni.sutd.edu.sg" "yantar92@gmail.com")
   "List of accounts, where the messaged should not be signed.")
 
 (defun yant/mml-secure-message-sign-pgpmime-maybe ()
