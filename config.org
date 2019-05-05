@@ -289,7 +289,8 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 #+begin_src emacs-lisp
 (when init-flag
   (bind-keys :map boon-x-map ("l" . toggle-truncate-lines)))
-(setq-default truncate-lines 't)
+(setq-default truncate-lines 't
+	      word-wrap 't)
 #+end_src
 **** Buffer boundaries
 :PROPERTIES:
