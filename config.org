@@ -1914,7 +1914,19 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   (bind-key* "<backtab>" #'assist-key)
   )
 #+end_src
+*** Org
+:PROPERTIES:
+:CREATED:  [2019-05-05 Sun 13:43]
+:END:
 
+#+begin_src emacs-lisp
+(use-package helm-org-rifle
+  :ensure t
+  :bind (:map boon-goto-map
+	      ("P" . helm-org-rifle))
+  :init
+  (use-package boon))
+#+end_src
 
 ** Editing
 :PROPERTIES:
@@ -7019,7 +7031,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
   :if init-flag
   :config
   (setq org-goto-interface 'outline-path-completion)
-  (add-to-list 'meta-functions-meta-goto-alist '(org-mode . org-goto))
+  (add-to-list 'meta-functions-meta-goto-alist '(org-mode . helm-org-rifle-current-buffer))
   (meta-functions-update-function-definitions)
   )
 #+end_src
