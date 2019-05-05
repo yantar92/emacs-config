@@ -251,6 +251,13 @@ There are various options, which can improve the performance.
 :PROPERTIES:
 :CREATED:  [2019-04-24 Wed 00:02]
 :END:
+**** Remove useless gap in maximised state 
+:PROPERTIES:
+:CREATED:  [2019-04-27 Sat 16:39]
+:END:
+#+begin_src emacs-lisp
+(setq frame-resize-pixelwise t)
+#+end_src
 *** Buffer
 **** Centered window mode
 :PROPERTIES:
