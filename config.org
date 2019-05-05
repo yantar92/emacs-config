@@ -3571,7 +3571,7 @@ I may not even need to run terminal in such a case!
 :END:
 Adjust some of the external application programs
 #+begin_src emacs-lisp
-(setq org-file-apps '((auto-mode . emacs)
+(setq org-file-apps '((directory . emacs)
 		      ("\\.mm\\'" . default)
 		      ("\\.x?html?\\'" . default)
 		      ("\\.pdf\\'" . default)
