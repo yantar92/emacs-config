@@ -2477,17 +2477,25 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (add-to-list 'meta-functions-meta-scroll-up-alist '(pdf-view-mode . pdf-view-scroll-up-or-next-page))
     (add-to-list 'meta-functions-meta-down-alist '(pdf-annot-list-mode . tablist-next-line))
     (add-to-list 'meta-functions-meta-up-alist '(pdf-annot-list-mode . tablist-previous-line)))
-  (defun yant/jump-to-bookmark ()
+  (defun yant/jump-to-file-bookmark ()
     "Jump to the bookmark names as `buffer-file-name'."
     (interactive)
-    (bookmark-jump (list buffer-file-name (alist-get buffer-file-name bookmark-alist nil nil #'string=))))  
+    (bookmark-jump (list buffer-file-name (alist-get buffer-file-name bookmark-alist nil nil #'string=))))
+  (defun yant/save-file-bookmark ()
+    "Save current file buffer position to bookmark with the name as `buffer-file-name'."
+    (when buffer-file-name
+      (bookmark-set buffer-file-name)))
+  (add-hook 'pdf-view-mode-hook #'yant/jump-to-file-bookmark)
+
+  (defun yant/save-bookmark-and-quit ()
+    "Call `yant/save-file-bookmark' and quit."
+    (interactive)
+    (yant/save-file-bookmark)
+    (quit-window 'KILL))
+  
   (bind-keys :map pdf-view-mode-map
-	     ("<M-f6>" . yant/jump-to-bookmark)	     
-	     ("q" . (lambda()
-		      (interactive)
-                      (when buffer-file-name
-			(bookmark-set buffer-file-name))
-		      (quit-window 'KILL)))))
+	     ("q" . yant/save-bookmark-and-quit))
+  )
 #+end_src
 *** Pdf rotate
 :PROPERTIES:
