@@ -164,7 +164,7 @@ There are various options, which can improve the performance.
 - prefer setting in this file over customized interface
   #+begin_src emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
-(add-hook 'after-init-hook (lambda nil (load custom-file)))
+(load custom-file)
   #+end_src
 ** Appearance
 :PROPERTIES:
