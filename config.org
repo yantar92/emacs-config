@@ -4313,7 +4313,6 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
   (setq org-web-tools-pandoc-sleep-time 1.0)
   )
 #+end_src
-
 **** =_epilogue=
 :PROPERTIES:
 :ID:       fdd42cf4-96cb-4c9f-b855-3fb8437f9d9c
@@ -4414,12 +4413,12 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
   "Faster implementation of `org-is-habit-p'.
 Returns t if entry at POM is habit.
 SUBTREE-END is used as end of the entry if not nil."
-  (org-with-wide-buffer
-   (and pom (goto-char pom))
-   (re-search-forward "^ *:STYLE: +habit"
-		      (or subtree-end
-			  (save-excursion (or (outline-next-heading) (point-max))))
-		      t)))
+  (save-excursion
+    (and pom (goto-char pom))
+    (re-search-forward "^ *:STYLE: +habit"
+		       (or subtree-end
+			   (save-excursion (or (outline-next-heading) (point-max))))
+		       t)))
 
 (defun bh/skip-habits ()
   "Skip habits"
