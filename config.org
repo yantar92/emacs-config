@@ -4635,7 +4635,47 @@ This agenda show the items for the current day and time.
 	(unless (re-search-forward "^\\*.+\\[#A\\]" nil 'noerror)
 	  (re-search-forward (org-get-limited-outline-regexp) nil 'noerror))
 	(point)))))
+
+(defun org-agenda-skip-nonurgent-fast ()
+  (save-excursion
+    (let ((element (org-element-at-point)))
+      (unless (or (eq (car element) 'inlinetask)
+		  (eq (car element) 'headline))
+        (org-back-to-heading)
+        (setq element (org-element-at-point)))
+      (let* ((cur-priority (string (or (org-element-property :priority element)
+				       org-default-priority)))
+             (tmp-scheduled-time-element (org-element-property :raw-value
+							       (org-element-property :scheduled
+										     element)))
+             (tmp-scheduled-time (and tmp-scheduled-time-element (org-parse-time-string tmp-scheduled-time-element)))
+	     (tmp-cur-schedule (time-to-days tmp-scheduled-time))
+	     (tmp-cur-day (time-to-days (apply #'encode-time
+					       (append '(0 0 0)
+						       (list (nth 1 org-agenda-current-date))
+						       (list (nth 0 org-agenda-current-date))
+						       (list (nth 2 org-agenda-current-date)))))))
+	(unless (and (string-equal cur-priority "A")
+		     (or (not tmp-scheduled-time)
+			 (<= tmp-cur-schedule tmp-cur-day)))
+	  (unless (re-search-forward "^\\*.+\\[#A\\]" nil 'noerror)
+	    (re-search-forward (org-get-limited-outline-regexp) nil 'noerror))
+	  (point))))))
   #+end_src
+
+*************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
+SCHEDULED: <2019-05-05 Sun>
+:PROPERTIES:
+:SHOWFROMDATE: 2019-05-06 18:00
+:END:
+:LOGBOOK:
+CLOCK: [2019-05-06 Mon 12:49]--[2019-05-06 Mon 14:14] =>  1:25
+CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
+- State "NEXT"       from "TODO"       [2019-05-05 Sun 18:42]
+:END:
+*************** END
+
+
 + none of [#C] priority items
 #+BEGIN_SRC emacs-lisp
 (defun org-agenda-skip-lowpriority ()
@@ -4663,28 +4703,28 @@ This agenda show the items for the current day and time.
 + items from diary/with timestamps (shown by default in org)
 + habits
   #+begin_src emacs-lisp
-  (defun yant/org-agenda-skip-nofocus()
-    "Filter tasks for focus agenda."
+(defun yant/org-agenda-skip-nofocus()
+  "Filter tasks for focus agenda."
+  (and
+   (or
     (and
-     (or
-      (and
-       (org-agenda-skip-nonurgent) ; show urgent items
-       (bh/skip-nohabits) ; and habits
-       )
+     (org-agenda-skip-nonurgent) ; show urgent items
+     (bh/skip-nohabits) ; and habits
+     )
 					;  if day and time are appropriate
-      (org-agenda-skip-before-SHOWFROMTIME-property)
-      (org-agenda-skip-before-SHOWFROMDATE-property)
-      (org-agenda-skip-noshowdates))
-     (or
-      (org-agenda-skip-not-today) ; and items, scheduled for today
-      (org-agenda-skip-before-SHOWFROMTIME-property) ; if time is appropriate (day is, since it is scheduled)
-      (org-agenda-skip-before-SHOWFROMDATE-property)
-      (org-agenda-skip-lowpriority) ;; and the priorty is not [#C]
-      )
-     (or (org-agenda-skip-deadlines-before-schedule) ; always show deadlines, unless scheduled in future
-	 (org-agenda-skip-before-SHOWFROMTIME-property)
-	 (org-agenda-skip-before-SHOWFROMDATE-property)
-	 )))
+    (org-agenda-skip-before-SHOWFROMTIME-property)
+    (org-agenda-skip-before-SHOWFROMDATE-property)
+    (org-agenda-skip-noshowdates))
+   (or
+    (org-agenda-skip-not-today) ; and items, scheduled for today
+    (org-agenda-skip-before-SHOWFROMTIME-property) ; if time is appropriate (day is, since it is scheduled)
+    (org-agenda-skip-before-SHOWFROMDATE-property)
+    (org-agenda-skip-lowpriority) ;; and the priorty is not [#C]
+    )
+   (or (org-agenda-skip-deadlines-before-schedule) ; always show deadlines, unless scheduled in future
+       (org-agenda-skip-before-SHOWFROMTIME-property)
+       (org-agenda-skip-before-SHOWFROMDATE-property)
+       )))
   #+end_src
 **** Normal daily agenda
 :PROPERTIES:
