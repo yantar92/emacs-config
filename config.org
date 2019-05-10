@@ -1771,6 +1771,24 @@ SCHEDULED: <2019-02-02 Sat>
 ;;   (add-hook 'dired-mode-hook #'my/dired-mode-hook))
 
 #+END_SRC
+****** NEXT Image-dired
+:PROPERTIES:
+:CREATED:  [2019-05-07 Tue 21:26]
+:ID:       c095c061-ffdc-4adb-a889-bb4e54b6a514
+:END:
+
+#+begin_src emacs-lisp
+(use-package image-dired
+  :config
+  (unbind-key "o" image-map)
+  (use-package meta-functions
+    :config 
+    (add-to-list 'meta-functions-meta-forward-alist '(image-dired-thumbnail-mode . image-dired-forward-image))
+    (add-to-list 'meta-functions-meta-backward-alist '(image-dired-thumbnail-mode . image-dired-backward-image))
+    (add-to-list 'meta-functions-meta-down-alist '(image-dired-thumbnail-mode . image-dired-next-line))
+    (add-to-list 'meta-functions-meta-up-alist '(image-dired-thumbnail-mode . image-dired-previous-line))
+    (meta-functions-update-function-definitions)))
+#+end_src
 
 ****** open file in external app 
 :PROPERTIES:
