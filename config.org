@@ -1231,7 +1231,9 @@ From https://www.emacswiki.org/emacs/FlySpell"
   :if init-flag
   :ensure t
   :bind (:map boon-command-map
-	      ("r" . er/expand-region)))
+	      ("`" . er/expand-region)
+              :map boon-special-map
+              ("`" . er/expand-region)))
 
 #+END_SRC
 *** Highlight uncommited changes in version-controlled files and dirs
