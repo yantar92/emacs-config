@@ -1006,7 +1006,10 @@ Interaction with Github
 #+BEGIN_SRC emacs-lisp
 (use-package magithub
   :ensure t
-  :after magit
+  :after (magit magit-popup)
+  :init
+  (use-package magit-popup :ensure t)
+  (require 'magit-popup)
   :config
   (magithub-feature-autoinject t)
   ;; Workaround for https://github.com/vermiculus/magithub/issues/71
