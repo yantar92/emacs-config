@@ -20,6 +20,7 @@ CLOCK: [2017-12-30 Sat 17:03]--[2017-12-30 Sat 17:14] =>  0:11
 CLOCK: [2017-12-28 Thu 18:41]--[2017-12-28 Thu 18:42] =>  0:01
 CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 :END:
+
 #+begin_src emacs-lisp
 (setf user-full-name "Ihor Radchenko")
 #+end_src
@@ -254,6 +255,7 @@ There are various options, which can improve the performance.
 **** Remove useless gap in maximised state 
 :PROPERTIES:
 :CREATED:  [2019-04-27 Sat 16:39]
+:ID:       1229776a-39f3-4d41-b800-8a6a445169d3
 :END:
 #+begin_src emacs-lisp
 (setq frame-resize-pixelwise t)
@@ -671,7 +673,7 @@ It should be noted, that the same can be done via setting the proper bindings fo
 			dired-mode pdf-view-mode helpful-mode magit-file-mode
 			magit-status-mode magit-revision-mode
 			mingus-playlist-mode mingus-browse-mode
-			mingus-help-mode ))
+			mingus-help-mode))
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   (setq boon-insert-state-major-mode-list
@@ -1940,6 +1942,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 *** Org
 :PROPERTIES:
 :CREATED:  [2019-05-05 Sun 13:43]
+:ID:       d5a656cb-42e1-4b90-881e-992561d803e2
 :END:
 
 #+begin_src emacs-lisp
@@ -2500,14 +2503,24 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (add-to-list 'meta-functions-meta-scroll-up-alist '(pdf-view-mode . pdf-view-scroll-up-or-next-page))
     (add-to-list 'meta-functions-meta-down-alist '(pdf-annot-list-mode . tablist-next-line))
     (add-to-list 'meta-functions-meta-up-alist '(pdf-annot-list-mode . tablist-previous-line)))
+  
   (defun yant/jump-to-file-bookmark ()
     "Jump to the bookmark names as `buffer-file-name'."
-    (interactive)
-    (bookmark-jump (list buffer-file-name (alist-get buffer-file-name bookmark-alist nil nil #'string=))))
+    (cond
+     ;; ((eq major-mode 'pdf-view-mode)
+     ;;  (pdf-view-bookmark-jump (list buffer-file-name (alist-get buffer-file-name bookmark-alist nil nil #'string=))))
+     (t
+      (bookmark-jump (list buffer-file-name (alist-get buffer-file-name bookmark-alist nil nil #'string=))))))
+  
   (defun yant/save-file-bookmark ()
     "Save current file buffer position to bookmark with the name as `buffer-file-name'."
-    (when buffer-file-name
-      (bookmark-set buffer-file-name)))
+    (cond
+     ;; ((eq major-mode 'pdf-view-mode)
+     ;;  (pdf-view-bookmark-make-record))
+     (t
+      (when buffer-file-name
+	(bookmark-set buffer-file-name)))))
+  
   (add-hook 'pdf-view-mode-hook #'yant/jump-to-file-bookmark)
 
   (defun yant/save-bookmark-and-quit ()
@@ -3592,6 +3605,35 @@ I may not even need to run terminal in such a case!
 :PROPERTIES:
 :ID:       7122dce7-7d3e-4167-a444-8811d588db42
 :END:
+**** NEXT Link description function
+:PROPERTIES:
+:CREATED:  [2019-05-07 Tue 10:27]
+:ID:       bd43272d-9ef4-45a6-85ab-bebbef75c18b
+:END:
+:LOGBOOK:
+- State "NEXT"       from "TODO"       [2019-05-07 Tue 10:34]
+:END:
+
+*************** NEXT [#A] Probably request feature of :desk link property, similar to :complete property
+SCHEDULED: <2019-05-11 Sat>
+:PROPERTIES:
+:SHOWFROMDATE: 2019-05-08 18:00
+:END:
+*************** END
+
+#+begin_src emacs-lisp
+(defun yant/org-make-link-description-function (link desk)
+  "Return description of the link LINK according to :desk link property.
+Return DESK if :desk is not set."
+  (let ((fun (org-link-get-parameter (car (split-string link ":")) :desk)))
+    (if (functionp fun)
+	(funcall fun link desk)
+      desk)))
+
+(setq org-make-link-description-function #'yant/org-make-link-description-function)
+#+end_src
+
+
 **** External
 :PROPERTIES:
 :ID:       e74697d9-3d3e-4db4-8a4c-e9cad8f73d23
@@ -3634,8 +3676,7 @@ Copy paste from https://github.com/jkitchin/scimax/blob/master/scimax-inkscape.e
 (use-package scimax-inkscape)
 #+END_SRC
 
-***** DONE Links to attached files
-CLOSED: [2019-04-24 Wed 17:15]
+***** Links to attached files
 :PROPERTIES:
 :CREATED:  [2018-07-09 Mon 21:46]
 :ID:       1460419f-52b8-4687-955c-936a1f99ae7c
@@ -3688,7 +3729,6 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 
 (add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
 
-
 (defun org-att-id-skip-function ()
   "Test if an entry contains attachments. Move point to next candidate location."
   (if (yant/org-task-has-attachments-p)
@@ -3729,17 +3769,71 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 (org-link-set-parameters "att-id" 
 			 :complete #'org-att-id-link-complete)
 
+(org-link-set-parameters "id" 
+			 :complete #'org-id-prompt-id)
+
 #+end_src
 
 **** Internal
 :PROPERTIES:
 :ID:       5aebc1b8-8d85-4254-b177-c216c053e8f3
 :END:
+***** Links by ID
+:PROPERTIES:
+:CREATED:  [2019-05-07 Tue 10:05]
+:ID:       0f7c34bc-bc56-4bbf-954e-b0e03e5240a2
+:END:
+
 #+begin_src emacs-lisp
 (use-package org-id)
 (setq org-id-method (quote uuidgen))
 (setq org-id-link-to-org-use-id 't)
 #+end_src
+***** =id:= link completion
+:PROPERTIES:
+:CREATED:  [2019-05-07 Tue 10:05]
+:ID:       ffb27a1a-735e-4398-b230-a71fc4df0023
+:END:
+
+#+begin_src emacs-lisp
+(defvar org-id-history nil
+  "ID completion history for id: link type.")
+
+(defvar org-id-cache nil
+  "ID completion cache for id: link type.")
+
+(defun org-id-prompt-id ()
+  "Prompt for the id during completion of att-id: link."
+  (let ((org-refile-history org-id-history)
+	(org-refile-cache org-id-cache)
+	(org-refile-target-verify-function nil))
+    (let ((prompt-ans (org-refile-get-location "Select org entry")))
+      (prog1
+	  (or (org-id-get (seq-find #'markerp
+				    prompt-ans)
+			  'create)
+              (user-error "Cannot find ID of the entry: %s" prompt-ans))
+	(setq org-id-history org-refile-history)
+	(setq org-id-cache org-refile-cache)))))
+
+
+(defun org-id-link-complete (&optional arg)
+  "Completion function for id: link."
+  (let* ((id (org-id-prompt-id)))
+    (format "id:%s" id)))
+
+(defun org-id-link-desk (link desk)
+  "Description function for id: link."
+  (let ((id (cadr (split-string link ":"))))
+    (org-with-point-at (org-id-find id 'marker)
+      (s-replace "||" "/" (yant/task-fulltitle)))))
+
+(org-link-set-parameters "id" 
+			 :complete #'org-id-link-complete
+                         :desk #'org-id-link-desk)
+
+#+end_src
+
 ***** TODO Footnotes
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 21:45]
@@ -3816,7 +3910,6 @@ The src block should be in the same org file."
                            :complete #'org-link-babel-complete)
   
 #+end_src
-
 **** NEXT Org-ref
 :PROPERTIES:
 :ID:       f944c2c8-f1fa-49ea-ab24-bf1b018013f1
@@ -4689,7 +4782,7 @@ This agenda show the items for the current day and time.
 *************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
 SCHEDULED: <2019-05-05 Sun>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-05-06 18:00
+:SHOWFROMDATE: 2019-05-11
 :END:
 :LOGBOOK:
 CLOCK: [2019-05-06 Mon 12:49]--[2019-05-06 Mon 14:14] =>  1:25
@@ -4870,9 +4963,12 @@ Agenda is excellent for short term planning, however it is not very useful if I 
 	  cfw:fchar-top-left-corner ?┏
 	  cfw:fchar-top-right-corner ?┓)))
 #+end_src
-**** =Gcal= - sync with Google calendar
+**** TODO =Gcal= - sync with Google calendar
 :PROPERTIES:
 :ID:       b66193fa-9189-4822-b68f-87f5bc30c3fd
+:END:
+:LOGBOOK:
+- State "TODO"       from              [2019-05-10 Fri 00:23]
 :END:
 ***** General setup
 :PROPERTIES:
