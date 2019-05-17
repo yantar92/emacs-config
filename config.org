@@ -1951,6 +1951,8 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   :bind (:map boon-goto-map
 	      ("P" . helm-org-rifle))
   :init
+  (setq helm-org-rifle-reverse-paths t
+	helm-org-rifle-test-against-path t)
   (use-package boon))
 #+end_src
 
