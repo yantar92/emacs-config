@@ -3624,7 +3624,7 @@ I may not even need to run terminal in such a case!
 *************** NEXT [#A] Probably request feature of :desk link property, similar to :complete property
 SCHEDULED: <2019-05-11 Sat>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-05-08 18:00
+:SHOWFROMDATE: 2019-05-17 15:00
 :END:
 *************** END
 
@@ -4789,7 +4789,7 @@ This agenda show the items for the current day and time.
   #+end_src
 
 *************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
-SCHEDULED: <2019-05-05 Sun>
+SCHEDULED: <2019-05-19 Sun>
 :PROPERTIES:
 :SHOWFROMDATE: 2019-05-11
 :END:
@@ -6287,8 +6287,9 @@ Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override stand
 Sometimes, I have a small projects, where I do not want to decide whether I want to archive every single subtask or not. I tag them =:ARCHIVEALL:=.
 
 Thanks God, I do not need to open my archive file frequently - my =TODO.org_archive= is =>1Mba= and takes forever to open. I am not sure if I need to do something with it.
-*************** HOLD Speed up opening large org files                     :HOLD:
+*************** TODO Speed up opening large org files
 :LOGBOOK:
+- State "TODO"       from "HOLD"       [2019-05-16 Thu 11:30]
 - State "HOLD"       from "TODO"          [2017-12-22 Fri 22:01] \\
   Consider it if it becomes annoying
 :END:
