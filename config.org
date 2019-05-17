@@ -4290,11 +4290,12 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 									  yant/org-attach-symlinks-directory
 									  entry-name))
 					   (or yant/org-attach-file-symlink-path (hack-local-variables))
+                                           (unless (file-exists-p yant/org-attach-file-symlink-path) (f-mkdir yant/org-attach-file-symlink-path))
 					   (directory-file-name (f-join (or yant/org-attach-file-symlink-path
 									    default-directory)
 									entry-name)))))
 		 (if (not (f-exists-p entry-symlink-name))
-		     (f-symlink symlinks-directory entry-symlink-name)
+		     (f-symlink symlinks-directory (directory-file-name entry-symlink-name))
 		   (unless (f-symlink-p entry-symlink-name)
 		     (error (format "File exists: %s" entry-symlink-name)))))))
 	    
