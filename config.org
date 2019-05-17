@@ -3333,14 +3333,14 @@ The task is any item with todo keyword and no subtask.
   - NEXT(n) :: Task which needs to be done next. If the task is scheduled it is most likely need to be done next. Though can change manually to =TODO= if needed. 
                #+begin_src emacs-lisp
 (define-advice org-schedule (:after (&optional ARG TIME) change-todo-after-schedule-state-change) 
-  "Make sure that task keyword is always TODO when it is not scheduled and NEXT if it is."
+  "Make sure that task keyword is always NEXT if it is scheduled."
   (let ((mystate (or (and (fboundp 'org-state)
 			  state)
 		     (nth 2 (org-heading-components))))
 	(isscheduled (org-agenda-skip-entry-if 'scheduled)))
-    (if (not isscheduled)
-	(when (member mystate (list "NEXT"))
-	  (org-todo "TODO"))
+    (when isscheduled
+      ;; (when (member mystate (list "NEXT"))
+      ;;   (org-todo "TODO"))
       (when (member mystate (list "TODO"))
 	(org-todo "NEXT")))))
                #+end_src
