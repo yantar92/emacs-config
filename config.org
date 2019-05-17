@@ -2468,6 +2468,11 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :PROPERTIES:
 :ID:       201475d1-64b3-4e1d-8e78-d850c6067761
 :END:
+
+*************** TODO fix the bookmark load problem when making frame
+*************** END
+
+
 #+begin_src emacs-lisp
 (use-package pdf-tools
   :if init-flag
@@ -2523,7 +2528,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
       (when buffer-file-name
 	(bookmark-set buffer-file-name)))))
   
-  (add-hook 'pdf-view-mode-hook #'yant/jump-to-file-bookmark)
+  ;;  (add-hook 'pdf-view-mode-hook #'yant/jump-to-file-bookmark)
 
   (defun yant/save-bookmark-and-quit ()
     "Call `yant/save-file-bookmark' and quit."
