@@ -303,6 +303,9 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 (setq-default indicate-buffer-boundaries 'left)
 #+end_src
 *** Text in buffers
+:PROPERTIES:
+:ID:       45675819-9551-43da-8e21-4437dde591e5
+:END:
 **** Coding system
 :PROPERTIES:
 :ID:       07c3544a-bcbd-4790-815a-25615ca2ca03
@@ -312,6 +315,9 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 (prefer-coding-system 'utf-8)
   #+end_src
 **** Visual text transformation
+:PROPERTIES:
+:ID:       ec85fac4-8fad-4adf-a159-2219ace7e7d7
+:END:
 Show some text in buffer differently
 ***** Page break shown as lines
 :PROPERTIES:
@@ -2533,13 +2539,14 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   (defun yant/save-bookmark-and-quit ()
     "Call `yant/save-file-bookmark' and quit."
     (interactive)
-    (yant/save-file-bookmark)
+    ;;(yant/save-file-bookmark)
     (quit-window 'KILL))
   
   (bind-keys :map pdf-view-mode-map
 	     ("q" . yant/save-bookmark-and-quit))
   )
 #+end_src
+
 *** Pdf rotate
 :PROPERTIES:
 :ID:       0ec2a69c-4284-48f2-86cb-4bac1f0a3b3f
