@@ -5512,13 +5512,17 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
       (plist-put org-agenda-clock-consistency-checks
 		 :max-gap "2:00"))
   #+end_src
-**** Logging clocking data
+**** Logging 
 :PROPERTIES:
 :ID:       973d6eff-3d91-48f0-a3b5-b438feccf28f
 :END:
 #+begin_src emacs-lisp
-(setq org-log-into-drawer t)
-(setq org-log-done 'time)
+(setq org-log-into-drawer nil
+      org-log-done 'time
+      org-log-done-with-time t
+      org-log-note-clock-out nil
+      org-log-refile nil
+      org-log-reschedule nil)
 (setq org-clock-into-drawer t)
 #+end_src
 - Do not create empty drawers
