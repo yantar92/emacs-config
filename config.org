@@ -5325,7 +5325,16 @@ By default, marking a task does not result in updated agenda follow buffer, so I
 
 *************** TODO send to mail list
 *************** END
+**** Agenda search
+:PROPERTIES:
+:CREATED:  [2019-05-18 Sat 20:28]
+:ID:       b646ef49-debd-41d1-b101-13d01db7f9f5
+:END:
 
+It is possible to search from agenda dispatcher not only in the org files, but also in archives (from [[https://blog.aaronbieber.com/2016/01/30/dig-into-org-mode.html][Dig Into Org Mode by Aaron Bieber]])
+#+begin_src emacs-lisp
+(setq org-agenda-text-search-extra-files '(agenda-archives))
+#+end_src
 
 *** TODO Contacts
 :PROPERTIES:
