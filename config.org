@@ -3327,7 +3327,7 @@ The task is any item with todo keyword and no subtask.
 - keywords for not done tasks: =TODO=, =NEXT=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=
   #+begin_src emacs-lisp
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t!)" "NEXT(n!)" "|" "DONE(d!)" "FAILED(f!)" "MERGED(m!)" )
+      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)" "FAILED(f!)" "MERGED(m!)" )
 	      (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c!)" ))))
 ;; set the tags assigned to specific keywords. Not nesessary, but used by a lot of code for filtering later - hence why not
 (setq org-todo-state-tags-triggers
@@ -3631,7 +3631,7 @@ I may not even need to run terminal in such a case!
 *************** NEXT [#A] Probably request feature of :desk link property, similar to :complete property
 SCHEDULED: <2019-05-11 Sat>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-05-17 15:00
+:SHOWFROMDATE: 2019-06-01
 :END:
 *************** END
 
@@ -4799,7 +4799,7 @@ This agenda show the items for the current day and time.
 *************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
 SCHEDULED: <2019-05-19 Sun>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-05-11
+:SHOWFROMDATE: 2019-06-01
 :END:
 :LOGBOOK:
 CLOCK: [2019-05-06 Mon 12:49]--[2019-05-06 Mon 14:14] =>  1:25
