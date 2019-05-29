@@ -6513,20 +6513,6 @@ It can be done using =org-tempo=.
   (push (cons "el" "src emacs-lisp") org-structure-template-alist))
 #+end_src
 
-However, =org-tempo= does not allow much customization. I prefer to enter source block editing mode right after expanding the template. I redefine =org-tempo-add-block= to enter edit mode after expanding.
-Since I use [[id:e90d8071-a7ed-4aba-a694-a78aa5fded78][Boon navigation & search]], I also switch to insert state after running =org-edit-special=.
-
-
-#+begin_src emacs-lisp
-(use-package org-tempo
-  :if init-flag
-  :init
-  (define-advice org-tempo-complete-tag (:filter-return (return) yant/org-tempo-enter-src-edit)
-    "Run `org-edit-special' and switch to `boon-insert' state after completion."
-    (when return
-      (org-edit-special)
-      (boon-set-insert-state))))
-#+end_src
 
 **** Source block editing functions from scimax
 :PROPERTIES:
