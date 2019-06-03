@@ -746,9 +746,10 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 :END:
 #+begin_src emacs-lisp
 (use-package reverse-im :ensure t
-	     :if init-flag
-	     :config
-	     (reverse-im-activate "russian-computer"))
+  :if init-flag
+  :config
+  (reverse-im-activate "russian-computer")
+  (reverse-im-activate "chinese-py-b5"))
 ;; (when init-flag
 ;;   (cl-loop
 ;;    for from across "йцукенгшщзхїфівапролджєячсмитьбюЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ№"
