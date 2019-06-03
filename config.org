@@ -922,30 +922,6 @@ saving all the buffers, is executed.
 (defvar yant/never-save-buffer-list nil
   "The buffers, matching any of the regexps in this list will never be saved.")
 #+end_src
-*** FAILED Undo tree
-CLOSED: [2019-04-03 Wed 10:40]
-:PROPERTIES:
-:ID:       85e15d5a-65f0-4283-93e4-7997fe9fa1a3
-:END:
-:LOGBOOK:
-- State "FAILED"     from              [2019-04-03 Wed 10:40]
-:END:
-#+begin_src emacs-lisp
-(use-package undo-tree
-  :if init-flag
-  :ensure t
-  :disabled t
-  ;;:diminish undo-tree-mode
-  :hook ((org-mode text-mode prog-mode) .  undo-tree-mode)
-  :config
-  (setq
-   undo-tree-auto-save-history t
-   undo-tree-visualizer-diff t
-   undo-tree-visualizer-timestamps t
-   undo-tree-history-directory-alist '((".*" . "~/.emacs.d/undo"))
-   undo-tree-enable-undo-in-region nil ; workaround to fix random error thrown by undo "Unrecognized entry in undo list undo-tree-canary" (unresolved undo-tree bug)
-   ))
-#+end_src
 *** Persistent scratch
 :PROPERTIES:
 :ID:       4185d833-9d1f-4763-97a0-d44bcc322da7
