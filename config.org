@@ -1278,6 +1278,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
   :if init-flag
   :defer t
   :config
+  (define-key boon-x-map "n" narrow-map)
   (bind-keys ("C-M-S-j" . scroll-other-window)
 	     ("C-M-S-k" . scroll-other-window-down)
 	     :map boon-x-map
