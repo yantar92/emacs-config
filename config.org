@@ -156,11 +156,12 @@ There are various options, which can improve the performance.
   #+end_src
 - automatically update packages on startup
   #+begin_src emacs-lisp
-    (use-package auto-package-update
-      :ensure t
-      :config
-      (setq auto-package-update-delete-old-versions t)
-      (add-hook 'window-setup-hook #'auto-package-update-maybe))
+(use-package auto-package-update
+  :ensure t
+  :config
+  (setq auto-package-update-delete-old-versions t)
+  ;;(add-hook 'window-setup-hook #'auto-package-update-maybe)
+  )
   #+end_src
 - prefer setting in this file over customized interface
   #+begin_src emacs-lisp
