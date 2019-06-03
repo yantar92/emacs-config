@@ -3610,7 +3610,10 @@ I may not even need to run terminal in such a case!
 *************** NEXT [#A] Probably request feature of :desk link property, similar to :complete property
 SCHEDULED: <2019-05-11 Sat>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-06-01
+:SHOWFROMDATE: 2019-06-08
+:END:
+:PROPERTIES:
+
 :END:
 *************** END
 
@@ -4399,7 +4402,7 @@ SCHEDULED: <2019-02-02 Sat>
 
 Sometimes, I want to save certain interesting online articles to disk to make sure that all the content and comments are preserved regardless of the website changes. 
 
-***** DONE [#A] org-webtools
+***** DONE [#A] org-webtools                                      :NOARCHIVE:
 CLOSED: [2019-04-24 Wed 15:43] SCHEDULED: <2019-04-24 Wed>
 :PROPERTIES:
 :CREATED:  [2019-04-23 Tue 23:44]
@@ -4779,7 +4782,7 @@ This agenda show the items for the current day and time.
 *************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
 SCHEDULED: <2019-05-19 Sun>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-06-01
+:SHOWFROMDATE: 2019-06-08
 :END:
 :LOGBOOK:
 CLOCK: [2019-05-06 Mon 12:49]--[2019-05-06 Mon 14:14] =>  1:25
