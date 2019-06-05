@@ -1456,6 +1456,9 @@ Imenu allows navigating through the buffer structure, according to the major mod
 
 
   :config
+
+  (use-package helm-bm :ensure t) 
+  
   ;; Allow cross-buffer 'next'
   (setq bm-cycle-all-buffers t)
 
@@ -1518,7 +1521,7 @@ Imenu allows navigating through the buffer structure, according to the major mod
 	      ("C-M-N" . bm-toggle)
               :map boon-goto-map
               ("n" . bm-show)
-              ("N" . bm-show-all)
+              ("N" . helm-bm)
 	      :map boon-forward-search-map
 	      ("n" . bm-next)
               :map boon-backward-search-map
