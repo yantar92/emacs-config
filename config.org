@@ -5954,7 +5954,7 @@ All these templates generally record the creation time in =:CREATED:=
 	("j" "Journal publication" entry (file "~/Org/inbox.org")
 	 "* NEXT [paper] %^{Aproximate title of the paper} :publication:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Short description}\n** TODO Outline\nDEADLINE: %^t\n*** NEXT Abstract\n*** TODO Introduction\n*** TODO Methods\n*** TODO Results\n*** TODO Discussion\n*** TODO Conclusions\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Cover letter\n** TODO Submit\n** Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Get accepted\n** TODO Publish on ArXiv\n** TODO Get published\n** TODO Add to pub list\n" :clock-in t :clock-resume t)
 	("P" "Research project" entry (file "~/Org/inbox.org")
-	 "* TODO %^{Project title} :%^G:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?\n** TODO Literature review\n** TODO Summary\n** TODO Reports\n** Ideas\n" :clock-in t :clock-resume t)
+	 "* TODO %^{Project title} :%^G:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?\n** TODO Literature review\n*** TODO Papers\n** TODO Summary\n** TODO Reports\n** Ideas\n" :clock-in t :clock-resume t)
 	("e" "Email" entry (file "~/Org/inbox.org")
 	 "* TODO %? email |- %:from: %:subject :EMAIL:\n:PROPERTIES:\n:CREATED: %U\n:EMAIL-SOURCE: %l\n:END:\n%U\n" :clock-in t :clock-resume t)
 	("b" "Link from browser" entry (file "~/Org/inbox.org")
