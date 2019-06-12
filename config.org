@@ -3613,7 +3613,7 @@ I may not even need to run terminal in such a case!
 *************** NEXT [#A] Probably request feature of :desk link property, similar to :complete property
 SCHEDULED: <2019-05-11 Sat>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-06-08
+:SHOWFROMDATE: 2019-06-15
 :END:
 :PROPERTIES:
 
@@ -4795,7 +4795,7 @@ This agenda show the items for the current day and time.
 *************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
 SCHEDULED: <2019-05-19 Sun>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-06-08
+:SHOWFROMDATE: 2019-06-15
 :END:
 :LOGBOOK:
 CLOCK: [2019-05-06 Mon 12:49]--[2019-05-06 Mon 14:14] =>  1:25
@@ -6343,7 +6343,7 @@ This function is called by `org-archive-hook'.  The option
 #+end_src
 Preview images and latex formulas.
 #+begin_src emacs-lisp
-(setq org-image-actual-width '(400))
+(setq org-image-actual-width '(300))
 (setq org-latex-create-formula-image-program 'imagemagick)
 (setq org-format-latex-options
       (quote
