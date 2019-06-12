@@ -3968,24 +3968,34 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 #+begin_src emacs-lisp 
 (setq org-use-property-inheritance 't)
 #+end_src
-- =:SHOWFROMTIME:= (always inheriting) :: The purpose of this is to be able to assign specific projects for different days of week or, say, show the home items only in the evening of weekdays and not annoy it at work when I cannot do it any way. Hence, I can focus on the items I really need to do now in this agenda. 
+- =:SHOWFROMTIME:= (always inheriting) :: The purpose of this is to be able to assign specific projects for different days of week or, say, show the home items only in the evening of weekdays and not annoy it at work when I cannot do it any way. Hence, I can focus on the items I really need to do now in this agenda.
+     Additionally, the time of the day after midnight is treated specially here. If =org-extend-today-until= is not 0 and the current time is before its value, the current time is still considered to be yesterday.
      #+begin_src emacs-lisp
-     (add-to-list 'org-default-properties "SHOWFROMTIME")
+(setq org-extend-today-until 4)
+
+(add-to-list 'org-default-properties "SHOWFROMTIME")
 (defun org-agenda-skip-before-SHOWFROMTIME-property ()
   "Skip agenda item if :SHOWFROMTIME: property is set and time of day is before it"
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-      (let ((showfromtime (parse-time-string (or (org-entry-get (point) "SHOWFROMTIME" 'inherit)
-						 "00:00:01")))
-	    (currenttime (parse-time-string (format-time-string "%T"))))
-	(if (< (nth 2 currenttime) (nth 2 showfromtime))
-	    next-headline
-	  (if (< (nth 1 currenttime) (nth 1 showfromtime))
-	      next-headline
-	    (if (< (nth 0 currenttime) (nth 0 showfromtime))
-		next-headline
-	      nil)))))))
+      (let* ((showfromtime (apply 'encode-time
+				  (-replace nil 0
+					    (parse-time-string (or (org-entry-get (point) "SHOWFROMTIME" 'inherit)
+								   "00:00:01")))))
+             (daystart (apply 'encode-time
+			      (-replace nil 0
+					(parse-time-string (or (and org-extend-today-until (format "%s:00:01" org-extend-today-until))
+							       ("00:00:01"))))))
+	     (currenttime (apply 'encode-time
+				 (-replace nil 0
+					   (parse-time-string (format-time-string "%T"))))))
+	(when (and (time-less-p currenttime showfromtime)
+		   (time-less-p currenttime daystart))
+          (setq currenttime (apply 'encode-time (-replace nil 0
+							  (parse-time-string (format-time-string "23:59:59"))))))
+	(when (time-less-p currenttime showfromtime)
+	  next-headline)))))
      #+end_src
 - =:SHOWFROMDATE:= :: The purpose of this is to be able to postpone the scheduled tasks for future if I cannot do it. The property is formatted as an org date.
      This property is especially useful if there is something more pressing, so that there is a temptation to reschedule less pressing event to another day. If the more pressing task is done earlier than expected, the postponed tasks can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
