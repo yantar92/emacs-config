@@ -3614,7 +3614,7 @@ I may not even need to run terminal in such a case!
 *************** NEXT [#A] Probably request feature of :desk link property, similar to :complete property
 SCHEDULED: <2019-05-11 Sat>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-06-15
+:SHOWFROMDATE: 2019-06-17 19:00
 :END:
 :PROPERTIES:
 
@@ -4796,7 +4796,7 @@ This agenda show the items for the current day and time.
 *************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
 SCHEDULED: <2019-05-19 Sun>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-06-15
+:SHOWFROMDATE: 2019-06-22
 :END:
 :LOGBOOK:
 CLOCK: [2019-05-06 Mon 12:49]--[2019-05-06 Mon 14:14] =>  1:25
@@ -7230,8 +7230,8 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
  ("C-c c" . org-clock-goto)
  :map boon-goto-map
  ("a" . org-agenda)
- ("t" . gtd-open)
- ("n" . notes-open)
+ ("C-t" . gtd-open)
+ ("C-n" . notes-open)
  )
 (bind-keys :map org-mode-map
 	   ("C-c C-+" . add-current-buffer-to-agenda-files)
