@@ -2552,6 +2552,19 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (interactive "P")
     (pdf-view--rotate :counterclockwise (not arg))))
 #+end_src
+*** TODO Fix page number in boon modeline when the pdf is opened in a new frame
+:PROPERTIES:
+:CREATED:  [2019-07-03 Wed 18:14]
+:END:
+It's magic
+#+begin_src emacs-lisp
+(use-package boon-powerline
+  :defer t
+  :init
+  (use-package pdf-view
+    :config
+    (setq pdf-cache-prefetch-delay 2)))
+#+end_src
 ** Utils
 :PROPERTIES:
 :ID:       460ee9e2-32f5-4ad2-a535-69121b201bcf
