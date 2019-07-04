@@ -5560,6 +5560,7 @@ I do not show current task in Emacs, instead I use =awesome wm= widget. Hence ne
       (let ((buf (find-file-noselect yant/org-clocking-info-file)))
 	(set-buffer buf)
 	(erase-buffer)
+        (setq-local backup-inhibited t)
 	(insert (format "\"No clocked in task\"\n%s" org-time-balance))
 	(save-buffer)
 	(kill-buffer)))))
@@ -5573,7 +5574,9 @@ I do not show current task in Emacs, instead I use =awesome wm= widget. Hence ne
 		 (str (org-clock-get-clock-string))
                  (org-time-multiplier org-clock-multiplier)
                  (time-balance org-time-balance))
-	    (with-temp-file buf (insert (format "%s\n%s\n%s" str time-balance org-time-multiplier))))))
+	    (with-temp-file buf
+              (setq-local backup-inhibited t)
+              (insert (format "%s\n%s\n%s" str time-balance org-time-multiplier))))))
     (yant/save-noclock))
   (async-start-process "Update balance widget" "/home/yantar92/bin/balance-monitor.sh" #'ignore))
 
