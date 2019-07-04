@@ -1692,7 +1692,9 @@ Undo window configuration changes
   (setq auto-revert-verbose nil
 	dired-dwim-target t
 	dired-du-size-format t ;; show human readable size
-	dired-listing-switches "--time-style=locale -ADhgGBF --group-directories-first")
+	dired-listing-switches "--time-style=locale -ADhgGBF --group-directories-first"
+        delete-by-moving-to-trash t
+        trash-directory "~/tmp/Trash")
   :config
   (put 'dired-find-alternate-file 'disabled nil)
   (defalias 'dired-find-file #'dired-find-alternate-file)
