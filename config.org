@@ -5746,7 +5746,7 @@ ignoring the previously saved values."
     (setq org-time-balance 0)
     (setq org-time-balance-save-time nil)
     (unless force (org-load-time-balance-session))
-    (cl-loop for file in (org-agenda-files) do
+    (cl-loop for file in (org-agenda-files 'unrestricted t) do
 	     (with-current-buffer (find-file-noselect file)
                (goto-char (point-min))
                (cl-loop until (eobp)
