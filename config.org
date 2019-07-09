@@ -2322,6 +2322,26 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   :config
   (rsw-elisp-enable))
 #+END_SRC
+*** Elisp coding
+:PROPERTIES:
+:CREATED:  [2019-07-08 Mon 20:50]
+:END:
+
+**** Font-lock based namespace for writing modes
+:PROPERTIES:
+:ID:       5b5c84f0-e363-4e5c-b373-69ddf019f9e3
+:END:
+
+#+begin_src elisp
+(use-package nameless
+  :if init-flag
+  :ensure t
+  :init
+  (add-hook 'emacs-lisp-mode-hook #'nameless-mode)
+  :config
+  (setq nameless-private-prefix t)
+  (bind-key "_" #'nameless-insert-name-or-self-insert nameless-mode-map))
+#+end_src
 
 *** Gnuplot
 :PROPERTIES:
