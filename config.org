@@ -481,9 +481,9 @@ Show some text in buffer differently
 
 #+begin_src emacs-lisp 
 (when init-flag
-(global-eldoc-mode)
-(diminish 'eldoc-mode)
-(mapc #'eldoc-add-command '(meta-up meta-up-element meta-down meta-down-element meta-backward meta-backward-element meta-forward meta-forward-element meta-scroll-down meta-scroll-up self-insert-command)))
+  (global-eldoc-mode)
+  (diminish 'eldoc-mode)
+  (mapc #'eldoc-add-command '(meta-up meta-up-element meta-down meta-down-element meta-backward meta-backward-element meta-forward meta-forward-element meta-scroll-down meta-scroll-up self-insert-command)))
 #+end_src
 
 *** Cursor
@@ -688,8 +688,8 @@ It should be noted, that the same can be done via setting the proper bindings fo
 			       magit-popup-mode))
   (add-hook 'boon-local-mode-hook
 	    (lambda() (when (and boon-local-mode
-			    (member major-mode boon-insert-state-major-mode-list))
-		   (boon-set-state 'boon-insert-state)))
+				 (member major-mode boon-insert-state-major-mode-list))
+			(boon-set-state 'boon-insert-state)))
 	    'append)
   (defun boon-set-insert-state ()
     "Switch to insert state."
@@ -1038,7 +1038,7 @@ Interaction with Github
 *************** TODO enable in org-mode
 *************** END
 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (use-package flyspell
   :if init-flag
   :ensure t
@@ -1054,8 +1054,8 @@ Interaction with Github
   (setq ispell-program-name "/usr/bin/ispell-aspell")
   (setq ispell-dictionary "british")
   (setq ispell-personal-dictionary "~/.emacs.d/dict")
- )
-  #+end_src
+  )
+#+end_src
 
 ***** Textual error pop-up
 :PROPERTIES:
@@ -1064,40 +1064,40 @@ Interaction with Github
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell
-:config
-(defun flyspell-emacs-popup-textual (event poss word)
-  "A textual flyspell popup menu.
+  :config
+  (defun flyspell-emacs-popup-textual (event poss word)
+    "A textual flyspell popup menu.
 From https://www.emacswiki.org/emacs/FlySpell"
-  (require 'popup)
-  (let* ((corrects (if flyspell-sort-corrections
-		       (sort (car (cdr (cdr poss))) 'string<)
-		     (car (cdr (cdr poss)))))
-	 (cor-menu (if (consp corrects)
-		       (mapcar (lambda (correct)
-				 (list correct correct))
-			       corrects)
-		     '()))
-	 (affix (car (cdr (cdr (cdr poss)))))
-	 show-affix-info
-	 (base-menu  (let ((save (if (and (consp affix) show-affix-info)
-				     (list
-				      (list (concat "Save affix: " (car affix))
-					    'save)
-				      '("Accept (session)" session)
-				      '("Accept (buffer)" buffer))
-				   '(("Save word" save)
-				     ("Accept (session)" session)
-				     ("Accept (buffer)" buffer)))))
-		       (if (consp cor-menu)
-			   (append cor-menu (cons "" save))
-			 save)))
-	 (menu (mapcar
-		(lambda (arg) (if (consp arg) (car arg) arg))
-		base-menu)))
-    (cadr (assoc (popup-menu* menu :scroll-bar t) base-menu))))
-(fset 'flyspell-emacs-popup 'flyspell-emacs-popup-textual)
-(defadvice flyspell-goto-next-error (after check-word-spelling activate) (ispell-word))
-)
+    (require 'popup)
+    (let* ((corrects (if flyspell-sort-corrections
+			 (sort (car (cdr (cdr poss))) 'string<)
+		       (car (cdr (cdr poss)))))
+	   (cor-menu (if (consp corrects)
+			 (mapcar (lambda (correct)
+				   (list correct correct))
+				 corrects)
+		       '()))
+	   (affix (car (cdr (cdr (cdr poss)))))
+	   show-affix-info
+	   (base-menu  (let ((save (if (and (consp affix) show-affix-info)
+				       (list
+					(list (concat "Save affix: " (car affix))
+					      'save)
+					'("Accept (session)" session)
+					'("Accept (buffer)" buffer))
+				     '(("Save word" save)
+				       ("Accept (session)" session)
+				       ("Accept (buffer)" buffer)))))
+			 (if (consp cor-menu)
+			     (append cor-menu (cons "" save))
+			   save)))
+	   (menu (mapcar
+		  (lambda (arg) (if (consp arg) (car arg) arg))
+		  base-menu)))
+      (cadr (assoc (popup-menu* menu :scroll-bar t) base-menu))))
+  (fset 'flyspell-emacs-popup 'flyspell-emacs-popup-textual)
+  (defadvice flyspell-goto-next-error (after check-word-spelling activate) (ispell-word))
+  )
 #+END_SRC
 ***** Integration with org-mode
 :PROPERTIES:
@@ -1353,11 +1353,11 @@ Hence, I define a new function - =avy-goto-word-in-line-1= to jump to any word i
 (use-package avy
   :defer t
   :config
-(defun avy-goto-word-in-line-1 (char &optional arg)
-  "Jump to a currently visible WORD with first CHAR in the current line."
-  (interactive (list (read-char "char: " t)
-                     current-prefix-arg))
-  (funcall-interactively #'avy-goto-word-1 char arg (line-beginning-position) (line-end-position))))
+  (defun avy-goto-word-in-line-1 (char &optional arg)
+    "Jump to a currently visible WORD with first CHAR in the current line."
+    (interactive (list (read-char "char: " t)
+                       current-prefix-arg))
+    (funcall-interactively #'avy-goto-word-1 char arg (line-beginning-position) (line-end-position))))
 #+END_SRC
 
 Also, I am not satisfied with moving around the visible text.
@@ -1864,9 +1864,9 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 (define-advice dired-find-file (:around (OLDFUN &rest args) disable-abbreviate-file-name)
   "Disable `abbreviate-file-name' in dired."
   (cl-flet ((abbreviate-file-name (filename) ""
-			       (if (f-directory? filename)
-				   (f-slash filename)
-                                 filename)))
+				  (if (f-directory? filename)
+				      (f-slash filename)
+                                    filename)))
     (apply OLDFUN args)))
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
@@ -2662,9 +2662,9 @@ When listening a new band/album, I usually go through all the songs and delete w
 #+end_src
 
 **** Boon special mode bindings
-     :PROPERTIES:
-     :ID:       336d16e1-7a21-44c1-8469-15a8658871a3
-     :END:
+:PROPERTIES:
+:ID:       336d16e1-7a21-44c1-8469-15a8658871a3
+:END:
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 22:24]
 
@@ -3192,7 +3192,7 @@ Use =orgalist=.
   :defer t
   :config
   (use-package orgalist :ensure t :init
-	       (add-hook 'message-mode-hook 'orgalist-mode)))
+    (add-hook 'message-mode-hook 'orgalist-mode)))
 #+end_src
 
 ** Org mode
@@ -3746,16 +3746,16 @@ Just links to the current entry are not always sufficient. I sometimes want to l
   "ID completion cache for att-id: link type.")
 
 (defun org-att-id-prompt-id ()
-"Prompt for the id during completion of att-id: link."
-(let ((org-refile-history org-att-id-history)
-      (org-refile-cache org-att-id-cache)
-      (org-refile-target-verify-function #'org-att-id-skip-function))
-  (let ((prompt-ans (org-refile-get-location "Link to attachment from")))
-    (prog1
-	(org-id-get (seq-find #'markerp
-			      prompt-ans))
-      (setq org-att-id-history org-refile-history)
-      (setq org-att-id-cache org-refile-cache)))))
+  "Prompt for the id during completion of att-id: link."
+  (let ((org-refile-history org-att-id-history)
+	(org-refile-cache org-att-id-cache)
+	(org-refile-target-verify-function #'org-att-id-skip-function))
+    (let ((prompt-ans (org-refile-get-location "Link to attachment from")))
+      (prog1
+	  (org-id-get (seq-find #'markerp
+				prompt-ans))
+	(setq org-att-id-history org-refile-history)
+	(setq org-att-id-cache org-refile-cache)))))
 
 
 (defun org-att-id-link-complete (&optional arg)
@@ -3876,41 +3876,41 @@ The src block should be in the same org file."
       (flet ((org-babel-insert-result (result &optional result-params info hash lang) nil))
 	(org-babel-execute-src-block nil info)))))
 
-  (defun org-link-babel-complete ()
-    "Complete babel: link at point."
-    (let* ((name (completing-read "Source block name: " (org-babel-src-block-names)))
-	   (block-info (org-link-babel-follow (format "%s()" name) 'return-info))
-           (block-lang (car block-info))
-           (block-default-params (nth 2 block-info))
-           (block-params (nth 2 (org-link-babel-follow (format "%s()" name) 'return-info))) ;; call again to make a new sequence
-           (lang-headers-var (intern (concat "org-babel-header-args:" block-lang)))
-           (lang-headers (when (boundp lang-headers-var) (eval lang-headers-var t)))
-	   (headers-w-values (org-babel-combine-header-arg-lists
-			      org-babel-common-header-args-w-values lang-headers))
-           (headers (mapcar (apply-partially #'format ":%s") (mapcar #'symbol-name (mapcar #'car headers-w-values))))
-           params)
-      (while (not params)
-	(setq params (org-completing-read "Header Arg: " (cons (format "Default: %s" block-params) headers)))
-	(unless (string= params (format "Default: %s" block-params))
-	  (let* ((args (cdr (assoc (intern (substring params 1)) headers-w-values)))
-		 (args (if (listp args) args nil))
-		 (arg (org-completing-read
-		       (format "%s: " params)
-		       (append (and args (mapcar #'symbol-name (apply #'append args)))
-			       (list (alist-get (intern params) block-params))))))
-            (setf (alist-get (intern params) block-params) arg)
-            (setq params nil))))
-      (setq params (seq-difference block-params block-default-params))
-      (let ((var-params (alist-get :var params)))
-	(setq params (seq-difference params (list (cons :var (alist-get :var params)))))
-	(when params (setq params (s-join " " (mapcar (lambda (el) (format "%s %s" (car el) (cdr el))) params))))
-	(when var-params (setq var-params (format "%s" var-params)))
-	(format "babel:%s[%s](%s)" name (or params "") (or var-params "")))))
+(defun org-link-babel-complete ()
+  "Complete babel: link at point."
+  (let* ((name (completing-read "Source block name: " (org-babel-src-block-names)))
+	 (block-info (org-link-babel-follow (format "%s()" name) 'return-info))
+         (block-lang (car block-info))
+         (block-default-params (nth 2 block-info))
+         (block-params (nth 2 (org-link-babel-follow (format "%s()" name) 'return-info))) ;; call again to make a new sequence
+         (lang-headers-var (intern (concat "org-babel-header-args:" block-lang)))
+         (lang-headers (when (boundp lang-headers-var) (eval lang-headers-var t)))
+	 (headers-w-values (org-babel-combine-header-arg-lists
+			    org-babel-common-header-args-w-values lang-headers))
+         (headers (mapcar (apply-partially #'format ":%s") (mapcar #'symbol-name (mapcar #'car headers-w-values))))
+         params)
+    (while (not params)
+      (setq params (org-completing-read "Header Arg: " (cons (format "Default: %s" block-params) headers)))
+      (unless (string= params (format "Default: %s" block-params))
+	(let* ((args (cdr (assoc (intern (substring params 1)) headers-w-values)))
+	       (args (if (listp args) args nil))
+	       (arg (org-completing-read
+		     (format "%s: " params)
+		     (append (and args (mapcar #'symbol-name (apply #'append args)))
+			     (list (alist-get (intern params) block-params))))))
+          (setf (alist-get (intern params) block-params) arg)
+          (setq params nil))))
+    (setq params (seq-difference block-params block-default-params))
+    (let ((var-params (alist-get :var params)))
+      (setq params (seq-difference params (list (cons :var (alist-get :var params)))))
+      (when params (setq params (s-join " " (mapcar (lambda (el) (format "%s %s" (car el) (cdr el))) params))))
+      (when var-params (setq var-params (format "%s" var-params)))
+      (format "babel:%s[%s](%s)" name (or params "") (or var-params "")))))
 
-  (org-link-set-parameters "babel" 
-			   :follow #'org-link-babel-follow
-                           :complete #'org-link-babel-complete)
-  
+(org-link-set-parameters "babel" 
+			 :follow #'org-link-babel-follow
+                         :complete #'org-link-babel-complete)
+
 #+end_src
 **** NEXT Org-ref
 :PROPERTIES:
@@ -4002,7 +4002,7 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 - =:SHOWFROMDATE:= :: The purpose of this is to be able to postpone the scheduled tasks for future if I cannot do it. The property is formatted as an org date.
      This property is especially useful if there is something more pressing, so that there is a temptation to reschedule less pressing event to another day. If the more pressing task is done earlier than expected, the postponed tasks can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
      #+begin_src emacs-lisp
-     (add-to-list 'org-default-properties "SHOWFROMDATE")
+(add-to-list 'org-default-properties "SHOWFROMDATE")
 (bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-mode-map)
 (bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-agenda-mode-map)
 (add-to-list 'org-agenda-bulk-custom-functions '(?F org-command-set-SHOWFROMDATE-property))
@@ -4058,7 +4058,7 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
      #+end_src
 - =:SHOWDATES:= (always inheriting) :: It contains dairy =sexps= to set when the project should be shown. For example, I may want to work on Saturday once or twice, but the working items should not be shown on weekend normally. Hence, I can define it. Or some things can only be done on specific dates (say, going to some shop, which is open few days a week only) 
      #+begin_src emacs-lisp
-     (add-to-list 'org-default-properties "SHOWDATES")
+(add-to-list 'org-default-properties "SHOWDATES")
 (defun org-agenda-skip-noshowdates()
   "Skip agenda item if :SHOWDATES: property sexp is not matching today"
   (save-restriction
@@ -4088,12 +4088,12 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
      #+end_src
 - =:CREATED:= :: Entry creation time. Inserted for all the new headings.
 		 #+BEGIN_SRC emacs-lisp
-   (defun yant/insert-heading-created-property (&optional time)
-     "Add :CREATED: property to the task at point and set it to current time.
+(defun yant/insert-heading-created-property (&optional time)
+  "Add :CREATED: property to the task at point and set it to current time.
 The property is set to TIME if it is supplied."
-     (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp time t t))))
-   (add-hook 'org-insert-heading-hook 'yant/insert-heading-created-property 'append)
-   #+END_SRC
+  (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp time t t))))
+(add-hook 'org-insert-heading-hook 'yant/insert-heading-created-property 'append)
+		 #+END_SRC
 - =:BLOCKER:= :: Conditions to be met before allowing the entry to be
                  marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]]) 
 - =:TRIGGER:= :: Actions to be done when the item is marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
@@ -4483,30 +4483,30 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
   - *Agenda view for captured tasks* :: tasks, which needs to be refiled (with =:INBOX:= tag)
 - I use different skip functions here in agenda to filter the agenda. Some of them are used, some of them are just kept here for future if I need them. 
   #+begin_src emacs-lisp
-  (defun bh/skip-non-stuck-projects-and-non-next-subprojects ()
-    "Skip trees that are not stuck projects"
+(defun bh/skip-non-stuck-projects-and-non-next-subprojects ()
+  "Skip trees that are not stuck projects"
   ;; (bh/list-sublevels-for-projects-indented)
-    (save-restriction
-      (widen)
-      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+  (save-restriction
+    (widen)
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
 					;      (if (bh/is-project-p)
-	(if (and (bh/is-project-p)
-		 (or (not (bh/is-subproject-p))
-		     (member (org-get-todo-state) (list "NEXT"))))
-	    (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-		   (has-next ))
-	      (save-excursion
-		(forward-line 1)
-		(while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-		  (unless (member "WAITING" (org-get-tags nil t))
-		    (setq has-next t))))
-	      (if has-next
-		  next-headline
-		nil)) ; a stuck project, has subtasks but no next task
-	  next-headline))))
+      (if (and (bh/is-project-p)
+	       (or (not (bh/is-subproject-p))
+		   (member (org-get-todo-state) (list "NEXT"))))
+	  (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+		 (has-next ))
+	    (save-excursion
+	      (forward-line 1)
+	      (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+		(unless (member "WAITING" (org-get-tags nil t))
+		  (setq has-next t))))
+	    (if has-next
+		next-headline
+	      nil)) ; a stuck project, has subtasks but no next task
+	next-headline))))
 (defun bh/skip-non-projects ()
   "Skip trees that are not projects"
-;; (bh/list-sublevels-for-projects-indented)
+  ;; (bh/list-sublevels-for-projects-indented)
   ;;  (if (save-restriction (bh/skip-non-stuck-projects-and-non-next-subprojects))
   (save-restriction
     (widen)
@@ -4602,7 +4602,7 @@ SUBTREE-END is used as end of the entry if not nil."
 	nil))))
   #+end_src
   #+begin_src emacs-lisp
-  (defvar bh/hide-scheduled-and-waiting-next-tasks 't)
+(defvar bh/hide-scheduled-and-waiting-next-tasks 't)
 (setq org-agenda-skip-function nil)
 (define-advice org-agenda-skip (:before (&rest args) make-sure-right-org-environment)
   ""
@@ -4643,7 +4643,8 @@ SUBTREE-END is used as end of the entry if not nil."
 	      (" " "Agenda"
 	       ((agenda ""
 			((org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t")
-			 (org-agenda-skip-function '(zin/org-agenda-skip-tag "HOLD"))))
+			 (org-agenda-skip-function '(or (zin/org-agenda-skip-tag "HOLD")
+							(org-agenda-skip-entry-if 'nottodo 'any)))))
 		(tags-todo "INBOX-DEFAULT"
 			   ((org-agenda-overriding-header "Inbox")
 			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'notscheduled))
@@ -4794,7 +4795,7 @@ This agenda show the items for the current day and time.
 	    (re-search-forward (org-get-limited-outline-regexp) nil 'noerror))
 	  (point))))))
   #+end_src
-
+  
 *************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
 SCHEDULED: <2019-05-19 Sun>
 :PROPERTIES:
@@ -4822,15 +4823,15 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 #+END_SRC
 + all the items scheduled for today and matching =:SHOWFROMTIME:=
   #+begin_src emacs-lisp
-  (defun org-agenda-skip-not-today ()
-    "Skip items which a not scheduled today."
-    (save-restriction
-      (widen)
-      (let* ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
-	     (scheduleddate (subseq (decode-time (org-get-scheduled-time (point))) 3 6))
-	     (currentdate	(list (nth 1 org-agenda-current-date) (nth 0 org-agenda-current-date) (nth 2 org-agenda-current-date)))
-	     )
-	(if (equal scheduleddate currentdate) nil next-headline))))
+(defun org-agenda-skip-not-today ()
+  "Skip items which a not scheduled today."
+  (save-restriction
+    (widen)
+    (let* ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
+	   (scheduleddate (subseq (decode-time (org-get-scheduled-time (point))) 3 6))
+	   (currentdate	(list (nth 1 org-agenda-current-date) (nth 0 org-agenda-current-date) (nth 2 org-agenda-current-date)))
+	   )
+      (if (equal scheduleddate currentdate) nil next-headline))))
   #+end_src
 + items from diary/with timestamps (shown by default in org)
 + habits
@@ -5686,7 +5687,7 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
 (defvar org-time-balance-update-time nil
   "Time of the last update of `org-time-balance'.")
 (use-package savehist
-:config
+  :config
   (add-to-list 'savehist-additional-variables 'org-time-balance)
   (add-to-list 'savehist-additional-variables 'org-time-balance-save-time))
 
@@ -6616,7 +6617,7 @@ I use it to activate alternative major modes in source blocks.
 				   :tail-matcher "^[ \t]*#\\+end_src"
 				   :head-adjust-face nil
 				   :mode-matcher #'org-source-block-major-mode
-				 :indent-offset org-edit-src-content-indentation))
+				   :indent-offset org-edit-src-content-indentation))
     ))
 #+end_src
 
@@ -6628,33 +6629,33 @@ It is not acceptable for me and it is not easy to re-implement by myself.
 Leaving the code below for reference.
 
 #+begin_src emacs-lisp :tangle no
-  (use-package mmm-mode
-    :ensure t
-    :disabled
-    :init
-    (setq mmm-global-mode 'auto
-	  mmm-submode-decoration-level 2)
-    (custom-set-faces '(mmm-declaration-submode-face ((t :background "#D1D4D9"))))
-    :config
-    (defun mmm-here-org-block-get-mode (heading)
-      "Detect the submode to be used with the current org source block."
-      (string-match "%\\#\\+begin_src +\\([^ ]+\\)" heading)
-      (let ((lang (match-string-no-properties 1)))
-	(if lang
-	    (org-src--get-lang-mode lang)
-	  (signal 'mmm-no-matching-submode nil))))
+(use-package mmm-mode
+  :ensure t
+  :disabled
+  :init
+  (setq mmm-global-mode 'auto
+	mmm-submode-decoration-level 2)
+  (custom-set-faces '(mmm-declaration-submode-face ((t :background "#D1D4D9"))))
+  :config
+  (defun mmm-here-org-block-get-mode (heading)
+    "Detect the submode to be used with the current org source block."
+    (string-match "%\\#\\+begin_src +\\([^ ]+\\)" heading)
+    (let ((lang (match-string-no-properties 1)))
+      (if lang
+	  (org-src--get-lang-mode lang)
+	(signal 'mmm-no-matching-submode nil))))
   
-    (mmm-add-classes '((org-mode-block
-			:face mmm-declaration-submode-face
-			:front "^\\#\\+begin_src +\\([a-zA-Z-]+\\).*$"
-			:front-offset (end-of-line 1)
-			:back "^\\#\\+end_src$"
-			:back-offset (beginning-of-line)
-			:match-submode mmm-here-org-block-get-mode
-			:delimiter-mode nil
-			)))
-    (mmm-add-mode-ext-class 'org-mode nil 'org-mode-block)
-    )
+  (mmm-add-classes '((org-mode-block
+		      :face mmm-declaration-submode-face
+		      :front "^\\#\\+begin_src +\\([a-zA-Z-]+\\).*$"
+		      :front-offset (end-of-line 1)
+		      :back "^\\#\\+end_src$"
+		      :back-offset (beginning-of-line)
+		      :match-submode mmm-here-org-block-get-mode
+		      :delimiter-mode nil
+		      )))
+  (mmm-add-mode-ext-class 'org-mode nil 'org-mode-block)
+  )
 #+end_src
 
 **** Backends	
@@ -6894,11 +6895,11 @@ The list is saved between Emacs sessions.")
 
   (bind-key "C-c C-*" #'yant/toggle-buffer-auto-tangle org-mode-map))
 
-  (defun yant/org-babel-tangle-current-buffer-async ()
-    "Tangle current buffer asynchronously."
-    (when (and (eq major-mode 'org-mode)
-	       (member (buffer-file-name) yant/auto-tangle-list))
-      (yant/org-babel-tangle-async (buffer-file-name))))
+(defun yant/org-babel-tangle-current-buffer-async ()
+  "Tangle current buffer asynchronously."
+  (when (and (eq major-mode 'org-mode)
+	     (member (buffer-file-name) yant/auto-tangle-list))
+    (yant/org-babel-tangle-async (buffer-file-name))))
 
 (add-hook 'after-save-hook #'yant/org-babel-tangle-current-buffer-async)
 #+end_src
@@ -6925,13 +6926,13 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 :END:
 - I do not want bigger items font because I tend to use items a lot
   #+begin_src emacs-lisp
-  (custom-set-faces
-   '(org-level-1 ((t (:inherit outline-1 :height 1.0))))
-   '(org-level-2 ((t (:inherit outline-2 :height 1.0))))
-   '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
-   '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
-   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
-   )
+(custom-set-faces
+ '(org-level-1 ((t (:inherit outline-1 :height 1.0))))
+ '(org-level-2 ((t (:inherit outline-2 :height 1.0))))
+ '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
+ '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
+ '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
+ )
   #+end_src
 - prefer bullets instead of stars in items
   #+begin_src emacs-lisp
@@ -6946,30 +6947,30 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
   #+end_src
 - prefer to replace default =...= by something more distinct if item is folded
   #+BEGIN_SRC emacs-lisp
-  (setq org-ellipsis " ⤵")
+(setq org-ellipsis " ⤵")
 (set-face-underline 'org-ellipsis nil)
   #+END_SRC
 - no blanks in items
   #+begin_src emacs-lisp
-  ;;turn off blanks in a new entries
+;;turn off blanks in a new entries
 (setq org-blank-before-new-entry (quote ((heading)
 					 (plain-list-item . auto))))
 (setq org-cycle-separator-lines 0)
   #+end_src
 - hide emphasis markers 
   #+begin_src emacs-lisp
-  (setq org-hide-emphasis-markers t)
+(setq org-hide-emphasis-markers t)
   #+end_src
 - keyword faces
   #+begin_src emacs-lisp
-  (setq org-todo-keyword-faces
-	(quote (("TODO" :foreground "red" :weight bold)
-      		("NEXT" :foreground "blue" :weight bold)
-      		("DONE" :foreground "forest green" :weight bold)
-      		("FAILED" :foreground "red" :weight bold)
-      		("WAITING" :foreground "orange" :weight bold)
-      		("HOLD" :foreground "magenta" :weight bold)
-      		("CANCELLED" :foreground "gray80" :weight bold))))
+(setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+      	      ("NEXT" :foreground "blue" :weight bold)
+      	      ("DONE" :foreground "forest green" :weight bold)
+      	      ("FAILED" :foreground "red" :weight bold)
+      	      ("WAITING" :foreground "orange" :weight bold)
+      	      ("HOLD" :foreground "magenta" :weight bold)
+      	      ("CANCELLED" :foreground "gray80" :weight bold))))
 (use-package pretty-symbols
   :disabled t 
   :config
@@ -7026,31 +7027,31 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 #+end_src
 - do not highlight line below mouse
   #+begin_src emacs-lisp
-  (defun yant/remove-mouse-highlight ()
-    "Remove all mouse highlights in buffer."
-    (let ((inhibit-read-only t))
-      (remove-text-properties
-       (point-min) (point-max) '(mouse-face t))))
+(defun yant/remove-mouse-highlight ()
+  "Remove all mouse highlights in buffer."
+  (let ((inhibit-read-only t))
+    (remove-text-properties
+     (point-min) (point-max) '(mouse-face t))))
 (add-hook 'org-agenda-finalize-hook
 	  #'yant/remove-mouse-highlight)
   #+end_src
 - highlight current line in agenda
   #+begin_src emacs-lisp
-  (use-package hl-line
-    :if init-flag
+(use-package hl-line
+  :if init-flag
 
-    :diminish global-hl-line-mode
-    :config
-    (progn
-      (add-hook 'org-agenda-mode-hook
-		'(lambda () (hl-line-mode 1))
-		'append)
-      )
+  :diminish global-hl-line-mode
+  :config
+  (progn
+    (add-hook 'org-agenda-mode-hook
+	      '(lambda () (hl-line-mode 1))
+	      'append)
     )
+  )
   #+end_src
 - prefix for entries
   #+begin_src emacs-lisp
-  (setq org-agenda-scheduled-leaders '("* today" "* %2d d. ago"))
+(setq org-agenda-scheduled-leaders '("* today" "* %2d d. ago"))
 (defun yant/format-summary-for-agenda ()
   "Format the contents of :SUMMARY: property to show in agenda view."
   (let ((summary (org-entry-get (point) "SUMMARY" 'INHERIT)))
@@ -7075,7 +7076,7 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 #+begin_src emacs-lisp
 (setq org-src-fontify-natively t
       org-src-tab-acts-natively t
-    org-src-preserve-indentation t
+      org-src-preserve-indentation t
       org-hide-block-startup nil)
 (set-face-background 'org-block "Gainsboro")
 #+end_src
@@ -7225,81 +7226,81 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :END:
 #+begin_src emacs-lisp
 (when init-flag
-(bind-keys 
- ("C-c C-S-l" . org-store-link)
- ("C-c m" . org-capture)
- ("C-c c" . org-clock-goto)
- :map boon-goto-map
- ("a" . org-agenda)
- ("C-t" . gtd-open)
- ("C-n" . notes-open)
- )
-(bind-keys :map org-mode-map
-	   ("C-c C-+" . add-current-buffer-to-agenda-files)
-	   ("C-c C--" . remove-current-buffer-from-agenda-files)
-	   ("C-c e" . yant/add-email-to-task) 
-	   ("C-c i" . org-clock-in)
-	   ("C-c o" . org-clock-out)
-           :map org-agenda-mode-map
-           ("s" . org-agenda-bulk-mark)
-           ("S" . org-agenda-bulk-mark-all)
-	   ("a" . org-agenda-bulk-unmark)
-	   ("A" . org-agenda-bulk-unmark-all))
+  (bind-keys 
+   ("C-c C-S-l" . org-store-link)
+   ("C-c m" . org-capture)
+   ("C-c c" . org-clock-goto)
+   :map boon-goto-map
+   ("a" . org-agenda)
+   ("C-t" . gtd-open)
+   ("C-n" . notes-open)
+   )
+  (bind-keys :map org-mode-map
+	     ("C-c C-+" . add-current-buffer-to-agenda-files)
+	     ("C-c C--" . remove-current-buffer-from-agenda-files)
+	     ("C-c e" . yant/add-email-to-task) 
+	     ("C-c i" . org-clock-in)
+	     ("C-c o" . org-clock-out)
+             :map org-agenda-mode-map
+             ("s" . org-agenda-bulk-mark)
+             ("S" . org-agenda-bulk-mark-all)
+	     ("a" . org-agenda-bulk-unmark)
+	     ("A" . org-agenda-bulk-unmark-all))
 
-(defun org-agenda-goto-and-narrow ()
-  "Run `org-agenda-goto' and narrow to subtree."
-  (interactive)
-  (org-agenda-goto)
-  (org-narrow-to-subtree)
-  (delete-other-windows))
-
-(bind-keys :map org-agenda-mode-map
-	   ("<tab>" . org-agenda-goto-and-narrow))
-
-(use-package meta-functions
-  :config
-  (add-to-list 'meta-functions-meta-move-line-up-alist '(org-mode . org-metaup))
-  (add-to-list 'meta-functions-meta-move-line-down-alist '(org-mode . org-metadown))
-  (add-to-list 'meta-functions-meta-move-element-up-alist '(org-mode . org-shiftmetaup))
-  (add-to-list 'meta-functions-meta-move-element-down-alist '(org-mode . org-shiftmetadown))
-  (add-to-list 'meta-functions-meta-move-element-left-alist '(org-mode . org-shiftmetaleft))
-  (add-to-list 'meta-functions-meta-move-element-right-alist '(org-mode . org-shiftmetaright))
-  (add-to-list 'meta-functions-meta-move-line-left-alist '(org-mode . org-metaleft))
-  (add-to-list 'meta-functions-meta-move-line-right-alist '(org-mode . org-metaright))
-  (add-to-list 'meta-functions-meta-insert-enclosure-new-line-alist '(org-mode . org-insert-heading-respect-content))
-  (add-to-list 'meta-functions-meta-insert-active-enclosure-new-line-alist '(org-mode . org-insert-todo-heading-respect-content))
-  (add-to-list 'meta-functions-meta-new-line-alist '(org-mode . org-return))
-  (defun yant/org-smart-meta-down-element ()
-    "Move down org item if at heading, move down paragraph otherwise."
+  (defun org-agenda-goto-and-narrow ()
+    "Run `org-agenda-goto' and narrow to subtree."
     (interactive)
-    (if (org-at-heading-p)
-	(call-interactively #'org-next-visible-heading)
-      (forward-paragraph)))
-  (defun yant/org-smart-meta-up-element ()
-    "Move up org item if at heading, move up paragraph otherwise."
-    (interactive)
-    (if (org-at-heading-p)
-	(call-interactively #'org-previous-visible-heading)
-      (backward-paragraph)))  
-  (add-to-list 'meta-functions-meta-down-element-alist '(org-mode . yant/org-smart-meta-down-element))
-  (add-to-list 'meta-functions-meta-up-element-alist '(org-mode . yant/org-smart-meta-up-element))
-  
-  (add-to-list 'meta-functions-meta-move-line-up-alist '(org-struct-mode . org-metaup))
-  (add-to-list 'meta-functions-meta-move-line-down-alist '(org-struct-mode . org-metadown))
-  (add-to-list 'meta-functions-meta-move-element-up-alist '(org-struct-mode . org-shiftmetaup))
-  (add-to-list 'meta-functions-meta-move-element-down-alist '(org-struct-mode . org-shiftmetadown))
-  (add-to-list 'meta-functions-meta-move-element-left-alist '(org-struct-mode . org-shiftmetaleft))
-  (add-to-list 'meta-functions-meta-move-element-right-alist '(org-struct-mode . org-shiftmetaright))
-  (add-to-list 'meta-functions-meta-move-line-left-alist '(org-struct-mode . org-metaleft))
-  (add-to-list 'meta-functions-meta-move-line-right-alist '(org-struct-mode . org-metaright))
-  (add-to-list 'meta-functions-meta-insert-enclosure-new-line-alist '(org-struct-mode . org-insert-heading-respect-content))
-  (add-to-list 'meta-functions-meta-insert-active-enclosure-new-line-alist '(org-struct-mode . org-insert-todo-heading-respect-content))
-  (add-to-list 'meta-functions-meta-new-line-alist '(org-struct-mode . org-return))
-  (add-to-list 'meta-functions-meta-up-alist '(org-agenda-mode . org-agenda-previous-line))
-  (add-to-list 'meta-functions-meta-down-alist '(org-agenda-mode . org-agenda-next-line))
-  (meta-functions-update-function-definitions))
+    (org-agenda-goto)
+    (org-narrow-to-subtree)
+    (delete-other-windows))
 
-)
+  (bind-keys :map org-agenda-mode-map
+	     ("<tab>" . org-agenda-goto-and-narrow))
+
+  (use-package meta-functions
+    :config
+    (add-to-list 'meta-functions-meta-move-line-up-alist '(org-mode . org-metaup))
+    (add-to-list 'meta-functions-meta-move-line-down-alist '(org-mode . org-metadown))
+    (add-to-list 'meta-functions-meta-move-element-up-alist '(org-mode . org-shiftmetaup))
+    (add-to-list 'meta-functions-meta-move-element-down-alist '(org-mode . org-shiftmetadown))
+    (add-to-list 'meta-functions-meta-move-element-left-alist '(org-mode . org-shiftmetaleft))
+    (add-to-list 'meta-functions-meta-move-element-right-alist '(org-mode . org-shiftmetaright))
+    (add-to-list 'meta-functions-meta-move-line-left-alist '(org-mode . org-metaleft))
+    (add-to-list 'meta-functions-meta-move-line-right-alist '(org-mode . org-metaright))
+    (add-to-list 'meta-functions-meta-insert-enclosure-new-line-alist '(org-mode . org-insert-heading-respect-content))
+    (add-to-list 'meta-functions-meta-insert-active-enclosure-new-line-alist '(org-mode . org-insert-todo-heading-respect-content))
+    (add-to-list 'meta-functions-meta-new-line-alist '(org-mode . org-return))
+    (defun yant/org-smart-meta-down-element ()
+      "Move down org item if at heading, move down paragraph otherwise."
+      (interactive)
+      (if (org-at-heading-p)
+	  (call-interactively #'org-next-visible-heading)
+	(forward-paragraph)))
+    (defun yant/org-smart-meta-up-element ()
+      "Move up org item if at heading, move up paragraph otherwise."
+      (interactive)
+      (if (org-at-heading-p)
+	  (call-interactively #'org-previous-visible-heading)
+	(backward-paragraph)))  
+    (add-to-list 'meta-functions-meta-down-element-alist '(org-mode . yant/org-smart-meta-down-element))
+    (add-to-list 'meta-functions-meta-up-element-alist '(org-mode . yant/org-smart-meta-up-element))
+    
+    (add-to-list 'meta-functions-meta-move-line-up-alist '(org-struct-mode . org-metaup))
+    (add-to-list 'meta-functions-meta-move-line-down-alist '(org-struct-mode . org-metadown))
+    (add-to-list 'meta-functions-meta-move-element-up-alist '(org-struct-mode . org-shiftmetaup))
+    (add-to-list 'meta-functions-meta-move-element-down-alist '(org-struct-mode . org-shiftmetadown))
+    (add-to-list 'meta-functions-meta-move-element-left-alist '(org-struct-mode . org-shiftmetaleft))
+    (add-to-list 'meta-functions-meta-move-element-right-alist '(org-struct-mode . org-shiftmetaright))
+    (add-to-list 'meta-functions-meta-move-line-left-alist '(org-struct-mode . org-metaleft))
+    (add-to-list 'meta-functions-meta-move-line-right-alist '(org-struct-mode . org-metaright))
+    (add-to-list 'meta-functions-meta-insert-enclosure-new-line-alist '(org-struct-mode . org-insert-heading-respect-content))
+    (add-to-list 'meta-functions-meta-insert-active-enclosure-new-line-alist '(org-struct-mode . org-insert-todo-heading-respect-content))
+    (add-to-list 'meta-functions-meta-new-line-alist '(org-struct-mode . org-return))
+    (add-to-list 'meta-functions-meta-up-alist '(org-agenda-mode . org-agenda-previous-line))
+    (add-to-list 'meta-functions-meta-down-alist '(org-agenda-mode . org-agenda-next-line))
+    (meta-functions-update-function-definitions))
+
+  )
 #+end_src
 
 **** Boon integration
