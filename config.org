@@ -1006,6 +1006,22 @@ Interaction with Github
           (lambda (a b) (> (plist-get a :number)
 			   (plist-get b :number))))))
 #+END_SRC
+*** TODO Show file changes in the fringe
+:PROPERTIES:
+:CREATED:  [2019-07-12 Fri 08:51]
+:ID:       183bac3b-5d30-4123-af4c-6012d7625766
+:END:
+
+#+begin_src emacs-lisp
+(use-package git-gutter-fringe+
+  :if init-flag
+  :ensure t
+  :init
+  (use-package fringe-helper)
+  :config
+  (git-gutter))
+#+end_src
+
 ** Text highlight & coloring
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
