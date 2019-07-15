@@ -4941,6 +4941,26 @@ Since my org files are really very large, it usually takes a lot of time to rebu
 #+end_src
 
 **** TODO Ever standing project list
+**** NEXT [#A] org-timeline
+SCHEDULED: <2019-08-02 Fri>
+:PROPERTIES:
+:CREATED:  [2019-07-11 Thu 14:51]
+:ID:       2e34a6d8-e1c6-4261-aaf0-40764571b445
+:SHOWFROMDATE: 2019-08-02
+:END:
+:LOGBOOK:
+CLOCK: [2019-07-12 Fri 17:10]--[2019-07-12 Fri 17:44] =>  0:34
+CLOCK: [2019-07-12 Fri 17:01]--[2019-07-12 Fri 17:07] =>  0:06
+:END:
+
+#+begin_src emacs-lisp
+(use-package org-timeline
+  :if init-flag
+  :ensure t
+  :config
+  (add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
+#+end_src
+
 **** =CalFW=
 :PROPERTIES:
 :ID:       1d03f6e7-0f52-4aad-926e-a6762cd2d7dc
