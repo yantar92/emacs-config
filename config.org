@@ -2435,8 +2435,9 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (add-to-list 'meta-functions-meta-down-element-alist '(ledger-mode . ledger-navigate-next-xact-or-directive))
     (add-to-list 'meta-functions-meta-up-element-alist '(ledger-mode . ledger-navigate-prev-xact-or-directive))
     (meta-functions-update-function-definitions))
-  )
-#+end_src
+)
+#+END_SRC
+
 *** Do not end the completions with string
 :PROPERTIES:
 :CREATED:  [2019-03-23 Sat 07:31]
@@ -2590,6 +2591,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 *** TODO Fix page number in boon modeline when the pdf is opened in a new frame
 :PROPERTIES:
 :CREATED:  [2019-07-03 Wed 18:14]
+:ID:       5fb47379-ccda-4f17-a834-7796b0f188dc
 :END:
 It's magic
 #+begin_src emacs-lisp
@@ -6037,7 +6039,6 @@ All these templates generally record the creation time in =:CREATED:=
 )
 		   #+end_src
 
-
 *** Refile
 :PROPERTIES:
 :ID:       c048269c-57b9-434a-a19b-6da8d70e5e0f
@@ -7164,7 +7165,6 @@ Turning on org element cache in attempt to make it faster.
 
 *************** TODO check if it is good enough
 *************** END
-
 
 *** Notmuch interaction
 :PROPERTIES:
