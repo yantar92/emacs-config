@@ -2611,7 +2611,7 @@ It's magic
   :init
   (use-package pdf-view
     :config
-    (setq pdf-cache-prefetch-delay 2)))
+    (setq pdf-cache-prefetch-delay 4)))
 #+end_src
 ** Utils
 :PROPERTIES:
