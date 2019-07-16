@@ -1688,6 +1688,17 @@ Undo window configuration changes
 (advice-add 'find-file-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
 **** Search directories
+***** Disk usage
+:PROPERTIES:
+:CREATED:  [2019-07-15 Mon 22:04]
+:END:
+
+#+begin_src emacs-lisp
+(use-package disk-usage
+  :if init-flag
+  :ensure t)
+#+end_src
+
 ***** NEXT Dired
 :PROPERTIES:
 :ID:       66f5dab7-add6-48c2-9824-fed4ef202b7a
