@@ -4828,7 +4828,7 @@ This agenda show the items for the current day and time.
 *************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
 SCHEDULED: <2019-05-19 Sun>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-07-16
+:SHOWFROMDATE: 2019-08-06
 :END:
 :LOGBOOK:
 CLOCK: [2019-05-06 Mon 12:49]--[2019-05-06 Mon 14:14] =>  1:25
