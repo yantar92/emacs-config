@@ -6310,13 +6310,13 @@ In the case if I want to keep the task and notes, I just add =:NOARCHIVE:= tag t
 	  subtree-end
 	(if (member (org-get-todo-state) org-done-keywords)
 	    (let* ((daynr (string-to-number (format-time-string "%d" (current-time))))
-		   (a-month-ago (* 60 60 24 (+ daynr 1)))
-		   (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
+		   ;; (a-month-ago (* 60 60 24 (+ daynr 1)))
+		   ;; (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
 		   (this-month (format-time-string "%Y-%m-" (current-time)))
 		   (subtree-is-current (save-excursion
 					 (forward-line 1)
 					 (and (< (point) subtree-end)
-					      (re-search-forward (concat last-month "\\|" this-month) subtree-end t)))))
+					      (re-search-forward this-month subtree-end t)))))
 	      (if subtree-is-current
 		  next-item ; Has a date in this month or last month, skip it
 		nil))  ; available to archive
