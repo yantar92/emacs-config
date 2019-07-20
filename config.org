@@ -3224,7 +3224,18 @@ Use =orgalist=.
   (use-package orgalist :ensure t :init
     (add-hook 'message-mode-hook 'orgalist-mode)))
 #+end_src
+**** TODO Use footnote mode in emails
+:PROPERTIES:
+:CREATED:  [2019-07-19 Fri 22:01]
+:ID:       82254965-b804-41ef-922f-f82cbe77dbb8
+:END:
 
+#+begin_src emacs-lisp
+(use-package footnote
+:hook message-mode-hook
+:init
+(setq footnote-prefix [(control ?c) ?f]))
+#+end_src
 ** Org mode
 :PROPERTIES:
 :ID:       58045c39-ffd5-4ccc-bc9d-49048c437f42
