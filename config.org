@@ -4979,11 +4979,11 @@ These items should have =:INBOX:= tag. Also, if both project and subproject have
       (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point)))
 	    (next-headline (save-excursion (or (outline-next-heading) (point-max))))
 	    result)
-	(if (not (member "INBOX" (org-get-tags)))
+	(if (not (member "INBOX" (org-get-tags-at)))
 	    next-headline
 	  (while (and (not result)
 		      (org-up-heading-safe))
-	    (when (member "INBOX" (org-get-tags))
+	    (when (member "INBOX" (org-get-tags-at))
 	      (setq result next-headline)))
 	  result)))))
 #+END_SRC
