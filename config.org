@@ -4546,7 +4546,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 (setq org-agenda-files "~/Org/agenda_files")
 (setq org-deadline-warning-days 30)
 (setq org-agenda-span 'day)
-(setq org-agenda-sorting-strategy '((agenda deadline-down time-up habit-up priority-down timestamp-down category-keep)
+(setq org-agenda-sorting-strategy '((agenda deadline-up time-up habit-up priority-down timestamp-down category-keep)
 				    (todo priority-down category-keep)
 				    (tags priority-down category-keep)
 				    (search category-keep)))
@@ -4556,12 +4556,13 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 (setq org-habit-show-habits-only-for-today t) ; do not show habits in future if scheduled withing agenda time range. E.g. do not show future habits in week view/calendar
 #+end_src
 - I use several agenda views
-  - Focused daily agenda :: When we mark the item scheduled, it means that we need to start working on it from that day. However, it leads to a situation when there are so many items being active in agenda that it is useful to focus on what we need to do during the day. That's why I need an additional agenda which focuses on what I really need to do today, but not what I need to start today and what I have started to do which is the case for default daily agenda. 
+  - Focused daily agenda :: When we mark the item scheduled, it means that we need to start working on it from that day. However, it leads to a situation when there are so many items being active in agenda that it is useful to focus on what we need to do during the day. That's why I need an additional agenda which focuses on what I really need to do today, but not what I need to start today and what I have started to do which is the case for default daily agenda. See [[id:a6054643-449e-48d7-afff-4155465efc19][Focused daily agenda]].
   - Normal daily agenda :: Standard agenda with minor tweaks.
-  - Full agenda for GTD self-check :: see below.
+  - Full agenda for GTD self-check :: see [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]].
   - List of projects agenda :: List of all active projects.
   - *Agenda view for captured tasks* :: tasks, which needs to be refiled (with =:INBOX:= tag)
-- I use different skip functions here in agenda to filter the agenda. Some of them are used, some of them are just kept here for future if I need them. 
+
+I use different skip functions here in agenda to filter the agenda. Some of them are used, some of them are just kept here for future if I need them. 
   #+begin_src emacs-lisp
 (defun bh/skip-non-stuck-projects-and-non-next-subprojects ()
   "Skip trees that are not stuck projects"
@@ -4793,7 +4794,7 @@ SUBTREE-END is used as end of the entry if not nil."
 							  (bh/skip-non-tasks)
 							  (and (not (zin/org-agenda-skip-tag "SKIP"))
 							       (bh/skip-subprojects))
-							  ;;(zin/org-agenda-skip-tag "NODEADLINE")
+							  (zin/org-agenda-skip-tag "NODEADLINE")
 							  (bh/skip-habits)))))))
 	       nil))))
   #+end_src
