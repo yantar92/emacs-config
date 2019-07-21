@@ -111,69 +111,95 @@ There are various options, which can improve the performance.
 :PROPERTIES:
 :ID:       4c0a06f9-9e69-4ead-b570-e3143fa0d61d
 :END:
-#+NAME: package-archives-table
-| Name  | URL                           |
-|-------+-------------------------------|
-| MELPA | https://melpa.org/packages/    |
-| ELPA  | http://tromey.com/elpa/       |
-| gnu   | http://elpa.gnu.org/packages/ |
-| org   | http://orgmode.org/elpa/      |
 
-#+NAME: parse-package-archives-table 
-#+BEGIN_SRC emacs-lisp :tangle no :var packages=package-archives-table
-(mapcar (lambda(el) (cons (car el) (cadr el))) packages)
-#+END_SRC
+Instead of the default emacs package manager, I use =straigt.el=. 
 
-#+begin_src emacs-lisp :noweb yes
+First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as from readme)]]
+#+begin_src emacs-lisp
+  (eval-and-compile
+    (defvar bootstrap-version)
+    (let ((bootstrap-file
+	   (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+	  (bootstrap-version 5))
+      (unless (file-exists-p bootstrap-file)
+	(with-current-buffer
+	    (url-retrieve-synchronously
+	     "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+	     'silent 'inhibit-cookies)
+	  (goto-char (point-max))
+	  (eval-print-last-sexp)))
+      (load bootstrap-file nil 'nomessage)))
+#+end_src
+#+begin_src emacs-lisp
 (eval-and-compile
-  (require 'package)
-  (setq package-archives '<<parse-package-archives-table()>>
-	load-prefer-newer t
-	package-user-dir "~/.emacs.d/elpa/"
-	package--init-file-ensured t
-	package-enable-at-startup nil)
-  (unless (file-directory-p package-user-dir)
-    (make-directory package-user-dir t))
   (setq load-path (append '("~/.emacs.d/site-lisp/") load-path))
-  (setq load-path (append (directory-files "~/.emacs.d/site-lisp/" t "^[^.]" t) load-path))
-  (setq load-path (append (directory-files package-user-dir t "^[^.]" t) load-path))
-  ;; (add-hook 'after-init-hook #'package-initialize)
-  ;; (package-initialize 'NO-ACTIVATE)
-  (package-initialize)
-  )
+  (setq load-path (append (directory-files "~/.emacs.d/site-lisp/" t "^[^.]" t) load-path)))
 #+end_src
 
 - enforce =use-package=
   #+begin_src emacs-lisp
-(eval-and-compile
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package)))
-(eval-when-compile
-  (require 'use-package))
-(use-package diminish :ensure t)
-(require 'bind-key)
+    (eval-and-compile (straight-use-package 'use-package))
+    (use-package diminish :straight t)
+    (use-package bind-key)
   #+end_src
-- automatically update packages on startup
-  #+begin_src emacs-lisp
-(use-package auto-package-update
-  :ensure t
-  :config
-  (setq auto-package-update-delete-old-versions t)
-  ;;(add-hook 'window-setup-hook #'auto-package-update-maybe)
-  )
-  #+end_src
+
+- load org to make sure that obsolete built-in org version is not used 
+#+begin_src emacs-lisp
+(straight-use-package 'org-plus-contrib)
+#+end_src
+
 - prefer setting in this file over customized interface
+*************** TODO use :custom use-package keyword instead
+*************** END
   #+begin_src emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (load custom-file)
   #+end_src
+
+- use hydra to manage packages
+#+BEGIN_SRC emacs-lisp
+(use-package hydra
+  :straight t
+  :requires boon
+  :bind (:map boon-x-map
+	      ("p" . hydra-straight-helper/body))
+  :config
+  (defhydra hydra-straight-helper (:hint nil)
+    "
+_c_heck all       |_f_etch all     |_m_erge all      |_n_ormalize all   |p_u_sh all
+_C_heck package   |_F_etch package |_M_erge package  |_N_ormlize package|p_U_sh package
+----------------^^+--------------^^+---------------^^+----------------^^+------------||_q_uit||
+_r_ebuild all     |_p_ull all      |_v_ersions freeze|_w_atcher start   |_g_et recipe
+_R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_ build"
+    ("c" straight-check-all)
+    ("C" straight-check-package)
+    ("r" straight-rebuild-all)
+    ("R" straight-rebuild-package)
+    ("f" straight-fetch-all)
+    ("F" straight-fetch-package)
+    ("p" straight-pull-all)
+    ("P" straight-pull-package)
+    ("m" straight-merge-all)
+    ("M" straight-merge-package)
+    ("n" straight-normalize-all)
+    ("N" straight-normalize-package)
+    ("u" straight-push-all)
+    ("U" straight-push-package)
+    ("v" straight-freeze-versions)
+    ("V" straight-thaw-versions)
+    ("w" straight-watcher-start)
+    ("W" straight-watcher-quit)
+    ("g" straight-get-recipe)
+    ("e" straight-prune-build)
+    ("q" nil)))
+#+END_SRC
+
 ** Appearance
 :PROPERTIES:
 :ID:       5b50a90f-4f47-4244-a6ac-e3646464539d
 :END:
 *** Theme
-**** =Flatui=
+**** TODO =Flatui=
 :PROPERTIES:
 :ID:       404c54f5-26eb-4ada-8a0f-c27efc714238
 :END:
@@ -181,11 +207,11 @@ There are various options, which can improve the performance.
 - State "CANCELLED"  from              [2017-10-08 Sun 11:58]
 :END:
 #+begin_src emacs-lisp
-(use-package flatui-theme
-  :if init-flag
-  :ensure t
-  :config
-  (load-theme 'flatui t))
+  (use-package flatui-theme
+    :if init-flag
+    :straight t
+    :config
+    (load-theme 'flatui t))
 #+end_src
 - I want Source Code Pro default everywhere
   #+begin_src emacs-lisp
@@ -268,18 +294,18 @@ There are various options, which can improve the performance.
 :END:
 My screen is too wide to read text comfortably. I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer width.
 #+begin_src emacs-lisp
-(use-package centered-window
-  :if init-flag
-  :diminish centered-window-mode
-  :config
-  (defun pdf-view-mode-p (&rest args)
-    "Return non-nil if in pdf-view-mode."
-    (eq major-mode 'pdf-view-mode))
-  (add-to-list 'cwm-ignore-buffer-predicates 'pdf-view-mode-p)
-  (use-package boon 
+  (use-package centered-window
+    :if init-flag
+    :diminish centered-window-mode
     :config
-    (bind-keys :map boon-x-map ("w" . centered-window-mode)))
-  (centered-window-mode +1))
+    (defun pdf-view-mode-p (&rest args)
+      "Return non-nil if in pdf-view-mode."
+      (eq major-mode 'pdf-view-mode))
+    (add-to-list 'cwm-ignore-buffer-predicates 'pdf-view-mode-p)
+    (use-package boon
+      :config
+      (bind-keys :map boon-x-map ("w" . centered-window-mode)))
+    (centered-window-mode +1))
 #+end_src
 **** TODO Long lines handling
 :PROPERTIES:
@@ -290,10 +316,12 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 - State "TODO"       from              [2018-03-12 Mon 14:24]
 :END:
 #+begin_src emacs-lisp
-(when init-flag
+(use-package boon
+  :if init-flag
+  :config
   (bind-keys :map boon-x-map ("l" . toggle-truncate-lines)))
-(setq-default truncate-lines 't
-	      word-wrap 't)
+  (setq-default truncate-lines 't
+		word-wrap 't)
 #+end_src
 **** Buffer boundaries
 :PROPERTIES:
@@ -327,7 +355,7 @@ Show some text in buffer differently
 #+begin_src emacs-lisp
 (use-package page-break-lines
   :if init-flag
-  :ensure t
+  :straight t
   :diminish page-break-lines-mode
   :config (global-page-break-lines-mode))
 #+end_src
@@ -344,7 +372,7 @@ Show some text in buffer differently
   :disabled t
   :if init-flag
   :diminish pretty-symbols-mode
-  :ensure t
+  :straight t
   :after org
   :hook ((pretty-symbols-mode . font-lock-fontify-buffer)
 	 ((prog-mode org-mode) . pretty-symbols-mode))
@@ -410,7 +438,7 @@ Show some text in buffer differently
 #+begin_src emacs-lisp 
 (use-package latex-pretty-symbols
   :if init-flag
-  :ensure t
+  :straight t
   :config
   (global-prettify-symbols-mode t))
 #+end_src
@@ -427,17 +455,17 @@ Show some text in buffer differently
     #+begin_src emacs-lisp
 (use-package powerline
   :if init-flag
-  :ensure t
+  :straight t
   :config
   ;; (powerline-vim-theme)
   (use-package smart-mode-line
-    :ensure t
+    :straight t
     :config
     (setq powerline-arrow-shape 'arrow14)
     (sml/setup)))
 
 (use-package spaceline
-  :ensure t
+  :straight t
   :init
   (setq powerline-default-separator 'arrow-fade
         spaceline-minor-modes-separator " ")
@@ -456,18 +484,18 @@ Show some text in buffer differently
   #+end_src
 - Show boon state
   #+begin_src emacs-lisp
-(use-package boon
-  :if init-flag
-  :defer t
-  :config
-  (use-package boon-powerline
-    :config
-    (custom-set-faces '(mode-line-inactive ((t (:background "#dfe4ea" :foreground "dim gray" :box nil)))))
-    (set-face-foreground 'boon-modeline-cmd "white")
-    (set-face-foreground 'boon-modeline-ins "white")
-    (set-face-foreground 'boon-modeline-spc "white")
-    (set-face-foreground 'boon-modeline-off "white")
-    (boon-powerline-theme)))
+    (use-package boon
+      :if init-flag
+      :defer t
+      :config
+      (use-package boon-powerline
+	:config
+	(custom-set-faces '(mode-line-inactive ((t (:background "#dfe4ea" :foreground "dim gray" :box nil)))))
+	(set-face-foreground 'boon-modeline-cmd "white")
+	(set-face-foreground 'boon-modeline-ins "white")
+	(set-face-foreground 'boon-modeline-spc "white")
+	(set-face-foreground 'boon-modeline-off "white")
+	(boon-powerline-theme)))
   #+end_src
 *** Minibuffer
 :PROPERTIES:
@@ -495,7 +523,7 @@ Show some text in buffer differently
 #+begin_src emacs-lisp :tangle no
 (use-package beacon
   :if init-flag
-  :ensure t
+  :straight t
   :diminish beacon-mode
   :config
   (beacon-mode 1))
@@ -555,81 +583,82 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 #+END_SRC
 
 #+begin_src emacs-lisp :tangle ~/Git/meta-functions/meta-functions.el
-  ;;; meta-functions.el --- Define meta-functions to act differently depending on major mode -*- lexical-binding: t; -*-
+    ;;; meta-functions.el --- Define meta-functions to act differently depending on major mode -*- lexical-binding: t; -*-
 
-;; Version: 1.0
-;; Author: Ihor Radchenko <yantar92@gmail.com>
-;; Created: 10 March 2018
+  ;; Version: 1.0
+  ;; Author: Ihor Radchenko <yantar92@gmail.com>
+  ;; Created: 10 March 2018
 
-  ;;; Commentary:
+    ;;; Commentary:
 
-;; Quick implementation of meta-functions, which allows to run multiple
-;; functions, which do similar logical operations by one single "meta"
-;; function in different major modes. For example, one may want to define
-;; meta-next-line to call `next-line' normally, but
-;; `org-agenda-next-line' in org-agenda mode. Both can be binded to, say
-;; "M-j", without a need to change the key-bindings on both fundamental
-;; and org-agenda modes.
-;; Example usage:
-;; (use-package meta-functions
-;;   :init
-;;   (setq meta-funcions-list '((meta-function-1 default-function-1 "Description") (meta-function-2 default-function-2  "description")))
-;;   (setq meta-functions-meta-function-1-alist '((major-mode-1 . function-1)))
-;;   )
-;; This will define meta-function-1 and meta-function-2 to automatically
-;; choose the right real functions depending on the major mode.
+  ;; Quick implementation of meta-functions, which allows to run multiple
+  ;; functions, which do similar logical operations by one single "meta"
+  ;; function in different major modes. For example, one may want to define
+  ;; meta-next-line to call `next-line' normally, but
+  ;; `org-agenda-next-line' in org-agenda mode. Both can be binded to, say
+  ;; "M-j", without a need to change the key-bindings on both fundamental
+  ;; and org-agenda modes.
+  ;; Example usage:
+  ;; (use-package meta-functions
+  ;;   :init
+  ;;   (setq meta-funcions-list '((meta-function-1 default-function-1 "Description") (meta-function-2 default-function-2  "description")))
+  ;;   (setq meta-functions-meta-function-1-alist '((major-mode-1 . function-1)))
+  ;;   )
+  ;; This will define meta-function-1 and meta-function-2 to automatically
+  ;; choose the right real functions depending on the major mode.
 
-;;; Code:
+  ;;; Code:
+  (require 'seq)
 
-(defvar meta-functions-list '()
-  "A list of meta function names, corresponding functions to be called by default, and their description.
-Each function may have meta-functions-metafunctionname-alist variable containing pairs of major mode names
-and corresponding function to be called by meta-function in that major mode.
-The default functions will be called if the major mode is not in the alist")
+  (defvar meta-functions-list '()
+    "A list of meta function names, corresponding functions to be called by default, and their description.
+  Each function may have meta-functions-metafunctionname-alist variable containing pairs of major mode names
+  and corresponding function to be called by meta-function in that major mode.
+  The default functions will be called if the major mode is not in the alist")
 
-(defun meta-functions-add-meta-function (&rest args)
-  "Add meta function or a list of metafunctions as in `meta-functions-list' and update the definitions."
-  (setq meta-functions-list (append meta-functions-list args))
-  (meta-functions-update-function-definitions))
+  (defun meta-functions-add-meta-function (&rest args)
+    "Add meta function or a list of metafunctions as in `meta-functions-list' and update the definitions."
+    (setq meta-functions-list (append meta-functions-list args))
+    (meta-functions-update-function-definitions))
 
-(defun meta-functions-update-function-definitions ()
-  "Update definitions of all the meta-functions according the present value of `meta-functions-list'."
-  (mapc (lambda (elem)
-	  (let* ((meta-func (car elem))
-		 (default-func (cadr elem))
-		 (meta-func-description (or (car (nthcdr 2 elem))
-					    ""))
-		 (func-alist (read (concat "meta-functions-" (format "%s" `,meta-func) "-alist"))))
-	    (eval `(defvar ,func-alist '()
-		     ,(concat "List of functions to be called by `"
-			      (format "%s" meta-func)
-			      "'.\nIt is an alist containing cons of major mode name and function name to be called.")))
-	    (eval `(defun ,meta-func (&optional args)
-		     ,(concat "Meta function."
-			      (if (not (seq-empty-p meta-func-description))
-				  (concat " The description is: \""
-					  meta-func-description
-					  "\"."))
-			      "\nMeta function is calling `"
-			      (format "%s" default-func)
-			      "' by default."
-			      (and (not (seq-empty-p (eval func-alist)))
-				   (concat "\nCalling other functions in various major modes (major-mode . functions):\n"
-					   (mapconcat (lambda(elem) (message "%s . `%s'" (car elem) (cdr elem))) (eval func-alist) "\n")
-					   )))
-		     (interactive)
-		     (let ((real-func
-			    (or (alist-get major-mode ,func-alist ',default-func)
-				',default-func)))
-		       (when (fboundp real-func)
-			 (call-interactively real-func nil args)))))))
-	meta-functions-list))
+  (defun meta-functions-update-function-definitions ()
+    "Update definitions of all the meta-functions according the present value of `meta-functions-list'."
+    (mapc (lambda (elem)
+	    (let* ((meta-func (car elem))
+		   (default-func (cadr elem))
+		   (meta-func-description (or (car (nthcdr 2 elem))
+					      ""))
+		   (func-alist (read (concat "meta-functions-" (format "%s" `,meta-func) "-alist"))))
+	      (eval `(defvar ,func-alist '()
+		       ,(concat "List of functions to be called by `"
+				(format "%s" meta-func)
+				"'.\nIt is an alist containing cons of major mode name and function name to be called.")))
+	      (eval `(defun ,meta-func (&optional args)
+		       ,(concat "Meta function."
+				(if (not (seq-empty-p meta-func-description))
+				    (concat " The description is: \""
+					    meta-func-description
+					    "\"."))
+				"\nMeta function is calling `"
+				(format "%s" default-func)
+				"' by default."
+				(and (not (seq-empty-p (eval func-alist)))
+				     (concat "\nCalling other functions in various major modes (major-mode . functions):\n"
+					     (mapconcat (lambda(elem) (message "%s . `%s'" (car elem) (cdr elem))) (eval func-alist) "\n")
+					     )))
+		       (interactive)
+		       (let ((real-func
+			      (or (alist-get major-mode ,func-alist ',default-func)
+				  ',default-func)))
+			 (when (fboundp real-func)
+			   (call-interactively real-func nil args)))))))
+	  meta-functions-list))
 
-(meta-functions-update-function-definitions)
+  (meta-functions-update-function-definitions)
 
-(provide 'meta-functions)
+  (provide 'meta-functions)
 
-  ;;; meta-functions.el ends here
+    ;;; meta-functions.el ends here
 #+end_src
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
@@ -667,7 +696,7 @@ It should be noted, that the same can be done via setting the proper bindings fo
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
-  :ensure t
+  :straight t
   :diminish boon-local-mode
   :init
   (use-package magit)
@@ -714,7 +743,7 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
-  :ensure t
+  :straight t
   )
 #+END_SRC
 **** Ignore some system keybindings, which are used in my WM (annoying unknown keybinding error)
@@ -745,7 +774,7 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 :ID:       943917fe-aecf-45a7-bc0d-591492d17898
 :END:
 #+begin_src emacs-lisp
-(use-package reverse-im :ensure t
+(use-package reverse-im :straight t
   :if init-flag
   :config
   (reverse-im-activate "russian-computer")
@@ -790,7 +819,7 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 #+begin_src emacs-lisp
 (use-package helm
   :if init-flag
-  :ensure t
+  :straight t
   :diminish helm-mode
   :bind (
 	 ("M-x" . helm-M-x)
@@ -842,7 +871,7 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 #+begin_src emacs-lisp
 (use-package company
   :if init-flag
-  :ensure t
+  :straight t
   :diminish company-mode
   :hook ((prog-mode ledger-mode) . company-mode)
   :bind (
@@ -930,7 +959,7 @@ saving all the buffers, is executed.
 #+begin_src emacs-lisp
 (use-package  persistent-scratch
   :if init-flag
-  :ensure t
+  :straight t
   :config
   (persistent-scratch-autosave-mode 1)
   )
@@ -967,11 +996,11 @@ saving all the buffers, is executed.
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package magit
-  :ensure t
+  :straight t
   :if init-flag
   :init
   (setq vc-handled-backends nil)
-  (use-package transient :ensure t)
+  (use-package transient :straight t)
   :config
   (use-package boon :config
     (bind-keys :map boon-x-map
@@ -992,10 +1021,10 @@ Interaction with Github
 
 #+BEGIN_SRC emacs-lisp
 (use-package magithub
-  :ensure t
+  :straight t
   :after (magit magit-popup)
   :init
-  (use-package magit-popup :ensure t)
+  (use-package magit-popup :straight t)
   (require 'magit-popup)
   :config
   (magithub-feature-autoinject t)
@@ -1015,11 +1044,12 @@ Interaction with Github
 #+begin_src emacs-lisp
 (use-package git-gutter-fringe+
   :if init-flag
-  :ensure t
+  :straight t
+  :diminish git-gutter+-mode
   :init
   (use-package fringe-helper)
   :config
-  (git-gutter))
+  (global-git-gutter+-mode))
 #+end_src
 
 ** Text highlight & coloring
@@ -1057,7 +1087,7 @@ Interaction with Github
 #+begin_src emacs-lisp
 (use-package flyspell
   :if init-flag
-  :ensure t
+  :straight t
   :after org
   :hook ((notmuch-message-mode org-mode) . flyspell-mode)
   :bind (("<f8>" . ispell-word)
@@ -1144,12 +1174,12 @@ From https://www.emacswiki.org/emacs/FlySpell"
 #+begin_src emacs-lisp
 (use-package flycheck
   :if init-flag
-  :ensure t
+  :straight t
   :diminish flycheck-mode
   :hook ((prog-mode) . flycheck-mode)
   :config
   (use-package flycheck-tip
-    :ensure t
+    :straight t
     :config
     (setq flycheck-display-errors-function 'ignore)
     (use-package boon
@@ -1166,7 +1196,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
 #+begin_src emacs-lisp
 (use-package highlight-parentheses
   :if init-flag
-  :ensure t
+  :straight t
   :diminish highlight-parentheses-mode
   :config
   (define-globalized-minor-mode global-highlight-parentheses-mode
@@ -1177,7 +1207,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
 
 (use-package rainbow-delimiters
   :if init-flag
-  :ensure t
+  :straight t
   :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
 *** Highlight numbers
@@ -1187,7 +1217,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
 #+begin_src emacs-lisp
 (use-package highlight-numbers
   :if init-flag
-  :ensure t
+  :straight t
   :hook (prog-mode . highlight-numbers-mode))
 #+end_src
 *** Regexp escape smart highlight
@@ -1197,7 +1227,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
 #+begin_src emacs-lisp
 (use-package easy-escape
   :if init-flag
-  :ensure t
+  :straight t
   :diminish easy-escape-minor-mode
   :hook (prog-mode . easy-escape-minor-mode))
 #+end_src
@@ -1217,7 +1247,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
   #+begin_src emacs-lisp
 (use-package volatile-highlights
   :if init-flag
-  :ensure t
+  :straight t
   :diminish volatile-highlights-mode
   :config
   (volatile-highlights-mode t)
@@ -1232,7 +1262,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
   :if init-flag
-  :ensure t
+  :straight t
   :bind (:map boon-command-map
 	      ("`" . er/expand-region)
               :map boon-special-map
@@ -1248,7 +1278,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
 #+begin_src emacs-lisp
 (use-package git-gutter-fringe
   :if init-flag
-  :ensure t
+  :straight t
   :init
   (setq git-gutter-fr:side 'right-fringe)
   :config
@@ -1266,7 +1296,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
 #+begin_src emacs-lisp
 (use-package hideshow
   :if init-flag
-  :ensure t
+  :straight t
   :bind (:map hs-minor-mode-map
 	      :filter boon-command-state
 	      ("<tab>" . hs-toggle-hiding)
@@ -1416,7 +1446,7 @@ BEG and END narrow the scope where candidates are searched."
   :defer t
   :config
   (use-package avy
-    :ensure t
+    :straight t
     :bind (:map boon-moves-map
 		("h" . avy-goto-word-in-line-1)
 		("H" . avy-goto-word-2)
@@ -1463,7 +1493,7 @@ Imenu allows navigating through the buffer structure, according to the major mod
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package bm
-  :ensure t
+  :straight t
   :when init-flag
   :demand t
 
@@ -1474,7 +1504,7 @@ Imenu allows navigating through the buffer structure, according to the major mod
 
   :config
 
-  (use-package helm-bm :ensure t) 
+  (use-package helm-bm :straight t) 
   
   ;; Allow cross-buffer 'next'
   (setq bm-cycle-all-buffers t)
@@ -1697,7 +1727,7 @@ Undo window configuration changes
 #+begin_src emacs-lisp
 (use-package disk-usage
   :if init-flag
-  :ensure t)
+  :straight t)
 #+end_src
 
 ***** NEXT Dired
@@ -1712,7 +1742,7 @@ Undo window configuration changes
 #+begin_src emacs-lisp
 (use-package dired-hide-dotfiles
   :if init-flag
-  :ensure t
+  :straight t
   :hook ((dired-mode . auto-revert-mode)
 	 ((dired-mode) . dired-hide-dotfiles-mode))
   :init
@@ -1726,7 +1756,7 @@ Undo window configuration changes
   :config
   (put 'dired-find-alternate-file 'disabled nil)
   (defalias 'dired-find-file #'dired-find-alternate-file)
-  (use-package dired-du :ensure t)
+  (use-package dired-du :straight t)
   (bind-key "." 'dired-hide-dotfiles-mode dired-mode-map)
   (use-package meta-functions
     :config
@@ -1824,7 +1854,7 @@ Version 2016-10-15"
 #+BEGIN_SRC emacs-lisp
 (use-package async
   :if init-flag
-  :ensure t
+  :straight t
   :config
   (use-package dired
     :defer t
@@ -1841,7 +1871,7 @@ Version 2016-10-15"
 #+BEGIN_SRC emacs-lisp
 (use-package dired-filter
   :if init-flag
-  :ensure t
+  :straight t
   :config
   (setq dired-filter-group-saved-groups '(("default"
 					   ("Dirs"
@@ -1869,7 +1899,7 @@ Version 2016-10-15"
 #+BEGIN_SRC emacs-lisp
 (use-package diredfl
   :if init-flag
-  :ensure t
+  :straight t
   :config
   (diredfl-global-mode 1))
 #+END_SRC
@@ -1918,7 +1948,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 
 #+begin_src emacs-lisp
 (use-package hyperbole
-  :ensure t
+  :straight t
   :disabled
   :config
   (bind-key* "<tab>" #'action-key)
@@ -1933,7 +1963,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 
 #+begin_src emacs-lisp
 (use-package helm-org-rifle
-  :ensure t
+  :straight t
   :bind (:map boon-goto-map
 	      ("P" . helm-org-rifle))
   :init
@@ -1995,7 +2025,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   :config
   (use-package visual-regexp
     :init
-    (use-package visual-regexp-steroids :ensure t)
+    (use-package visual-regexp-steroids :straight t)
     :bind (:map boon-command-map
 		("?" . vr/query-replace)
 		("M-?" . helm-regexp))))
@@ -2007,7 +2037,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+begin_src emacs-lisp
 (use-package comment-dwim-2
   :if init-flag
-  :ensure t
+  :straight t
   :bind (:map prog-mode-map
 	      ("M-;" . comment-dwim-2))) 
 #+end_src
@@ -2025,7 +2055,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+begin_src emacs-lisp
 (use-package aggressive-indent
   :if init-flag
-  :ensure t
+  :straight t
   :diminish aggressive-indent-mode
   :config
   (global-aggressive-indent-mode t))
@@ -2121,7 +2151,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 				    '(meta-move-element-up move-text-up "Move the element under cursor up."))
   (use-package move-text
     :if init-flag
-    :ensure t
+    :straight t
     :bind (:map boon-command-map
 		("M-j" . meta-move-line-down)
 		("M-k" . meta-move-line-up)
@@ -2214,7 +2244,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+begin_src emacs-lisp
 (use-package which-key
   :if init-flag
-  :ensure t
+  :straight t
   :diminish which-key-mode
   :config
   (which-key-mode))
@@ -2263,7 +2293,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   :if init-flag
   :bind (("<f1> l" . helm-locate-library))
   :init
-  (use-package helm-descbinds :ensure t)
+  (use-package helm-descbinds :straight t)
   (use-package boon
     :defer t
     :config
@@ -2303,7 +2333,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :END:
 
 #+begin_src emacs-lisp
-(use-package tldr :ensure t)
+(use-package tldr :straight t)
 #+end_src
 
 **** Helpful - better help buffers
@@ -2314,8 +2344,21 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+BEGIN_SRC emacs-lisp
 (use-package helpful
   :if init-flag
-  :ensure t)
+  :straight t)
 #+END_SRC
+*** Show elisp result in overlay
+:PROPERTIES:
+:CREATED:  [2019-07-20 Sat 19:34]
+:ID:       35974311-ca9b-4626-a0eb-47294ccb37b2
+:END:
+
+#+begin_src emacs-lisp
+(use-package eros
+  :if init-flag
+  :straight t
+  :hook lisp-mode-hook)
+#+end_src
+
 *** Execute current buffer (c++,python,bash,...)
 :PROPERTIES:
 :ID:       a57244bb-a617-44b4-a806-7cff82a86ac7
@@ -2323,7 +2366,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+begin_src emacs-lisp 
 (use-package quickrun
   :if init-flag
-  :ensure t
+  :straight t
   :bind (
 	 ("<f10>" . quickrun)
 	 ("<C-XF86Search>" . quickrun-with-arg)
@@ -2360,10 +2403,10 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :ID:       5b5c84f0-e363-4e5c-b373-69ddf019f9e3
 :END:
 
-#+begin_src elisp
+#+begin_src emacs-lisp
 (use-package nameless
   :if init-flag
-  :ensure t
+  :straight t
   :init
   (add-hook 'emacs-lisp-mode-hook #'nameless-mode)
   :config
@@ -2378,7 +2421,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+begin_src emacs-lisp
 (use-package gnuplot
   :if (or init-flag org-export-flag)
-  :ensure t
+  :straight t
   :mode ("\\.\\(gp\\|gnuplot\\|plot\\)$" . gnuplot-mode))
 #+end_src
 ** TODO LaTeX
@@ -2413,7 +2456,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+begin_src emacs-lisp
 (use-package ledger-mode
   :if init-flag
-  :ensure t
+  :straight t
   :bind (:map boon-goto-map
 	      ("z" . open-finance)
 	      :map ledger-mode-map
@@ -2468,7 +2511,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+BEGIN_SRC emacs-lisp
 (use-package wolfram-mode
   :if init-flag
-  :ensure t
+  :straight t
   )
 #+END_SRC
 ** TODO Pdf view
@@ -2482,7 +2525,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+begin_src emacs-lisp
 (use-package pdf-tools
   :if init-flag
-  :ensure t
+  :straight t
   :magic ("%PDF" . pdf-view-mode)
   :bind (:map pdf-view-mode-map
 	      ("v w" . pdf-view-fit-width-to-window)
@@ -2626,7 +2669,7 @@ It's magic
 #+begin_src emacs-lisp 
 (use-package shell-pop
   :if init-flag
-  :ensure t
+  :straight t
   :bind ("M-<f9>" . shell-pop)
   :init
   (setq shell-pop-shell-type '("ansi-term" "*ansi-term*" (lambda () (ansi-term shell-pop-term-shell)))) 
@@ -2669,7 +2712,7 @@ Hence, delete frame instead of burying the mingus buffer.
 #+begin_src emacs-lisp
 (use-package mingus
   :if init-flag
-  :ensure t
+  :straight t
   :bind (:map mingus-playlist-map
 	      ("q" . (lambda() (interactive) (mingus-git-out) (delete-frame)))))
 #+end_src
@@ -2734,7 +2777,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 #+begin_src emacs-lisp
 (use-package elfeed
   :if init-flag
-  :ensure t
+  :straight t
   :bind (:map elfeed-search-mode-map
 	      ("q" . delete-frame)
 	      ("r" . elfeed-search-update--force)
@@ -2780,7 +2823,7 @@ When listening a new band/album, I usually go through all the songs and delete w
   (unless (boundp 'elfeed-search-mode-hook) (setq elfeed-search-mode-hook nil))
   ;; (add-hook 'elfeed-search-mode-hook (lambda () (toggle-truncate-lines +1)))
   (use-package elfeed-org
-    :ensure t
+    :straight t
     :config
     (elfeed-org)
     (setq rmh-elfeed-org-files (list "~/Org/rss.org"))))
@@ -2792,7 +2835,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 #+begin_src emacs-lisp
 (use-package notmuch
   :if init-flag
-  :ensure t
+  :straight t
   :config
   (use-package boon
     :config
@@ -2880,10 +2923,9 @@ When listening a new band/album, I usually go through all the songs and delete w
 #+BEGIN_SRC emacs-lisp
 ;; (use-package async
 ;;   :if init-flag
-;;   :ensure t
+;;   :straight t
 ;;   :config
 ;;   (use-package smtpmail-async
-;;     :ensure nil
 ;;     :config
 ;;     (setq message-send-mail-function 'message-send-mail-with-sendmail)))
 #+END_SRC
@@ -2897,7 +2939,7 @@ When listening a new band/album, I usually go through all the songs and delete w
   :defer t
   :config
   (use-package helm-notmuch
-    :ensure t))
+    :straight t))
 #+end_src
 **** Tagging of sent messages
 :PROPERTIES:
@@ -3217,11 +3259,10 @@ Use =orgalist=.
 #+begin_src emacs-lisp
 (use-package org
   :if init-flag
-  :ensure org-plus-contrib
-  :pin org
+  :straight t
   :defer t
   :config
-  (use-package orgalist :ensure t :init
+  (use-package orgalist :straight t :init
     (add-hook 'message-mode-hook 'orgalist-mode)))
 #+end_src
 **** TODO Use footnote mode in emails
@@ -3249,8 +3290,7 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 #+begin_src emacs-lisp
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
-  :ensure org-plus-contrib
-  :pin org
+  :straight t
   :mode ("\\.org$" . org-mode)
   :config
 #+end_src
@@ -3436,7 +3476,7 @@ Some of the tasks cannot be done until some condition is met. Before that, it do
 I use [[http://www.nongnu.org/org-edna-el/][org-edna]] for managing dependencies. On top of blocked tasks management, it allows to schedule tasks on trigger. It introduces two new properties: =TRIGGER= and =BLOCKER= (see [[id:598c2b16-2eb8-404a-b7e9-00969a1c4d72][Properties]] for details)
 #+BEGIN_SRC emacs-lisp
 (use-package org-edna
-  :ensure t
+  :straight t
   :config
   (org-edna-load))
 #+END_SRC
@@ -3703,7 +3743,7 @@ Store links to pages in pdf
 #+begin_src emacs-lisp
 (use-package org-pdfview
   :if init-flag
-  :ensure t)
+  :straight t)
 (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (file link) (org-pdfview-open link))))
 #+end_src
 ***** Inkscape links
@@ -3963,9 +4003,9 @@ The src block should be in the same org file."
 #+begin_src emacs-lisp
 (use-package org-ref
   :if init-flag
-  :ensure t
+  :straight t
   :init
-  (use-package lv :ensure t)
+  (use-package lv :straight t)
   :config
   (setq org-latex-prefer-user-labels t)
   (setq org-ref-show-broken-links nil) ;; it makes typing very slow if 't
@@ -4474,7 +4514,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 #+begin_src emacs-lisp
 (use-package org-web-tools
   :if init-flag
-  :ensure t
+  :straight t
   :bind (:map org-mode-map
 	      ("C-c C-S-u a" . org-web-tools-archive-attach)
               ("C-c C-S-u o" . org-web-tools-archive-view)
@@ -4982,7 +5022,7 @@ The package idea is cool, but I would prefer vertical view. Need to write my own
 (use-package org-timeline
   :if init-flag
   :disabled
-  :ensure t
+  :straight t
   :config
   (add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
 #+end_src
@@ -4995,10 +5035,10 @@ Agenda is excellent for short term planning, however it is not very useful if I 
 #+begin_src emacs-lisp
 (use-package calfw
   :if init-flag
-  :ensure t
+  :straight t
   :config
   (use-package calfw-org
-    :ensure t
+    :straight t
     :config
     (setq calendar-week-start-day 1)
     (defun cfw:open-calendar ()
@@ -5056,7 +5096,7 @@ Agenda is excellent for short term planning, however it is not very useful if I 
 #+begin_src emacs-lisp
 (use-package org-gcal
   :if init-flag
-  :ensure t
+  :straight t
   :config
   (setq org-gcal-down-days 360)
   (setq org-gcal-sync-idle-secs (* 60 20)) ; 20 min
@@ -5480,78 +5520,80 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
 *************** END
 *************** TODO Clock out from subtask from home is wrongly activating home task
 *************** END
-     #+begin_src emacs-lisp
-(setq org-duration-format '(("h" . h:mm) ("min" . h:mm)))
-(setq org-clock-out-remove-zero-time-clocks t)
-(setq org-clock-out-when-done t)
-(setq org-clock-in-resume t)
-(setq org-clock-persist t)
-(setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
-(setq org-clock-persist-query-resume nil)
-(org-clock-persistence-insinuate)
+#+begin_src emacs-lisp
+  (use-package org-clock
+    :after org
+    :config
+    (setq org-duration-format '(("h" . h:mm) ("min" . h:mm)))
+    (setq org-clock-out-remove-zero-time-clocks t)
+    (setq org-clock-out-when-done t)
+    (setq org-clock-in-resume t)
+    (setq org-clock-persist t)
+    (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+    (setq org-clock-persist-query-resume nil)
+    (org-clock-persistence-insinuate)
+    (defvar bh/keep-clock-running nil
+      "Continue in default task if no task is clocked in.")
+    (defvar bh/organization-task-id "Organization"
+      "ID of default usefull work task.")
+    (defvar yant/home-task-id "Homedef"
+      "ID of default useless activity task.")
 
-(defvar bh/keep-clock-running nil
-  "Continue in default task if no task is clocked in.")
-(defvar bh/organization-task-id "Organization"
-  "ID of default usefull work task.")
-(defvar yant/home-task-id "Homedef"
-  "ID of default useless activity task.")
+    (defun yant/punch-in-organization ()
+      "Clock in Organization task."
+      (interactive)
+      (setq bh/keep-clock-running 'yant/punch-in-organization)
+      (org-with-point-at (org-id-find bh/organization-task-id
+				      'marker)
+	(org-clock-in '(16))))
 
-(defun yant/punch-in-organization ()
-  "Clock in Organization task."
-  (interactive)
-  (setq bh/keep-clock-running 'yant/punch-in-organization)
-  (org-with-point-at (org-id-find bh/organization-task-id
-				  'marker)
-    (org-clock-in '(16))))
+    (defun yant/punch-in-home ()
+      "Clock in home (random activity) task."
+      (interactive)
+      (setq bh/keep-clock-running 'yant/punch-in-home)
+      (org-with-point-at (org-id-find yant/home-task-id
+				      'marker)
+	(org-clock-in '(16))))
 
-(defun yant/punch-in-home ()
-  "Clock in home (random activity) task."
-  (interactive)
-  (setq bh/keep-clock-running 'yant/punch-in-home)
-  (org-with-point-at (org-id-find yant/home-task-id
-				  'marker)
-    (org-clock-in '(16))))
+    (defun yant/punch-out nil
+      "Set `org-clock-default-task' to nil and clock out."
+      (save-excursion
+	(setq bh/keep-clock-running nil)
+	(when (org-clock-is-active)
+	  (org-clock-out))))
 
-(defun yant/punch-out nil
-  "Set `org-clock-default-task' to nil and clock out."
-  (save-excursion
-    (setq bh/keep-clock-running nil)
-    (when (org-clock-is-active)
-      (org-clock-out))))
+    (defun bh/clock-in-default-task ()
+      (save-excursion
+	(org-with-point-at org-clock-default-task
+	  (org-clock-in))))
 
-(defun bh/clock-in-default-task ()
-  (save-excursion
-    (org-with-point-at org-clock-default-task
-      (org-clock-in))))
+    (defun bh/clock-in-parent-task ()
+      "Move point to the parent (project) task if any and does not have local tag NOCLOCK and clock in."
+      (let ((parent-task))
+	(save-mark-and-excursion
+	  (save-restriction
+	    (widen)
+	    (while (and (not parent-task) (org-up-heading-safe))
+	      (when (and (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+			 (not (member "NOCLOCK" (org-get-tags nil 'LOCAL))))
+		(setq parent-task (point))))
+	    (if parent-task
+		(org-with-point-at parent-task
+		  (org-clock-in))
+	      (if bh/keep-clock-running
+		  (bh/clock-in-default-task)
+		(org-clock-out)))))))
 
-(defun bh/clock-in-parent-task ()
-  "Move point to the parent (project) task if any and does not have local tag NOCLOCK and clock in."
-  (let ((parent-task))
-    (save-mark-and-excursion
-      (save-restriction
-        (widen)
-        (while (and (not parent-task) (org-up-heading-safe))
-          (when (and (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-		     (not (member "NOCLOCK" (org-get-tags nil 'LOCAL))))
-            (setq parent-task (point))))
-        (if parent-task
-            (org-with-point-at parent-task
-              (org-clock-in))
-          (if bh/keep-clock-running
-              (bh/clock-in-default-task)
-            (org-clock-out)))))))
+    (defun yant/clock-out-maybe nil
+      "Clock out and clock in to default task if `bh/keep-clock-running' is not nil."
+      (when (and bh/keep-clock-running
+		 (not org-clock-clocking-in)
+		 (marker-buffer org-clock-default-task)
+		 (not org-clock-resolving-clocks-due-to-idleness))
+	(bh/clock-in-parent-task)))
 
-(defun yant/clock-out-maybe nil
-  "Clock out and clock in to default task if `bh/keep-clock-running' is not nil."
-  (when (and bh/keep-clock-running
-	     (not org-clock-clocking-in)
-	     (marker-buffer org-clock-default-task)
-	     (not org-clock-resolving-clocks-due-to-idleness))
-    (bh/clock-in-parent-task)))
-
-(add-hook 'org-clock-out-hook 'yant/clock-out-maybe 'append)
-(add-hook 'org-clock-in-hook (lambda () (setq bh/keep-clock-running t)))
+    (add-hook 'org-clock-out-hook 'yant/clock-out-maybe 'append)
+    (add-hook 'org-clock-in-hook (lambda () (setq bh/keep-clock-running t))))
      #+end_src
 
      Once I keep all my time tracked, I can calculate the estimated balance of my time. The idea is that I assign the weight to each task/project (=:TIMEWEIGHT:=), which is positive for useful tasks I
@@ -5710,7 +5752,7 @@ Sometimes I need to do important task, but I just hate it. I tend to do anything
 About: [[https://habrahabr.ru/post/323576/][habr]]
 #+begin_src emacs-lisp
 (use-package pomidor
-  :ensure t
+  :straight t
   :bind (([f7] . pomidor))
   :config
   (setq alert-default-style 'libnotify))
@@ -5922,7 +5964,7 @@ CLOSED: [2018-09-23 Sun 17:36]
 New frame for capturing. The frame should only have capture buffer in it.
 #+begin_src emacs-lisp
 (use-package org-capture-pop-frame
-  :ensure t
+  :straight t
   :config
   (defadvice org-capture-place-template (after delete-windows activate) (delete-other-windows))
   (defadvice org-capture-select-template (around delete-capture-frame activate)
@@ -6152,7 +6194,6 @@ The subheadings below such a headlines are promoted up *1 level*.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-extra
-  :ensure nil
   :config
   (ox-extras-activate '(ignore-headlines)))
 
@@ -6425,7 +6466,7 @@ Justify and number the formulas
 #+begin_src emacs-lisp
 ;; from https://github.com/jkitchin/scimax/blob/master/scimax-org.el
 (use-package ov
-  :ensure t
+  :straight t
   :config
   (defun org-latex-fragment-justify (justification)
     "Justify the latex fragment at point with JUSTIFICATION.
@@ -6551,6 +6592,7 @@ The source code editing is usually done in a new buffer. However, I do not like 
   (interactive)
   (polymode-with-current-base-buffer #'funcall-interactively #'org-edit-special))
 (use-package poly-org
+  :defer t
   :config
   (bind-key "C-c C-b" #'poly-org-edit-special poly-org-mode-map))
 #+end_src
@@ -6571,9 +6613,7 @@ I can just type =<el<TAB>= to enter elisp code block.
 It can be done using =org-tempo=.
 
 #+begin_src emacs-lisp
-(use-package org-tempo
-  :config
-  (push (cons "el" "src emacs-lisp") org-structure-template-alist))
+  (push (cons "el" "src emacs-lisp") org-structure-template-alist)
 #+end_src
 
 
@@ -6658,10 +6698,10 @@ I use it to activate alternative major modes in source blocks.
 
 #+begin_src emacs-lisp
 (use-package polymode
-  :ensure t
+  :straight t
   :init
   (use-package poly-org
-    :ensure t
+    :straight t
     :init
     (setq poly-lock-allow-fontification nil)
     (defun org-source-block-major-mode ()
@@ -6692,7 +6732,7 @@ Leaving the code below for reference.
 
 #+begin_src emacs-lisp :tangle no
 (use-package mmm-mode
-  :ensure t
+  :straight t
   :disabled
   :init
   (setq mmm-global-mode 'auto
@@ -6903,7 +6943,7 @@ I had to modify =org-babel-expand-body:gnuplot= to make it respect =:dir= proper
 :END:
 #+begin_src emacs-lisp
 (use-package ob-async
-  :ensure t
+  :straight t
   )
 #+end_src
 **** TODO Tangle
@@ -7005,7 +7045,7 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 - prefer bullets instead of stars in items
   #+begin_src emacs-lisp
 (use-package org-bullets
-  :ensure t
+  :straight t
   :disabled
   :config
   (setq org-bullets-bullet-list '("⁂" "•" "⊢" "⋮" "⋱" "⋱" "⋱"))
@@ -7060,7 +7100,7 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 (use-package org-fancy-priorities
   :disabled t
   :if init-flag
-  :ensure t
+  :straight t
   :hook 
   ((org-mode org-agenda-mode) . org-fancy-priorities-mode)
   :diminish org-fancy-priorities-mode
@@ -7208,7 +7248,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 #+begin_src emacs-lisp
 (use-package org-notmuch)
 (use-package helm-notmuch
-  :ensure t
+  :straight t
   :config
   (let ((helm-source-notmuch-action (alist-get 'action helm-source-notmuch)))
     (setf (alist-get 'action helm-source-notmuch)
@@ -7410,7 +7450,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :END:
 #+begin_src emacs-lisp
 (use-package keyfreq
-  :ensure t
+  :straight t
   :config
   (define-globalized-minor-mode global-keyfreq-mode keyfreq-mode
     (lambda nil (progn (keyfreq-mode 1) (keyfreq-autosave-mode 1))))
