@@ -1715,7 +1715,8 @@ Undo window configuration changes
 :ID:       7e252121-b5ba-4f9e-ba55-6eabb75d9a47
 :END:
 #+BEGIN_SRC emacs-lisp
-(advice-add 'find-file-noselect :around #'dired-find-file@disable-abbreviate-file-name)
+  (add-hook 'after-init-hook (lambda ()
+      (advice-add 'find-file-noselect :around #'dired-find-file@disable-abbreviate-file-name)))
 #+END_SRC
 **** Search directories
 ***** Disk usage
@@ -3344,6 +3345,7 @@ I need to deal with many projects running at the same time in my work. Hence, I 
 Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-hooks=
 *************** END
 - =NOEXPORT= :: Do not export an item
+- =NODEADLINE= :: Do not show these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view 
 - =SKIP= :: Some projects contains tasks, which can be done independently on each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belongs to has =NEXT= tasks.  
 - =NOARCHIVE= :: Do not archive a task. This in not inherited.
 - =ARCHIVE= :: Prevent task from unfolding (e.g. task contains bulky data, I do not want to see)
@@ -4032,6 +4034,7 @@ SCHEDULED: <2018-10-10 Wed>
 :ID:       160da641-39cb-4ce9-b41f-da015d2fd0e8
 :END:
 :LOGBOOK:
+CLOCK: [2019-07-20 Sat 22:04]--[2019-07-20 Sat 22:34] =>  0:30
 CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 :END:
 
@@ -4039,6 +4042,7 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-recoll
+  :if init-flag
   :config
   (helm-recoll-create-source "docs" "~/.recoll")
   (bind-key* "C-c }" 'helm-recoll-docs))
