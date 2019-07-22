@@ -4549,7 +4549,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 (setq org-agenda-files "~/Org/agenda_files")
 (setq org-deadline-warning-days 30)
 (setq org-agenda-span 'day)
-(setq org-agenda-sorting-strategy '((agenda deadline-up time-up habit-up priority-down timestamp-down category-keep)
+(setq org-agenda-sorting-strategy '((agenda deadline-down time-up habit-up priority-down timestamp-down category-keep)
 				    (todo priority-down category-keep)
 				    (tags priority-down category-keep)
 				    (search category-keep)))
