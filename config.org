@@ -46,7 +46,7 @@ Init file, which is loads this file.
 #+begin_src emacs-lisp :tangle "init.el"
 ;;(package-initialize)
 (setq init-flag t)
-(byte-compile-file "~/.emacs.d/config.el" 'load)
+(load "~/.emacs.d/config.el")
 #+end_src
 ** NEXT Debugging current issues
 :PROPERTIES:
