@@ -159,8 +159,9 @@ First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as fro
 - use hydra to manage packages
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
+  :if init-flag
   :straight t
-  :requires boon
+  :after boon
   :bind (:map boon-x-map
 	      ("p" . hydra-straight-helper/body))
   :config
@@ -3260,7 +3261,6 @@ Use =orgalist=.
 #+begin_src emacs-lisp
 (use-package org
   :if init-flag
-  :straight t
   :defer t
   :config
   (use-package orgalist :straight t :init
@@ -3291,7 +3291,6 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 #+begin_src emacs-lisp
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
-  :straight t
   :mode ("\\.org$" . org-mode)
   :config
 #+end_src
