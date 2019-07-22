@@ -159,9 +159,8 @@ First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as fro
 - use hydra to manage packages
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
-  :if init-flag
   :straight t
-  :after boon
+  :requires boon
   :bind (:map boon-x-map
 	      ("p" . hydra-straight-helper/body))
   :config
@@ -3261,6 +3260,7 @@ Use =orgalist=.
 #+begin_src emacs-lisp
 (use-package org
   :if init-flag
+  :straight t
   :defer t
   :config
   (use-package orgalist :straight t :init
@@ -3291,6 +3291,7 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 #+begin_src emacs-lisp
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
+  :straight t
   :mode ("\\.org$" . org-mode)
   :config
 #+end_src
@@ -6591,13 +6592,13 @@ The source code editing is usually done in a new buffer. However, I do not like 
 #+begin_src emacs-lisp
 (bind-key "C-c C-b" 'org-edit-special org-mode-map)
 (bind-key "C-c C-b" 'org-edit-src-exit org-src-mode-map)
-(defun poly-org-edit-special ()
-  "Run `org-edit-special' from poly-org."
-  (interactive)
-  (polymode-with-current-base-buffer #'funcall-interactively #'org-edit-special))
 (use-package poly-org
   :defer t
   :config
+  (defun poly-org-edit-special ()
+    "Run `org-edit-special' from poly-org."
+    (interactive)
+    (polymode-with-current-base-buffer #'funcall-interactively #'org-edit-special))
   (bind-key "C-c C-b" #'poly-org-edit-special poly-org-mode-map))
 #+end_src
 
@@ -6701,30 +6702,30 @@ It is always annoying that I need switch to separate window to edit source block
 I use it to activate alternative major modes in source blocks.
 
 #+begin_src emacs-lisp
-(use-package polymode
-  :straight t
-  :init
-  (use-package poly-org
+  (use-package polymode
     :straight t
     :init
-    (setq poly-lock-allow-fontification nil)
-    (defun org-source-block-major-mode ()
-      "Return the name of major mode for the org source block at point."
-      (when (re-search-forward "#\\+begin_src +\\([^ \t\n]+\\)")
-        (if (string-match "\\(bash\\|sh\\|shell\\)" (match-string 1))
-            "sh"
-          (format "%s" (match-string 1)))))
-    (setq pm-inner/org
-	  (pm-inner-auto-chunkmode :name "org"
-				   :mode 'host
-				   :head-mode 'host
-				   :tail-mode 'host
-				   :head-matcher "^[ \t]*#\\+begin_src .*\n"
-				   :tail-matcher "^[ \t]*#\\+end_src"
-				   :head-adjust-face nil
-				   :mode-matcher #'org-source-block-major-mode
-				   :indent-offset org-edit-src-content-indentation))
-    ))
+    (use-package poly-org
+      :straight t
+      :init
+      (setq poly-lock-allow-fontification nil)
+      (defun org-source-block-major-mode ()
+	"Return the name of major mode for the org source block at point."
+	(when (re-search-forward "#\\+begin_src +\\([^ \t\n]+\\)")
+	  (if (string-match "\\(bash\\|sh\\|shell\\)" (match-string 1))
+	      "sh"
+	    (format "%s" (match-string 1)))))
+      (setq pm-inner/org
+	    (pm-inner-auto-chunkmode :name "org"
+				     :mode 'host
+				     :head-mode 'host
+				     :tail-mode 'host
+				     :head-matcher "^[ \t]*#\\+begin_src .*\n"
+				     :tail-matcher "^[ \t]*#\\+end_src"
+				     :head-adjust-face nil
+				     :mode-matcher #'org-source-block-major-mode
+				     :indent-offset org-edit-src-content-indentation))
+      ))
 #+end_src
 
 =mmm-mode= also allows having multiple major modes depending on cursor position in the buffer. 
