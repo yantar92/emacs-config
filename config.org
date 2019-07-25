@@ -4446,9 +4446,9 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
 		       default-directory)
 		   entry-path)))))))
 
-(define-advice org-attach-reveal (:around (OLDFUN &optional if-exists) reveal-symlink)
+(define-advice org-attach-reveal (:around (OLDFUN) reveal-symlink)
   "Go to symlink attach dir structure instead of an actual attach dir."
-  (let ((dir (org-attach-dir (not if-exists)))
+  (let ((dir (org-attach-dir))
 	(attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
 				     (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))));; only consider if the entry is the child
 	)
@@ -4461,7 +4461,7 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
                                                     dir
                                                     )))))
       (when attach-dir-inherited-p (org-attach-tag 'off))
-      (funcall OLDFUN if-exists))))
+      (funcall OLDFUN))))
 
 (define-advice org-attach-reveal-in-emacs (:around (OLDFUN &rest args) reveal-symlink)
   #'org-attach-reveal@reveal-symlink)
