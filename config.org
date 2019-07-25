@@ -3265,7 +3265,6 @@ Use =orgalist=.
 #+begin_src emacs-lisp
 (use-package org
   :if init-flag
-  :straight t
   :defer t
   :config
   (use-package orgalist :straight t :init
@@ -3296,7 +3295,6 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 #+begin_src emacs-lisp
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
-  :straight t
   :mode ("\\.org$" . org-mode)
   :config
 #+end_src
@@ -3450,8 +3448,6 @@ I use inline tasks to add temporary todo state (instead of notes). It should be 
 
 It seems that inline tasks interfers with =org-outline-regexp=.
 Fix it:
-
-
 
 #+begin_src emacs-lisp
 (defun org-outline-regexp-no-inline ()
@@ -3753,7 +3749,7 @@ Store links to pages in pdf
   :straight t)
 (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (file link) (org-pdfview-open link))))
 #+end_src
-***** Inkscape links
+***** TODO Inkscape links
 :PROPERTIES:
 :CREATED:  [2018-10-21 Sun 14:05]
 :ID:       824be892-df30-4c07-bf02-93a234fb7885
@@ -6623,7 +6619,9 @@ I can just type =<el<TAB>= to enter elisp code block.
 It can be done using =org-tempo=.
 
 #+begin_src emacs-lisp
-  (push (cons "el" "src emacs-lisp") org-structure-template-alist)
+(use-package org-tempo
+  :init
+  (push (cons "el" "src emacs-lisp") org-structure-template-alist))
 #+end_src
 
 
