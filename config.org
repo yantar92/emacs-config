@@ -164,8 +164,9 @@ First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as fro
 - use hydra to manage packages
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
+  :if init-flag
   :straight t
-  :requires boon
+  :after boon
   :bind (:map boon-x-map
 	      ("p" . hydra-straight-helper/body))
   :config
