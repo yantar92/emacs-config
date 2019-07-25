@@ -107,6 +107,11 @@ There are various options, which can improve the performance.
 (setq bidi-display-reordering nil)
 #+END_SRC
 
+- Speed up line movement [[https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746][source]]
+#+begin_src emacs-lisp
+(setq auto-window-vscroll nil)
+#+end_src
+
 ** Package management & configuration
 :PROPERTIES:
 :ID:       4c0a06f9-9e69-4ead-b570-e3143fa0d61d
