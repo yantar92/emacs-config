@@ -2537,7 +2537,9 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :ID:       201475d1-64b3-4e1d-8e78-d850c6067761
 :END:
 
-*************** TODO fix the bookmark load problem when making frame
+*************** DONE fix the bookmark load problem when making frame
+CLOSED: [2019-07-22 Mon 22:26]
+- State "DONE"       from "TODO"       [2019-07-22 Mon 22:26]
 *************** END
 
 #+begin_src emacs-lisp
@@ -2576,36 +2578,22 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (add-to-list 'meta-functions-meta-scroll-down-alist '(pdf-view-mode . pdf-view-scroll-down-or-previous-page))
     (add-to-list 'meta-functions-meta-scroll-up-alist '(pdf-view-mode . pdf-view-scroll-up-or-next-page))
     (add-to-list 'meta-functions-meta-down-alist '(pdf-annot-list-mode . tablist-next-line))
-    (add-to-list 'meta-functions-meta-up-alist '(pdf-annot-list-mode . tablist-previous-line)))
-  
-  (defun yant/jump-to-file-bookmark ()
-    "Jump to the bookmark names as `buffer-file-name'."
-    (cond
-     ;; ((eq major-mode 'pdf-view-mode)
-     ;;  (pdf-view-bookmark-jump (list buffer-file-name (alist-get buffer-file-name bookmark-alist nil nil #'string=))))
-     (t
-      (bookmark-jump (list buffer-file-name (alist-get buffer-file-name bookmark-alist nil nil #'string=))))))
-  
-  (defun yant/save-file-bookmark ()
-    "Save current file buffer position to bookmark with the name as `buffer-file-name'."
-    (cond
-     ;; ((eq major-mode 'pdf-view-mode)
-     ;;  (pdf-view-bookmark-make-record))
-     (t
-      (when buffer-file-name
-	(bookmark-set buffer-file-name)))))
-  
-  ;;  (add-hook 'pdf-view-mode-hook #'yant/jump-to-file-bookmark)
+    (add-to-list 'meta-functions-meta-up-alist '(pdf-annot-list-mode . tablist-previous-line))))
+#+end_src
 
-  (defun yant/save-bookmark-and-quit ()
-    "Call `yant/save-file-bookmark' and quit."
-    (interactive)
-    ;;(yant/save-file-bookmark)
-    (quit-window 'KILL))
-  
-  (bind-keys :map pdf-view-mode-map
-	     ("q" . yant/save-bookmark-and-quit))
-  )
+*** Restore the last position in pdf
+:PROPERTIES:
+:CREATED:  [2019-07-22 Mon 22:25]
+:ID:       298073df-f1e0-4a57-ac78-65ab17582ead
+:END:
+
+#+begin_src emacs-lisp
+(use-package pdf-view-restore
+  :straight t
+  :after pdf-tools
+  :config
+  (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode)
+  (setq pdf-view-restore-filename "~/.emacs.d/.pdf-view-restore"))
 #+end_src
 
 *** Pdf rotate
