@@ -2509,6 +2509,17 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 #+begin_src emacs-lisp
 (add-hook 'ledger-mode-hook (lambda () (setq-local pcomplete-termination-string "")))
 #+end_src
+*** Complete in steps
+:PROPERTIES:
+:CREATED:  [2019-07-23 Tue 09:33]
+:ID:       43baaeec-565a-4cb8-b450-1221e3306399
+:END:
+
+#+begin_src emacs-lisp
+(use-package ledger
+:config
+(setq ledger-complete-in-steps t))
+#+end_src
 
 ** Wolfram Mathematica
 :PROPERTIES:
