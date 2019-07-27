@@ -2290,6 +2290,14 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (add-to-list 'meta-functions-meta-next-buffer-alist '(Info-mode . Info-history-forward))
     ))
 #+end_src
+**** Info+
+:PROPERTIES:
+:CREATED:  [2019-07-26 Fri 21:36]
+:END:
+Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.201900474][emacswiki]]). Specifically, the package improves the highlighting.
+#+begin_src emacs-lisp
+(use-package info+ :straight t)
+#+end_src
 
 **** Symbol&info lookup
 :PROPERTIES:
