@@ -303,14 +303,13 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
   (use-package centered-window
     :if init-flag
     :diminish centered-window-mode
+    :after boon
     :config
     (defun pdf-view-mode-p (&rest args)
       "Return non-nil if in pdf-view-mode."
       (eq major-mode 'pdf-view-mode))
     (add-to-list 'cwm-ignore-buffer-predicates 'pdf-view-mode-p)
-    (use-package boon
-      :config
-      (bind-keys :map boon-x-map ("w" . centered-window-mode)))
+    (bind-keys :map boon-x-map ("w" . centered-window-mode))
     (centered-window-mode +1))
 #+end_src
 **** TODO Long lines handling
@@ -322,12 +321,13 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 - State "TODO"       from              [2018-03-12 Mon 14:24]
 :END:
 #+begin_src emacs-lisp
-(use-package boon
-  :if init-flag
-  :config
-  (bind-keys :map boon-x-map ("l" . toggle-truncate-lines)))
-  (setq-default truncate-lines 't
-		word-wrap 't)
+  (use-package boon
+    :if init-flag
+    :defer t
+    :config
+    (bind-keys :map boon-x-map ("l" . toggle-truncate-lines)))
+    (setq-default truncate-lines 't
+		  word-wrap 't)
 #+end_src
 **** Buffer boundaries
 :PROPERTIES:
@@ -704,8 +704,6 @@ It should be noted, that the same can be done via setting the proper bindings fo
   :if init-flag
   :straight t
   :diminish boon-local-mode
-  :init
-  (use-package magit)
   :config
   (setq boon-special-mode-list
 	'(debugger-mode edebug-mode ediff-mode org-agenda-mode cfw:calendar-mode
@@ -2293,6 +2291,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 **** Info+
 :PROPERTIES:
 :CREATED:  [2019-07-26 Fri 21:36]
+:ID:       e75f029b-943d-4600-933b-e76ceb98f501
 :END:
 Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.201900474][emacswiki]]). Specifically, the package improves the highlighting.
 #+begin_src emacs-lisp
@@ -2524,9 +2523,10 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
 :END:
 
 #+begin_src emacs-lisp
-(use-package ledger
-:config
-(setq ledger-complete-in-steps t))
+  (use-package ledger-mode
+    :defer t
+    :config
+    (setq ledger-complete-in-steps t))
 #+end_src
 
 ** Wolfram Mathematica
@@ -3303,7 +3303,6 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 #+begin_src emacs-lisp
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
-  :mode ("\\.org$" . org-mode)
   :config
 #+end_src
 *** Project management
@@ -6603,6 +6602,7 @@ The source code editing is usually done in a new buffer. However, I do not like 
 (bind-key "C-c C-b" 'org-edit-src-exit org-src-mode-map)
 (use-package poly-org
   :defer t
+  :requires polymode
   :config
   (defun poly-org-edit-special ()
     "Run `org-edit-special' from poly-org."
