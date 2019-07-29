@@ -4490,13 +4490,31 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :CREATED:  [2018-07-09 Mon 13:01]
 :END:
 ***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
-SCHEDULED: <2019-02-02 Sat>
+SCHEDULED: <2019-07-30 Tue>
 :PROPERTIES:
 :CREATED:  [2018-08-26 Sun 22:40]
 :END:
 :LOGBOOK:
 - State "NEXT"       from "TODO"       [2018-08-27 Mon 08:39]
 :END:
+
+**** NEXT Make =:ATTACH_DIR_INHERITED:= work again
+:PROPERTIES:
+:CREATED:  [2019-07-27 Sat 17:03]
+:END:
+
+#+begin_src emacs-lisp
+  (define-advice org-attach-dir (:filter-return (dir) yant/org-attach-use-attach-dir-inheritance -100)
+    "Use :ATTACH_DIR_INHERIT: property."
+    (let ((attach-dir-inherited (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
+  				     (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))
+				     (org-with-point-at org-entry-property-inherited-from (org-attach-dir)))))
+      (or attach-dir-inherited
+  	  dir)))
+#+end_src
+
+
+
 **** Saving web pages into notes
 :PROPERTIES:
 :CREATED:  [2017-12-30 Sat 22:20]
