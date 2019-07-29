@@ -3339,11 +3339,8 @@ I need to deal with many projects running at the same time in my work. Hence, I 
 :ID:       27eb85b6-114f-437f-9424-b28d400f6aa9
 :END:
 *************** END
-- =BOOKMARK= :: Contains link
-- =ORG= :: if the task is not finished - include the org file linked during agenda creation if todo keyword is =NEXT=.
-           The purpose of this tag is reduce the file size: I had a large database of books, which I've read/will read. The file with all the authors included was more than =2Mb=, which
-           took forever to open and, more importantly, made my agenda view build/update time *few minutes*. So, I created separate project for different authors and kept the links to that
-           projects with =ORG= tag assigned, so that I can add the author book list to file/agenda view if the project is =NEXT=.
+- =BOOKMARK= :: Contains a link
+- =ORG= :: if the task is not finished - include the org file linked during agenda creation if todo keyword is =NEXT=.The purpose of this tag is reduce the file size: I had a large database of books, which I've read/will read. The file with all the authors included was more than =2Mb=, which took forever to open and, more importantly, made my agenda view build/update time *few minutes*. So, I created separate project for different authors and kept the links to that projects with =ORG= tag assigned, so that I can add the author book list to file/agenda view if the project is =NEXT=.
 *************** TODO add link management system
 *************** TODO need to implement this (ORG tag)
 :PROPERTIES:
@@ -3401,7 +3398,7 @@ The task is any item with todo keyword and no subtask.
       (and is-a-task (not has-subtask)))))
 #+end_src
 - keywords for not done tasks: =TODO=, =NEXT=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)" "FAILED(f!)" "MERGED(m!)" )
 	      (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c!)" ))))
@@ -3416,10 +3413,10 @@ The task is any item with todo keyword and no subtask.
 	      ("DONE" ("WAITING") ("CANCELLED") ("HOLD"))
 	      ("FAILED" ("WAITING") ("CANCELLED") ("HOLD"))
 	      )))
-  #+end_src
+#+end_src
   - TODO(t) :: task which needs to be done
   - NEXT(n) :: Task which needs to be done next. If the task is scheduled it is most likely need to be done next. Though can change manually to =TODO= if needed. 
-               #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (define-advice org-schedule (:after (&optional ARG TIME) change-todo-after-schedule-state-change) 
   "Make sure that task keyword is always NEXT if it is scheduled."
   (let ((mystate (or (and (fboundp 'org-state)
@@ -3431,14 +3428,14 @@ The task is any item with todo keyword and no subtask.
       ;;   (org-todo "TODO"))
       (when (member mystate (list "TODO"))
 	(org-todo "NEXT")))))
-               #+end_src
+#+end_src
   - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason) 
   - HOLD(h) :: I am not going to do this task for now due to reason explained in the comment
   - CANCELLED(c) :: I will never do this task because of what is in the comment
   - DONE(d) :: self explanatory
   - FAILED(f) :: there is some outcome and can mark done, but the outcome is not positive, though can get some conclusions out of it 
   - MERGED(m) :: become a part of other task. The link to the task is added to =MERGED-WITH= property. The motivation of adding this state is that I sometimes create a duplicate task, find out that it is duplicate, and confused which state to set. It is just faster to
-                 set =MERGED= without deciding if it is =CANCELLED= (which is not really) or =DONE= (which is also not).
+    set =MERGED= without deciding if it is =CANCELLED= (which is not really) or =DONE= (which is also not).
 *************** TODO Prompt for the link to new task, default is clocked in task. Use helm search. Store link in property
 *************** END
 **** Inline tasks
@@ -3598,7 +3595,7 @@ The project with parent projects.
   #+end_src
 ***** TODO Standard projects
 *** NEXT Journal
-SCHEDULED: <2019-02-02 Sat>
+SCHEDULED: <2019-07-29 Mon>
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 18:19]
 :ID:       46346e6b-4ed8-4570-bf4c-05639c125046
@@ -3625,7 +3622,7 @@ I may not even need to run terminal in such a case!
 :ID:       f1be655e-5fc4-44b5-8197-22ce9457e489
 :END:
 - TODO.org :: store new entries, general home and work entries, want todo some time entries
-              #+begin_src emacs-lisp
+  #+begin_src emacs-lisp
 (defun gtd-open ()
   (interactive)
   (find-file "~/Org/TODO.org"))
@@ -4035,7 +4032,7 @@ The src block should be in the same org file."
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
 #+end_src 
 ***** NEXT search in article pdfs
-SCHEDULED: <2018-10-10 Wed>
+SCHEDULED: <2019-07-28 Sun>
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
@@ -4547,18 +4544,17 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
   :straight t
   :bind (:map org-mode-map
 	      ("C-c C-S-u a" . org-web-tools-archive-attach)
-              ("C-c C-S-u o" . org-web-tools-archive-view)
-              ("C-c C-S-u i" . org-web-tools-insert-web-page-as-entry))
+	      ("C-c C-S-u o" . org-web-tools-archive-view)
+	      ("C-c C-S-u i" . org-web-tools-insert-web-page-as-entry))
   :init
-  (setq org-web-tools-pandoc-sleep-time 1.0)
-  )
+  (setq org-web-tools-pandoc-sleep-time 1.0))
 #+end_src
 **** =_epilogue=
 :PROPERTIES:
 :ID:       fdd42cf4-96cb-4c9f-b855-3fb8437f9d9c
 :END:
 #+BEGIN_SRC emacs-lisp
-)
+  )
 #+END_SRC
 
 *** Agenda & scheduling
