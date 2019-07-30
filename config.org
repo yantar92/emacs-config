@@ -1849,7 +1849,7 @@ Version 2016-10-15"
 	      -file-list))
        ((string-equal system-type "gnu/linux")
 	(mapc (lambda (-fpath) (let ((process-connection-type nil))
-				 (start-process "" nil "xdg-open" -fpath)))
+				 (start-process "" nil "mimeopen" -fpath)))
 	      -file-list))))))
 #+end_src
 ****** Async operations
