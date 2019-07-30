@@ -3641,12 +3641,13 @@ The project with parent projects.
   #+end_src
 ***** TODO Standard projects
 *** NEXT Journal
-SCHEDULED: <2019-07-29 Mon>
+SCHEDULED: <2019-08-29 Thu>
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 18:19]
 :ID:       46346e6b-4ed8-4570-bf4c-05639c125046
 :END:
 :LOGBOOK:
+CLOCK: [2019-07-29 Mon 13:33]--[2019-07-29 Mon 14:06] =>  0:33
 - State "NEXT"       from              [2018-10-23 Tue 18:50]
 :END:
 
@@ -4584,6 +4585,7 @@ SCHEDULED: <2019-07-30 Tue>
 **** NEXT Make =:ATTACH_DIR_INHERITED:= work again
 :PROPERTIES:
 :CREATED:  [2019-07-27 Sat 17:03]
+:ID:       58e525e8-18e5-4eb0-8e6d-f8e10ee8f2f1
 :END:
 
 #+begin_src emacs-lisp
@@ -6830,30 +6832,30 @@ It is always annoying that I need switch to separate window to edit source block
 I use it to activate alternative major modes in source blocks.
 
 #+begin_src emacs-lisp
-  (use-package polymode
+(use-package polymode
+  :straight t
+  :disabled t
+  :init
+  (use-package poly-org
     :straight t
     :init
-    (use-package poly-org
-      :straight t
-      :init
-      (setq poly-lock-allow-fontification nil)
-      (defun org-source-block-major-mode ()
-	"Return the name of major mode for the org source block at point."
-	(when (re-search-forward "#\\+begin_src +\\([^ \t\n]+\\)")
-	  (if (string-match "\\(bash\\|sh\\|shell\\)" (match-string 1))
-	      "sh"
-	    (format "%s" (match-string 1)))))
-      (setq pm-inner/org
-	    (pm-inner-auto-chunkmode :name "org"
-				     :mode 'host
-				     :head-mode 'host
-				     :tail-mode 'host
-				     :head-matcher "^[ \t]*#\\+begin_src .*\n"
-				     :tail-matcher "^[ \t]*#\\+end_src"
-				     :head-adjust-face nil
-				     :mode-matcher #'org-source-block-major-mode
-				     :indent-offset org-edit-src-content-indentation))
-      ))
+    (setq poly-lock-allow-fontification nil)
+    (defun org-source-block-major-mode ()
+      "Return the name of major mode for the org source block at point."
+      (when (re-search-forward "#\\+begin_src +\\([^ \t\n]+\\)")
+	(if (string-match "\\(bash\\|sh\\|shell\\)" (match-string 1))
+	    "sh"
+	  (format "%s" (match-string 1)))))
+    (setq pm-inner/org
+	  (pm-inner-auto-chunkmode :name "org"
+				   :mode 'host
+				   :head-mode 'host
+				   :tail-mode 'host
+				   :head-matcher "^[ \t]*#\\+begin_src .*\n"
+				   :tail-matcher "^[ \t]*#\\+end_src"
+				   :head-adjust-face nil
+				   :mode-matcher #'org-source-block-major-mode
+				   :indent-offset org-edit-src-content-indentation))))
 #+end_src
 
 =mmm-mode= also allows having multiple major modes depending on cursor position in the buffer. 
@@ -6889,8 +6891,7 @@ Leaving the code below for reference.
 		      :match-submode mmm-here-org-block-get-mode
 		      :delimiter-mode nil
 		      )))
-  (mmm-add-mode-ext-class 'org-mode nil 'org-mode-block)
-  )
+  (mmm-add-mode-ext-class 'org-mode nil 'org-mode-block))
 #+end_src
 
 **** Backends	
