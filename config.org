@@ -6202,7 +6202,7 @@ All these templates generally record the creation time in =:CREATED:=
 	 "* TODO %? %a\n:PROPERTIES:\n:CREATED: %U\n:ORG-TIME-BONUS-ON-DONE: 60\n:END:\n" :clock-in t :clock-resume t)
 	("p" "Conference presentation/poster" entry (file "~/Org/inbox.org")
 	 "* NEXT [presentation/poster] %^{Title of presentation/poster} :conference:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n** NEXT Write an abstract\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Submit abstract\nDEADLINE: %^t\n** TODO Get accepted\n** TODO Finance matters\n*** TODO Apply for conference funding\n*** TODO Book a flight\n*** TODO Book accomodation\n*** TODO Register for a conference\n** TODO Make presentation/poster\n** TODO Trial presentation\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Print poster/slides\n** TODO Present\n** TODO Submit the claim\n** Get reimbursement\n" :clock-in t :clock-resume t)
-	("j" "Journal publication" entry (file "~/Org/inbox.org")
+	("J" "Journal publication" entry (file "~/Org/inbox.org")
 	 "* NEXT [paper] %^{Aproximate title of the paper} :publication:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Short description}\n** TODO Outline\nDEADLINE: %^t\n*** NEXT Abstract\n*** TODO Introduction\n*** TODO Methods\n*** TODO Results\n*** TODO Discussion\n*** TODO Conclusions\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Cover letter\n** TODO Submit\n** Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Get accepted\n** TODO Publish on ArXiv\n** TODO Get published\n** TODO Add to pub list\n" :clock-in t :clock-resume t)
 	("P" "Research project" entry (file "~/Org/inbox.org")
 	 "* TODO %^{Project title} :%^G:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?\n** TODO Literature review\n*** TODO Papers\n** TODO Summary\n** TODO Reports\n** Ideas\n" :clock-in t :clock-resume t)
@@ -7486,16 +7486,6 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
              ("S" . org-agenda-bulk-mark-all)
 	     ("a" . org-agenda-bulk-unmark)
 	     ("A" . org-agenda-bulk-unmark-all))
-
-  (defun org-agenda-goto-and-narrow ()
-    "Run `org-agenda-goto' and narrow to subtree."
-    (interactive)
-    (org-agenda-goto)
-    (org-narrow-to-subtree)
-    (delete-other-windows))
-
-  (bind-keys :map org-agenda-mode-map
-	     ("<tab>" . org-agenda-goto-and-narrow))
 
   (use-package meta-functions
     :config
