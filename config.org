@@ -887,7 +887,8 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 	 ("C-h" . backward-delete-char-untabify)
          ("C-M-h" . backward-kill-word)
          ("M-l" . nil)
-         ("M-h" . company-show-doc-buffer))
+         ("M-h" . company-show-doc-buffer)
+         ("M-s" . company-filter-candidates))
   :init
   (setq company-idle-delay 0
 	company-minimum-prefix-length 2))
