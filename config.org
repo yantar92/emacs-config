@@ -3662,46 +3662,6 @@ I can write notes, run shell commands, calculations, etc without loosing what I 
 I may not even need to run terminal in such a case! 
 
 #+begin_src emacs-lisp
-(use-package org-journal
-  :straight t
-  :defer t
-  :custom
-  (org-journal-dir "~/Org/Journal/")
-  (org-journal-date-format "%A, %d %B %Y"))
-#+end_src
-
-Capture setup for =org-journal= 
-
-#+begin_src emacs-lisp
-(use-package org-journal
-  :defer t
-  :init
-  (defun org-journal-find-location ()
-    ;; Open today's journal, but specify a non-nil prefix argument in order to
-    ;; inhibit inserting the heading; org-capture will insert the heading.
-    (org-journal-new-entry t)
-    ;; Position point on the journal's top-level heading so that org-capture
-    ;; will add the new entry as a child entry.
-    (goto-char (point-min)))
-
-  (add-to-list 'org-capture-templates '("j" "Journal entry" entry (function org-journal-find-location)
-					"* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
-#+end_src
-
-Open journal file for today. I call this function using =emacsclient -c=, so I do not need to split window when opening the journal (set =org-journal-find-file= to ='find-file=).
-
-#+begin_src emacs-lisp
-(use-package org-journal
-  :custom (org-journal-find-file 'find-file)
-  :config
-  (defun yant/org-journal-read-entry-today ()
-    "Open the today's org-journal file."
-    (interactive)
-    (org-journal-read-or-display-entry (current-time) nil)))
-#+end_src
-
-#+begin_src bash :shebang "#!/bin/bash"  :tangle ~/bin/open-journal.sh
-emacsclient -n -c -e "(yant/org-journal-read-entry-today)" 
 #+end_src
 
 *** TODO Files
@@ -6204,7 +6164,7 @@ All these templates generally record the creation time in =:CREATED:=
 	 "* TODO %? %a\n:PROPERTIES:\n:CREATED: %U\n:ORG-TIME-BONUS-ON-DONE: 60\n:END:\n" :clock-in t :clock-resume t)
 	("p" "Conference presentation/poster" entry (file "~/Org/inbox.org")
 	 "* NEXT [presentation/poster] %^{Title of presentation/poster} :conference:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n** NEXT Write an abstract\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Submit abstract\nDEADLINE: %^t\n** TODO Get accepted\n** TODO Finance matters\n*** TODO Apply for conference funding\n*** TODO Book a flight\n*** TODO Book accomodation\n*** TODO Register for a conference\n** TODO Make presentation/poster\n** TODO Trial presentation\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Print poster/slides\n** TODO Present\n** TODO Submit the claim\n** Get reimbursement\n" :clock-in t :clock-resume t)
-	("J" "Journal publication" entry (file "~/Org/inbox.org")
+	("j" "Journal publication" entry (file "~/Org/inbox.org")
 	 "* NEXT [paper] %^{Aproximate title of the paper} :publication:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Short description}\n** TODO Outline\nDEADLINE: %^t\n*** NEXT Abstract\n*** TODO Introduction\n*** TODO Methods\n*** TODO Results\n*** TODO Discussion\n*** TODO Conclusions\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Cover letter\n** TODO Submit\n** Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Get accepted\n** TODO Publish on ArXiv\n** TODO Get published\n** TODO Add to pub list\n" :clock-in t :clock-resume t)
 	("P" "Research project" entry (file "~/Org/inbox.org")
 	 "* TODO %^{Project title} :%^G:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?\n** TODO Literature review\n*** TODO Papers\n** TODO Summary\n** TODO Reports\n** Ideas\n" :clock-in t :clock-resume t)
@@ -7487,6 +7447,16 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
              ("S" . org-agenda-bulk-mark-all)
 	     ("a" . org-agenda-bulk-unmark)
 	     ("A" . org-agenda-bulk-unmark-all))
+
+  (defun org-agenda-goto-and-narrow ()
+    "Run `org-agenda-goto' and narrow to subtree."
+    (interactive)
+    (org-agenda-goto)
+    (org-narrow-to-subtree)
+    (delete-other-windows))
+
+  (bind-keys :map org-agenda-mode-map
+	     ("<tab>" . org-agenda-goto-and-narrow))
 
   (use-package meta-functions
     :config
