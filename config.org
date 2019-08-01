@@ -3350,7 +3350,7 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 #+begin_src emacs-lisp
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
-  :config
+  :demand t)
 #+end_src
 *** Project management
 :PROPERTIES:
@@ -5563,15 +5563,14 @@ It is possible to search from agenda dispatcher not only in the org files, but a
 :END:
 
 #+begin_src emacs-lisp
+(use-package quick-peek :straight t)
 (use-package org-quick-peek
   :if init-flag
   :straight (org-quick-peek :type git :host github :repo "alphapapa/org-quick-peek")
   :requires quick-peek
   :after org
   :bind (:map org-agenda-mode-map
-	      ("<tab>" . org-quick-peek-agenda-current-item))
-  :init
-  (use-package quick-peek :straight t))
+	      ("<tab>" . org-quick-peek-agenda-current-item)))
 #+end_src
 
 *** TODO Contacts
@@ -6201,31 +6200,31 @@ All these templates generally record the creation time in =:CREATED:=
 - Selection from browser :: Same as previous, but selection is used as headline 
 - Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=. 
 #+begin_src emacs-lisp
-  (add-to-list 'org-capture-templates
-	       '(("n" "TODO item" entry (file "~/Org/inbox.org")
-		  "* TODO %? %a\n:PROPERTIES:\n:CREATED: %U\n:END:\n" :clock-in t :clock-resume t)
-		 ("m" "singular TODO item" entry (file "~/Org/inbox.org")
-		  "* TODO %? %a\n:PROPERTIES:\n:CREATED: %U\n:ORG-TIME-BONUS-ON-DONE: 60\n:END:\n" :clock-in t :clock-resume t)
-		 ("p" "Conference presentation/poster" entry (file "~/Org/inbox.org")
-		  "* NEXT [presentation/poster] %^{Title of presentation/poster} :conference:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n** NEXT Write an abstract\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Submit abstract\nDEADLINE: %^t\n** TODO Get accepted\n** TODO Finance matters\n*** TODO Apply for conference funding\n*** TODO Book a flight\n*** TODO Book accomodation\n*** TODO Register for a conference\n** TODO Make presentation/poster\n** TODO Trial presentation\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Print poster/slides\n** TODO Present\n** TODO Submit the claim\n** Get reimbursement\n" :clock-in t :clock-resume t)
-		 ("J" "Journal publication" entry (file "~/Org/inbox.org")
-		  "* NEXT [paper] %^{Aproximate title of the paper} :publication:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Short description}\n** TODO Outline\nDEADLINE: %^t\n*** NEXT Abstract\n*** TODO Introduction\n*** TODO Methods\n*** TODO Results\n*** TODO Discussion\n*** TODO Conclusions\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Cover letter\n** TODO Submit\n** Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Get accepted\n** TODO Publish on ArXiv\n** TODO Get published\n** TODO Add to pub list\n" :clock-in t :clock-resume t)
-		 ("P" "Research project" entry (file "~/Org/inbox.org")
-		  "* TODO %^{Project title} :%^G:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?\n** TODO Literature review\n*** TODO Papers\n** TODO Summary\n** TODO Reports\n** Ideas\n" :clock-in t :clock-resume t)
-		 ("e" "Email" entry (file "~/Org/inbox.org")
-		  "* TODO %? email |- %:from: %:subject :EMAIL:\n:PROPERTIES:\n:CREATED: %U\n:EMAIL-SOURCE: %l\n:END:\n%U\n" :clock-in t :clock-resume t)
-		 ("b" "Link from browser" entry (file "~/Org/inbox.org")
-		  "* TODO %? |- (%:description) :BOOKMARK:\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :clock-in t :clock-resume t)
-		 ("B" "Generic link" entry (file "~/Org/inbox.org")
-		  "* TODO url |- (%:description) :BOOKMARK:\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :immediate-finish t)
-		 ("s" "Selection from browser" entry (file "~/Org/inbox.org")
-		  "* TODO %? :BOOKMARK:\n%(replace-regexp-in-string \"\n.*\" \"\" \"%i\")\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :clock-in t :clock-resume t)
-		 ("h" "Habit" entry (file "~/Org/inbox.org")
-		  "* NEXT %?\nSCHEDULED: <%<%Y-%m-%d %a .+1d>>\n:PROPERTIES:\n:CREATED: %U\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:LOGGING: DONE(!)\n:ARCHIVE: %%s_archive::* Habits\n:END:\n%U\n")
-		 ("M" "Scheduled event/Meeting" entry (file "~/Org/schedule.org")
-		  "* %?\n")
-		 ("C" "Contacts" entry (file "~/Org/contacts.org")
-		  "* %(org-contacts-template-name)
+(setq org-capture-templates (append org-capture-templates
+				    '(("n" "TODO item" entry (file "~/Org/inbox.org")
+				       "* TODO %? %a\n:PROPERTIES:\n:CREATED: %U\n:END:\n" :clock-in t :clock-resume t)
+				      ("m" "singular TODO item" entry (file "~/Org/inbox.org")
+				       "* TODO %? %a\n:PROPERTIES:\n:CREATED: %U\n:ORG-TIME-BONUS-ON-DONE: 60\n:END:\n" :clock-in t :clock-resume t)
+				      ("p" "Conference presentation/poster" entry (file "~/Org/inbox.org")
+				       "* NEXT [presentation/poster] %^{Title of presentation/poster} :conference:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n** NEXT Write an abstract\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Submit abstract\nDEADLINE: %^t\n** TODO Get accepted\n** TODO Finance matters\n*** TODO Apply for conference funding\n*** TODO Book a flight\n*** TODO Book accomodation\n*** TODO Register for a conference\n** TODO Make presentation/poster\n** TODO Trial presentation\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Print poster/slides\n** TODO Present\n** TODO Submit the claim\n** Get reimbursement\n" :clock-in t :clock-resume t)
+				      ("J" "Journal publication" entry (file "~/Org/inbox.org")
+				       "* NEXT [paper] %^{Aproximate title of the paper} :publication:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Short description}\n** TODO Outline\nDEADLINE: %^t\n*** NEXT Abstract\n*** TODO Introduction\n*** TODO Methods\n*** TODO Results\n*** TODO Discussion\n*** TODO Conclusions\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Cover letter\n** TODO Submit\n** Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Get accepted\n** TODO Publish on ArXiv\n** TODO Get published\n** TODO Add to pub list\n" :clock-in t :clock-resume t)
+				      ("P" "Research project" entry (file "~/Org/inbox.org")
+				       "* TODO %^{Project title} :%^G:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?\n** TODO Literature review\n*** TODO Papers\n** TODO Summary\n** TODO Reports\n** Ideas\n" :clock-in t :clock-resume t)
+				      ("e" "Email" entry (file "~/Org/inbox.org")
+				       "* TODO %? email |- %:from: %:subject :EMAIL:\n:PROPERTIES:\n:CREATED: %U\n:EMAIL-SOURCE: %l\n:END:\n%U\n" :clock-in t :clock-resume t)
+				      ("b" "Link from browser" entry (file "~/Org/inbox.org")
+				       "* TODO %? |- (%:description) :BOOKMARK:\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :clock-in t :clock-resume t)
+				      ("B" "Generic link" entry (file "~/Org/inbox.org")
+				       "* TODO url |- (%:description) :BOOKMARK:\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :immediate-finish t)
+				      ("s" "Selection from browser" entry (file "~/Org/inbox.org")
+				       "* TODO %? :BOOKMARK:\n%(replace-regexp-in-string \"\n.*\" \"\" \"%i\")\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n" :clock-in t :clock-resume t)
+				      ("h" "Habit" entry (file "~/Org/inbox.org")
+				       "* NEXT %?\nSCHEDULED: <%<%Y-%m-%d %a .+1d>>\n:PROPERTIES:\n:CREATED: %U\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:LOGGING: DONE(!)\n:ARCHIVE: %%s_archive::* Habits\n:END:\n%U\n")
+				      ("M" "Scheduled event/Meeting" entry (file "~/Org/schedule.org")
+				       "* %?\n")
+				      ("C" "Contacts" entry (file "~/Org/contacts.org")
+				       "* %(org-contacts-template-name)
   :PROPERTIES:
   :EMAIL: %(org-contacts-template-email)
   :PHONE:
@@ -6236,7 +6235,7 @@ All these templates generally record the creation time in =:CREATED:=
   :NOTE:
   :ADDRESS:
   :BIRTHDAY:
-  :END:")))
+  :END:"))))
 #+end_src
 #+begin_src emacs-lisp
 )
@@ -7544,13 +7543,6 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :END:
 #+begin_src emacs-lisp
 (add-hook 'org-capture-mode-hook 'boon-insert 'append)
-#+end_src
-*** =__finalize=
-:PROPERTIES:
-:ID:       8414a0fc-0456-4c19-a20d-cc20af9573be
-:END:
-#+begin_src emacs-lisp
-)
 #+end_src
 ** Sensitive info                                                  :NOEXPORT:
 :PROPERTIES:
