@@ -6585,8 +6585,8 @@ This function is called by `org-archive-hook'.  The option
 	     (member org-attach-auto-tag (org-get-tags nil t));; do not ask if no attachments
 	     )
     (when (if (eq org-attach-archive-delete 'query)
-	      (yes-or-no-p (format "%s: Delete all attachments? " (s-truncate 20 (org-get-heading
-										  'notags 'notodo 'nopriority 'nocomment))))
+	      (yes-or-no-p (format "%s: Delete all attachments? " (org-get-heading
+								   'notags 'notodo 'nopriority 'nocomment)))
 	    org-attach-archive-delete)
       (org-attach-delete-all t))))
 
