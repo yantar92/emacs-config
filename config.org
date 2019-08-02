@@ -7551,6 +7551,18 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 #+BEGIN_SRC emacs-lisp
 (setq w3m-image-no-idle-timer t)
 #+END_SRC
+*** Make =dired-hide-dotfiles= work
+:PROPERTIES:
+:CREATED:  [2019-08-02 Fri 16:09]
+:END:
+
+#+begin_src emacs-lisp
+(defun dired-hide-dotfiles--hide ()
+  "Hide all dot-files in the current `dired' buffer."
+  (when dired-hide-dotfiles-mode
+    (dired-mark-files-regexp "^\\." nil 'localname)
+    (dired-do-kill-lines)))
+#+end_src
 ** TODO Summary of key bindings
 *** Command frequency measurement in emacs
 :PROPERTIES:
