@@ -4385,7 +4385,7 @@ Bound search by SUBTREE-END if non nil."
           (entry-name (replace-regexp-in-string " +\\[.+\\]$" "" ;; remove statistics cookies
 						entry-name
 						))
-          (entry-name (replace-regexp-in-string org-bracket-link-analytic-regexp "\\5" ;; only leave the link names
+          (entry-name (replace-regexp-in-string org-link-bracket-re "\\2" ;; only leave the link names
 						entry-name
 						)))
      (unless (seq-empty-p entry-name) ;; prevent empty folders
