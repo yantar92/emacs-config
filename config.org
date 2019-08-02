@@ -2601,10 +2601,7 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
 :ID:       201475d1-64b3-4e1d-8e78-d850c6067761
 :END:
 
-*************** DONE fix the bookmark load problem when making frame
-CLOSED: [2019-07-22 Mon 22:26]
-- State "DONE"       from "TODO"       [2019-07-22 Mon 22:26]
-*************** END
+
 
 #+begin_src emacs-lisp
 (use-package pdf-tools
