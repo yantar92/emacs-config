@@ -1040,6 +1040,15 @@ Interaction with Github
           (lambda (a b) (> (plist-get a :number)
 			   (plist-get b :number))))))
 #+END_SRC
+
+Working with forges
+
+#+begin_src emacs-lisp
+(use-package forge
+  :if init-flag
+  :straight t
+  :after magit)
+#+end_src
 *** TODO Show file changes in the fringe
 :PROPERTIES:
 :CREATED:  [2019-07-12 Fri 08:51]
