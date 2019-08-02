@@ -989,7 +989,6 @@ saving all the buffers, is executed.
 (use-package helm
   :if init-flag
   :defer t
-  :bind ("C-x r" . helm-recentf)
   :config
   (recentf-mode t)
   (setq
