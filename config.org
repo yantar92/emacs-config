@@ -1792,14 +1792,14 @@ Undo window configuration changes
     (add-to-list 'meta-functions-meta-down-element-alist '(dired-mode . dired-find-alternate-file))
     (meta-functions-update-function-definitions))
   (bind-keys :map dired-mode-map
-	     ("q" . (lambda () (interactive) (quit-window 'kill)))
 	     ("<return>" . xah-open-in-external-app)
 	     ("W" . dired-copy-filename-as-kill)
              ("s" . dired-mark)
              ("a" . dired-unmark)
 	     ("<tab>" . other-window)))
-
 #+end_src
+
+
 ****** Dired+
 :PROPERTIES:
 :CREATED:  [2018-10-08 Mon 14:53]
