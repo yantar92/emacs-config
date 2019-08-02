@@ -721,8 +721,8 @@ It should be noted, that the same can be done via setting the proper bindings fo
 			       magit-popup-mode))
   (add-hook 'boon-local-mode-hook
 	    (lambda() (when (and boon-local-mode
-				 (member major-mode boon-insert-state-major-mode-list))
-			(boon-set-state 'boon-insert-state)))
+			    (member major-mode boon-insert-state-major-mode-list))
+		   (boon-set-state 'boon-insert-state)))
 	    'append)
   (defun boon-set-insert-state ()
     "Switch to insert state."
@@ -1765,6 +1765,8 @@ Undo window configuration changes
 - State "TODO"       from              [2018-03-12 Mon 14:57]
 - State "CANCELLED"  from              [2017-05-28 Sun 17:46]
 :END:
+
+
 #+begin_src emacs-lisp
 (use-package dired-hide-dotfiles
   :if init-flag
@@ -3774,7 +3776,7 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
 *************** NEXT [#A] Probably request feature of :desk link property, similar to :complete property
 SCHEDULED: <2019-05-11 Sat>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-08-02
+:SHOWFROMDATE: 2019-08-02 15:00
 :END:
 :PROPERTIES:
 
@@ -4104,7 +4106,7 @@ The src block should be in the same org file."
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
 #+end_src 
 ***** NEXT search in article pdfs
-SCHEDULED: <2019-07-28 Sun>
+SCHEDULED: <2019-08-04 Sun>
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
@@ -4559,7 +4561,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :CREATED:  [2018-07-09 Mon 13:01]
 :END:
 ***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
-SCHEDULED: <2019-07-30 Tue>
+SCHEDULED: <2019-08-04 Sun>
 :PROPERTIES:
 :CREATED:  [2018-08-26 Sun 22:40]
 :END:
