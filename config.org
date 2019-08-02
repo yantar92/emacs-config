@@ -6489,9 +6489,13 @@ The subheadings below such a headlines are promoted up *1 level*.
 :PROPERTIES:
 :ID:       85dadb9c-2a7e-47cf-ba98-a0e73377653d
 :END:
-I usually archive =DONE= tasks, which were done last month or earlier. They are shown in my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view. These are usually small tasks like =TODO Contact someone=. There is no need to keep them.
+
+I usually archive =DONE= tasks, which were done earlier +last month or earlier+. They are shown in my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view. These are usually small tasks like =TODO Contact someone=. There is no need to keep them.
 
 In the case if I want to keep the task and notes, I just add =:NOARCHIVE:= tag to it.
+
+In the past I only archived the tasks, which where done before the past month, but it turned out that there are too many tasks (hundreds). When I was looking through all those tasks, I often missed some tasks I actually wanted too keep, which was sub-optimal. Now, I just consider all the done tasks as available to archive (unless marked with =:NOARCHIVE:=) and clean them regularly as a part of my [[id:26a3b0fb-17ba-4d28-8776-61502ce429bf][Work/Habits/Weekly review]].
+
 #+begin_src emacs-lisp
 (setq org-archive-mark-done nil)
 (setq org-archive-location "%s_archive::datetree/* Archived Tasks")
@@ -6508,17 +6512,18 @@ In the case if I want to keep the task and notes, I just add =:NOARCHIVE:= tag t
       (if (member "NOARCHIVE" (org-get-tags))
 	  subtree-end
 	(if (member (org-get-todo-state) org-done-keywords)
-	    (let* ((daynr (string-to-number (format-time-string "%d" (current-time))))
-		   ;; (a-month-ago (* 60 60 24 (+ daynr 1)))
-		   ;; (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
-		   (this-month (format-time-string "%Y-%m-" (current-time)))
-		   (subtree-is-current (save-excursion
-					 (forward-line 1)
-					 (and (< (point) subtree-end)
-					      (re-search-forward this-month subtree-end t)))))
-	      (if subtree-is-current
-		  next-item ; Has a date in this month or last month, skip it
-		nil))  ; available to archive
+            nil ; available to archive
+	  ;; (let* ((daynr (string-to-number (format-time-string "%d" (current-time))))
+	  ;; 	   ;; (a-month-ago (* 60 60 24 (+ daynr 1)))
+	  ;; 	   ;; (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
+	  ;; 	   (this-month (format-time-string "%Y-%m-" (current-time)))
+	  ;; 	   (subtree-is-current (save-excursion
+	  ;; 				 (forward-line 1)
+	  ;; 				 (and (< (point) subtree-end)
+	  ;; 				      (re-search-forward this-month subtree-end t)))))
+	  ;;   (if subtree-is-current
+	  ;; 	  next-item ; Has a date in this month or last month, skip it
+	  ;; 	nil))  ; available to archive
 	  next-item)))))
 #+end_src
 
