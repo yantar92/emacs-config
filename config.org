@@ -7564,6 +7564,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :END:
 #+begin_src emacs-lisp
 (org-babel-load-file "~/PersonalDocuments/emacs-personal.org")
+(setq auth-sources '("~/.authinfo.gpg"))
 #+end_src
 ** Magic - I have no clue why it works
 :PROPERTIES:
