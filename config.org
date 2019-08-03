@@ -3792,18 +3792,11 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
 :ID:       bd43272d-9ef4-45a6-85ab-bebbef75c18b
 :END:
 :LOGBOOK:
+CLOCK: [2019-08-03 Sat 00:01]--[2019-08-03 Sat 00:02] =>  0:01
 - State "NEXT"       from "TODO"       [2019-05-07 Tue 10:34]
 :END:
 
-*************** NEXT [#A] Probably request feature of :desk link property, similar to :complete property
-SCHEDULED: <2019-05-11 Sat>
-:PROPERTIES:
-:SHOWFROMDATE: 2019-08-02 15:00
-:END:
-:PROPERTIES:
 
-:END:
-*************** END
 
 #+begin_src emacs-lisp
 (defun yant/org-make-link-description-function (link desk)
