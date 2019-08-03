@@ -1716,6 +1716,28 @@ Undo window configuration changes
 (global-set-key (kbd "C-x C-c") 'delete-frame)
 (global-set-key (kbd "C-x c") 'delete-frame)
 #+end_src
+**** Detach current window from the frame
+:PROPERTIES:
+:CREATED:  [2019-08-02 Fri 23:25]
+:END:
+
+#+begin_src emacs-lisp
+(when init-flag
+
+  (defun my/tear-off-window ()
+    "Delete the selected window, and create a new frame displaying its buffer."
+    (interactive)
+    (let* ((window (selected-window))
+	   (buf (window-buffer window))
+	   (frame (make-frame)))
+      (select-frame frame)
+      (switch-to-buffer buf)
+      (delete-window window)))
+  (use-package boon
+    :config
+    (bind-key "5" #'my/tear-off-window boon-goto-map)))
+#+end_src
+
 *** Files
 **** Find files
 :PROPERTIES:
