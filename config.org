@@ -24,6 +24,7 @@ CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 #+begin_src emacs-lisp
 (setf user-full-name "Ihor Radchenko")
 #+end_src
+
 This Emacs configuration allows to load Emacs in both interactive and batch modes. It is controlled by special variables, identifying startup mode:
 - =init-flag= :: normal startup, load all the visual packages and options
 - =org-export-flag= :: load necessary options for org-export
@@ -37,6 +38,8 @@ This Emacs configuration allows to load Emacs in both interactive and batch mode
 (defvar org-tangle-flag nil
   "Set up org tangle if not nil.")
 #+end_src
+
+
 ** =Init.el=
 :PROPERTIES:
 :ID:       0948a927-42a3-4284-aaed-1ca9dd27a538
@@ -375,7 +378,6 @@ Show some text in buffer differently
 :END:
 #+begin_src emacs-lisp
 (use-package pretty-symbols
-  :disabled t
   :if init-flag
   :diminish pretty-symbols-mode
   :straight t
@@ -815,6 +817,7 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 *** Do not use mouse
 :PROPERTIES:
 :CREATED:  [2019-08-02 Fri 15:44]
+:ID:       1edf3f36-6a30-4374-a47d-2d1b9c7a889a
 :END:
 
 I can force no mouse in emacs (see [[https://www.emacswiki.org/emacs/EmacsNiftyTricks][emacswiki]]). 
@@ -1737,6 +1740,7 @@ Undo window configuration changes
 **** Detach current window from the frame
 :PROPERTIES:
 :CREATED:  [2019-08-02 Fri 23:25]
+:ID:       a80e772c-443e-4e44-a2c1-7891808c3dc0
 :END:
 
 #+begin_src emacs-lisp
@@ -2479,7 +2483,7 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
 (use-package eros
   :if init-flag
   :straight t
-  :hook lisp-mode-hook)
+  :hook lisp-mode)
 #+end_src
 
 *** Execute current buffer (c++,python,bash,...)
@@ -3743,11 +3747,17 @@ I may not even need to run terminal in such a case!
 I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it does not really work for me because it creates too many files. A simple =datetree= capture works just fine.
 
 #+begin_src emacs-lisp
-(defvar yant/org-journal-file "~/Org/Journal.org"
-  "Filename of the journal file")
+(use-package org-capture
+  :if init-flag
+  :after org
+  :requires org
+  :config 
+  (defvar yant/org-journal-file "~/Org/Journal.org"
+    "Filename of the journal file")
 
-(add-to-list 'org-capture-templates '("j" "Journal entry" entry (file+olp+datetree yant/org-journal-file)
-				      "* %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n" :clock-in t :clock-resume t))
+  (add-to-list 'org-capture-templates '("j" "Journal entry" entry (file+olp+datetree yant/org-journal-file)
+					"* %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n"
+                                        :clock-in t :clock-resume t :jump-to-captured t)))
 #+end_src
 
 *** TODO Files
@@ -7253,9 +7263,9 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
       	      ("FAILED" :foreground "red" :weight bold)
       	      ("WAITING" :foreground "orange" :weight bold)
       	      ("HOLD" :foreground "magenta" :weight bold)
-      	      ("CANCELLED" :foreground "gray80" :weight bold))))
+      	      ("CANCELLED" :foreground "gray80" :weight bold)
+	      ("MERGED" :foreground "light green" :weight bold))))
 (use-package pretty-symbols
-  :disabled t 
   :config
   (setq pretty-symbol-patterns (append pretty-symbol-patterns '((?▤ org-specific ":LOGBOOK:" (org-mode))
       								(?⚙ org-specific ":PROPERTIES:" (org-mode))
@@ -7402,7 +7412,7 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 (setq org-src-fontify-natively t
       org-src-tab-acts-natively t
       org-src-preserve-indentation t
-      org-hide-block-startup nil)
+      org-hide-block-startup t)
 (set-face-background 'org-block "Gainsboro")
 #+end_src
 **** Symbols 
@@ -7647,6 +7657,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 *** Make =dired-hide-dotfiles= work
 :PROPERTIES:
 :CREATED:  [2019-08-02 Fri 16:09]
+:ID:       7165a65e-b501-48c7-a227-138e035f0418
 :END:
 
 #+begin_src emacs-lisp
