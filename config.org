@@ -4571,10 +4571,10 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
 	(org-with-wide-buffer
 	 (if (org-up-heading-safe)
 	     (let ((head-path (org-attach-dir-symlink 'create 'no-data-dir)))
-	       (when head-path (f-join head-path entry-path)))
-           (f-join (or yant/org-attach-file-symlink-path
-		       default-directory)
-		   entry-path)))))))
+	       (when head-path (f-slash (f-join head-path entry-path))))
+           (f-slash (f-join (or yant/org-attach-file-symlink-path
+				default-directory)
+			    entry-path))))))))
 
 (define-advice org-attach-reveal (:around (OLDFUN) reveal-symlink)
   "Go to symlink attach dir structure instead of an actual attach dir."
