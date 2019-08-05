@@ -7293,6 +7293,49 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 #+BEGIN_SRC emacs-lisp
 (setq org-adapt-indentation nil)
 #+END_SRC
+
+
+- hide property drawers if they are empty or contain only invisible =org-custom-properties= 
+
+*************** TODO Make it faster
+*************** END
+
+#+begin_src emacs-lisp
+(use-package org
+  :if init-flag
+  :disabled
+  :config
+  (setq org-custom-properties '("ID" "STYLE" "REPEAT_TO_STATE" "CREATED"))
+
+  (defun yant/next-prop-change (prop)
+    "Return next point where PROP value changes."
+    (let* ((s (point))
+	   (val (get-char-property s prop)))
+      (while (and (not (= (point-max) (setq s (next-char-property-change s))))
+		  (equal val (get-char-property s prop))))
+      s))
+
+  (define-advice org-toggle-custom-properties-visibility (:after () hide-empty-drawers)
+    "Hide all the drawers, appeared empty after hiding custom properties."
+    (when org-custom-properties-overlays
+      (org-with-wide-buffer
+       (goto-char (point-min))
+       (let ((regexp (org-re-property (regexp-opt org-custom-properties) t t)))
+	 (while (re-search-forward regexp nil t)
+	   (re-search-backward org-property-start-re)
+           (goto-char (match-end 0))
+	   (goto-char (yant/next-prop-change 'org-custom-property))
+	   (when (looking-at-p org-property-end-re)
+	     (re-search-backward org-property-start-re)
+             (looking-at org-property-drawer-re)
+	     (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
+	       (overlay-put o 'invisible t)
+	       (overlay-put o 'org-custom-property t)
+	       (push o org-custom-properties-overlays))
+             (goto-char (match-end 0))))))))
+  )
+#+end_src
+
 **** Agenda
 :PROPERTIES:
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
