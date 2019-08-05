@@ -823,7 +823,25 @@ Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][
 (if init-flag
     (mouse-avoidance-mode 'banish))
 #+end_src
-
+*** Chinese input
+:PROPERTIES:
+:CREATED:  [2019-08-03 Sat 17:01]
+:END:
+#+begin_src emacs-lisp
+(use-package pyim :straight t :demand t)
+(use-package pyim-basedict
+  :after pyim
+  :requires pyim
+  :config
+  (pyim-basedict-enable)
+  (setq default-input-method "pyim")
+  (setq-default pyim-english-input-switch-functions
+                '(pyim-probe-isearch-mode
+                  pyim-probe-program-mode
+                  pyim-probe-org-structure-template))
+  (setq pyim-page-tooltip 'tooltip)
+  (setq pyim-page-length 5))
+#+end_src
 ** Completion 
 :PROPERTIES:
 :ID:       f78e9123-ed35-4c76-a5fd-5549cc8f8210
