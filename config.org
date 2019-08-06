@@ -3091,7 +3091,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 (defun notmuch-show-delete () 
   (interactive)
   (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
-			  (seq-difference (notmuch-show-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server")))))
+			  (seq-difference (notmuch-show-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist")))))
     (when (or (member "listinbox" tags)
 	      (seq-empty-p tags) 	      
 	      (yes-or-no-p "Really delete?"))
@@ -3120,7 +3120,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 (defun notmuch-search-delete () 
   (interactive) 
   (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
-			  (seq-difference (notmuch-search-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server")))))
+			  (seq-difference (notmuch-search-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist")))))
     (when (or (member "listinbox" tags)
 	      (seq-empty-p tags) 	      
 	      (yes-or-no-p "Really delete?"))
@@ -5041,7 +5041,7 @@ This agenda show the items for the current day and time.
   #+end_src
   
 *************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
-SCHEDULED: <2019-05-19 Sun>
+SCHEDULED: <2019-08-20 Tue>
 :PROPERTIES:
 :SHOWFROMDATE: 2019-08-06
 :END:
