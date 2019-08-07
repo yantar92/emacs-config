@@ -1865,6 +1865,13 @@ CLOCK: [2019-07-03 Wed 22:12]--[2019-07-03 Wed 22:28] =>  0:16
 #+BEGIN_SRC emacs-lisp
 (use-package dired+)
 #+END_SRC
+
+- do not use =dired+= mode-line. Too much performance degradation
+
+#+begin_src emacs-lisp
+(remove-hook 'dired-after-readin-hook #'diredp-nb-marked-in-mode-name)
+#+end_src
+
 ****** NEXT Image-dired
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 21:26]
