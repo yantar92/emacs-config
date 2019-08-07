@@ -902,6 +902,8 @@ Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][
       (helm-mode 1)))
   (helm-global-mode))
 #+end_src
+
+
 *** Company
 :PROPERTIES:
 :ID:       8ca3a911-ad9d-43a6-83a6-a7b12b383984
@@ -1813,7 +1815,6 @@ Undo window configuration changes
 - State "TODO"       from              [2018-03-12 Mon 14:57]
 - State "CANCELLED"  from              [2017-05-28 Sun 17:46]
 :END:
-
 
 #+begin_src emacs-lisp
 (use-package dired-hide-dotfiles
@@ -4179,7 +4180,7 @@ The src block should be in the same org file."
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
 #+end_src 
 ***** NEXT search in article pdfs
-SCHEDULED: <2019-08-04 Sun>
+SCHEDULED: <2019-08-07 Wed>
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
@@ -4634,7 +4635,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :CREATED:  [2018-07-09 Mon 13:01]
 :END:
 ***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
-SCHEDULED: <2019-08-04 Sun>
+SCHEDULED: <2019-08-07 Wed>
 :PROPERTIES:
 :CREATED:  [2018-08-26 Sun 22:40]
 :END:
