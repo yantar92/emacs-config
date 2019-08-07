@@ -71,32 +71,36 @@ Trying to debug "Re-entering top level after C stack overflow", as suggested in 
 :PROPERTIES:
 :ID:       5d8e1dca-a849-4980-bfde-cbf02801e92b
 :END:
+- setup =PATH=
+#+begin_src emacs-lisp
+(setenv "PATH" (s-concat (getenv "PATH") ":/home/yantar92/bin/"))
+#+end_src
 - ensure one server instance 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (require 'server)
 (unless (server-running-p)
   (server-start))
-  #+end_src
+#+end_src
 - run server silently
   - ignore file clashes ([[https://www.reddit.com/r/emacs/comments/733698/if_a_file_has_changed_on_disk_save_anyway_without/][reddit]])
-    #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (defun ask-user-about-supersession-threat (args)
   "Ignore file clashes.")
-    #+end_src
+#+end_src
   - do not show large file warnings
-    #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (setq large-file-warning-threshold nil)
-    #+end_src
+#+end_src
 - exit server silently
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'kill-emacs-hook '(lambda() (save-some-buffers 'save-all-buffers)) 'append)
-  #+end_src
+#+end_src
 - disable =kill-emacs= 
   I start emacs as a daemon on system startup. Hence, I need to stop
   or start it as daemon, not using =kill-emacs=
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (put 'kill-emacs 'disabled t)
-  #+END_SRC
+#+END_SRC
 ** Performance 
 :PROPERTIES:
 :CREATED:  [2018-09-12 Wed 19:48]
