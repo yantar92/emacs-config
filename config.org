@@ -3626,10 +3626,10 @@ The task is any item with todo keyword and no subtask.
 	    (setq has-subtask t))))
       (and is-a-task (not has-subtask)))))
 #+end_src
-- keywords for not done tasks: =TODO=, =NEXT=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=
+- keywords for not done tasks: =TODO=, =NEXT=, =TODAY=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=
 #+begin_src emacs-lisp
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)" "FAILED(f!)" "MERGED(m!)" )
+      (quote ((sequence "TODO(t)" "NEXT(n)" "TODAY(y)" "|" "DONE(d!)" "FAILED(f!)" "MERGED(m!)" )
 	      (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c!)" ))))
 ;; set the tags assigned to specific keywords. Not nesessary, but used by a lot of code for filtering later - hence why not
 (setq org-todo-state-tags-triggers
