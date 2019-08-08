@@ -2371,6 +2371,17 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 	      ("C-c C-k" . org-cut-subtree)))
 #+end_src
 
+*** TODO Yasnippet
+:PROPERTIES:
+:CREATED:  [2019-08-07 Wed 10:53]
+:END:
+
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :if init-flag
+  :straight t)
+#+end_src
+
 ** Debugging
 :PROPERTIES:
 :ID:       749e7414-827f-45cb-9ee0-19637eb2274e
