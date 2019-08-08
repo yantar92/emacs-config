@@ -1564,6 +1564,19 @@ Double space convention is outdated.
 #+BEGIN_SRC emacs-lisp
 (setq-default sentence-end-double-space nil)
 #+END_SRC
+**** =goto-line= with preview
+:PROPERTIES:
+:CREATED:  [2019-08-07 Wed 21:38]
+:END:
+
+#+begin_src emacs-lisp
+(use-package goto-line-preview
+  :if init-flag
+  :straight t
+  :config
+  (global-set-key [remap goto-line] 'goto-line-preview))
+#+end_src
+
 *** Links
 **** Browse URL
 :PROPERTIES:
