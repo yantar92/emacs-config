@@ -142,6 +142,7 @@ First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as fro
 	  (eval-print-last-sexp)))
       (load bootstrap-file nil 'nomessage)))
 #+end_src
+
 #+begin_src emacs-lisp
 (eval-and-compile
   (setq load-path (append '("~/.emacs.d/site-lisp/") load-path))
@@ -1366,6 +1367,7 @@ abort completely with `C-g'."
 (use-package expand-region
   :if init-flag
   :straight t
+  :after org
   :bind (:map boon-command-map
 	      ("`" . er/expand-region)
               :map boon-special-map
