@@ -2382,6 +2382,19 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
   :straight t)
 #+end_src
 
+*** Save macro as lisp code
+:PROPERTIES:
+:CREATED:  [2019-08-07 Wed 12:28]
+:END:
+
+#+begin_src emacs-lisp
+(use-package elmacro
+  :if init-flag
+  :straight t
+  :diminish ""
+  :config (elmacro-mode))
+#+end_src
+
 ** Debugging
 :PROPERTIES:
 :ID:       749e7414-827f-45cb-9ee0-19637eb2274e
