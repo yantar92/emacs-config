@@ -3658,6 +3658,7 @@ The task is any item with todo keyword and no subtask.
       (when (member mystate (list "TODO"))
 	(org-todo "NEXT")))))
 #+end_src
+  - TODAY(y) :: Task which needs to be done today. I select this tasks manually every morning after opening the agenda.
   - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason) 
   - HOLD(h) :: I am not going to do this task for now due to reason explained in the comment
   - CANCELLED(c) :: I will never do this task because of what is in the comment
@@ -4965,7 +4966,9 @@ SUBTREE-END is used as end of the entry if not nil."
 		(org-agenda-sorting-strategy
 		 '(todo-state-down effort-up category-keep))))
 	      ("d" "Focus daily agenda" agenda ""
-	       ((org-agenda-skip-function 'yant/org-agenda-skip-nofocus)))
+	       ((org-agenda-overriding-header (propertize "Do not forget to mark TODAY tasks if none!" 'face :bold 'face '(:size 14) ))
+		(org-agenda-skip-function 'yant/org-agenda-skip-nofocus)))
+              ("y" "TODAY tasks" tags-todo "/!TODAY")
 	      ("i" "Inbox items"
 	       ((tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "Inbox")
