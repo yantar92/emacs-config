@@ -3191,7 +3191,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 (defun notmuch-show-delete () 
   (interactive)
   (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
-			  (seq-difference (notmuch-show-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist")))))
+			  (seq-difference (notmuch-show-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist" "deleted")))))
     (when (or (member "listinbox" tags)
 	      (seq-empty-p tags) 	      
 	      (yes-or-no-p "Really delete?"))
@@ -3220,7 +3220,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 (defun notmuch-search-delete () 
   (interactive) 
   (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
-			  (seq-difference (notmuch-search-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist")))))
+			  (seq-difference (notmuch-search-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist" "deleted")))))
     (when (or (member "listinbox" tags)
 	      (seq-empty-p tags) 	      
 	      (yes-or-no-p "Really delete?"))
