@@ -3559,7 +3559,8 @@ I need to deal with many projects running at the same time in my work. Hence, I 
                             ("NOARCHIVE" . ?a)
                             ("ARCHIVEALL" . ?A)
                             ("NOCLOCK" . ?k)
-			    ("ignore" . ?g))))
+			    ("ignore" . ?g)
+                            ("REFILE" . ?r))))
 #+end_src
 - =COMMON= :: General task
 - =PhD= :: Related to work/PhD
@@ -3590,6 +3591,7 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only do it all together.
 - =NOCLOCK= :: prevent entry from being clocked in automatically (after child task clock out [[id:d1afb1ae-a3a4-45b4-8186-8e7242e0edc1][Clocking & logging]]). This is not inherited.
 - =DEFAULT= :: Do not list the task in GTD agenda
+- =REFILE= :: can be refile target even if it is not project/subproject
 ***** TODO Tags for everything
 ***** TODO try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
 :PROPERTIES:
@@ -6366,7 +6368,7 @@ All these templates generally record the creation time in =:CREATED:=
 				      ("J" "Journal publication" entry (file "~/Org/inbox.org")
 				       "* NEXT [paper] %^{Aproximate title of the paper} :publication:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Short description}\n** TODO Outline\nDEADLINE: %^t\n*** NEXT Abstract\n*** TODO Introduction\n*** TODO Methods\n*** TODO Results\n*** TODO Discussion\n*** TODO Conclusions\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Cover letter\n** TODO Submit\n** Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Get accepted\n** TODO Publish on ArXiv\n** TODO Get published\n** TODO Add to pub list\n" :clock-in t :clock-resume t)
 				      ("P" "Research project" entry (file "~/Org/inbox.org")
-				       "* TODO %^{Project title} :%^G:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?\n** TODO Literature review\n*** TODO Papers\n** TODO Summary\n** TODO Reports\n** Ideas\n" :clock-in t :clock-resume t)
+				       "* TODO %^{Project title} :%^G:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?\n** TODO Literature review\n*** TODO Papers :REFILE:\n** TODO Summary\n** TODO Reports\n** Ideas\n" :clock-in t :clock-resume t)
 				      ("e" "Email" entry (file "~/Org/inbox.org")
 				       "* TODO %? email |- %:from: %:subject :EMAIL:\n:PROPERTIES:\n:CREATED: %U\n:EMAIL-SOURCE: %l\n:END:\n%U\n" :clock-in t :clock-resume t)
 				      ("b" "Link from browser" entry (file "~/Org/inbox.org")
@@ -6443,7 +6445,8 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 (defun yant/verify-refile-target ()
   "Exclude tasks and todo keywords with a done state from refile targets."
   (and (or refile-to-tasks
-	   (not (bh/is-task-p)))
+	   (or (member "REFILE" (org-get-tags (point) 'local))
+	       (not (bh/is-task-p))))
        (not (member (nth 2 (org-heading-components)) org-done-keywords))))
 
 (setq org-refile-target-verify-function 'yant/verify-refile-target)
