@@ -2888,7 +2888,7 @@ It's magic
 :ID:       460ee9e2-32f5-4ad2-a535-69121b201bcf
 :END:
 *** TODO Shell
-**** Invokation
+**** Invocation
 :PROPERTIES:
 :ID:       1bdbe0fd-07db-483b-bf04-c9a6813ee351
 :END:
@@ -2905,9 +2905,9 @@ It's magic
 #+end_src
 **** Interaction with boon
 :PROPERTIES:
-:CREATED:  [2018-03-12 Mon 20:43]
-:ID:       6027fccc-5e96-4c55-9e5a-12194caadefd
+:ID:       2d3d61e0-4447-4bcb-8cb9-af49f9696335
 :END:
+
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
   :if init-flag
