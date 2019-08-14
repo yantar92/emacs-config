@@ -373,7 +373,7 @@ Show some text in buffer differently
   :diminish page-break-lines-mode
   :config (global-page-break-lines-mode))
 #+end_src
-***** TODO Pretty symbols
+***** NEXT Pretty symbols
 :PROPERTIES:
 :ID:       315191d1-6edf-4c10-a1fe-0fb70885fbe1
 :END:
@@ -381,6 +381,12 @@ Show some text in buffer differently
 - State "TODO"       from              [2018-03-12 Mon 14:26]
 - State "HOLD"       from              [2018-03-04 Sun 17:57]
 :END:
+
+*************** NEXT [#A] Maybe use built-in prettify-symbols-mode or pretty-mode or ligatures
+SCHEDULED: <2019-08-13 Tue>
+*************** END
+
+
 #+begin_src emacs-lisp
 (use-package pretty-symbols
   :if init-flag
@@ -834,6 +840,7 @@ Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][
 *** Chinese input
 :PROPERTIES:
 :CREATED:  [2019-08-03 Sat 17:01]
+:ID:       c822d425-3cfa-4cb7-bf1e-9ea893fbee5c
 :END:
 #+begin_src emacs-lisp
 (use-package pyim :straight t :demand t)
@@ -1242,6 +1249,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
 ***** Automatically add wrong spelled words to abbrev to avoid such mistakes later
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 10:27]
+:ID:       a47c3763-17c4-4a6e-9ec7-d204a8616166
 :END:
 
 The idea and the code is from [[http://endlessparentheses.com/ispell-and-abbrev-the-perfect-auto-correct.html][here]].
@@ -1588,6 +1596,7 @@ Double space convention is outdated.
 **** =goto-line= with preview
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 21:38]
+:ID:       6e7fa2e9-644d-4682-84c9-53e2f0c2d295
 :END:
 
 #+begin_src emacs-lisp
@@ -2395,6 +2404,7 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 *** TODO Yasnippet
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 10:53]
+:ID:       800d19f3-bbce-4a3c-888d-d8b6ac34eb81
 :END:
 
 #+begin_src emacs-lisp
@@ -2406,6 +2416,7 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 *** Save macro as lisp code
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 12:28]
+:ID:       7154dac1-1525-4b07-8aef-3b70c4488e2b
 :END:
 
 #+begin_src emacs-lisp
@@ -2685,7 +2696,6 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
 :PROPERTIES:
 :CREATED:  [2019-07-08 Mon 20:50]
 :END:
-
 **** Font-lock based namespace for writing modes
 :PROPERTIES:
 :ID:       5b5c84f0-e363-4e5c-b373-69ddf019f9e3
@@ -4352,7 +4362,7 @@ The src block should be in the same org file."
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
 #+end_src 
 ***** NEXT search in article pdfs
-SCHEDULED: <2019-08-07 Wed>
+SCHEDULED: <2019-08-14 Wed>
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
@@ -4811,7 +4821,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :CREATED:  [2018-07-09 Mon 13:01]
 :END:
 ***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
-SCHEDULED: <2019-08-07 Wed>
+SCHEDULED: <2019-08-15 Thu>
 :PROPERTIES:
 :CREATED:  [2018-08-26 Sun 22:40]
 :END:
@@ -7463,13 +7473,14 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
       	      ("CANCELLED" :foreground "gray80" :weight bold)
 	      ("MERGED" :foreground "light green" :weight bold))))
 (use-package pretty-symbols
+  :disabled
   :config
   (setq pretty-symbol-patterns (append pretty-symbol-patterns '((?▤ org-specific ":LOGBOOK:" (org-mode))
       								(?⚙ org-specific ":PROPERTIES:" (org-mode))
       								(?⏏ org-specific ":END:" (org-mode))
-      								;; (?★ org-specific "\\[#A\\]" (org-mode))
-      								;; ("" org-specific "\\[#B\\]" (org-mode))
-      								;; (?☕ org-specific "\\[#C\\]" (org-mode))
+      								(?★ org-specific "\\[#A\\]" (org-mode))
+      								("" org-specific "\\[#B\\]" (org-mode))
+      								(?☕ org-specific "\\[#C\\]" (org-mode))
       								((yant/str-to-glyph "☐") org-specific "\\(?:^*+ +\\)\\(\\<TODO\\>\\)" (org-mode) 1)
       								((yant/str-to-glyph "☑") org-specific "\\(?:^*+ +\\)\\(\\<DONE\\>\\)" (org-mode) 1)
       								((yant/str-to-glyph "✘") org-specific "\\(?:^*+ +\\)\\(\\<FAILED\\>\\)" (org-mode) 1)
@@ -7482,6 +7493,7 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 (use-package org-fancy-priorities
   :if init-flag
   :straight t
+  :disabled
   :hook 
   ((org-mode org-agenda-mode) . org-fancy-priorities-mode)
   :diminish org-fancy-priorities-mode
@@ -7645,7 +7657,7 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 	(isearch . lineage)
 	))
 #+end_src
-**** COMMENT Org element cache
+**** Org element cache
 :PROPERTIES:
 :CREATED:  [2018-11-18 Sun 13:04]
 :ID:       7c1c828b-3a77-4e79-b07a-4ad173a5f87a
@@ -7870,11 +7882,13 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :END:
 
 #+begin_src emacs-lisp
+(use-package dired-hide-dotfiles
+:config
 (defun dired-hide-dotfiles--hide ()
   "Hide all dot-files in the current `dired' buffer."
   (when dired-hide-dotfiles-mode
     (dired-mark-files-regexp "^\\." nil 'localname)
-    (dired-do-kill-lines)))
+    (dired-do-kill-lines))))
 #+end_src
 ** TODO Summary of key bindings
 *** Command frequency measurement in emacs
