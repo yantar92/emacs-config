@@ -7661,6 +7661,18 @@ Turning on org element cache in attempt to make it faster.
 *************** TODO check if it is good enough
 *************** END
 
+**** =M-RET= should not split lines inside folded entry
+:PROPERTIES:
+:CREATED:  [2019-08-11 Sun 16:50]
+:ID:       e87616b0-d0f7-47e0-a64a-c1b6c7798539
+:END:
+
+From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bullet_after_a_folded_item/e1pbs57/
+
+#+begin_src emacs-lisp
+(setq org-M-RET-may-split-line '((default . nil)))
+#+end_src
+
 *** Notmuch interaction
 :PROPERTIES:
 :ID:       e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326
