@@ -1,7 +1,7 @@
 #+SETUPFILE: ~/Org/common.setup
 #+AUTHOR: Ihor Radchenko
 #+EMAIL: yantar92@gmail.com
-#+PROPERTY: header-args+ :tangle yes :comments link
+#+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
 
 * NEXT Emacs configuration                                     :EMACS:COMMON:
 :PROPERTIES:
@@ -46,7 +46,7 @@ This Emacs configuration allows to load Emacs in both interactive and batch mode
 :CREATED:  [2017-12-23 Sat 15:16]
 :END:
 Init file, which is loads this file.
-#+begin_src emacs-lisp :tangle "init.el"
+#+begin_src emacs-lisp :tangle "~/.emacs.d/init.el"
 ;;(package-initialize)
 (setq init-flag t)
 (load "~/.emacs.d/config.el")
