@@ -4107,7 +4107,8 @@ Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while
 
 (defun yant/process-att-abbrev (arg)
   "Return `org-attach-dir' for the current entry."
-  (s-concat (let ((org-attach-dir-suppress-extra-checks t)) (org-attach-dir-symlink 'CREATE)) arg))
+  (s-concat (f-slash (org-attach-dir-symlink 'CREATE))
+	    arg))
 
 (add-to-list 'org-link-abbrev-alist (cons "att" "file:%(yant/process-att-abbrev)"))
 
@@ -4677,7 +4678,6 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 	     (entry-name (yant/org-entry-name-cleanup-for-dir))
 	     (attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
 					  (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil)))) ;; only consider if the entry is the child
-	     ;; (processed-entry-ids (when (boundp 'processed-entry-ids) processed-entry-ids)) ; keep track of the processed entries to avoid infinite recursion
 	     (org-attach-dir-recursive-p (bound-and-true-p org-attach-dir-recursive-p))) ;; keep track if this is the initial call of the function
 	(unless org-attach-dir-recursive-p (setq yant/--processed-entry-ids nil))
 	(unless (member org-id yant/--processed-entry-ids)
@@ -4732,8 +4732,8 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 			 (let ((child-dir (f-join symlinks-directory (yant/org-entry-name-cleanup-for-dir))))
 			   (when (yant/org-subtree-has-attachments-p)
 			     (unless (member child-dir dirs)
-			       (org-attach-dir 'create) ; call recursively
-			       )
+                               (let ((org-attach-dir-recursive-p t))
+				 (org-attach-dir 'CREATE)))
 			     (setq dirs (delete child-dir dirs)))))
 		       (or (yant/outline-get-next-sibling subtree-end)
 			   (goto-char subtree-end))))))
@@ -4751,6 +4751,11 @@ Now, when I have the mirror attach folder structure, it make sense to open this 
 (defun org-attach-dir-symlink (&optional create-if-not-exists-p no-data-dir)
   "Return symlink based path to the attach dir of current entry.
 Do not append symlink to data directory if NO-DATA-dir is not nil."
+  (if create-if-not-exists-p
+      (let ((symlink (org-attach-dir-symlink nil no-data-dir)))
+	(if (not (f-exists-p symlink))
+	    (org-attach-dir 't))
+	symlink))
   (let* ((entry-name (yant/org-entry-name-cleanup-for-dir))
 	 (attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
 				      (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))));; only consider if the entry is the child
@@ -4759,11 +4764,11 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
     (if attach-dir-inherited-p
 	(org-with-wide-buffer
          (org-up-heading-safe) ;; if this is false, something went really wrong
-	 (org-attach-dir-symlink))
+	 (org-attach-dir-symlink create-if-not-exists-p no-data-dir))
       (unless (seq-empty-p entry-name) ;; prevent empty folders
 	(org-with-wide-buffer
 	 (if (org-up-heading-safe)
-	     (let ((head-path (org-attach-dir-symlink 'create 'no-data-dir)))
+	     (let ((head-path (org-attach-dir-symlink create-if-not-exists-p 't)))
 	       (when head-path (f-slash (f-join head-path entry-path))))
            (f-slash (f-join (or yant/org-attach-file-symlink-path
 				default-directory)
