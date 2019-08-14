@@ -849,7 +849,26 @@ Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][
                   pyim-probe-org-structure-template))
   (setq pyim-page-tooltip 'tooltip)
   (setq pyim-page-length 5))
+
 #+end_src
+
+
+*** Default major mode
+:PROPERTIES:
+:CREATED:  [2019-08-11 Sun 14:57]
+:ID:       357921b0-cf2f-41ef-bbea-ddffab6090ce
+:END:
+
+Use text-mode by default. 
+From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
+
+#+begin_src emacs-lisp
+;; Default mode is ‘text-mode’.  The actual default,
+;; ‘fundamental-mode’ is rather useless.
+
+(setq-default major-mode 'text-mode)
+#+end_src
+
 ** Completion 
 :PROPERTIES:
 :ID:       f78e9123-ed35-4c76-a5fd-5549cc8f8210
