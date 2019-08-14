@@ -73,7 +73,7 @@ Trying to debug "Re-entering top level after C stack overflow", as suggested in 
 :END:
 - setup =PATH=
 #+begin_src emacs-lisp
-(setenv "PATH" (s-concat (getenv "PATH") ":/home/yantar92/bin/"))
+  (setenv "PATH" (concat (getenv "PATH") ":/home/yantar92/bin/"))
 #+end_src
 - ensure one server instance 
 #+begin_src emacs-lisp
