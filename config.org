@@ -384,6 +384,9 @@ Show some text in buffer differently
 
 *************** NEXT [#A] Maybe use built-in prettify-symbols-mode or pretty-mode or ligatures
 SCHEDULED: <2019-08-13 Tue>
+:PROPERTIES:
+:SHOWFROMDATE: 2019-08-14 18:00
+:END:
 *************** END
 
 
@@ -1130,7 +1133,6 @@ Working with forges
   :config
   (global-git-gutter+-mode))
 #+end_src
-
 ** Text highlight & coloring
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
@@ -1486,7 +1488,6 @@ abort completely with `C-g'."
 	     ("G" . end-of-buffer)
 	     :map boon-command-map
 	     ("-" . meta-undo)
-             ("_" . undo-tree-redo)
 	     ("~" . boon-repeat-command)
 	     ("Q" . kmacro-end-or-call-macro)
 	     ("q" . nil)
@@ -2143,7 +2144,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 (use-package helm-org-rifle
   :straight t
   :bind (:map boon-goto-map
-	      ("P" . helm-org-rifle))
+	      ("P" . helm-org-rifle-agenda-files))
   :init
   (setq helm-org-rifle-reverse-paths t
 	helm-org-rifle-test-against-path t)
@@ -4376,7 +4377,7 @@ The src block should be in the same org file."
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
 #+end_src 
 ***** NEXT search in article pdfs
-SCHEDULED: <2019-08-14 Wed>
+SCHEDULED: <2019-08-28 Wed>
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
@@ -6120,15 +6121,7 @@ Sometimes I need to jump to some urgent task. After it is done, I hate searching
   :config
   (use-package helm-org
     :bind (:map boon-goto-map
-		("p" . yant/resume-orcall-helm-org-agenda-files-headings))
-    :init
-    (defun yant/resume-orcall-helm-org-agenda-files-headings ()
-      "Try to resume `helm-org-agenda-files-headings' session or call a new one if not exists."
-      (interactive)
-      (let ((buffer-name "*helm org headings*"))
-	(if (bufferp (get-buffer buffer-name))
-	    (helm-resume buffer-name)
-          (helm-org-agenda-files-headings))))
+		("p" . helm-org-agenda-files-headings))
     :config
     (defun dfeich/helm-org-clock-in (marker)
       "Clock into the item at MARKER"
