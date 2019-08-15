@@ -2645,6 +2645,20 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
   :if init-flag
   :straight t)
 #+END_SRC
+**** Elisp demos
+:PROPERTIES:
+:CREATED:  [2019-08-15 Thu 12:17]
+:ID:       4e508904-0543-474c-956a-85e56506f403
+:END:
+
+#+begin_src emacs-lisp
+(use-package elisp-demos
+  :if init-flag
+  :straight t
+  :config
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+#+end_src
+
 *** Show elisp result in overlay
 :PROPERTIES:
 :CREATED:  [2019-07-20 Sat 19:34]
