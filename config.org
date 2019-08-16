@@ -382,10 +382,13 @@ Show some text in buffer differently
 - State "HOLD"       from              [2018-03-04 Sun 17:57]
 :END:
 
-*************** NEXT [#A] Maybe use built-in prettify-symbols-mode or pretty-mode or ligatures
-SCHEDULED: <2019-08-13 Tue>
+*************** CANCELLED [#A] Maybe use built-in prettify-symbols-mode or pretty-mode or ligatures :CANCELLED:
+CLOSED: [2019-08-15 Thu 17:09] SCHEDULED: <2019-08-13 Tue>
 :PROPERTIES:
 :SHOWFROMDATE: 2019-08-14 18:00
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "NEXT"       [2019-08-15 Thu 17:09]
 :END:
 *************** END
 
