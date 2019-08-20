@@ -382,15 +382,7 @@ Show some text in buffer differently
 - State "HOLD"       from              [2018-03-04 Sun 17:57]
 :END:
 
-*************** CANCELLED [#A] Maybe use built-in prettify-symbols-mode or pretty-mode or ligatures :CANCELLED:
-CLOSED: [2019-08-15 Thu 17:09] SCHEDULED: <2019-08-13 Tue>
-:PROPERTIES:
-:SHOWFROMDATE: 2019-08-14 18:00
-:END:
-:LOGBOOK:
-- State "CANCELLED"  from "NEXT"       [2019-08-15 Thu 17:09]
-:END:
-*************** END
+
 
 
 #+begin_src emacs-lisp
@@ -3650,6 +3642,7 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 #+begin_src emacs-lisp
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
+  :straight t
   :demand t)
 #+end_src
 *** Project management
@@ -4405,6 +4398,7 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 #+BEGIN_SRC emacs-lisp
 (use-package helm-recoll
   :if init-flag
+  :straight t
   :config
   (helm-recoll-create-source "docs" "~/.recoll")
   (bind-key* "C-c }" 'helm-recoll-docs))
