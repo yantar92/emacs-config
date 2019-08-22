@@ -955,8 +955,13 @@ From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
          ("M-s" . company-filter-candidates))
   :init
   (setq company-idle-delay 0
-	company-minimum-prefix-length 2))
+	company-minimum-prefix-length 2
+	company-selection-wrap-around t
+        company-show-numbers t ;; quick selection by Alt+[1-9]
+        company-require-match nil))
 #+end_src
+
+
 *** TODO Skeleton
 :PROPERTIES:
 :CREATED:  [2018-10-21 Sun 14:28]
