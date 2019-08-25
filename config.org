@@ -2590,7 +2590,11 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
   :straight t
   :diminish which-key-mode
   :config
-  (which-key-mode))
+  (which-key-mode)
+  (use-package which-key-posframe
+    :straight t
+    :config
+    (which-key-posframe-mode)))
 #+end_src
 **** Help buffer navigation
 :PROPERTIES:
