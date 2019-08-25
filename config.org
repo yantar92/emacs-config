@@ -2443,6 +2443,20 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
   :config (elmacro-mode))
 #+end_src
 
+*** Undo
+
+**** Persistent undo
+:PROPERTIES:
+:CREATED:  [2019-08-25 Sun 19:29]
+:ID:       ae00a281-ea18-47c8-b75b-a7f643d63b88
+:END:
+
+#+begin_src emacs-lisp
+(use-package undohist
+  :straight (undohist :type git :host github :repo "clemera-dev/undohist")
+  :config
+  (undohist-initialize))
+#+end_src
 ** Debugging
 :PROPERTIES:
 :ID:       749e7414-827f-45cb-9ee0-19637eb2274e
