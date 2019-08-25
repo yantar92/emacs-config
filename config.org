@@ -1003,6 +1003,21 @@ to rebind to =C-c s= is such a case and =save-some-buffers= to =C-c C-s=.
  create-lockfiles nil
  )
 #+end_src
+*** Backup walker
+:PROPERTIES:
+:CREATED:  [2019-08-22 Thu 22:51]
+:ID:       3837955e-831d-46b3-8cbb-a4e7a9e19b92
+:END:
+
+Walk across the backup files
+
+#+begin_src emacs-lisp
+(use-package backup-walker
+  :if init-flag
+  :straight t
+  :commands backup-walker-start)
+#+end_src
+
 *** Auto save
 :PROPERTIES:
 :ID:       2e32ad16-4c7a-46b9-8c47-06f7f5566032
