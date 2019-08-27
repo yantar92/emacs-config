@@ -4920,7 +4920,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :CREATED:  [2018-07-09 Mon 13:01]
 :END:
 ***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
-SCHEDULED: <2019-08-15 Thu>
+SCHEDULED: <2019-08-28 Wed>
 :PROPERTIES:
 :CREATED:  [2018-08-26 Sun 22:40]
 :END:
