@@ -2791,6 +2791,24 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
 (use-package ht
   :straight t)
 #+end_src
+**** Measure time of code blocks
+:PROPERTIES:
+:CREATED:  [2019-08-26 Mon 23:56]
+:END:
+
+Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
+#+begin_src emacs-lisp
+(when init-flag
+  (defmacro measure-time (&rest body)
+    "Measure and return the running time of the code block."
+    (declare (indent defun))
+    ;; Fresh garbage collection before making any measurements.
+    (garbage-collect)
+    (let ((start (make-symbol "start")))
+      `(let ((,start (float-time)))
+	 ,@body
+	 (- (float-time) ,start)))))
+#+end_src
 
 *** Gnuplot
 :PROPERTIES:
