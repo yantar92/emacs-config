@@ -997,8 +997,8 @@ to rebind to =C-c s= is such a case and =save-some-buffers= to =C-c C-s=.
  backup-directory-alist '((".*" . "~/.emacs.d/backups/"))
  backup-by-copying t
  delete-old-versions t
- kept-new-versions 100000
- kept-old-versions 100000
+ kept-new-versions 100
+ kept-old-versions 100
  version-control t
  create-lockfiles nil
  )
