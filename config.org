@@ -2113,6 +2113,20 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (apply OLDFUN args)))
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
+****** Appearance
+******* File icons
+:PROPERTIES:
+:CREATED:  [2019-08-27 Tue 17:18]
+:ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
+:END:
+
+#+begin_src emacs-lisp
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :straight t
+  :config (treemacs-icons-dired-mode))
+#+end_src
+
 **** FTP
 :PROPERTIES:
 :CREATED:  [2018-12-07 Fri 14:58]
