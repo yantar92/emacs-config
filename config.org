@@ -7981,7 +7981,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
     (dired-do-kill-lines))))
 #+end_src
 ** TODO Summary of key bindings
-*** Command frequency measurement in emacs
+*** COMMENT Command frequency measurement in emacs
 :PROPERTIES:
 :ID:       cd5dd0a5-e810-4846-91a3-ba5b6c649cdc
 :END:
