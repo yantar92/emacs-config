@@ -229,20 +229,11 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
 #+end_src
 - I want Source Code Pro default everywhere
   #+begin_src emacs-lisp
-(when init-flag
-  (custom-set-faces '(default ((t (:inherit nil
-					    :stipple nil
-					    :inverse-video nil
-					    :box nil
-					    :strike-through nil
-					    :overline nil
-					    :underline nil
-					    :slant normal
-					    :weight normal
-					    :height 100
-					    :width normal
-					    :foundry "adobe"
-					    :family "source code pro"))))))
+    (when init-flag
+      (set-face-attribute 'default nil
+			  :height 100
+			  :foundry "adobe"
+			  :family "source code pro"))
   #+end_src
 - Secondary selection is the same color with some symbols in =org-agenda=
 #+BEGIN_SRC emacs-lisp
