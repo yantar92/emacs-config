@@ -6270,17 +6270,20 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
   "Time of the last save of `org-time-balance'.")
 (defvar org-time-balance-update-time nil
   "Time of the last update of `org-time-balance'.")
-(use-package savehist
-  :config
-  (add-to-list 'savehist-additional-variables 'org-time-balance)
-  (add-to-list 'savehist-additional-variables 'org-time-balance-save-time))
+(defvar org-time-balance-file (f-join user-emacs-directory ".org-time-balance")
+  "File used to store time balance between sessions.")
+
+;; (use-package savehist
+;;   :config
+;;   (add-to-list 'savehist-additional-variables 'org-time-balance)
+;;   (add-to-list 'savehist-additional-variables 'org-time-balance-save-time))
 
 (defun org-load-time-balance-session ()
-  "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
-  (when org-time-balance-persistant-p
-    (unless (and (boundp 'savehist-mode)
-		 savehist-mode)
-      (savehist-mode +1))))
+  "Load the current org-time-balance if `org-time-balance-persistant-p' is non nil."
+  (if org-time-balance-persistant-p
+      (setq org-time-balance (string-to-number (f-read-text org-time-balance-file)))
+    (setq org-time-balance 0)))
+    
 
 (defun org-save-time-balance-session ()
   "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
@@ -6288,7 +6291,7 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
 	     org-time-balance
              org-time-balance-update-time)
     (setq org-time-balance-save-time org-time-balance-update-time)
-    (savehist-save)))
+    (f-write-text (format "%s" org-time-balance) 'utf-8 org-time-balance-file)))
 
 (defun org-get-time-balance-multiplier-at-point ()
   "Get value of :ORG-TIME-BALANCE-MULTIPLIER property of an item at point or return 1."
