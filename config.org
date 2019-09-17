@@ -348,6 +348,21 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
   #+begin_src emacs-lisp
 (prefer-coding-system 'utf-8)
   #+end_src
+
+- ensure UTF fonts
+
+Note that the fonts should be installed in the system first
+#+begin_src bash :tangle no
+sudo emerge -a noto dejavu quivira symbola
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package unicode-fonts
+  :straight t
+  :config
+  (unicode-fonts-setup))
+#+end_src
+
 **** Visual text transformation
 :PROPERTIES:
 :ID:       ec85fac4-8fad-4adf-a159-2219ace7e7d7
