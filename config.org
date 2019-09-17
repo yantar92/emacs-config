@@ -6266,8 +6266,8 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
   "Time of the last save of `org-time-balance'.")
 (defvar org-time-balance-update-time nil
   "Time of the last update of `org-time-balance'.")
-(defvar org-time-balance-file (f-join user-emacs-directory ".org-time-balance")
-  "File used to store time balance between sessions.")
+(defvar org-time-balance-storage "org-time-balance"
+  "`persistent-soft' data storage used to store time balance between sessions.")
 
 ;; (use-package savehist
 ;;   :config
@@ -6277,7 +6277,9 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
 (defun org-load-time-balance-session ()
   "Load the current org-time-balance if `org-time-balance-persistant-p' is non nil."
   (if org-time-balance-persistant-p
-      (setq org-time-balance (string-to-number (f-read-text org-time-balance-file)))
+      (progn
+	(setq org-time-balance (or (persistent-soft-fetch 'org-time-balance org-time-balance-storage) 0))
+        (setq org-time-balance-save-time (persistent-soft-fetch 'org-time-balance-save-time org-time-balance-storage)))
     (setq org-time-balance 0)))
     
 
@@ -6287,7 +6289,8 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
 	     org-time-balance
              org-time-balance-update-time)
     (setq org-time-balance-save-time org-time-balance-update-time)
-    (f-write-text (format "%s" org-time-balance) 'utf-8 org-time-balance-file)))
+    (persistent-soft-store 'org-time-balance org-time-balance org-time-balance-storage)
+    (persistent-soft-store 'org-time-balance-save-time org-time-balance-save-time org-time-balance-storage)))
 
 (defun org-get-time-balance-multiplier-at-point ()
   "Get value of :ORG-TIME-BALANCE-MULTIPLIER property of an item at point or return 1."
@@ -6328,11 +6331,7 @@ Increment :ORG-TIME-BONUS: for habits, if nesessary."
 Use :ORG-TIME-BALANCE-MULTIPLIER: property to set the weight.
 Just return the value at point if RETURN is not nil."
   (when org-time-balance
-    (let* ((daynr (string-to-number (format-time-string "%d" (current-time))))
-	   (a-month-ago (* 60 60 24 (+ daynr 1)))
-	   (last-month (time-subtract (current-time) (seconds-to-time a-month-ago)))
-           (value-at-point (* (org-clock-sum-current-item (or org-time-balance-save-time
-							      last-month))
+    (let* ((value-at-point (* (org-clock-sum-current-item org-time-balance-save-time)
                               (org-get-time-balance-multiplier-at-point))))
       (setq value-at-point (+ value-at-point (org-get-org-time-bonus-at-point)))
       (if return
@@ -6360,6 +6359,8 @@ ignoring the previously saved values."
 
 (define-advice org-clock-out (:around (OLDFUN &rest args) yant/org-increment-weighted-time)
   "Add the current clock time to `org-time-balance'."
+  (unless org-time-balance
+    (setq org-time-balance (org-get-total-weighted-time)))
   (save-excursion ; Do not replace this with `with-current-buffer'.
     (with-no-warnings (set-buffer (org-clocking-buffer)))
     (save-restriction
@@ -6376,6 +6377,8 @@ ignoring the previously saved values."
 
 (define-advice org-todo (:around (OLDFUN &optional arg) yant/org-increment-weighted-time)
   "Probably add the current item time bonus to `org-time-balance'."
+  (unless org-time-balance
+    (setq org-time-balance (org-get-total-weighted-time)))
   (let ((old-time-at-point (org-accumulate-weighted-time 'return))
 	(old-org-time-balance org-time-balance))
     (when (and (string= (org-entry-get (point) "STYLE") "habit")
