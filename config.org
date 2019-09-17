@@ -7716,10 +7716,20 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 :PROPERTIES:
 :ID:       aae027ae-a2b7-42b6-a833-cf038edcad3a
 :END:
+
+Use UTF symbols for entities
+
 #+begin_src emacs-lisp 
 (setq org-pretty-entities t)
 (setq org-pretty-entities-include-sub-superscripts t)
 #+end_src
+
+*Only* use curly brackets to identify sub/superscripts (from [[https://github.com/grettke/help/blob/master/help.org][here]])
+
+#+begin_src emacs-lisp
+(setq org-use-sub-superscripts '{})
+#+end_src
+
 **** =Eldoc= integration
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 20:31]
