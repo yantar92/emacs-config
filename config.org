@@ -6258,6 +6258,8 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
 
 
 #+begin_src emacs-lisp 
+(use-package persistent-soft :straight t :demand t)
+
 (defvar org-time-balance nil
   "Weighted time spent for all the tasks in agenda files.")
 (defvar org-time-balance-persistant-p t
