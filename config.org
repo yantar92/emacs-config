@@ -6121,7 +6121,7 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
       org-log-done 'time
       org-log-done-with-time t
       org-log-note-clock-out nil
-      org-log-refile nil
+      org-log-refile 'time
       org-log-reschedule nil)
 (setq org-clock-into-drawer t)
 #+end_src
