@@ -2476,6 +2476,7 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 
 #+begin_src emacs-lisp
 (use-package emacs_anywhere
+  :disabled t
   :straight (emacs_anywhere :type git :host github :repo "zachcurry/emacs-anywhere")
   )
 #+end_src
