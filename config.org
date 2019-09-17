@@ -1247,28 +1247,6 @@ From https://www.emacswiki.org/emacs/FlySpell"
   (defadvice flyspell-goto-next-error (after check-word-spelling activate) (ispell-word))
   )
 #+END_SRC
-***** Integration with org-mode
-:PROPERTIES:
-:CREATED:  [2018-10-21 Sun 12:54]
-:ID:       bc5ecae4-4038-4284-9d98-f7a6c819fe87
-:END:
-
-#+BEGIN_SRC emacs-lisp
-;; from https://github.com/wdenton/.emacs.d/blob/master/setup/setup-orgmode.el
-;; Use LaTeX spell-check
-(add-hook 'org-mode-hook (lambda () (setq ispell-parser 'tex)))
-
-;; Ispell should ignore some things in Org files
-;; http://endlessparentheses.com/ispell-and-org-mode.html
-(defun endless/org-ispell ()
-  "Configure `ispell-skip-region-alist' for `org-mode'."
-  (make-local-variable 'ispell-skip-region-alist)
-  (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
-  (add-to-list 'ispell-skip-region-alist '("~" "~"))
-  (add-to-list 'ispell-skip-region-alist '("=" "="))
-  (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
-(add-hook 'org-mode-hook #'endless/org-ispell)
-#+END_SRC
 ***** Automatically add wrong spelled words to abbrev to avoid such mistakes later
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 10:27]
@@ -7885,6 +7863,81 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
   (meta-functions-update-function-definitions)
   )
 #+end_src
+
+*** Spell checking
+:PROPERTIES:
+:CREATED:  [2019-09-17 Tue 00:16]
+:ID:       0ff33f97-adf2-4195-adba-0b92040950e5
+:END:
+
+Spell check rules for org syntax. 
+
+
+[Partially stolen from https://github.com/grettke/help/blob/master/help.org]:
+
+#+begin_src emacs-lisp
+(defun help/block-regex (special)
+  "Make an ispell skip-region alist for a SPECIAL block."
+  (interactive)
+  `(,(concat "^[ ]*#[+][bB][eE][gG][iI][nN]_" special)
+    .
+    ,(concat "^[ ]*#[+][eE][nN][dD]_" special)))
+
+;; from https://github.com/wdenton/.emacs.d/blob/master/setup/setup-orgmode.el
+;; Use LaTeX spell-check
+(add-hook 'org-mode-hook (lambda () (setq ispell-parser 'tex)))
+
+;; Ispell should ignore some things in Org files
+;; http://endlessparentheses.com/ispell-and-org-mode.html
+(defun endless/org-ispell ()
+  "Configure `ispell-skip-region-alist' for `org-mode'."
+  (make-local-variable 'ispell-skip-region-alist)
+  (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+  (add-to-list 'ispell-skip-region-alist '(org-any-link-re))
+  (add-to-list 'ispell-skip-region-alist '("=[^=]+="))
+  (add-to-list 'ispell-skip-region-alist (help/block-regex "[Ss][rR][cC]"))
+  (let ()
+    (--each
+	'(("ATTR_LATEX" nil)
+          ("AUTHOR" nil)
+          ("SETUPFILE" t)
+          ("BLOG" nil)
+          ("CREATOR" nil)
+          ("DATE" nil)
+          ("DESCRIPTION" nil)
+          ("EMAIL" nil)
+          ("EXCLUDE_TAGS" nil)
+          ("HTML_CONTAINER" nil)
+          ("HTML_DOCTYPE" nil)
+          ("HTML_HEAD" nil)
+          ("HTML_HEAD_EXTRA" nil)
+          ("HTML_LINK_HOME" nil)
+          ("HTML_LINK_UP" nil)
+          ("HTML_MATHJAX" nil)
+          ("INFOJS_OPT" nil)
+          ("KEYWORDS" nil)
+          ("LANGUAGE" nil)
+          ("LATEX_CLASS" nil)
+          ("LATEX_CLASS_OPTIONS" nil)
+          ("LATEX_HEADER" nil)
+          ("LATEX_HEADER_EXTRA" nil)
+          ("NAME" t)
+          ("OPTIONS" t)
+          ("PROPERTY" t)
+          ("POSTID" nil)
+          ("RESULTS" t)
+          ("SELECT_TAGS" nil)
+          ("STARTUP" nil)
+          ("TITLE" nil))
+      (add-to-list
+       'ispell-skip-region-alist
+       (let ((special (concat "#[+]" (car it) ":")))
+	 (if (cadr it)
+             (cons special "$")
+           (list special)))))))
+
+(add-hook 'org-mode-hook #'endless/org-ispell)
+#+END_SRC
 
 *** TODO Key combinations
 :PROPERTIES:
