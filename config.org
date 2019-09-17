@@ -161,7 +161,7 @@ First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as fro
 (straight-use-package 'org-plus-contrib)
 #+end_src
 
-- prefer setting in this file over customized interface
+- prefer setting in this file over customised interface
 *************** TODO use :custom use-package keyword instead
 *************** END
   #+begin_src emacs-lisp
@@ -235,7 +235,7 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
 			  :foundry "adobe"
 			  :family "source code pro"))
   #+end_src
-- Secondary selection is the same color with some symbols in =org-agenda=
+- Secondary selection is the same colour with some symbols in =org-agenda=
 #+BEGIN_SRC emacs-lisp
 (set-face-background 'secondary-selection "#aae59c")
 #+END_SRC
@@ -520,11 +520,11 @@ Show some text in buffer differently
 	(set-face-foreground 'boon-modeline-off "white")
 	(boon-powerline-theme)))
   #+end_src
-*** Minibuffer
+*** Mini-buffer
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 20:29]
 :END:
-**** =Eldoc= show various info in minibuffer
+**** =Eldoc= show various info in mini-buffer
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 20:29]
 :ID:       461cf4e2-bcb0-4166-bdf0-fe437d352417
@@ -558,7 +558,7 @@ Show some text in buffer differently
 #+begin_src emacs-lisp
 (global-hl-line-mode t)
 #+end_src
-**** Cursor color
+**** Cursor colour
 :PROPERTIES:
 :CREATED:  [2018-10-11 Thu 22:39]
 :ID:       727818b2-7362-4772-b461-08fa3ce82450
@@ -595,8 +595,8 @@ Do not use =self-insert-command= by default, but bind character keys to navigati
 I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 - it is bad idea to enable boon insert mode in special buffers, so it has =special mode= with limited redefined key binding by default. This mode replaces normal =insert mode= 
 - I add extra functionality for the case when =special mode= or =command mode= should not be enabled by default --- the buffer requires a lot of writing (I mean shell buffers, for example). This is defined by =boon-insert-state-major-mode-list= where the default mode is =insert mode=.
-- =boon-special-mode= is frequently useful in all kinds of major modes, like debug, org-agenda, notmuch, etc. However, many major modes use the conventional movement key bindings or their derivatives (like "n" and "p" in =org-agenda=). I do not like it. I prefer to have some minimal [[id:46fb459b-7794-4b9a-9fce-85389aba1d95][set]] of movement keys working in all the buffers. It means, that I need to redefine the movement commands to be able to act according to the major mode (like "n" from org-mode is binded to =org-next-line= and, hence, "j" from =org-special-map= should be also bound to =org-next-line=.
-  This can be done using meta-function approach when I use the function, which acts differently depending on the mode, while keeping the same general idea of the behavior.
+- =boon-special-mode= is frequently useful in all kinds of major modes, like debug, org-agenda, =notmuch=, etc. However, many major modes use the conventional movement key bindings or their derivatives (like "n" and "p" in =org-agenda=). I do not like it. I prefer to have some minimal [[id:46fb459b-7794-4b9a-9fce-85389aba1d95][set]] of movement keys working in all the buffers. It means, that I need to redefine the movement commands to be able to act according to the major mode (like "n" from org-mode is bound to =org-next-line= and, hence, "j" from =org-special-map= should be also bound to =org-next-line=.
+  This can be done using meta-function approach when I use the function, which acts differently depending on the mode, while keeping the same general idea of the behaviour.
 
 #+BEGIN_SRC emacs-lisp
 (use-package boon
@@ -1083,7 +1083,7 @@ saving all the buffers, is executed.
 (setq revert-without-query '(".*"))
 (bind-key* "M-r" #'revert-buffer)
 #+end_src
-*** Magit
+*** =Magit=
 :PROPERTIES:
 :CREATED:  [2018-08-11 Sat 20:47]
 :ID:       6e9f1b1e-bcd9-4927-894f-7a3ff773fb8c
@@ -1154,7 +1154,7 @@ Working with forges
   :config
   (global-git-gutter+-mode))
 #+end_src
-** Text highlight & coloring
+** Text highlight & colouring
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
 :END:
@@ -1175,13 +1175,13 @@ Working with forges
 :LOGBOOK:
 - State "TODO"       from              [2018-07-18 Wed 11:26]
 :END:
-**** Flyspell
+**** =Flyspell=
 :PROPERTIES:
 :CREATED:  [2018-10-12 Fri 14:07]
 :ID:       b79658d1-8d62-4c47-be3b-cc399a0a8c59
 :END:
 
-*************** TODO fly ispell only with idle timer?
+*************** TODO fly =ispell= only with idle timer?
 *************** END
 *************** TODO enable in org-mode
 *************** END
@@ -1375,7 +1375,7 @@ abort completely with `C-g'."
 :PROPERTIES:
 :ID:       02c8a98c-a38a-4054-a0a2-400f6757693b
 :END:
-- I changed the background color here due to clash with my =org-mode= colors
+- I changed the background colour here due to clash with my =org-mode= colours
   #+begin_src emacs-lisp
 (use-package volatile-highlights
   :if init-flag
@@ -1402,7 +1402,7 @@ abort completely with `C-g'."
               ("`" . er/expand-region)))
 
 #+END_SRC
-*** Highlight uncommited changes in version-controlled files and dirs
+*** Highlight uncommitted changes in version-controlled files and dirs
 :PROPERTIES:
 :CREATED:  [2019-04-05 Fri 16:37]
 :ID:       c5fc942a-d468-4102-9c90-6275fd605e92
@@ -1523,7 +1523,7 @@ abort completely with `C-g'."
 :ID:       f645973b-fcd8-466a-9fec-7e8ebcbb0be1
 :END:
 
-I do not move by visual line in files. Instead, I prefer to use avy to move within the line. 
+I do not move by visual line in files. Instead, I prefer to use =avy= to move within the line. 
 However, it is still not fast enough with =avy-goto-char-in-line=. 
 Hence, I define a new function - =avy-goto-word-in-line-1= to jump to any word in 2 keys.
 
@@ -1620,13 +1620,13 @@ Double space convention is outdated.
   (setq browse-url-browser-function 'browse-url-generic
 	browse-url-generic-program "/home/yantar92/bin/qutebrowser-call.sh"))
 #+end_src
-*** Imenu
+*** =Imenu=
 :PROPERTIES:
 :CREATED:  [2018-10-25 Thu 22:45]
 :ID:       fdbef4e6-7b49-4c80-88be-cf9f85bce94f
 :END:
 
-Imenu allows navigating through the buffer structure, according to the major mode.
+=Imenu= allows navigating through the buffer structure, according to the major mode.
 #+begin_src emacs-lisp
 (use-package imenu
   :init
@@ -1900,7 +1900,7 @@ Undo window configuration changes
   :straight t)
 #+end_src
 
-***** NEXT Dired
+***** NEXT =Dired=
 :PROPERTIES:
 :ID:       66f5dab7-add6-48c2-9824-fed4ef202b7a
 :END:
@@ -1945,7 +1945,7 @@ Undo window configuration changes
 #+end_src
 
 
-****** Dired+
+****** =Dired+=
 :PROPERTIES:
 :CREATED:  [2018-10-08 Mon 14:53]
 :ID:       f7f3a852-237e-491d-9de7-786807aa63cb
@@ -1967,7 +1967,7 @@ CLOCK: [2019-07-03 Wed 22:12]--[2019-07-03 Wed 22:28] =>  0:16
 (remove-hook 'dired-after-readin-hook #'diredp-nb-marked-in-mode-name)
 #+end_src
 
-****** NEXT Image-dired
+****** NEXT =Image-dired=
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 21:26]
 :ID:       c095c061-ffdc-4adb-a889-bb4e54b6a514
@@ -2415,7 +2415,7 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 	      ("C-c C-k" . org-cut-subtree)))
 #+end_src
 
-*** TODO Yasnippet
+*** TODO =Yasnippet=
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 10:53]
 :ID:       800d19f3-bbce-4a3c-888d-d8b6ac34eb81
@@ -2681,7 +2681,7 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
     (add-to-list 'meta-functions-meta-down-element-alist '(woman-mode . Man-next-section))
     (add-to-list 'meta-functions-meta-up-element-alist '(woman-mode . Man-previous-section))))
 #+end_src
-**** TLDR - short practical version of man
+**** TL;DR - short practical version of man
 :PROPERTIES:
 :CREATED:  [2019-01-20 Sun 02:28]
 :ID:       fd10055f-2a65-4c7e-a1e9-3d95e7d8ea72
@@ -3037,7 +3037,7 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
     (interactive "P")
     (pdf-view--rotate :counterclockwise (not arg))))
 #+end_src
-*** TODO Fix page number in boon modeline when the pdf is opened in a new frame
+*** TODO Fix page number in boon mode-line when the pdf is opened in a new frame
 :PROPERTIES:
 :CREATED:  [2019-07-03 Wed 18:14]
 :ID:       5fb47379-ccda-4f17-a834-7796b0f188dc
@@ -3104,7 +3104,7 @@ It's magic
 (add-hook 'shell-mode-hook (lambda () (set-process-sentinel (get-buffer-process (buffer-name) ) #'jt-shell-sentinel)))
 #+end_src
 
-*** Calc
+*** =Calc=
 :PROPERTIES:
 :ID:       db607f5d-6270-4193-942a-c1f772a97ca6
 :END:
@@ -3115,12 +3115,12 @@ It's magic
 	      ("c" . calc)))
 #+end_src
 *** Music
-**** Mingus (mpd)
+**** Mingus (=mpd=)
 :PROPERTIES:
 :ID:       dad9e1d1-308f-4706-900e-3ec546e6eb58
 :END:
-I usually run mingus in a new frame using global WM key binding.
-Hence, delete frame instead of burying the mingus buffer.
+I usually run =mingus= in a new frame using global WM key binding.
+Hence, delete frame instead of burying the =mingus= buffer.
 
 #+begin_src emacs-lisp
 (use-package mingus
@@ -3130,7 +3130,7 @@ Hence, delete frame instead of burying the mingus buffer.
 	      ("q" . (lambda() (interactive) (mingus-git-out) (delete-frame)))))
 #+end_src
 
-When listening a new band/album, I usually go through all the songs and delete what I do no like until several song remain in the playlist. It is much more convenient to have a global command to delete currently playing song if I do not like it instead of opening mingus frame and doing it manually.
+When listening a new band/album, I usually go through all the songs and delete what I do no like until several song remain in the playlist. It is much more convenient to have a global command to delete currently playing song if I do not like it instead of opening =mingus= frame and doing it manually.
 
 #+begin_src emacs-lisp
 (use-package mingus
@@ -3183,7 +3183,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 :PROPERTIES:
 :ID:       b53c6b66-4a7c-4eae-ab26-e010fdeb3534
 :END:
-*** Elfeed
+*** =Elfeed=
 :PROPERTIES:
 :ID:       9bc385e2-0ed2-460b-875e-be9ad19144a3
 :END:
@@ -3241,7 +3241,7 @@ When listening a new band/album, I usually go through all the songs and delete w
     (elfeed-org)
     (setq rmh-elfeed-org-files (list "~/Org/rss.org"))))
 #+end_src
-*** Notmuch
+*** =Notmuch=
 :PROPERTIES:
 :ID:       f6ca2367-45c4-45bc-acec-49837cadc5ac
 :END:
@@ -3283,7 +3283,7 @@ When listening a new band/album, I usually go through all the songs and delete w
                ("C-c C-f" . notmuch-show-nolist)
 	       ("C-c C-S-d" . notmuch-show-delete))))
 #+end_src
-**** Sendmail setup
+**** =Sendmail= setup
 :PROPERTIES:
 :ID:       48f4a6a2-a480-4d4f-9ad4-99da5667a15f
 :END:
@@ -3638,7 +3638,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 	"text/x-patch" "application/pgp-signature" "application/emacs-lisp"))
 (setq mm-inline-large-images 'resize)
   #+end_src
-**** Notmuch hello
+**** =Notmuch= hello
 :PROPERTIES:
 :ID:       645a5628-289a-4373-9668-b79e10738215
 :END:
@@ -3779,7 +3779,7 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only do it all together.
 - =NOCLOCK= :: prevent entry from being clocked in automatically (after child task clock out [[id:d1afb1ae-a3a4-45b4-8186-8e7242e0edc1][Clocking & logging]]). This is not inherited.
 - =DEFAULT= :: Do not list the task in GTD agenda
-- =REFILE= :: can be refile target even if it is not project/subproject
+- =REFILE= :: can be refile target even if it is not project/sub-project
 ***** TODO Tags for everything
 ***** TODO try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
 :PROPERTIES:
@@ -3871,7 +3871,7 @@ I use inline tasks to add temporary todo state (instead of notes). It should be 
 (setq org-inlinetask-default-state "TODO")
 #+end_src
 
-It seems that inline tasks interfers with =org-outline-regexp=.
+It seems that inline tasks interferes with =org-outline-regexp=.
 Fix it:
 
 #+begin_src emacs-lisp
@@ -4016,7 +4016,7 @@ The project with parent projects.
   #+end_src
 ***** TODO Standard projects
 *** NEXT Journal
-SCHEDULED: <2019-08-29 Thu>
+SCHEDULED: <2019-09-17 Tue>
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 18:19]
 :ID:       46346e6b-4ed8-4570-bf4c-05639c125046
@@ -4036,7 +4036,7 @@ I can dump all kind of staff there instead of having it spread over the bash his
 I can write notes, run shell commands, calculations, etc without loosing what I have done. 
 I may not even need to run terminal in such a case!
 
-I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it does not really work for me because it creates too many files. A simple =datetree= capture works just fine.
+I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it does not really work for me because it creates too many files. A simple =date-tree= capture works just fine.
 
 #+begin_src emacs-lisp
 (use-package org-capture
@@ -4364,14 +4364,14 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 #+begin_src emacs-lisp
 (setq org-footnote-section nil)
 #+end_src
-***** Src block links
+***** =Src= block links
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 14:37]
 :ID:       b1ca3ea7-39ec-4489-8a67-8a01d4d61398
 :END:
 
-The links to run src blocks.
-Useful if I want to run an src block when working on entry. 
+The links to run =src= blocks.
+Useful if I want to run an =src= block when working on entry. 
 Having a link, which runs blocks, allows to simply =C-c C-o= on the heading to follow this link.
 
 #+begin_src emacs-lisp
@@ -4460,8 +4460,8 @@ The src block should be in the same org file."
   (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
 #+end_src 
-***** NEXT search in article pdfs
-SCHEDULED: <2019-08-28 Wed>
+***** NEXT search in article PDFs
+SCHEDULED: <2019-09-26 Thu>
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
@@ -4472,7 +4472,7 @@ CLOCK: [2019-07-20 Sat 22:04]--[2019-07-20 Sat 22:34] =>  0:30
 CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 :END:
 
-- need to modify the lib to show abstracts (recollq -A)
+- need to modify the lib to show abstracts (recollqq -A=)
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-recoll
@@ -4921,7 +4921,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :CREATED:  [2018-07-09 Mon 13:01]
 :END:
 ***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
-SCHEDULED: <2019-08-28 Wed>
+SCHEDULED: <2019-09-21 Sat>
 :PROPERTIES:
 :CREATED:  [2018-08-26 Sun 22:40]
 :END:
@@ -5430,7 +5430,7 @@ This is a standard org mode agenda showing deadlines, schedules, diary items and
 :CREATED:  [2017-12-28 Thu 22:28]
 :ID:       18a47cca-2dfa-4e27-9814-a2edfd54a9f4
 :END:
-These items should have =:INBOX:= tag. Also, if both project and subproject have =:INBOX:= tag, only topmost project should be refiled.
+These items should have =:INBOX:= tag. Also, if both project and sub-project have =:INBOX:= tag, only topmost project should be refiled.
 #+BEGIN_SRC emacs-lisp
 (defun yant/org-agenda-inbox-items ()
   "Only show items with INBOX tag, which parents does not have this tag."
@@ -5573,9 +5573,9 @@ Agenda is excellent for short term planning, however it is not very useful if I 
     (cancel-timer org-gcal-sync-timer))
   (org-gcal-sync-enable))
 #+end_src
-***** TODO Avoid duplicates in agenda for gcal entries and other entries
+***** TODO Avoid duplicates in agenda for =gcal= entries and other entries
 
-Usually, I have some events scheduled locally in my computer and some are scheduled in Google calendar. Of course, I want to see both. It is easy - just add my gcal org file to agenda. However, the problem appears when I want to see locally scheduled events in Google Calendar (for mobile notifications). In such a case I need to copy the entries from my local org files to GCal. In such a case, these entries appears in my local agenda twice, which is annoying.
+Usually, I have some events scheduled locally in my computer and some are scheduled in Google calendar. Of course, I want to see both. It is easy - just add my =gcal= org file to agenda. However, the problem appears when I want to see locally scheduled events in Google Calendar (for mobile notifications). In such a case I need to copy the entries from my local org files to =GCal=. In such a case, these entries appears in my local agenda twice, which is annoying.
 ***** Suppress =libnotify= notifications
 :PROPERTIES:
 :CREATED:  [2018-03-12 Mon 21:18]
