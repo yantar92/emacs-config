@@ -1597,9 +1597,9 @@ BEG and END narrow the scope where candidates are searched."
   (use-package avy
     :straight t
     :bind (:map boon-moves-map
-		("H" . avy-goto-word-in-line-1)
 		("h" . avy-goto-char-timer)
-		)))
+                :map boon-command-map
+                ("y" . avy-goto-word-in-line-1))))
 #+end_src
 **** End of sentence
 :PROPERTIES:
