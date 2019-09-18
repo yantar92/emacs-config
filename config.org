@@ -3839,7 +3839,7 @@ The task is any item with todo keyword and no subtask.
 - keywords for not done tasks: =TODO=, =NEXT=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=
 #+begin_src emacs-lisp
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)" "FAILED(f!)" "MERGED(m!)" )
+      (quote ((sequence "TODO(t)" "NEXT(n)" "SOMEDAY(s)" "|" "DONE(d!)" "FAILED(f!)" "MERGED(m!)" )
 	      (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c!)" ))))
 ;; set the tags assigned to specific keywords. Not nesessary, but used by a lot of code for filtering later - hence why not
 (setq org-todo-state-tags-triggers
@@ -3870,6 +3870,7 @@ The task is any item with todo keyword and no subtask.
 #+end_src
   - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason) 
   - HOLD(h) :: I am not going to do this task for now due to reason explained in the comment
+  - SOMEDAY(s) :: This task does not have to be done at all. But maybe, it I have a mood...
   - CANCELLED(c) :: I will never do this task because of what is in the comment
   - DONE(d) :: self explanatory
   - FAILED(f) :: there is some outcome and can mark done, but the outcome is not positive, though can get some conclusions out of it 
@@ -6001,7 +6002,7 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 :END:
 #+begin_src emacs-lisp 
 (use-package org-autosort)
-(setq org-autosort-todo-cmp-order '("WAITING" "NEXT" "HOLD" "TODO" "MERGED" "FAILED" "DONE" "CANCELLED"))
+(setq org-autosort-todo-cmp-order '("WAITING" "NEXT" "HOLD" "TODO" "SOMEDAY" "MERGED" "FAILED" "DONE" "CANCELLED"))
 (bind-key "C-c C-S-s" 'org-autosort-sort-entries-at-point org-mode-map)
 (add-to-list 'org-default-properties "SORT")
 #+end_src
@@ -7563,7 +7564,7 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
       		  (?★ org-specific "\\[#A\\]" (org-mode))
       		  ("" org-specific "\\[#B\\]" (org-mode))
       		  (?☕ org-specific "\\[#C\\]" (org-mode))
-                  (?⁂ org-specific "\\(^\\*\\)[^*]" (org-mode) 1)
+                  (?■ org-specific "\\(^\\*\\)[^*]" (org-mode) 1)
                   (?• org-specific "^\\(?:\\*\\{1\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
                   (?⊢ org-specific "^\\(?:\\*\\{2\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
                   (?⋮ org-specific "^\\(?:\\*\\{3\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
@@ -7589,6 +7590,7 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
                   (?⚙ org-specific "[ ]*#[+]PROPERTY" (org-mode))
                   (?⏣ org-specific "[ ]*#[+]OPTIONS" (org-mode))
       		  ((yant/str-to-glyph "☐") org-specific "\\(?:^*+ +\\)\\(\\<TODO\\>\\)" (org-mode) 1)
+                  ((yant/str-to-glyph "⯑") org-specific "\\(?:^*+ +\\)\\(\\<SOMEDAY\\>\\)" (org-mode) 1)
       		  ((yant/str-to-glyph "☑") org-specific "\\(?:^*+ +\\)\\(\\<DONE\\>\\)" (org-mode) 1)
       		  ((yant/str-to-glyph "✘") org-specific "\\(?:^*+ +\\)\\(\\<FAILED\\>\\)" (org-mode) 1)
       		  ((yant/str-to-glyph "✘") org-specific "\\(?:^*+ +\\)\\(\\<CANCELLED\\>\\)" (org-mode) 1)
@@ -7620,6 +7622,7 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
       	      ("NEXT" :foreground "blue" :weight bold)
+              ("SOMEDAY" :foreground "black" :weight bold)
       	      ("DONE" :foreground "forest green" :weight bold)
       	      ("FAILED" :foreground "red" :weight bold)
       	      ("WAITING" :foreground "orange" :weight bold)
