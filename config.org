@@ -3865,12 +3865,21 @@ The task is any item with todo keyword and no subtask.
 #+end_src
   - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason) 
   - HOLD(h) :: I am not going to do this task for now due to reason explained in the comment
-  - SOMEDAY(s) :: This task does not have to be done at all. But maybe, it I have a mood...
+  - SOMEDAY(s) :: This task does not have to be done at all. But maybe, it I have a mood... The command triggers un-scheduling the task if it is scheduled
+#+begin_src emacs-lisp
+(defun yant/unschedule-someday-keyword ()
+  "Unschedule task when it keyword is changed to SOMEDAY."
+  (let ((mystate (or (and (fboundp 'org-state)
+			  state)
+		     (nth 2 (org-heading-components)))))
+    (when (member mystate (list "SOMEDAY"))
+      (org-schedule '(4)))))
+(add-hook 'org-after-todo-state-change-hook 'yant/unschedule-someday-keyword 'append)
+#+end_src
   - CANCELLED(c) :: I will never do this task because of what is in the comment
   - DONE(d) :: self explanatory
   - FAILED(f) :: there is some outcome and can mark done, but the outcome is not positive, though can get some conclusions out of it 
-  - MERGED(m) :: become a part of other task. The link to the task is added to =MERGED-WITH= property. The motivation of adding this state is that I sometimes create a duplicate task, find out that it is duplicate, and confused which state to set. It is just faster to
-    set =MERGED= without deciding if it is =CANCELLED= (which is not really) or =DONE= (which is also not).
+  - MERGED(m) :: become a part of other task. The link to the task is added to =MERGED-WITH= property. The motivation of adding this state is that I sometimes create a duplicate task, find out that it is duplicate, and confused which state to set. It is just faster to set =MERGED= without deciding if it is =CANCELLED= (which is not really) or =DONE= (which is also not).
 *************** TODO Prompt for the link to new task, default is clocked in task. Use helm search. Store link in property
 *************** END
 **** Inline tasks
