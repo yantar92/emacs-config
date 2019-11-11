@@ -2439,15 +2439,16 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
   :straight t)
 #+end_src
 
-*** Save macro as lisp code
+*** COMMENT Save macro as lisp code
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 12:28]
 :ID:       7154dac1-1525-4b07-8aef-3b70c4488e2b
 :END:
-
+[2019-11-04 Mon] Disabled due to performance issues
 #+begin_src emacs-lisp
 (use-package elmacro
   :if init-flag
+  :disabled
   :straight t
   :diminish ""
   :config (elmacro-mode))
