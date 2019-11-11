@@ -6281,8 +6281,6 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
 
 
 #+begin_src emacs-lisp 
-(use-package persistent-soft :straight t :demand t)
-
 (defvar org-time-balance nil
   "Weighted time spent for all the tasks in agenda files.")
 (defvar org-time-balance-persistant-p t
@@ -6291,31 +6289,29 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
   "Time of the last save of `org-time-balance'.")
 (defvar org-time-balance-update-time nil
   "Time of the last update of `org-time-balance'.")
-(defvar org-time-balance-storage "org-time-balance"
-  "`persistent-soft' data storage used to store time balance between sessions.")
-
-;; (use-package savehist
-;;   :config
-;;   (add-to-list 'savehist-additional-variables 'org-time-balance)
-;;   (add-to-list 'savehist-additional-variables 'org-time-balance-save-time))
+(defvar org-time-balance-storage (concat user-emacs-directory ".org-time-balance")
+  "File used to store time balance between sessions.")
 
 (defun org-load-time-balance-session ()
   "Load the current org-time-balance if `org-time-balance-persistant-p' is non nil."
   (if org-time-balance-persistant-p
       (progn
-	(setq org-time-balance (or (persistent-soft-fetch 'org-time-balance org-time-balance-storage) 0))
-        (setq org-time-balance-save-time (persistent-soft-fetch 'org-time-balance-save-time org-time-balance-storage)))
+	(with-temp-buffer
+          (insert-file-contents org-time-balance-storage)
+          (eval-buffer))
+	(unless org-time-balance (setq org-time-balance 0))
+	(message "Loading time-balance... %d" org-time-balance))
     (setq org-time-balance 0)))
     
 
 (defun org-save-time-balance-session ()
   "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
   (when (and org-time-balance-persistant-p
-	     org-time-balance
-             org-time-balance-update-time)
-    (setq org-time-balance-save-time org-time-balance-update-time)
-    (persistent-soft-store 'org-time-balance org-time-balance org-time-balance-storage)
-    (persistent-soft-store 'org-time-balance-save-time org-time-balance-save-time org-time-balance-storage)))
+	     org-time-balance)
+    (setq org-time-balance-save-time (or org-time-balance-update-time (current-time)))
+    (with-temp-file org-time-balance-storage
+      (insert "(setq org-time-balance " (prin1-to-string org-time-balance) ")" "\n")
+      (insert "(setq org-time-balance-save-time '" (prin1-to-string org-time-balance-save-time) ")"))))
 
 (defun org-get-time-balance-multiplier-at-point ()
   "Get value of :ORG-TIME-BALANCE-MULTIPLIER property of an item at point or return 1."
@@ -6352,7 +6348,7 @@ Increment :ORG-TIME-BONUS: for habits, if nesessary."
 	(+ bonus extra)))))
 
 (defun org-accumulate-weighted-time (&optional return)
-  "Aggregate `org-time-balance' counter at point from the last save of for a month.
+  "Aggregate `org-time-balance' counter at point from the last save or for all the time.
 Use :ORG-TIME-BALANCE-MULTIPLIER: property to set the weight.
 Just return the value at point if RETURN is not nil."
   (when org-time-balance
