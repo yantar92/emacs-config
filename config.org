@@ -947,7 +947,7 @@ From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
   :if init-flag
   :straight t
   :diminish company-mode
-  :hook ((prog-mode ledger-mode org-mode) . company-mode)
+  :hook ((prog-mode ledger-mode) . company-mode)
   :bind (
 	 ("M-/" . company-complete)
 	 ("C-/" . hippie-expand)
