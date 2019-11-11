@@ -956,20 +956,15 @@ From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 	 ("M-k" . company-select-previous)
 	 ("C-h" . backward-delete-char-untabify)
          ("C-M-h" . backward-kill-word)
-         ("M-l" . company-abort)
+         ("M-l" . nil)
          ("M-h" . company-show-doc-buffer)
          ("M-s" . company-filter-candidates))
   :init
-  (setq company-auto-complete (lambda () (eq company-candidates-length 1)) ;; complete when typing whitespace and only one completion candidate is available
-	company-idle-delay 0
+  (setq company-idle-delay 0
 	company-minimum-prefix-length 2
 	company-selection-wrap-around t
 	company-show-numbers t ;; quick selection by Alt+[1-9]
-	company-require-match nil)
-  (add-to-list 'company-auto-complete-chars ?:)
-  (add-to-list 'company-auto-complete-chars ?;)
-  (add-to-list 'company-auto-complete-chars ?.)
-  )
+	company-require-match nil))
 #+end_src
 
 
