@@ -5227,7 +5227,7 @@ SUBTREE-END is used as end of the entry if not nil."
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'scheduled 'deadline)))
 		       (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))))
-	      (" " "Agenda"
+	      ("v" "Agenda"
 	       ((agenda ""
 			((org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t")
 			 (org-agenda-skip-function '(or (zin/org-agenda-skip-tag "HOLD")
