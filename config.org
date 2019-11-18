@@ -1443,7 +1443,7 @@ abort completely with `C-g'."
 (use-package highlight-stages
   :straight t
   :diminish highlight-stages
-  :hook emacs-lisp-mode)
+  :hook (emacs-lisp-mode . highlight-stages-mode))
 #+end_src
 ** Fold & narrow
 :PROPERTIES:
