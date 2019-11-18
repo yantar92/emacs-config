@@ -2548,10 +2548,10 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 :ID:       cbca9cd1-9225-45b5-aa88-43ff09f128e5
 :END:
 #+begin_src emacs-lisp
-(use-package debug
-  :if init-flag
-  :config
-  (bind-key "s" #'debugger-continue debugger-mode-map))
+  (use-package debug
+    :if init-flag
+    :config
+    (bind-key "s" #'debugger-continue debugger-mode-map))
 #+end_src
 *** =(expr ...)= instead of =expr( ... )=
 :PROPERTIES:
@@ -2846,7 +2846,6 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 	 ,@body
 	 (- (float-time) ,start)))))
 #+end_src
-
 *** Gnuplot
 :PROPERTIES:
 :ID:       192254a2-dc90-4a29-a713-f43f794211f6
@@ -4506,7 +4505,7 @@ The src block should be in the same org file."
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
 #+end_src 
 ***** NEXT search in article PDFs
-SCHEDULED: <2019-09-26 Thu>
+SCHEDULED: <2019-12-11 Wed>
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
@@ -4966,7 +4965,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :CREATED:  [2018-07-09 Mon 13:01]
 :END:
 ***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
-SCHEDULED: <2019-09-21 Sat>
+SCHEDULED: <2019-12-19 Thu>
 :PROPERTIES:
 :CREATED:  [2018-08-26 Sun 22:40]
 :END:
@@ -6049,79 +6048,78 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
 *************** TODO Clock out from subtask from home is wrongly activating home task
 *************** END
 #+begin_src emacs-lisp
-  (use-package org-clock
-    :after org
-    :config
-    (setq org-duration-format '(("h" . h:mm) ("min" . h:mm)))
-    (setq org-clock-out-remove-zero-time-clocks t)
-    (setq org-clock-out-when-done t)
-    (setq org-clock-in-resume t)
-    (setq org-clock-persist t)
-    (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
-    (setq org-clock-persist-query-resume nil)
-    (org-clock-persistence-insinuate)
-    (defvar bh/keep-clock-running nil
-      "Continue in default task if no task is clocked in.")
-    (defvar bh/organization-task-id "Organization"
-      "ID of default usefull work task.")
-    (defvar yant/home-task-id "Homedef"
-      "ID of default useless activity task.")
+(use-package org-clock
+  :after org
+  :config
+  (setq org-duration-format '(("h" . h:mm) ("min" . h:mm)))
+  (setq org-clock-out-remove-zero-time-clocks t)
+  (setq org-clock-out-when-done t)
+  (setq org-clock-in-resume t)
+  (setq org-clock-persist t)
+  (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+  (setq org-clock-persist-query-resume nil)
+  (org-clock-persistence-insinuate)
+  (defvar bh/keep-clock-running nil
+    "Continue in default task if no task is clocked in.")
+  (defvar bh/organization-task-id "Organization"
+    "ID of default usefull work task.")
+  (defvar yant/home-task-id "Homedef"
+    "ID of default useless activity task.")
 
-    (defun yant/punch-in-organization ()
-      "Clock in Organization task."
-      (interactive)
-      (setq bh/keep-clock-running 'yant/punch-in-organization)
-      (org-with-point-at (org-id-find bh/organization-task-id
-				      'marker)
-	(org-clock-in '(16))))
+  (defun yant/punch-in-organization ()
+    "Clock in Organization task."
+    (interactive)
+    (setq bh/keep-clock-running 'yant/punch-in-organization)
+    (org-with-point-at (org-id-find bh/organization-task-id
+				    'marker)
+      (org-clock-in '(16))))
 
-    (defun yant/punch-in-home ()
-      "Clock in home (random activity) task."
-      (interactive)
-      (setq bh/keep-clock-running 'yant/punch-in-home)
-      (org-with-point-at (org-id-find yant/home-task-id
-				      'marker)
-	(org-clock-in '(16))))
+  (defun yant/punch-in-home ()
+    "Clock in home (random activity) task."
+    (interactive)
+    (setq bh/keep-clock-running 'yant/punch-in-home)
+    (org-with-point-at (org-id-find yant/home-task-id
+				    'marker)
+      (org-clock-in '(16))))
 
-    (defun yant/punch-out nil
-      "Set `org-clock-default-task' to nil and clock out."
-      (save-excursion
-	(setq bh/keep-clock-running nil)
-	(when (org-clock-is-active)
-	  (org-clock-out))))
+  (defun yant/punch-out nil
+    "Set `org-clock-default-task' to nil and clock out."
+    (save-excursion
+      (setq bh/keep-clock-running nil)
+      (when (org-clock-is-active)
+	(org-clock-out))))
 
-    (defun bh/clock-in-default-task ()
-      (save-excursion
-	(org-with-point-at org-clock-default-task
-	  (org-clock-in))))
-
-    (defun bh/clock-in-parent-task ()
-      "Move point to the parent (project) task if any and does not have local tag NOCLOCK and clock in."
-      (let ((parent-task))
-	(save-mark-and-excursion
-	  (save-restriction
-	    (widen)
-	    (while (and (not parent-task) (org-up-heading-safe))
-	      (when (and (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-			 (not (member "NOCLOCK" (org-get-tags nil 'LOCAL))))
-		(setq parent-task (point))))
-	    (if parent-task
-		(org-with-point-at parent-task
-		  (org-clock-in))
-	      (if bh/keep-clock-running
-		  (bh/clock-in-default-task)
-		(org-clock-out)))))))
-
-    (defun yant/clock-out-maybe nil
-      "Clock out and clock in to default task if `bh/keep-clock-running' is not nil."
-      (when (and bh/keep-clock-running
-		 (not org-clock-clocking-in)
-		 (marker-buffer org-clock-default-task)
-		 (not org-clock-resolving-clocks-due-to-idleness))
-	(bh/clock-in-parent-task)))
-
-    (add-hook 'org-clock-out-hook 'yant/clock-out-maybe 'append)
   (defun bh/clock-in-default-task ()
+    (save-excursion
+      (org-with-point-at org-clock-default-task
+	(org-clock-in))))
+
+  (defun bh/clock-in-parent-task ()
+    "Move point to the parent (project) task if any and does not have local tag NOCLOCK and clock in."
+    (let ((parent-task))
+      (save-mark-and-excursion
+	(save-restriction
+	  (widen)
+	  (while (and (not parent-task) (org-up-heading-safe))
+	    (when (and (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+		       (not (member "NOCLOCK" (org-get-tags nil 'LOCAL))))
+	      (setq parent-task (point))))
+	  (if parent-task
+	      (org-with-point-at parent-task
+		(org-clock-in))
+	    (if bh/keep-clock-running
+		(bh/clock-in-default-task)
+	      (org-clock-out)))))))
+
+  (defun yant/clock-out-maybe nil
+    "Clock out and clock in to default task if `bh/keep-clock-running' is not nil."
+    (when (and bh/keep-clock-running
+	       (not org-clock-clocking-in)
+	       (marker-buffer org-clock-default-task)
+	       (not org-clock-resolving-clocks-due-to-idleness))
+      (bh/clock-in-parent-task)))
+
+  (add-hook 'org-clock-out-hook 'yant/clock-out-maybe 'append))
      #+end_src
 
      Once I keep all my time tracked, I can calculate the estimated balance of my time. The idea is that I assign the weight to each task/project (=:TIMEWEIGHT:=), which is positive for useful tasks I
@@ -8052,7 +8050,9 @@ Spell check rules for org syntax.
              ("s" . org-agenda-bulk-mark)
              ("S" . org-agenda-bulk-mark-all)
 	     ("a" . org-agenda-bulk-unmark)
-	     ("A" . org-agenda-bulk-unmark-all))
+	     ("A" . org-agenda-bulk-unmark-all)
+             :map narrow-map
+             ("s" . org-narrow-to-subtree))
 
   (use-package meta-functions
     :config
