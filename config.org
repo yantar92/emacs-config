@@ -781,6 +781,21 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 (global-set-key (kbd "S-u") #'ignore)
 (global-set-key (kbd "S-w") #'ignore)
 #+end_src
+**** Disable terminal key aliases (I don't use console emacs anyway)
+:PROPERTIES:
+:CREATED:  [2019-11-18 Mon 10:24]
+:ID:       5656ef63-a887-47c0-9427-f7d53d9ddc13
+:END:
+
+https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_thread/ehcg919/
+#+begin_src emacs-lisp
+;; free up blocked keys (GUI only)
+;; add to your init.el
+(define-key input-decode-map [?\C-m] [C-m])
+(define-key input-decode-map [?\C-i] [C-i])
+(define-key input-decode-map (kbd "C-[") [C-\[])
+#+end_src
+
 **** Disable some keybinding, which interfere with my setup (easy to press by mistake)
 :PROPERTIES:
 :CREATED:  [2018-09-25 Tue 20:22]
