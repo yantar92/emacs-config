@@ -2574,24 +2574,26 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 :END:
 
 #+begin_src emacs-lisp
-; From https://www.reddit.com/r/emacs/comments/7htdzk/show_reddit_prettyprint_debugger_frames/
+;; From https://www.reddit.com/r/emacs/comments/7htdzk/show_reddit_prettyprint_debugger_frames/
 
-(defun gk-debugger-pp-frame ()
-  (interactive)
-  (let ((inhibit-read-only t)
-        (frame (backtrace-frame (debugger-frame-number))))
-    (set-buffer (pop-to-buffer "*BT: Frame*"))
-    (destructuring-bind (special fn &rest args) frame
-      (erase-buffer)
-      (progn
-        (insert "(" (pp-to-string fn))
-        (dolist (arg args)
-          (insert "\n" (pp-to-string arg)))
-        (insert ")"))
-      (goto-char (point-min))
-      (indent-pp-sexp))))
-
-(define-key debugger-mode-map "r" 'gk-debugger-pp-frame)
+(use-package debug
+  :if init-flag
+  :config
+  (defun gk-debugger-pp-frame ()
+    (interactive)
+    (let ((inhibit-read-only t)
+          (frame (backtrace-frame (debugger-frame-number))))
+      (set-buffer (pop-to-buffer "*BT: Frame*"))
+      (destructuring-bind (special fn &rest args) frame
+	(erase-buffer)
+	(progn
+          (insert "(" (pp-to-string fn))
+          (dolist (arg args)
+            (insert "\n" (pp-to-string arg)))
+          (insert ")"))
+	(goto-char (point-min))
+	(indent-pp-sexp))))
+  (define-key debugger-mode-map "r" 'gk-debugger-pp-frame))
 #+end_src
 *** Lorem ipsum
 :PROPERTIES:
