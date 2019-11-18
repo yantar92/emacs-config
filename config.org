@@ -6121,7 +6121,7 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
 	(bh/clock-in-parent-task)))
 
     (add-hook 'org-clock-out-hook 'yant/clock-out-maybe 'append)
-    (add-hook 'org-clock-in-hook (lambda () (setq bh/keep-clock-running t))))
+  (defun bh/clock-in-default-task ()
      #+end_src
 
      Once I keep all my time tracked, I can calculate the estimated balance of my time. The idea is that I assign the weight to each task/project (=:TIMEWEIGHT:=), which is positive for useful tasks I
