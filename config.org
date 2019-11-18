@@ -2745,6 +2745,12 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
+*** Bug hunting in =init.el=
+
+#+begin_src emacs-lisp
+  (use-package bug-hunter :straight t)
+#+end_src
+
 *** Show elisp result in overlay
 :PROPERTIES:
 :CREATED:  [2019-07-20 Sat 19:34]
