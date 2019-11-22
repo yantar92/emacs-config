@@ -85,22 +85,10 @@ Init file, which is loads this file.
 #+BEGIN_SRC emacs-lisp
 (put 'kill-emacs 'disabled t)
 #+END_SRC
-** Performance 
-:PROPERTIES:
-:CREATED:  [2018-09-12 Wed 19:48]
-:ID:       45c70cb5-df2f-4e86-8ccd-42c1881a7dbf
-:END:
-Elisp is not the fastest language in the world. 
-There are various options, which can improve the performance.
 
-- Bidirectional text is not something I use frequently (never used up until writing this)
-#+BEGIN_SRC emacs-lisp
-(setq bidi-display-reordering nil)
-#+END_SRC
-
-- Speed up line movement [[https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746][source]]
+Exit server silently without asking about unsaved buffers. 
 #+begin_src emacs-lisp
-(setq auto-window-vscroll nil)
+(add-hook 'kill-emacs-hook '(lambda() (save-some-buffers 'save-all-buffers)) 'append)
 #+end_src
 
 ** Package management & configuration
@@ -229,18 +217,50 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
     ("q" nil)))
 #+END_SRC
 
+** Performance 
+:PROPERTIES:
+:CREATED:  [2018-09-12 Wed 19:48]
+:ID:       45c70cb5-df2f-4e86-8ccd-42c1881a7dbf
+:END:
+
+Elisp is not the fastest language in the world. 
+There are various options, which can improve the performance.
+
+Bidirectional text is not something I use frequently (never used up until writing this)
+#+BEGIN_SRC emacs-lisp
+(setq bidi-display-reordering nil)
+#+END_SRC
+
+Speed up line movement [[https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746][source]]
+#+begin_src emacs-lisp
+(setq auto-window-vscroll nil)
+#+end_src
+
+Smart garbage collect
+#+begin_src emacs-lisp
+(use-package gcmh
+  :straight (gcmh :type git :host gitlab :repo "koral/gcmh")
+  :hook after-init-hook)
+#+end_src
+
 ** Appearance
 :PROPERTIES:
 :ID:       5b50a90f-4f47-4244-a6ac-e3646464539d
 :END:
+
+*************** NEXT [#A] revise config from here
+SCHEDULED: <2019-11-21 Thu>
+*************** END
+
+
 *** Theme
-**** TODO =Flatui=
+**** =Flatui=
 :PROPERTIES:
 :ID:       404c54f5-26eb-4ada-8a0f-c27efc714238
 :END:
-:LOGBOOK:
-- State "CANCELLED"  from              [2017-10-08 Sun 11:58]
-:END:
+
+For a while, I have been using various dark themes for emacs. Later, I found light themes easier for my eyes when it is not dark outside. Since it is not really a good idea to work in darkness regardless of the colour scheme, I ended up using a light theme I prefer.
+
 #+begin_src emacs-lisp
   (use-package flatui-theme
     :if init-flag
