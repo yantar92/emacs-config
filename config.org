@@ -25,11 +25,11 @@ CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 (setf user-full-name "Ihor Radchenko")
 #+end_src
 
-This Emacs configuration allows to load Emacs in both interactive and batch modes. It is controlled by special variables, identifying startup mode:
+This Emacs configuration allows loading Emacs in both interactive and batch modes. It is controlled by special variables, identifying startup mode:
 - =init-flag= :: normal startup, load all the visual packages and options
 - =org-export-flag= :: load necessary options for org-export
 - =org-tangle-flag= :: load necessary options for org-tangle
-     One important note about this configuration is that I do not use desktop save mode and similar things. I do it because everything I intend to do is kept in my org files, which are automatically loaded by org agenda command. 
+One important note about this configuration is that I do not use desktop save mode and similar things. Everything I intend to do is kept in my org files, which are automatically loaded by org agenda command. 
 #+begin_src emacs-lisp
 (defvar init-flag nil
   "Do normal init if not nil.")
