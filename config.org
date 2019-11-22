@@ -3743,15 +3743,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 :LOGBOOK:
 - State "TODO"       from              [2018-09-06 Thu 10:11]
 :END:
-Use =orgalist=.
-#+begin_src emacs-lisp
-(use-package org
-  :if init-flag
-  :defer t
-  :config
-  (use-package orgalist :straight t :init
-    (add-hook 'message-mode-hook 'orgalist-mode)))
-#+end_src
+
 **** TODO Use footnote mode in emails
 :PROPERTIES:
 :CREATED:  [2019-07-19 Fri 22:01]
