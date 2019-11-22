@@ -51,22 +51,6 @@ Init file, which is loads this file.
 (setq init-flag t)
 (load "~/.emacs.d/config.el")
 #+end_src
-** NEXT Debugging current issues
-:PROPERTIES:
-:CREATED:  [2019-04-03 Wed 10:42]
-:ID:       d7431e10-411b-456f-ab6e-76aa07300712
-:END:
-:LOGBOOK:
-- State "NEXT"       from "TODO"       [2019-04-03 Wed 10:42]
-- State "TODO"       from              [2019-04-03 Wed 10:42]
-:END:
-
-Trying to debug "Re-entering top level after C stack overflow", as suggested in [[https://www.reddit.com/r/emacs/comments/9fs8pp/reentering_top_level_after_c_stack_overflow/][reddit]]
-#+begin_src emacs-lisp
-(setq max-lisp-eval-depth 6000
-      max-specpdl-size 6000)
-#+end_src
-
 ** Emacs server settings
 :PROPERTIES:
 :ID:       5d8e1dca-a849-4980-bfde-cbf02801e92b
