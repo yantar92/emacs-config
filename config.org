@@ -295,6 +295,10 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
 :CREATED:  [2018-10-14 Sun 00:25]
 :ID:       570c813d-fc52-4c6c-bdb3-1c3ba55f93e6
 :END:
+
+Because of the [[id:404c54f5-26eb-4ada-8a0f-c27efc714238][color scheme]] I use, the border between windows is not easy to distinguish.
+Using =window-divider-mode= to emphasise it more.
+
 #+BEGIN_SRC emacs-lisp
 (setq window-divider-default-places t
       window-divider-default-bottom-width 2
