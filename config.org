@@ -16,7 +16,7 @@ CLOCK: [2018-07-23 Mon 00:16]--[2018-07-23 Mon 00:23] =>  0:07
 - State "NEXT"       from "NEXT"       [2018-01-01 Mon 13:17]
 CLOCK: [2017-12-30 Sat 22:19]--[2017-12-30 Sat 22:24] =>  0:05
 CLOCK: [2017-12-30 Sat 17:03]--[2017-12-30 Sat 17:14] =>  0:11
-- State "NEXT"       from "NEXT"          [2017-12-29 Fri 23:14]
+- State "NEXT"       from "NEXT"       [2017-12-29 Fri 23:14]
 CLOCK: [2017-12-28 Thu 18:41]--[2017-12-28 Thu 18:42] =>  0:01
 CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 :END:
@@ -38,13 +38,15 @@ One important note about this configuration is that I do not use desktop save mo
 (defvar org-tangle-flag nil
   "Set up org tangle if not nil.")
 #+end_src
-
+*************** TODO make a babel :wrap snippet aka (when init-flag BODY)
+*************** END
 
 ** =Init.el=
 :PROPERTIES:
 :ID:       0948a927-42a3-4284-aaed-1ca9dd27a538
 :CREATED:  [2017-12-23 Sat 15:16]
 :END:
+
 Init file, which is loads this file.
 #+begin_src emacs-lisp :tangle "~/.emacs.d/init.el"
 ;;(package-initialize)
@@ -2790,6 +2792,9 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
 #+end_src
 
 *** Bug hunting in =init.el=
+:PROPERTIES:
+:ID:       fa3afe58-87b9-4230-a9a6-298be9f6998d
+:END:
 
 #+begin_src emacs-lisp
   (use-package bug-hunter :straight t)
@@ -3758,7 +3763,7 @@ When listening a new band/album, I usually go through all the songs and delete w
     )
   (bind-key "t" 'bh/capture-mail notmuch-show-mode-map))
 #+end_src
-***** TODO Org mode list functionality when writing messages
+***** TODO Org mode functionality when writing messages
 :PROPERTIES:
 :CREATED:  [2017-12-23 Sat 16:16]
 :ID:       119b23b6-1881-4446-847d-7baffbfc2c89
@@ -7207,7 +7212,6 @@ It can be done using =org-tempo=.
   :init
   (push (cons "el" "src emacs-lisp") org-structure-template-alist))
 #+end_src
-
 
 **** Source block editing functions from scimax
 :PROPERTIES:
