@@ -125,8 +125,30 @@ There are various options, which can improve the performance.
 :END:
 
 Instead of the default emacs package manager, I use =straigt.el=. 
+My initial motivation was mostly the ability to get packages from github directly. 
+In addition, it would be useful to keep track modify the packages in some better way than advising.
 
-First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as from readme)]]
+*************** TODO Use el-patch and take a look at fork+master handling by package.el
+*************** END
+
+=Straight.el= can use =watchexec= to watch changes in the packages, which is much faster in comparison with default =find=. 
+Install =watchexec=
+#+begin_src bash :dir "/sudo::/" :tangle no
+layman -a chaoslab
+emerge -v watchexec
+#+end_src
+And tell =straight.el= to use file watcher
+
+#+begin_src emacs-lisp
+;; https://github.com/raxod502/radian/blob/develop/emacs/radian.el
+(if (and (executable-find "watchexec")
+         (executable-find "python3"))
+    (setq straight-check-for-modifications '(watch-files find-when-checking))
+  (setq straight-check-for-modifications
+        '(find-at-startup find-when-checking)))
+#+end_src
+
+First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as from straight.el readme]])
 #+begin_src emacs-lisp
   (eval-and-compile
     (defvar bootstrap-version)
