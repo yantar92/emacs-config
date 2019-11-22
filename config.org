@@ -248,7 +248,9 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
     :config
     (load-theme 'flatui t))
 #+end_src
-- I want Source Code Pro default everywhere
+
+For the font, I prefer something that works fine with mixed code and text (e.g. org files). My choice is Source Code Pro. Setting it up as default everywhere.
+
   #+begin_src emacs-lisp
     (when init-flag
       (set-face-attribute 'default nil
