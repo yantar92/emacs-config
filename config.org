@@ -256,9 +256,11 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
 			  :foundry "adobe"
 			  :family "source code pro"))
   #+end_src
-- Secondary selection is the same colour with some symbols in =org-agenda=
+
+The colour of secondary selection in the theme is the same colour with some symbols in my =org-agenda=. Actually, it is probably not the case anymore, but it is used to be so... The colour I use is below
 #+BEGIN_SRC emacs-lisp
-(set-face-background 'secondary-selection "#aae59c")
+(when init-flag
+  (set-face-background 'secondary-selection "#aae59c"))
 #+END_SRC
 *** No startup message
 :PROPERTIES:
