@@ -3974,17 +3974,40 @@ Also, the projects require all the children to be done by default.
 :PROPERTIES:
 :ID:       fa036b84-f68e-485b-943c-d5d9ad79c516
 :END:
+
 Habits are regular tasks which are treated specially in agenda to show if I missed it.
 #+begin_src emacs-lisp
 (use-package org-habit)
 (setq org-habit-graph-column 120)
 #+end_src
-Allow checklists to be reset in recurring tasks when =:RESET_CHECK_BOXES:= is =t=
+
+Any tasks can be made a habit by adding an appropriate properties. 
+I have two ways to do it:
+- through [[id:e3d02bee-a924-4808-9a2f-fe577065038d][capture]] 
+- calling a custom function
 #+begin_src emacs-lisp
+(defun yant/org-task-convert-to-habit ()
+  "Make task at point a habit."
+  (interactive)
+  (org-with-wide-buffer
+   (if (not (org-entry-is-todo-p))
+       (when (y-or-n-p (format "Current entry is not a task ("%s").\nChange todo state?" (org-get-heading 'no-tags)))
+	 (funcall-interactively #'org-todo))
+     (cl-mapc #'org-set-property
+	      '("STYLE" "REPEAT_TO_STATE" "LOGGING" "ARCHIVE")
+	      '("habit" "NEXT" "DONE(!)" "%%s_archive::* Habits")))))
+(bind-key "C-c C-x h" #'yant/org-task-convert-to-habit org-mode-map)
+#+end_src
+
+Allow checklists to be reset in recurring tasks when =:RESET_CHECK_BOXES:= is =t=
+,#+begin_src emacs-lisp
 (use-package org-checklist
   :config
   (add-to-list 'org-default-properties "RESET_CHECK_BOXES"))
 #+end_src
+
+
+
 **** Projects
 :PROPERTIES:
 :ID:       3edce153-2927-4a2d-8b45-87d9a6151913
