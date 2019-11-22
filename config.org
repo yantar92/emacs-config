@@ -165,33 +165,48 @@ First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as fro
       (load bootstrap-file nil 'nomessage)))
 #+end_src
 
+Prefer loading fresh versions of lisp files
+#+begin_src emacs-lisp
+(setq load-prefer-newer t)
+#+end_src
+
+Setup local =load-path= for whatever is not handled by =straigh.el=
+
+*************** TODO This may better be done individually using :load-path option of use-package
+*************** END
+
 #+begin_src emacs-lisp
 (eval-and-compile
   (setq load-path (append '("~/.emacs.d/site-lisp/") load-path))
   (setq load-path (append (directory-files "~/.emacs.d/site-lisp/" t "^[^.]" t) load-path)))
 #+end_src
 
-- enforce =use-package=
+Now, I can setup =use-package= to simplify subsequent package configuration
   #+begin_src emacs-lisp
     (eval-and-compile (straight-use-package 'use-package))
     (use-package diminish :straight t)
     (use-package bind-key)
   #+end_src
-
-- load org to make sure that obsolete built-in org version is not used 
+  
+Load org to make sure that obsolete built-in org version is not used. 
+The main org-mode config is provided [[id:58045c39-ffd5-4ccc-bc9d-49048c437f42][later]].
 #+begin_src emacs-lisp
 (straight-use-package 'org-plus-contrib)
 #+end_src
 
-- prefer setting in this file over customised interface
-*************** TODO use :custom use-package keyword instead
+Keep customisation away from =init.el= in a separate file
+*************** TODO use :custom use-package keyword for setting customisation
 *************** END
   #+begin_src emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (load custom-file)
   #+end_src
 
-- use hydra to manage packages
+Quick hydra menu for =straight.el=
+*************** TODO rewrite using nicer hydras
+*************** END
+*************** TODO move elsewhere, but leave the link
+*************** END
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
   :if init-flag
@@ -202,8 +217,8 @@ First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as fro
   :config
   (defhydra hydra-straight-helper (:hint nil)
     "
-_c_heck all       |_f_etch all     |_m_erge all      |_n_ormalize all   |p_u_sh all
-_C_heck package   |_F_etch package |_M_erge package  |_N_ormlize package|p_U_sh package
+_c_heck all       |_f_etch all (download)     |_m_erge all      |_n_ormalize all   |p_u_sh all
+_C_heck package   |_F_etch package (download) |_M_erge package  |_N_ormlize package|p_U_sh package
 ----------------^^+--------------^^+---------------^^+----------------^^+------------||_q_uit||
 _r_ebuild all     |_p_ull all      |_v_ersions freeze|_w_atcher start   |_g_et recipe
 _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_ build"
