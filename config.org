@@ -335,13 +335,16 @@ Using =window-divider-mode= to emphasise it more.
 :PROPERTIES:
 :CREATED:  [2019-04-24 Wed 00:02]
 :END:
-**** Remove useless gap in maximised state 
+**** Remove useless gap in maximised state
 :PROPERTIES:
 :CREATED:  [2019-04-27 Sat 16:39]
 :ID:       1229776a-39f3-4d41-b800-8a6a445169d3
 :END:
+*************** TODO Not setting it now because of weird bug when capture frame does not render
+*************** END
+
 #+begin_src emacs-lisp
-(setq frame-resize-pixelwise t)
+(setq frame-resize-pixelwise nil)
 #+end_src
 *** Buffer
 **** Centered window mode
