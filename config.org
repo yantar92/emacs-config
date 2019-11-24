@@ -29,7 +29,7 @@ This Emacs configuration allows loading Emacs in both interactive and batch mode
 - =init-flag= :: normal startup, load all the visual packages and options
 - =org-export-flag= :: load necessary options for org-export
 - =org-tangle-flag= :: load necessary options for org-tangle
-One important note about this configuration is that I do not use desktop save mode and similar things. Everything I intend to do is kept in my org files, which are automatically loaded by org agenda command. 
+One important note about this configuration is that I do not use desktop save mode and similar things. Everything I intend to do is kept in my org files, which are automatically loaded by org agenda command.
 #+begin_src emacs-lisp
 (defvar init-flag nil
   "Do normal init if not nil.")
@@ -65,7 +65,7 @@ Setup =PATH=
   (setenv "PATH" (concat (getenv "PATH") ":/home/yantar92/bin/"))
 #+end_src
 
-Ensure one server instance 
+Ensure one server instance
 #+begin_src emacs-lisp
 (require 'server)
 (unless (server-running-p)
@@ -83,7 +83,7 @@ Do not show large file warnings
 (setq large-file-warning-threshold nil)
 #+end_src
 
-Exit server silently without asking about unsaved buffers. 
+Exit server silently without asking about unsaved buffers.
 #+begin_src emacs-lisp
 (add-hook 'kill-emacs-hook '(lambda() (save-some-buffers 'save-all-buffers)) 'append)
 #+end_src
@@ -93,19 +93,22 @@ Exit server silently without asking about unsaved buffers.
 :ID:       4c0a06f9-9e69-4ead-b570-e3143fa0d61d
 :END:
 
-Instead of the default emacs package manager, I use =straigt.el=. 
-My initial motivation was mostly the ability to get packages from github directly. 
+Instead of the default emacs package manager, I use =straigt.el=.
+My initial motivation was mostly the ability to get packages from github directly.
 In addition, it would be useful to keep track modify the packages in some better way than advising.
 
 *************** TODO Use el-patch and take a look at fork+master handling by package.el
 *************** END
 
-=Straight.el= can use =watchexec= to watch changes in the packages, which is much faster in comparison with default =find=. 
+=Straight.el= can use =watchexec= to watch changes in the packages, which is much faster in comparison with default =find=.
 Install =watchexec=
 #+begin_src bash :dir "/sudo::/" :tangle no
 layman -a chaoslab
 emerge -v watchexec
 #+end_src
+*************** TODO Actually, this snippet might be useless on a fresh system. Need to add some check to indicate that missing package is a problem
+*************** END
+
 And tell =straight.el= to use file watcher
 
 #+begin_src emacs-lisp
@@ -161,8 +164,8 @@ Now, I can setup =use-package= to simplify subsequent package configuration
     (use-package diminish :straight t)
     (use-package bind-key)
   #+end_src
-  
-Load org to make sure that obsolete built-in org version is not used. 
+
+Load org to make sure that obsolete built-in org version is not used.
 The main org-mode config is provided [[id:58045c39-ffd5-4ccc-bc9d-49048c437f42][later]].
 #+begin_src emacs-lisp
 (straight-use-package 'org-plus-contrib)
@@ -219,13 +222,13 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
     ("q" nil)))
 #+END_SRC
 
-** Performance 
+** Performance
 :PROPERTIES:
 :CREATED:  [2018-09-12 Wed 19:48]
 :ID:       45c70cb5-df2f-4e86-8ccd-42c1881a7dbf
 :END:
 
-Elisp is not the fastest language in the world. 
+Elisp is not the fastest language in the world.
 There are various options, which can improve the performance.
 
 Bidirectional text is not something I use frequently (never used up until writing this)
@@ -512,7 +515,7 @@ Show some text in buffer differently
 :PROPERTIES:
 :ID:       bdf24c4b-681c-4286-86cd-e81f63b94ec0
 :END:
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (use-package latex-pretty-symbols
   :if init-flag
   :straight t
@@ -584,7 +587,7 @@ Show some text in buffer differently
 :ID:       461cf4e2-bcb0-4166-bdf0-fe437d352417
 :END:
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (when init-flag
   (global-eldoc-mode)
   (diminish 'eldoc-mode)
@@ -605,7 +608,7 @@ Show some text in buffer differently
   :config
   (beacon-mode 1))
 #+end_src
-**** Highlight current line 
+**** Highlight current line
 :PROPERTIES:
 :ID:       f90676cb-1c8a-47c1-b539-debcf961d912
 :END:
@@ -640,14 +643,14 @@ Show some text in buffer differently
 At some point, a got very annoyed about distance between =C-n=, =C-p=,
 =C-f=, and =C-b= and did not want to move my hand all the way to arrow
 keys. So, I use modal editing  now, which allows me to move around
-using the keys, which are close to each other. 
+using the keys, which are close to each other.
 **** Modal setup
 :PROPERTIES:
 :ID:       0fe0bca3-fb51-4e0c-8b35-79a5e92975d6
 :END:
 Do not use =self-insert-command= by default, but bind character keys to navigation, selection, etc.
 I use [[https://github.com/jyp/boon][boon]] package for this purpose.
-- it is bad idea to enable boon insert mode in special buffers, so it has =special mode= with limited redefined key binding by default. This mode replaces normal =insert mode= 
+- it is bad idea to enable boon insert mode in special buffers, so it has =special mode= with limited redefined key binding by default. This mode replaces normal =insert mode=
 - I add extra functionality for the case when =special mode= or =command mode= should not be enabled by default --- the buffer requires a lot of writing (I mean shell buffers, for example). This is defined by =boon-insert-state-major-mode-list= where the default mode is =insert mode=.
 - =boon-special-mode= is frequently useful in all kinds of major modes, like debug, org-agenda, =notmuch=, etc. However, many major modes use the conventional movement key bindings or their derivatives (like "n" and "p" in =org-agenda=). I do not like it. I prefer to have some minimal [[id:46fb459b-7794-4b9a-9fce-85389aba1d95][set]] of movement keys working in all the buffers. It means, that I need to redefine the movement commands to be able to act according to the major mode (like "n" from org-mode is bound to =org-next-line= and, hence, "j" from =org-special-map= should be also bound to =org-next-line=.
   This can be done using meta-function approach when I use the function, which acts differently depending on the mode, while keeping the same general idea of the behaviour.
@@ -769,7 +772,7 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 #+end_src
 
 It should be noted, that the same can be done via setting the proper bindings for "j", "k", etc. in the mode itself. The problem is that it may mess up the cases when want to set special meanings for the single keys in =command-mode=, but leave the normal editing on in the =insert-mode=.
-  
+
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
@@ -904,7 +907,7 @@ https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_thread/ehcg91
 :ID:       1edf3f36-6a30-4374-a47d-2d1b9c7a889a
 :END:
 
-I can force no mouse in emacs (see [[https://www.emacswiki.org/emacs/EmacsNiftyTricks][emacswiki]]). 
+I can force no mouse in emacs (see [[https://www.emacswiki.org/emacs/EmacsNiftyTricks][emacswiki]]).
 Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][pdf-tools]].
 #+begin_src emacs-lisp
 (if init-flag
@@ -939,7 +942,7 @@ Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][
 :ID:       357921b0-cf2f-41ef-bbea-ddffab6090ce
 :END:
 
-Use text-mode by default. 
+Use text-mode by default.
 From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 
 #+begin_src emacs-lisp
@@ -949,11 +952,11 @@ From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 (setq-default major-mode 'text-mode)
 #+end_src
 
-** Completion 
+** Completion
 :PROPERTIES:
 :ID:       f78e9123-ed35-4c76-a5fd-5549cc8f8210
 :END:
-*** Helm 
+*** Helm
 :PROPERTIES:
 :ID:       d388e4f5-214e-4697-a53a-be6fb6c24411
 :END:
@@ -1054,7 +1057,7 @@ From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 :END:
 Boon =command mode= allows to translate =c 'symbol= key bindings into =C-c
 'symbol= key bindings. It is useful, but =save-buffer= is more meaningful
-to rebind to =C-c s= is such a case and =save-some-buffers= to =C-c C-s=. 
+to rebind to =C-c s= is such a case and =save-some-buffers= to =C-c C-s=.
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
@@ -1111,8 +1114,8 @@ Walk across the backup files
 :END:
 I got an issue with =org-src= block editing buffers. They are saved
 under some weird name beside the actual org file when some command,
-saving all the buffers, is executed. 
-#+begin_src emacs-lisp 
+saving all the buffers, is executed.
+#+begin_src emacs-lisp
 (defvar yant/never-save-buffer-list nil
   "The buffers, matching any of the regexps in this list will never be saved.")
 #+end_src
@@ -1147,7 +1150,7 @@ saving all the buffers, is executed.
 :PROPERTIES:
 :ID:       b4f4fbea-9315-412c-bb48-6984906c67d8
 :END:
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (global-auto-revert-mode -1)
 (setq revert-without-query '(".*"))
 (bind-key* "M-r" #'revert-buffer)
@@ -1487,7 +1490,7 @@ abort completely with `C-g'."
   (add-hook 'magit-mode-hook #'git-gutter-mode))
 #+end_src
 *** Elisp
-**** Highlight quoted expressions in macro forms 
+**** Highlight quoted expressions in macro forms
 :PROPERTIES:
 :CREATED:  [2019-09-17 Tue 09:54]
 :ID:       04d49d5a-75dd-40a7-8fb4-fee6785296a2
@@ -1604,8 +1607,8 @@ abort completely with `C-g'."
 :ID:       f645973b-fcd8-466a-9fec-7e8ebcbb0be1
 :END:
 
-I do not move by visual line in files. Instead, I prefer to use =avy= to move within the line. 
-However, it is still not fast enough with =avy-goto-char-in-line=. 
+I do not move by visual line in files. Instead, I prefer to use =avy= to move within the line.
+However, it is still not fast enough with =avy-goto-char-in-line=.
 Hence, I define a new function - =avy-goto-word-in-line-1= to jump to any word in 2 keys.
 
 #+BEGIN_SRC emacs-lisp
@@ -1620,7 +1623,7 @@ Hence, I define a new function - =avy-goto-word-in-line-1= to jump to any word i
 #+END_SRC
 
 Also, I am not satisfied with moving around the visible text.
-The =avy-goto-char-2= is frequently gives too many options. 
+The =avy-goto-char-2= is frequently gives too many options.
 I wrote my own =avy-goto-word-2= to move around.
 
 #+BEGIN_SRC emacs-lisp
@@ -1653,7 +1656,7 @@ BEG and END narrow the scope where candidates are searched."
   )
 #+END_SRC
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (use-package boon
   :if init-flag
   :defer t
@@ -1663,7 +1666,9 @@ BEG and END narrow the scope where candidates are searched."
     :bind (:map boon-moves-map
 		("h" . avy-goto-char-timer)
                 :map boon-command-map
-                ("y" . avy-goto-word-in-line-1))))
+                ("T" . avy-goto-word-in-line-1))
+    :custom
+    (avy-timeout-seconds 0.2 "The default is too long.")))
 #+end_src
 **** End of sentence
 :PROPERTIES:
@@ -1697,7 +1702,7 @@ Double space convention is outdated.
 (use-package browse-url
   :bind (("C-c C-o" . browse-url)
 	 ("C-c C-M-o" . browse-url-of-buffer))
-  :init  
+  :init
   (setq browse-url-browser-function 'browse-url-generic
 	browse-url-generic-program "/home/yantar92/bin/qutebrowser-call.sh"))
 #+end_src
@@ -1731,8 +1736,8 @@ Double space convention is outdated.
 
   :config
 
-  (use-package helm-bm :straight t) 
-  
+  (use-package helm-bm :straight t)
+
   ;; Allow cross-buffer 'next'
   (setq bm-cycle-all-buffers t)
 
@@ -1813,7 +1818,7 @@ Double space convention is outdated.
 #+begin_src emacs-lisp
 (use-package helm
   :if init-flag
-  :defer t 
+  :defer t
   :bind (:map boon-forward-search-map
 	      ("b" . helm-mini)
 	      :map boon-backward-search-map
@@ -1832,7 +1837,7 @@ Double space convention is outdated.
     (pop-to-buffer "*scratch*")
     )
   (use-package boon
-    :config 
+    :config
     (bind-key "8" 'yant/show-scratch boon-goto-map)))
 #+end_src
 **** Kill buffer & buffer manipulation/movement
@@ -2059,7 +2064,7 @@ CLOCK: [2019-07-03 Wed 22:12]--[2019-07-03 Wed 22:28] =>  0:16
   :config
   (unbind-key "o" image-map)
   (use-package meta-functions
-    :config 
+    :config
     (add-to-list 'meta-functions-meta-forward-alist '(image-dired-thumbnail-mode . image-dired-forward-image))
     (add-to-list 'meta-functions-meta-backward-alist '(image-dired-thumbnail-mode . image-dired-backward-image))
     (add-to-list 'meta-functions-meta-down-alist '(image-dired-thumbnail-mode . image-dired-next-line))
@@ -2067,7 +2072,7 @@ CLOCK: [2019-07-03 Wed 22:12]--[2019-07-03 Wed 22:28] =>  0:16
     (meta-functions-update-function-definitions)))
 #+end_src
 
-****** open file in external app 
+****** open file in external app
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 21:55]
 :ID:       61a29cb9-8c13-4e10-979d-144866c4d122
@@ -2122,7 +2127,7 @@ Version 2016-10-15"
       :config
       (dired-async-mode 1))))
 #+END_SRC
-****** Group files 
+****** Group files
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 21:56]
 :ID:       18e2dd1e-dc25-4188-bad4-cdcdb76f506a
@@ -2150,7 +2155,7 @@ Version 2016-10-15"
 					   )))
   (add-hook 'dired-mode-hook 'dired-filter-group-mode))
 #+END_SRC
-****** Highlight files 
+****** Highlight files
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 22:09]
 :ID:       45393002-d153-42bf-ae39-70b6e49b25b0
@@ -2170,7 +2175,7 @@ Version 2016-10-15"
 :LOGBOOK:
 - State "TODO"       from              [2018-07-23 Mon 15:45]
 :END:
-=dired-find-file= calls =find-file=, which calls =find-file-noselect=, which forces =abbreviate-file-name= to be applied. 
+=dired-find-file= calls =find-file=, which calls =find-file-noselect=, which forces =abbreviate-file-name= to be applied.
 It makes entering symlink in =~/Dropbox/Org/->~/Org= go into "~/Org".
 As a result, =dired-up-directory= goes to =~/= instead of =~/Dropbox=.
 
@@ -2312,7 +2317,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   :if init-flag
   :straight t
   :bind (:map prog-mode-map
-	      ("M-;" . comment-dwim-2))) 
+	      ("M-;" . comment-dwim-2)))
 #+end_src
 *** Indent region
 :PROPERTIES:
@@ -2355,7 +2360,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :ID:       533e507c-2f3a-48cf-8a50-240d306a43f0
 :END:
 
-From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread/er0bgll/][reddit]]. 
+From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread/er0bgll/][reddit]].
 
 #+begin_src emacs-lisp
 (if init-flag
@@ -2571,7 +2576,7 @@ Avoid trailing white-spaces at the end of the lines
 :PROPERTIES:
 :ID:       83e9e494-8646-4118-a574-b35026acd582
 :END:
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (setq visible-bell nil)
 #+end_src
 *** Debug on error
@@ -2581,7 +2586,7 @@ Avoid trailing white-spaces at the end of the lines
 :LOGBOOK:
 - State "CANCELLED"  from              [2017-12-19 Tue 08:53]
 :END:
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (setq debug-on-error t)
 (setq debug-on-quit nil)
 (setq debug-ignored-errors '(beginning-of-line
@@ -2691,7 +2696,7 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 :PROPERTIES:
 :ID:       2bc3b25c-9754-4bce-a885-8d8b1300b6cc
 :END:
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (use-package boon
   :defer t
   :if init-flag
@@ -2707,7 +2712,7 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 :ID:       924cdc83-3ddc-4ef1-ae8d-8ca57682d389
 :END:
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (use-package boon
   :defer t
   :if init-flag
@@ -2747,7 +2752,7 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
   (use-package boon
     :defer t
     :config
-    
+
     (bind-keys :map boon-goto-map
 	       ("f" . helpful-function)
 	       ("v" . helpful-at-point)
@@ -2836,7 +2841,7 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
 :PROPERTIES:
 :ID:       a57244bb-a617-44b4-a806-7cff82a86ac7
 :END:
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (use-package quickrun
   :if init-flag
   :straight t
@@ -2970,8 +2975,8 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
     (find-file "~/Finance/Singapore-PhD/Ledger.dat"))
   (defun ledger-add-transaction-and-boonedit ()
     "Switch to boon insert state when adding transaction."
-    (interactive) 
-    (call-interactively 'ledger-add-transaction) 
+    (interactive)
+    (call-interactively 'ledger-add-transaction)
     (boon-set-insert-like-state))
   (setq ledger-reports
 	'(("bal" "ledger --pedantic -f %(ledger-file) bal not Equity")
@@ -3163,13 +3168,13 @@ It's magic
 :PROPERTIES:
 :ID:       1bdbe0fd-07db-483b-bf04-c9a6813ee351
 :END:
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (use-package shell-pop
   :if init-flag
   :straight t
   :bind ("M-<f9>" . shell-pop)
   :init
-  (setq shell-pop-shell-type '("ansi-term" "*ansi-term*" (lambda () (ansi-term shell-pop-term-shell)))) 
+  (setq shell-pop-shell-type '("ansi-term" "*ansi-term*" (lambda () (ansi-term shell-pop-term-shell))))
   (setq shell-pop-window-position "right")
   :config
   (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
@@ -3188,7 +3193,7 @@ It's magic
   (meta-functions-update-function-definitions))
 
 #+END_SRC
-**** Kill process buffer after finishing 
+**** Kill process buffer after finishing
 :PROPERTIES:
 :CREATED:  [2019-08-09 Fri 17:30]
 :ID:       6027fccc-5e96-4c55-9e5a-12194caadefd
@@ -3432,7 +3437,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 
 (add-hook 'message-send-hook #'yant/mml-secure-message-sign-pgpmime-maybe)
   #+end_src
-- async mail sending 
+- async mail sending
 *************** TODO Make it work
 *************** END
 
@@ -3480,12 +3485,12 @@ When listening a new band/album, I usually go through all the songs and delete w
 :ID:       54d9479f-a0a4-456f-bf4b-7adc2812c17b
 :END:
 #+begin_src emacs-lisp
-(defun notmuch-show-delete () 
+(defun notmuch-show-delete ()
   (interactive)
   (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
 			  (seq-difference (notmuch-show-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist" "deleted")))))
     (when (or (member "listinbox" tags)
-	      (seq-empty-p tags) 	      
+	      (seq-empty-p tags)
 	      (yes-or-no-p "Really delete?"))
       (notmuch-show-tag-message "+deleted" "-inbox" "-todo" "-listinbox"))))
 
@@ -3509,12 +3514,12 @@ When listening a new band/album, I usually go through all the songs and delete w
   (interactive)
   (notmuch-search-tag '("-todo")))
 
-(defun notmuch-search-delete () 
-  (interactive) 
+(defun notmuch-search-delete ()
+  (interactive)
   (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
 			  (seq-difference (notmuch-search-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist" "deleted")))))
     (when (or (member "listinbox" tags)
-	      (seq-empty-p tags) 	      
+	      (seq-empty-p tags)
 	      (yes-or-no-p "Really delete?"))
       (notmuch-search-tag '("+deleted" "-inbox" "-todo" "-listinbox")))))
 
@@ -3823,7 +3828,7 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 :PROPERTIES:
 :ID:       8cef1ba5-d5ea-4ad1-955b-932952c77b0c
 :END:
-I need to deal with many projects running at the same time in my work. Hence, I need some good structure for all these projects to keep track of deadlines, have all the notes to be able to recall what is going on in the project after some time. 
+I need to deal with many projects running at the same time in my work. Hence, I need some good structure for all these projects to keep track of deadlines, have all the notes to be able to recall what is going on in the project after some time.
 **** Tags
 ***** General org mode tags
 :PROPERTIES:
@@ -3867,8 +3872,8 @@ I need to deal with many projects running at the same time in my work. Hence, I 
 Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-hooks=
 *************** END
 - =NOEXPORT= :: Do not export an item
-- =NODEADLINE= :: Do not show these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view 
-- =SKIP= :: Some projects contains tasks, which can be done independently on each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belongs to has =NEXT= tasks.  
+- =NODEADLINE= :: Do not show these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view
+- =SKIP= :: Some projects contains tasks, which can be done independently on each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belongs to has =NEXT= tasks.
 - =NOARCHIVE= :: Do not archive a task. This in not inherited.
 - =ARCHIVE= :: Prevent task from unfolding (e.g. task contains bulky data, I do not want to see)
 - =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only do it all together.
@@ -3931,9 +3936,9 @@ The task is any item with todo keyword and no subtask.
 	      )))
 #+end_src
   - TODO(t) :: task which needs to be done
-  - NEXT(n) :: Task which needs to be done next. If the task is scheduled it is most likely need to be done next. Though can change manually to =TODO= if needed. 
+  - NEXT(n) :: Task which needs to be done next. If the task is scheduled it is most likely need to be done next. Though can change manually to =TODO= if needed.
 #+begin_src emacs-lisp
-(define-advice org-schedule (:after (&optional ARG TIME) change-todo-after-schedule-state-change) 
+(define-advice org-schedule (:after (&optional ARG TIME) change-todo-after-schedule-state-change)
   "Make sure that task keyword is always NEXT if it is scheduled."
   (let ((mystate (or (and (fboundp 'org-state)
 			  state)
@@ -3945,7 +3950,7 @@ The task is any item with todo keyword and no subtask.
       (when (member mystate (list "TODO"))
 	(org-todo "NEXT")))))
 #+end_src
-  - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason) 
+  - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason)
   - HOLD(h) :: I am not going to do this task for now due to reason explained in the comment
   - SOMEDAY(s) :: This task does not have to be done at all. But maybe, it I have a mood... The command triggers un-scheduling the task if it is scheduled
 #+begin_src emacs-lisp
@@ -3960,7 +3965,7 @@ The task is any item with todo keyword and no subtask.
 #+end_src
   - CANCELLED(c) :: I will never do this task because of what is in the comment
   - DONE(d) :: self explanatory
-  - FAILED(f) :: there is some outcome and can mark done, but the outcome is not positive, though can get some conclusions out of it 
+  - FAILED(f) :: there is some outcome and can mark done, but the outcome is not positive, though can get some conclusions out of it
   - MERGED(m) :: become a part of other task. The link to the task is added to =MERGED-WITH= property. The motivation of adding this state is that I sometimes create a duplicate task, find out that it is duplicate, and confused which state to set. It is just faster to set =MERGED= without deciding if it is =CANCELLED= (which is not really) or =DONE= (which is also not).
 *************** TODO Prompt for the link to new task, default is clocked in task. Use helm search. Store link in property
 *************** END
@@ -4005,7 +4010,7 @@ The maximum number of levels is controlled by `org-inlinetask-min-level'."
 :LOGBOOK:
 - State "TODO"       from              [2018-03-12 Mon 17:59]
 :END:
-Some of the tasks cannot be done until some condition is met. Before that, it does not make too much sense to show it in agenda. 
+Some of the tasks cannot be done until some condition is met. Before that, it does not make too much sense to show it in agenda.
 I use [[http://www.nongnu.org/org-edna-el/][org-edna]] for managing dependencies. On top of blocked tasks management, it allows to schedule tasks on trigger. It introduces two new properties: =TRIGGER= and =BLOCKER= (see [[id:598c2b16-2eb8-404a-b7e9-00969a1c4d72][Properties]] for details)
 #+BEGIN_SRC emacs-lisp
 (use-package org-edna
@@ -4028,9 +4033,9 @@ Habits are regular tasks which are treated specially in agenda to show if I miss
 (setq org-habit-graph-column 120)
 #+end_src
 
-Any tasks can be made a habit by adding an appropriate properties. 
+Any tasks can be made a habit by adding an appropriate properties.
 I have two ways to do it:
-- through [[id:e3d02bee-a924-4808-9a2f-fe577065038d][capture]] 
+- through [[id:e3d02bee-a924-4808-9a2f-fe577065038d][capture]]
 - calling a custom function
 #+begin_src emacs-lisp
 (defun yant/org-task-convert-to-habit ()
@@ -4122,7 +4127,7 @@ The project with parent projects.
 	  (setq is-subproject t))))
     (and is-a-task is-subproject)))
 #+end_src
-- if any task below is =NEXT= and the project is =TODO= then need to change to =NEXT= (it means that we need to do some task from this sub-project next) 
+- if any task below is =NEXT= and the project is =TODO= then need to change to =NEXT= (it means that we need to do some task from this sub-project next)
   #+begin_src emacs-lisp
 (defun yant/mark-todo-parent-tasks-next ()
   "Visit each parent task and change TODO states to NEXT."
@@ -4154,13 +4159,13 @@ CLOCK: [2019-07-29 Mon 13:33]--[2019-07-29 Mon 14:06] =>  0:33
 :END:
 
 Sometimes, I do some trial tasks for my projects or just try random things with programming.
-These things are unlikely to go into my actual notes or projects files. 
-Not always though. 
-It is always frustrating when I remember trying something and want to move it to actual notes of project file, but lose what I did. 
+These things are unlikely to go into my actual notes or projects files.
+Not always though.
+It is always frustrating when I remember trying something and want to move it to actual notes of project file, but lose what I did.
 
-Journal seems to be a good solution for it. 
+Journal seems to be a good solution for it.
 I can dump all kind of staff there instead of having it spread over the bash history or just lost.
-I can write notes, run shell commands, calculations, etc without loosing what I have done. 
+I can write notes, run shell commands, calculations, etc without loosing what I have done.
 I may not even need to run terminal in such a case!
 
 I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it does not really work for me because it creates too many files. A simple =date-tree= capture works just fine.
@@ -4170,7 +4175,7 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
   :if init-flag
   :after org
   :requires org
-  :config 
+  :config
   (defvar yant/org-journal-file "~/Org/Journal.org"
     "Filename of the journal file")
 
@@ -4333,7 +4338,7 @@ CLOCK: [2018-07-09 Mon 21:47]--[2018-07-09 Mon 23:02] =>  1:15
 :END:
 
 I have symlinks to the attached files stored in the directory tree mimicking org file structure (see [[id:9361bc68-010b-45f1-bddd-4638d6344758][Store files in folder structure, following my org tree structure]])
-However, they can be moved upon refiling. 
+However, they can be moved upon refiling.
 Hence, it is better to avoid =file= links to the attached files.
 Therefore, I define a new link type to the attached files of the current entry.
 Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while selecting an image link - it will show the preview of images in separate buffer (idea from [[https://www.reddit.com/r/emacs/comments/9dh45j/preview_images_while_helmfindfiles/][reddit]]).
@@ -4356,11 +4361,11 @@ Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while
 	 (filepath (apply #'s-concat (cdr (s-split ":" filelink)))))
     (format "att:%s" filepath)))
 
-(org-link-set-parameters "att" 
+(org-link-set-parameters "att"
 			 :complete #'org-att-link-complete)
 #+END_SRC
 
-Just links to the current entry are not always sufficient. I sometimes want to link a file from another entry. 
+Just links to the current entry are not always sufficient. I sometimes want to link a file from another entry.
 
 #+begin_src emacs-lisp
 (defun yant/process-att-id-abbrev (arg)
@@ -4411,10 +4416,10 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 	 (filepath (apply #'s-concat (cdr (s-split ":" filelink)))))
     (format "att-id:%s:%s" id filepath)))
 
-(org-link-set-parameters "att-id" 
+(org-link-set-parameters "att-id"
 			 :complete #'org-att-id-link-complete)
 
-(org-link-set-parameters "id" 
+(org-link-set-parameters "id"
 			 :complete #'org-id-prompt-id)
 
 #+end_src
@@ -4473,7 +4478,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
     (org-with-point-at (org-id-find id 'marker)
       (s-replace "||" "/" (yant/task-fulltitle)))))
 
-(org-link-set-parameters "id" 
+(org-link-set-parameters "id"
 			 :complete #'org-id-link-complete
                          :desk #'org-id-link-desk)
 
@@ -4498,7 +4503,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 :END:
 
 The links to run =src= blocks.
-Useful if I want to run an =src= block when working on entry. 
+Useful if I want to run an =src= block when working on entry.
 Having a link, which runs blocks, allows to simply =C-c C-o= on the heading to follow this link.
 
 #+begin_src emacs-lisp
@@ -4550,7 +4555,7 @@ The src block should be in the same org file."
       (when var-params (setq var-params (format "%s" var-params)))
       (format "babel:%s[%s](%s)" name (or params "") (or var-params "")))))
 
-(org-link-set-parameters "babel" 
+(org-link-set-parameters "babel"
 			 :follow #'org-link-babel-follow
                          :complete #'org-link-babel-complete)
 
@@ -4586,7 +4591,7 @@ The src block should be in the same org file."
 	     ("C-c [" . org-ref-helm-insert-ref-link))
   (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
-#+end_src 
+#+end_src
 ***** NEXT search in article PDFs
 SCHEDULED: <2019-12-11 Wed>
 :PROPERTIES:
@@ -4613,7 +4618,7 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 :PROPERTIES:
 :ID:       598c2b16-2eb8-404a-b7e9-00969a1c4d72
 :END:
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (setq org-use-property-inheritance 't)
 #+end_src
 - =:SHOWFROMTIME:= (always inheriting) :: The purpose of this is to be able to assign specific projects for different days of week or, say, show the home items only in the evening of weekdays and not annoy it at work when I cannot do it any way. Hence, I can focus on the items I really need to do now in this agenda.
@@ -4702,7 +4707,7 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 	    next-headline
 	  nil)))))
      #+end_src
-- =:SHOWDATES:= (always inheriting) :: It contains dairy =sexps= to set when the project should be shown. For example, I may want to work on Saturday once or twice, but the working items should not be shown on weekend normally. Hence, I can define it. Or some things can only be done on specific dates (say, going to some shop, which is open few days a week only) 
+- =:SHOWDATES:= (always inheriting) :: It contains dairy =sexps= to set when the project should be shown. For example, I may want to work on Saturday once or twice, but the working items should not be shown on weekend normally. Hence, I can define it. Or some things can only be done on specific dates (say, going to some shop, which is open few days a week only)
      #+begin_src emacs-lisp
 (add-to-list 'org-default-properties "SHOWDATES")
 (defun org-agenda-skip-noshowdates()
@@ -4733,17 +4738,17 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
     (some #'(lambda (&rest args) (apply #'diary-cyclic (car args))) (remove nil data))))
      #+end_src
 - =:CREATED:= :: Entry creation time. Inserted for all the new headings.
-		 #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (defun yant/insert-heading-created-property (&optional time)
   "Add :CREATED: property to the task at point and set it to current time.
 The property is set to TIME if it is supplied."
   (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp time t t))))
 (add-hook 'org-insert-heading-hook 'yant/insert-heading-created-property 'append)
-		 #+END_SRC
+ #+END_SRC
 - =:BLOCKER:= :: Conditions to be met before allowing the entry to be
-                 marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]]) 
+                 marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
 - =:TRIGGER:= :: Actions to be done when the item is marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
-- =:MERGED-WITH:= :: If the task is marked =MERGED=, contains a link to the new task  
+- =:MERGED-WITH:= :: If the task is marked =MERGED=, contains a link to the new task
 - =:SOURCE:= :: The link to the file/URL, which this task refers to
 *** NEXT Attach
 :PROPERTIES:
@@ -4764,8 +4769,8 @@ CLOCK: [2019-04-24 Wed 15:43]--[2019-04-24 Wed 15:46] =>  0:03
 :ID:       3a0ca96a-3ce5-4f72-ba38-16990342fb5a
 :END:
 
-I try to store every possibe file in an attachment dir. 
-The new files are usually coming from my Downloads (=yant/org-attach-default-source)= directory. 
+I try to store every possibe file in an attachment dir.
+The new files are usually coming from my Downloads (=yant/org-attach-default-source)= directory.
 
 #+BEGIN_SRC emacs-lisp
 (defvar yant/org-attach-default-source "~/Downloads/"
@@ -4792,7 +4797,7 @@ The new files are usually coming from my Downloads (=yant/org-attach-default-sou
 :CREATED:  [2018-09-28 Fri 16:37]
 :END:
 
-The default =org-attach-attach= function does not allow to attach directories. 
+The default =org-attach-attach= function does not allow to attach directories.
 I made it so in the interactive specification in [[id:3a0ca96a-3ce5-4f72-ba38-16990342fb5a][Default attachment directory]].
 
 **** NEXT Store files in folder structure, following my org tree structure
@@ -4804,13 +4809,13 @@ I made it so in the interactive specification in [[id:3a0ca96a-3ce5-4f72-ba38-16
 - State "TODO"       from "NEXT"          [2018-01-01 Mon 13:17]
 :END:
 
-I usually have a huge numbers of files, related to my projects. I would like to use attach to associate the files with the proper entry, but searching them later in my Dropbox is a pain because of the way Org saves the attachments. 
-It makes more sense for me to make attachments follow the org tree structure in the project by default (unless I change the attach folder to something else). 
+I usually have a huge numbers of files, related to my projects. I would like to use attach to associate the files with the proper entry, but searching them later in my Dropbox is a pain because of the way Org saves the attachments.
+It makes more sense for me to make attachments follow the org tree structure in the project by default (unless I change the attach folder to something else).
 
 This can be done if we make attachment by creating a symbolic link to the attach folder in the place, according to the headline path.
 This way allows to keep all the file attached to the project accessible with relative paths.
 
-*************** TODO I do not handle the situation when the entry uid is being changed.. 
+*************** TODO I do not handle the situation when the entry uid is being changed..
 Try to look in symlinks?
 *************** END
 
@@ -4954,7 +4959,7 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 		     (f-symlink symlinks-directory (directory-file-name entry-symlink-name))
 		   (unless (f-symlink-p entry-symlink-name)
 		     (error (format "File exists: %s" entry-symlink-name)))))))
-	    
+
 	    ;; check children
             (when (yant/org-subtree-has-attachments-p)
 	      (let ((dirs (delete (directory-file-name attachments-symlink-directory)
@@ -4982,9 +4987,9 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 		      dirs)))))))))
 #+END_SRC
 
-Now, when I have the mirror attach folder structure, it make sense to open this structure on =org-attach-reveal= instead of opening the actual attach dirs. 
+Now, when I have the mirror attach folder structure, it make sense to open this structure on =org-attach-reveal= instead of opening the actual attach dirs.
 
-#+BEGIN_SRC emacs-lisp  
+#+BEGIN_SRC emacs-lisp
 (defun org-attach-dir-symlink (&optional create-if-not-exists-p no-data-dir)
   "Return symlink based path to the attach dir of current entry.
 Do not append symlink to data directory if NO-DATA-dir is not nil."
@@ -5034,7 +5039,7 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
 
 
 
-Files, out of the folder structure, will appear in my agenda to attach them to the relevant project (unless explicitly specified in special variable). 
+Files, out of the folder structure, will appear in my agenda to attach them to the relevant project (unless explicitly specified in special variable).
 
 ***** TODO handle cases when we need files in the same dir with the org file [[id:9dc72877-1e7b-4084-a262-6e39b08ced49][LaTeX class]]
 :PROPERTIES:
@@ -5084,7 +5089,7 @@ SCHEDULED: <2019-12-19 Thu>
 - State "TODO"       from              [2017-12-30 Sat 22:20]
 :END:
 
-Sometimes, I want to save certain interesting online articles to disk to make sure that all the content and comments are preserved regardless of the website changes. 
+Sometimes, I want to save certain interesting online articles to disk to make sure that all the content and comments are preserved regardless of the website changes.
 
 ***** DONE [#A] org-webtools                                      :NOARCHIVE:
 CLOSED: [2019-04-24 Wed 15:43] SCHEDULED: <2019-04-24 Wed>
@@ -5150,7 +5155,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
   - List of projects agenda :: List of all active projects.
   - *Agenda view for captured tasks* :: tasks, which needs to be refiled (with =:INBOX:= tag)
 
-I use different skip functions here in agenda to filter the agenda. Some of them are used, some of them are just kept here for future if I need them. 
+I use different skip functions here in agenda to filter the agenda. Some of them are used, some of them are just kept here for future if I need them.
   #+begin_src emacs-lisp
 (defun bh/skip-non-stuck-projects-and-non-next-subprojects ()
   "Skip trees that are not stuck projects"
@@ -5418,7 +5423,7 @@ This agenda show the items for the current day and time.
 	(re-search-forward (org-get-limited-outline-regexp) nil 'noerror)
 	(point)))))
   #+end_src
-  
+
 + all [#A] priority items, with matching =:SHOWDATES:= and =:SHOWFROMTIME:=, unless they are scheduled in the future
   #+begin_src emacs-lisp
 (defun org-agenda-skip-nonurgent ()
@@ -5464,7 +5469,7 @@ This agenda show the items for the current day and time.
 	    (re-search-forward (org-get-limited-outline-regexp) nil 'noerror))
 	  (point))))))
   #+end_src
-  
+
 *************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
 :PROPERTIES:
 :SHOWFROMDATE: 2019-08-06
@@ -5635,7 +5640,7 @@ Agenda is excellent for short term planning, however it is not very useful if I 
 	     (cfw:create-calendar-component-buffer
 	      :view 'week
 	      :contents-sources
-	      (list 
+	      (list
 	       (cfw:org-create-source)))))
 	(switch-to-buffer (cfw:cp-get-buffer cp))))
     (use-package boon
@@ -5801,7 +5806,7 @@ Unfortunately, =org-agenda-get-scheduled= has hard coded setting to
 calculate time of the entry and not respecting =org-parse-timestring= or
 =org-get-time-of-day=. Hence, I need to rewrite it just for sake of
 changing =(concat (substring s (match-beginning 1)) " "))= into =(concat
-(org-get-time-of-day s t) " ")).= 
+(org-get-time-of-day s t) " ")).=
 #+begin_src emacs-lisp :tangle no
 (defun org-agenda-get-scheduled (&optional deadlines with-hour)
   "Return the scheduled information for agenda display.
@@ -6002,7 +6007,7 @@ scheduled items with an hour specification like [h]h:mm."
 
 I routinely use the agenda feature to mark multiple tasks and perform an action on all of them.
 
-For example, my typical archiving workflow involves going through archive candidates in my Full agenda for GTD self-check (see [[id:85dadb9c-2a7e-47cf-ba98-a0e73377653d][Archiving]]) using agenda follow mode and 
+For example, my typical archiving workflow involves going through archive candidates in my Full agenda for GTD self-check (see [[id:85dadb9c-2a7e-47cf-ba98-a0e73377653d][Archiving]]) using agenda follow mode and
 I archive some of the tasks and mark some with :NOARCHIVE: tag (see [[id:adc6f5ae-183f-4c5f-97e8-7bfe18f028d2][General org mode tags]]).
 
 By default, marking a task does not result in updated agenda follow buffer, so I fix it below.
@@ -6108,7 +6113,7 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 :PROPERTIES:
 :ID:       aa092c63-f695-4c03-8639-b34fa262d5fe
 :END:
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (use-package org-autosort)
 (setq org-autosort-todo-cmp-order '("WAITING" "NEXT" "HOLD" "TODO" "SOMEDAY" "MERGED" "FAILED" "DONE" "CANCELLED"))
 (bind-key "C-c C-S-s" 'org-autosort-sort-entries-at-point org-mode-map)
@@ -6121,10 +6126,10 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 #+begin_src emacs-lisp
 (when init-flag
 #+end_src
-The main purpose of clocking for me is to control the time I spend for important projects and for other staff (like configuring Emacs ;)). Hence, it is important to do a continuous tracking of the tasks, which I can choose to do or not to do (e.g. it is useless to keep track of how much time I spend brushing my teeth in the morning - anyway, I have to do it). 
-A lot of time, the task I am doing is not useful to add to my org files explicitly (e.g. initial checks on some side project, which may or may not work; routine work). I use special tasks for all kinds of such activity: 
+The main purpose of clocking for me is to control the time I spend for important projects and for other staff (like configuring Emacs ;)). Hence, it is important to do a continuous tracking of the tasks, which I can choose to do or not to do (e.g. it is useless to keep track of how much time I spend brushing my teeth in the morning - anyway, I have to do it).
+A lot of time, the task I am doing is not useful to add to my org files explicitly (e.g. initial checks on some side project, which may or may not work; routine work). I use special tasks for all kinds of such activity:
 - Organization :: related to work, general
-- Check TORead ... :: related to home, browsing, reading fiction, etc I start the activity from clocking in one of these tasks. Later, I clock in the task, which I am doing at the moment. Once it's done, clocking automatically comes back to higher level task (unless it is marked =:NOCLOCK=, see [[id:adc6f5ae-183f-4c5f-97e8-7bfe18f028d2][General org mode tags]]) or to one of the tasks above when I clocked out top level project.  
+- Check TORead ... :: related to home, browsing, reading fiction, etc I start the activity from clocking in one of these tasks. Later, I clock in the task, which I am doing at the moment. Once it's done, clocking automatically comes back to higher level task (unless it is marked =:NOCLOCK=, see [[id:adc6f5ae-183f-4c5f-97e8-7bfe18f028d2][General org mode tags]]) or to one of the tasks above when I clocked out top level project.
      Captures are also clocked, but once done, clocking comes back to previously active task, if any, or to default task otherwise.
 *************** TODO The default task is not being saved if I restart emacs
 *************** END
@@ -6207,14 +6212,14 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
 
      Once I keep all my time tracked, I can calculate the estimated balance of my time. The idea is that I assign the weight to each task/project (=:TIMEWEIGHT:=), which is positive for useful tasks I
      do not want to do, and negative for fun tasks (they may be useful, but the purpose is to force myself doing what I do not like to do). All I need to do now, is to keep this balance
-     positive. 
+     positive.
 *************** TODO Implement this (current month summary)
 *************** END
 **** Agenda log mode & clock report
 :PROPERTIES:
 :ID:       104927a5-4dea-4ee0-91d7-36afc6b15c7f
 :END:
-Reviewing previously clocked task is important to keep track of mistakes and clashes during clocking. I do it once per week. 
+Reviewing previously clocked task is important to keep track of mistakes and clashes during clocking. I do it once per week.
 #+begin_src emacs-lisp
 (setq org-clock-report-include-clocking-task t)
 (setq org-agenda-log-mode-items (quote (closed state)))
@@ -6225,7 +6230,7 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
       (plist-put org-agenda-clock-consistency-checks
 		 :max-gap "2:00"))
   #+end_src
-**** Logging 
+**** Logging
 :PROPERTIES:
 :ID:       973d6eff-3d91-48f0-a3b5-b438feccf28f
 :END:
@@ -6263,7 +6268,7 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
 :PROPERTIES:
 :ID:       13012cf7-322e-4433-a22c-e81b7c5feda0
 :END:
-I do not show current task in Emacs, instead I use =awesome wm= widget. Hence need to save current task in file. The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] Project/Subproject/Subsubproject/.../task=) or =[hh:mm] Capturing ...= for capturing (the title is being edited there and it does not make sense to keep that updated in widget as well). 
+I do not show current task in Emacs, instead I use =awesome wm= widget. Hence need to save current task in file. The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] Project/Subproject/Subsubproject/.../task=) or =[hh:mm] Capturing ...= for capturing (the title is being edited there and it does not make sense to keep that updated in widget as well).
 #+begin_src emacs-lisp
 (setq org-clock-mode-line-total (quote today))
 (setq org-clock-clocked-in-display nil)
@@ -6323,7 +6328,7 @@ I do not show current task in Emacs, instead I use =awesome wm= widget. Hence ne
 :PROPERTIES:
 :ID:       9e2c7a88-8a56-4213-b458-ccebcd59812a
 :END:
-Sometimes I need to jump to some urgent task. After it is done, I hate searching for the last task buffer and start clocking it again. Hence, I use clocking history and quick key combination to clock in task from recent clocked in tasks. 
+Sometimes I need to jump to some urgent task. After it is done, I hate searching for the last task buffer and start clocking it again. Hence, I use clocking history and quick key combination to clock in task from recent clocked in tasks.
 #+begin_src emacs-lisp
 (setq org-clock-history-length 23)
 (use-package boon
@@ -6350,7 +6355,7 @@ Sometimes I need to jump to some urgent task. After it is done, I hate searching
 :PROPERTIES:
 :ID:       ee371af1-c478-49d1-9814-1eb78242a341
 :END:
-Sometimes I need to do important task, but I just hate it. I tend to do anything, but not that freaking task. In this case, =pomodoro= works for me - I just switch between the task and something I like. 
+Sometimes I need to do important task, but I just hate it. I tend to do anything, but not that freaking task. In this case, =pomodoro= works for me - I just switch between the task and something I like.
 About: [[https://habrahabr.ru/post/323576/][habr]]
 #+begin_src emacs-lisp
 (use-package pomidor
@@ -6365,15 +6370,15 @@ About: [[https://habrahabr.ru/post/323576/][habr]]
 :ID:       38d9103d-a969-4c69-ae0e-a9a50912fba0
 :END:
 The idea is to assign time bonus/penalty during working on different tasks, so that the total balanced time spent under all the tasks (=org-time-balance=) is kept positive.
-Similar concept is described [[id:8a2ae3c3-69b0-495b-b796-9c9916dc40c6][here]]. 
- 
+Similar concept is described [[id:8a2ae3c3-69b0-495b-b796-9c9916dc40c6][here]].
+
 I calculate the effective time by setting =ORG-TIME-BALANCE-MULTIPLIER= property for various tasks.
-If the value is positive then the task is useful. Otherwise, it is negative and I do not want to spend too much time doing such tasks. 
+If the value is positive then the task is useful. Otherwise, it is negative and I do not want to spend too much time doing such tasks.
 The property can be different for various classes of tasks allowing to avoid/promote doing various tasks.
 Setting =ORG-TIME-BALANCE-MULTIPLIER= for every single task is annoying, so I make it inherited during calculation.
 
-It does not make sense to set =ORG-TIME-BALANCE-MULTIPLIER= for tasks like buying something in the shop. 
-I just do not clock them in. 
+It does not make sense to set =ORG-TIME-BALANCE-MULTIPLIER= for tasks like buying something in the shop.
+I just do not clock them in.
 Instead, I use =ORG-TIME-BONUS-ON-DONE= property to add fixed extra time for finishing the task (only =DONE= keyword is considered).
 
 =org-time-balance= is calculated for the last month only at the initial calculation to avoid counting old tasks and projects, which were not [[id:85dadb9c-2a7e-47cf-ba98-a0e73377653d][archived]].
@@ -6384,7 +6389,7 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
 *************** END
 
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (defvar org-time-balance nil
   "Weighted time spent for all the tasks in agenda files.")
 (defvar org-time-balance-persistant-p t
@@ -6406,7 +6411,7 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
 	(unless org-time-balance (setq org-time-balance 0))
 	(message "Loading time-balance... %d" org-time-balance))
     (setq org-time-balance 0)))
-    
+
 
 (defun org-save-time-balance-session ()
   "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
@@ -6547,13 +6552,13 @@ ignoring the previously saved values."
 #+begin_src emacs-lisp
 (when init-flag
 #+end_src
-Capturing is an important part of my workflow. It allows me to quickly note down the task or thought for future consideration and continue the current task. 
+Capturing is an important part of my workflow. It allows me to quickly note down the task or thought for future consideration and continue the current task.
 This should be done quickly, and from any place (not only from inside emacs):
 - system wide key combination for capturing allows to capture from anywhere
 - open new frame for capturing
 - use capture templates for most common types of quick captures
 There is also one more use case when I prefer to use capture - creating a new big projects. The reason to use capture here is that common types of projects require some set of needed actions, which I tend to forget. Capture templates here allows to remind necessary project tasks to myself.
-**** System wide capture 
+**** System wide capture
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 21:49]
 :ID:       0702c999-0ee5-494c-a1d7-1bb4024c43f7
@@ -6588,7 +6593,7 @@ New frame for capturing. The frame should only have capture buffer in it.
 Currently =org-capture-pop-frame= resets the line truncation state, which is rather annoying. Denying it:
 #+begin_src emacs-lisp
 (use-package org-capture-pop-frame
-  :if init-flag 
+  :if init-flag
   :defer t
   :init
   (defun ocpf--org-capture (orig-fun &optional goto keys)
@@ -6668,8 +6673,8 @@ All these templates generally record the creation time in =:CREATED:=
      9. Add to publication list
 - Link from browser :: It has =:SOURCE:= with URL of the page and page title in headline. =:SOURCE:= is the only place, where the URL is shown. I tag the entry with tag =BOOKMARK= to make it clear.
 - Generic link :: Same as link from browser, but silent (don't raise the capture buffer)
-- Selection from browser :: Same as previous, but selection is used as headline 
-- Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=. 
+- Selection from browser :: Same as previous, but selection is used as headline
+- Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=.
 #+begin_src emacs-lisp
 (setq org-capture-templates
       (append org-capture-templates
@@ -6788,9 +6793,9 @@ Occasionally, I need to add subtask to the existing task, which is not a project
   #+end_src
   #+begin_src emacs-lisp
 (setq org-export-use-babel t)
-(setf (alist-get :eval org-babel-default-header-args) "never-export") 
+(setf (alist-get :eval org-babel-default-header-args) "never-export")
   #+end_src
-**** Ignore some headlines in a sense that it will not be exported as =\section=. 
+**** Ignore some headlines in a sense that it will not be exported as =\section=.
 :PROPERTIES:
 :CREATED:  [2018-03-27 Tue 15:17]
 :ID:       e345057c-cd79-4e89-8ecc-ed81473804f1
@@ -6946,7 +6951,7 @@ The subheadings below such a headlines are promoted up *1 level*.
 :PROPERTIES:
 :ID:       51a2db82-731b-4daf-bea9-dbcca50bc4e8
 :END:
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (use-package ox-md)
 #+end_src
 *** Archiving
@@ -7211,7 +7216,7 @@ The source code editing is usually done in a new buffer. However, I do not like 
   (bind-key "C-c C-b" #'poly-org-edit-special poly-org-mode-map))
 #+end_src
 
-For convenience, add =header-args= property to completion 
+For convenience, add =header-args= property to completion
 
 ,#+begin_src emacs-lisp
 (add-to-list 'org-default-properties "header-args")
@@ -7223,7 +7228,7 @@ For convenience, add =header-args= property to completion
 :ID:       c9773614-0fec-4d7d-8ee3-72155d16d91c
 :END:
 
-I can just type =<el<TAB>= to enter elisp code block. 
+I can just type =<el<TAB>= to enter elisp code block.
 It can be done using =org-tempo=.
 
 #+begin_src emacs-lisp
@@ -7338,10 +7343,10 @@ I use it to activate alternative major modes in source blocks.
 				   :indent-offset org-edit-src-content-indentation))))
 #+end_src
 
-=mmm-mode= also allows having multiple major modes depending on cursor position in the buffer. 
-However, it does not fully replace major mode locally. 
+=mmm-mode= also allows having multiple major modes depending on cursor position in the buffer.
+However, it does not fully replace major mode locally.
 This mode is only taking care about keymap, menu, local variables, font-lock, and indentation.
-It does not really take care about the minor modes and does not run the =submode= hooks either. 
+It does not really take care about the minor modes and does not run the =submode= hooks either.
 It is not acceptable for me and it is not easy to re-implement by myself.
 Leaving the code below for reference.
 
@@ -7361,7 +7366,7 @@ Leaving the code below for reference.
       (if lang
 	  (org-src--get-lang-mode lang)
 	(signal 'mmm-no-matching-submode nil))))
-  
+
   (mmm-add-classes '((org-mode-block
 		      :face mmm-declaration-submode-face
 		      :front "^\\#\\+begin_src +\\([a-zA-Z-]+\\).*$"
@@ -7374,7 +7379,7 @@ Leaving the code below for reference.
   (mmm-add-mode-ext-class 'org-mode nil 'org-mode-block))
 #+end_src
 
-**** Backends	
+**** Backends
 :PROPERTIES:
 :ID:       397b6a12-0a2f-4d05-9c76-9735314434fa
 :END:
@@ -7573,7 +7578,7 @@ I have a lot of small scripts and programs written at some point for some purpos
 *************** END
 
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (defun yant/org-babel-tangle-async (file &optional target-file lang)
   "Ivoke `org-babel-tangle-file' asynchronously."
   (require 'async)
@@ -7582,7 +7587,7 @@ I have a lot of small scripts and programs written at some point for some purpos
      `(lambda ()
 	(require 'org)
 	(setq org-tangle-flag t)
-	(byte-compile-file "~/.emacs.d/config.el" 'load) 
+	(load "~/.emacs.d/config.el")
 	(apply #'org-babel-tangle-file ',args)))
    (let ((message-string (format "Tangling (%S %S %S) completed." file target-file lang)))
      `(lambda (result) (message ,message-string)))))
@@ -7657,7 +7662,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
          (result (buffer-substring (org-element-property :contents-begin named-element)
                                    (org-element-property :contents-end named-element))))
     (format "\"%s\"" (replace-regexp-in-string "\\\"" "\\\\\"" result))) ;; escape quote
-#+END_SRC
+#+end_src
 
 *************** TODO make autocompletion possible for babel blocks from inside editing org-src
 *************** END
@@ -7749,7 +7754,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 					 (plain-list-item . auto))))
 (setq org-cycle-separator-lines 2)
   #+end_src
-- hide emphasis markers 
+- hide emphasis markers
   #+begin_src emacs-lisp
 (setq org-hide-emphasis-markers t)
   #+end_src
@@ -7792,7 +7797,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
  '(("^[[:space:]]*\\(-\\) "
     0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "—")))))
 #+end_src
-- hide property drawers if they are empty or contain only invisible =org-custom-properties= 
+- hide property drawers if they are empty or contain only invisible =org-custom-properties=
 - also hide the logbooks containing only state changes and clocking
 
 
@@ -7837,7 +7842,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 		    ("%T" . ,org-ts-regexp)
 		    ("%u" . ".*?")
 		    ("%U" . ".*?"))))))))
-  
+
   (defun org-re-logs (notes)
     "Construct regexp matching any of the note types from NOTES list.
 The types must be taken from `org-log-note-headings'."
@@ -7855,7 +7860,7 @@ The types must be taken from `org-log-note-headings'."
   (defun org-log-end ()
     "Return expected end of log notes in current entry."
     (org-with-wide-buffer
-     (save-match-data 
+     (save-match-data
        (let ((org-log-states-order-reversed nil))
 	 (goto-char (org-log-beginning))
 	 (let ((regexp (org-re-logs (mapcar #'car org-log-note-headings))))
@@ -7924,17 +7929,17 @@ The types must be taken from `org-log-note-headings'."
 					   (if (functionp el) (funcall el) el))
                                          org-custom-drawers)))
             ":[ \t]*"))
-  
+
   (defvar org-drawer-end-re "[ \t]*:END:[ \t]*"
     "Regex of the last line (:END:) of a drawer.")
-  
+
   (defun org-custom-drawer-re (drawers)
     "Return custom drawer regexp in entry at point according to DRAWERS list.
     See `org-custom-drawer-start-re' description for more details."
     (concat (org-custom-drawer-start-re drawers)
-	    "\n\\(?:.*\n\\)*?"	    
+	    "\n\\(?:.*\n\\)*?"
 	    org-drawer-end-re))
-  
+
 
   ;; (define-advice org-toggle-custom-properties-visibility (:after () hide-empty-drawers)
   ;;   "Hide all the drawers, containing only invisible text. Only consider drawers from `org-custom-drawers'."
@@ -8040,14 +8045,14 @@ The types must be taken from `org-log-note-headings'."
       org-hide-block-startup t)
 (set-face-background 'org-block "Gainsboro")
 #+end_src
-**** Symbols 
+**** Symbols
 :PROPERTIES:
 :ID:       aae027ae-a2b7-42b6-a833-cf038edcad3a
 :END:
 
 Use UTF symbols for entities
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (setq org-pretty-entities t)
 (setq org-pretty-entities-include-sub-superscripts t)
 #+end_src
@@ -8064,7 +8069,7 @@ Use UTF symbols for entities
 :ID:       d858e349-99e4-4117-83c6-78b75acf6160
 :END:
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (use-package org-eldoc)
 (add-hook 'org-mode-hook (lambda () (setq-local eldoc-documentation-function #'org-eldoc-documentation-function)))
 #+end_src
@@ -8122,7 +8127,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-notmuch)
+(use-package ol-notmuch)
 (use-package helm-notmuch
   :straight t
   :config
@@ -8208,7 +8213,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :ID:       0ff33f97-adf2-4195-adba-0b92040950e5
 :END:
 
-Spell check rules for org syntax. 
+Spell check rules for org syntax.
 
 
 [Partially stolen from https://github.com/grettke/help/blob/master/help.org]:
@@ -8284,7 +8289,7 @@ Spell check rules for org syntax.
 :END:
 #+begin_src emacs-lisp
 (when init-flag
-  (bind-keys 
+  (bind-keys
    ("C-c C-S-l" . org-store-link)
    ("C-c m" . org-capture)
    ("C-c c" . org-clock-goto)
@@ -8296,7 +8301,7 @@ Spell check rules for org syntax.
   (bind-keys :map org-mode-map
 	     ("C-c C-+" . add-current-buffer-to-agenda-files)
 	     ("C-c C--" . remove-current-buffer-from-agenda-files)
-	     ("C-c e" . yant/add-email-to-task) 
+	     ("C-c e" . yant/add-email-to-task)
 	     ("C-c i" . org-clock-in)
 	     ("C-c o" . org-clock-out)
              :map org-agenda-mode-map
@@ -8331,10 +8336,10 @@ Spell check rules for org syntax.
       (interactive)
       (if (org-at-heading-p)
 	  (call-interactively #'org-previous-visible-heading)
-	(backward-paragraph)))  
+	(backward-paragraph)))
     (add-to-list 'meta-functions-meta-down-element-alist '(org-mode . yant/org-smart-meta-down-element))
     (add-to-list 'meta-functions-meta-up-element-alist '(org-mode . yant/org-smart-meta-up-element))
-    
+
     (add-to-list 'meta-functions-meta-move-line-up-alist '(org-struct-mode . org-metaup))
     (add-to-list 'meta-functions-meta-move-line-down-alist '(org-struct-mode . org-metadown))
     (add-to-list 'meta-functions-meta-move-element-up-alist '(org-struct-mode . org-shiftmetaup))
@@ -8408,6 +8413,3 @@ Spell check rules for org syntax.
     (lambda nil (progn (keyfreq-mode 1) (keyfreq-autosave-mode 1))))
   (global-keyfreq-mode))
 #+end_src
-
- 
-
