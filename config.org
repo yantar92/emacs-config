@@ -1664,9 +1664,9 @@ BEG and END narrow the scope where candidates are searched."
   (use-package avy
     :straight t
     :bind (:map boon-moves-map
-		("h" . avy-goto-char-timer)
+		("H" . avy-goto-char-timer)
                 :map boon-command-map
-                ("T" . avy-goto-word-in-line-1))
+                ("h" . avy-goto-word-in-line-1))
     :custom
     (avy-timeout-seconds 0.2 "The default is too long.")))
 #+end_src
