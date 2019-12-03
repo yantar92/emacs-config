@@ -7648,25 +7648,34 @@ I had to modify =org-babel-expand-body:gnuplot= to make it respect =:dir= proper
 I have a lot of small scripts and programs written at some point for some purpose I do not remember anymore. Hence, I prefer to use org files instead of all kinds of script files in the system. There are few things, which I need to make it work comfortably:
 - make sure that the script are tangled when I save org file, because it is easy to forget tangling of some files after editing.
 
-*It does not work for now*
 
-*************** TODO Make it work
+
+*************** TODO rewrite using threads
 *************** END
 
-
 #+begin_src emacs-lisp
+(defvar yant/org-babel-tangle-async-process-list nil
+  "Plist of (file . process) for all the currently running async tangle processes.")
+
+
 (defun yant/org-babel-tangle-async (file &optional target-file lang)
-  "Ivoke `org-babel-tangle-file' asynchronously."
+  "Invoke `org-babel-tangle-file' asynchronously."
   (require 'async)
-  (async-start
-   (let ((args (list file target-file lang)))
-     `(lambda ()
-	(require 'org)
-	(setq org-tangle-flag t)
-	(load "~/.emacs.d/config.el")
-	(apply #'org-babel-tangle-file ',args)))
-   (let ((message-string (format "Tangling (%S %S %S) completed." file target-file lang)))
-     `(lambda (result) (message ,message-string)))))
+  (let ((oldproc (plist-get yant/org-babel-tangle-async-process-list file)))
+    (when (or (not oldproc)
+	      (async-wait oldproc))
+      (message "Tangling %s..." (buffer-file-name))
+      (plist-put yant/org-babel-tangle-async-process-list
+		 file
+		 (async-start
+		  (let ((args (list file target-file lang)))
+		    `(lambda ()
+		       (require 'org)
+		       (setq org-tangle-flag t)
+		       (load "~/.emacs.d/config.el")
+		       (apply #'org-babel-tangle-file ',args)))
+		  (let ((message-string (format "Tangling (%S %S %S) completed." file target-file lang)))
+		    `(lambda (result) (message ,message-string))))))))
 
 (defvar yant/auto-tangle-list nil
   "List of files, which can be safely tangled on save.
