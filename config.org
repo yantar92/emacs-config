@@ -6112,7 +6112,25 @@ It is possible to search from agenda dispatcher not only in the org files, but a
 :ID:       40f833b6-615e-410b-89eb-3ffaea1c5c30
 :END:
 
+Showing part of entry content can be important to immediately see some important information related to the task in agenda.
+For example, this can be achieved using =org-agenda-entry-text-mode=.
+However, this mode appears to clutter the agenda too much, as for me.
+
+An alternative can be =org-quick-peek= package, which creates a temporary overlay showing the first lines of the task at point.
+
+For a while, I tried to bind revealing the task contents in agenda on a key press (TAB).
+However, I found myself missing earlier notes I sometimes add to my bookmark tasks.
+When the bookmark is a long article, I may read it half way and save the location where I stopped in the task body.
+Later, I just forget that I started reading and do not even check the task body...
+The solution is to show the task contents of every task at point in agenda.
+
+
+*************** TODO auto-show the contents. make it minor-mode
+*************** END
+
+
 #+begin_src emacs-lisp
+(setq org-agenda-start-with-entry-text-mode nil)
 (use-package quick-peek :straight t)
 (use-package org-quick-peek
   :if init-flag
