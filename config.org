@@ -2028,6 +2028,11 @@ Undo window configuration changes
 	     ("<tab>" . other-window)))
 #+end_src
 
+Do not ask confirmation about killing buffers for deleted folders
+#+begin_src emacs-lisp
+(setq dired-clean-confirm-killing-deleted-buffers nil)
+#+end_src
+
 
 ****** =Dired+=
 :PROPERTIES:
