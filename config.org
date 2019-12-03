@@ -6531,12 +6531,23 @@ Increment :ORG-TIME-BONUS: for habits, if nesessary."
                        0)))
 	(+ bonus extra)))))
 
+(defun org-clock-sum-current-entry-only (&optional tstart)
+  "Return time, clocked on current item in total. Exclude subitems."
+  (save-excursion
+    (save-restriction
+      (org-narrow-to-subtree)
+      (goto-char (point-min))
+      (outline-next-heading)
+      (narrow-to-region (point-min) (point))
+      (org-clock-sum tstart)
+      org-clock-file-total-minutes)))
+
 (defun org-accumulate-weighted-time (&optional return)
   "Aggregate `org-time-balance' counter at point from the last save or for all the time.
 Use :ORG-TIME-BALANCE-MULTIPLIER: property to set the weight.
 Just return the value at point if RETURN is not nil."
   (when org-time-balance
-    (let* ((value-at-point (* (org-clock-sum-current-item org-time-balance-save-time)
+    (let* ((value-at-point (* (org-clock-sum-current-entry-only org-time-balance-save-time)
                               (org-get-time-balance-multiplier-at-point))))
       (setq value-at-point (+ value-at-point (org-get-org-time-bonus-at-point)))
       (if return
@@ -6552,12 +6563,13 @@ ignoring the previously saved values."
     (setq org-time-balance 0)
     (setq org-time-balance-save-time nil)
     (unless force (org-load-time-balance-session))
-    (cl-loop for file in (org-agenda-files 'unrestricted t) do
-	     (with-current-buffer (find-file-noselect file)
-               (goto-char (point-min))
-               (cl-loop until (eobp)
-			do (when (outline-next-heading)
-			     (org-accumulate-weighted-time)))))
+    (when (not org-time-balance-save-time) ;; FIXME: temporary fix to avoid accumulating bonus time after loading saved balance
+      (cl-loop for file in (org-agenda-files 'unrestricted t) do
+	       (with-current-buffer (find-file-noselect file)
+		 (goto-char (point-min))
+		 (cl-loop until (eobp)
+			  do (when (outline-next-heading)
+			       (org-accumulate-weighted-time))))))
     (setq org-time-balance-update-time (current-time))
     (org-save-time-balance-session))
   org-time-balance)
