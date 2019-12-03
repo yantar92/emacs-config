@@ -2009,8 +2009,8 @@ Undo window configuration changes
         delete-by-moving-to-trash t
         trash-directory "~/tmp/Trash")
   :config
-  (put 'dired-find-alternate-file 'disabled nil)
-  (defalias 'dired-find-file #'dired-find-alternate-file)
+  ;; (put 'dired-find-alternate-file 'disabled nil)
+  ;; (defalias 'dired-find-file #'dired-find-alternate-file)
   (use-package dired-du :straight t)
   (bind-key "." 'dired-hide-dotfiles-mode dired-mode-map)
   (use-package meta-functions
