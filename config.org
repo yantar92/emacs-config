@@ -2539,9 +2539,17 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 :ID:       ae00a281-ea18-47c8-b75b-a7f643d63b88
 :END:
 
+Keep undo information between sessions.
+Never recover undo if the buffer is modified.
+
 #+begin_src emacs-lisp
 (use-package undohist
   :straight (undohist :type git :host github :repo "clemera-dev/undohist")
+  :init
+  (define-advice undohist-recover-1 (:around (oldfun &rest args) noask)
+    "Do not ask anything when recovering undo history."
+    (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) nil)))
+      (apply oldfun args)))
   :config
   (undohist-initialize))
 #+end_src
