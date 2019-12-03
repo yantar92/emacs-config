@@ -6095,6 +6095,20 @@ By default, marking a task does not result in updated agenda follow buffer, so I
 
 *************** TODO send to mail list
 *************** END
+
+Further, I use =tags-todo= search to find all unscheduled tasks, which are also not marked as =NEXT=, and decide what to do with them.
+Typically, I simply scatter them over a week or other period of time.
+However, =tags-todo= search cannot be used for scattering via explicit check in =org-agenda-bulk-action=.
+Disabling it (at least, until I find when that check is actually useful).
+
+#+begin_src emacs-lisp
+(define-advice org-agenda-bulk-action (:around (oldfun &optional arg) disable-org-agenda-check-type)
+  "Always return 't when checking agenda type."
+  (cl-letf (((symbol-function 'org-agenda-check-type) (lambda (&rest args) t)))
+    (apply oldfun arg)))
+#+end_src
+
+
 **** Agenda search
 :PROPERTIES:
 :CREATED:  [2019-05-18 Sat 20:28]
