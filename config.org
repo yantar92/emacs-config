@@ -1500,19 +1500,6 @@ abort completely with `C-g'."
   :config
   (add-hook 'magit-mode-hook #'git-gutter-mode))
 #+end_src
-*** Elisp
-**** Highlight quoted expressions in macro forms
-:PROPERTIES:
-:CREATED:  [2019-09-17 Tue 09:54]
-:ID:       04d49d5a-75dd-40a7-8fb4-fee6785296a2
-:END:
-
-#+begin_src emacs-lisp
-(use-package highlight-stages
-  :straight t
-  :diminish highlight-stages
-  :hook (emacs-lisp-mode . highlight-stages-mode))
-#+end_src
 ** Fold & narrow
 :PROPERTIES:
 :ID:       7f5795bc-6bc1-4095-b31c-ed724bbc942c
