@@ -8274,6 +8274,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :END:
 =Imenu= appears to be slower in =org-mode= in comparison with =org-goto=
 #+begin_src emacs-lisp
+(setq org-imenu-depth 8)
 (use-package meta-functions
   :if init-flag
   :config
