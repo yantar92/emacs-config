@@ -3175,6 +3175,59 @@ It's magic
 :ID:       460ee9e2-32f5-4ad2-a535-69121b201bcf
 :END:
 *** TODO Shell
+**** Eterm
+:PROPERTIES:
+:CREATED:  [2019-11-25 Mon 20:31]
+:ID:       e5c58182-de92-45b5-98d1-1a42db7c0886
+:END:
+
+Eterm is a much faster version of terminal for emacs since utilising emacs library support.
+#+begin_src emacs-lisp
+(use-package vterm
+  :straight (vterm :host github :repo "akermu/emacs-libvterm")
+  :commands (vterm vterm-other-window))
+
+;; ;; directory tracking
+;; (defun vterm--rename-buffer-as-title (title)
+;;   (let ((dir (string-trim-left (concat (nth 1 (split-string title ":")) "/"))))
+;;     (cd-absolute dir)
+;;     (rename-buffer (format "term %s" title) t)))
+;; (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
+
+;; ;; vterm toggle
+;; (eval-when-compile
+;;   (quelpa '(vterm-toggle :fetcher github :repo "jixiuf/vterm-toggle")))
+;; (use-package vterm-toggle
+;;   :ensure nil
+;;   :commands (vterm-toggle-forward vterm-toggle-backward vterm-toggle-cd vterm-toggle)
+;;   :config
+;;   (setq vterm-toggle-fullscreen-p nil)
+;;   ;; toggle window in bottom side
+;;   (add-to-list 'display-buffer-alist
+;;                '("^v?term.*"
+;;                  (display-buffer-reuse-window display-buffer-at-bottom)
+;;                  ;;(display-buffer-reuse-window display-buffer-in-direction)
+;;                  ;;display-buffer-in-direction/direction/dedicated is added in emacs27
+;;                  ;;(direction . bottom)
+;;                  ;;(dedicated . t) ;dedicated is supported in emacs27
+;;                  (reusable-frames . visible)
+;;                  (window-height . 0.5))))
+#+end_src
+
+**** Shell colours
+:PROPERTIES:
+:CREATED:  [2019-11-25 Mon 20:29]
+:ID:       0e7fd436-6b4b-43a2-932e-fd75daac32d2
+:END:
+
+#+begin_src emacs-lisp
+(use-package eterm-256color
+  :straight t
+  :hook
+  (term-mode-hook . eterm-256color-mode)
+  (vterm-mode-hook . eterm-256color-mode))
+#+end_src
+
 **** Invocation
 :PROPERTIES:
 :ID:       1bdbe0fd-07db-483b-bf04-c9a6813ee351
