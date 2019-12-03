@@ -4408,6 +4408,16 @@ Therefore, I define a new link type to the attached files of the current entry.
 Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while selecting an image link - it will show the preview of images in separate buffer (idea from [[https://www.reddit.com/r/emacs/comments/9dh45j/preview_images_while_helmfindfiles/][reddit]]).
 
 #+BEGIN_SRC emacs-lisp
+(defmacro org-with-point-at-org-buffer (&rest body)
+  "If in agenda, put the point into the corresponding org buffer."
+  `(cond ((eq major-mode 'org-agenda-mode)
+	  (let ((marker (org-get-at-bol 'org-hd-marker)))
+	    (org-with-point-at marker
+	      ,@body)))
+         ((eq major-mode 'org-mode)
+	  ,@body)
+	 (t (display-warning :warning "Trying to call org function in non-org buffer."))))
+
 (setq org-link-file-path-type 'relative)
 
 (defun yant/process-att-abbrev (arg)
@@ -5057,28 +5067,29 @@ Now, when I have the mirror attach folder structure, it make sense to open this 
 (defun org-attach-dir-symlink (&optional create-if-not-exists-p no-data-dir)
   "Return symlink based path to the attach dir of current entry.
 Do not append symlink to data directory if NO-DATA-dir is not nil."
-  (if create-if-not-exists-p
-      (let ((symlink (org-attach-dir-symlink nil no-data-dir)))
-	(if (not (f-exists-p symlink))
-	    (org-attach-dir 't))
-	symlink))
-  (let* ((entry-name (yant/org-entry-name-cleanup-for-dir))
-	 (attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
-				      (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))));; only consider if the entry is the child
-         (entry-path (and entry-name
-			  (f-join entry-name (if no-data-dir "" yant/org-attach-attachments-symlink-directory)))))
-    (if attach-dir-inherited-p
-	(org-with-wide-buffer
-         (org-up-heading-safe) ;; if this is false, something went really wrong
-	 (org-attach-dir-symlink create-if-not-exists-p no-data-dir))
-      (unless (seq-empty-p entry-name) ;; prevent empty folders
-	(org-with-wide-buffer
-	 (if (org-up-heading-safe)
-	     (let ((head-path (org-attach-dir-symlink create-if-not-exists-p 't)))
-	       (when head-path (f-slash (f-join head-path entry-path))))
-           (f-slash (f-join (or yant/org-attach-file-symlink-path
-				default-directory)
-			    entry-path))))))))
+  (org-with-point-at-org-buffer
+   (if create-if-not-exists-p
+       (let ((symlink (org-attach-dir-symlink nil no-data-dir)))
+	 (if (not (f-exists-p symlink))
+	     (org-attach-dir 't))
+	 symlink))
+   (let* ((entry-name (yant/org-entry-name-cleanup-for-dir))
+	  (attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
+				       (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))));; only consider if the entry is the child
+          (entry-path (and entry-name
+			   (f-join entry-name (if no-data-dir "" yant/org-attach-attachments-symlink-directory)))))
+     (if attach-dir-inherited-p
+	 (org-with-wide-buffer
+          (org-up-heading-safe) ;; if this is false, something went really wrong
+	  (org-attach-dir-symlink create-if-not-exists-p no-data-dir))
+       (unless (seq-empty-p entry-name) ;; prevent empty folders
+	 (org-with-wide-buffer
+	  (if (org-up-heading-safe)
+	      (let ((head-path (org-attach-dir-symlink create-if-not-exists-p 't)))
+		(when head-path (f-slash (f-join head-path entry-path))))
+            (f-slash (f-join (or yant/org-attach-file-symlink-path
+				 default-directory)
+			     entry-path)))))))))
 
 (define-advice org-attach-reveal (:around (OLDFUN) reveal-symlink)
   "Go to symlink attach dir structure instead of an actual attach dir."
@@ -6573,18 +6584,19 @@ ignoring the previously saved values."
   "Probably add the current item time bonus to `org-time-balance'."
   (unless org-time-balance
     (setq org-time-balance (org-get-total-weighted-time)))
-  (let ((old-time-at-point (org-accumulate-weighted-time 'return))
-	(old-org-time-balance org-time-balance))
-    (when (and (string= (org-entry-get (point) "STYLE") "habit")
-	       (string= (format "%s" arg) (org-entry-get (point) "REPEAT_TO_STATE"))
-               (string= "DONE" (org-get-todo-state))
-	       (org-set-property "ORG-TIME-BONUS" (format "%s" (org-get-org-time-bonus-at-point)))))
-    (apply OLDFUN (list arg))
-    (setq org-time-balance-update-time (current-time))
-    (setq org-time-balance (+ old-org-time-balance
-			      (- (org-accumulate-weighted-time 'return)
-				 old-time-at-point))))
-  (yant/save-clocked))
+  (org-with-point-at-org-buffer
+   (let ((old-time-at-point (org-accumulate-weighted-time 'return))
+	 (old-org-time-balance org-time-balance))
+     (when (and (string= (org-entry-get (point) "STYLE") "habit")
+		(string= (format "%s" arg) (org-entry-get (point) "REPEAT_TO_STATE"))
+		(string= "DONE" (org-get-todo-state))
+		(org-set-property "ORG-TIME-BONUS" (format "%s" (org-get-org-time-bonus-at-point)))))
+     (apply OLDFUN (list arg))
+     (setq org-time-balance-update-time (current-time))
+     (setq org-time-balance (+ old-org-time-balance
+			       (- (org-accumulate-weighted-time 'return)
+				  old-time-at-point))))
+   (yant/save-clocked)))
 
 
 (defvar org-clock-multiplier 0
