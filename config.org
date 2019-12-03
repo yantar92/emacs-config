@@ -248,23 +248,34 @@ Smart garbage collect
   :hook after-init-hook)
 #+end_src
 
+And increase GC threshold on top of that (I found emacs spend >25% of time doing GC when just moving around the buffer)
+#+begin_src emacs-lisp
+(setq gc-cons-threshold 20000000)
+#+end_src
+
 ** Appearance
 :PROPERTIES:
 :ID:       5b50a90f-4f47-4244-a6ac-e3646464539d
 :END:
 
+The configuration here is only for generic appearance of emacs.
+The major mode-specific configuration is configured later on per-mode basis.
+
 *************** NEXT [#A] revise config from here
 SCHEDULED: <2019-11-21 Thu>
+:PROPERTIES:
+:SHOWFROMDATE: 2019-11-29
+:END:
 *************** END
 
-
 *** Theme
-**** =Flatui=
 :PROPERTIES:
-:ID:       404c54f5-26eb-4ada-8a0f-c27efc714238
+:ID:       335a0a70-61ef-4691-bf1f-90351bd7c3bd
 :END:
 
-For a while, I have been using various dark themes for emacs. Later, I found light themes easier for my eyes when it is not dark outside. Since it is not really a good idea to work in darkness regardless of the colour scheme, I ended up using a light theme I prefer.
+For a while, I have been using various dark themes for emacs.
+Later, I found light themes easier for my eyes when it is not dark outside.
+Since it is not really a good idea to work in darkness regardless of the colour scheme, I ended up using a light theme I prefer.
 
 #+begin_src emacs-lisp
   (use-package flatui-theme
