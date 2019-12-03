@@ -3238,7 +3238,7 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
   :straight t
   :bind ("M-<f9>" . shell-pop)
   :init
-  (setq shell-pop-shell-type '("ansi-term" "*ansi-term*" (lambda () (ansi-term shell-pop-term-shell))))
+  (setq shell-pop-shell-type '("vterm" "*vterm*" (lambda () (vterm))))
   (setq shell-pop-window-position "right")
   :config
   (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
