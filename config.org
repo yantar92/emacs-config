@@ -4746,6 +4746,7 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
      Additionally, the time of the day after midnight is treated specially here. If =org-extend-today-until= is not 0 and the current time is before its value, the current time is still considered to be yesterday.
      #+begin_src emacs-lisp
 (setq org-extend-today-until 4)
+(setq org-use-effective-time t) ; respect `org-extend-today-until' when setting time-stamps
 
 (add-to-list 'org-default-properties "SHOWFROMTIME")
 (defun org-agenda-skip-before-SHOWFROMTIME-property ()
