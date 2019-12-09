@@ -427,7 +427,11 @@ sudo emerge -a noto dejavu quivira symbola
 
 #+begin_src emacs-lisp
 (use-package unicode-fonts
+  :if init-flag
   :straight t
+  :init
+  (use-package persistent-soft
+    :straight t) ;; Speed-up unicode-fonts startup, as suggested in unicode-fonts.el commentary
   :config
   (unicode-fonts-setup))
 #+end_src
