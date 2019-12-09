@@ -381,20 +381,27 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
 :LOGBOOK:
 - State "TODO"       from              [2018-03-12 Mon 14:24]
 :END:
+
+Long lines do not look good in text buffers and people often turn on line wrapping.
+However, long lines are pretty common in special buffers like in =elfeed=, =notmuch=, =agenda=, etc
+Setting line wrapping there makes them look ugly.
+Moreover, a need to wrap lines in =prog-mode= buffers is a sign that the code is not formatted well.
+So, I don't really need line wrapping in most of the major modes.
+I am setting line truncation globally and enable line wrapping only for several certain major modes (i.e. =org-mode=).
+
+If the line wrapping is active, I also want the word wrap to be activated automatically.
+
 #+begin_src emacs-lisp
-  (use-package boon
-    :if init-flag
-    :defer t
-    :config
-    (bind-keys :map boon-x-map ("l" . toggle-truncate-lines)))
-    (setq-default truncate-lines 't
-		  word-wrap 't)
+(when init-flag
+  (bind-key "C-x l" #'toggle-truncate-lines)
+  (setq-default truncate-lines 't
+		word-wrap 't))
 #+end_src
 **** Buffer boundaries
 :PROPERTIES:
 :ID:       00975142-2491-4f85-bd0b-f1f6c2938e36
 :END:
-
+When the buffer text takes less space then a window, it's neat to see the beginning/end of the buffer in emacs.
 #+begin_src emacs-lisp
 (setq-default indicate-buffer-boundaries 'left)
 #+end_src
