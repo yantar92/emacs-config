@@ -2954,6 +2954,18 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
   :straight t
   :mode ("\\.\\(gp\\|gnuplot\\|plot\\)$" . gnuplot-mode))
 #+end_src
+*** Lua
+:PROPERTIES:
+:CREATED:  [2019-12-05 Thu 15:17]
+:ID:       2cfb9df1-22b4-4c4a-bc68-535e3093b649
+:END:
+
+#+begin_src emacs-lisp
+(use-package lua-mode
+  :if init-flag
+  :straight t)
+#+end_src
+
 ** TODO LaTeX
 :PROPERTIES:
 :ID:       2fb97bdf-d310-4e5a-8266-d68a1ae10298
