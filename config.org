@@ -267,13 +267,6 @@ And increase GC threshold on top of that (I found emacs spend >25% of time doing
 The configuration here is only for generic appearance of emacs.
 The major mode-specific configuration is configured later on per-mode basis.
 
-*************** NEXT [#A] revise config from here
-SCHEDULED: <2019-11-21 Thu>
-:PROPERTIES:
-:SHOWFROMDATE: 2019-11-29
-:END:
-*************** END
-
 *** Theme
 :PROPERTIES:
 :ID:       335a0a70-61ef-4691-bf1f-90351bd7c3bd
@@ -352,14 +345,30 @@ Setting resizing to be exact instead.
 *************** END
 
 #+begin_src emacs-lisp
-(setq frame-resize-pixelwise nil)
+(setq frame-resize-pixelwise t)
 #+end_src
 *** Buffer
+
+General buffer appearance.
+
 **** Centered window mode
 :PROPERTIES:
 :ID:       af9c7d6c-fd15-4d68-b379-3d439ea94370
 :END:
-My screen is too wide to read text comfortably. I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer width.
+My screen is too wide to read text comfortably.
+I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer width.
+*************** TODO Move pdf-view config to pdf-view
+*************** END
+*************** NEXT [#A] revise config from here
+SCHEDULED: <2019-11-21 Thu>
+:PROPERTIES:
+:SHOWFROMDATE: 2019-12-06
+:END:
+:LOGBOOK:
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
+
 #+begin_src emacs-lisp
   (use-package centered-window
     :if init-flag
@@ -373,7 +382,7 @@ My screen is too wide to read text comfortably. I am not very comfortable with =
     (bind-keys :map boon-x-map ("w" . centered-window-mode))
     (centered-window-mode +1))
 #+end_src
-**** TODO Long lines handling
+**** Long lines handling
 :PROPERTIES:
 :ID:       827dc236-fee4-43b8-bfbe-05026d7e3e6d
 :CREATED:  [2019-03-20 Wed 12:07]
@@ -409,16 +418,17 @@ When the buffer text takes less space then a window, it's neat to see the beginn
 :PROPERTIES:
 :ID:       45675819-9551-43da-8e21-4437dde591e5
 :END:
+
 **** Coding system
 :PROPERTIES:
 :ID:       07c3544a-bcbd-4790-815a-25615ca2ca03
 :END:
-- prefer UTF
+Prefer UTF
   #+begin_src emacs-lisp
 (prefer-coding-system 'utf-8)
   #+end_src
 
-- ensure UTF fonts
+Ensure UTF fonts
 
 Note that the fonts should be installed in the system first
 #+begin_src bash :tangle no
@@ -460,9 +470,8 @@ Show some text in buffer differently
 - State "TODO"       from              [2018-03-12 Mon 14:26]
 - State "HOLD"       from              [2018-03-04 Sun 17:57]
 :END:
-
-
-
+*************** TODO Split config to prog-modes. Add more commentary
+*************** END
 
 #+begin_src emacs-lisp
 (use-package pretty-symbols
@@ -531,6 +540,9 @@ Show some text in buffer differently
 :PROPERTIES:
 :ID:       bdf24c4b-681c-4286-86cd-e81f63b94ec0
 :END:
+*************** TODO Move to latex
+*************** END
+
 #+begin_src emacs-lisp
 (use-package latex-pretty-symbols
   :if init-flag
