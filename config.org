@@ -3196,6 +3196,27 @@ It's magic
     :config
     (setq pdf-cache-prefetch-delay 4)))
 #+end_src
+*** Kill pdf buffer on =q=
+:PROPERTIES:
+:CREATED:  [2019-12-05 Thu 11:16]
+:ID:       ee42b095-7f3a-4bc9-a07b-3c830287c59c
+:END:
+
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :defer t
+  :config
+  (defun yant/kill-pdf-buffer-and-quit-window ()
+    "When in pdf-view-mode, kill the buffer and clear image cache.
+See https://lists.gnu.org/archive/html/bug-gnu-emacs/2019-11/msg01731.html for details why clearing cache is useful."
+    (interactive)
+    (if (eq major-mode 'pdf-view-mode)
+	(progn
+	  (kill-buffer-and-window)
+          (clear-image-cache t))
+      (funcall-interactively #'quit-window)))
+  (bind-key "q" #'yant/kill-pdf-buffer-and-quit-window pdf-view-mode-map))
+#+end_src
 ** Utils
 :PROPERTIES:
 :ID:       460ee9e2-32f5-4ad2-a535-69121b201bcf
