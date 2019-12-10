@@ -683,112 +683,234 @@ I use [[https://github.com/jyp/boon][boon]] package for this purpose.
   (set-keymap-parent boon-special-map boon-moves-map))
 #+END_SRC
 
+*************** TODO respect interactive definitions
+*************** END
+*************** TODO make recursive conditions like :mode org-mode :cond org-at-heading-p body
+*************** END
+
 #+begin_src emacs-lisp :tangle ~/Git/meta-functions/meta-functions.el
-    ;;; meta-functions.el --- Define meta-functions to act differently depending on major mode -*- lexical-binding: t; -*-
+;;; meta-functions.el --- Define meta-functions to act differently depending on major mode -*- lexical-binding: t; -*-
 
-  ;; Version: 1.0
-  ;; Author: Ihor Radchenko <yantar92@gmail.com>
-  ;; Created: 10 March 2018
+;; Version: 2.0
+;; Author: Ihor Radchenko <yantar92@gmail.com>
+;; Created: 10 March 2018
 
-    ;;; Commentary:
+;;; Commentary:
 
-  ;; Quick implementation of meta-functions, which allows to run multiple
-  ;; functions, which do similar logical operations by one single "meta"
-  ;; function in different major modes. For example, one may want to define
-  ;; meta-next-line to call `next-line' normally, but
-  ;; `org-agenda-next-line' in org-agenda mode. Both can be binded to, say
-  ;; "M-j", without a need to change the key-bindings on both fundamental
-  ;; and org-agenda modes.
-  ;; Example usage:
-  ;; (use-package meta-functions
-  ;;   :init
-  ;;   (setq meta-funcions-list '((meta-function-1 default-function-1 "Description") (meta-function-2 default-function-2  "description")))
-  ;;   (setq meta-functions-meta-function-1-alist '((major-mode-1 . function-1)))
-  ;;   )
-  ;; This will define meta-function-1 and meta-function-2 to automatically
-  ;; choose the right real functions depending on the major mode.
+;; Quick implementation of meta-functions, which allows to run multiple
+;; functions, which do similar logical operations by one single "meta"
+;; function in different major modes. For example, one may want to define
+;; meta-next-line to call `next-line' normally, but
+;; `org-agenda-next-line' in org-agenda mode. Both can be binded to, say
+;; "M-j", without a need to change the key-bindings on both fundamental
+;; and org-agenda modes.
+;; Example usage:
+;; (use-package meta-functions
+;;   :config
+;; (meta-defun meta-next-element ()
+;;   "Go to next element."
+;;   :mode org-agenda-mode (org-agenda-next-item 1) ; call org-agenda-next-item in org-agenda
+;;   :cond (lambda () (and (eq major-mode 'org-mode) (org-at-heading-p))) (org-next-visible-heading 1) ; call org-next-visible-headting when at heading in org-mode
+;;   (next-line)) ; call-next line in any other case
+;; )
 
-  ;;; Code:
-  (require 'seq)
+;;; Code:
+(require 'seq)
 
-  (defvar meta-functions-list '()
-    "A list of meta function names, corresponding functions to be called by default, and their description.
-  Each function may have meta-functions-metafunctionname-alist variable containing pairs of major mode names
-  and corresponding function to be called by meta-function in that major mode.
-  The default functions will be called if the major mode is not in the alist")
+(defun meta-functions--process-args (name args)
+  "Process arguments of `meta-defun'.
+The return value is a list (docstring ((sub-body-symbol condition-func|mode-symbol body) ...))."
+  (when (memq ':override-nil args) (setq args (delq ':override-nil args)))
+  (let* ((arglist (and (listp (car args)) (pop args)))
+	 (docstring (and (stringp (car args)) (pop args)))
+	 conditions)
+    (while args
+      (add-to-list 'conditions
+		   (pcase args
+		     (`(:mode ,(and (pred symbolp) s) ,body . ,_)
+                      (prog1
+			  (list (make-symbol (concat (symbol-name name) "%" (symbol-name s)))
+				`(quote ,s)
+				(if (functionp #'body)
+                                    `(function ,body)
+                                  `(lambda (&optional arg) (interactive) ,body)))
+			(dotimes (_ 3) (pop args))))
+		     (`(:mode . ,_)
+		      (error ":mode must be followed by a symbol and body."))
+		     (`(:cond :symbol ,(and (pred symbolp) s) ,(and (pred #'functionp) func) ,body . ,_)
+                      (prog1
+			  (list (make-symbol (concat (symbol-name name) "%" (symbol-name s)))
+				func
+				(if (functionp #'body)
+                                    `(function ,body)
+                                  `(lambda (&optional arg) (interactive) ,body)))
+			(dotimes (_ 5) (pop args))))
+		     (`(:cond :symbol . ,_)
+		      (error ":cond :symbol must be followed by symbol and function."))
+		     (`(:cond ,(and (pred functionp) func) ,body . ,_)
+                      (prog1
+			  (list (when (symbolp func) (make-symbol (concat (symbol-name name) "%" (symbol-name func))))
+				func
+				(if (functionp #'body)
+                                    `(function ,body)
+                                  `(lambda (&optional arg) (interactive) ,body)))
+			(dotimes (_ 3) (pop args))))
+		     (`(:cond . ,_)
+		      (error ":cond must be followed by [:symbol symbol] function."))
+		     (`(,body)
+                      (prog1
+			  (list
+			   (make-symbol (concat (symbol-name name) "%t"))
+			   #'t
+			   (if (functionp body)
+                               `(function ,body)
+                             `(lambda (&optional arg) (interactive) ,body)))
+			(setq args nil))))
+		   'append))
+    (list arglist docstring conditions)))
 
-  (defun meta-functions-add-meta-function (&rest args)
-    "Add meta function or a list of metafunctions as in `meta-functions-list' and update the definitions."
-    (setq meta-functions-list (append meta-functions-list args))
-    (meta-functions-update-function-definitions))
+(defun meta-functions--generate-docstring (name default-docstring conditions)
+  "Generate a docstring for a function define using meta-defun."
+  (concat "Meta function. "
+	  (when default-docstring default-docstring)
+	  "\n"
+	  "By default, run `"
+	  (pp-to-string (cadr (alist-get (make-symbol (concat (symbol-name name) "%t")) conditions nil nil (lambda (a b) (string= (symbol-name a) (symbol-name b))))))
+	  "'"
+	  (mapconcat (lambda (condition)
+		       (pcase condition
+			 (`(,cond-name ,(and (pred symbolp) 't) ,body)
+			  nil)
+			 (`(,cond-name ,(and (pred functionp) cond-func) ,body)
+			  (concat "When `" (pp-to-string cond-func) "' returns 't, run `" (pp-to-string body) "'"))
+                         (`(,cond-name ,cond-symbol ,body)
+			  (concat "When major mode is `" (pp-to-string (eval cond-symbol)) "', run `" (pp-to-string body) "'"))))
+		     conditions
+		     "")))
 
-  (defun meta-functions-update-function-definitions ()
-    "Update definitions of all the meta-functions according the present value of `meta-functions-list'."
-    (mapc (lambda (elem)
-	    (let* ((meta-func (car elem))
-		   (default-func (cadr elem))
-		   (meta-func-description (or (car (nthcdr 2 elem))
-					      ""))
-		   (func-alist (read (concat "meta-functions-" (format "%s" `,meta-func) "-alist"))))
-	      (eval `(defvar ,func-alist '()
-		       ,(concat "List of functions to be called by `"
-				(format "%s" meta-func)
-				"'.\nIt is an alist containing cons of major mode name and function name to be called.")))
-	      (eval `(defun ,meta-func (&optional args)
-		       ,(concat "Meta function."
-				(if (not (seq-empty-p meta-func-description))
-				    (concat " The description is: \""
-					    meta-func-description
-					    "\"."))
-				"\nMeta function is calling `"
-				(format "%s" default-func)
-				"' by default."
-				(and (not (seq-empty-p (eval func-alist)))
-				     (concat "\nCalling other functions in various major modes (major-mode . functions):\n"
-					     (mapconcat (lambda(elem) (message "%s . `%s'" (car elem) (cdr elem))) (eval func-alist) "\n")
-					     )))
-		       (interactive)
-		       (let ((real-func
-			      (or (alist-get major-mode ,func-alist ',default-func)
-				  ',default-func)))
-			 (when (fboundp real-func)
-			   (call-interactively real-func nil args)))))))
-	  meta-functions-list))
+(cl-defmacro meta-defun (name &rest args)
+  "Define a meta-function or update its definition.
 
-  (meta-functions-update-function-definitions)
+USAGE:
+(meta-defun foo [(arglist)]
+[:override-nil]
+[docstring]
+[:mode bar-mode body-sexp]
+[:mode ...]
+[:cond [:symbol zen-func-symbol] zen-func body-sexp]
+[:cond ...]
+[default-body])
 
-  (provide 'meta-functions)
+If a command foo has not yet been defined using meta-defun, the above
+defines a command foo, which can call different BODY (which can be a
+function or sexp) depending on major mode or :cond functions. For any
+major mode, the BODY defined in the corresponding [:mode mode body]
+definition is called. If none of the define mode conditions are
+satisfied, the FUNCs in [:cond func body] are called sequentially
+without argument until one of the return 't. Then, the corresponding
+BODY is called. If none of the above conditions can be met,
+DEFAULT-BODY is called.
 
-    ;;; meta-functions.el ends here
+If a command foo has been already defined with meta-defun, the
+existing definition will be updated. All the omitted definitions will
+be preserved (including docstring and default-body) unless
+:override-nil keyword is provided. If :override-nil keyword is
+present, the command foo will be redefined.
+
+In addition, every BODY definition in :mode definition is bound to foo%bar-mode symbol.
+This symbol can be used in the following [:mode ...] and [:cond ...] definitions.
+In the [:cond ...] definition, it [:symbol zen-fun-symbol] is present, the BODY
+is bound to foo%zen-fun-symbol.
+Otherwise, it is bound to foo%zen-fun is zen a symbol.
+
+\(fn NAME (ARGLIST) [DOCSTRING] ARGS...)"
+  (declare (indent defun))
+  `(pcase-let ((`(,arglist ,docstring ,conditions) (meta-functions--process-args ',name ',args))
+	       (old-conditions (function-get ',name 'meta-functions-cond-plist)))
+     (unless (memq :override-nil ',args)
+       (mapc (lambda (el)
+	       (setf (alist-get (car el) old-conditions nil nil (lambda (a b) (string= (symbol-name a) (symbol-name b)))) (cdr el)))
+	     (reverse conditions))
+       (setq conditions old-conditions))
+     (mapc (lambda (el)
+	     (let ((main-name  ',name)
+		   (sub-name (car el))
+		   (body (caddr el)))
+	       (when sub-name
+		 (eval `(defun ,sub-name ()
+			  (concat "Sub-definition in meta-function `" (symbol-name ',main-name) "'.")
+			  ,body)))))
+	   conditions) ; define the sub-bodies
+     (let ((docstring (meta-functions--generate-docstring ',name docstring conditions)))
+       (eval `(defun ,',name ,arglist
+		,docstring
+                (interactive)
+		(seq-some (lambda (condition)
+			    (pcase condition
+			      (`(,_ ,(and (pred symbolp) 't) ,body)
+			       (eval `(funcall ,body)) t)
+                              (`(,_ ,(and (pred functionp) cond-func) ,body)
+			       (when (funcall cond-func)
+				 (eval `(funcall ,body)) t))
+			      (`(,_ ,mode ,body)
+			       (when (eq major-mode (eval mode))
+				 (eval `(funcall ,body)) t))))
+			  ',conditions)))) ; define meta-function
+     (function-put ',name 'meta-functions-cond-plist conditions)))
+
+(defun meta-defun-mapc (list)
+  "Defun multiple meta-functions with `meta-defun' trating each element of LIST as argument."
+  (mapc (lambda (body) (eval `(meta-defun ,@body))) list))
+
+(provide 'meta-functions)
+
+;;; meta-functions.el ends here
 #+end_src
+
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
   :if init-flag
   :demand t)
 #+END_SRC
 
+*************** NEXT [#A] revise config from here
+SCHEDULED: <2019-11-21 Thu>
+:PROPERTIES:
+:SHOWFROMDATE: 2019-12-10 18:00
+:END:
+:LOGBOOK:
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
+
+
 #+begin_src emacs-lisp
 (use-package meta-functions
   :if init-flag
   :config
-  (meta-functions-add-meta-function '(meta-down next-logical-line "Move down.")
-				    '(meta-up previous-logical-line "Move up.")
-				    '(meta-down-element forward-paragraph "Move down one element.")
-				    '(meta-up-element backward-paragraph "Move up one element.")
-				    '(meta-forward forward-char "Move forward.")
-				    '(meta-backward backward-char "Move backward.")
-				    '(meta-forward-element forward-word "Move forward one element.")
-				    '(meta-backward-element backward-word "Move backward one element.")
-				    '(meta-scroll-up scroll-up "Scroll up.")
-				    '(meta-scroll-down scroll-down "Scroll down.")
-				    '(meta-undo undo "Undo.")
-				    '(meta-occur helm-occur "Occur.")
-				    '(meta-goto helm-imenu "Goto place in document.")
-				    '(meta-next-buffer next-buffer "Go forward in buffer.")
-				    '(meta-previous-buffer previous-buffer "Go backward in buffer.")
-				    '(meta-insert-enclosure-new-line ignore "Insert beg/end passive structure in the line below.")
-				    '(meta-insert-active-enclosure-new-line ignore "Isert beg/end active structure in the line below.")
-				    '(meta-new-line boon-newline-dwim "Insert new line."))
+  (meta-defun-mapc
+   '((meta-down "Move down." next-logical-line)
+     (meta-up "Move up." previous-logical-line)
+     (meta-down-element "Move down one element." forward-paragraph)
+     (meta-up-element "Move up one element." backward-paragraph)
+     (meta-forward "Move forward." forward-char)
+     (meta-forward-sexp "Move forward sexp." forward-sexp)
+     (meta-backward "Move backward." backward-char)
+     (meta-backward-sexp "Move backward sexp." backward-sexp)
+     (meta-forward-element "Move forward one element." forward-word)
+     (meta-backward-element "Move backward one element." backward-word)
+     (meta-scroll-up "Scroll up." scroll-up)
+     (meta-scroll-down "Scroll down." scroll-down)
+     (meta-undo "Undo." undo)
+     (meta-occur "Occur." (helm-occur))
+     (meta-goto "Goto place in document." (helm-imenu))
+     (meta-next-buffer "Go forward in buffer." next-buffer)
+     (meta-previous-buffer "Go backward in buffer." previous-buffer)
+     (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
+     (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore)
+     (meta-new-line "Insert new line." boon-newline-dwim)))
   )
 #+end_src
 
@@ -1196,12 +1318,10 @@ saving all the buffers, is executed.
 	       ("M-g" . magit-file-popup))
     (use-package meta-functions
       :config
-      (meta-functions-update-function-definitions)
-      (add-to-list 'meta-functions-meta-down-element-alist '(magit-status-mode . magit-section-forward))
-      (add-to-list 'meta-functions-meta-up-element-alist '(magit-status-mode . magit-section-backward))
-      (add-to-list 'meta-functions-meta-down-element-alist '(magit-revision-mode . magit-section-forward))
-      (add-to-list 'meta-functions-meta-up-element-alist '(magit-revision-mode . magit-section-backward))
-      (meta-functions-update-function-definitions))))
+      (meta-defun meta-down-element :mode magit-status-mode magit-section-forward)
+      (meta-defun meta-up-element :mode magit-status-mode magit-section-backward)
+      (meta-defun meta-down-element :mode magit-revision-mode magit-section-forward)
+      (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward))))
 #+END_SRC
 
 Interaction with Github
@@ -1563,15 +1683,17 @@ abort completely with `C-g'."
 	     ("K" . meta-up-element)
 	     ("o" . meta-forward)
 	     ("O" . meta-forward-element)
+	     ("P" . meta-forward-sexp)
 	     ("i" . meta-backward)
 	     ("I" . meta-backward-element)
+	     ("U" . meta-backward-sexp)
 	     ("l" . meta-scroll-up)
 	     ("L" . meta-scroll-down)
 	     (";" . recenter-top-bottom)
 	     ("G" . end-of-buffer)
 	     ("g" . boon-goto-map)
-	     ("U" . move-beginning-of-line)
-	     ("P" . move-end-of-line)
+	     ;;("U" . move-beginning-of-line)
+	     ;;("P" . move-end-of-line)
 	     ("u" . boon-beginning-of-line)
 	     ("p" . boon-end-of-line)
 	     :map boon-goto-map
@@ -1795,10 +1917,8 @@ Double space convention is outdated.
   (use-package meta-functions
     :defer t
     :config
-    (add-to-list 'meta-functions-meta-down-element-alist '(bm-show-mode . bm-show-next))
-    (add-to-list 'meta-functions-meta-up-element-alist '(bm-show-mode . bm-show-prev))
-    (meta-functions-update-function-definitions)
-    )
+    (meta-defun meta-down-element :mode bm-show-mode bm-show-next)
+    (meta-defun meta-up-element :mode bm-show-mode bm-show-prev))
 
   :bind (:map boon-command-map
 	      ("N" . bm-toggle)
@@ -2025,11 +2145,10 @@ Undo window configuration changes
   (bind-key "." 'dired-hide-dotfiles-mode dired-mode-map)
   (use-package meta-functions
     :config
-    (add-to-list 'meta-functions-meta-down-alist '(dired-mode . dired-hacks-next-file))
-    (add-to-list 'meta-functions-meta-up-alist '(dired-mode . dired-hacks-previous-file))
-    (add-to-list 'meta-functions-meta-up-element-alist '(dired-mode . dired-up-directory))
-    (add-to-list 'meta-functions-meta-down-element-alist '(dired-mode . dired-find-alternate-file))
-    (meta-functions-update-function-definitions))
+    (meta-defun meta-down :mode dired-mode dired-hacks-next-file)
+    (meta-defun meta-up :mode dired-mode dired-hacks-previous-file)
+    (meta-defun meta-up-element :mode dired-mode dired-up-directory)
+    (meta-defun meta-down-element :mode dired-mode dired-find-alternate-file))
   (bind-keys :map dired-mode-map
 	     ("<return>" . xah-open-in-external-app)
 	     ("W" . dired-copy-filename-as-kill)
@@ -2078,11 +2197,10 @@ CLOCK: [2019-07-03 Wed 22:12]--[2019-07-03 Wed 22:28] =>  0:16
   (unbind-key "o" image-map)
   (use-package meta-functions
     :config
-    (add-to-list 'meta-functions-meta-forward-alist '(image-dired-thumbnail-mode . image-dired-forward-image))
-    (add-to-list 'meta-functions-meta-backward-alist '(image-dired-thumbnail-mode . image-dired-backward-image))
-    (add-to-list 'meta-functions-meta-down-alist '(image-dired-thumbnail-mode . image-dired-next-line))
-    (add-to-list 'meta-functions-meta-up-alist '(image-dired-thumbnail-mode . image-dired-previous-line))
-    (meta-functions-update-function-definitions)))
+    (meta-defun meta-forward :mode image-dired-thumbnail-mode image-dired-forward-image)
+    (meta-defun meta-backward :mode image-dired-thumbnail-mode image-dired-backward-image)
+    (meta-defun meta-down :mode image-dired-thumbnail-mode image-dired-next-line)
+    (meta-defun meta-up :mode image-dired-thumbnail-mode image-dired-previous-line)))
 #+end_src
 
 ****** open file in external app
@@ -2482,14 +2600,14 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
   :config
-  (meta-functions-add-meta-function '(meta-move-line-right ignore "Move the line under cursor right.")
-				    '(meta-move-line-left ignore "Move the line under cursor left.")
-				    '(meta-move-line-up move-text-line-up "Move the line under cursor up.")
-				    '(meta-move-line-down move-text-line-down "Move the line under cursor down.")
-				    '(meta-move-element-right ignore "Move the element under cursor right.")
-				    '(meta-move-element-left ignore "Move the element under cursor left.")
-				    '(meta-move-element-down move-text-down "Move the element under cursor down.")
-				    '(meta-move-element-up move-text-up "Move the element under cursor up."))
+  (meta-defun-mapc '((meta-move-line-right "Move the line under cursor right." ignore)
+		     (meta-move-line-left "Move the line under cursor left." ignore)
+		     (meta-move-line-up "Move the line under cursor up." move-text-line-up)
+		     (meta-move-line-down "Move the line under cursor down." move-text-line-down)
+		     (meta-move-element-right "Move the element under cursor right." ignore)
+		     (meta-move-element-left "Move the element under cursor left." ignore)
+		     (meta-move-element-down "Move the element under cursor down." move-text-down)
+		     (meta-move-element-up "Move the element under cursor up." move-text-up)))
   (use-package move-text
     :if init-flag
     :straight t
@@ -2729,8 +2847,8 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
   :config
   (use-package meta-functions
     :config
-    (add-to-list 'meta-functions-meta-next-buffer-alist '(help-mode . help-go-forward))
-    (add-to-list 'meta-functions-meta-previous-buffer-alist '(help-mode . help-go-back))))
+    (meta-defun meta-next-buffer :mode help-mode help-go-forward)
+    (meta-defun meta-previous-buffer :mode help-mode help-go-back)))
 #+end_src
 **** Info buffer navigation
 :PROPERTIES:
@@ -2745,12 +2863,11 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
   :config
   (use-package meta-functions
     :config
-    (add-to-list 'meta-functions-meta-down-element-alist '(Info-mode . Info-forward-node))
-    (add-to-list 'meta-functions-meta-up-element-alist '(Info-mode . Info-backward-node))
-    (add-to-list 'meta-functions-meta-new-line-alist '(Info-mode . Info-follow-nearest-node))
-    (add-to-list 'meta-functions-meta-previous-buffer-alist '(Info-mode . Info-history-back))
-    (add-to-list 'meta-functions-meta-next-buffer-alist '(Info-mode . Info-history-forward))
-    ))
+    (meta-defun meta-down-element :mode Info-mode Info-forward-node)
+    (meta-defun meta-up-element :mode Info-mode Info-backward-node)
+    (meta-defun meta-new-line :mode Info-mode Info-follow-nearest-node)
+    (meta-defun meta-previous-buffer :mode Info-mode Info-history-back)
+    (meta-defun meta-next-buffer :mode Info-mode Info-history-forward)))
 #+end_src
 **** COMMENT Info+
 :PROPERTIES:
@@ -2804,8 +2921,8 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
   :config
   (use-package meta-functions
     :config
-    (add-to-list 'meta-functions-meta-down-element-alist '(woman-mode . Man-next-section))
-    (add-to-list 'meta-functions-meta-up-element-alist '(woman-mode . Man-previous-section))))
+    (meta-defun meta-down-element :mode woman-mode Man-next-section)
+    (meta-defun meta-up-element :mode woman-mode Man-previous-section)))
 #+end_src
 **** TL;DR - short practical version of man
 :PROPERTIES:
@@ -3030,10 +3147,9 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 	ledger-report-auto-refresh t)
   (use-package meta-functions
     :config
-    (add-to-list 'meta-functions-meta-down-element-alist '(ledger-mode . ledger-navigate-next-xact-or-directive))
-    (add-to-list 'meta-functions-meta-up-element-alist '(ledger-mode . ledger-navigate-prev-xact-or-directive))
-    (meta-functions-update-function-definitions))
-)
+    (meta-defun meta-down-element :mode ledger-mode (ledger-navigate-next-xact-or-directive))
+    (meta-defun meta-up-element :mode ledger-mode (ledger-navigate-prev-xact-or-directive)))
+  )
 #+END_SRC
 
 *** Do not end the completions with string
@@ -3107,12 +3223,12 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
   (add-hook 'pdf-view-mode-hook #'pdf-tools-enable-minor-modes 'APPEND)
   (use-package meta-functions
     :config
-    (add-to-list 'meta-functions-meta-down-alist '(pdf-view-mode . yant/pdf-view-down))
-    (add-to-list 'meta-functions-meta-up-alist '(pdf-view-mode . yant/pdf-view-up))
-    (add-to-list 'meta-functions-meta-scroll-down-alist '(pdf-view-mode . pdf-view-scroll-down-or-previous-page))
-    (add-to-list 'meta-functions-meta-scroll-up-alist '(pdf-view-mode . pdf-view-scroll-up-or-next-page))
-    (add-to-list 'meta-functions-meta-down-alist '(pdf-annot-list-mode . tablist-next-line))
-    (add-to-list 'meta-functions-meta-up-alist '(pdf-annot-list-mode . tablist-previous-line))))
+    (meta-defun meta-down :mode pdf-view-mode (yant/pdf-view-down))
+    (meta-defun meta-up :mode pdf-view-mode (yant/pdf-view-up))
+    (meta-defun meta-scroll-down :mode pdf-view-mode (pdf-view-scroll-down-or-previous-page))
+    (meta-defun meta-scroll-up :mode pdf-view-mode (pdf-view-scroll-up-or-next-page))
+    (meta-defun meta-down :mode pdf-annot-list-mode (tablist-next-line))
+    (meta-defun meta-up :mode pdf-annot-list-mode (tablist-previous-line))))
 #+end_src
 
 *** Restore the last position in pdf
@@ -3300,9 +3416,8 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 (use-package meta-functions
   :if init-flag
   :config
-  (add-to-list 'meta-functions-meta-insert-enclosure-new-line-alist '(term-mode . ignore))
-  (add-to-list 'meta-functions-meta-new-line-alist '(term-mode . term-send-raw))
-  (meta-functions-update-function-definitions))
+  (meta-defun meta-insert-enclosure-new-line :mode term-mode ignore)
+  (meta-defun meta-new-line :mode term-mode term-send-raw))
 
 #+END_SRC
 **** Kill process buffer after finishing
@@ -3380,13 +3495,11 @@ When listening a new band/album, I usually go through all the songs and delete w
 (use-package meta-functions
   :if init-flag
   :config
-  (add-to-list 'meta-functions-meta-move-line-down-alist '(mingus-playlist-mode . mingus-move-down))
-  (add-to-list 'meta-functions-meta-move-line-up-alist '(mingus-playlist-mode . mingus-move-up))
-  (add-to-list 'meta-functions-meta-new-line-alist '(mingus-playlist-mode . mingus-play))
-  (add-to-list 'meta-functions-meta-new-line-alist '(mingus-browse-mode . mingus-down-dir-or-play-song))
-  (add-to-list 'meta-functions-meta-up-element-alist '(mingus-browse-mode . mingus-open-parent))
-  (meta-functions-update-function-definitions)
-  )
+  (meta-defun meta-move-line-down :mode mingus-playlist-mode mingus-move-down)
+  (meta-defun meta-move-line-up :mode mingus-playlist-mode mingus-move-up)
+  (meta-defun meta-new-line :mode mingus-playlist-mode mingus-play)
+  (meta-defun meta-new-line :mode mingus-browse-mode mingus-down-dir-or-play-song)
+  (meta-defun meta-up-element :mode mingus-browse-mode mingus-open-parent))
 #+end_src
 
 *** Printing
@@ -3478,14 +3591,12 @@ When listening a new band/album, I usually go through all the songs and delete w
       (notmuch-show-view-part))
     (use-package meta-functions
       :config
-      (add-to-list 'meta-functions-meta-down-alist '(notmuch-search-mode . notmuch-search-next-thread))
-      (add-to-list 'meta-functions-meta-up-alist '(notmuch-search-mode . notmuch-search-previous-thread))
-      (add-to-list 'meta-functions-meta-down-element-alist '(notmuch-show-mode . notmuch-show-next-message))
-      (add-to-list 'meta-functions-meta-up-element-alist '(notmuch-show-mode . notmuch-show-previous-message))
-      (add-to-list 'meta-functions-meta-down-element-alist '(notmuch-search-mode . notmuch-search-show-thread))
-      (add-to-list 'meta-functions-meta-up-element-alist '(notmuch-search-mode . ignore))
-      (meta-functions-update-function-definitions)
-      )
+      (meta-defun meta-down :mode notmuch-search-mode (notmuch-search-next-thread))
+      (meta-defun meta-up :mode notmuch-search-mode (notmuch-search-previous-thread))
+      (meta-defun meta-down-element :mode notmuch-show-mode (notmuch-show-next-message))
+      (meta-defun meta-up-element :mode notmuch-show-mode (notmuch-show-previous-message))
+      (meta-defun meta-down-element :mode notmuch-search-mode notmuch-search-show-thread)
+      (meta-defun meta-up-element :mode notmuch-search-mode ignore))
     (bind-keys :map notmuch-search-mode-map
 	       ("r" . notmuch-refresh-this-buffer)
 	       ("C-c C-u" . notmuch-search-unread)
@@ -8401,9 +8512,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
   :if init-flag
   :config
   (setq org-goto-interface 'outline-path-completion)
-  (add-to-list 'meta-functions-meta-goto-alist '(org-mode . helm-org-rifle-current-buffer))
-  (meta-functions-update-function-definitions)
-  )
+  (meta-defun meta-goto :mode org-mode (helm-org-rifle-current-buffer)))
 #+end_src
 
 *** Spell checking
@@ -8513,17 +8622,17 @@ Spell check rules for org syntax.
 
   (use-package meta-functions
     :config
-    (add-to-list 'meta-functions-meta-move-line-up-alist '(org-mode . org-metaup))
-    (add-to-list 'meta-functions-meta-move-line-down-alist '(org-mode . org-metadown))
-    (add-to-list 'meta-functions-meta-move-element-up-alist '(org-mode . org-shiftmetaup))
-    (add-to-list 'meta-functions-meta-move-element-down-alist '(org-mode . org-shiftmetadown))
-    (add-to-list 'meta-functions-meta-move-element-left-alist '(org-mode . org-shiftmetaleft))
-    (add-to-list 'meta-functions-meta-move-element-right-alist '(org-mode . org-shiftmetaright))
-    (add-to-list 'meta-functions-meta-move-line-left-alist '(org-mode . org-metaleft))
-    (add-to-list 'meta-functions-meta-move-line-right-alist '(org-mode . org-metaright))
-    (add-to-list 'meta-functions-meta-insert-enclosure-new-line-alist '(org-mode . org-insert-heading-respect-content))
-    (add-to-list 'meta-functions-meta-insert-active-enclosure-new-line-alist '(org-mode . org-insert-todo-heading-respect-content))
-    (add-to-list 'meta-functions-meta-new-line-alist '(org-mode . org-return))
+    (meta-defun meta-move-line-up :mode org-mode (org-metaup))
+    (meta-defun meta-move-line-down :mode org-mode (org-metadown))
+    (meta-defun meta-move-element-up :mode org-mode org-shiftmetaup)
+    (meta-defun meta-move-element-down :mode org-mode org-shiftmetadown)
+    (meta-defun meta-move-element-left :mode org-mode org-shiftmetaleft)
+    (meta-defun meta-move-element-right :mode org-mode org-shiftmetaright)
+    (meta-defun meta-move-line-left :mode org-mode org-metaleft)
+    (meta-defun meta-move-line-right :mode org-mode org-metaright)
+    (meta-defun meta-insert-enclosure-new-line :mode org-mode org-insert-heading-respect-content)
+    (meta-defun meta-insert-active-enclosure-new-line :mode org-mode org-insert-todo-heading-respect-content)
+    (meta-defun meta-new-line :mode org-mode (org-return))
     (defun yant/org-smart-meta-down-element ()
       "Move down org item if at heading, move down paragraph otherwise."
       (interactive)
@@ -8536,25 +8645,22 @@ Spell check rules for org syntax.
       (if (org-at-heading-p)
 	  (call-interactively #'org-previous-visible-heading)
 	(backward-paragraph)))
-    (add-to-list 'meta-functions-meta-down-element-alist '(org-mode . yant/org-smart-meta-down-element))
-    (add-to-list 'meta-functions-meta-up-element-alist '(org-mode . yant/org-smart-meta-up-element))
+    (meta-defun meta-down-element :mode org-mode (yant/org-smart-meta-down-element))
+    (meta-defun meta-up-element :mode org-mode (yant/org-smart-meta-up-element))
 
-    (add-to-list 'meta-functions-meta-move-line-up-alist '(org-struct-mode . org-metaup))
-    (add-to-list 'meta-functions-meta-move-line-down-alist '(org-struct-mode . org-metadown))
-    (add-to-list 'meta-functions-meta-move-element-up-alist '(org-struct-mode . org-shiftmetaup))
-    (add-to-list 'meta-functions-meta-move-element-down-alist '(org-struct-mode . org-shiftmetadown))
-    (add-to-list 'meta-functions-meta-move-element-left-alist '(org-struct-mode . org-shiftmetaleft))
-    (add-to-list 'meta-functions-meta-move-element-right-alist '(org-struct-mode . org-shiftmetaright))
-    (add-to-list 'meta-functions-meta-move-line-left-alist '(org-struct-mode . org-metaleft))
-    (add-to-list 'meta-functions-meta-move-line-right-alist '(org-struct-mode . org-metaright))
-    (add-to-list 'meta-functions-meta-insert-enclosure-new-line-alist '(org-struct-mode . org-insert-heading-respect-content))
-    (add-to-list 'meta-functions-meta-insert-active-enclosure-new-line-alist '(org-struct-mode . org-insert-todo-heading-respect-content))
-    (add-to-list 'meta-functions-meta-new-line-alist '(org-struct-mode . org-return))
-    (add-to-list 'meta-functions-meta-up-alist '(org-agenda-mode . org-agenda-previous-line))
-    (add-to-list 'meta-functions-meta-down-alist '(org-agenda-mode . org-agenda-next-line))
-    (meta-functions-update-function-definitions))
-
-  )
+    (meta-defun meta-move-line-up :mode org-struct-mode org-metaup)
+    (meta-defun meta-move-line-down :mode org-struct-mode org-metadown)
+    (meta-defun meta-move-element-up :mode org-struct-mode org-shiftmetaup)
+    (meta-defun meta-move-element-down :mode org-struct-mode org-shiftmetadown)
+    (meta-defun meta-move-element-left :mode org-struct-mode org-shiftmetaleft)
+    (meta-defun meta-move-element-right :mode org-struct-mode org-shiftmetaright)
+    (meta-defun meta-move-line-left :mode org-struct-mode org-metaleft)
+    (meta-defun meta-move-line-right :mode org-struct-mode org-metaright)
+    (meta-defun meta-insert-enclosure-new-line :mode org-struct-mode org-insert-heading-respect-content)
+    (meta-defun meta-insert-active-enclosure-new-line :mode org-struct-mode org-insert-todo-heading-respect-content)
+    (meta-defun meta-new-line :mode org-struct-mode (org-return))
+    (meta-defun meta-up :mode org-agenda-mode (org-agenda-previous-line))
+    (meta-defun meta-down :mode org-agenda-mode (org-agenda-next-line))))
 #+end_src
 
 **** Boon integration
