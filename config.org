@@ -619,6 +619,9 @@ Show some text in buffer differently
 (when init-flag
   (global-eldoc-mode)
   (diminish 'eldoc-mode)
+
+Since I wrap the default movement commands into custom functions (see [[id:0fe0bca3-fb51-4e0c-8b35-79a5e92975d6][Modal setup]]), I need to make these custom commands trigger =eldoc= information update.
+#+begin_src emacs-lisp
   (mapc #'eldoc-add-command '(meta-up meta-up-element meta-down meta-down-element meta-backward meta-backward-element meta-forward meta-forward-element meta-scroll-down meta-scroll-up self-insert-command)))
 #+end_src
 
