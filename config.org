@@ -657,25 +657,30 @@ Since I wrap the default movement commands into custom functions (see [[id:0fe0b
 (setq use-dialog-box nil)
   #+end_src
 *** Key bindings
-At some point, a got very annoyed about distance between =C-n=, =C-p=,
-=C-f=, and =C-b= and did not want to move my hand all the way to arrow
-keys. So, I use modal editing  now, which allows me to move around
-using the keys, which are close to each other.
+At some point, a got very annoyed about distance between =C-n=, =C-p=, =C-f=, and =C-b= and did not want to move my hand all the way to arrow keys.
+So, I use modal editing  now, which allows me to move around using the keys, which are close to each other.
+
 **** Modal setup
 :PROPERTIES:
 :ID:       0fe0bca3-fb51-4e0c-8b35-79a5e92975d6
 :END:
 Do not use =self-insert-command= by default, but bind character keys to navigation, selection, etc.
 I use [[https://github.com/jyp/boon][boon]] package for this purpose.
-- it is bad idea to enable boon insert mode in special buffers, so it has =special mode= with limited redefined key binding by default. This mode replaces normal =insert mode=
-- I add extra functionality for the case when =special mode= or =command mode= should not be enabled by default --- the buffer requires a lot of writing (I mean shell buffers, for example). This is defined by =boon-insert-state-major-mode-list= where the default mode is =insert mode=.
-- =boon-special-mode= is frequently useful in all kinds of major modes, like debug, org-agenda, =notmuch=, etc. However, many major modes use the conventional movement key bindings or their derivatives (like "n" and "p" in =org-agenda=). I do not like it. I prefer to have some minimal [[id:46fb459b-7794-4b9a-9fce-85389aba1d95][set]] of movement keys working in all the buffers. It means, that I need to redefine the movement commands to be able to act according to the major mode (like "n" from org-mode is bound to =org-next-line= and, hence, "j" from =org-special-map= should be also bound to =org-next-line=.
-  This can be done using meta-function approach when I use the function, which acts differently depending on the mode, while keeping the same general idea of the behaviour.
 
-*************** TODO do not use it. Instead store meta- keys names in constants and bind them later. There will be no overhead in the code anyway. [2019-11-28 Thu 10:59] Hmm.... What about depending on buffer contents
-*************** END
+It is bad idea to enable boon insert mode in special buffers, so it has =special mode= with limited redefined key binding by default.
+This mode replaces normal =insert mode=.
+I add extra functionality for the case when =special mode= or =command mode= should not be enabled by default --- the buffer requires a lot of writing (I mean shell buffers, for example).
+This is defined by =boon-insert-state-major-mode-list= where the default mode is =insert mode=.
 
+=boon-special-mode= is frequently useful in all kinds of major modes, like debug, org-agenda, =notmuch=, etc.
+However, many major modes use the conventional movement key bindings or their derivatives (like "n" and "p" in =org-agenda=).
+I do not like it.
+I prefer to have some minimal [[id:46fb459b-7794-4b9a-9fce-85389aba1d95][set]] of movement keys working in all the buffers.
+It means that I need to redefine the movement commands to be able to act according to the major mode (like "n" from org-mode is bound to =org-next-line= and, hence, "j" from =org-special-map= should be also bound to =org-next-line=.
+This can be done by defining special wrapper command, which acts differently depending on the mode or buffer position, while the general result or running the command is similar (i.e. move next line in text buffer, but move next file in =dired=, or next agenda item in =org-agenda=.
 
+First, unify all the movement commands.
+In boon, it can be done by forcing global move commands in special state.
 #+BEGIN_SRC emacs-lisp
 (use-package boon
   :defer t
