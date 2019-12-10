@@ -626,20 +626,6 @@ Since I wrap the default movement commands into custom functions (see [[id:0fe0b
 #+end_src
 
 *** Cursor
-**** COMMENT Highlight cursor when it moves far
-:PROPERTIES:
-:ID:       c86d4d84-aa19-43e8-990a-6305db525433
-:END:
-=beacon-mode= seems to slow down the org movement like =c u=.
-#+begin_src emacs-lisp :tangle no
-(use-package beacon
-  :if init-flag
-  :straight t
-  :diminish beacon-mode
-  :config
-  (beacon-mode 1))
-#+end_src
-**** Highlight current line
 :PROPERTIES:
 :ID:       f90676cb-1c8a-47c1-b539-debcf961d912
 :END:
