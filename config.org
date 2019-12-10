@@ -9,6 +9,7 @@
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
 :END:
 :LOGBOOK:
+CLOCK: [2019-12-09 Mon 20:45]--[2019-12-09 Mon 20:46] =>  0:01
 - State "NEXT"       from "NEXT"       [2018-09-06 Thu 21:10]
 CLOCK: [2018-07-23 Mon 00:16]--[2018-07-23 Mon 00:23] =>  0:07
 - State "NEXT"       from "NEXT"       [2018-07-11 Wed 18:17]
@@ -354,19 +355,11 @@ General buffer appearance.
 **** Centered window mode
 :PROPERTIES:
 :ID:       af9c7d6c-fd15-4d68-b379-3d439ea94370
+:SHOWFROMDATE: 2019-12-10
 :END:
 My screen is too wide to read text comfortably.
 I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer width.
 *************** TODO Move pdf-view config to pdf-view
-*************** END
-*************** NEXT [#A] revise config from here
-SCHEDULED: <2019-11-21 Thu>
-:PROPERTIES:
-:SHOWFROMDATE: 2019-12-06
-:END:
-:LOGBOOK:
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
 *************** END
 
 #+begin_src emacs-lisp
@@ -412,7 +405,8 @@ If the line wrapping is active, I also want the word wrap to be activated automa
 :END:
 When the buffer text takes less space then a window, it's neat to see the beginning/end of the buffer in emacs.
 #+begin_src emacs-lisp
-(setq-default indicate-buffer-boundaries 'left)
+(when init-flag
+  (setq-default indicate-buffer-boundaries 'left))
 #+end_src
 *** Text in buffers
 :PROPERTIES:
@@ -618,34 +612,40 @@ Show some text in buffer differently
 #+begin_src emacs-lisp
 (when init-flag
   (global-eldoc-mode)
-  (diminish 'eldoc-mode)
+  (diminish 'eldoc-mode))
+#+end_src
 
 Since I wrap the default movement commands into custom functions (see [[id:0fe0bca3-fb51-4e0c-8b35-79a5e92975d6][Modal setup]]), I need to make these custom commands trigger =eldoc= information update.
 #+begin_src emacs-lisp
+(when init-flag
   (mapc #'eldoc-add-command '(meta-up meta-up-element meta-down meta-down-element meta-backward meta-backward-element meta-forward meta-forward-element meta-scroll-down meta-scroll-up self-insert-command)))
 #+end_src
 
+
+
 *** Cursor
-:PROPERTIES:
-:ID:       f90676cb-1c8a-47c1-b539-debcf961d912
-:END:
+
+Highlight current line
+
 #+begin_src emacs-lisp
-(global-hl-line-mode t)
+(when init-flag
+  (global-hl-line-mode t))
 #+end_src
-**** Cursor colour
-:PROPERTIES:
-:CREATED:  [2018-10-11 Thu 22:39]
-:ID:       727818b2-7362-4772-b461-08fa3ce82450
-:END:
+
+Change default cursor colour (just my taste)
 
 #+BEGIN_SRC emacs-lisp
-(set-cursor-color "IndianRed")
+(when init-flag
+  (set-cursor-color "IndianRed"))
 #+END_SRC
 
 ** Command loop
 :PROPERTIES:
 :ID:       ff7a4c41-d457-4a90-bcb9-4f653af48ff4
 :END:
+
+This section contains customisation relevant to actions associated with running various commands.
+
 *** Dialogues
 :PROPERTIES:
 :ID:       b1e1c83a-18be-4c5c-bd77-970a0a163b72
@@ -1082,7 +1082,6 @@ Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][
   (setq pyim-page-length 5))
 
 #+end_src
-
 
 *** Default major mode
 :PROPERTIES:
@@ -1709,10 +1708,10 @@ abort completely with `C-g'."
 	     ("~" . boon-repeat-command)
 	     ("Q" . kmacro-end-or-call-macro)
 	     ("q" . nil)
-	     ("P" . nil)
 	     ("z" . boon-quote-character)
 	     ("y" . transpose-chars)
 	     ("Y" . transpose-words)
+             ("C-Y" . transpose-sexps)
              ("n" . boon-switch-mark)
              ("m" . bm-previous)
 	     :map boon-forward-search-map
