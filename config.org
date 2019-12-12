@@ -881,9 +881,10 @@ Otherwise, it is bound to foo%zen-fun is zen a symbol.
 *************** NEXT [#A] revise config from here
 SCHEDULED: <2019-11-21 Thu>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-12-10 18:00
+:SHOWFROMDATE: 2019-12-11
 :END:
 :LOGBOOK:
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
 CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
 CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
 CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
@@ -6281,7 +6282,6 @@ Disabling it (at least, until I find when that check is actually useful).
   (cl-letf (((symbol-function 'org-agenda-check-type) (lambda (&rest args) t)))
     (apply oldfun arg)))
 #+end_src
-
 
 **** Agenda search
 :PROPERTIES:
