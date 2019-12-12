@@ -915,7 +915,8 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
      (meta-previous-buffer "Go backward in buffer." previous-buffer)
      (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
      (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore)
-     (meta-new-line "Insert new line." boon-newline-dwim)))
+     (meta-new-line "Insert new line." (boon-newline-dwim))
+     ))
   )
 #+end_src
 
@@ -2149,10 +2150,10 @@ Undo window configuration changes
   (bind-key "." 'dired-hide-dotfiles-mode dired-mode-map)
   (use-package meta-functions
     :config
-    (meta-defun meta-down :mode dired-mode dired-hacks-next-file)
-    (meta-defun meta-up :mode dired-mode dired-hacks-previous-file)
-    (meta-defun meta-up-element :mode dired-mode dired-up-directory)
-    (meta-defun meta-down-element :mode dired-mode dired-find-alternate-file))
+    (meta-defun meta-down :mode dired-mode (dired-hacks-next-file))
+    (meta-defun meta-up :mode dired-mode (dired-hacks-previous-file))
+    (meta-defun meta-up-element :mode dired-mode (dired-up-directory))
+    (meta-defun meta-down-element :mode dired-mode (dired-find-alternate-file)))
   (bind-keys :map dired-mode-map
 	     ("<return>" . xah-open-in-external-app)
 	     ("W" . dired-copy-filename-as-kill)
@@ -8654,6 +8655,8 @@ Spell check rules for org syntax.
 
     (meta-defun meta-move-line-up :mode org-struct-mode org-metaup)
     (meta-defun meta-move-line-down :mode org-struct-mode org-metadown)
+    (meta-defun meta-move-line-up :mode org-agenda-mode (org-agenda-drag-line-backward))
+    (meta-defun meta-move-line-down :mode org-agenda-mode (org-agenda-drag-line-forward))
     (meta-defun meta-move-element-up :mode org-struct-mode org-shiftmetaup)
     (meta-defun meta-move-element-down :mode org-struct-mode org-shiftmetadown)
     (meta-defun meta-move-element-left :mode org-struct-mode org-shiftmetaleft)
@@ -8663,6 +8666,7 @@ Spell check rules for org syntax.
     (meta-defun meta-insert-enclosure-new-line :mode org-struct-mode org-insert-heading-respect-content)
     (meta-defun meta-insert-active-enclosure-new-line :mode org-struct-mode org-insert-todo-heading-respect-content)
     (meta-defun meta-new-line :mode org-struct-mode (org-return))
+    (meta-defun meta-undo :mode org-agenda-mode (org-agenda-undo))
     (meta-defun meta-up :mode org-agenda-mode (org-agenda-previous-line))
     (meta-defun meta-down :mode org-agenda-mode (org-agenda-next-line))))
 #+end_src
