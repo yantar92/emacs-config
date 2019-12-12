@@ -7194,7 +7194,6 @@ The subheadings below such a headlines are promoted up *1 level*.
 (setq org-latex-default-packages-alist
       (quote
        (("utf8" "inputenc" t)
-	("T1" "fontenc" t)
 	("" "longtable" nil)
 	("" "float" nil)
 	("" "wrapfig" nil)
