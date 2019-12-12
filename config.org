@@ -4830,8 +4830,7 @@ The src block should be in the same org file."
   (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
 #+end_src
-***** NEXT search in article PDFs
-SCHEDULED: <2019-12-11 Wed>
+***** SOMEDAY search in article PDFs
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
