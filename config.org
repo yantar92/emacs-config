@@ -6688,33 +6688,25 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
   "Weighted time spent for all the tasks in agenda files.")
 (defvar org-time-balance-persistant-p t
   "Non nil means that `org-time-balance' is saved between emacs sessions.")
-(defvar org-time-balance-save-time nil
-  "Time of the last save of `org-time-balance'.")
 (defvar org-time-balance-update-time nil
   "Time of the last update of `org-time-balance'.")
-(defvar org-time-balance-storage (concat user-emacs-directory ".org-time-balance")
-  "File used to store time balance between sessions.")
+
+(add-to-list 'savehist-additional-variables 'org-time-balance)
+(add-to-list 'savehist-additional-variables 'org-time-balance-update-time)
+
+(require 'savehist)
+(setq savehist-autosave-interval 10)
+(savehist-mode +1)
 
 (defun org-load-time-balance-session ()
   "Load the current org-time-balance if `org-time-balance-persistant-p' is non nil."
-  (if org-time-balance-persistant-p
-      (progn
-	(with-temp-buffer
-          (insert-file-contents org-time-balance-storage)
-          (eval-buffer))
-	(unless org-time-balance (setq org-time-balance 0))
-	(message "Loading time-balance... %d" org-time-balance))
-    (setq org-time-balance 0)))
-
-
-(defun org-save-time-balance-session ()
-  "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
-  (when (and org-time-balance-persistant-p
-	     org-time-balance)
-    (setq org-time-balance-save-time (or org-time-balance-update-time (current-time)))
-    (with-temp-file org-time-balance-storage
-      (insert "(setq org-time-balance " (prin1-to-string org-time-balance) ")" "\n")
-      (insert "(setq org-time-balance-save-time '" (prin1-to-string org-time-balance-save-time) ")"))))
+  (if (not org-time-balance-persistant-p)
+      (setq org-time-balance 0
+	    org-time-balance-update-time (current-time))
+    (savehist-mode +1)
+    (unless org-time-balance (setq org-time-balance 0))
+    (unless org-time-balance-update-time (setq org-time-balance-update-time (current-time)))
+    (message "Loading time-balance... %d" org-time-balance)))
 
 (defun org-get-time-balance-multiplier-at-point ()
   "Get value of :ORG-TIME-BALANCE-MULTIPLIER property of an item at point or return 1."
@@ -6722,7 +6714,7 @@ The resulting value of =org-time-balance= contains the balanced time from *one m
     (save-restriction
       (let  ((multiplier (org-entry-get (point) "ORG-TIME-BALANCE-MULTIPLIER" 'inherit)))
 	(if (seq-empty-p multiplier)
-	    1
+	    1 ;; default value
 	  (string-to-number multiplier))))))
 
 (defun org-get-org-time-bonus-on-done-at-point ()
@@ -6780,17 +6772,14 @@ If FORCE is non nil recalculate the time in all the agenda files
 ignoring the previously saved values."
   (when (or force (not org-time-balance))
     (setq org-time-balance 0)
-    (setq org-time-balance-save-time nil)
-    (unless force (org-load-time-balance-session))
-    (when (not org-time-balance-save-time) ;; FIXME: temporary fix to avoid accumulating bonus time after loading saved balance
+    (when (not org-time-balance-update-time) ;; FIXME: temporary fix to avoid accumulating bonus time after loading saved balance
       (cl-loop for file in (org-agenda-files 'unrestricted t) do
 	       (with-current-buffer (find-file-noselect file)
 		 (goto-char (point-min))
 		 (cl-loop until (eobp)
 			  do (when (outline-next-heading)
 			       (org-accumulate-weighted-time))))))
-    (setq org-time-balance-update-time (current-time))
-    (org-save-time-balance-session))
+    (setq org-time-balance-update-time (current-time)))
   org-time-balance)
 
 (define-advice org-clock-out (:around (OLDFUN &rest args) yant/org-increment-weighted-time)
@@ -6815,19 +6804,20 @@ ignoring the previously saved values."
   "Probably add the current item time bonus to `org-time-balance'."
   (unless org-time-balance
     (setq org-time-balance (org-get-total-weighted-time)))
-  (org-with-point-at-org-buffer
-   (let ((old-time-at-point (org-accumulate-weighted-time 'return))
-	 (old-org-time-balance org-time-balance))
-     (when (and (string= (org-entry-get (point) "STYLE") "habit")
-		(string= (format "%s" arg) (org-entry-get (point) "REPEAT_TO_STATE"))
-		(string= "DONE" (org-get-todo-state))
-		(org-set-property "ORG-TIME-BONUS" (format "%s" (org-get-org-time-bonus-at-point)))))
-     (apply OLDFUN (list arg))
-     (setq org-time-balance-update-time (current-time))
-     (setq org-time-balance (+ old-org-time-balance
-			       (- (org-accumulate-weighted-time 'return)
-				  old-time-at-point))))
-   (yant/save-clocked)))
+  (let ((old-time-at-point (org-accumulate-weighted-time 'return))
+	(old-org-time-balance org-time-balance))
+    (when (and (string= (org-entry-get (point) "STYLE") "habit")
+	       (string= (format "%s" arg) (org-entry-get (point) "REPEAT_TO_STATE"))
+	       (string= "DONE" (org-get-todo-state))
+	       (org-set-property "ORG-TIME-BONUS" (format "%s" (org-get-org-time-bonus-at-point)))))
+    (if (interactive-p)
+	(funcall-interactively OLDFUN arg)
+      (funcall OLDFUN arg))
+    (setq org-time-balance-update-time (current-time))
+    (setq org-time-balance (+ old-org-time-balance
+			      (- (org-accumulate-weighted-time 'return)
+				 old-time-at-point)))
+    (yant/save-clocked)))
 
 
 (defvar org-clock-multiplier 0
