@@ -6840,7 +6840,7 @@ Increment :ORG-TIME-BONUS: for habits, if nesessary."
 Use :ORG-TIME-BALANCE-MULTIPLIER: property to set the weight.
 Just return the value at point if RETURN is not nil."
   (when org-time-balance
-    (let* ((value-at-point (* (org-clock-sum-current-entry-only org-time-balance-save-time)
+    (let* ((value-at-point (* (org-clock-sum-current-entry-only org-time-balance-update-time)
                               (org-get-time-balance-multiplier-at-point))))
       (setq value-at-point (+ value-at-point (org-get-org-time-bonus-at-point)))
       (if return
