@@ -2672,9 +2672,13 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 :ID:       184b97b2-df73-4961-9f8f-ad8a6b4e1db8
 :END:
 
+*************** TODO Use boon selection here to call org-cut-subtree conditionally
+*************** END
+
 #+begin_src emacs-lisp
 (use-package org
   :defer t
+  :disabled
   :config
   (bind-keys* :map org-mode-map
 	      ("C-c C-k" . org-cut-subtree)))
