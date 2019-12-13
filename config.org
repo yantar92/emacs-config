@@ -2930,6 +2930,49 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
 :PROPERTIES:
 :ID:       e48bff0a-518d-4499-a62d-7003d203077a
 :END:
+
+Quick documentation access is one of the most powerful features of emacs.
+=Helm= makes searching the documentation lightning fast.
+We can search:
+ - functions, variables, other symbols
+ - =.el= files
+ - key bindings
+ - info entries for anything
+ - man entries
+
+The default =elisp= info search does not include many useful libraries like =cl-lib=, =dash=, or =EIEIO.
+I rely on the search so much that I, for example, did not even know about =cl-lib= for a long time and still struggling to use it efficiently.
+Expanding =helm= completion to include everything.
+ #+begin_src emacs-lisp
+;;Modified from https://www.reddit.com/r/emacs/comments/e5dzv6/weekly_tipstricketc_thread/f9xug5q/
+(defun helm-info-elisp-and-libs ()
+  "Helm for Emacs, Elisp, and CL-library info pages."
+  (interactive)
+  (helm :sources '(helm-source-info-dash
+		   helm-source-info-eieio
+		   helm-source-info-elisp
+                   helm-source-info-cl)))
+ #+end_src
+
+Similarly, many emacs features are hidden in separate info nodes.
+ #+begin_src emacs-lisp
+(defun helm-info-emacs-and-extra ()
+  "Helm for Emacs, Elisp, and CL-library info pages."
+  (interactive)
+  (helm :sources '(helm-source-info-emacs
+                   helm-source-info-autotype
+                   helm-source-info-magit
+                   helm-source-info-tramp)))
+ #+end_src
+
+For the =elisp= built-in docstrings, =helpful= package extension with very useful.
+It provides extra functionality to the standard =help= buffers.
+Another package =elisp-demos= extends =helpful= even further providing examples to many standard functions.
+
+*************** TODO Move elisp-demos and helpful to here
+*************** END
+
+
 #+begin_src emacs-lisp
 (use-package helm
   :if init-flag
@@ -2941,16 +2984,17 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
     :config
 
     (bind-keys :map boon-goto-map
-	       ("f" . helpful-function)
+	       ("k" . helpful-key)
+	       ("f" . helpful-callable)
 	       ("v" . helpful-at-point)
 	       ("d" . helpful-variable)
 	       ("s" . helpful-symbol)
 	       ("b" . helm-descbinds)
 	       ("h m" . woman)
 	       ("h n" . tldr)
-	       ("h i" . helm-info-elisp)
+	       ("h i" . helm-info-elisp-and-libs)
 	       ("h o" . helm-info-org)
-	       ("h e" . helm-info-emacs)
+	       ("h e" . helm-info-emacs-and-extra)
 	       ("h t" . helm-info-auctex)
 	       ("h T" . helm-info-texinfo))))
 #+end_src
