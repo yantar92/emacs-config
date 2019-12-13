@@ -6469,7 +6469,7 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 
 (define-advice org-store-log-note (:after (&rest args) yant/org-save-last-note-into-summary-prop)
   "Save the last saved note into SUMMARY property."
-  (when (not org-note-abort)
+  (when (and (not org-note-abort) (seq-empty-p yant/last-note-taken))
     (if (eq major-mode 'org-agenda-mode)
 	(org-with-point-at-org-buffer
 	 (org-set-property "SUMMARY" (or yant/last-note-taken "")))
