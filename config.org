@@ -624,6 +624,9 @@ Since I wrap the default movement commands into custom functions (see [[id:0fe0b
 
 
 *** Cursor
+:PROPERTIES:
+:ID:       3dbc3bed-206e-4132-b8e1-0d1ed338f990
+:END:
 
 Highlight current line
 
