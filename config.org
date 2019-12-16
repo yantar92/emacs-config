@@ -2767,19 +2767,6 @@ Never recover undo if the buffer is modified.
   )
 #+end_src
 
-
-*** Text file hygiene
-:PROPERTIES:
-:CREATED:  [2019-11-23 Sat 17:35]
-:ID:       24457871-908c-48f3-ae65-3a64fad75eba
-:END:
-
-Avoid trailing white-spaces at the end of the lines
-
-#+begin_src emacs-lisp
-(add-hook 'before-save-hook #'delete-trailing-whitespace)
-#+end_src
-
 ** Debugging
 :PROPERTIES:
 :ID:       749e7414-827f-45cb-9ee0-19637eb2274e
