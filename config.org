@@ -1252,13 +1252,30 @@ Walk across the backup files
 :PROPERTIES:
 :ID:       2e32ad16-4c7a-46b9-8c47-06f7f5566032
 :END:
+
+Better auto save.
+*************** TODO This slows down emacs. Investigate
+*************** END
+
+#+begin_src emacs-lisp
+(use-package auto-save-buffers-enhanced
+  :disabled
+  :straight t
+  :config
+  (auto-save-buffers-enhanced t))
+#+end_src
+
 #+begin_src emacs-lisp
 (setq  auto-save-file-name-transforms `((".*"  "~/.emacs.d/auto-save/" t))
        auto-save-interval 20)
 #+end_src
-- Save virtual buffers (kill ring, etc.)
+Save virtual buffers (kill ring, etc.)
+
+Do it in separate file to avoid accidental overwriting when config is corrupted.
   #+begin_src emacs-lisp
-(savehist-mode 1)
+(when init-flag
+  (setq savehist-file (concat user-emacs-directory "yant.history"))
+  (savehist-mode 1))
   #+end_src
 *** TODO Never save some buffers
 :PROPERTIES:
