@@ -8411,7 +8411,7 @@ The types must be taken from `org-log-note-headings'."
 (defun yant/format-summary-for-agenda ()
   "Format the contents of :SUMMARY: property to show in agenda view."
   (let ((summary (org-entry-get (point) "SUMMARY" 'INHERIT)))
-    (if summary
+    (if (not (seq-empty-p summary))
 	(concat "\tComment: \"" summary "\"\n\t\t\t\t\t")
       "")))
 (defun yant/format-time-balance-multiplier ()
