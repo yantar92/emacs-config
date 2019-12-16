@@ -1822,7 +1822,7 @@ BEG and END narrow the scope where candidates are searched."
     :bind (:map boon-moves-map
 		("H" . avy-goto-char-timer)
                 :map boon-command-map
-                ("h" . avy-goto-word-in-line-1))
+                ("h" . avy-goto-char-in-line))
     :custom
     (avy-timeout-seconds 0.2 "The default is too long.")))
 #+end_src
