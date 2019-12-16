@@ -6967,6 +6967,7 @@ New frame for capturing. The frame should only have capture buffer in it.
 (use-package org-capture-pop-frame
   :straight t
   :config
+  (setq ocpf-frame-parameters '((name . "org-capture-pop-frame")))
   (defadvice org-capture-place-template (after delete-windows activate) (delete-other-windows))
   (defadvice org-capture-select-template (around delete-capture-frame activate)
     "Advise org-capture-select-template to close the frame on abort.  From https://stackoverflow.com/questions/23517372/hook-or-advice-when-aborting-org-capture-before-template-selection#23517820"
