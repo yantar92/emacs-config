@@ -3822,7 +3822,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 
 (defun notmuch-show-nolist()
   (interactive)
-  (notmuch-show-tag-message "+inbox" "-listinbox"))
+  (notmuch-show-tag-message "+inbox" "-listinbox" "+nolist"))
 
 (defun notmuch-show-done()
   (interactive)
@@ -3855,7 +3855,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 
 (defun notmuch-search-nolist()
   (interactive)
-  (notmuch-search-tag '("+inbox" "-listinbox")))
+  (notmuch-search-tag '("+inbox" "-listinbox" "+nolist")))
 #+end_src
 **** Quit frame instead of bury buffer
 :PROPERTIES:
