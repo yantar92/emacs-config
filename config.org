@@ -290,11 +290,13 @@ My choice is Source Code Pro.
 Setting it up as default everywhere.
 
   #+begin_src emacs-lisp
-    (when init-flag
-      (set-face-attribute 'default nil
-			  :height 100
-			  :foundry "adobe"
-			  :family "source code pro"))
+(when init-flag
+  (set-face-attribute 'default nil
+		      :height 100
+		      :foundry "adobe"
+		      :family "source code pro"))
+;; :foundry "misc"
+;; :family "fixed"))
   #+end_src
 
 The colour of secondary selection in the theme is the same colour with some symbols in my =org-agenda=.
