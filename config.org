@@ -693,9 +693,12 @@ In boon, it can be done by forcing global move commands in special state.
   (set-keymap-parent boon-special-map boon-moves-map))
 #+END_SRC
 
+
+
 *************** TODO respect interactive definitions
 *************** END
-*************** TODO make recursive conditions like :mode org-mode :cond org-at-heading-p body
+
+*************** TODO Provide a way to prepend condition
 *************** END
 
 #+begin_src emacs-lisp :tangle ~/Git/meta-functions/meta-functions.el
@@ -5486,8 +5489,7 @@ SCHEDULED: <2019-12-19 Thu>
 
 Sometimes, I want to save certain interesting online articles to disk to make sure that all the content and comments are preserved regardless of the website changes.
 
-***** DONE [#A] org-webtools                                      :NOARCHIVE:
-CLOSED: [2019-04-24 Wed 15:43] SCHEDULED: <2019-04-24 Wed>
+***** org-webtools
 :PROPERTIES:
 :CREATED:  [2019-04-23 Tue 23:44]
 :ID:       f8a52437-48d9-418a-a00d-c1af5680c230
@@ -5499,6 +5501,10 @@ CLOCK: [2019-04-24 Wed 15:23]--[2019-04-24 Wed 15:43] =>  0:20
 :END:
 
 With =org-webtools=, I can download and attach web pages to an entry or even insert them converted into org format.
+
+*************** TODO make the web-pages open on C-c C-o
+*************** END
+
 
 #+begin_src emacs-lisp
 (use-package org-web-tools
@@ -8839,7 +8845,6 @@ Spell check rules for org syntax.
 :END:
 #+begin_src emacs-lisp
 (org-babel-load-file "~/PersonalDocuments/emacs-personal.org")
-(setq auth-sources '("~/.authinfo.gpg"))
 #+end_src
 ** Magic - I have no clue why it works
 :PROPERTIES:
