@@ -6913,6 +6913,7 @@ Ignore current value of `org-time-balance' if FORCE is not nil.
 If FORCE is non nil recalculate the time in all the agenda files
 ignoring the previously saved values."
   (when (or force (not org-time-balance))
+    (message "Updating org-time-balance...")
     (setq org-time-balance 0)
     (when (not org-time-balance-update-time) ;; FIXME: temporary fix to avoid accumulating bonus time after loading saved balance
       (cl-loop for file in (org-agenda-files 'unrestricted t) do
@@ -6921,6 +6922,7 @@ ignoring the previously saved values."
 		 (cl-loop until (eobp)
 			  do (when (outline-next-heading)
 			       (org-accumulate-weighted-time))))))
+    (message "Updating org-time-balance... %shours" (/ org-time-balance 60))
     (setq org-time-balance-update-time (current-time)))
   org-time-balance)
 
