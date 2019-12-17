@@ -8652,8 +8652,9 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 (use-package meta-functions
   :if init-flag
   :config
+  (setq org-goto-max-level 8)
   (setq org-goto-interface 'outline-path-completion)
-  (meta-defun meta-goto :mode org-mode (helm-org-rifle-current-buffer)))
+  (meta-defun meta-goto :mode org-mode org-goto))
 #+end_src
 
 *** Spell checking
@@ -8763,8 +8764,8 @@ Spell check rules for org syntax.
 
   (use-package meta-functions
     :config
-    (meta-defun meta-move-line-up :mode org-mode (org-metaup))
-    (meta-defun meta-move-line-down :mode org-mode (org-metadown))
+    (meta-defun meta-move-line-up :mode org-mode org-metaup)
+    (meta-defun meta-move-line-down :mode org-mode org-metadown)
     (meta-defun meta-move-element-up :mode org-mode org-shiftmetaup)
     (meta-defun meta-move-element-down :mode org-mode org-shiftmetadown)
     (meta-defun meta-move-element-left :mode org-mode org-shiftmetaleft)
@@ -8786,13 +8787,13 @@ Spell check rules for org syntax.
       (if (org-at-heading-p)
 	  (call-interactively #'org-previous-visible-heading)
 	(backward-paragraph)))
-    (meta-defun meta-down-element :mode org-mode (yant/org-smart-meta-down-element))
-    (meta-defun meta-up-element :mode org-mode (yant/org-smart-meta-up-element))
+    (meta-defun meta-down-element :mode org-mode yant/org-smart-meta-down-element)
+    (meta-defun meta-up-element :mode org-mode yant/org-smart-meta-up-element)
 
     (meta-defun meta-move-line-up :mode org-struct-mode org-metaup)
     (meta-defun meta-move-line-down :mode org-struct-mode org-metadown)
-    (meta-defun meta-move-line-up :mode org-agenda-mode (org-agenda-drag-line-backward))
-    (meta-defun meta-move-line-down :mode org-agenda-mode (org-agenda-drag-line-forward))
+    (meta-defun meta-move-line-up :mode org-agenda-mode org-agenda-drag-line-backward)
+    (meta-defun meta-move-line-down :mode org-agenda-mode org-agenda-drag-line-forward)
     (meta-defun meta-move-element-up :mode org-struct-mode org-shiftmetaup)
     (meta-defun meta-move-element-down :mode org-struct-mode org-shiftmetadown)
     (meta-defun meta-move-element-left :mode org-struct-mode org-shiftmetaleft)
@@ -8801,10 +8802,10 @@ Spell check rules for org syntax.
     (meta-defun meta-move-line-right :mode org-struct-mode org-metaright)
     (meta-defun meta-insert-enclosure-new-line :mode org-struct-mode org-insert-heading-respect-content)
     (meta-defun meta-insert-active-enclosure-new-line :mode org-struct-mode org-insert-todo-heading-respect-content)
-    (meta-defun meta-new-line :mode org-struct-mode (org-return))
-    (meta-defun meta-undo :mode org-agenda-mode (org-agenda-undo))
-    (meta-defun meta-up :mode org-agenda-mode (org-agenda-previous-line))
-    (meta-defun meta-down :mode org-agenda-mode (org-agenda-next-line))))
+    (meta-defun meta-new-line :mode org-struct-mode org-return)
+    (meta-defun meta-undo :mode org-agenda-mode org-agenda-undo)
+    (meta-defun meta-up :mode org-agenda-mode org-agenda-previous-line)
+    (meta-defun meta-down :mode org-agenda-mode org-agenda-next-line)))
 #+end_src
 
 **** Boon integration
