@@ -935,6 +935,15 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 (use-package meta-functions
   :if init-flag
   :config
+  (use-package helm
+    :defer t
+    :config
+    (meta-defun meta-occur "Occur." helm-occur)
+    (meta-defun meta-goto "Goto place in document." helm-imenu))
+  (use-package boon
+    :defer t
+    :config
+    (meta-defun meta-new-line "Insert new line." boon-newline-dwim))
   (meta-defun-mapc
    '((meta-down "Move down." next-logical-line)
      (meta-up "Move up." previous-logical-line)
@@ -949,13 +958,10 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
      (meta-scroll-up "Scroll up." scroll-up)
      (meta-scroll-down "Scroll down." scroll-down)
      (meta-undo "Undo." undo)
-     (meta-occur "Occur." (helm-occur))
-     (meta-goto "Goto place in document." (helm-imenu))
      (meta-next-buffer "Go forward in buffer." next-buffer)
      (meta-previous-buffer "Go backward in buffer." previous-buffer)
      (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
      (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore)
-     (meta-new-line "Insert new line." (boon-newline-dwim))
      ))
   )
 #+end_src
@@ -2245,10 +2251,10 @@ Undo window configuration changes
   (bind-key "." 'dired-hide-dotfiles-mode dired-mode-map)
   (use-package meta-functions
     :config
-    (meta-defun meta-down :mode dired-mode (dired-hacks-next-file))
-    (meta-defun meta-up :mode dired-mode (dired-hacks-previous-file))
-    (meta-defun meta-up-element :mode dired-mode (dired-up-directory))
-    (meta-defun meta-down-element :mode dired-mode (dired-find-alternate-file)))
+    (meta-defun meta-down :mode dired-mode dired-hacks-next-file)
+    (meta-defun meta-up :mode dired-mode dired-hacks-previous-file)
+    (meta-defun meta-up-element :mode dired-mode dired-up-directory)
+    (meta-defun meta-down-element :mode dired-mode dired-find-alternate-file))
   (bind-keys :map dired-mode-map
 	     ("<return>" . xah-open-in-external-app)
 	     ("W" . dired-copy-filename-as-kill)
@@ -3282,8 +3288,8 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 	ledger-report-auto-refresh t)
   (use-package meta-functions
     :config
-    (meta-defun meta-down-element :mode ledger-mode (ledger-navigate-next-xact-or-directive))
-    (meta-defun meta-up-element :mode ledger-mode (ledger-navigate-prev-xact-or-directive)))
+    (meta-defun meta-down-element :mode ledger-mode ledger-navigate-next-xact-or-directive)
+    (meta-defun meta-up-element :mode ledger-mode ledger-navigate-prev-xact-or-directive))
   )
 #+END_SRC
 
@@ -3358,12 +3364,12 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
   (add-hook 'pdf-view-mode-hook #'pdf-tools-enable-minor-modes 'APPEND)
   (use-package meta-functions
     :config
-    (meta-defun meta-down :mode pdf-view-mode (yant/pdf-view-down))
-    (meta-defun meta-up :mode pdf-view-mode (yant/pdf-view-up))
-    (meta-defun meta-scroll-down :mode pdf-view-mode (pdf-view-scroll-down-or-previous-page))
-    (meta-defun meta-scroll-up :mode pdf-view-mode (pdf-view-scroll-up-or-next-page))
-    (meta-defun meta-down :mode pdf-annot-list-mode (tablist-next-line))
-    (meta-defun meta-up :mode pdf-annot-list-mode (tablist-previous-line))))
+    (meta-defun meta-down :mode pdf-view-mode yant/pdf-view-down)
+    (meta-defun meta-up :mode pdf-view-mode yant/pdf-view-up)
+    (meta-defun meta-scroll-down :mode pdf-view-mode pdf-view-scroll-down-or-previous-page)
+    (meta-defun meta-scroll-up :mode pdf-view-mode pdf-view-scroll-up-or-next-page)
+    (meta-defun meta-down :mode pdf-annot-list-mode tablist-next-line)
+    (meta-defun meta-up :mode pdf-annot-list-mode tablist-previous-line)))
 #+end_src
 
 *** Restore the last position in pdf
@@ -3551,8 +3557,10 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 (use-package meta-functions
   :if init-flag
   :config
-  (meta-defun meta-insert-enclosure-new-line :mode term-mode ignore)
-  (meta-defun meta-new-line :mode term-mode term-send-raw))
+  (use-package term
+    :config
+    (meta-defun meta-insert-enclosure-new-line :mode term-mode ignore)
+    (meta-defun meta-new-line :mode term-mode term-send-raw)))
 
 #+END_SRC
 **** Kill process buffer after finishing
@@ -3726,10 +3734,10 @@ When listening a new band/album, I usually go through all the songs and delete w
       (notmuch-show-view-part))
     (use-package meta-functions
       :config
-      (meta-defun meta-down :mode notmuch-search-mode (notmuch-search-next-thread))
-      (meta-defun meta-up :mode notmuch-search-mode (notmuch-search-previous-thread))
-      (meta-defun meta-down-element :mode notmuch-show-mode (notmuch-show-next-message))
-      (meta-defun meta-up-element :mode notmuch-show-mode (notmuch-show-previous-message))
+      (meta-defun meta-down :mode notmuch-search-mode notmuch-search-next-thread)
+      (meta-defun meta-up :mode notmuch-search-mode notmuch-search-previous-thread)
+      (meta-defun meta-down-element :mode notmuch-show-mode notmuch-show-next-message)
+      (meta-defun meta-up-element :mode notmuch-show-mode notmuch-show-previous-message)
       (meta-defun meta-down-element :mode notmuch-search-mode notmuch-search-show-thread)
       (meta-defun meta-up-element :mode notmuch-search-mode ignore))
     (bind-keys :map notmuch-search-mode-map
