@@ -2268,6 +2268,23 @@ Do not ask confirmation about killing buffers for deleted folders
 (setq dired-clean-confirm-killing-deleted-buffers nil)
 #+end_src
 
+Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
+
+#+begin_src emacs-lisp
+(use-package dired
+  :if init-flag
+  :defer t
+  :config
+  (defun dired-quit-window (&optional kill window)
+    "Run `quit-window' until first non-dired buffer in the current window."
+    (interactive)
+    (let ((window (or window (selected-window))))
+      (with-selected-window window
+	(while (and (window-live-p window)
+		    (eq major-mode 'dired-mode))
+	  (quit-window kill window)))))
+  (bind-key "q" #'dired-quit-window dired-mode-map))
+#+end_src
 
 ****** =Dired+=
 :PROPERTIES:
