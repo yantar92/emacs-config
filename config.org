@@ -723,80 +723,110 @@ In boon, it can be done by forcing global move commands in special state.
 ;;   :cond (lambda () (and (eq major-mode 'org-mode) (org-at-heading-p))) (org-next-visible-heading 1) ; call org-next-visible-headting when at heading in org-mode
 ;;   (next-line)) ; call-next line in any other case
 ;; )
+;; or the same can be written as
+;; (meta-defun meta-next-element "Go to next element." next-line)
+;; (meta-defun meta-next-element :mode org-agenda-mode (org-agenda-next-item 1))
+;; (meta-defun meta-next-element :mode org-mode :cond org-at-heading-p (org-next-visible-heading 1))
 
 ;;; Code:
 (require 'seq)
 
+(defun meta-functions--process-args-1 (args &optional recursive)
+  "Return list of ((sub-body-symbol condition-func|mode-symbol number-elements-in-args) ...) in front of ARGS."
+  (pcase args
+    (`(:mode ,(and (pred symbolp) s) . ,_)
+     (cons
+      (list (make-symbol (concat "%" (symbol-name s)))
+	    `(quote ,s)
+            2)
+      (meta-functions--process-args-1 (cddr args) 'recursive)))
+    (`(:cond :symbol ,(and (pred symbolp) s) ,(and (pred #'functionp) func) . ,_)
+     (cons
+      (list (make-symbol (concat "%" (symbol-name s)))
+	    func
+            4)
+      (meta-functions--process-args-1 (cddddr args) 'recursive)))
+    (`(:cond :symbol . ,_)
+     (error ":cond :symbol must be followed by symbol and function."))
+    (`(:cond ,(and (pred functionp) func) . ,_)
+     (cons
+      (list (when (symbolp func) (make-symbol (concat "%" (symbol-name func))))
+	    func
+            2)
+      (meta-functions--process-args-1 (cddr args) 'recursive)))
+    (`(:cond . ,_)
+     (error ":cond must be followed by [:symbol symbol] function."))
+    (_
+     (unless recursive
+       (list (list
+	      '%t
+              `(function t)
+              0))))))
+
 (defun meta-functions--process-args (name args)
   "Process arguments of `meta-defun'.
-The return value is a list (docstring ((sub-body-symbol condition-func|mode-symbol body) ...))."
+The return value is a list (arglist docstring ((sub-body-symbol condition-func|mode-symbol body) ...))."
   (when (memq ':override-nil args) (setq args (delq ':override-nil args)))
   (let* ((arglist (and (listp (car args)) (pop args)))
 	 (docstring (and (stringp (car args)) (pop args)))
 	 conditions)
     (while args
       (add-to-list 'conditions
-		   (pcase args
-		     (`(:mode ,(and (pred symbolp) s) ,body . ,_)
-                      (prog1
-			  (list (make-symbol (concat (symbol-name name) "%" (symbol-name s)))
-				`(quote ,s)
-				(if (functionp #'body)
-                                    `(function ,body)
-                                  `(lambda (&optional arg) (interactive) ,body)))
-			(dotimes (_ 3) (pop args))))
-		     (`(:mode . ,_)
-		      (error ":mode must be followed by a symbol and body."))
-		     (`(:cond :symbol ,(and (pred symbolp) s) ,(and (pred #'functionp) func) ,body . ,_)
-                      (prog1
-			  (list (make-symbol (concat (symbol-name name) "%" (symbol-name s)))
-				func
-				(if (functionp #'body)
-                                    `(function ,body)
-                                  `(lambda (&optional arg) (interactive) ,body)))
-			(dotimes (_ 5) (pop args))))
-		     (`(:cond :symbol . ,_)
-		      (error ":cond :symbol must be followed by symbol and function."))
-		     (`(:cond ,(and (pred functionp) func) ,body . ,_)
-                      (prog1
-			  (list (when (symbolp func) (make-symbol (concat (symbol-name name) "%" (symbol-name func))))
-				func
-				(if (functionp #'body)
-                                    `(function ,body)
-                                  `(lambda (&optional arg) (interactive) ,body)))
-			(dotimes (_ 3) (pop args))))
-		     (`(:cond . ,_)
-		      (error ":cond must be followed by [:symbol symbol] function."))
-		     (`(,body)
-                      (prog1
-			  (list
-			   (make-symbol (concat (symbol-name name) "%t"))
-			   #'t
-			   (if (functionp body)
-                               `(function ,body)
-                             `(lambda (&optional arg) (interactive) ,body)))
-			(setq args nil))))
+		   (cl-loop for (symbol subcondition num-remove) in (meta-functions--process-args-1 args)
+			    with condition = nil
+			    with sumsymbol = nil
+			    do (when symbol
+				 (if sumsymbol
+				     (setq sumsymbol
+					   (make-symbol (concat (symbol-name sumsymbol)
+								"+"
+								(symbol-name symbol))))
+				   (setq sumsymbol
+					 (make-symbol (concat (symbol-name name)
+							      (symbol-name symbol))))))
+			    do (dotimes (_ num-remove) (pop args))
+			    do (push subcondition condition)
+			    finally return (cons sumsymbol
+						 (nreverse (push (pcase (cl-loop for el = (pop args)
+										 collect el
+										 until (or (seq-empty-p args) (meta-functions--process-args-1 args 'recursive)))
+								   (`(,(and (pred functionp) func)) `(function ,func))
+								   (`(,form) `(lambda () (interactive) ,form)))
+								 condition))))
 		   'append))
     (list arglist docstring conditions)))
 
+
 (defun meta-functions--generate-docstring (name default-docstring conditions)
   "Generate a docstring for a function define using meta-defun."
-  (concat "Meta function. "
-	  (when default-docstring default-docstring)
-	  "\n"
-	  "By default, run `"
-	  (pp-to-string (cadr (alist-get (make-symbol (concat (symbol-name name) "%t")) conditions nil nil (lambda (a b) (string= (symbol-name a) (symbol-name b))))))
-	  "'"
-	  (mapconcat (lambda (condition)
-		       (pcase condition
-			 (`(,cond-name ,(and (pred symbolp) 't) ,body)
-			  nil)
-			 (`(,cond-name ,(and (pred functionp) cond-func) ,body)
-			  (concat "When `" (pp-to-string cond-func) "' returns 't, run `" (pp-to-string body) "'"))
-                         (`(,cond-name ,cond-symbol ,body)
-			  (concat "When major mode is `" (pp-to-string (eval cond-symbol)) "', run `" (pp-to-string body) "'"))))
-		     conditions
-		     "")))
+  (->>
+   (concat "[Meta function.]\n"
+	   (when default-docstring default-docstring)
+	   "\n"
+	   "By default, run `"
+	   (format "%s" (cadr (alist-get (make-symbol (concat (symbol-name name) "%t")) conditions nil nil (lambda (a b) (string= (symbol-name a) (symbol-name b))))))
+	   "'\n"
+	   (mapconcat (lambda (condition)
+			(let* ((rcondition (seq-reverse (cdr condition)))
+			       (body (car rcondition))
+                               (subconditions (cdr rcondition)))
+                          (unless (equal subconditions '(#'t))
+			    (concat "When "
+				    (mapconcat (lambda (el)
+						 (pcase el
+						   ('#'t nil)
+						   ((pred functionp)
+						    (concat "`" (format "%s" el) "' returns 't"))
+						   (_
+						    (concat "When major mode is `" (format "%s" (eval el)) "'"))))
+					       subconditions
+					       " or ")
+				    ", run `"
+				    (format "%s" body)
+				    "'"))))
+		      conditions
+		      "\n"))
+   (replace-regexp-in-string "#'" "")))
 
 (cl-defmacro meta-defun (name &rest args)
   "Define a meta-function or update its definition.
@@ -833,7 +863,7 @@ In the [:cond ...] definition, it [:symbol zen-fun-symbol] is present, the BODY
 is bound to foo%zen-fun-symbol.
 Otherwise, it is bound to foo%zen-fun is zen a symbol.
 
-\(fn NAME (ARGLIST) [DOCSTRING] ARGS...)"
+\(fn NAME [(ARGLIST)] [DOCSTRING] ARGS...)"
   (declare (indent defun))
   `(pcase-let ((`(,arglist ,docstring ,conditions) (meta-functions--process-args ',name ',args))
 	       (old-conditions (function-get ',name 'meta-functions-cond-plist)))
@@ -845,7 +875,7 @@ Otherwise, it is bound to foo%zen-fun is zen a symbol.
      (mapc (lambda (el)
 	     (let ((main-name  ',name)
 		   (sub-name (car el))
-		   (body (caddr el)))
+		   (body (car (reverse el))))
 	       (when sub-name
 		 (eval `(defun ,sub-name ()
 			  (concat "Sub-definition in meta-function `" (symbol-name ',main-name) "'.")
@@ -856,15 +886,19 @@ Otherwise, it is bound to foo%zen-fun is zen a symbol.
 		,docstring
                 (interactive)
 		(seq-some (lambda (condition)
-			    (pcase condition
-			      (`(,_ ,(and (pred symbolp) 't) ,body)
-			       (eval `(funcall ,body)) t)
-                              (`(,_ ,(and (pred functionp) cond-func) ,body)
-			       (when (funcall cond-func)
-				 (eval `(funcall ,body)) t))
-			      (`(,_ ,mode ,body)
-			       (when (eq major-mode (eval mode))
-				 (eval `(funcall ,body)) t))))
+			    (let* ((rcondition (seq-reverse (cdr condition)))
+				   (body (car rcondition))
+                                   (subconditions (cdr rcondition)))
+                              (when (seq-reduce (lambda (prev el)
+						  (and prev
+                                                       (pcase el
+							 ('#'t t)
+							 ((pred functionp) (funcall-interactively el))
+							 (_ (eq major-mode (eval el))))))
+						subconditions
+						t)
+				(eval `(funcall-interactively ,body))
+                                t)))
 			  ',conditions)))) ; define meta-function
      (function-put ',name 'meta-functions-cond-plist conditions)))
 
