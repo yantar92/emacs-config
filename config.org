@@ -7450,7 +7450,7 @@ Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override stand
   "Archive inline tasks according to `org-inlinetask-archive-location'."
   (if (boundp 'org-inlinetask-min-level)
       (let* ((org-inlinetask-min-level-real org-inlinetask-min-level)
-	     (at-inline-task (org-inlinetask-in-task-p))
+	     (at-inline-task (save-match-data (org-inlinetask-in-task-p)))
 	     (org-inlinetask-min-level (if at-inline-task
 					   org-inlinetask-max-level
 					 org-inlinetask-min-level))
