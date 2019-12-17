@@ -8029,7 +8029,8 @@ I have a lot of small scripts and programs written at some point for some purpos
      `(lambda ()
 	(require 'org)
 	(setq org-tangle-flag t)
-	(load "~/.emacs.d/config.el")
+        (ignore-errors
+	  (load "~/.emacs.d/config.el"))
 	(let ((start-time (current-time)))
 	  (apply #'org-babel-tangle-file ',args)
 	  (list (float-time (time-since start-time))))))
