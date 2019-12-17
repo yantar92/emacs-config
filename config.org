@@ -3674,6 +3674,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 	      ("t" . elfeed-search-untag-all-unread)
               ("T" . elfeed-search-tag-all-unread)
               ("b" . yant/elfeed-capture-entry)
+              ("<tab>" . elfeed-search-show-entry)
               ("B" . (lambda () (interactive)
 		       (elfeed-search-tag-all 'opened)
 		       (meta-up)
