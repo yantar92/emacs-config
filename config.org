@@ -5366,12 +5366,12 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 Now, when I have the mirror attach folder structure, it make sense to open this structure on =org-attach-reveal= instead of opening the actual attach dirs.
 
 #+BEGIN_SRC emacs-lisp
-(defun org-attach-dir-symlink (&optional create-if-not-exists-p no-data-dir)
+(defun org-attach-dir-symlink (&optional create-if-not-exists-p no-fs-check no-data-dir)
   "Return symlink based path to the attach dir of current entry.
 Do not append symlink to data directory if NO-DATA-dir is not nil."
   (org-with-point-at-org-buffer
    (if create-if-not-exists-p
-       (let ((symlink (org-attach-dir-symlink nil no-data-dir)))
+       (let ((symlink (org-attach-dir-symlink nil nil no-data-dir)))
 	 (if (not (f-exists-p symlink))
 	     (org-attach-dir 't))
 	 symlink))
@@ -5383,11 +5383,11 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
      (if attach-dir-inherited-p
 	 (org-with-wide-buffer
           (org-up-heading-safe) ;; if this is false, something went really wrong
-	  (org-attach-dir-symlink create-if-not-exists-p no-data-dir))
+	  (org-attach-dir-symlink create-if-not-exists-p nil no-data-dir))
        (unless (seq-empty-p entry-name) ;; prevent empty folders
 	 (org-with-wide-buffer
 	  (if (org-up-heading-safe)
-	      (let ((head-path (org-attach-dir-symlink create-if-not-exists-p 't)))
+	      (let ((head-path (org-attach-dir-symlink create-if-not-exists-p nil 't)))
 		(when head-path (f-slash (f-join head-path entry-path))))
             (f-slash (f-join (or yant/org-attach-file-symlink-path
 				 default-directory)
@@ -5404,7 +5404,7 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
 						  #'org-attach-dir-symlink
 						(lambda (&rest args)
                                                   (if (yant/org-subtree-has-attachments-p)
-                                                      (org-attach-dir-symlink 't 't)
+                                                      (org-attach-dir-symlink 't nil 't)
                                                     dir
                                                     )))))
       (when attach-dir-inherited-p (org-attach-tag 'off))
