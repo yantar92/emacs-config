@@ -6553,7 +6553,8 @@ However, I do not find it comfortable to look into notes (which are stored in dr
     (if (eq major-mode 'org-agenda-mode)
 	(org-with-point-at-org-buffer
 	 (org-set-property "SUMMARY" (or yant/last-note-taken "")))
-      (org-set-property "SUMMARY" (or yant/last-note-taken "")))))
+      (org-set-property "SUMMARY" (or yant/last-note-taken "")))
+    (setq yant/last-note-taken nil)))
 
 #+end_src
 **** =__epilogue=
