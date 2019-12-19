@@ -4931,7 +4931,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
   "Description function for id: link."
   (let ((id (cadr (split-string link ":"))))
     (org-with-point-at (org-id-find id 'marker)
-      (s-replace "||" "/" (yant/task-fulltitle)))))
+      (org-get-heading 'stip 'all 'the 'extra))))
 
 (org-link-set-parameters "id"
 			 :complete #'org-id-link-complete
