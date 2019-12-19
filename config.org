@@ -4346,11 +4346,11 @@ The task is any item with todo keyword and no subtask.
 	    (setq has-subtask t))))
       (and is-a-task (not has-subtask)))))
 #+end_src
-- keywords for not done tasks: =TODO=, =NEXT=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=
+- keywords for not done tasks: =TODO=, =NEXT=, =DOING=, =REVIEW=, =SOMEDAY=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=
 #+begin_src emacs-lisp
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "SOMEDAY(s)" "|" "DONE(d!)" "FAILED(f@/!)" "MERGED(m!)" )
-	      (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c!)" ))))
+      (quote ((sequence "TODO(t)" "NEXT(n)" "DOING(o)" "REVIEW(e)" "|" "DONE(d!)" "FAILED(f@/!)" "MERGED(m!)" )
+	      (sequence "SOMEDAY(s)" "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@)" ))))
 ;; set the tags assigned to specific keywords. Not nesessary, but used by a lot of code for filtering later - hence why not
 (setq org-todo-state-tags-triggers
       (quote (("CANCELLED" ("CANCELLED" . t))
@@ -4378,6 +4378,23 @@ The task is any item with todo keyword and no subtask.
       (when (member mystate (list "TODO"))
 	(org-todo "NEXT")))))
 #+end_src
+  - DOING(o) :: A task I am working on, but do not expect to finish quickly (e.g. reading book). Marking this task =DONE= changes the keyword back to =DOING= and, if the schedule date does not have a repeater, reschedules it to tomorrow.
+  #+begin_src emacs-lisp
+(defun org-trigger-doing (arg)
+  "Restore DOING keyword after DOING->DONE change.
+If the task is not scheduled or its schedule time does not have a repater,
+Schedule it for tomorrow."
+  (when (and (eq (plist-get arg :type) 'todo-state-change)
+	     (string= (plist-get arg :from) "DOING")
+             (string= (plist-get arg :to) "DONE"))
+    (let* ((pos (plist-get arg :position))
+	   (schedule-info (org-with-point-at pos (org-element-property :scheduled (org-element-at-point)))))
+      (unless (org-element-property :repeater-type schedule-info)
+	(org-schedule nil "+1d")))
+    (org-todo "DOING")))
+(add-hook 'org-trigger-hook #'org-trigger-doing)
+  #+end_src
+  - REVIEW(e) :: A task is basically done, but should be reviewed (i.e. consider putting to knowledge base)
   - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason)
   - HOLD(h) :: I am not going to do this task for now due to reason explained in the comment
   - SOMEDAY(s) :: This task does not have to be done at all. But maybe, it I have a mood... The command triggers un-scheduling the task if it is scheduled
