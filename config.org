@@ -22,17 +22,36 @@ CLOCK: [2017-12-28 Thu 18:41]--[2017-12-28 Thu 18:42] =>  0:01
 CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 :END:
 
+This is me 
+
 #+begin_src emacs-lisp
-(setf user-full-name "Ihor Radchenko")
+(setq user-full-name "Ihor Radchenko")
+(setq user-mail-address "yantar92@gmail.com")
 #+end_src
-*************** TODO Just use threads instead
+*************** CANCELLED Just use threads instead                        :CANCELLED:
+CLOSED: [2019-12-18 Wed 16:27]
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2019-12-18 Wed 16:27] \\
+  Threads will always slow down emacs. It often make sense to just run separate process
+:END:
 *************** END
+
+I am not really doing much programming, but rather use Emacs as knowledge base management tool.
+Most of time, I do not even edit or type things directly, but read through the files. 
+Therefore, the main focus of this setup is =org-mode= and not as much programming, navigating through text and not as much editing.
+
+The usage of =org-mode= unfortunately means that the overall performance of Emacs is generally not very good. 
+To improve things a little bit, I am trying to run things that "freeze" Emacs most terribly either asynchronously or in separate Emacs process. 
+Running in separate process would be terribly slow if I just load my main =init.el= over and over again as if I open a new instance of emacs interactively.
+Hence, I design my =init.el= in the way that it can load faster in batch mode.
 
 This Emacs configuration allows loading Emacs in both interactive and batch modes. It is controlled by special variables, identifying startup mode:
 - =init-flag= :: normal startup, load all the visual packages and options
 - =org-export-flag= :: load necessary options for org-export
 - =org-tangle-flag= :: load necessary options for org-tangle
-One important note about this configuration is that I do not use desktop save mode and similar things. Everything I intend to do is kept in my org files, which are automatically loaded by org agenda command.
+One important note about this configuration is that I do not use =desktop-save-mode. 
+Everything I intend to do is kept in my org files, which are automatically loaded by org agenda command.
+
 #+begin_src emacs-lisp
 (defvar init-flag nil
   "Do normal init if not nil.")
