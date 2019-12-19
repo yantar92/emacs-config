@@ -6555,7 +6555,15 @@ The solution is to show the task contents of every task at point in agenda.
 	      ("<tab>" . org-quick-peek-agenda-current-item))
   :custom ((org-quick-peek-show-lines 45)
 	   (org-quick-peek-show-drawers nil)
-	   (org-quick-peek-show-planning nil)))
+	   (org-quick-peek-show-planning nil))
+  :config
+  
+  (define-advice org-agenda-clock-in (:after (&rest args) quick-peek-maybe)
+    "Show contents of the org-entry at point when there is any."
+    (org-agenda-redo@org-quick-peek--hide-all)
+    (org-quick-peek--agenda-show :quiet t))
+  
+  )
 #+end_src
 
 *** TODO Contacts
