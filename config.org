@@ -780,7 +780,7 @@ In boon, it can be done by forcing global move commands in special state.
     (`(:cond :symbol ,(and (pred symbolp) s) ,(and (pred #'functionp) func) . ,_)
      (cons
       (list (make-symbol (concat "%" (symbol-name s)))
-	    func
+	    `(function ,func)
             4)
       (meta-functions--process-args-1 (cddddr args) 'recursive)))
     (`(:cond :symbol . ,_)
@@ -788,11 +788,15 @@ In boon, it can be done by forcing global move commands in special state.
     (`(:cond ,(and (pred functionp) func) . ,_)
      (cons
       (list (when (symbolp func) (make-symbol (concat "%" (symbol-name func))))
-	    func
+	    `(function ,func)
             2)
       (meta-functions--process-args-1 (cddr args) 'recursive)))
-    (`(:cond . ,_)
-     (error ":cond must be followed by [:symbol symbol] function."))
+    (`(:cond ,form . ,_)
+     (cons
+      (list (make-symbol (concat "%lambda" (org-id-uuid)))
+	    `(function (lambda () ,form))
+	    2)
+      (meta-functions--process-args-1 (cddr args) 'recursive)))
     (_
      (unless recursive
        (list (list
@@ -846,18 +850,18 @@ The return value is a list (arglist docstring ((sub-body-symbol condition-func|m
 	   (mapconcat (lambda (condition)
 			(let* ((rcondition (seq-reverse (cdr condition)))
 			       (body (car rcondition))
-                               (subconditions (cdr rcondition)))
+                               (subconditions (seq-reverse (cdr rcondition))))
                           (unless (equal subconditions '(#'t))
 			    (concat "When "
 				    (mapconcat (lambda (el)
 						 (pcase el
 						   ('#'t nil)
-						   ((pred functionp)
+						   (`(function ,_)
 						    (concat "`" (format "%s" el) "' returns 't"))
 						   (_
-						    (concat "When major mode is `" (format "%s" (eval el)) "'"))))
+						    (concat "major mode is `" (format "%s" (eval el)) "'"))))
 					       subconditions
-					       " or ")
+					       " and ")
 				    ", run `"
 				    (format "%s" body)
 				    "'"))))
@@ -902,13 +906,15 @@ Otherwise, it is bound to foo%zen-fun is zen a symbol.
 
 \(fn NAME [(ARGLIST)] [DOCSTRING] ARGS...)"
   (declare (indent defun))
-  `(pcase-let ((`(,arglist ,docstring ,conditions) (meta-functions--process-args ',name ',args))
-	       (old-conditions (function-get ',name 'meta-functions-cond-plist)))
+  `(pcase-let ((`(,arglist ,default-docstring ,conditions) (meta-functions--process-args ',name ',args))
+	       (old-conditions (function-get ',name 'meta-functions-cond-plist))
+               (old-default-docstring (function-get ',name 'meta-functions-default-docstring)))
      (unless (memq :override-nil ',args)
        (mapc (lambda (el)
 	       (setf (alist-get (car el) old-conditions nil nil (lambda (a b) (string= (symbol-name a) (symbol-name b)))) (cdr el)))
 	     (reverse conditions))
-       (setq conditions old-conditions))
+       (setq conditions old-conditions)
+       (unless default-docstring (setq default-docstring old-default-docstring)))
      (mapc (lambda (el)
 	     (let ((main-name  ',name)
 		   (sub-name (car el))
@@ -918,26 +924,27 @@ Otherwise, it is bound to foo%zen-fun is zen a symbol.
 			  (concat "Sub-definition in meta-function `" (symbol-name ',main-name) "'.")
 			  ,body)))))
 	   conditions) ; define the sub-bodies
-     (let ((docstring (meta-functions--generate-docstring ',name docstring conditions)))
+     (let ((docstring (meta-functions--generate-docstring ',name default-docstring conditions)))
        (eval `(defun ,',name ,arglist
 		,docstring
                 (interactive)
 		(seq-some (lambda (condition)
 			    (let* ((rcondition (seq-reverse (cdr condition)))
 				   (body (car rcondition))
-                                   (subconditions (cdr rcondition)))
+                                   (subconditions (seq-reverse (cdr rcondition))))
                               (when (seq-reduce (lambda (prev el)
 						  (and prev
                                                        (pcase el
 							 ('#'t t)
-							 ((pred functionp) (funcall-interactively el))
+							 (`(function ,_) (eval `(funcall-interactively ,el)))
 							 (_ (eq major-mode (eval el))))))
 						subconditions
 						t)
 				(eval `(funcall-interactively ,body))
                                 t)))
 			  ',conditions)))) ; define meta-function
-     (function-put ',name 'meta-functions-cond-plist conditions)))
+     (function-put ',name 'meta-functions-cond-plist conditions)
+     (function-put ',name 'meta-functions-default-docstring default-docstring)))
 
 (defun meta-defun-mapc (list)
   "Defun multiple meta-functions with `meta-defun' trating each element of LIST as argument."
