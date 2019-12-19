@@ -92,9 +92,10 @@ Setup environment variables
 
 Ensure one server instance
 #+begin_src emacs-lisp
-(require 'server)
-(unless (server-running-p)
-  (server-start))
+(when init-flag
+  (require 'server)
+  (unless (server-running-p)
+    (server-start)))
 #+end_src
 
 Run server silently and ignore file clashes ([[https://www.reddit.com/r/emacs/comments/733698/if_a_file_has_changed_on_disk_save_anyway_without/][reddit]])
@@ -106,7 +107,9 @@ Run server silently and ignore file clashes ([[https://www.reddit.com/r/emacs/co
 Do not show large file warnings for anything \le100Mb.
 The default 10Mb is too small for many pdfs.
 #+begin_src emacs-lisp
-(setq large-file-warning-threshold (* 100 1024 1024)); 100Mb
+(if init-flag 
+    (setq large-file-warning-threshold (* 100 1024 1024)); 100Mb
+  (setq large-file-warning-threshold nil))
 #+end_src
 
 Exit server silently without asking about unsaved buffers.
@@ -267,16 +270,21 @@ Speed up line movement [[https://emacs.stackexchange.com/questions/28736/emacs-p
 (setq auto-window-vscroll nil)
 #+end_src
 
-Smart garbage collect
+Smart garbage collect. 
+Though I don't want it in batch mode because it is optimised for interactive use.
 #+begin_src emacs-lisp
-(use-package gcmh
-  :straight (gcmh :type git :host gitlab :repo "koral/gcmh")
-  :hook after-init-hook)
+(when init-flag
+  (use-package gcmh
+    :straight (gcmh :type git :host gitlab :repo "koral/gcmh")
+    :hook after-init-hook))
 #+end_src
 
-And increase GC threshold on top of that (I found emacs spend >25% of time doing GC when just moving around the buffer)
+And increase GC threshold on top of that (I found emacs spend >25% of time doing GC when just moving around the buffer). 
+In batch mode, increase the threshold to make things faster.
 #+begin_src emacs-lisp
-(setq gc-cons-threshold 20000000)
+(if init-flag
+    (setq gc-cons-threshold (* 200 1000 1000))
+  (setq gc-cons-threshold (* 1 1000 1000 1000)))
 #+end_src
 
 ** Appearance
@@ -334,7 +342,8 @@ Startup message probably only makes sense for someone who is not yet familiar en
 Disabling
 
 #+begin_src emacs-lisp
-(setq inhibit-startup-message t)
+(when init-flag
+  (setq inhibit-startup-message t))
 #+end_src
 *** Frame
 :PROPERTIES:
@@ -345,19 +354,21 @@ General frame appearance configuration.
 First, disable unnecessary graphical elements
 No tool bar, no scroll bar, no menu bar.
 #+begin_src emacs-lisp
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(menu-bar-mode -1)
+(when init-flag
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (menu-bar-mode -1))
 #+END_SRC
 
 Because of the [[id:404c54f5-26eb-4ada-8a0f-c27efc714238][color scheme]] I use, the border between windows is not easy to distinguish.
 Using =window-divider-mode= to emphasise it more.
 
 #+BEGIN_SRC emacs-lisp
-(setq window-divider-default-places t
-      window-divider-default-bottom-width 2
-      window-divider-default-right-width 2)
-(window-divider-mode +1)
+(when init-flag
+  (setq window-divider-default-places t
+	window-divider-default-bottom-width 2
+	window-divider-default-right-width 2)
+  (window-divider-mode +1))
 #+END_SRC
 
 By default, emacs frame height can only be a multiple of line height.
@@ -367,7 +378,8 @@ Setting resizing to be exact instead.
 *************** END
 
 #+begin_src emacs-lisp
-(setq frame-resize-pixelwise t)
+(when init-flag
+  (setq frame-resize-pixelwise t))
 #+end_src
 *** Buffer
 
@@ -599,11 +611,13 @@ Show some text in buffer differently
     #+end_src
 - Show column numbers
   #+begin_src emacs-lisp
-(setf column-number-mode t)
+(when init-flag
+  (setq column-number-mode t))
   #+end_src
 - Show total lines
   #+begin_src emacs-lisp
-(setf size-indication-mode t)
+(when init-flag
+  (setf size-indication-mode t))
   #+end_src
 - Show boon state
   #+begin_src emacs-lisp
@@ -707,6 +721,7 @@ First, unify all the movement commands.
 In boon, it can be done by forcing global move commands in special state.
 #+BEGIN_SRC emacs-lisp
 (use-package boon
+  :if init-flag
   :defer t
   :config
   (set-keymap-parent boon-special-map boon-moves-map))
