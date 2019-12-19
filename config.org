@@ -60,7 +60,14 @@ Everything I intend to do is kept in my org files, which are automatically loade
 (defvar org-tangle-flag nil
   "Set up org tangle if not nil.")
 #+end_src
-*************** TODO make a babel :wrap snippet aka (when init-flag BODY)
+*************** DOING make a babel :wrap snippet aka (when init-flag BODY)
+SCHEDULED: <2019-12-19 Thu>
+:LOGBOOK:
+- State "DONE"       from "DOING"      [2019-12-18 Wed 18:16]
+- State "DONE"       from "NEXT"          [2019-12-18 Wed 18:16]
+CLOCK: [2019-12-18 Wed 17:05]--[2019-12-18 Wed 18:16] =>  1:11
+CLOCK: [2019-12-18 Wed 16:46]--[2019-12-18 Wed 17:04] =>  0:18
+:END:
 *************** END
 
 ** =Init.el=
@@ -322,8 +329,6 @@ Setting it up as default everywhere.
 		      :height 100
 		      :foundry "adobe"
 		      :family "source code pro"))
-;; :foundry "misc"
-;; :family "fixed"))
   #+end_src
 
 The colour of secondary selection in the theme is the same colour with some symbols in my =org-agenda=.
@@ -477,7 +482,9 @@ sudo emerge -a noto dejavu quivira symbola
 :PROPERTIES:
 :ID:       ec85fac4-8fad-4adf-a159-2219ace7e7d7
 :END:
+
 Show some text in buffer differently
+
 ***** Page break shown as lines
 :PROPERTIES:
 :ID:       6c1e16d6-7f4e-41e5-99a8-13fac4eab2a3
@@ -489,6 +496,7 @@ Show some text in buffer differently
   :diminish page-break-lines-mode
   :config (global-page-break-lines-mode))
 #+end_src
+
 ***** NEXT Pretty symbols
 :PROPERTIES:
 :ID:       315191d1-6edf-4c10-a1fe-0fb70885fbe1
@@ -563,6 +571,7 @@ Show some text in buffer differently
 				    ))))
 
 #+end_src
+
 ***** Latex pretty symbols
 :PROPERTIES:
 :ID:       bdf24c4b-681c-4286-86cd-e81f63b94ec0
@@ -577,6 +586,7 @@ Show some text in buffer differently
   :config
   (global-prettify-symbols-mode t))
 #+end_src
+
 *** TODO Mode line
 :PROPERTIES:
 :ID:       ca75c464-f35c-43ed-a90e-d78d4cfaa99a
@@ -600,6 +610,7 @@ Show some text in buffer differently
     (sml/setup)))
 
 (use-package spaceline
+  :if init-flag
   :straight t
   :init
   (setq powerline-default-separator 'arrow-fade
@@ -651,6 +662,7 @@ Show some text in buffer differently
 #+end_src
 
 Since I wrap the default movement commands into custom functions (see [[id:0fe0bca3-fb51-4e0c-8b35-79a5e92975d6][Modal setup]]), I need to make these custom commands trigger =eldoc= information update.
+
 #+begin_src emacs-lisp
 (when init-flag
   (mapc #'eldoc-add-command '(meta-up meta-up-element meta-down meta-down-element meta-backward meta-backward-element meta-forward meta-forward-element meta-scroll-down meta-scroll-up self-insert-command)))
@@ -690,10 +702,12 @@ This section contains customisation relevant to actions associated with running 
 :END:
 - enforce =y-or-n-p= everywhere
 - do not use graphical dialogues
+
   #+begin_src emacs-lisp
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq use-dialog-box nil)
   #+end_src
+
 *** Key bindings
 At some point, a got very annoyed about distance between =C-n=, =C-p=, =C-f=, and =C-b= and did not want to move my hand all the way to arrow keys.
 So, I use modal editing  now, which allows me to move around using the keys, which are close to each other.
@@ -767,6 +781,7 @@ In boon, it can be done by forcing global move commands in special state.
 
 ;;; Code:
 (require 'seq)
+(require 'dash)
 
 (defun meta-functions--process-args-1 (args &optional recursive)
   "Return list of ((sub-body-symbol condition-func|mode-symbol number-elements-in-args) ...) in front of ARGS."
@@ -967,6 +982,7 @@ SCHEDULED: <2019-11-21 Thu>
 :SHOWFROMDATE: 2019-12-11
 :END:
 :LOGBOOK:
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
 CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
 CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
 CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
