@@ -990,6 +990,23 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 :END:
 *************** END
 
+Define the most basic movement commands:
+ - occur :: interactive search in buffer
+
+*************** TODO Move the editing meta-commands to editing section
+*************** END
+
+ - goto :: interactive go to a place in buffer
+
+ - down/up :: move down/up the line
+
+ - down-element/up-element :: move down/up to the next multi-line buffer element
+
+ - forward/backward :: move forward/backward by smallest possible element in the buffer
+
+ - forward-element/backward-element :: move forward/backward by second smallest element in the buffer
+
+ - forward-sexp/backward-sexp :: move forward/backward by an element, which typically takes less then a single line
 
 #+begin_src emacs-lisp
 (use-package meta-functions
