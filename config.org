@@ -1081,6 +1081,7 @@ It should be noted, that the same can be done via setting the proper bindings fo
 Also, I do not like default implementation of =boon-special-mode-p=, which force setting special mode for terminal-modes. I prefer to rewrite it
 #+BEGIN_SRC emacs-lisp
 (use-package boon
+  :if init-flag
   :defer t
   :config
   (define-advice boon-special-mode-p (:around (oldfun) force-special-mode-list-only)
@@ -1094,14 +1095,15 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
-  :straight t
-  )
+  :if init-flag
+  :straight t)
 #+END_SRC
 **** Ignore some system keybindings, which are used in my WM (annoying unknown keybinding error)
 :PROPERTIES:
 :ID:       af77c219-c181-4534-bdfc-325616965ddc
 :END:
 #+begin_src emacs-lisp
+(when init-flag
 (global-set-key (kbd "<XF86MonBrightnessUp>") #'ignore)
 (global-set-key (kbd "<XF86MonBrightnessDown>") #'ignore)
 (global-set-key (kbd "S-_") #'ignore)
@@ -1119,11 +1121,12 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 
 https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_thread/ehcg919/
 #+begin_src emacs-lisp
+(when init-flag
 ;; free up blocked keys (GUI only)
 ;; add to your init.el
 (define-key input-decode-map [?\C-m] [C-m])
 (define-key input-decode-map [?\C-i] [C-i])
-(define-key input-decode-map (kbd "C-[") [C-\[])
+(define-key input-decode-map (kbd "C-[") [C-\[]))
 #+end_src
 
 **** Disable some keybinding, which interfere with my setup (easy to press by mistake)
@@ -1132,8 +1135,9 @@ https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_thread/ehcg91
 :ID:       c952de1f-b5f9-4238-b01e-ff0870159694
 :END:
 #+BEGIN_SRC emacs-lisp
+(when init-flag
 (bind-key "M-u" #'ignore global-map)
-(bind-key "M-k"  #'ignore global-map)
+(bind-key "M-k"  #'ignore global-map))
 #+END_SRC
 **** Make key bindings work in Ukrainian/Russian =keymap=
 :PROPERTIES:
@@ -1192,8 +1196,12 @@ Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][
 :ID:       c822d425-3cfa-4cb7-bf1e-9ea893fbee5c
 :END:
 #+begin_src emacs-lisp
-(use-package pyim :straight t :demand t)
+(use-package pyim
+  :if init-flag
+  :straight t
+  :demand t)
 (use-package pyim-basedict
+  :if init-flag
   :after pyim
   :requires pyim
   :config
@@ -1474,6 +1482,7 @@ Interaction with Github
 
 #+BEGIN_SRC emacs-lisp
 (use-package magithub
+  :if init-flag
   :straight t
   :after (magit magit-popup)
   :init
@@ -1571,6 +1580,7 @@ Working with forges
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell
+  :if init-flag
   :config
   (defun flyspell-emacs-popup-textual (event poss word)
     "A textual flyspell popup menu.
@@ -1727,8 +1737,9 @@ abort completely with `C-g'."
 :ID:       afa67877-bede-41c1-9c44-bb168070d292
 :END:
 #+begin_src emacs-lisp
+(when init-flag
 (setf search-highlight t)
-(setf query-replace-highlight t)
+(setf query-replace-highlight t))
 #+end_src
 *** Volatile highlights - highlight actions
 :PROPERTIES:
@@ -1800,7 +1811,8 @@ abort completely with `C-g'."
 :ID:       9b629716-48c5-41c7-b34e-5e458922368b
 :END:
 #+begin_src emacs-lisp
-(put 'narrow-to-region 'disabled nil)
+(when init-flag
+  (put 'narrow-to-region 'disabled nil))
 #+end_src
 ** Search & navigation
 :PROPERTIES:
@@ -1889,6 +1901,7 @@ Hence, I define a new function - =avy-goto-word-in-line-1= to jump to any word i
 
 #+BEGIN_SRC emacs-lisp
 (use-package avy
+  :if init-flag
   :defer t
   :config
   (defun avy-goto-word-in-line-1 (char &optional arg)
@@ -1904,6 +1917,7 @@ I wrote my own =avy-goto-word-2= to move around.
 
 #+BEGIN_SRC emacs-lisp
 (use-package avy
+  :if init-flag
   :defer t
   :config
   (defun avy-goto-word-2 (char1 char2 &optional arg beg end symbol)
@@ -1991,6 +2005,7 @@ Double space convention is outdated.
 =Imenu= allows navigating through the buffer structure, according to the major mode.
 #+begin_src emacs-lisp
 (use-package imenu
+  :if init-flag
   :init
   (setq imenu-auto-rescan 't))
 #+end_src
@@ -2001,8 +2016,8 @@ Double space convention is outdated.
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package bm
+  :if init-flag
   :straight t
-  :when init-flag
   :demand t
 
   :init
@@ -2232,8 +2247,9 @@ Undo window configuration changes
 :ID:       bb7ce294-1833-43bd-a837-ab4cd73fca6b
 :END:
 #+begin_src emacs-lisp
+(when init-flag
 (global-set-key (kbd "C-x C-c") 'delete-frame)
-(global-set-key (kbd "C-x c") 'delete-frame)
+(global-set-key (kbd "C-x c") 'delete-frame))
 #+end_src
 **** Detach current window from the frame
 :PROPERTIES:
@@ -2343,7 +2359,8 @@ Undo window configuration changes
 
 Do not ask confirmation about killing buffers for deleted folders
 #+begin_src emacs-lisp
-(setq dired-clean-confirm-killing-deleted-buffers nil)
+(when init-flag
+  (setq dired-clean-confirm-killing-deleted-buffers nil))
 #+end_src
 
 Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
@@ -2377,13 +2394,14 @@ CLOCK: [2019-07-03 Wed 22:12]--[2019-07-03 Wed 22:28] =>  0:16
 :END:
 
 #+BEGIN_SRC emacs-lisp
-(use-package dired+)
+(use-package dired+ :if init-flag)
 #+END_SRC
 
 - do not use =dired+= mode-line. Too much performance degradation
 
 #+begin_src emacs-lisp
-(remove-hook 'dired-after-readin-hook #'diredp-nb-marked-in-mode-name)
+(when init-flag
+  (remove-hook 'dired-after-readin-hook #'diredp-nb-marked-in-mode-name))
 #+end_src
 
 ****** NEXT =Image-dired=
@@ -2394,6 +2412,7 @@ CLOCK: [2019-07-03 Wed 22:12]--[2019-07-03 Wed 22:28] =>  0:16
 
 #+begin_src emacs-lisp
 (use-package image-dired
+  :if init-flag
   :config
   (unbind-key "o" image-map)
   (use-package meta-functions
@@ -2410,37 +2429,38 @@ CLOCK: [2019-07-03 Wed 22:12]--[2019-07-03 Wed 22:28] =>  0:16
 :ID:       61a29cb9-8c13-4e10-979d-144866c4d122
 :END:
 #+begin_src emacs-lisp
-(defun xah-open-in-external-app ()
-  "Open the current file or dired marked files in external app.
+(when init-flag
+  (defun xah-open-in-external-app ()
+    "Open the current file or dired marked files in external app.
 The app is chosen from your OS's preference.
 URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
 Version 2016-10-15"
-  (interactive)
-  (let* ((-file-list
-	  (if (or (string-equal major-mode "dired-mode")
-		  (string-equal major-mode "sr-mode")
-		  )
-	      (or (dired-get-marked-files)
-		  (dired-get-filename)
-		  )
-	    (list (buffer-file-name))))
-	 (-do-it-p (if (<= (length -file-list) 5)
-		       t
-		     (y-or-n-p "Open more than 5 files? "))))
-    (when -do-it-p
-      (cond
-       ((string-equal system-type "windows-nt")
-	(mapc (lambda (-fpath) (w32-shell-execute "open"
-						  (replace-regexp-in-string "/" "\\" -fpath t t)))
-	      -file-list))
-       ((string-equal system-type "darwin")
-	(mapc (lambda (-fpath) (shell-command (concat "open "
-						      (shell-quote-argument -fpath))))
-	      -file-list))
-       ((string-equal system-type "gnu/linux")
-	(mapc (lambda (-fpath) (let ((process-connection-type nil))
-				 (start-process "" nil "mimeopen" -fpath)))
-	      -file-list))))))
+    (interactive)
+    (let* ((-file-list
+	    (if (or (string-equal major-mode "dired-mode")
+		    (string-equal major-mode "sr-mode")
+		    )
+		(or (dired-get-marked-files)
+		    (dired-get-filename)
+		    )
+	      (list (buffer-file-name))))
+	   (-do-it-p (if (<= (length -file-list) 5)
+			 t
+		       (y-or-n-p "Open more than 5 files? "))))
+      (when -do-it-p
+	(cond
+	 ((string-equal system-type "windows-nt")
+	  (mapc (lambda (-fpath) (w32-shell-execute "open"
+					       (replace-regexp-in-string "/" "\\" -fpath t t)))
+		-file-list))
+	 ((string-equal system-type "darwin")
+	  (mapc (lambda (-fpath) (shell-command (concat "open "
+						   (shell-quote-argument -fpath))))
+		-file-list))
+	 ((string-equal system-type "gnu/linux")
+	  (mapc (lambda (-fpath) (let ((process-connection-type nil))
+			      (start-process "" nil "mimeopen" -fpath)))
+		-file-list)))))))
 #+end_src
 ****** Async operations
 :PROPERTIES:
@@ -2453,10 +2473,10 @@ Version 2016-10-15"
 
 #+BEGIN_SRC emacs-lisp
 (use-package async
-  :if init-flag
   :straight t
   :config
   (use-package dired
+    :if init-flag
     :defer t
     :config
     (use-package dired-async
@@ -2537,20 +2557,12 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 
 #+begin_src emacs-lisp
 (use-package treemacs-icons-dired
+  :if init-flag
   :after dired
   :straight t
   :config (treemacs-icons-dired-mode))
 #+end_src
 
-**** FTP
-:PROPERTIES:
-:CREATED:  [2018-12-07 Fri 14:58]
-:ID:       54e5a53e-cebe-4449-a854-27bd586ca55d
-:END:
-
-#+begin_src emacs-lisp
-(setq ange-ftp-dumb-unix-host-regexp "58\\.206\\.96\\.91")
-#+end_src
 *** NEXT Hyperbole
 :PROPERTIES:
 :CREATED:  [2019-03-21 Thu 13:52]
@@ -2562,6 +2574,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 
 #+begin_src emacs-lisp
 (use-package hyperbole
+  :if init-flag
   :straight t
   :disabled
   :config
@@ -2577,6 +2590,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 
 #+begin_src emacs-lisp
 (use-package helm-org-rifle
+  :if init-flag
   :straight t
   :bind (:map boon-goto-map
 	      ("P" . helm-org-rifle-agenda-files))
@@ -2624,6 +2638,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package boon
+  :if init-flag
   :defer t
   :config
   (bind-key "M-v" 'boon-open-line-and-insert boon-command-map))
@@ -2660,7 +2675,8 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :ID:       703f08dd-3ad9-4eba-a60e-2ad4de642375
 :END:
 #+begin_src emacs-lisp
-(bind-key* "C-<tab>" 'indent-region)
+(when init-flag
+  (bind-key* "C-<tab>" 'indent-region))
 #+end_src
 *** Aggressive indent
 :PROPERTIES:
@@ -2679,11 +2695,12 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :ID:       c36d8b82-50ab-4097-a93a-56cbcf376cee
 :END:
 #+begin_src emacs-lisp
-(bind-keys ("C-M-h" . backward-kill-word)
-	   ("C-h" . backward-delete-char-untabify)
-           :map isearch-mode-map
-	   ("C-h" . isearch-delete-char)
-           ("C-M-h" . isearch-delete-char))
+(when init-flag
+  (bind-keys ("C-M-h" . backward-kill-word)
+	     ("C-h" . backward-delete-char-untabify)
+             :map isearch-mode-map
+	     ("C-h" . isearch-delete-char)
+             ("C-M-h" . isearch-delete-char)))
 (use-package boon
   :if init-flag
   :defer t
@@ -2755,18 +2772,16 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 		("<RET>" . meta-new-line)
                 ("C-M-j" . meta-insert-enclosure-new-line)
                 ("C-J" . meta-insert-active-enclosure-new-line))))
-
-
 #+end_src
 *** Do no yank with mouse, but use Shift-Ins to yank the primary selection
 :PROPERTIES:
 :ID:       88a3703a-21fe-47a1-9b8c-bce7fdb5d10a
 :END:
 #+begin_src emacs-lisp
-;; (setq mouse-yank-at-point t)
-(bind-key "<S-insert>" (lambda () (interactive)
-			 (insert (gui-get-primary-selection))))
-(bind-key "<mouse-2>" #'ignore)
+(when init-flag
+  (bind-key "<S-insert>" (lambda () (interactive)
+			   (insert (gui-get-primary-selection))))
+  (bind-key "<mouse-2>" #'ignore))
 #+end_src
 *** Open files as root
 :PROPERTIES:
@@ -2883,6 +2898,7 @@ Never recover undo if the buffer is modified.
 
 #+begin_src emacs-lisp
 (use-package undohist
+  :if init-flag
   :straight (undohist :type git :host github :repo "clemera-dev/undohist")
   :init
   (define-advice undohist-recover-1 (:around (oldfun &rest args) noask)
@@ -2925,6 +2941,7 @@ Never recover undo if the buffer is modified.
 - State "CANCELLED"  from              [2017-12-19 Tue 08:53]
 :END:
 #+begin_src emacs-lisp
+(when init-flag
 (setq debug-on-error t)
 (setq debug-on-quit nil)
 (setq debug-ignored-errors '(beginning-of-line
@@ -2948,8 +2965,7 @@ Never recover undo if the buffer is modified.
 			     "use-package: Unrecognized keyword"
 			     "No more buttons"
                              "No command bound to"
-			     )
-      )
+			     )))
 #+end_src
 *** Debugger key bindings
 :PROPERTIES:
@@ -3010,7 +3026,9 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 :END:
 
 #+begin_src emacs-lisp
-(use-package lorem-ipsum :straight t)
+(use-package lorem-ipsum
+  :if init-flag
+  :straight t)
 #+end_src
 
 ** Programming & emacsing
@@ -3070,10 +3088,10 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 :END:
 Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.201900474][emacswiki]]). Specifically, the package improves the highlighting.
 #+begin_src emacs-lisp
-  (use-package info+
-    :disabled
-    :straight (emacswiki.org :type git :host github :repo "emacsmirror/emacswiki.org")
-    )
+(use-package info+
+  :if init-flag
+  :disabled
+  :straight (emacswiki.org :type git :host github :repo "emacsmirror/emacswiki.org"))
 #+end_src
 
 **** Symbol&info lookup
@@ -3094,25 +3112,27 @@ The default =elisp= info search does not include many useful libraries like =cl-
 I rely on the search so much that I, for example, did not even know about =cl-lib= for a long time and still struggling to use it efficiently.
 Expanding =helm= completion to include everything.
  #+begin_src emacs-lisp
+(when init-flag
 ;;Modified from https://www.reddit.com/r/emacs/comments/e5dzv6/weekly_tipstricketc_thread/f9xug5q/
-(defun helm-info-elisp-and-libs ()
-  "Helm for Emacs, Elisp, and CL-library info pages."
-  (interactive)
-  (helm :sources '(helm-source-info-dash
-		   helm-source-info-eieio
-		   helm-source-info-elisp
-                   helm-source-info-cl)))
+  (defun helm-info-elisp-and-libs ()
+    "Helm for Emacs, Elisp, and CL-library info pages."
+    (interactive)
+    (helm :sources '(helm-source-info-dash
+		     helm-source-info-eieio
+		     helm-source-info-elisp
+                     helm-source-info-cl))))
  #+end_src
 
 Similarly, many emacs features are hidden in separate info nodes.
  #+begin_src emacs-lisp
-(defun helm-info-emacs-and-extra ()
-  "Helm for Emacs, Elisp, and CL-library info pages."
-  (interactive)
-  (helm :sources '(helm-source-info-emacs
-                   helm-source-info-autotype
-                   helm-source-info-magit
-                   helm-source-info-tramp)))
+(when init-flag
+  (defun helm-info-emacs-and-extra ()
+    "Helm for Emacs, Elisp, and CL-library info pages."
+    (interactive)
+    (helm :sources '(helm-source-info-emacs
+                     helm-source-info-autotype
+                     helm-source-info-magit
+                     helm-source-info-tramp))))
  #+end_src
 
 For the =elisp= built-in docstrings, =helpful= package extension with very useful.
@@ -3169,7 +3189,9 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 :END:
 
 #+begin_src emacs-lisp
-(use-package tldr :straight t)
+(use-package tldr
+  :if init-flag
+  :straight t)
 #+end_src
 
 **** Helpful - better help buffers
@@ -3202,56 +3224,11 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 :END:
 
 #+begin_src emacs-lisp
-  (use-package bug-hunter :straight t)
-#+end_src
-
-*** Show elisp result in overlay
-:PROPERTIES:
-:CREATED:  [2019-07-20 Sat 19:34]
-:ID:       35974311-ca9b-4626-a0eb-47294ccb37b2
-:END:
-
-#+begin_src emacs-lisp
-(use-package eros
+(use-package bug-hunter
   :if init-flag
-  :straight t
-  :hook (lisp-mode lisp-interaction-mode))
+  :straight t)
 #+end_src
 
-*** Execute current buffer (c++,python,bash,...)
-:PROPERTIES:
-:ID:       a57244bb-a617-44b4-a806-7cff82a86ac7
-:END:
-#+begin_src emacs-lisp
-(use-package quickrun
-  :if init-flag
-  :straight t
-  :bind (
-	 ("<f10>" . quickrun)
-	 ("<C-XF86Search>" . quickrun-with-arg)
-	 ("<C-M-XF86Search>" . quickrun-shell)
-	 ("<C-XF86Explorer>" . quickrun-region)
-	 ("<C-M-XF86Explorer>" . quickrun-replace-region)
-	 ("<f12>" . helm-quickrun)))
-#+end_src
-*** Improved interactive evaluation of elisp code
-:PROPERTIES:
-:CREATED:  [2018-07-14 Sat 00:42]
-:ID:       08ca8dd5-a692-470f-97fd-5e46f8255a90
-:END:
-1. Evaluating Quoted Expressions
-2. Evaluating Function Symbols
-3. Redefining Variables
-4. Default Expressions to Evaluate
-5. Editing Default Expressions
-
-[[https://github.com/rswgnu/rsw-elisp]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package rsw-elisp
-  :config
-  (rsw-elisp-enable))
-#+END_SRC
 *** Elisp coding
 :PROPERTIES:
 :CREATED:  [2019-07-08 Mon 20:50]
@@ -3289,16 +3266,94 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 
 Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 #+begin_src emacs-lisp
-(when init-flag
-  (defmacro measure-time (&rest body)
-    "Measure and return the running time of the code block."
-    (declare (indent defun))
-    ;; Fresh garbage collection before making any measurements.
-    (garbage-collect)
-    (let ((start (make-symbol "start")))
-      `(let ((,start (float-time)))
-	 ,@body
-	 (- (float-time) ,start)))))
+(defmacro measure-time (&rest body)
+  "Measure and return the running time of the code block."
+  (declare (indent defun))
+  ;; Fresh garbage collection before making any measurements.
+  (garbage-collect)
+  (let ((start (make-symbol "start")))
+    `(let ((,start (float-time)))
+       ,@body
+       (- (float-time) ,start))))
+#+end_src
+**** Show elisp result in overlay
+:PROPERTIES:
+:CREATED:  [2019-07-20 Sat 19:34]
+:ID:       35974311-ca9b-4626-a0eb-47294ccb37b2
+:END:
+
+#+begin_src emacs-lisp
+(use-package eros
+  :if init-flag
+  :straight t
+  :hook (lisp-mode lisp-interaction-mode))
+#+end_src
+
+**** Improved interactive evaluation of elisp code
+:PROPERTIES:
+:CREATED:  [2018-07-14 Sat 00:42]
+:ID:       08ca8dd5-a692-470f-97fd-5e46f8255a90
+:END:
+1. Evaluating Quoted Expressions
+2. Evaluating Function Symbols
+3. Redefining Variables
+4. Default Expressions to Evaluate
+5. Editing Default Expressions
+
+[[https://github.com/rswgnu/rsw-elisp]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package rsw-elisp
+  :if init-flag
+  :config
+  (rsw-elisp-enable))
+#+END_SRC
+**** =Paredit= - read my mind when I write elisp
+:PROPERTIES:
+:CREATED:  [2019-12-20 Fri 00:09]
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-21 Sat 15:31]
+:END:
+*************** NEXT look at the editing commands
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2019-12-20 Fri 23:59]
+:END:
+*************** END
+*************** NEXT make it work well with meta-functions
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2019-12-20 Fri 23:59]
+:END:
+*************** END
+#+begin_src emacs-lisp :tangle no
+(use-package paredit
+  :if init-flag
+  :straight t
+  :hook ((emacs-lisp-mode lisp-interaction-mode) . paredit-mode)
+  :config
+  (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
+  (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-backward-slurp-sexp)
+  (bind-keys :map emacs-lisp-mode-map
+	     ("M-o" . paredit-forward-slurp-sexp)
+             ("M-i" . paredit-forward-slurp-sexp))
+  )
+#+end_src
+
+*** Execute current buffer (c++,python,bash,...)
+:PROPERTIES:
+:ID:       a57244bb-a617-44b4-a806-7cff82a86ac7
+:END:
+#+begin_src emacs-lisp
+(use-package quickrun
+  :if init-flag
+  :straight t
+  :bind (
+	 ("<f10>" . quickrun)
+	 ("<C-XF86Search>" . quickrun-with-arg)
+	 ("<C-M-XF86Search>" . quickrun-shell)
+	 ("<C-XF86Explorer>" . quickrun-region)
+	 ("<C-M-XF86Explorer>" . quickrun-replace-region)
+	 ("<f12>" . helm-quickrun)))
 #+end_src
 *** Gnuplot
 :PROPERTIES:
@@ -3331,21 +3386,22 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 :ID:       a0515bfd-07df-418a-90a2-5515b1a4deb3
 :END:
 #+begin_src emacs-lisp
-(setq TeX-view-program-list '(("pdf tools refresh" (lambda() (pdf-tools-install)
-						     (TeX-pdf-tools-sync-view)))))
-(setq TeX-view-program-selection '((output-pdf "pdf tools refresh")))
-(setq TeX-source-correlate-start-server t)
+(when init-flag
+  (setq TeX-view-program-list '(("pdf tools refresh" (lambda() (pdf-tools-install)
+						       (TeX-pdf-tools-sync-view)))))
+  (setq TeX-view-program-selection '((output-pdf "pdf tools refresh")))
+  (setq TeX-source-correlate-start-server t)
 
-(add-hook 'TeX-after-TeX-LaTeX-command-finished-hook
-	  'TeX-revert-document-buffer)
+  (add-hook 'TeX-after-TeX-LaTeX-command-finished-hook
+	    'TeX-revert-document-buffer)
 
-(add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+  (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
 
-(add-hook 'LaTeX-mode-hook 'visual-line-mode)
-(diminish 'visual-line-mode)
-(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-(add-hook 'LaTeX-mode-hook 'variable-pitch-mode)
-(diminish 'buffer-face-mode)
+  (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+  (diminish 'visual-line-mode)
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook 'variable-pitch-mode)
+  (diminish 'buffer-face-mode))
 #+end_src
 ** Ledger
 :PROPERTIES:
@@ -3397,7 +3453,8 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 :END:
 
 #+begin_src emacs-lisp
-(add-hook 'ledger-mode-hook (lambda () (setq-local pcomplete-termination-string "")))
+(when init-flag
+  (add-hook 'ledger-mode-hook (lambda () (setq-local pcomplete-termination-string ""))))
 #+end_src
 *** Complete in steps
 :PROPERTIES:
@@ -3406,10 +3463,11 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 :END:
 
 #+begin_src emacs-lisp
-  (use-package ledger-mode
-    :defer t
-    :config
-    (setq ledger-complete-in-steps t))
+(use-package ledger-mode
+  :if init-flag
+  :defer t
+  :config
+  (setq ledger-complete-in-steps t))
 #+end_src
 
 ** Wolfram Mathematica
@@ -3477,6 +3535,7 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 
 #+begin_src emacs-lisp
 (use-package pdf-view-restore
+  :if init-flag
   :straight t
   :after pdf-tools
   :config
@@ -3545,11 +3604,12 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 It's magic
 #+begin_src emacs-lisp
 (use-package boon-powerline
+  :if init-flag
   :defer t
   :init
   (use-package pdf-view
     :config
-    (setq pdf-cache-prefetch-delay 4)))
+    (setq pdf-cache-prefetch-delay 8)))
 #+end_src
 *** Kill pdf buffer on =q=
 :PROPERTIES:
@@ -3559,6 +3619,7 @@ It's magic
 
 #+begin_src emacs-lisp
 (use-package pdf-tools
+  :if init-flag
   :defer t
   :config
   (defun yant/kill-pdf-buffer-and-quit-window ()
@@ -3586,6 +3647,7 @@ See https://lists.gnu.org/archive/html/bug-gnu-emacs/2019-11/msg01731.html for d
 Eterm is a much faster version of terminal for emacs since utilising emacs library support.
 #+begin_src emacs-lisp
 (use-package vterm
+  :if init-flag
   :straight (vterm :host github :repo "akermu/emacs-libvterm")
   :commands (vterm vterm-other-window))
 
@@ -3624,6 +3686,7 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 
 #+begin_src emacs-lisp
 (use-package eterm-256color
+  :if init-flag
   :straight t
   :hook
   (term-mode-hook . eterm-256color-mode)
@@ -3667,16 +3730,17 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 :END:
 
 #+begin_src emacs-lisp
-(defun jt-shell-sentinel (process event)
-  "Kill buffer and window on shell PROCESS termination when EVENT describe normal termination."
-  (when (and (not (process-live-p process))
-	     (string-equal event "finished\n"))
-    (let ((buf (process-buffer process)))
-      (when (buffer-live-p buf)
-	(with-current-buffer buf
-          (kill-buffer)
-          (delete-window))))))
-(add-hook 'shell-mode-hook (lambda () (set-process-sentinel (get-buffer-process (buffer-name) ) #'jt-shell-sentinel)))
+(when init-flag
+  (defun jt-shell-sentinel (process event)
+    "Kill buffer and window on shell PROCESS termination when EVENT describe normal termination."
+    (when (and (not (process-live-p process))
+	       (string-equal event "finished\n"))
+      (let ((buf (process-buffer process)))
+	(when (buffer-live-p buf)
+	  (with-current-buffer buf
+            (kill-buffer)
+            (delete-window))))))
+  (add-hook 'shell-mode-hook (lambda () (set-process-sentinel (get-buffer-process (buffer-name) ) #'jt-shell-sentinel))))
 #+end_src
 
 *** =Calc=
@@ -4357,9 +4421,10 @@ Here are some workarounds
 
 #+begin_src emacs-lisp
 (use-package footnote
-:hook message-mode-hook
-:init
-(setq footnote-prefix [(control ?c) ?f]))
+  :if init-flag
+  :hook message-mode-hook
+  :init
+  (setq footnote-prefix [(control ?c) ?f]))
 #+end_src
 ** Org mode
 :PROPERTIES:
@@ -4760,15 +4825,17 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
 :END:
 - TODO.org :: store new entries, general home and work entries, want todo some time entries
   #+begin_src emacs-lisp
-(defun gtd-open ()
-  (interactive)
-  (find-file "~/Org/TODO.org"))
+(when init-flag
+  (defun gtd-open ()
+    (interactive)
+    (find-file "~/Org/TODO.org")))
               #+end_src
 - notes.org :: all kind of generally useful information
                #+begin_src emacs-lisp
-(defun notes-open ()
-  (interactive)
-  (find-file "~/Org/notes.org"))
+(when init-flag
+  (defun notes-open ()
+    (interactive)
+    (find-file "~/Org/notes.org")))
                #+end_src
 - articles.org :: notes on research articles
 - rss.org :: rss entries for [[id:9bc385e2-0ed2-460b-875e-be9ad19144a3][Elfeed]]
@@ -4777,6 +4844,7 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
 - all of it is in =agenda_files=
 - we can add new org files and remove existing
 #+begin_src emacs-lisp
+(when init-flag
 (defun add-buffer-to-agenda-files (buffer)
   (let ((file_name (buffer-file-name buffer)))
     (with-temp-file "~/Org/agenda_files"
@@ -4821,7 +4889,7 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
 (defun remove-current-buffer-from-agenda-files ()
   (interactive)
   (remove-buffer-from-agenda-files (current-buffer))
-  )
+  ))
 #+end_src
 *** Links
 :PROPERTIES:
@@ -7007,6 +7075,7 @@ Sometimes I need to do important task, but I just hate it. I tend to do anything
 About: [[https://habrahabr.ru/post/323576/][habr]]
 #+begin_src emacs-lisp
 (use-package pomidor
+  :if init-flag
   :straight t
   :bind (([f7] . pomidor))
   :config
@@ -7862,6 +7931,7 @@ Babel is a great way to combine source code and text.
 The source code editing is usually done in a new buffer. However, I do not like the default binding =C-c C-'=. I use =C-c C-b= instead.
 
 #+begin_src emacs-lisp
+(when init-flag
 (bind-key "C-c C-b" 'org-edit-special org-mode-map)
 (bind-key "C-c C-b" 'org-edit-src-exit org-src-mode-map)
 (use-package poly-org
@@ -7977,6 +8047,7 @@ I use it to activate alternative major modes in source blocks.
 
 #+begin_src emacs-lisp
 (use-package polymode
+  :if init-flag
   :straight t
   :disabled t
   :init
@@ -8011,6 +8082,7 @@ Leaving the code below for reference.
 
 #+begin_src emacs-lisp :tangle no
 (use-package mmm-mode
+  :if init-flag
   :straight t
   :disabled
   :init
