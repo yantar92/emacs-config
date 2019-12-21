@@ -1034,6 +1034,7 @@ Define the most basic movement commands:
      (meta-backward-element "Move backward one element." backward-word)
      (meta-scroll-up "Scroll up." scroll-up)
      (meta-scroll-down "Scroll down." scroll-down)
+     (meta-recenter-top-bottom "Recenter text on scree." recenter-top-bottom)
      (meta-undo "Undo." undo)
      (meta-next-buffer "Go forward in buffer." next-buffer)
      (meta-previous-buffer "Go backward in buffer." previous-buffer)
@@ -1054,7 +1055,7 @@ It should be noted, that the same can be done via setting the proper bindings fo
   (setq boon-special-mode-list
 	'(debugger-mode edebug-mode ediff-mode org-agenda-mode cfw:calendar-mode
 			notmuch-search-mode notmuch-show-mode elfeed-search-mode
-			elfeed-show-mode pomidor-mode mingus-mode
+			notmuch-tree-mode elfeed-show-mode pomidor-mode mingus-mode
 			notmuch-hello-mode ledger-report-mode help-mode
 			dired-mode pdf-view-mode helpful-mode magit-file-mode
 			magit-status-mode magit-revision-mode
@@ -1834,7 +1835,7 @@ abort completely with `C-g'."
 	     ("U" . meta-backward-sexp)
 	     ("l" . meta-scroll-up)
 	     ("L" . meta-scroll-down)
-	     (";" . recenter-top-bottom)
+	     (";" . meta-recenter-top-bottom)
 	     ("G" . end-of-buffer)
 	     ("g" . boon-goto-map)
 	     ;;("U" . move-beginning-of-line)
@@ -2799,15 +2800,8 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
+  :if init-flag
   :config
-  (meta-defun-mapc '((meta-move-line-right "Move the line under cursor right." ignore)
-		     (meta-move-line-left "Move the line under cursor left." ignore)
-		     (meta-move-line-up "Move the line under cursor up." move-text-line-up)
-		     (meta-move-line-down "Move the line under cursor down." move-text-line-down)
-		     (meta-move-element-right "Move the element under cursor right." ignore)
-		     (meta-move-element-left "Move the element under cursor left." ignore)
-		     (meta-move-element-down "Move the element under cursor down." move-text-down)
-		     (meta-move-element-up "Move the element under cursor up." move-text-up)))
   (use-package move-text
     :if init-flag
     :straight t
@@ -2819,7 +2813,16 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 		("M-O" . meta-move-element-right)
 		("M-I" . meta-move-element-left)
 		("M-o" . meta-move-line-right)
-		("M-i" . meta-move-line-left)))
+		("M-i" . meta-move-line-left))
+    :config
+    (meta-defun-mapc '((meta-move-line-right "Move the line under cursor right." ignore)
+		       (meta-move-line-left "Move the line under cursor left." ignore)
+		       (meta-move-line-up "Move the line under cursor up." move-text-line-up)
+		       (meta-move-line-down "Move the line under cursor down." move-text-line-down)
+		       (meta-move-element-right "Move the element under cursor right." ignore)
+		       (meta-move-element-left "Move the element under cursor left." ignore)
+		       (meta-move-element-down "Move the element under cursor down." move-text-down)
+		       (meta-move-element-up "Move the element under cursor up." move-text-up))))
   :init (use-package boon))
 #+END_SRC
 *** Org mode editing
@@ -3818,23 +3821,57 @@ When listening a new band/album, I usually go through all the songs and delete w
 :END:
 #+begin_src emacs-lisp
 (use-package notmuch
-  :if init-flag
   :straight t
   :config
   (use-package boon
+    :if init-flag
     :config
     (defun yant/notmuch-show-view-html-part ()
       "Search and open html part of the message in the browser."
       (interactive)
+      (beginning-of-buffer)
+      (re-search-forward "text/html")
       (notmuch-show-view-part))
     (use-package meta-functions
       :config
+      (meta-defun meta-scroll-up :mode notmuch-tree-mode scroll-other-window)
+      (meta-defun meta-scroll-down :mode notmuch-tree-mode scroll-other-window-down)
+      (meta-defun meta-recenter-top-bottom :mode notmuch-tree-mode (with-selected-window (other-window-for-scrolling) (recenter-top-bottom)))
+      (meta-defun meta-new-line :mode notmuch-tree-mode notmuch-tree-show-message)
+      (meta-defun meta-down :mode notmuch-tree-mode notmuch-tree-next-matching-message)
+      (meta-defun meta-up :mode notmuch-tree-mode notmuch-tree-prev-matching-message)
+      (meta-defun meta-down-element :mode notmuch-tree-mode notmuch-tree-next-message)
+      (meta-defun meta-up-element :mode notmuch-tree-mode notmuch-tree-prev-message)
+
       (meta-defun meta-down :mode notmuch-search-mode notmuch-search-next-thread)
       (meta-defun meta-up :mode notmuch-search-mode notmuch-search-previous-thread)
-      (meta-defun meta-down-element :mode notmuch-show-mode notmuch-show-next-message)
-      (meta-defun meta-up-element :mode notmuch-show-mode notmuch-show-previous-message)
       (meta-defun meta-down-element :mode notmuch-search-mode notmuch-search-show-thread)
-      (meta-defun meta-up-element :mode notmuch-search-mode ignore))
+      (meta-defun meta-up-element :mode notmuch-search-mode ignore)
+      
+      (meta-defun meta-down-element :mode notmuch-show-mode (when notmuch-tree-message-window
+							      (with-selected-window (other-window-for-scrolling)
+								(meta-down)
+                                                                (select-window notmuch-tree-message-window))
+							      (notmuch-show-next-message)
+                                                              (beginning-of-buffer)))
+      (meta-defun meta-up-element :mode notmuch-show-mode (when notmuch-tree-message-window
+							    (with-selected-window (other-window-for-scrolling)
+							      (meta-up)
+                                                              (select-window notmuch-tree-message-window))
+							    (notmuch-show-previous-message))))
+
+    (defun notmuch-tree-close-and-quit ()
+      "Close the current message in notmuch-tree and quit the tree buffer."
+      (interactive)
+      (notmuch-tree-close-message-window)
+      (kill-buffer (current-buffer)))
+
+    (defun notmuch-tree-from-search-thread-and-focus-on-message ()
+      "Switch to tree view of the thread at point and activate the message window."
+      (interactive)
+      (notmuch-tree-from-search-thread)
+      (other-window 1))
+    
     (bind-keys :map notmuch-search-mode-map
 	       ("r" . notmuch-refresh-this-buffer)
 	       ("C-c C-u" . notmuch-search-unread)
@@ -3842,6 +3879,7 @@ When listening a new band/album, I usually go through all the songs and delete w
                ("C-c C-a" . notmuch-search-hide)
                ("C-c C-f" . notmuch-search-nolist)
 	       ("C-c C-S-d" . notmuch-search-delete)
+               ("<RET>" . notmuch-tree-from-search-thread-and-focus-on-message)
 	       :map notmuch-show-mode-map
 	       ("v" . yant/notmuch-show-view-html-part)
 	       ("J" . notmuch-show-next-message)
@@ -3850,7 +3888,17 @@ When listening a new band/album, I usually go through all the songs and delete w
 	       ("C-c C-d" . notmuch-show-done)
                ("C-c C-a" . notmuch-show-hide)
                ("C-c C-f" . notmuch-show-nolist)
-	       ("C-c C-S-d" . notmuch-show-delete))))
+	       ("C-c C-S-d" . notmuch-show-delete)
+               :map notmuch-tree-mode-map
+               ("v" . (lambda () (interactive) (if (window-live-p notmuch-tree-message-window)
+					      (with-selected-window notmuch-tree-message-window
+						(yant/notmuch-show-view-html-part)))))
+               ("q" . notmuch-tree-close-and-quit)
+               ("C-c C-u" . notmuch-tree-unread)
+	       ("C-c C-d" . notmuch-tree-done)
+               ("C-c C-a" . notmuch-tree-hide)
+               ("C-c C-f" . notmuch-tree-nolist)
+	       ("C-c C-S-d" . notmuch-tree-delete))))
 #+end_src
 **** =Sendmail= setup
 :PROPERTIES:
@@ -3946,55 +3994,83 @@ When listening a new band/album, I usually go through all the songs and delete w
 :ID:       54d9479f-a0a4-456f-bf4b-7adc2812c17b
 :END:
 #+begin_src emacs-lisp
-(defun notmuch-show-delete ()
-  (interactive)
-  (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
-			  (seq-difference (notmuch-show-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist" "deleted")))))
-    (when (or (member "listinbox" tags)
-	      (seq-empty-p tags)
-	      (yes-or-no-p "Really delete?"))
-      (notmuch-show-tag-message "+deleted" "-inbox" "-todo" "-listinbox"))))
+(use-package notmuch
+  :if init-flag
+  :config
+  (defun notmuch-show-delete ()
+    (interactive)
+    (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
+			    (seq-difference (notmuch-show-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist" "deleted")))))
+      (when (or (member "listinbox" tags)
+		(seq-empty-p tags)
+		(yes-or-no-p "Really delete?"))
+	(notmuch-show-tag-message "+deleted" "-inbox" "-todo" "-listinbox"))))
 
-(defun notmuch-show-unread()
-  (interactive)
-  (notmuch-show-tag-message "+unread"))
+  (defun notmuch-show-unread()
+    (interactive)
+    (notmuch-show-tag-message "+unread"))
 
-(defun notmuch-show-nolist()
-  (interactive)
-  (notmuch-show-tag-message "+inbox" "-listinbox" "+nolist"))
+  (defun notmuch-show-nolist()
+    (interactive)
+    (notmuch-show-tag-message "+inbox" "-listinbox" "+nolist"))
 
-(defun notmuch-show-done()
-  (interactive)
-  (notmuch-show-tag-message "-todo" "-inbox" "-listinbox"))
+  (defun notmuch-show-done()
+    (interactive)
+    (notmuch-show-tag-message "-todo" "-inbox" "-listinbox"))
 
-(defun notmuch-show-hide()
-  (interactive)
-  (notmuch-show-tag-message "-todo"))
+  (defun notmuch-show-hide()
+    (interactive)
+    (notmuch-show-tag-message '("-todo")))
 
-(defun notmuch-search-hide()
-  (interactive)
-  (notmuch-search-tag '("-todo")))
+  (defun notmuch-tree-unread()
+    (interactive)
+    (notmuch-tree-tag '("+unread")))
 
-(defun notmuch-search-delete ()
-  (interactive)
-  (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
-			  (seq-difference (notmuch-search-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist" "deleted")))))
-    (when (or (member "listinbox" tags)
-	      (seq-empty-p tags)
-	      (yes-or-no-p "Really delete?"))
-      (notmuch-search-tag '("+deleted" "-inbox" "-todo" "-listinbox")))))
+  (defun notmuch-tree-nolist()
+    (interactive)
+    (notmuch-tree-tag '("+inbox \"-listinbox\"") "+nolist"))
 
-(defun notmuch-search-unread()
-  (interactive)
-  (notmuch-search-tag '("+unread")))
+  (defun notmuch-tree-done()
+    (interactive)
+    (notmuch-tree-tag '("-todo" "-inbox" "-listinbox")))
 
-(defun notmuch-search-done()
-  (interactive)
-  (notmuch-search-tag '("-todo" "-inbox" "-listinbox")))
+  (defun notmuch-tree-hide()
+    (interactive)
+    (notmuch-tree-tag '("-todo")))
 
-(defun notmuch-search-nolist()
-  (interactive)
-  (notmuch-search-tag '("+inbox" "-listinbox" "+nolist")))
+  (defun notmuch-tree-delete()
+    (interactive)
+    (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
+			    (seq-difference (notmuch-tree-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist" "deleted")))))
+      (when (or (member "listinbox" tags)
+		(seq-empty-p tags)
+		(yes-or-no-p "Really delete?"))
+	(notmuch-tree-tag '("+deleted" "-inbox" "-todo" "-listinbox")))))
+
+  (defun notmuch-search-hide()
+    (interactive)
+    (notmuch-search-tag '("-todo")))
+
+  (defun notmuch-search-delete ()
+    (interactive)
+    (let ((tags (seq-remove (lambda (el) (string-match-p "[0-9]\\{4\\}" el)) ; remove year tags
+			    (seq-difference (notmuch-search-get-tags) '("inbox" "todo" "attachment" "sent" "unread" "spam" "spam_server" "maillist" "deleted")))))
+      (when (or (member "listinbox" tags)
+		(seq-empty-p tags)
+		(yes-or-no-p "Really delete?"))
+	(notmuch-search-tag '("+deleted" "-inbox" "-todo" "-listinbox")))))
+
+  (defun notmuch-search-unread()
+    (interactive)
+    (notmuch-search-tag '("+unread")))
+
+  (defun notmuch-search-done()
+    (interactive)
+    (notmuch-search-tag '("-todo" "-inbox" "-listinbox")))
+
+  (defun notmuch-search-nolist()
+    (interactive)
+    (notmuch-search-tag '("+inbox" "-listinbox" "+nolist"))))
 #+end_src
 **** Quit frame instead of bury buffer
 :PROPERTIES:
@@ -4029,196 +4105,211 @@ When listening a new band/album, I usually go through all the songs and delete w
 - inline view
 - html renderer
   #+begin_src emacs-lisp
-(custom-set-variables
- '(mm-external-terminal-program "urxvt")
- '(mm-inline-large-images-proportion 0.4)
- '(mm-inline-media-tests
-   (quote
-    (("image/p?jpeg" mm-inline-image
-      (lambda
-	(handle)
-	(mm-valid-and-fit-image-p
-	 (quote jpeg)
-	 handle)))
-     ("image/png" mm-inline-image
-      (lambda
-	(handle)
-	(mm-valid-and-fit-image-p
-	 (quote png)
-	 handle)))
-     ("image/gif" mm-inline-image
-      (lambda
-	(handle)
-	(mm-valid-and-fit-image-p
-	 (quote gif)
-	 handle)))
-     ("image/tiff" mm-inline-image
-      (lambda
-	(handle)
-	(mm-valid-and-fit-image-p
-	 (quote tiff)
-	 handle)))
-     ("image/xbm" mm-inline-image
-      (lambda
-	(handle)
-	(mm-valid-and-fit-image-p
-	 (quote xbm)
-	 handle)))
-     ("image/x-xbitmap" mm-inline-image
-      (lambda
-	(handle)
-	(mm-valid-and-fit-image-p
-	 (quote xbm)
-	 handle)))
-     ("image/xpm" mm-inline-image
-      (lambda
-	(handle)
-	(mm-valid-and-fit-image-p
-	 (quote xpm)
-	 handle)))
-     ("image/x-xpixmap" mm-inline-image
-      (lambda
-	(handle)
-	(mm-valid-and-fit-image-p
-	 (quote xpm)
-	 handle)))
-     ("image/bmp" mm-inline-image
-      (lambda
-	(handle)
-	(mm-valid-and-fit-image-p
-	 (quote bmp)
-	 handle)))
-     ("image/x-portable-bitmap" mm-inline-image
-      (lambda
-	(handle)
-	(mm-valid-and-fit-image-p
-	 (quote pbm)
-	 handle)))
-     ("text/plain" mm-inline-text identity)
-     ("text/enriched" mm-inline-text identity)
-     ("text/richtext" mm-inline-text identity)
-     ("text/x-patch" mm-display-patch-inline identity)
-     ("text/x-diff" mm-display-patch-inline identity)
-     ("application/emacs-lisp" mm-display-elisp-inline identity)
-     ("application/x-emacs-lisp" mm-display-elisp-inline identity)
-     ("application/x-shellscript" mm-display-shell-script-inline identity)
-     ("application/x-sh" mm-display-shell-script-inline identity)
-     ("text/x-sh" mm-display-shell-script-inline identity)
-     ("application/javascript" mm-display-javascript-inline identity)
-     ("text/dns" mm-display-dns-inline identity)
-     ("text/x-org" mm-display-org-inline identity)
-     ("text/html" mm-inline-text-html
-      (lambda
-	(handle)
-	mm-text-html-renderer))
-     ("text/x-vcard" mm-inline-text-vcard
-      (lambda
-	(handle)
-	(or
-	 (featurep
-	  (quote vcard))
-	 (locate-library "vcard"))))
-     ("message/delivery-status" mm-inline-text identity)
-     ("message/rfc822" mm-inline-message identity)
-     ("message/partial" mm-inline-partial identity)
-     ("message/external-body" mm-inline-external-body identity)
-     ("text/.*" mm-inline-text identity)
-     ("application/x-.?tar\\(-.*\\)?" ignore identity)
-     ("application/zip" ignore identity)
-     ("audio/wav" mm-inline-audio
-      (lambda
-	(handle)
-	(and
-	 (or
-	  (featurep
-	   (quote nas-sound))
-	  (featurep
-	   (quote native-sound)))
-	 (device-sound-enabled-p))))
-     ("audio/au" mm-inline-audio
-      (lambda
-	(handle)
-	(and
-	 (or
-	  (featurep
-	   (quote nas-sound))
-	  (featurep
-	   (quote native-sound)))
-	 (device-sound-enabled-p))))
-     ("application/pgp-signature" ignore identity)
-     ("application/x-pkcs7-signature" ignore identity)
-     ("application/pkcs7-signature" ignore identity)
-     ("application/x-pkcs7-mime" ignore identity)
-     ("application/pkcs7-mime" ignore identity)
-     ("multipart/alternative" ignore identity)
-     ("multipart/mixed" ignore identity)
-     ("multipart/related" ignore identity)
-     ("image/.*" mm-inline-image
-      (lambda
-	(handle)
-	(and
-	 (mm-valid-image-format-p
-	  (quote imagemagick))
-	 (mm-with-unibyte-buffer
-	   (mm-insert-part handle)
-	   (let
-	       ((image
-		 (ignore-errors
-		   (if
-		       (fboundp
-			(quote create-image))
-		       (create-image
-			(buffer-string)
-			(quote imagemagick)
-			(quote data-p))
-		     (mm-create-image-xemacs
-		      (mm-handle-media-subtype handle))))))
-	     (when image
-	       (setcar
-		(cdr handle)
-		(list "image/imagemagick"))
-	       (mm-image-fit-p handle)))))))
-     ("audio/.*" ignore ignore)
-     ("image/.*" ignore ignore)
-     (".*" mm-inline-text mm-readable-p))))
- '(mm-inlined-types
-   (quote
-    ("text/calendar" "image/.*" "text/.*" "message/delivery-status" "message/rfc822" "message/partial" "message/external-body" "application/emacs-lisp" "application/x-emacs-lisp" "application/pgp-signature" "application/x-pkcs7-signature" "application/pkcs7-signature" "application/x-pkcs7-mime" "application/pkcs7-mime" "application/pgp")))
- '(mm-text-html-renderer (quote w3m))
+(when init-flag
+  (custom-set-variables
+   '(mm-external-terminal-program "kitty")
+   '(mm-inline-large-images-proportion 0.4)
+   '(mm-inline-media-tests
+     (quote
+      (("image/p?jpeg" mm-inline-image
+	(lambda
+	  (handle)
+	  (mm-valid-and-fit-image-p
+	   (quote jpeg)
+	   handle)))
+       ("image/png" mm-inline-image
+	(lambda
+	  (handle)
+	  (mm-valid-and-fit-image-p
+	   (quote png)
+	   handle)))
+       ("image/gif" mm-inline-image
+	(lambda
+	  (handle)
+	  (mm-valid-and-fit-image-p
+	   (quote gif)
+	   handle)))
+       ("image/tiff" mm-inline-image
+	(lambda
+	  (handle)
+	  (mm-valid-and-fit-image-p
+	   (quote tiff)
+	   handle)))
+       ("image/xbm" mm-inline-image
+	(lambda
+	  (handle)
+	  (mm-valid-and-fit-image-p
+	   (quote xbm)
+	   handle)))
+       ("image/x-xbitmap" mm-inline-image
+	(lambda
+	  (handle)
+	  (mm-valid-and-fit-image-p
+	   (quote xbm)
+	   handle)))
+       ("image/xpm" mm-inline-image
+	(lambda
+	  (handle)
+	  (mm-valid-and-fit-image-p
+	   (quote xpm)
+	   handle)))
+       ("image/x-xpixmap" mm-inline-image
+	(lambda
+	  (handle)
+	  (mm-valid-and-fit-image-p
+	   (quote xpm)
+	   handle)))
+       ("image/bmp" mm-inline-image
+	(lambda
+	  (handle)
+	  (mm-valid-and-fit-image-p
+	   (quote bmp)
+	   handle)))
+       ("image/x-portable-bitmap" mm-inline-image
+	(lambda
+	  (handle)
+	  (mm-valid-and-fit-image-p
+	   (quote pbm)
+	   handle)))
+       ("text/plain" mm-inline-text identity)
+       ("text/enriched" mm-inline-text identity)
+       ("text/richtext" mm-inline-text identity)
+       ("text/x-patch" mm-display-patch-inline identity)
+       ("text/x-diff" mm-display-patch-inline identity)
+       ("application/emacs-lisp" mm-display-elisp-inline identity)
+       ("application/x-emacs-lisp" mm-display-elisp-inline identity)
+       ("application/x-shellscript" mm-display-shell-script-inline identity)
+       ("application/x-sh" mm-display-shell-script-inline identity)
+       ("text/x-sh" mm-display-shell-script-inline identity)
+       ("application/javascript" mm-display-javascript-inline identity)
+       ("text/dns" mm-display-dns-inline identity)
+       ("text/x-org" mm-display-org-inline identity)
+       ("text/html" mm-inline-text-html
+	(lambda
+	  (handle)
+	  mm-text-html-renderer))
+       ("text/x-vcard" mm-inline-text-vcard
+	(lambda
+	  (handle)
+	  (or
+	   (featurep
+	    (quote vcard))
+	   (locate-library "vcard"))))
+       ("message/delivery-status" mm-inline-text identity)
+       ("message/rfc822" mm-inline-message identity)
+       ("message/partial" mm-inline-partial identity)
+       ("message/external-body" mm-inline-external-body identity)
+       ("text/.*" mm-inline-text identity)
+       ("application/x-.?tar\\(-.*\\)?" ignore identity)
+       ("application/zip" ignore identity)
+       ("audio/wav" mm-inline-audio
+	(lambda
+	  (handle)
+	  (and
+	   (or
+	    (featurep
+	     (quote nas-sound))
+	    (featurep
+	     (quote native-sound)))
+	   (device-sound-enabled-p))))
+       ("audio/au" mm-inline-audio
+	(lambda
+	  (handle)
+	  (and
+	   (or
+	    (featurep
+	     (quote nas-sound))
+	    (featurep
+	     (quote native-sound)))
+	   (device-sound-enabled-p))))
+       ("application/pgp-signature" ignore identity)
+       ("application/x-pkcs7-signature" ignore identity)
+       ("application/pkcs7-signature" ignore identity)
+       ("application/x-pkcs7-mime" ignore identity)
+       ("application/pkcs7-mime" ignore identity)
+       ("multipart/alternative" ignore identity)
+       ("multipart/mixed" ignore identity)
+       ("multipart/related" ignore identity)
+       ("image/.*" mm-inline-image
+	(lambda
+	  (handle)
+	  (and
+	   (mm-valid-image-format-p
+	    (quote imagemagick))
+	   (mm-with-unibyte-buffer
+	     (mm-insert-part handle)
+	     (let
+		 ((image
+		   (ignore-errors
+		     (if
+			 (fboundp
+			  (quote create-image))
+			 (create-image
+			  (buffer-string)
+			  (quote imagemagick)
+			  (quote data-p))
+		       (mm-create-image-xemacs
+			(mm-handle-media-subtype handle))))))
+	       (when image
+		 (setcar
+		  (cdr handle)
+		  (list "image/imagemagick"))
+		 (mm-image-fit-p handle)))))))
+       ("audio/.*" ignore ignore)
+       ("image/.*" ignore ignore)
+       (".*" mm-inline-text mm-readable-p))))
+   '(mm-inlined-types
+     (quote
+      ("text/calendar" "image/.*" "text/.*" "message/delivery-status" "message/rfc822" "message/partial" "message/external-body" "application/emacs-lisp" "application/x-emacs-lisp" "application/pgp-signature" "application/x-pkcs7-signature" "application/pkcs7-signature" "application/x-pkcs7-mime" "application/pkcs7-mime" "application/pgp")))
+   '(mm-text-html-renderer (quote w3m))
 
- '(send-mail-function (quote sendmail-send-it))
- )
-(setq mm-text-html-renderer-alist '((shr . mm-shr)
-				    (w3 . mm-inline-text-html-render-with-w3)
-				    (w3m . mm-inline-text-html-render-with-w3m)
-				    (w3m-standalone . mm-inline-text-html-render-with-w3m-standalone)
-				    (gnus-w3m . gnus-article-html)
-				    (links mm-inline-render-with-file mm-links-remove-leading-blank "links" "-dump" file)
-				    (lynx mm-inline-render-with-stdin nil "qutebrowser-call.sh")
-				    (html2text mm-inline-render-with-function html2text)))
-;; Inline images?
-(setq mm-attachment-override-types '("image/.*"))
-;; No HTML mail
-(setq mm-discouraged-alternatives '("text/html" "text/richtext" "text/rtf" "application/zip" "image/vnd.djvu" "application/x-dvi" "application/postscript" ))
-;; Don't start a browser for text/html only mail
-(setq mm-automatic-display
-      '("text/plain" "text/enriched"
-	"image/.*" "message/delivery-status" "message/rfc822"
-	"text/x-patch" "application/pgp-signature" "application/emacs-lisp"))
-(setq mm-inline-large-images 'resize)
+   '(send-mail-function (quote sendmail-send-it))
+   )
+  (setq mm-text-html-renderer-alist '((shr . mm-shr)
+				      (w3 . mm-inline-text-html-render-with-w3)
+				      (w3m . mm-inline-text-html-render-with-w3m)
+				      (w3m-standalone . mm-inline-text-html-render-with-w3m-standalone)
+				      (gnus-w3m . gnus-article-html)
+				      (links mm-inline-render-with-file mm-links-remove-leading-blank "links" "-dump" file)
+				      (lynx mm-inline-render-with-stdin nil "qutebrowser-call.sh")
+				      (html2text mm-inline-render-with-function html2text)))
+  ;; Inline images?
+  (setq mm-attachment-override-types '("image/.*"))
+  ;; No HTML mail
+  (setq mm-discouraged-alternatives '("text/html" "text/richtext" "text/rtf" "application/zip" "image/vnd.djvu" "application/x-dvi" "application/postscript" ))
+  ;; Don't start a browser for text/html only mail
+  (setq mm-automatic-display
+	'("text/plain" "text/enriched"
+	  "image/.*" "message/delivery-status" "message/rfc822"
+	  "text/x-patch" "application/pgp-signature" "application/emacs-lisp"))
+  (setq mm-inline-large-images 'resize))
   #+end_src
 **** =Notmuch= hello
 :PROPERTIES:
 :ID:       645a5628-289a-4373-9668-b79e10738215
 :END:
 #+begin_src emacs-lisp
-(setq notmuch-hello-sections '(notmuch-hello-insert-header notmuch-hello-insert-saved-searches
-                                                           notmuch-hello-insert-alltags)
-      notmuch-saved-searches '((:name "todo" :query "tag:todo and tag:inbox" :sort-order newest-first)
-			       (:name "work" :query "tag:todo or tag:inbox and not tag:private" :sort-order newest-first)
-			       (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
-			       (:name "all mail" :query "*" :key "a")))
+(when init-flag
+  (setq notmuch-hello-sections '(notmuch-hello-insert-header notmuch-hello-insert-saved-searches
+                                                             notmuch-hello-insert-alltags)
+	notmuch-saved-searches '((:name "todo" :query "tag:todo and tag:inbox" :sort-order newest-first)
+				 (:name "work" :query "tag:todo or tag:inbox and not tag:private" :sort-order newest-first)
+				 (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
+				 (:name "all mail" :query "*" :key "a"))))
 #+end_src
+**** Opening large threads
+:PROPERTIES:
+:CREATED:  [2019-12-21 Sat 14:34]
+:END:
+
+Notmuch is known to have poor performance on long threads ([[notmuch:id:87fttpy0n5.fsf@mechane.wlandry.net][as reported in maillist]])
+Here are some workarounds
+
+#+begin_src emacs-lisp
+(setq-default notmuch-show-indent-content nil)
+(setq mm-text-html-renderer 'html2text)
+#+end_src
+
 **** TODO Show accept/decline buttons for calendar invitations
 :PROPERTIES:
 :ID:       1735faf3-9249-43bd-ae32-8f30500210fe
@@ -4240,13 +4331,14 @@ When listening a new band/album, I usually go through all the songs and delete w
   :if init-flag
   :defer t
   :config
-  (defun bh/capture-mail()
+  (defun capture-mail()
     "Capture mail to org mode."
     (interactive)
     (org-store-link nil)
     (org-capture nil "e")
     )
-  (bind-key "t" 'bh/capture-mail notmuch-show-mode-map))
+  (bind-key "t" 'capture-mail notmuch-show-mode-map)
+  (bind-key "t" 'capture-mail notmuch-tree-mode-map))
 #+end_src
 ***** TODO Org mode functionality when writing messages
 :PROPERTIES:
