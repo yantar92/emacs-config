@@ -9,6 +9,7 @@
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
 :END:
 :LOGBOOK:
+CLOCK: [2019-12-19 Thu 12:52]--[2019-12-19 Thu 12:53] =>  0:01
 CLOCK: [2019-12-09 Mon 20:45]--[2019-12-09 Mon 20:46] =>  0:01
 - State "NEXT"       from "NEXT"       [2018-09-06 Thu 21:10]
 CLOCK: [2018-07-23 Mon 00:16]--[2018-07-23 Mon 00:23] =>  0:07
@@ -60,9 +61,11 @@ Everything I intend to do is kept in my org files, which are automatically loade
 (defvar org-tangle-flag nil
   "Set up org tangle if not nil.")
 #+end_src
-*************** DOING make a babel :wrap snippet aka (when init-flag BODY)
-SCHEDULED: <2019-12-19 Thu>
+*************** DONE make a babel :wrap snippet aka (when init-flag BODY)
+CLOSED: [2019-12-19 Thu 12:52] SCHEDULED: <2019-12-19 Thu>
 :LOGBOOK:
+- State "DONE"       from "NEXT"          [2019-12-19 Thu 12:52]
+CLOCK: [2019-12-19 Thu 12:11]--[2019-12-19 Thu 12:52] =>  0:41
 - State "DONE"       from "DOING"      [2019-12-18 Wed 18:16]
 - State "DONE"       from "NEXT"          [2019-12-18 Wed 18:16]
 CLOCK: [2019-12-18 Wed 17:05]--[2019-12-18 Wed 18:16] =>  1:11
@@ -716,6 +719,7 @@ So, I use modal editing  now, which allows me to move around using the keys, whi
 :PROPERTIES:
 :ID:       0fe0bca3-fb51-4e0c-8b35-79a5e92975d6
 :END:
+
 Do not use =self-insert-command= by default, but bind character keys to navigation, selection, etc.
 I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 
@@ -727,7 +731,7 @@ This is defined by =boon-insert-state-major-mode-list= where the default mode is
 =boon-special-mode= is frequently useful in all kinds of major modes, like debug, org-agenda, =notmuch=, etc.
 However, many major modes use the conventional movement key bindings or their derivatives (like "n" and "p" in =org-agenda=).
 I do not like it.
-I prefer to have some minimal [[id:46fb459b-7794-4b9a-9fce-85389aba1d95][set]] of movement keys working in all the buffers.
+I prefer to have some minimal set of movement keys working in all the buffers (see below).
 It means that I need to redefine the movement commands to be able to act according to the major mode (like "n" from org-mode is bound to =org-next-line= and, hence, "j" from =org-special-map= should be also bound to =org-next-line=.
 This can be done by defining special wrapper command, which acts differently depending on the mode or buffer position, while the general result or running the command is similar (i.e. move next line in text buffer, but move next file in =dired=, or next agenda item in =org-agenda=.
 
@@ -741,13 +745,13 @@ In boon, it can be done by forcing global move commands in special state.
   (set-keymap-parent boon-special-map boon-moves-map))
 #+END_SRC
 
-
-
 *************** TODO respect interactive definitions
 *************** END
 
 *************** TODO Provide a way to prepend condition
 *************** END
+
+Second, implement the wrapper command.
 
 #+begin_src emacs-lisp :tangle ~/Git/meta-functions/meta-functions.el
 ;;; meta-functions.el --- Define meta-functions to act differently depending on major mode -*- lexical-binding: t; -*-
@@ -970,18 +974,22 @@ Otherwise, it is bound to foo%zen-fun is zen a symbol.
 ;;; meta-functions.el ends here
 #+end_src
 
+And use the wrapper command in interactive mode.
+
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
   :if init-flag
   :demand t)
 #+END_SRC
 
-*************** NEXT [#A] revise config from here
-SCHEDULED: <2019-11-21 Thu>
+*************** DOING [#A] revise config from here
+SCHEDULED: <2019-12-20 Fri>
 :PROPERTIES:
 :SHOWFROMDATE: 2019-12-11
 :END:
 :LOGBOOK:
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
 CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
 CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
 CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
@@ -1111,7 +1119,7 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 (global-set-key (kbd "S-I") #'ignore)
 (global-set-key (kbd "S-y") #'ignore)
 (global-set-key (kbd "S-u") #'ignore)
-(global-set-key (kbd "S-w") #'ignore)
+(global-set-key (kbd "S-w") #'ignore))
 #+end_src
 **** Disable terminal key aliases (I don't use console emacs anyway)
 :PROPERTIES:
@@ -1213,8 +1221,8 @@ Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][
                   pyim-probe-org-structure-template))
   (setq pyim-page-tooltip 'tooltip)
   (setq pyim-page-length 5))
-
 #+end_src
+
 
 *** Default major mode
 :PROPERTIES:
@@ -1495,7 +1503,7 @@ Interaction with Github
     "Sort ISSUES by issue number."
     (sort issues
           (lambda (a b) (> (plist-get a :number)
-			   (plist-get b :number))))))
+		      (plist-get b :number))))))
 #+END_SRC
 
 Working with forges
@@ -2760,6 +2768,9 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 :PROPERTIES:
 :ID:       ce7df944-6c64-4a7d-8e11-136237250e3c
 :END:
+*************** TODO adjust keybindings to avoid interference with WM
+*************** END
+
 #+begin_src emacs-lisp
 (define-key key-translation-map (kbd "C-j") (kbd "<RET>"))
 
@@ -3631,7 +3642,7 @@ See https://lists.gnu.org/archive/html/bug-gnu-emacs/2019-11/msg01731.html for d
     (interactive)
     (if (eq major-mode 'pdf-view-mode)
 	(progn
-	  (kill-buffer-and-window)
+	  (quit-window 'kill)
           (clear-image-cache t))
       (funcall-interactively #'quit-window)))
   (bind-key "q" #'yant/kill-pdf-buffer-and-quit-window pdf-view-mode-map))
@@ -4388,6 +4399,7 @@ Here are some workarounds
   :config
   (use-package notmuch-calendar-x))
 #+end_src
+
 **** TODO Interaction with org
 ***** Capture mail to org task
 :PROPERTIES:
@@ -5681,6 +5693,7 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 	      (f-mkdir symlinks-directory))
 	    (unless (or (f-exists-p attachments-symlink-directory)
 			(not (yant/org-task-has-attachments-p)))
+              (debug)
 	      (f-symlink attach-path (directory-file-name attachments-symlink-directory)))
 	    (when (and (f-exists-p attachments-symlink-directory)
 		       (not (yant/org-task-has-attachments-p)))
@@ -5701,7 +5714,9 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 									    default-directory)
 									entry-name)))))
 		 (if (not (f-exists-p entry-symlink-name))
-		     (f-symlink symlinks-directory (directory-file-name entry-symlink-name))
+                     (progn
+                       (debug)
+		       (f-symlink symlinks-directory (directory-file-name entry-symlink-name)))
 		   (unless (f-symlink-p entry-symlink-name)
 		     (error (format "File exists: %s" entry-symlink-name)))))))
 
@@ -5782,10 +5797,10 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
 (define-advice org-attach-reveal-in-emacs (:around (OLDFUN &rest args) reveal-symlink)
   #'org-attach-reveal@reveal-symlink)
 #+END_SRC
-
-
-
 Files, out of the folder structure, will appear in my agenda to attach them to the relevant project (unless explicitly specified in special variable).
+
+*************** TODO implement this
+*************** END
 
 ***** TODO handle cases when we need files in the same dir with the org file [[id:9dc72877-1e7b-4084-a262-6e39b08ced49][LaTeX class]]
 :PROPERTIES:
@@ -5794,9 +5809,13 @@ Files, out of the folder structure, will appear in my agenda to attach them to t
 :LOGBOOK:
 CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :END:
-***** TODO honor inherit export directory
+***** DONE honor inherit export directory
+CLOSED: [2019-12-21 Sat 20:30]
 :PROPERTIES:
 :CREATED:  [2018-07-09 Mon 13:01]
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2019-12-21 Sat 20:30]
 :END:
 ***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
 SCHEDULED: <2019-12-19 Thu>
@@ -5822,8 +5841,6 @@ SCHEDULED: <2019-12-19 Thu>
       (or attach-dir-inherited
   	  dir)))
 #+end_src
-
-
 
 **** Saving web pages into notes
 :PROPERTIES:
@@ -8040,7 +8057,7 @@ The source code editing is usually done in a new buffer. However, I do not like 
     "Run `org-edit-special' from poly-org."
     (interactive)
     (polymode-with-current-base-buffer #'funcall-interactively #'org-edit-special))
-  (bind-key "C-c C-b" #'poly-org-edit-special poly-org-mode-map))
+  (bind-key "C-c C-b" #'poly-org-edit-special poly-org-mode-map)))
 #+end_src
 
 For convenience, add =header-args= property to completion
