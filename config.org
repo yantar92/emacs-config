@@ -955,7 +955,7 @@ Otherwise, it is bound to foo%zen-fun is zen a symbol.
 							 (_ (eq major-mode (eval el))))))
 						subconditions
 						t)
-				(eval `(funcall-interactively ,body))
+				(eval `(call-interactively ,body))
                                 t)))
 			  ',conditions)))) ; define meta-function
      (function-put ',name 'meta-functions-cond-plist conditions)
