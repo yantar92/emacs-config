@@ -5569,10 +5569,10 @@ For the implementation, the idea is keeping all the actual attachments in a comm
 #+begin_src emacs-lisp
 (setq org-attach-method 'mv)
 (setq org-attach-store-link-p 't)
-(setq org-attach-id-dir "~/.data/")
 (require 'f)
+(setq org-attach-id-dir "~/.data/")
 (setq org-id-locations-file
-      (f-join org-attach-directory ".org-id-locations"))
+      (f-join org-attach-id-dir ".org-id-locations"))
 #+end_src
 
 The above does not follow the task hierarchy of the tasks.
