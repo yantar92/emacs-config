@@ -7428,7 +7428,7 @@ All these templates generally record the creation time in =:CREATED:=
 		("M" "Scheduled event/Meeting" entry (file "~/Org/schedule.org")
 		 "* %?\n%^T\n")
                 ("r" "Rss entry" entry (file "~/Org/inbox.org")
-                 "* [[%:link][%^{Title|%:description}]]\n:PROPERTIES:\n:CREATED: %U\n:END:")
+                 "* [[%:link][%^{Title|%:description}]] :rss:\n:PROPERTIES:\n:CREATED: %U\n:END:")
 		("C" "Contacts" entry (file "~/Org/contacts.org")
 		 "* %(org-contacts-template-name)
   :PROPERTIES:
