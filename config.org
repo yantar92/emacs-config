@@ -2165,7 +2165,10 @@ I use them to manage windows.
 	 ("M-3" . split-window-right)
 	 ("M-4" . (lambda () (interactive)
 		    (split-window-right)
-                    (call-interactively #'clone-indirect-buffer-other-window)))))
+                    (call-interactively #'clone-indirect-buffer-other-window))))
+  :config
+  (bind-key*  "C-M-o" #'other-window) ; it's really often used: http://ergoemacs.org/emacs/emacs_split_windows.html
+  )
 #+end_src
 
 Sometimes, there is a need to split window vertically or horizontally, but I make a mistake and split in wrong direction.
