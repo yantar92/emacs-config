@@ -5862,15 +5862,16 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 	      ("C-c C-S-u a" . org-web-tools-archive-attach)
 	      ("C-c C-S-u o" . org-web-tools-archive-view)
 	      ("C-c C-S-u i" . org-web-tools-insert-web-page-as-entry))
-  :requires org-web-tools-archive
+  :init (use-package org-web-tools-archive)
   :config
   (setq org-web-tools-archive-fn #'org-web-tools-archive--wget-tar)
   (setq org-web-tools-archive-wget-options
-	(-remove-item  "--execute robots=off" org-web-tools-archive-wget-options))
+	(append (-remove-item  "--execute robots=off" org-web-tools-archive-wget-options) (list "--max-redirect=100")))
   (setq org-web-tools-archive-wget-html-only-options
-	(-remove-item  "--execute robots=off" org-web-tools-archive-wget-html-only-options))
+	(append (-remove-item  "--execute robots=off" org-web-tools-archive-wget-html-only-options) (list "--max-redirect=100")))
   (setq org-web-tools-pandoc-sleep-time 1.0))
 #+end_src
+
 **** =_epilogue=
 :PROPERTIES:
 :ID:       fdd42cf4-96cb-4c9f-b855-3fb8437f9d9c
