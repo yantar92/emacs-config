@@ -29,13 +29,7 @@ This is me
 (setq user-full-name "Ihor Radchenko")
 (setq user-mail-address "yantar92@gmail.com")
 #+end_src
-*************** CANCELLED Just use threads instead                        :CANCELLED:
-CLOSED: [2019-12-18 Wed 16:27]
-:LOGBOOK:
-- State "CANCELLED"  from "TODO"          [2019-12-18 Wed 16:27] \\
-  Threads will always slow down emacs. It often make sense to just run separate process
-:END:
-*************** END
+
 
 I am not really doing much programming, but rather use Emacs as knowledge base management tool.
 Most of time, I do not even edit or type things directly, but read through the files. 
@@ -61,17 +55,7 @@ Everything I intend to do is kept in my org files, which are automatically loade
 (defvar org-tangle-flag nil
   "Set up org tangle if not nil.")
 #+end_src
-*************** DONE make a babel :wrap snippet aka (when init-flag BODY)
-CLOSED: [2019-12-19 Thu 12:52] SCHEDULED: <2019-12-19 Thu>
-:LOGBOOK:
-- State "DONE"       from "NEXT"          [2019-12-19 Thu 12:52]
-CLOCK: [2019-12-19 Thu 12:11]--[2019-12-19 Thu 12:52] =>  0:41
-- State "DONE"       from "DOING"      [2019-12-18 Wed 18:16]
-- State "DONE"       from "NEXT"          [2019-12-18 Wed 18:16]
-CLOCK: [2019-12-18 Wed 17:05]--[2019-12-18 Wed 18:16] =>  1:11
-CLOCK: [2019-12-18 Wed 16:46]--[2019-12-18 Wed 17:04] =>  0:18
-:END:
-*************** END
+
 
 ** =Init.el=
 :PROPERTIES:
@@ -5691,7 +5675,7 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 	      (f-mkdir symlinks-directory))
 	    (unless (or (f-exists-p attachments-symlink-directory)
 			(not (yant/org-task-has-attachments-p)))
-              (debug)
+              ;;(debug)
 	      (f-symlink attach-path (directory-file-name attachments-symlink-directory)))
 	    (when (and (f-exists-p attachments-symlink-directory)
 		       (not (yant/org-task-has-attachments-p)))
@@ -5713,7 +5697,7 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 									entry-name)))))
 		 (if (not (f-exists-p entry-symlink-name))
                      (progn
-                       (debug)
+                       ;;(debug)
 		       (f-symlink symlinks-directory (directory-file-name entry-symlink-name)))
 		   (unless (f-symlink-p entry-symlink-name)
 		     (error (format "File exists: %s" entry-symlink-name)))))))
@@ -5806,14 +5790,6 @@ Files, out of the folder structure, will appear in my agenda to attach them to t
 :END:
 :LOGBOOK:
 CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
-:END:
-***** DONE honor inherit export directory
-CLOSED: [2019-12-21 Sat 20:30]
-:PROPERTIES:
-:CREATED:  [2018-07-09 Mon 13:01]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2019-12-21 Sat 20:30]
 :END:
 ***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
 SCHEDULED: <2019-12-19 Thu>
@@ -6869,7 +6845,6 @@ The solution is to show the task contents of every task at point in agenda.
     "Show contents of the org-entry at point when there is any."
     (org-agenda-redo@org-quick-peek--hide-all)
     (org-quick-peek--agenda-show :quiet t))
-  
   )
 #+end_src
 
