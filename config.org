@@ -4392,7 +4392,6 @@ Here are some workarounds
 
 #+begin_src emacs-lisp
 (setq-default notmuch-show-indent-content nil)
-(setq mm-text-html-renderer 'html2text)
 #+end_src
 
 **** TODO Show accept/decline buttons for calendar invitations
