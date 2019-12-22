@@ -5517,7 +5517,7 @@ CLOCK: [2019-04-24 Wed 15:43]--[2019-04-24 Wed 15:46] =>  0:03
 (use-package org-attach
   :config
 #+end_src
-**** Default attachment directory
+**** Default attachment directory + multi-selection for attach
 :PROPERTIES:
 :CREATED:  [2018-09-28 Fri 16:12]
 :ID:       3a0ca96a-3ce5-4f72-ba38-16990342fb5a
@@ -5530,20 +5530,21 @@ The new files are usually coming from my Downloads (=yant/org-attach-default-sou
 (defvar yant/org-attach-default-source "~/Downloads/"
   "Default directory to attach the files from.")
 
-(define-advice org-attach-attach (:around (oldfun &rest args) start-from-default-directory)
+(define-advice org-attach-attach (:around (oldfun files &rest args) start-from-default-directory)
   "Look for new attachments from `yant/org-attach-default-source' directory instead of `default-directory'."
   (interactive
    (list
-    (directory-file-name (read-file-name "File to keep as an attachment:"
-					 (or (progn
-					       (require 'dired-aux)
-					       (dired-dwim-target-directory))
-					     (and yant/org-attach-default-source
-						  (f-slash yant/org-attach-default-source))
-					     default-directory)))
+    (mapcar #'directory-file-name (helm-read-file-name "File to keep as an attachment:"
+						       :initial-input (or (progn
+									    (require 'dired-aux)
+									    (dired-dwim-target-directory))
+									  (and yant/org-attach-default-source
+									       (f-slash yant/org-attach-default-source))
+									  default-directory)
+						       :marked-candidates t))
     current-prefix-arg
     nil))
-  (apply oldfun args))
+  (mapc (lambda (file) (apply oldfun file args)) files))
 #+END_SRC
 
 **** Make it possible to attach directories (not only files)
