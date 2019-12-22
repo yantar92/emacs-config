@@ -148,6 +148,13 @@ emerge -v watchexec
 *************** TODO Actually, this snippet might be useless on a fresh system. Need to add some check to indicate that missing package is a problem
 *************** END
 
+First, make sure that =straight.el= can fetch remote urls from everywhere.
+Set up the askpass.
+
+#+begin_src emacs-lisp
+(setenv "SSH_ASKPASS" "ssh-askpass-fullscreen")
+#+end_src
+
 And tell =straight.el= to use file watcher
 
 #+begin_src emacs-lisp
