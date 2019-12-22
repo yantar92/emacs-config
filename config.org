@@ -5206,7 +5206,6 @@ It also looks at the text of the entry itself."
 		(with-current-buffer buffer
 		  (setq trg (and (string-match org-link-bracket-re l)
 				 (match-string 1 l)))
-		  ;;I do not really understand it. What kind of hacky condition is it??
 		  (if (or (not trg) (string-match org-link-any-re trg))
 		      (org-with-wide-buffer
 		       (goto-char marker)
@@ -5219,15 +5218,7 @@ It also looks at the text of the entry itself."
 		    (goto-char marker)
 		    (when (search-forward l nil lkend)
 		      (goto-char (match-beginning 0))
-		      (org-open-at-point)))
-		  (string-match org-link-any-re trg)
-		  (switch-to-buffer-other-window buffer)
-		  (widen)
-		  (goto-char marker)
-		  (when (search-forward l nil lkend)
-		    (goto-char (match-beginning 0))
-		    (org-open-at-point))
-		  ))
+		      (org-open-at-point)))))
 	      lk))
      ((or (org-in-regexp (concat "\\(" org-link-bracket-re "\\)"))
 	  (save-excursion
