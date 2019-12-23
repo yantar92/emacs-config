@@ -3912,12 +3912,19 @@ When listening a new band/album, I usually go through all the songs and delete w
       (notmuch-show-view-part))
     (use-package meta-functions
       :config
+      ;; consider notmuch-tree-to-message-pane to run functions in message pane
       (meta-defun meta-scroll-up :mode notmuch-tree-mode scroll-other-window)
       (meta-defun meta-scroll-down :mode notmuch-tree-mode scroll-other-window-down)
       (meta-defun meta-recenter-top-bottom :mode notmuch-tree-mode (with-selected-window (other-window-for-scrolling) (recenter-top-bottom)))
-      (meta-defun meta-new-line :mode notmuch-tree-mode notmuch-tree-show-message)
-      (meta-defun meta-down :mode notmuch-tree-mode notmuch-tree-next-matching-message)
-      (meta-defun meta-up :mode notmuch-tree-mode notmuch-tree-prev-matching-message)
+      (meta-defun meta-new-line :mode notmuch-tree-mode (if notmuch-tree-message-window (notmuch-tree-show-message-out) (notmuch-tree-show-message-in)))
+      (meta-defun meta-down :mode notmuch-tree-mode (progn
+						      (notmuch-tree-next-matching-message)
+                                                      (unless (notmuch-tree-get-message-id)
+							(notmuch-tree-prev-matching-message))))
+      (meta-defun meta-up :mode notmuch-tree-mode (progn
+						    (notmuch-tree-prev-matching-message)
+                                                    (unless (notmuch-tree-get-message-id)
+						      (notmuch-tree-next-matching-message))))
       (meta-defun meta-down-element :mode notmuch-tree-mode notmuch-tree-next-message)
       (meta-defun meta-up-element :mode notmuch-tree-mode notmuch-tree-prev-message)
 
@@ -3926,17 +3933,8 @@ When listening a new band/album, I usually go through all the songs and delete w
       (meta-defun meta-down-element :mode notmuch-search-mode notmuch-search-show-thread)
       (meta-defun meta-up-element :mode notmuch-search-mode ignore)
       
-      (meta-defun meta-down-element :mode notmuch-show-mode (when notmuch-tree-message-window
-							      (with-selected-window (other-window-for-scrolling)
-								(meta-down)
-                                                                (select-window notmuch-tree-message-window))
-							      (notmuch-show-next-message)
-                                                              (beginning-of-buffer)))
-      (meta-defun meta-up-element :mode notmuch-show-mode (when notmuch-tree-message-window
-							    (with-selected-window (other-window-for-scrolling)
-							      (meta-up)
-                                                              (select-window notmuch-tree-message-window))
-							    (notmuch-show-previous-message))))
+      (meta-defun meta-down-element :mode notmuch-show-mode (notmuch-show-next-message))
+      (meta-defun meta-up-element :mode notmuch-show-mode (notmuch-show-previous-message)))
 
     (defun notmuch-tree-close-and-quit ()
       "Close the current message in notmuch-tree and quit the tree buffer."
