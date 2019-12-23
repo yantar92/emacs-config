@@ -8937,7 +8937,7 @@ The types must be taken from `org-log-note-headings'."
   (condition-case nil
       (let ((mult (org-get-time-balance-multiplier-at-point))
 	    (bonus (org-get-org-time-bonus-on-done-at-point))
-            (scheduled? (string-match-p "\\." (or (org-entry-get (point) "SCHEDULED") ""))))
+            (scheduled? (string-match-p org-repeat-re (or (org-entry-get (point) "SCHEDULED") ""))))
 	(format "%s%s%s" (if scheduled? "↰" " ") (if mult (format "%sx" mult) "")
 		(if (and bonus (> bonus 0)) (format "+%s" bonus) "")))
     (error "")))
