@@ -3872,12 +3872,21 @@ When listening a new band/album, I usually go through all the songs and delete w
 								 (elfeed-entry-title entry)))))))
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
-  (setq elfeed-search-filter "+unread -video -science")
+  (defvar elfeed-search-default-filter "+unread -video -science"
+    "Default filter in elfeed search window.")
+  (setq elfeed-search-filter elfeed-search-default-filter)
   (setq elfeed-sort-order 'ascending)
   (setq elfeed-search-title-max-width 100)
   (setq elfeed-search-date-format '("%d %b, %a, %H:%M" 20 :left))
   (unless (boundp 'elfeed-search-mode-hook) (setq elfeed-search-mode-hook nil))
   ;; (add-hook 'elfeed-search-mode-hook (lambda () (toggle-truncate-lines +1)))
+
+  (define-advice elfeed-search-live-filter (:around (oldfun &optional arg) default-filter-maybe)
+    "Set `elfeed-search-filter' to `elfeed-search-default-filter' when invoked with C-u prefix argument."
+    (interactive "P")
+    (setq elfeed-search-filter (if arg elfeed-search-default-filter elfeed-search-filter))
+    (call-interactively oldfun))
+  
   (use-package elfeed-org
     :straight t
     :config
