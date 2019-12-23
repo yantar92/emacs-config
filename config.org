@@ -661,9 +661,6 @@ Since I wrap the default movement commands into custom functions (see [[id:0fe0b
 (when init-flag
   (mapc #'eldoc-add-command '(meta-up meta-up-element meta-down meta-down-element meta-backward meta-backward-element meta-forward meta-forward-element meta-scroll-down meta-scroll-up self-insert-command)))
 #+end_src
-
-
-
 *** Cursor
 :PROPERTIES:
 :ID:       3dbc3bed-206e-4132-b8e1-0d1ed338f990
@@ -1020,6 +1017,9 @@ Define the most basic movement commands:
     :defer t
     :config
     (meta-defun meta-new-line "Insert new line." boon-newline-dwim))
+
+  (meta-defun meta-scroll-up "Scroll up." scroll-up)
+  (meta-defun meta-scroll-down "Scroll down." scroll-down)
   (meta-defun-mapc
    '((meta-down "Move down." next-logical-line)
      (meta-up "Move up." previous-logical-line)
@@ -1031,8 +1031,6 @@ Define the most basic movement commands:
      (meta-backward-sexp "Move backward sexp." backward-sexp)
      (meta-forward-element "Move forward one element." forward-word)
      (meta-backward-element "Move backward one element." backward-word)
-     (meta-scroll-up "Scroll up." scroll-up)
-     (meta-scroll-down "Scroll down." scroll-down)
      (meta-recenter-top-bottom "Recenter text on scree." recenter-top-bottom)
      (meta-undo "Undo." undo)
      (meta-next-buffer "Go forward in buffer." next-buffer)
@@ -4376,6 +4374,7 @@ When listening a new band/album, I usually go through all the songs and delete w
 **** Opening large threads
 :PROPERTIES:
 :CREATED:  [2019-12-21 Sat 14:34]
+:ID:       ec8e6f0d-bb74-40fc-9088-becd7fa36d86
 :END:
 
 Notmuch is known to have poor performance on long threads ([[notmuch:id:87fttpy0n5.fsf@mechane.wlandry.net][as reported in maillist]])
@@ -6155,7 +6154,7 @@ SUBTREE-END is used as end of the entry if not nil."
 :ID:       a6054643-449e-48d7-afff-4155465efc19
 :END:
 This agenda show the items for the current day and time.
-+ all the items with deadline, according =org-deadline-warning-days=, unless the item is scheduled. If the item is scheduled, it is shown from the scheduled day.
+- all the items with deadline, according =org-deadline-warning-days=, unless the item is scheduled. If the item is scheduled, it is shown from the scheduled day.
   #+begin_src emacs-lisp
 (defun org-agenda-skip-deadlines-before-schedule ()
   "Skip tasks, with deadline and scheduled in future and tasks without deadline."
@@ -6183,7 +6182,7 @@ This agenda show the items for the current day and time.
 	(point)))))
   #+end_src
 
-+ all [#A] priority items, with matching =:SHOWDATES:= and =:SHOWFROMTIME:=, unless they are scheduled in the future
+- all [#A] priority items, with matching =:SHOWDATES:= and =:SHOWFROMTIME:=, unless they are scheduled in the future
   #+begin_src emacs-lisp
 (defun org-agenda-skip-nonurgent ()
   (save-excursion
@@ -6241,7 +6240,7 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 *************** END
 
 
-+ none of [#C] priority items
+- none of [#C] priority items
 #+BEGIN_SRC emacs-lisp
 (defun org-agenda-skip-lowpriority ()
   (save-restriction
@@ -6253,7 +6252,7 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 	  next-headline
 	nil))))
 #+END_SRC
-+ all the items scheduled for today and matching =:SHOWFROMTIME:=
+- all the items scheduled for today and matching =:SHOWFROMTIME:=
   #+begin_src emacs-lisp
 (defun org-agenda-skip-not-today ()
   "Skip items which a not scheduled today."
@@ -6265,8 +6264,8 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 	   )
       (if (equal scheduleddate currentdate) nil next-headline))))
   #+end_src
-+ items from diary/with timestamps (shown by default in org)
-+ habits
+- items from diary/with timestamps (shown by default in org)
+- habits
 
 *************** TODO can I do it with standard org capabilities? (at least, partially)
 #+begin_src emacs-lisp :tangle no
