@@ -6860,6 +6860,67 @@ The solution is to show the task contents of every task at point in agenda.
   )
 #+end_src
 
+**** Trying =org-ql=
+:PROPERTIES:
+:CREATED:  [2019-12-22 Sun 17:16]
+:END:
+*************** TODO I do not really use SHOWDATES? think about it
+*************** END
+
+#+begin_src emacs-lisp
+
+(add-to-list 'org-default-properties "SHOWDATES")
+
+(defun yant/diary-sexp-match-showdate? (entry) ;; the ENTRY name is important, since it is used internally by calendar
+  "Does current time match SHOWDATE?."
+  (or (not entry) ;; no condition: match
+      (let ((date (diary-make-date (nth 4 (decode-time)) (nth 3 (decode-time)) (nth 5 (decode-time)))))
+	(pcase (eval (car (read-from-string entry)))
+	  ((and (pred listp) res)
+	   (when (cdr res) t))
+	  (res (when res t))))))
+
+(defun yant/now-after-showfromtime? (showfromtime)
+  "Is time of the day after SHOWFROMTIME? Take into account `org-extend-today-until'."
+  (let* ((now (ts-now))
+	 (beginningofday (ts-parse (format "%s %s:00"
+					   (ts-format "%Y-%m-%d" now)
+					   (or org-extend-today-until 0))))
+         (stillyesterday? (ts<= now beginningofday))
+         (showfromtime (ts-parse (s-concat (ts-format "%Y-%m-%d " now)
+					   showfromtime))))
+    (or stillyesterday? (ts>= now showfromtime))))
+
+(use-package org-ql
+  :demand t
+  :straight t
+  :init (use-package org-ql-search :demand t)
+  :config
+  )
+(defun yant/org-ql-focused-agenda-block (&rest args)
+  "Return expression, suitable for `org-agenda-custom-commands', which matches focused agenda view."
+  (org-ql-block
+   '(and (todo)
+	 (not (priority "C"))
+	 (or (and (deadline auto) ;; deadline check first because deadlines are far more scarse in comparison with scheduled
+		  (not (scheduled :from +1)))
+	     (and (priority "A")
+		  (scheduled :to 0) ;; these two are easy checks, do them before heavy property matches
+		  (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
+		      (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
+		  (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)) ;; I have more of this in cmp with SHOWDATES
+		  (yant/diary-sexp-match-showdate? (org-entry-get (point) "SHOWDATES" 'inherit))
+		  )
+	     (and (scheduled :on 0)
+		  (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)))
+	     (ts-active :on 0) ;; diary
+	     ))))
+(add-to-list 'org-agenda-custom-commands
+	     `("D" "Focused agenda (ql version)"
+	       ((yant/org-ql-focused-agenda-block))
+	       ((org-ql-block-header "Focused agenda(ql version)"))))
+#+end_src
+
 *** TODO Contacts
 :PROPERTIES:
 :CREATED:  [2018-09-05 Wed 06:39]
