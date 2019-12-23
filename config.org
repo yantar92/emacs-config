@@ -4585,15 +4585,20 @@ The task is any item with todo keyword and no subtask.
 *************** END
   #+begin_src emacs-lisp
 (defun org-trigger-doing (arg)
-  "Restore DOING keyword after DOING->DONE change.
+  "Restore DOING keyword after DOING->DONE or DOING->DOING change.
 If the task is scheduled, schedule it for tomorrow."
   (when (and (eq (plist-get arg :type) 'todo-state-change)
 	     (string= (plist-get arg :from) "DOING")
-             (string= (plist-get arg :to) "DOING"))
+             (or (string= (plist-get arg :to) "DOING")
+		 (string= (plist-get arg :to) "DONE")))
     (let* ((pos (plist-get arg :position))
 	   (schedule-info (org-with-point-at pos (org-element-property :scheduled (org-element-at-point)))))
       (when schedule-info
-	(org-schedule nil "+1d")))))
+	(org-schedule nil "+1d"))
+      (when (string= (plist-get arg :to) "DONE")
+	(unless (y-or-n-p "Trying to mark DOING task as DONE. Proceed?")
+	  (org-todo "DOING")))
+      (org-clock-out))))
 (add-hook 'org-trigger-hook #'org-trigger-doing)
   #+end_src
   - REVIEW(e) :: A task is basically done, but should be reviewed (i.e. consider putting to knowledge base)
