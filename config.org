@@ -3153,6 +3153,17 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
 :END:
+*** =((((((= auto close parentheses =)))))))=
+:PROPERTIES:
+:CREATED:  [2019-12-23 Mon 19:36]
+:ID:       a8a2499f-32fc-43ee-b9a0-0176bf9f2ee0
+:END:
+
+#+begin_src emacs-lisp
+(when init-flag
+  (electric-pair-mode +1))
+#+end_src
+
 *** Help
 **** Show the continuation of unfinished keybindings
 :PROPERTIES:
