@@ -446,7 +446,6 @@ When the buffer text takes less space then a window, it's neat to see the beginn
 :PROPERTIES:
 :ID:       45675819-9551-43da-8e21-4437dde591e5
 :END:
-
 **** Coding system
 :PROPERTIES:
 :ID:       07c3544a-bcbd-4790-815a-25615ca2ca03
@@ -1052,7 +1051,7 @@ And use the wrapper command in interactive mode.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2019-12-20 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-12-11
+:SHOWFROMDATE: 2019-12-23
 :END:
 :LOGBOOK:
 - State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
@@ -3346,7 +3345,6 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   :config
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
-
 *** Bug hunting in =init.el=
 :PROPERTIES:
 :ID:       fa3afe58-87b9-4230-a9a6-298be9f6998d
@@ -3437,7 +3435,7 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
   :config
   (rsw-elisp-enable))
 #+END_SRC
-**** =Paredit= - read my mind when I write elisp
+**** TODO COMMENT =Paredit= - read my mind when I write elisp
 :PROPERTIES:
 :CREATED:  [2019-12-20 Fri 00:09]
 :END:
@@ -4102,9 +4100,9 @@ Can be still occasionally useful to navigate the complicated threads though.
                ("C-c C-a" . notmuch-search-hide)
                ("C-c C-f" . notmuch-search-nolist)
 	       ("C-c C-S-d" . notmuch-search-delete)
-               ("<RET>" . notmuch-tree-from-search-thread-and-focus-on-message)
+               ("<RET>" . notmuch-search-show-thread)
 	       :map notmuch-show-mode-map
-	       ("v" . yant/notmuch-show-view-html-part)
+	       ("v" . yant/notmuch-show-view-part)
 	       ("J" . notmuch-show-next-message)
 	       ("K" . notmuch-show-previous-message)
 	       ("C-c C-u" . notmuch-show-unread)
@@ -7031,6 +7029,7 @@ The solution is to show the task contents of every task at point in agenda.
 **** Trying =org-ql=
 :PROPERTIES:
 :CREATED:  [2019-12-22 Sun 17:16]
+:ID:       43d227d2-2032-4c56-b715-5065b31f1b0c
 :END:
 *************** TODO I do not really use SHOWDATES? think about it
 *************** END
