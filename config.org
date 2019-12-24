@@ -3988,14 +3988,26 @@ When listening a new band/album, I usually go through all the songs and delete w
                do (elfeed-untag entry 'unread)
                when (elfeed-entry-link entry)
                do (flet ((raise-frame nil nil))
-		    (let ((yant/suppress-pop-frame t))
-		      (org-protocol-capture (list :template "B"
-						  :url it
-						  :title (format "%s: %s"
-								 (elfeed-feed-title (elfeed-entry-feed entry))
-								 (elfeed-entry-title entry)))))))
+		    (let ((yant/suppress-pop-frame t)
+			  (url-present-p (s-replace "\n" "" (shell-command-to-string (format "/home/yantar92/bin/org-check-bookmark.sh \"%s\"" it))))
+                          (content (elfeed-deref (elfeed-entry-content entry)))
+                          (content-type (elfeed-entry-content-type entry)))
+                      (setq content-text (with-temp-buffer (when content
+							     (if (eq content-type 'html)
+								 (elfeed-insert-html content)
+							       (insert content)))
+                                                           (buffer-string)))
+                      (if (string= url-present-p "ok")
+			  (org-protocol-capture (list :template "B"
+						      :url it
+						      :title (format "%s: %s"
+								     (elfeed-feed-title (elfeed-entry-feed entry))
+								     (elfeed-entry-title entry))
+                                                      :body content-text))
+                        (message url-present-p)))))
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
+  
   (defvar elfeed-search-default-filter "+unread -video -science"
     "Default filter in elfeed search window.")
   (setq elfeed-search-filter elfeed-search-default-filter)
