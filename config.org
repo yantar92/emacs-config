@@ -673,6 +673,73 @@ Since I wrap the default movement commands into custom functions (see [[id:0fe0b
 (when init-flag
   (mapc #'eldoc-add-command '(meta-up meta-up-element meta-down meta-down-element meta-backward meta-backward-element meta-forward meta-forward-element meta-scroll-down meta-scroll-up self-insert-command)))
 #+end_src
+**** Stack messages in mini-buffer when they appear quickly after each other
+:PROPERTIES:
+:CREATED:  [2019-12-22 Sun 14:26]
+:ID:       2a660565-143a-4431-946b-404498bd3996
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-23 Mon 11:43]
+:END:
+Credit: [[notmuch:id:87sgldfi9j.fsf@mail.linkov.net][Email from Juri Linkov: Re: Intelligent stacking of messages in the echo area]]
+
+One problem with this is that resizing the echo area forces emacs to redraw, which 
+makes some functions laggy.
+
+#+begin_src emacs-lisp
+(defcustom multi-message-timeout 0.5
+  "Number of seconds between messages before clearing the accumulated list."
+  :type 'number
+  :group 'minibuffer
+  :version "28.1")
+
+(defcustom multi-message-max 4
+  "Max size of the list of accumulated messages."
+  :type 'number
+  :group 'minibuffer
+  :version "28.1")
+
+(defcustom multi-message-transient "\\.\\.\\.\\'"
+  "Regexp to filter out transient messages that should not be stacked."
+  :type 'regexp
+  :group 'minibuffer
+  :version "28.1")
+
+(defvar multi-message-separator "\n")
+
+(defvar multi-message-list nil)
+
+(defun set-multi-message (message)
+  "Return recent messages as one string to display in the echo area.
+Note that this feature works best only when `resize-mini-windows'
+is at its default value `grow-only'."
+  (let ((last-message (car multi-message-list)))
+    (unless (and last-message (equal message (aref last-message 1)))
+      (when last-message
+        (cond
+         ((> (float-time) (+ (aref last-message 0) multi-message-timeout))
+          (setq multi-message-list nil))
+         ((or
+           ;; `message-log-max' was nil, potential clutter.
+           (aref last-message 2)
+           (string-match-p multi-message-transient (aref last-message 1)))
+          (setq multi-message-list (cdr multi-message-list)))))
+      (push (vector (float-time) message (not message-log-max)) multi-message-list)
+      (when (> (length multi-message-list) multi-message-max)
+        (setf (nthcdr multi-message-max multi-message-list) nil)))
+    (mapconcat (lambda (m) (aref m 1))
+               (reverse multi-message-list)
+               multi-message-separator)))
+
+(setq set-message-function 'set-multi-message)
+#+end_src
+*************** NEXT [#A] make sure it works
+SCHEDULED: <2019-12-22 Sun>
+:LOGBOOK:
+CLOCK: [2019-12-22 Sun 16:22]--[2019-12-22 Sun 17:13] =>  0:51
+:END:
+*************** END
+
 *** Cursor
 :PROPERTIES:
 :ID:       3dbc3bed-206e-4132-b8e1-0d1ed338f990
