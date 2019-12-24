@@ -6215,16 +6215,17 @@ SUBTREE-END is used as end of the entry if not nil."
 					       (org-agenda-skip-noshowdates)
                                                (org-agenda-skip-entry-if 'nottodo 'any)))))
 	      ("p" "Projects" tags-todo "-CANCELLED/!"
-	       ((org-agenda-overriding-header "Project list")
+	       ((org-agenda-overriding-header "Project list\n")
 		(org-agenda-prefix-format "%?-12t")
 		(org-agenda-skip-function 'bh/skip-non-projects)
 		(org-agenda-sorting-strategy
 		 '(todo-state-down effort-up category-keep))))
 	      ("d" "Focus daily agenda" agenda ""
-	       ((org-agenda-skip-function 'yant/org-agenda-skip-nofocus)))
+	       ((org-agenda-overriding-header "Focused daily agenda. Don't forget to filter to work/home scope\n")
+		(org-agenda-skip-function 'yant/org-agenda-skip-nofocus)))
 	      ("i" "Inbox items"
 	       ((tags "+INBOX-DEFAULT"
-		      ((org-agenda-overriding-header "Inbox")
+		      ((org-agenda-overriding-header "Inbox\n")
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'notscheduled)))
 		       (org-agenda-prefix-format "S\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))
@@ -6240,7 +6241,7 @@ SUBTREE-END is used as end of the entry if not nil."
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'scheduled 'deadline)))
 		       (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))))
-	      ("v" "Agenda"
+	      ("v" "GTD overview"
 	       ((agenda ""
 			((org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t")
 			 (org-agenda-skip-function '(or (zin/org-agenda-skip-tag "HOLD")
