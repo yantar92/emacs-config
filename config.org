@@ -8405,6 +8405,7 @@ It can be done using =org-tempo=.
 
 #+begin_src emacs-lisp
 (use-package org-tempo
+  :if init-flag
   :init
   (push (cons "el" "src emacs-lisp") org-structure-template-alist))
 #+end_src
@@ -8416,9 +8417,10 @@ It can be done using =org-tempo=.
 :END:
 
 #+begin_src emacs-lisp
-(bind-keys :map boon-command-map
-	   ("S" . scimax-split-src-block)
-           ("Z" . scimax-insert-src-block))
+(when init-flag
+  (bind-keys :map boon-command-map
+	     ("S" . scimax-split-src-block)
+             ("Z" . scimax-insert-src-block)))
 
 ;; from https://github.com/jkitchin/scimax/blob/master/scimax-ob.el
 (defun scimax-insert-src-block (&optional below)
