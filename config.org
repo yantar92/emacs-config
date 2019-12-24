@@ -9538,7 +9538,7 @@ Spell check rules for org syntax.
       (progn
 	(goto-char (org-element-property :begin (org-element-at-point)))
 	(next-line)
-        (org-hide-block-toggle 'hide)
+        ;; (org-hide-block-toggle 'hide)
 	(org-babel-next-src-block 1)
 	(org-hide-block-toggle 'off))
       :mode org-mode
@@ -9549,7 +9549,7 @@ Spell check rules for org syntax.
       :mode org-mode
       :cond (let ((element (org-element-at-point))) (and (eq (org-element-type element) 'src-block) (eq (point) (org-element-property :begin element))))
       (progn
-	(org-hide-block-toggle 'hide)
+	;; (org-hide-block-toggle 'hide)
 	(org-babel-previous-src-block 1)
 	(org-hide-block-toggle 'off))
       :mode org-mode
