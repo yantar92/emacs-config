@@ -4203,6 +4203,7 @@ Can be still occasionally useful to navigate the complicated threads though.
   :if init-flag
   :defer t
   :config
+  (unbind-key "C-c C-s" notmuch-message-mode-map)
   (bind-key  "C-c C-c"
 	     (lambda()
 	       (interactive)
