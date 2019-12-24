@@ -5483,6 +5483,7 @@ The src block should be in the same org file."
   :straight t
   :init
   (use-package lv :straight t)
+  (setq org-ref-show-citation-on-enter nil) ;; this slows down org mode a lot otherwise
   :config
   (setq org-latex-prefer-user-labels t)
   (setq org-ref-show-broken-links nil) ;; it makes typing very slow if 't
