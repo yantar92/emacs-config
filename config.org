@@ -4047,12 +4047,16 @@ Can be still occasionally useful to navigate the complicated threads though.
   (use-package boon
     :if init-flag
     :config
-    (defun yant/notmuch-show-view-html-part ()
-      "Search and open html part of the message in the browser."
+    (defun yant/notmuch-show-view-part ()
+      "Search and open part at point or html part of the message."
       (interactive)
-      (beginning-of-buffer)
-      (re-search-forward "text/html")
-      (notmuch-show-view-part))
+      (save-excursion
+	(beginning-of-line)
+	(if (looking-at "^[ ]*\\[[^\\[]+]$")
+	    (notmuch-show-view-part)
+	  (beginning-of-buffer)
+	  (re-search-forward "text/html")
+	  (notmuch-show-view-part))))
     (use-package meta-functions
       :config
       ;; consider notmuch-tree-to-message-pane to run functions in message pane
