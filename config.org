@@ -4033,6 +4033,13 @@ When listening a new band/album, I usually go through all the songs and delete w
 :PROPERTIES:
 :ID:       f6ca2367-45c4-45bc-acec-49837cadc5ac
 :END:
+
+I was using notmuch-tree-mode for a while, but find it not very comfortable. 
+Especially in threads with many small messages, which could otherwise appear all together in notmuch-show-mode. 
+Can be still occasionally useful to navigate the complicated threads though. 
+
+
+
 #+begin_src emacs-lisp
 (use-package notmuch
   :straight t
