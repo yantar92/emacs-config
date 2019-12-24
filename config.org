@@ -1426,7 +1426,25 @@ to rebind to =C-c s= is such a case and =save-some-buffers= to =C-c C-s=.
 :PROPERTIES:
 :ID:       e9322c07-68fa-485f-abac-af5b5a2b97f5
 :END:
+
+I don't like Emacs' default behaviour to save backup files in the same folder, thus cluttering it annoyingly.
+Keep everything in a single folder with tree ([[http://ergoemacs.org/emacs/emacs_set_backup_into_a_directory.html][credit: Xah Lee]]) structure.
+
 #+begin_src emacs-lisp
+;; make backup to a designated dir, mirroring the full path
+(defun my-backup-file-name (fpath)
+  "Return a new file path of a given file path.
+If the new path's directories does not exist, create them."
+  (let* (
+         (backupRootDir "~/.emacs.d/backup/")
+         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path, for example, “C:”
+         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") ))
+         )
+    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
+    backupFilePath))
+
+(setq make-backup-file-name-function 'my-backup-file-name)
+
 (setq
  backup-directory-alist '((".*" . "~/.emacs.d/backups/"))
  backup-by-copying t
