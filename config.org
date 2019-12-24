@@ -1452,9 +1452,16 @@ If the new path's directories does not exist, create them."
  kept-new-versions 100
  kept-old-versions 100
  version-control t
- create-lockfiles nil
  )
 #+end_src
+
+Since this config is often called in extra batch process, lockfiles can mess everything up. 
+Disable them.
+
+#+begin_src emacs-lisp
+(setq create-lockfiles nil)
+#+end_src
+
 *** Backup walker
 :PROPERTIES:
 :CREATED:  [2019-08-22 Thu 22:51]
