@@ -7083,12 +7083,126 @@ The solution is to show the task contents of every task at point in agenda.
 		  (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)))
 	     (ts-active :on 0) ;; diary
 	     ))))
+
+(defun yant/org-ql-full-agenda-block (&rest args)
+  "Return expression, suitable for `org-agenda-custom-commands', which lists all the active scheduled todo items."
+  (org-ql-block
+   '(and (todo)
+	 (scheduled :to 0)
+         (not (tags "HOLD")))))
+
+
+;; how to do it? I do not want children to be listed if the parent is listed. But cannot give up tag inheritance
+;; In normal agenda, it is achieved by `org-tags-match-list-sublevels' 
+(defun yant/org-ql-inbox-block (&rest args)
+  "Return expression, suitable for `org-agenda-custom-commands', which lists all the inbox items."
+  (org-ql-block
+   '(tags "INBOX")))
+
+;; changing the project definition. Either project tag or the sub-project with NEXT/DOING/REVIEW
+(defmacro yant/org-ql-is-project-p ()
+  "org-ql query to match a project."
+  `(or (and (tag "project")
+	    (todo))
+       (and (todo "NEXT" "DOING" "REVIEW")
+            (children (todo)))))
+
+(defun yant/org-ql-stuck-projects-block (&rest args)
+  "Return expression, suitable for `org-agenda-custom-commands', which lists all the stuck projects."
+  (org-ql-block
+   '(and (not (tags "HOLD" "WAITING"))
+	 (yant/org-ql-is-project-p)
+         (not (children (todo "NEXT" "DOING" "REVIEW"))))))
+
+(defun yant/org-ql-waiting-and-hold-tasks-block (&rest args)
+  "Return expression, suitable for `org-agenda-custom-commands', which lists all the waiting and hold tasks."
+  (org-ql-block
+   '(todo "HOLD" "WAITING")))
+
+;; (defun yant/org-ql-next-tasks-block (&rest args)
+;;   "Return expression, suitable for `org-agenda-custom-commands', which lists all the NEXT and REVIEW tasks in projects."
+;;   (org-ql-block
+;;    '(and (not (habit))
+;; 	 ()
+;; 	 )))
+
+
 (add-to-list 'org-agenda-custom-commands
 	     `("D" "Focused agenda (ql version)"
 	       ((yant/org-ql-focused-agenda-block))
 	       ((org-ql-block-header "Focused agenda(ql version)"))))
 #+end_src
 
+***** TODO use it |- (alphapapa/org-ql: An Org query language, and experimental code for a next-generation Org Agenda) :BOOKMARK:
+:PROPERTIES:
+:CREATED:  [2019-04-04 Thu 15:20]
+:Source:   https://github.com/alphapapa/org-ql#org-ql-search
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-23 Mon 18:07]
+:END:
+***** NEXT [#A] this example seems to be wrong |- (alphapapa/org-ql: An Org-mode query language, including search commands and saved views) :BOOKMARK:
+SCHEDULED: <2019-12-23 Mon>
+:PROPERTIES:
+:CREATED: [2019-12-22 Sun 19:27]
+:Source: https://github.com/alphapapa/org-ql
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-23 Mon 18:08]
+- Refiled on [2019-12-23 Mon 10:57]
+:END:
+ ((org-ql-block-header "SOMEDAY :Emacs: High-priority")))
+***** NEXT [#A] ignoring "B" default priority in org-ql is not in github page
+SCHEDULED: <2019-12-23 Mon>
+:PROPERTIES:
+:CREATED: [2019-12-22 Sun 19:43]
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-23 Mon 18:08]
+- Refiled on [2019-12-23 Mon 10:57]
+CLOCK: [2019-12-22 Sun 19:43]--[2019-12-22 Sun 19:44] =>  0:01
+:END:
+***** NEXT [#A] org-ql-block does not apply link face when link is in heading
+SCHEDULED: <2019-12-23 Mon>
+:PROPERTIES:
+:CREATED: [2019-12-22 Sun 19:55]
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-23 Mon 18:08]
+- Refiled on [2019-12-23 Mon 10:57]
+:END:
+***** NEXT [#A] helm-org-ql search does not seem to understand outline path by default. It would make sense....
+SCHEDULED: <2019-12-23 Mon>
+:PROPERTIES:
+:CREATED: [2019-12-22 Sun 20:48]
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-23 Mon 18:08]
+- Refiled on [2019-12-23 Mon 10:57]
+:END:
+***** NEXT [#A] make org-ql format agenda items better
+SCHEDULED: <2019-12-23 Mon>
+:PROPERTIES:
+:CREATED: [2019-12-22 Sun 21:35]
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-23 Mon 18:08]
+- Refiled on [2019-12-23 Mon 10:57]
+:END:
+***** NEXT [#A] how to emulate org-tags-match-list-sublevels from agenda in org-ql?
+SCHEDULED: <2019-12-23 Mon>
+:PROPERTIES:
+:CREATED: [2019-12-23 Mon 14:39]
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-23 Mon 18:08]
+- Refiled on [2019-12-23 Mon 18:05]
+:END:
+***** NEXT [#A] What about looking at ancestors?
+SCHEDULED: <2019-12-24 Tue>
+:PROPERTIES:
+:CREATED:  [2019-12-24 Tue 14:48]
+:END:
 *** TODO Contacts
 :PROPERTIES:
 :CREATED:  [2018-09-05 Wed 06:39]
