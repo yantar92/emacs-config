@@ -4587,6 +4587,15 @@ Here are some workarounds
   :init
   (setq footnote-prefix [(control ?c) ?f]))
 #+end_src
+*** Mail host address
+:PROPERTIES:
+:CREATED:  [2019-12-23 Mon 12:34]
+:ID:       676cf766-9c21-4561-bb05-35df617c4333
+:END:
+Not sure why I need to set it, but I don't like "i-did-not-set--mail-host-address--so-tickle-me" inserted in my emails.
+#+begin_src emacs-lisp
+(setq mail-host-address "localhost")
+#+end_src
 ** Org mode
 :PROPERTIES:
 :ID:       58045c39-ffd5-4ccc-bc9d-49048c437f42
