@@ -2708,6 +2708,17 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :PROPERTIES:
 :ID:       6d0859b5-5d38-42a6-a676-aebec0867681
 :END:
+*** Ingest primary selection from OS
+:PROPERTIES:
+:CREATED:  [2019-12-23 Mon 19:43]
+:ID:       ffef4dc6-ed14-468a-acd1-4f54284ac37b
+:END:
+
+#+begin_src emacs-lisp
+(when init-flag
+  (setq select-enable-primary t))
+#+end_src
+
 *** Boon - set =command state= from =insert state=
 :PROPERTIES:
 :ID:       94ed4714-1f9d-43f7-8ddc-74f855154b2c
