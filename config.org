@@ -6195,6 +6195,13 @@ SUBTREE-END is used as end of the entry if not nil."
 	nil))))
   #+end_src
   #+begin_src emacs-lisp
+(set-face-attribute 'org-agenda-structure nil
+		    :height 120
+                    :foreground "firebrick")
+(set-face-attribute 'org-agenda-date-today nil
+                    :foreground "dark goldenrod")
+
+
 (defvar bh/hide-scheduled-and-waiting-next-tasks 't)
 (setq org-agenda-skip-function nil)
 (define-advice org-agenda-skip (:before (&rest args) make-sure-right-org-environment)
