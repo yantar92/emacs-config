@@ -473,6 +473,16 @@ sudo emerge -a noto dejavu quivira symbola
   :config
   (unicode-fonts-setup))
 #+end_src
+**** Line spacing
+:PROPERTIES:
+:CREATED:  [2019-12-23 Mon 20:02]
+:ID:       86eccbaa-8999-4630-9784-07a91b8d14bd
+:END:
+This looks nicer.
+[[http://ergoemacs.org/emacs/emacs_toggle_line_spacing.html][credit: Xah Lee]]
+#+begin_src emacs-lisp
+(setq-default line-spacing 3)
+#+end_src
 
 **** Visual text transformation
 :PROPERTIES:
