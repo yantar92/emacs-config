@@ -698,9 +698,20 @@ makes some functions laggy.
   :group 'minibuffer
   :version "28.1")
 
-(defcustom multi-message-transient "\\.\\.\\.\\'"
-  "Regexp to filter out transient messages that should not be stacked."
-  :type 'regexp
+(defun multi-message--ellipsis-p (message)
+  "Return non nil when MESSAGE ends with ellipsis."
+  (string-match-p "\\.\\.\\.\\'" message))
+
+(defun multi-message--keystroke-echo-p (message)
+  "Return non nil when MESSAGE is a currently entered keystroke."
+  (string= message (key-description (this-command-keys-vector))))
+
+
+(defcustom multi-message-transient-functions '(multi-message--ellipsis-p multi-message--keystroke-echo-p)
+  "List of functions to filter out transient messages that should not be stacked.
+Each function is called in sequence with message string as an only argument.
+If any of the functions returns non nil, the message is filtered out."
+  :type 'list
   :group 'minibuffer
   :version "28.1")
 
@@ -721,7 +732,7 @@ is at its default value `grow-only'."
          ((or
            ;; `message-log-max' was nil, potential clutter.
            (aref last-message 2)
-           (string-match-p multi-message-transient (aref last-message 1)))
+           (run-hook-with-args-until-success 'multi-message-transient-functions (aref last-message 1)))
           (setq multi-message-list (cdr multi-message-list)))))
       (push (vector (float-time) message (not message-log-max)) multi-message-list)
       (when (> (length multi-message-list) multi-message-max)
@@ -729,6 +740,7 @@ is at its default value `grow-only'."
     (mapconcat (lambda (m) (aref m 1))
                (reverse multi-message-list)
                multi-message-separator)))
+
 
 (setq set-message-function 'set-multi-message)
 #+end_src
