@@ -382,14 +382,62 @@ Setting resizing to be exact instead.
 (when init-flag
   (setq frame-resize-pixelwise t))
 #+end_src
-*** Buffer
+*** Window
+:PROPERTIES:
+:CREATED:  [2019-12-25 Wed 14:14]
+:END:
 
-General buffer appearance.
+General settings for window appearance
+**** COMMENT Handling pop-up windows
+:PROPERTIES:
+:CREATED:  [2019-12-25 Wed 14:15]
+:END:
+
+Pop-up windows in emacs sometimes behave in a strange way.
+They may unexpectedly occupy a window with useful buffer or split window in unexpected direction. 
+The most bizarre case was when a debug buffer popped-up in a non-active frame once.
+The frame was in different WM workspace and I was totally confused about what is going on. 
+
+=shackle= package allows setting rules for pop-up windows.
+*************** TODO this is an example when I want mirror text work
+*************** END
+
+#+begin_src emacs-lisp
+(use-package shackle
+  :if init-flag
+  :straight t
+  :diminish shackle-mode
+  :config (shackle-mode +1)
+  :custom
+  (shackle-rules
+   '(
+#+END_SRC
+
+Make help, info, and backtrace pop-up in separate frame
+*************** TODO backtrace buffer with the config below pops-up a newframe every time a step into execution
+*************** END
+
+#+BEGIN_SRC emacs-lisp  
+("*Help*" :select t :frame t)
+(helpful-mode :select t :frame t)
+("*info*" :select t :frame t)
+("*Backtrace*" :select t :frame t)
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp  
+)))
+#+end_src
+
+
 
 **** Centered window mode
 :PROPERTIES:
 :ID:       af9c7d6c-fd15-4d68-b379-3d439ea94370
 :SHOWFROMDATE: 2019-12-10
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-25 Wed 14:15]
 :END:
 My screen is too wide to read text comfortably.
 I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer width.
