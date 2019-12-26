@@ -4293,7 +4293,7 @@ Can be still occasionally useful to navigate the complicated threads though.
 
   (defun notmuch-show-hide()
     (interactive)
-    (notmuch-show-tag-message '("-todo")))
+    (notmuch-show-tag-message "-todo"))
 
   (defun notmuch-tree-unread()
     (interactive)
