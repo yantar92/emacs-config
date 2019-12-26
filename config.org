@@ -759,7 +759,7 @@ makes some functions laggy.
 
 (defun multi-message--keystroke-echo-p (message)
   "Return non nil when MESSAGE is a currently entered keystroke."
-  (string= message (key-description (this-command-keys-vector))))
+  (string-match-p (key-description (this-command-keys-vector)) message))
 
 
 (defcustom multi-message-transient-functions '(multi-message--ellipsis-p multi-message--keystroke-echo-p)
