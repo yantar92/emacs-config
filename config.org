@@ -2012,7 +2012,7 @@ abort completely with `C-g'."
 	     ("-" . meta-undo)
 	     ("~" . boon-repeat-command)
 	     ("Q" . kmacro-end-or-call-macro)
-	     ("q" . nil)
+	     ("q" . endless/fill-or-unfill)
 	     ("z" . boon-quote-character)
 	     ("y" . transpose-chars)
 	     ("Y" . transpose-words)
@@ -3088,6 +3088,23 @@ Never recover undo if the buffer is modified.
   :disabled t
   :straight (emacs_anywhere :type git :host github :repo "zachcurry/emacs-anywhere")
   )
+#+end_src
+*** Fill/unfill paragraph
+:PROPERTIES:
+:CREATED:  [2019-12-25 Wed 15:20]
+:END:
+
+#+begin_src emacs-lisp
+;; https://github.com/jethrokuan/.emacs.d/blob/master/init.el
+(defun endless/fill-or-unfill ()
+  "Like `fill-paragraph', but unfill if used twice."
+  (interactive)
+  (let ((fill-column
+         (if (eq last-command 'endless/fill-or-unfill)
+             (progn (setq this-command nil)
+                    (point-max))
+           fill-column)))
+    (call-interactively #'fill-paragraph)))
 #+end_src
 
 ** Debugging
