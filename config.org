@@ -3503,37 +3503,6 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
   :config
   (rsw-elisp-enable))
 #+END_SRC
-**** TODO COMMENT =Paredit= - read my mind when I write elisp
-:PROPERTIES:
-:CREATED:  [2019-12-20 Fri 00:09]
-:END:
-:LOGBOOK:
-- Refiled on [2019-12-21 Sat 15:31]
-:END:
-*************** NEXT look at the editing commands
-:LOGBOOK:
-- State "CANCELLED"  from "TODO"          [2019-12-20 Fri 23:59]
-:END:
-*************** END
-*************** NEXT make it work well with meta-functions
-:LOGBOOK:
-- State "CANCELLED"  from "TODO"          [2019-12-20 Fri 23:59]
-:END:
-*************** END
-#+begin_src emacs-lisp :tangle no
-(use-package paredit
-  :if init-flag
-  :straight t
-  :hook ((emacs-lisp-mode lisp-interaction-mode) . paredit-mode)
-  :config
-  (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
-  (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-backward-slurp-sexp)
-  (bind-keys :map emacs-lisp-mode-map
-	     ("M-o" . paredit-forward-slurp-sexp)
-             ("M-i" . paredit-forward-slurp-sexp))
-  )
-#+end_src
-
 *** Execute current buffer (c++,python,bash,...)
 :PROPERTIES:
 :ID:       a57244bb-a617-44b4-a806-7cff82a86ac7
