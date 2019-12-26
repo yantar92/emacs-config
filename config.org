@@ -457,6 +457,22 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
     (bind-keys :map boon-x-map ("w" . centered-window-mode))
     (centered-window-mode +1))
 #+end_src
+**** Window boundaries
+:PROPERTIES:
+:ID:       00975142-2491-4f85-bd0b-f1f6c2938e36
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-25 Wed 14:15]
+:END:
+When the buffer text takes less space then a window, it's neat to see the beginning/end of the buffer in emacs.
+#+begin_src emacs-lisp
+(when init-flag
+  (setq-default indicate-buffer-boundaries 'left))
+#+end_src
+*** Buffer
+
+General buffer appearance.
+
 **** Long lines handling
 :PROPERTIES:
 :ID:       827dc236-fee4-43b8-bfbe-05026d7e3e6d
@@ -480,15 +496,6 @@ If the line wrapping is active, I also want the word wrap to be activated automa
   (bind-key "C-x l" #'toggle-truncate-lines)
   (setq-default truncate-lines 't
 		word-wrap 't))
-#+end_src
-**** Buffer boundaries
-:PROPERTIES:
-:ID:       00975142-2491-4f85-bd0b-f1f6c2938e36
-:END:
-When the buffer text takes less space then a window, it's neat to see the beginning/end of the buffer in emacs.
-#+begin_src emacs-lisp
-(when init-flag
-  (setq-default indicate-buffer-boundaries 'left))
 #+end_src
 *** Text in buffers
 :PROPERTIES:
