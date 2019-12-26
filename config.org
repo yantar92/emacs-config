@@ -7253,6 +7253,21 @@ SCHEDULED: <2019-12-24 Tue>
 :PROPERTIES:
 :CREATED:  [2019-12-24 Tue 14:48]
 :END:
+***** NEXT [#A] the following happens when I try to change the todo state of a task in org-ql
+SCHEDULED: <2019-12-26 Thu>
+:PROPERTIES:
+:CREATED: [2019-12-25 Wed 15:46]
+:END:
+:LOGBOOK:
+- Refiled on [2019-12-26 Thu 13:51]
+CLOCK: [2019-12-25 Wed 15:46]--[2019-12-25 Wed 15:47] =>  0:01
+:END:
+
+#+begin_src org
+  DOING [#A] try this email |- Adam Porter <adam@alphapapa.net>: Re: Asynchronous org-agenda-redo  2d ago                                                :COMMON:EMAIL:
+            	get_started_org_mode:	 -0.9x	DONE [#A] try to play with options by removing DOUG_LEA_MALLOC conds email |- Eli Zaretskii <eliz@gnu.org>: Re: bug#38345: 27.0.50; Permanent increase in memory consumption after opening images (or pdfs) :COMMON::EMAIL:
+            	get_started_org_mode:	 -0.9x	DOING [#A] benchmark agenda after 1 day running                                                            :COMMON::
+#+end_src
 *** TODO Contacts
 :PROPERTIES:
 :CREATED:  [2018-09-05 Wed 06:39]
