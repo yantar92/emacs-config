@@ -3519,6 +3519,18 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 	 ("<C-M-XF86Explorer>" . quickrun-replace-region)
 	 ("<f12>" . helm-quickrun)))
 #+end_src
+
+*** Set executable flag in all the script files
+:PROPERTIES:
+:CREATED:  [2019-12-25 Wed 13:52]
+:END:
+
+#+begin_src emacs-lisp
+(when init-flag
+;; stolen from https://github.com/jethrokuan/.emacs.d/blob/master/init.el
+  (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p))
+#+end_src
+
 *** Gnuplot
 :PROPERTIES:
 :ID:       192254a2-dc90-4a29-a713-f43f794211f6
