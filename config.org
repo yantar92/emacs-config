@@ -4807,7 +4807,9 @@ If the task is scheduled, schedule it for tomorrow."
     (let* ((pos (plist-get arg :position))
 	   (schedule-info (org-with-point-at pos (org-element-property :scheduled (org-element-at-point)))))
       (when schedule-info
-	(org-schedule nil "+1d"))
+	(if (eq major-mode 'org-agenda-mode)
+            (org-agenda-schedule nil "+1d")
+	  (org-schedule nil "+1d")))
       (when (string= (plist-get arg :to) "DONE")
 	(unless (y-or-n-p "Trying to mark DOING task as DONE. Proceed?")
 	  (org-todo "DOING")))
@@ -5883,8 +5885,11 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 							     yant/org-attach-attachments-symlink-directory)))
 	     (org-id (org-id-get nil 'create))
 	     (entry-name (yant/org-entry-name-cleanup-for-dir))
-	     (attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
-					  (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil)))) ;; only consider if the entry is the child
+	     (attach-dir-inherited-p (or (not (org-entry-get (point) "ID"))
+					 (and  (org-entry-get-with-inheritance "DIR")
+					       (not (org-entry-get (point) "DIR")))
+					 (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
+					      (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))))) ;; only consider if the entry is the child
 	     (org-attach-dir-recursive-p (bound-and-true-p org-attach-dir-recursive-p))) ;; keep track if this is the initial call of the function
 	(unless org-attach-dir-recursive-p (setq yant/--processed-entry-ids nil))
 	(unless (member org-id yant/--processed-entry-ids)
