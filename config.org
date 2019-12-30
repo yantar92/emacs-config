@@ -9723,20 +9723,35 @@ Spell check rules for org syntax.
       (if (org-at-heading-p)
 	  (call-interactively #'org-previous-visible-heading)
 	(backward-paragraph)))
-    (meta-defun meta-down-element :mode org-mode :cond org-at-heading-p (org-next-visible-heading 1))
+    (meta-defun meta-down-element :mode org-mode :cond org-at-heading-p :cond (not (buffer-narrowed-p)) (outline-get-next-sibling))
+    (meta-defun meta-down-element :mode org-mode :cond org-at-heading-p :cond buffer-narrowed-p (let ((curpos (point)))
+												  (unless (outline-get-next-sibling)
+                                                                                                    (goto-char curpos)
+												    (widen)
+												    (outline-get-next-sibling)
+												    (org-narrow-to-subtree)
+                                                                                                    (org-show-entry))))
     (meta-defun meta-down-element
       :mode org-mode
       :cond (let ((element (org-element-at-point))) (and (eq (org-element-type element) 'src-block) (eq (1+ (point)) (org-element-property :end element))))
       (progn
 	(goto-char (org-element-property :begin (org-element-at-point)))
 	(next-line)
-        ;; (org-hide-block-toggle 'hide)
+	;; (org-hide-block-toggle 'hide)
 	(org-babel-next-src-block 1)
 	(org-hide-block-toggle 'off))
       :mode org-mode
       :cond (eq (org-element-type (org-element-at-point)) 'src-block)
       (goto-char (1- (org-element-property :end (org-element-at-point)))))
-    (meta-defun meta-up-element :mode org-mode :cond org-at-heading-p (org-previous-visible-heading 1))
+    (meta-defun meta-up-element :mode org-mode :cond org-at-heading-p :cond (not (buffer-narrowed-p)) (outline-get-last-sibling))
+    (meta-defun meta-up-element :mode org-mode :cond org-at-heading-p :cond buffer-narrowed-p (let ((curpos (point)))
+												(unless (outline-get-last-sibling)
+                                                                                                  (goto-char curpos)
+												  (widen)
+												  (outline-get-last-sibling)
+												  (org-narrow-to-subtree)
+												  (org-show-entry))))
+
     (meta-defun meta-up-element
       :mode org-mode
       :cond (let ((element (org-element-at-point))) (and (eq (org-element-type element) 'src-block) (eq (point) (org-element-property :begin element))))
