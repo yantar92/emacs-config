@@ -915,6 +915,11 @@ Second, implement the wrapper command.
 ;; (meta-defun meta-next-element "Go to next element." next-line)
 ;; (meta-defun meta-next-element :mode org-agenda-mode (org-agenda-next-item 1))
 ;; (meta-defun meta-next-element :mode org-mode :cond org-at-heading-p (org-next-visible-heading 1))
+;;
+;; Similar packages:
+;; https://gitlab.com/jjzmajic/handle implements similar functionality to unify functions across major modes
+;; However, handle is very major-mode centric. meta-functions is more function-centric
+;; Also, meta-functions is not only limited to current major mode defining which function to call.
 
 ;;; Code:
 (require 'seq)
