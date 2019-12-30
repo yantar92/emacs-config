@@ -9,6 +9,7 @@
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
 :END:
 :LOGBOOK:
+CLOCK: [2019-12-27 Fri 23:03]--[2019-12-27 Fri 23:04] =>  0:01
 CLOCK: [2019-12-19 Thu 12:52]--[2019-12-19 Thu 12:53] =>  0:01
 CLOCK: [2019-12-09 Mon 20:45]--[2019-12-09 Mon 20:46] =>  0:01
 - State "NEXT"       from "NEXT"       [2018-09-06 Thu 21:10]
@@ -799,12 +800,7 @@ is at its default value `grow-only'."
 
 (setq set-message-function 'set-multi-message)
 #+end_src
-*************** NEXT [#A] make sure it works
-SCHEDULED: <2019-12-22 Sun>
-:LOGBOOK:
-CLOCK: [2019-12-22 Sun 16:22]--[2019-12-22 Sun 17:13] =>  0:51
-:END:
-*************** END
+
 
 *** Cursor
 :PROPERTIES:
@@ -3096,6 +3092,7 @@ Never recover undo if the buffer is modified.
 *** Fill/unfill paragraph
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 15:20]
+:ID:       596fe5bd-824f-4706-a2b5-d4decb90511e
 :END:
 
 #+begin_src emacs-lisp
@@ -3528,6 +3525,7 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 *** Set executable flag in all the script files
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 13:52]
+:ID:       09ca1291-739f-4949-a7bc-4cb50303c364
 :END:
 
 #+begin_src emacs-lisp
@@ -8862,7 +8860,6 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 
 *************** TODO make autocompletion possible for babel blocks from inside editing org-src
 *************** END
-
 
 *** Appearance
 **** Links
