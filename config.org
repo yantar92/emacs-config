@@ -4048,8 +4048,8 @@ When listening a new band/album, I usually go through all the songs and delete w
 							     (if (eq content-type 'html)
 								 (elfeed-insert-html content)
 							       (insert content)))
-                                                           (let ((org-babel-min-lines-for-block-output 0)) ;; handle org-mode syntax in body
-                                                             (org-babel-examplify-region (point-min) (point-max)))
+							   (let ((org-babel-min-lines-for-block-output 0)) ;; handle org-mode syntax in body
+							     (org-escape-code-in-region (point-min) (point-max)))
 							   (buffer-string)))
                       (if (string= url-present-p "ok")
 			  (org-protocol-capture (list :template "B"
