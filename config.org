@@ -9871,7 +9871,7 @@ CCACHE_SIZE="2G"
 Speed up application startup by pre-linking shared libraries
 https://wiki.gentoo.org/wiki/Prelink
 
-#+begin_src bash
+#+begin_src bash :tangle no
 emerge prelink
 #+end_src
 
