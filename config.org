@@ -7157,7 +7157,8 @@ The solution is to show the task contents of every task at point in agenda.
 (defun yant/org-ql-inbox-block (&rest args)
   "Return expression, suitable for `org-agenda-custom-commands', which lists all the inbox items."
   (org-ql-block
-   '(tags "INBOX")))
+   '(and (level 1)
+	 (tags "INBOX"))))
 
 ;; changing the project definition. Either project tag or the sub-project with NEXT/DOING/REVIEW
 (defmacro yant/org-ql-is-project-p ()
@@ -7191,6 +7192,12 @@ The solution is to show the task contents of every task at point in agenda.
 	     `("D" "Focused agenda (ql version)"
 	       ((yant/org-ql-focused-agenda-block))
 	       ((org-ql-block-header "Focused agenda(ql version)"))))
+
+(add-to-list 'org-agenda-custom-commands
+	     `("I" "Inbox (ql version)"
+	       ((yant/org-ql-inbox-block))
+	       ((org-ql-block-header "Inbox"))
+               (list (f-join org-directory "inbox.org"))))
 #+end_src
 
 ***** TODO use it |- (alphapapa/org-ql: An Org query language, and experimental code for a next-generation Org Agenda) :BOOKMARK:
@@ -7201,83 +7208,17 @@ The solution is to show the task contents of every task at point in agenda.
 :LOGBOOK:
 - Refiled on [2019-12-23 Mon 18:07]
 :END:
-***** NEXT [#A] this example seems to be wrong |- (alphapapa/org-ql: An Org-mode query language, including search commands and saved views) :BOOKMARK:
-SCHEDULED: <2019-12-23 Mon>
-:PROPERTIES:
-:CREATED: [2019-12-22 Sun 19:27]
-:Source: https://github.com/alphapapa/org-ql
-:END:
-:LOGBOOK:
-- Refiled on [2019-12-23 Mon 18:08]
-- Refiled on [2019-12-23 Mon 10:57]
-:END:
- ((org-ql-block-header "SOMEDAY :Emacs: High-priority")))
-***** NEXT [#A] ignoring "B" default priority in org-ql is not in github page
-SCHEDULED: <2019-12-23 Mon>
-:PROPERTIES:
-:CREATED: [2019-12-22 Sun 19:43]
-:END:
-:LOGBOOK:
-- Refiled on [2019-12-23 Mon 18:08]
-- Refiled on [2019-12-23 Mon 10:57]
-CLOCK: [2019-12-22 Sun 19:43]--[2019-12-22 Sun 19:44] =>  0:01
-:END:
-***** NEXT [#A] org-ql-block does not apply link face when link is in heading
-SCHEDULED: <2019-12-23 Mon>
-:PROPERTIES:
-:CREATED: [2019-12-22 Sun 19:55]
-:END:
-:LOGBOOK:
-- Refiled on [2019-12-23 Mon 18:08]
-- Refiled on [2019-12-23 Mon 10:57]
-:END:
-***** NEXT [#A] helm-org-ql search does not seem to understand outline path by default. It would make sense....
-SCHEDULED: <2019-12-23 Mon>
-:PROPERTIES:
-:CREATED: [2019-12-22 Sun 20:48]
-:END:
-:LOGBOOK:
-- Refiled on [2019-12-23 Mon 18:08]
-- Refiled on [2019-12-23 Mon 10:57]
-:END:
 ***** NEXT [#A] make org-ql format agenda items better
 SCHEDULED: <2019-12-23 Mon>
 :PROPERTIES:
 :CREATED: [2019-12-22 Sun 21:35]
+:SHOWFROMDATE: 2019-12-28
 :END:
 :LOGBOOK:
+CLOCK: [2019-12-27 Fri 16:59]--[2019-12-27 Fri 17:04] =>  0:05
 - Refiled on [2019-12-23 Mon 18:08]
 - Refiled on [2019-12-23 Mon 10:57]
 :END:
-***** NEXT [#A] how to emulate org-tags-match-list-sublevels from agenda in org-ql?
-SCHEDULED: <2019-12-23 Mon>
-:PROPERTIES:
-:CREATED: [2019-12-23 Mon 14:39]
-:END:
-:LOGBOOK:
-- Refiled on [2019-12-23 Mon 18:08]
-- Refiled on [2019-12-23 Mon 18:05]
-:END:
-***** NEXT [#A] What about looking at ancestors?
-SCHEDULED: <2019-12-24 Tue>
-:PROPERTIES:
-:CREATED:  [2019-12-24 Tue 14:48]
-:END:
-***** NEXT [#A] the following happens when I try to change the todo state of a task in org-ql
-SCHEDULED: <2019-12-26 Thu>
-:PROPERTIES:
-:CREATED: [2019-12-25 Wed 15:46]
-:END:
-:LOGBOOK:
-- Refiled on [2019-12-26 Thu 13:51]
-CLOCK: [2019-12-25 Wed 15:46]--[2019-12-25 Wed 15:47] =>  0:01
-:END:
-
-#+begin_src org
-  DOING [#A] try this email |- Adam Porter <adam@alphapapa.net>: Re: Asynchronous org-agenda-redo  2d ago                                                :COMMON:EMAIL:
-            	get_started_org_mode:	 -0.9x	DONE [#A] try to play with options by removing DOUG_LEA_MALLOC conds email |- Eli Zaretskii <eliz@gnu.org>: Re: bug#38345: 27.0.50; Permanent increase in memory consumption after opening images (or pdfs) :COMMON::EMAIL:
-            	get_started_org_mode:	 -0.9x	DOING [#A] benchmark agenda after 1 day running                                                            :COMMON::
-#+end_src
 *** TODO Contacts
 :PROPERTIES:
 :CREATED:  [2018-09-05 Wed 06:39]
