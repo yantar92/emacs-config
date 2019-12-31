@@ -758,12 +758,16 @@ makes some functions laggy.
   "Return non nil when MESSAGE ends with ellipsis."
   (string-match-p "\\.\\.\\.\\'" message))
 
+(defun multi-message--keystroke-regex-p (message)
+  "Return non nil when MESSAGE looks like a keystroke echo."
+  (string-match-p "^[A-Za-z]\\(-[A-Za-z]\\)*-?$" message))
+
 (defun multi-message--keystroke-echo-p (message)
   "Return non nil when MESSAGE is a currently entered keystroke."
   (string-match-p (key-description (this-command-keys-vector)) message))
 
 
-(defcustom multi-message-transient-functions '(multi-message--ellipsis-p multi-message--keystroke-echo-p)
+(defcustom multi-message-transient-functions '(multi-message--ellipsis-p multi-message--keystroke-echo-p multi-message--keystroke-regex-p)
   "List of functions to filter out transient messages that should not be stacked.
 Each function is called in sequence with message string as an only argument.
 If any of the functions returns non nil, the message is filtered out."
