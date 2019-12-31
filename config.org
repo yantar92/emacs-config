@@ -8942,7 +8942,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
                   (?⯑ org-specific "\\(?:^*+ +\\)\\(\\<SOMEDAY\\>\\)" (org-mode) 1)
       		  (?☑ org-specific "\\(?:^*+ +\\)\\(\\<DONE\\>\\)" (org-mode) 1)
       		  (?✘ org-specific "\\(?:^*+ +\\)\\(\\<FAILED\\>\\)" (org-mode) 1)
-      		  (?☒ org-specific "\\(?:^*+ +\\)\\(\\<CANCELLED\\>\\)" (org-mode) 1)
+      		  (?✘ org-specific "\\(?:^*+ +\\)\\(\\<CANCELLED\\>\\)" (org-mode) 1)
       		  (?▶ org-specific "\\(?:^*+ +\\)\\(\\<NEXT\\>\\)" (org-mode) 1)
                   (?⛕ org-specific "\\(?:^*+ +\\)\\(\\<MERGED\\>\\)" (org-mode) 1)
       		  (?⌛ org-specific "\\(?:^*+ +\\)\\(\\<WAITING\\>\\)" (org-mode) 1)
