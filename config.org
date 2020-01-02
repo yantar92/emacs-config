@@ -2493,7 +2493,8 @@ Undo window configuration changes
   (setq auto-revert-verbose nil
 	dired-dwim-target t
 	dired-du-size-format t ;; show human readable size
-	dired-listing-switches "--time-style=locale -ADhgGBF --group-directories-first"
+	;; 2019-12-31 Disabled because it does not play well with ftp 	dired-listing-switches "--time-style=locale -ADhgGBF --group-directories-first"
+	dired-listing-switches "-ADl"
         delete-by-moving-to-trash t
         trash-directory "~/tmp/Trash")
   :config
