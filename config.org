@@ -2721,6 +2721,24 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   :straight t
   :config (treemacs-icons-dired-mode))
 #+end_src
+**** Tramp
+:PROPERTIES:
+:CREATED:  [2019-12-31 Tue 14:33]
+:END:
+***** COMMENT FTP
+:PROPERTIES:
+:CREATED:  [2019-12-31 Tue 14:33]
+:END:
+
+Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not accept them
+
+#+begin_src emacs-lisp
+(define-advice ange-ftp-ls (:around (oldfun file lsargs parse &optional no-error wildcard) force-default-ls-switches)
+  "Always use -al in ftp."
+  (unless (string= lsargs "-al")
+    (setq lsargs "-al --dired"))
+  (apply oldfun (list file "-al" parse no-error wildcard)))
+#+end_src
 
 *** NEXT Hyperbole
 :PROPERTIES:
