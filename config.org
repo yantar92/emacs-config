@@ -6307,17 +6307,20 @@ SUBTREE-END is used as end of the entry if not nil."
 	      ("i" "Inbox items"
 	       ((tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "Inbox\n")
+                       (org-agenda-files '("~/Org/inbox.org"))
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'notscheduled)))
 		       (org-agenda-prefix-format "S\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))
 		(tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "")
+                       (org-agenda-files '("~/Org/inbox.org")) 
 		       (org-agenda-block-separator nil)
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'notdeadline)))
 		       (org-agenda-prefix-format "D\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))
 		(tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "")
+                       (org-agenda-files '("~/Org/inbox.org")) 
 		       (org-agenda-block-separator nil)
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'scheduled 'deadline)))
 		       (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
