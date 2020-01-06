@@ -4683,7 +4683,6 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 #+begin_src emacs-lisp
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
-  :straight t
   :demand t)
 #+end_src
 *** Project management
