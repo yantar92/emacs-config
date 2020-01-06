@@ -5644,10 +5644,10 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 (bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-agenda-mode-map)
 (add-to-list 'org-agenda-bulk-custom-functions '(?F org-command-set-SHOWFROMDATE-property))
 
-(defun org-command-set-SHOWFROMDATE-property ()
+(defun org-command-set-SHOWFROMDATE-property (&optional arg)
   "Command to set :SHOWFROMDATE property for the org entry at point.
   If NOT-IN-AGENDA is not nil, do not check whether we are in agenda now."
-  (interactive)
+  (interactive "P")
   (if (equal major-mode 'org-agenda-mode)
       (progn
 	(org-agenda-check-no-diary)
@@ -5662,18 +5662,20 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 	      (widen)
 	      (goto-char pos)
 	      (org-show-context 'agenda)
-	      (call-interactively 'org-command-set-SHOWFROMDATE-property)
+	      (funcall-interactively 'org-command-set-SHOWFROMDATE-property arg)
               (setq ts (org-entry-get (point) "SHOWFROMDATE")))
             (org-agenda-show-new-time marker ts " P"))))
     (let ((property "SHOWFROMDATE"))
-      (let ((value (org-read-property-value property))
-	    (fn (cdr (assoc-string property org-properties-postprocess-alist t))))
-	(setq org-last-set-property property)
-	(setq org-last-set-property-value (concat property ": " value))
-	;; Possibly postprocess the inserted value:
-	(when fn (setq value (funcall fn value)))
-	(unless (equal (org-entry-get nil property) value)
-	  (org-entry-put nil property value))))))
+      (if (equal arg '(4))
+	  (org-entry-delete (point) property)
+	(let ((value (org-read-property-value property))
+	      (fn (cdr (assoc-string property org-properties-postprocess-alist t))))
+	  (setq org-last-set-property property)
+	  (setq org-last-set-property-value (concat property ": " value))
+	  ;; Possibly postprocess the inserted value:
+	  (when fn (setq value (funcall fn value)))
+	  (unless (equal (org-entry-get nil property) value)
+	    (org-entry-put nil property value)))))))
 
 (defun org-set-SHOWFROMDATE-property (PROMPT &rest args)
   "Read :SHOWFROMDATE: property."
