@@ -1122,7 +1122,7 @@ And use the wrapper command in interactive mode.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2019-12-20 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2019-12-31
+:SHOWFROMDATE: 2020-01-11
 :END:
 :LOGBOOK:
 - State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
@@ -7247,18 +7247,6 @@ The solution is to show the task contents of every task at point in agenda.
 :END:
 :LOGBOOK:
 - Refiled on [2019-12-23 Mon 18:07]
-:END:
-***** MERGED [#A] make org-ql format agenda items better
-CLOSED: [2019-12-30 Mon 11:52] SCHEDULED: <2020-01-04 Sat>
-:PROPERTIES:
-:CREATED: [2019-12-22 Sun 21:35]
-:SHOWFROMDATE: 2019-12-28
-:END:
-:LOGBOOK:
-- State "MERGED"     from "NEXT"          [2019-12-30 Mon 11:52]
-CLOCK: [2019-12-27 Fri 16:59]--[2019-12-27 Fri 17:04] =>  0:05
-- Refiled on [2019-12-23 Mon 18:08]
-- Refiled on [2019-12-23 Mon 10:57]
 :END:
 *** TODO Contacts
 :PROPERTIES:
