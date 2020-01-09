@@ -4103,6 +4103,21 @@ When listening a new band/album, I usually go through all the songs and delete w
     (elfeed-org)
     (setq rmh-elfeed-org-files (list "~/Org/rss.org"))))
 #+end_src
+
+Group entries by rss feed
+
+#+begin_src emacs-lisp
+(defun yant/elfeed-group-by-feed (entry1 entry2)
+  (let ((time1 (elfeed-entry-date entry1))
+	(time2 (elfeed-entry-date entry2))
+        (rss1 (elfeed-entry-feed-id entry1))
+        (rss2 (elfeed-entry-feed-id entry2)))
+    (or (string> rss1 rss2)
+	(and (string= rss1 rss2)
+	     (> time1 time2)))))
+
+(setf elfeed-search-sort-function #'yant/elfeed-group-by-feed)
+#+end_src
 *** =Notmuch=
 :PROPERTIES:
 :ID:       f6ca2367-45c4-45bc-acec-49837cadc5ac
