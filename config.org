@@ -3081,7 +3081,7 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 
 *** Undo
 
-**** Persistent undo
+**** COMMENT Persistent undo
 :PROPERTIES:
 :CREATED:  [2019-08-25 Sun 19:29]
 :ID:       ae00a281-ea18-47c8-b75b-a7f643d63b88
@@ -3102,6 +3102,21 @@ Never recover undo if the buffer is modified.
   :config
   (undohist-initialize))
 #+end_src
+
+**** Undo-tree 
+:PROPERTIES:
+:CREATED:  [2020-01-20 Mon 10:34]
+:END:
+
+Trying =undo-tree= again
+#+begin_src emacs-lisp
+(use-package undo-tree
+  :straight t
+  :custom ((undo-tree-auto-save-history t))
+  :config
+  (global-undo-tree-mode +1))
+#+end_src
+
 *** TODO Editing outside emacs
 :PROPERTIES:
 :CREATED:  [2019-08-25 Sun 19:56]
