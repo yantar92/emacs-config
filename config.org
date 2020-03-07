@@ -3868,7 +3868,8 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 #+begin_src emacs-lisp
 (use-package vterm
   :if init-flag
-  :straight (vterm :host github :repo "akermu/emacs-libvterm")
+  :load-path  "~/.emacs.d/site-lisp/emacs-libvterm"
+  ;;:straight (vterm :host github :repo "akermu/emacs-libvterm")
   :commands (vterm vterm-other-window))
 
 ;; ;; directory tracking
