@@ -4037,6 +4037,26 @@ When listening a new band/album, I usually go through all the songs and delete w
 (setq pdf-misc-print-programm "gtklp")
 (setq pdf-misc-print-programm-args '("-C \"emacs-print\""))
 #+end_src
+*** Calendar
+:PROPERTIES:
+:CREATED:  [2020-01-09 Thu 19:41]
+:ID:       581abcb2-4a7a-4b0e-b9b9-a0dc6281748b
+:END:
+Meta bindings for calendar
+#+begin_src emacs-lisp
+(use-package calendar
+  :if init-flag
+  :requires meta-functions
+  :config
+  (meta-defun meta-down :mode calendar-mode calendar-forward-week)
+  (meta-defun meta-up :mode calendar-mode calendar-backward-week)
+  (meta-defun meta-forward :mode calendar-mode calendar-forward-day)
+  (meta-defun meta-backward :mode calendar-mode calendar-backward-day)
+  (meta-defun meta-down-element :mode calendar-mode calendar-forward-year)
+  (meta-defun meta-up-element :mode calendar-mode calendar-backward-year)
+  (meta-defun meta-forward-element :mode calendar-mode calendar-forward-month)
+  (meta-defun meta-backward-element :mode calendar-mode calendar-backward-month))
+#+end_src
 ** News & email
 :PROPERTIES:
 :ID:       b53c6b66-4a7c-4eae-ab26-e010fdeb3534
