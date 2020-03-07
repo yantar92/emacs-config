@@ -727,7 +727,7 @@ Since I wrap the default movement commands into custom functions (see [[id:0fe0b
 (when init-flag
   (mapc #'eldoc-add-command '(meta-up meta-up-element meta-down meta-down-element meta-backward meta-backward-element meta-forward meta-forward-element meta-scroll-down meta-scroll-up self-insert-command)))
 #+end_src
-**** Stack messages in mini-buffer when they appear quickly after each other
+**** COMMENT Stack messages in mini-buffer when they appear quickly after each other
 :PROPERTIES:
 :CREATED:  [2019-12-22 Sun 14:26]
 :ID:       2a660565-143a-4431-946b-404498bd3996
