@@ -4999,7 +4999,10 @@ Allow checklists to be reset in recurring tasks when =:RESET_CHECK_BOXES:= is =t
   (add-to-list 'org-default-properties "RESET_CHECK_BOXES"))
 #+end_src
 
-
+Do not show consistency graph in agenda
+#+begin_src emacs-lisp
+(define-advice org-habit-insert-consistency-graphs (:override () disable) #'ignore)
+#+end_src
 
 **** Projects
 :PROPERTIES:
