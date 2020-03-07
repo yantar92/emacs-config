@@ -2497,7 +2497,7 @@ Undo window configuration changes
 	dired-dwim-target t
 	dired-du-size-format t ;; show human readable size
 	;; 2019-12-31 Disabled because it does not play well with ftp 	dired-listing-switches "--time-style=locale -ADhgGBF --group-directories-first"
-	dired-listing-switches "-ADl"
+	dired-listing-switches "-ADlh"
         delete-by-moving-to-trash t
         trash-directory "~/tmp/Trash")
   :config
