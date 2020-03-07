@@ -389,6 +389,7 @@ Setting resizing to be exact instead.
 :END:
 
 General settings for window appearance
+
 **** COMMENT Handling pop-up windows
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 14:15]
@@ -882,6 +883,8 @@ In boon, it can be done by forcing global move commands in special state.
 
 *************** TODO Provide a way to prepend condition
 *************** END
+*************** TODO check when trying to bind non-existing function? maybe link to function symbol instead
+*************** END
 
 Second, implement the wrapper command.
 
@@ -1122,7 +1125,7 @@ And use the wrapper command in interactive mode.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2019-12-20 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-01-11
+:SHOWFROMDATE: 2020-01-19 18:00
 :END:
 :LOGBOOK:
 - State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
@@ -1185,7 +1188,6 @@ Define the most basic movement commands:
      (meta-forward-element "Move forward one element." forward-word)
      (meta-backward-element "Move backward one element." backward-word)
      (meta-recenter-top-bottom "Recenter text on scree." recenter-top-bottom)
-     (meta-undo "Undo." undo)
      (meta-next-buffer "Go forward in buffer." next-buffer)
      (meta-previous-buffer "Go backward in buffer." previous-buffer)
      (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
@@ -8949,7 +8951,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 :PROPERTIES:
 :ID:       6b238696-fbbe-4206-91fb-eeebff4a032a
 :END:
-- I do not want bigger items font because I tend to use items a lot
+I do not want bigger items font because I tend to use items a lot
   #+begin_src emacs-lisp
 (custom-set-faces
  '(org-level-1 ((t (:inherit outline-1 :height 1.0))))
@@ -8959,7 +8961,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
  '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
  )
   #+end_src
-- Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much faster than overlay-based =org-bullets=.
+Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much faster than overlay-based =org-bullets=.
   #+begin_src emacs-lisp
 (use-package pretty-symbols
   :config
@@ -9026,18 +9028,18 @@ Prefer to replace default =...= by something more distinct if item is folded
 (setq org-ellipsis "  ")
 (set-face-underline 'org-ellipsis nil)
   #+END_SRC
-- blanks in items
+blanks in items
   #+begin_src emacs-lisp
 ;;turn off blanks in a new entries
 (setq org-blank-before-new-entry (quote ((heading . auto)
 					 (plain-list-item . auto))))
 (setq org-cycle-separator-lines 2)
   #+end_src
-- hide emphasis markers
+hide emphasis markers
   #+begin_src emacs-lisp
 (setq org-hide-emphasis-markers t)
   #+end_src
-- keyword faces
+keyword faces
   #+begin_src emacs-lisp
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -9052,34 +9054,34 @@ Prefer to replace default =...= by something more distinct if item is folded
       	      ("CANCELLED" :foreground "gray80" :weight bold)
 	      ("MERGED" :foreground "light green" :weight bold))))
 #+end_src
-- truncation by default
+truncation by default
 #+BEGIN_SRC emacs-lisp
 (setq org-startup-truncated t)
 #+END_SRC
-- no leading stars
+no leading stars
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-leading-stars t)
 #+END_SRC
-- no indentation inside entries
+no indentation inside entries
 #+BEGIN_SRC emacs-lisp
 (setq org-adapt-indentation nil)
 #+END_SRC
-- show sticky headers on tall tables
+show sticky headers on tall tables
 #+begin_src emacs-lisp
 (use-package org-table-sticky-header
   :straight t
   :diminish org-table-sticky-header-mode
   :hook (org-mode . org-table-sticky-header-mode))
 #+end_src
-- hyphen as em-dash (from [[https://github.com/grettke/help/blob/master/help.org][here]])
+hyphen as em-dash (from [[https://github.com/grettke/help/blob/master/help.org][here]])
 #+begin_src emacs-lisp
 (font-lock-add-keywords
  'org-mode
  '(("^[[:space:]]*\\(-\\) "
     0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "—")))))
 #+end_src
-- hide property drawers if they are empty or contain only invisible =org-custom-properties=
-- also hide the logbooks containing only state changes and clocking
+hide property drawers if they are empty or contain only invisible =org-custom-properties=
+also hide the logbooks containing only state changes and clocking
 
 
 
