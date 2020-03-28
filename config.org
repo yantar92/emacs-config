@@ -9972,10 +9972,14 @@ Spell check rules for org syntax.
 :END:
 #+begin_src emacs-lisp
 (when init-flag
+  (use-package meta-functions
+    :config
+    (meta-defun meta-org-clock-goto "Goto clocked in entry" org-clock-goto)
+    (meta-defun meta-org-clock-goto :mode org-agenda-mode org-agenda-clock-goto)
+    (bind-key "C-c c" #'meta-org-clock-goto))
   (bind-keys
    ("C-c C-S-l" . org-store-link)
    ("C-c m" . org-capture)
-   ("C-c c" . org-clock-goto)
    :map boon-goto-map
    ("a" . org-agenda)
    ("C-t" . gtd-open)
