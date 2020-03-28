@@ -2004,6 +2004,7 @@ abort completely with `C-g'."
 (use-package hideshow
   :if init-flag
   :straight t
+  :diminish hs-minor-mode
   :bind (:map hs-minor-mode-map
 	      :filter boon-command-state
 	      ("<tab>" . hs-toggle-hiding)
