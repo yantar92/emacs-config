@@ -9694,19 +9694,20 @@ Fontify agenda items properly
   "Force fontify ageda item. (hack)"
   (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
     (with-temp-buffer
-      (cl-letf (((symbol-function 'org-link-expand-abbrev) #'identity)) ;; expanding sometimes causes errors when attempting to access ancestors
+      (cl-letf (((symbol-function 'yant/process-att-abbrev) #'identity)
+		((symbol-function 'yant/process-att-id-abbrev) #'identity)) ;; expanding sometimes causes errors when attempting to access ancestors
 	(org-mode)
 	(insert "* "
 		txt
-		" "
-		(or (and tags (s-join ":" `(nil ,@tags nil)))
+		"\t"
+		(or (and tags (s-join ":" `(nil ,@(cl-remove-duplicates tags) nil)))
 		    "")
 		"\n")
 	(font-lock-fontify-buffer)
 	(goto-char (point-min))
-	(looking-at "^\\* \\(.+\\)[ 	]+\\(:\\([[:alnum:]_@#%:]+\\):\\)*[ 	]*$")
-	(setq txt (match-string 1))
-	(setq tags (and tags (s-split ":" (match-string 2) 't))))
+	(looking-at "^\\* \\(\\([^\t]+\\)[ 	]+\\(:\\([[:alnum:]_@#%:]+\\):\\)*\\)[ 	]*$")
+	(setq txt (match-string 2))
+	(setq tags (and tags (s-split ":" (match-string 3) 't))))
       (list extra txt level category tags dotime remove-re habitp)))
   )
 
