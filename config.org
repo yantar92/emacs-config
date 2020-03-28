@@ -3172,9 +3172,22 @@ Trying =undo-tree= again
 #+begin_src emacs-lisp
 (use-package undo-tree
   :straight t
+  :diminish undo-tree-mode
   :custom ((undo-tree-auto-save-history t))
   :config
   (global-undo-tree-mode +1))
+#+end_src
+
+Add meta-bindings
+
+#+begin_src emacs-lisp
+(use-package meta-functions
+  :after undo-tree 
+  :config
+  (meta-defun meta-up :mode undo-tree-visualizer-mode undo-tree-visualize-undo)
+  (meta-defun meta-down :mode undo-tree-visualizer-mode undo-tree-visualize-redo)
+  (meta-defun meta-forward :mode undo-tree-visualizer-mode undo-tree-visualize-switch-branch-right)
+  (meta-defun meta-backward :mode undo-tree-visualizer-mode undo-tree-visualize-switch-branch-left))
 #+end_src
 
 *** TODO Editing outside emacs
