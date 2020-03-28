@@ -2870,18 +2870,30 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
     :bind (:map boon-command-map
 		("C-V" . mc/edit-beginnings-of-lines))))
 #+end_src
-*** Open current line =insert state=
+*** Open current line
 :PROPERTIES:
 :CREATED:  [2017-12-29 Fri 16:03]
 :ID:       0d1d2022-e094-49b0-abc0-0957536690ee
 :END:
+
 #+BEGIN_SRC emacs-lisp
 (use-package boon
   :if init-flag
   :defer t
   :config
-  (bind-key "M-v" 'boon-open-line-and-insert boon-command-map))
+  (bind-key "C-o" 'boon-open-line boon-command-map))
 #+END_SRC
+
+Also, don't break the current line if the cursor is in the middle of a line
+
+#+begin_src emacs-lisp
+(use-package simple
+  :if init-flag
+  :config
+  (define-advice open-line (:before (&rest args) mote-to-beg-first)
+    (beginning-of-line)))
+#+end_src
+
 *** Query replace
 :PROPERTIES:
 :ID:       1825c53a-1f53-4da8-a2b0-04ddea8cc43e
