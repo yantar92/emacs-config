@@ -5071,6 +5071,7 @@ I use [[http://www.nongnu.org/org-edna-el/][org-edna]] for managing dependencies
 #+BEGIN_SRC emacs-lisp
 (use-package org-edna
   :straight t
+  :diminish org-edna-mode
   :config
   (org-edna-load))
 #+END_SRC
