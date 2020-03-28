@@ -702,8 +702,9 @@ Show some text in buffer differently
 
 (use-package spaceline
   :if init-flag
+  :demand t
   :straight t
-  :init
+  :config
   (setq powerline-default-separator 'arrow-fade
         spaceline-minor-modes-separator " ")
   (require 'spaceline-config)
