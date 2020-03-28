@@ -8503,6 +8503,32 @@ This function is called by `org-archive-hook'.  The option
 
 #+end_src
 
+Archive logbook
+Credit: https://www.reddit.com/r/orgmode/comments/dg43hs/can_i_archive_a_property_drawer/f3frk2n/
+*************** TODO automate this
+*************** END
+
+#+begin_src emacs-lisp
+(defun my/org-archive-delete-logbook ()
+  (save-excursion
+   (org-end-of-meta-data)
+   (let ((elm (org-element-at-point)))
+     (when (and
+            (equal (org-element-type elm) 'drawer)
+            (equal (org-element-property :drawer-name elm) "LOGBOOK"))
+       (delete-region (org-element-property :begin elm)
+                      (org-element-property :end elm))))))
+
+(defun my/org-archive-without-delete ()
+  (cl-letf (((symbol-function 'org-cut-subtree) (lambda () nil)))
+    (org-archive-subtree)))
+
+(defun my/org-archive-logbook ()
+  (interactive)
+  (my/org-archive-without-delete)
+  (my/org-archive-delete-logbook))
+#+end_src
+
 *** Preview
 :PROPERTIES:
 :ID:       a85d2993-1d90-40b3-b69a-52cf7d6bd18b
