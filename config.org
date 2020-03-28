@@ -7938,7 +7938,7 @@ ignoring the previously saved values."
       (let ((old-time-at-point (org-accumulate-weighted-time 'return))
 	    (old-org-time-balance org-time-balance))
 	(apply OLDFUN args)
-	(setq org-time-balance-update-time (current-time))
+	;; (setq org-time-balance-update-time (current-time))
 	(setq org-time-balance (+ old-org-time-balance
 				  (- (org-accumulate-weighted-time 'return)
                                      old-time-at-point)))))))
@@ -7955,7 +7955,7 @@ ignoring the previously saved values."
 		(string= "DONE" (org-get-todo-state))
 		(org-set-property "ORG-TIME-BONUS" (format "%s" (org-get-org-time-bonus-at-point)))))
      (apply OLDFUN (list arg))
-     (setq org-time-balance-update-time (current-time))
+     ;; (setq org-time-balance-update-time (current-time))
      (setq org-time-balance (+ old-org-time-balance
 			       (- (org-accumulate-weighted-time 'return)
 				  old-time-at-point))))
@@ -7973,6 +7973,7 @@ ignoring the previously saved values."
 				  1))))
 
 (add-hook 'org-clock-in-hook #'org-clock-save-clock-multiplier)
+(add-hook 'org-clock-in-hook #'org-save-time-balance-session)
 
 (add-to-list 'org-default-properties "ORG-TIME-BALANCE-MULTIPLIER")
 (add-to-list 'org-default-properties "ORG-TIME-BONUS-ON-DONE")
