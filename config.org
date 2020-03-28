@@ -816,21 +816,31 @@ is at its default value `grow-only'."
   (let ((last-message (car multi-message-list)))
     (unless (and last-message (equal message (aref last-message 1)))
       (when last-message
-        (cond
-         ((> (float-time) (+ (aref last-message 0) multi-message-timeout))
+	(cond
+	 ((> (float-time) (+ (aref last-message 0) multi-message-timeout))
           (setq multi-message-list nil))
-         ((or
+	 ((or
            ;; `message-log-max' was nil, potential clutter.
            (aref last-message 2)
            (run-hook-with-args-until-success 'multi-message-transient-functions (aref last-message 1)))
           (setq multi-message-list (cdr multi-message-list)))))
       (push (vector (float-time) message (not message-log-max)) multi-message-list)
       (when (> (length multi-message-list) multi-message-max)
-        (setf (nthcdr multi-message-max multi-message-list) nil)))
-    (mapconcat (lambda (m) (aref m 1))
-               (reverse multi-message-list)
-               multi-message-separator)))
-
+	(setf (nthcdr multi-message-max multi-message-list) nil)))
+    (message-display (mapconcat (lambda (m) (aref m 1))
+				(reverse multi-message-list)
+				multi-message-separator))
+    ;; (let ((message-display (mapconcat (lambda (m) (aref m 1))
+    ;; 				      (reverse multi-message-list)
+    ;; 				      multi-message-separator))
+    ;;       (n-lines (s-count-matches "\n" message-display)))
+    ;;   (if (and last-message
+    ;; 	       (equal this-command (aref 3 last-message))
+    ;;            (< n-lines multi-message-max))
+    ;;       (s-concat message-display (s-repeat (- multi-message-max n-lines) "\n"))
+    ;;     message-display))
+    )
+  )
 
 (setq set-message-function 'set-multi-message)
 #+end_src
