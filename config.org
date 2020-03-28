@@ -31,7 +31,6 @@ This is me
 (setq user-mail-address "yantar92@gmail.com")
 #+end_src
 
-
 I am not really doing much programming, but rather use Emacs as knowledge base management tool.
 Most of time, I do not even edit or type things directly, but read through the files. 
 Therefore, the main focus of this setup is =org-mode= and not as much programming, navigating through text and not as much editing.
@@ -6517,7 +6516,7 @@ SUBTREE-END is used as end of the entry if not nil."
 		(org-agenda-sorting-strategy
 		 '(todo-state-down effort-up category-keep))))
 	      ("d" "Focus daily agenda" agenda ""
-	       ((org-agenda-overriding-header "Focused daily agenda. Don't forget to filter to work/home scope\n")
+	       ((org-agenda-overriding-header "Focused daily agenda. Do not forget to filter to work/home scope\n")
 		(org-agenda-skip-function 'yant/org-agenda-skip-nofocus)))
 	      ("i" "Inbox items"
 	       ((tags "+INBOX-DEFAULT"
@@ -7297,11 +7296,10 @@ However, I found myself missing earlier notes I sometimes add to my bookmark tas
 When the bookmark is a long article, I may read it half way and save the location where I stopped in the task body.
 Later, I just forget that I started reading and do not even check the task body...
 The solution is to show the task contents of every task at point in agenda.
-
+Also, hide the contents once task is clocked out.
 
 *************** TODO auto-show the contents. make it minor-mode
 *************** END
-
 
 #+begin_src emacs-lisp
 (setq org-agenda-start-with-entry-text-mode nil)
@@ -8472,7 +8470,7 @@ Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override stand
 
 Sometimes, I have a small projects, where I do not want to decide whether I want to archive every single subtask or not. I tag them =:ARCHIVEALL:=.
 
-Thanks God, I do not need to open my archive file frequently - my =TODO.org_archive= is =>1Mba= and takes forever to open. I am not sure if I need to do something with it.
+Thanks God, I do not need to open my archive file frequently - my =TODO.org_archive= is =>1Mb= and takes forever to open. I am not sure if I need to do something with it.
 *************** TODO Speed up opening large org files
 :LOGBOOK:
 - State "TODO"       from "HOLD"       [2019-05-16 Thu 11:30]
@@ -8483,6 +8481,8 @@ Thanks God, I do not need to open my archive file frequently - my =TODO.org_arch
 
 If a task being archived contains attachments, it is better to delete them.
 Otherwise, I'd rather keep the task in place to avoid hanging files.
+*************** TODO also show the attachment list when asking
+*************** END
 
 #+begin_src emacs-lisp
 (setq org-attach-archive-delete 'query)
@@ -10123,7 +10123,7 @@ Spell check rules for org syntax.
     (dired-mark-files-regexp "^\\." nil 'localname)
     (dired-do-kill-lines))))
 #+end_src
-** TODO Summary of key bindings
+** Summary of key bindings
 *** COMMENT Command frequency measurement in emacs
 :PROPERTIES:
 :ID:       cd5dd0a5-e810-4846-91a3-ba5b6c649cdc
