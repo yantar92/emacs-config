@@ -288,7 +288,7 @@ And increase GC threshold on top of that (I found emacs spend >25% of time doing
 In batch mode, increase the threshold to make things faster.
 #+begin_src emacs-lisp
 (if init-flag
-    (setq gc-cons-threshold (* 200 1000 1000))
+    (setq gc-cons-threshold (* 400 1000 1000))
   (setq gc-cons-threshold (* 1 1000 1000 1000)))
 #+end_src
 
