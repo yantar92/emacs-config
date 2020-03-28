@@ -9496,16 +9496,11 @@ Show tags right justified
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
 :END:
 #+begin_src emacs-lisp
-(defun place-agenda-tags ()
-  "Put the agenda tags by the right border of the agenda window."
-  (setq org-agenda-tags-column (- 4 (window-width)))
-  (org-agenda-align-tags))
-(add-hook 'org-finalize-agenda-hook 'place-agenda-tags)
 (defadvice org-agenda (around split-vertically activate)
   (let ((split-width-threshold 1000))  ; or whatever width makes sense for you
     ad-do-it))
 #+end_src
-- do not highlight line below mouse
+Do not highlight line below mouse
   #+begin_src emacs-lisp
 (defun yant/remove-mouse-highlight ()
   "Remove all mouse highlights in buffer."
