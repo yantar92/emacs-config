@@ -9229,7 +9229,7 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
                   (?📧 org-specific "[ ]*#[+]EMAIL" (org-mode))
                   (?⚙ org-specific "[ ]*#[+]PROPERTY" (org-mode))
                   (?⏣ org-specific "[ ]*#[+]OPTIONS" (org-mode))
-                  (?📑 org-specific ":\\(BOOKMARK\\):" (org-mode) 1)
+                  (?🔗 org-specific ":\\(BOOKMARK\\):" (org-mode) 1)
                   (?🖬 org-specific ":\\(ARCHIVED\\):" (org-mode) 1)
                   ((yant/str-to-glyph "📁📁📁") org-specific ":\\(ATTACH\\):" (org-mode) 1)
                   (?🖳 org-specific ":\\(PhD\\):" (org-mode) 1)
