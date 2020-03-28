@@ -421,7 +421,7 @@ Setting resizing to be exact instead.
 
 General settings for window appearance
 
-**** COMMENT Handling pop-up windows
+**** Handling pop-up windows
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 14:15]
 :END:
@@ -451,17 +451,16 @@ Make help, info, and backtrace pop-up in separate frame
 *************** END
 
 #+BEGIN_SRC emacs-lisp  
-("*Help*" :select t :frame t)
-     (helpful-mode :select t :frame t)
-     ("*info*" :select t :frame t)
-     ("*Backtrace*" :select t :frame t)
+;; ("*Help*" :select t :frame t)
+     ;; (helpful-mode :select t :frame t)
+     ;; ("*info*" :select t :frame t :same t)
+     ("*Select Link*" :align 'below)
+     ;; ("*Backtrace*" :select t :frame t :same t)
      #+END_SRC
 
 #+BEGIN_SRC emacs-lisp  
 )))
 #+end_src
-
-
 
 **** Centered window mode
 :PROPERTIES:
