@@ -2093,7 +2093,8 @@ abort completely with `C-g'."
 	     ("g" . boon-goto-map)
 	     ("G" . end-of-buffer)
 	     ("D" . boon-treasure-region)
-	     ("<SPC>" . boon-drop-mark)))
+	     ("<SPC>" . boon-drop-mark))
+  (unbind-key "M-l" global-map))
 #+end_src
 
 **** =Avy= mode - =qutebrowser= like hints to words
