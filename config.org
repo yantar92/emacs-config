@@ -1337,34 +1337,34 @@ https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_thread/ehcg91
 :ID:       943917fe-aecf-45a7-bc0d-591492d17898
 :END:
 #+begin_src emacs-lisp
-(use-package reverse-im :straight t
+(use-package reverse-im
+  :straight t
   :if init-flag
   :config
-  (reverse-im-activate "russian-computer")
-  (reverse-im-activate "chinese-py-b5"))
-;; (when init-flag
-;;   (cl-loop
-;;    for from across "йцукенгшщзхїфівапролджєячсмитьбюЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ№"
-;;    for to   across "qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>#"
-;;    do
-;;    (eval `(define-key local-function-key-map
-;; 	    (kbd ,(concat "C-"
-;; 			  (string from)))
-;; 	    (kbd ,(concat "C-"
-;; 			  (string to)))))
-;;    (eval `(define-key local-function-key-map
-;; 	    (kbd ,(concat "M-"
-;; 			  (string from)))
-;; 	    (kbd ,(concat "M-"
-;; 			  (string to)))))
-;;    (eval `(define-key local-function-key-map
-;; 	    (kbd ,(concat "C-M-"
-;; 			  (string from)))
-;; 	    (kbd ,(concat "C-M-"
-;; 			  (string to)))))
-;;    (eval `(define-key local-function-key-map
-;; 	    (kbd ,(string from))
-;; 	    (kbd ,(string to))))))
+  (reverse-im-activate "russian-computer"))
+(when init-flag
+  (cl-loop
+   for from across "йцукенгшщзхїфівапролджєячсмитьбюЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ№"
+   for to   across "qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>#"
+   do
+   (eval `(define-key local-function-key-map
+	    (kbd ,(concat "C-"
+			  (string from)))
+	    (kbd ,(concat "C-"
+			  (string to)))))
+   (eval `(define-key local-function-key-map
+	    (kbd ,(concat "M-"
+			  (string from)))
+	    (kbd ,(concat "M-"
+			  (string to)))))
+   (eval `(define-key local-function-key-map
+	    (kbd ,(concat "C-M-"
+			  (string from)))
+	    (kbd ,(concat "C-M-"
+			  (string to)))))
+   (eval `(define-key local-function-key-map
+	    (kbd ,(string from))
+	    (kbd ,(string to))))))
 #+end_src
 ***** TODO Make it work everywhere
 - +This does not work with things like =C-c 'symbol= for now.+
@@ -1389,7 +1389,7 @@ Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][
 :ID:       c822d425-3cfa-4cb7-bf1e-9ea893fbee5c
 :END:
 #+begin_src emacs-lisp
-(use-package pyim
+(use-package pyim 
   :if init-flag
   :straight t
   :demand t)
