@@ -4880,7 +4880,7 @@ I need to deal with many projects running at the same time in my work. Hence, I 
                             ("NOCLOCK" . ?k)
 			    ("ignore" . ?g)
                             ("REFILE" . ?r))))
-(setq org-tags-exclude-from-inheritance '("ATTACH" "NOCLOCK"))
+(setq org-tags-exclude-from-inheritance '("ATTACH" "NOCLOCK" "REFILE"))
 #+end_src
 - =COMMON= :: General task
 - =PhD= :: Related to work/PhD
