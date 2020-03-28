@@ -68,6 +68,7 @@ Init file, which loads this file.
 #+begin_src emacs-lisp :tangle "~/.emacs.d/init.el"
 ;;(package-initialize)
 (setq init-flag t)
+(setq comp-deferred-compilation t) ;; enable automatic native-compilation
 (load "~/.emacs.d/config.el")
 #+end_src
 ** Emacs server settings
