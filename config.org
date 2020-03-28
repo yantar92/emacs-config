@@ -7325,6 +7325,15 @@ The solution is to show the task contents of every task at point in agenda.
     (org-agenda-redo@org-quick-peek--hide-all)
     (org-quick-peek--agenda-show :quiet t))
   )
+Also, because my agenda window is usually wide (unlike most windows shrank by [[id:af9c7d6c-fd15-4d68-b379-3d439ea94370][Centered window mode]]), I prefer to apply =fill-mode= to the entry text.
+
+#+begin_src emacs-lisp
+(use-package org-quick-peek
+  :defer t
+  :config
+  (define-advice org-quick-peek--s-trim-lines (:filter-return (text) fill-text)
+    "Fill the entry text."
+    (s-word-wrap 80 text)))
 #+end_src
 
 **** Trying =org-ql=
