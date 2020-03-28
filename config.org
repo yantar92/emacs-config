@@ -9662,16 +9662,30 @@ Fontify headlines in agenda
 #+end_src
 Hide some uninteresting tags
 #+begin_src emacs-lisp
-(setq org-agenda-hide-tags-regexp (rx-to-string '(or "DEFAULT" "SKIP" "NOARCHIVE" "INBOX" "HOLD" "WAITING" "NODEADLINE")))
+(setq org-agenda-hide-tags-regexp (rx-to-string '(or "DEFAULT" "SKIP" "NOARCHIVE" "INBOX" "HOLD" "WAITING" "NODEADLINE" "CANCELLED")))
 #+end_src
 
-Shorten too long headlines in agenda
+Shorten too long headlines in agenda. 
+In order to make the remainder consistent, the multibyte characters are considered to be [[39a84dde-88d1-46e8-86d0-28fb8f72f30c][double width]] and all headlines containing multibyte characters are shortened to less chars accordingly.
+*************** DONE this thing should be smarter and consider that multibyte characters can have different width. I will try to keep 2-byte double width. Then the string should be trimmed to certain number of bytes, but not certain character number
+CLOSED: [2020-03-11 Wed 23:17]
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-03-11 Wed 23:17]
+:END:
+*************** END
+*************** TODO the idea about multibyte is not good for russian text having same width as english...
+*************** END
+
 #+begin_src emacs-lisp
 ;; cutoff agenda headlines
-(define-advice org-agenda-format-item (:filter-args (&rest args) trim-heading)
-  "Trip org-agenda heading to 110 chars or 80 chars if habit."
+(define-advice org-agenda-format-item (:filter-args (&rest args) trim-heading 100) ;; run last
+  "Trip org-agenda heading to 120 chars."
   (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
-    (list extra (s-truncate (if habitp 80 110) txt) level category tags dotime remove-re habitp)))
+    (setq txt (s-truncate (- 120 (/ (- (string-bytes txt)
+				       (length txt))
+                                    2)) ; multibyte characters are assumed to be twice wider than single byte, though it does not seem to be asolutely accurate
+			  txt))
+    (list extra txt level category tags dotime remove-re habitp)))
 #+END_SRC
 
 Fontify agenda items properly
