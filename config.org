@@ -5967,6 +5967,7 @@ I made it so in the interactive specification in [[id:3a0ca96a-3ce5-4f72-ba38-16
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 18:11]
 :ID:       9361bc68-010b-45f1-bddd-4638d6344758
+:header-args: :tangle ~/Git/org-attach-fs/org-attach-fs.el
 :END:
 :LOGBOOK:
 - State "TODO"       from "NEXT"          [2018-01-01 Mon 13:17]
@@ -5984,10 +5985,42 @@ Try to look in symlinks?
 
 For the implementation, the idea is keeping all the actual attachments in a common folder for all the org files according to their uuid. As a result, I can safely refile tasks between different org files without worrying about moving the attachments around (assuming that there is not change in the task ids).
 
+#+begin_src emacs-lisp :tangle "~/.emacs.d/config.el"
+(use-package org-attach-fs :after org :demand t)
+#+end_src
+
+This is separate package now. All the code below is exported to =org-attach-fs.el=
+*************** TODO rewrite to use lexical binding
+*************** END
 #+begin_src emacs-lisp
+;;; org-attach-fs.el --- Mirror org heading heirarchy to store attachments
+
+;; Version: 0.0
+;; Author: Ihor Radchenko <yantar92@gmail.com>
+;; Created: 14 March 2020
+
+;;; Commentary:
+
+;; This package aims to store symlinks to org attachments under folder
+;; structure reflecting current org heading hierarchy.
+;; The package started as my personal Emacs config and assumes that
+;; all the attachments can be accessed from any org file. This
+;; corresponds to the following config:
+;; (setq org-attach-method 'mv)
+;; (setq org-attach-store-link-p 't)
+;; (setq org-attach-id-dir "~/.data/")
+;; (setq org-id-locations-file
+;;       (f-join org-attach-id-dir ".org-id-locations"))
+#+end_src
+
+#+begin_src emacs-lisp
+(require 'f)
+(require 'org-attach)
+#+end_src
+
+#+begin_src emacs-lisp :tangle "~/.emacs.d/config.el"
 (setq org-attach-method 'mv)
 (setq org-attach-store-link-p 't)
-(require 'f)
 (setq org-attach-id-dir "~/.data/")
 (setq org-id-locations-file
       (f-join org-attach-id-dir ".org-id-locations"))
@@ -5998,10 +6031,10 @@ To implement this, for each task, I store the symlinks to the child tasks in the
 Therefore, apart from the attachments, I have =yant/org-attach-symlinks-directory= folder in the task's attach dir.
 This folder contains a back reference to the attachment dir (if there are attachments) =yant/org-attach-attachments-symlink-directory= and symlinks to the corresponding symlink folders of the children with attachments somewhere down the hierarchy.
 
-Now, it is trivial to create the attachment hierarchy for any org file. I just make folders pointing to the =yant/org-attach-symlinks-directory== of the top level tasks either in the same folder with the org file or in =yant/org-attach-file-symlink-path= (file local).
+Now, it is trivial to create the attachment hierarchy for any org file. I just make folders pointing to the =yant/org-attach-symlinks-directory= of the top level tasks either in the same folder with the org file or in =yant/org-attach-file-symlink-path= (file local).
 
 #+BEGIN_SRC emacs-lisp
-(setq org-attach-file-list-property nil)
+;; (setq org-attach-file-list-property nil)
 
 (defvar-local yant/org-attach-file-symlink-path nil
   "Path to directory where the symlink hierarchy is created for the current org buffer.
@@ -6210,6 +6243,14 @@ Files, out of the folder structure, will appear in my agenda to attach them to t
 
 *************** TODO implement this
 *************** END
+
+#+begin_src emacs-lisp
+
+(provide 'org-attach-fs)
+
+;;; org-attach-fs.el ends here
+
+#+end_src
 
 ***** TODO handle cases when we need files in the same dir with the org file [[id:9dc72877-1e7b-4084-a262-6e39b08ced49][LaTeX class]]
 :PROPERTIES:
