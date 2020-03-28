@@ -1870,7 +1870,8 @@ abort completely with `C-g'."
 	(user-error "No typo at or before point"))))
 
   (setq save-abbrevs 'silently)
-  (setq-default abbrev-mode t))
+  (setq-default abbrev-mode t)
+  (diminish 'abbrev-mode))
 #+end_src
 *** Code checking
 :PROPERTIES:
