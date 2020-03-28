@@ -1252,7 +1252,8 @@ It should be noted, that the same can be done via setting the proper bindings fo
 			dired-mode pdf-view-mode helpful-mode magit-file-mode
 			magit-status-mode magit-revision-mode
 			mingus-playlist-mode mingus-browse-mode
-			mingus-help-mode calendar-mode))
+			mingus-help-mode calendar-mode undo-tree-visualizer-mode
+                        profiler-report-mode fundamental-mode))
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   (setq boon-insert-state-major-mode-list
