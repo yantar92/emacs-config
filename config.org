@@ -1667,6 +1667,7 @@ saving all the buffers, is executed.
 :END:
 #+begin_src emacs-lisp
 (global-auto-revert-mode -1)
+(diminish 'auto-revert-mode)
 (setq revert-without-query '(".*"))
 (bind-key* "M-r" #'revert-buffer)
 #+end_src
