@@ -3221,6 +3221,27 @@ Add meta-bindings
            fill-column)))
     (call-interactively #'fill-paragraph)))
 #+end_src
+*** Paredit
+:PROPERTIES:
+:CREATED:  [2020-03-22 Sun 21:43]
+:END:
+
+#+begin_src emacs-lisp
+(use-package paredit
+  :if init-flag
+  :straight t
+  :diminish paredit-mode
+  :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . paredit-mode)
+  :config
+  (use-package boon
+    :defer t
+    :config
+    (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
+    (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-backward-slurp-sexp)
+    (bind-keys :map boon-insert-map
+	       ("M-o" . paredit-forward-slurp-sexp)
+               ("M-i" . paredit-backward-slurp-sexp))))
+#+end_src
 
 ** Debugging
 :PROPERTIES:
