@@ -321,12 +321,42 @@ For the font, I prefer something that works fine with mixed code and text (e.g. 
 My choice is Source Code Pro.
 Setting it up as default everywhere.
 
+[2020-03-10 Tue] <<39a84dde-88d1-46e8-86d0-28fb8f72f30c>>
+Chinese symbols are not covered by Source Code Pro. 
+The result is different character width for Chinese characters.
+Using Sarasa Gothic hc with slightly larger size for Chinese symbols in order to keep the character width same all the time.
+Credit: https://www.reddit.com/r/emacs/comments/fgbnfv/is_there_a_fixed_width_font_supporting_multiple/
+*************** DONE adjust the width for various symbols 
+CLOSED: [2020-03-11 Wed 23:44]
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-03-11 Wed 23:44]
+:END:
+*************** END
+
   #+begin_src emacs-lisp
 (when init-flag
   (set-face-attribute 'default nil
 		      :height 100
-		      :foundry "adobe"
-		      :family "source code pro"))
+		      :family "Source Code Pro")
+  (set-fontset-font "fontset-default" 'chinese-gbk (font-spec :size 12.0 :family "Sarasa Mono hc"))
+  (set-fontset-font "fontset-default" 'cyrillic-iso8859-5 (font-spec :size 13 :family "source code pro"))
+  (mapc (lambda (char)
+	  (set-fontset-font "fontset-default" char (font-spec :size 10.0 :family "Source Code Pro")))
+        '(?λ))
+  (mapc (lambda (char)
+	  (set-fontset-font "fontset-default" char (font-spec :size 5.0 :family "Quivira")))
+        '(?⏩ ?⛔))
+  (mapc (lambda (char)
+	  (set-fontset-font "fontset-default" char (font-spec :size 10.0 :family "Quivira")))
+        '(?★ ?⌛))
+
+  (mapc (lambda (char)
+	  (set-fontset-font "fontset-default" char (font-spec :size 12.0 :family "symbola")))
+        '(?📧 ?🖳 ?🏠 ?🔗 ?🖹))
+  (mapc (lambda (char)
+	  (set-fontset-font "fontset-default" char (font-spec :size 8.0 :family "symbola")))
+        '(?🖹 ?⛕))
+  )
   #+end_src
 
 The colour of secondary selection in the theme is the same colour with some symbols in my =org-agenda=.
