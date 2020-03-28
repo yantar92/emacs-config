@@ -3618,7 +3618,7 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 (use-package eros
   :if init-flag
   :straight t
-  :hook (lisp-mode lisp-interaction-mode))
+  :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . eros-mode))
 #+end_src
 
 **** Improved interactive evaluation of elisp code
