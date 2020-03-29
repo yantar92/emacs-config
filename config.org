@@ -3278,6 +3278,7 @@ Add meta-bindings
                              search-failed
 			     file-missing
                              file-date-error
+                             "Already at top level of the outline"
 			     "Attempt to delete the sole visible or iconified frame"
                              "No such page"
                              "use-package: :[a-z]+ wants"
