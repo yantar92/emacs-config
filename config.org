@@ -4161,42 +4161,45 @@ Meta bindings for calendar
 :ID:       9bc385e2-0ed2-460b-875e-be9ad19144a3
 :END:
 #+begin_src emacs-lisp
-(use-package elfeed
-  :if init-flag
-  :straight t
-  :bind (:map elfeed-search-mode-map
-	      ("q" . delete-frame)
-	      ("r" . elfeed-search-update--force)
-	      ("R" . elfeed-search-fetch)
-	      ("t" . elfeed-search-untag-all-unread)
-              ("T" . elfeed-search-tag-all-unread)
-              ("b" . yant/elfeed-capture-entry)
-              ("<tab>" . elfeed-quick-peek-current-item)
-              ("B" . (lambda () (interactive)
-		       (elfeed-search-tag-all 'opened)
-		       (meta-up)
-		       (elfeed-search-browse-url))))
-  :config
-  (use-package quick-peek
+  (use-package elfeed
+    :if init-flag
     :straight t
+    :bind (:map elfeed-search-mode-map
+		("q" . delete-frame)
+		("r" . elfeed-search-update--force)
+		("R" . elfeed-search-fetch)
+		("t" . elfeed-search-untag-all-unread)
+		("T" . elfeed-search-tag-all-unread)
+		("b" . yant/elfeed-capture-entry)
+		("<tab>" . elfeed-quick-peek-current-item)
+		("B" . (lambda () (interactive)
+			 (elfeed-search-tag-all 'opened)
+			 (meta-up)
+			 (elfeed-search-browse-url))))
     :config
-    (defun elfeed-quick-peek-current-item ()
-      "Show quick peek of current elfeed item or hide if one is already shown."
-      (interactive)
-      (require 'elfeed-show)
-      (let* ((entry (elfeed-search-selected :ignore-region))
-	     (text (and entry
-			(with-temp-buffer 
-			  (elfeed-show-mode)
-			  (setq elfeed-show-entry entry)
-			  (elfeed-show-refresh)
-			  (buffer-string)))))
-	(unless (> (quick-peek-hide (point)) 0)
-	  (when text (quick-peek-show text nil nil)))))
-    (define-advice elfeed-search-untag-all-unread (:after (&rest args) hide-quickpeek)
-      "Hide all quick peek overlays in buffer."
-      (quick-peek-hide))
-    (advice-add 'yant/elfeed-capture-entry :after #'elfeed-search-untag-all-unread@hide-quickpeek))
+    (use-package quick-peek
+      :straight t
+      :config
+      (defun elfeed-quick-peek-current-item ()
+	"Show quick peek of current elfeed item or hide if one is already shown."
+	(interactive)
+	(require 'elfeed-show)
+	(let* ((entry (elfeed-search-selected :ignore-region))
+	       (text (and entry
+			  (with-temp-buffer 
+			    (elfeed-show-mode)
+			    (setq elfeed-show-entry entry)
+			    (elfeed-show-refresh)
+			    (read-only-mode -1)
+			    (setq-local fill-column 120)
+			    (fill-region (point-min) (point-max) 'center)
+			    (buffer-string)))))
+	  (unless (> (quick-peek-hide (point)) 0)
+	    (when text (quick-peek-show text nil nil)))))
+      (define-advice elfeed-search-untag-all-unread (:after (&rest args) hide-quickpeek)
+	"Hide all quick peek overlays in buffer."
+	(quick-peek-hide))
+      (advice-add 'yant/elfeed-capture-entry :after #'elfeed-search-untag-all-unread@hide-quickpeek))
   
   (use-package org-capture-pop-frame
     :defer t
