@@ -10017,7 +10017,9 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
   (make-local-variable 'ispell-skip-region-alist)
   (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
   (add-to-list 'ispell-skip-region-alist '(org-any-link-re))
+  (add-to-list 'ispell-skip-region-alist '("<<[A-Za-z-0-9]+>>"))
   (add-to-list 'ispell-skip-region-alist '("=[^=]+="))
+  (add-to-list 'ispell-skip-region-alist '("^# +-\\*-*+$"))
   (add-to-list 'ispell-skip-region-alist (help/block-regex "[Ss][rR][cC]"))
   (let ()
     (--each
