@@ -325,12 +325,7 @@ Chinese symbols are not covered by Source Code Pro.
 The result is different character width for Chinese characters.
 Using Sarasa Gothic hc with slightly larger size for Chinese symbols in order to keep the character width same all the time.
 Credit: https://www.reddit.com/r/emacs/comments/fgbnfv/is_there_a_fixed_width_font_supporting_multiple/
-*************** DONE adjust the width for various symbols 
-CLOSED: [2020-03-11 Wed 23:44]
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-03-11 Wed 23:44]
-:END:
-*************** END
+
 
   #+begin_src emacs-lisp
 (when init-flag
@@ -423,6 +418,7 @@ General settings for window appearance
 **** Handling pop-up windows
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 14:15]
+:ID:       d74e4baa-4599-4a98-9246-2d03e52d846e
 :END:
 
 Pop-up windows in emacs sometimes behave in a strange way.
@@ -1165,7 +1161,7 @@ And use the wrapper command in interactive mode.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2019-12-20 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-01-19 18:00
+:SHOWFROMDATE: 2020-03-30
 :END:
 :LOGBOOK:
 - State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
@@ -3165,6 +3161,7 @@ Never recover undo if the buffer is modified.
 **** Undo-tree 
 :PROPERTIES:
 :CREATED:  [2020-01-20 Mon 10:34]
+:ID:       8b8023ed-03c8-4aa7-a47e-6195f94bc63d
 :END:
 
 Trying =undo-tree= again
@@ -6000,6 +5997,9 @@ I made it so in the interactive specification in [[id:3a0ca96a-3ce5-4f72-ba38-16
 :LOGBOOK:
 - State "TODO"       from "NEXT"          [2018-01-01 Mon 13:17]
 :END:
+
+*************** TODO view attachments in dired just by hitting inter on .org file - simulate symlink folders / virtual filesystem
+*************** END
 
 I usually have a huge numbers of files, related to my projects. I would like to use attach to associate the files with the proper entry, but searching them later in my Dropbox is a pain because of the way Org saves the attachments.
 It makes more sense for me to make attachments follow the org tree structure in the project by default (unless I change the attach folder to something else).
@@ -9321,7 +9321,7 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
   :config
   (setq pretty-symbol-patterns
 	(append pretty-symbol-patterns
-		'(;;(?▤ org-specific ":LOGBOOK:" (org-mode))
+		`(;;(?▤ org-specific ":LOGBOOK:" (org-mode))
       		  ;;(?⚙ org-specific ":PROPERTIES:" (org-mode))
       		  ;;(?⏏ org-specific ":END:" (org-mode))
       		  (?★ org-specific "\\[#A\\]" (org-mode))
@@ -9438,7 +9438,6 @@ hyphen as em-dash (from [[https://github.com/grettke/help/blob/master/help.org][
 #+end_src
 hide property drawers if they are empty or contain only invisible =org-custom-properties=
 also hide the logbooks containing only state changes and clocking
-
 
 
 *************** TODO Find a faster way to hide empty drawers
@@ -9763,14 +9762,9 @@ Hide some uninteresting tags
 #+end_src
 
 Shorten too long headlines in agenda. 
-In order to make the remainder consistent, the multibyte characters are considered to be [[39a84dde-88d1-46e8-86d0-28fb8f72f30c][double width]] and all headlines containing multibyte characters are shortened to less chars accordingly.
-*************** DONE this thing should be smarter and consider that multibyte characters can have different width. I will try to keep 2-byte double width. Then the string should be trimmed to certain number of bytes, but not certain character number
-CLOSED: [2020-03-11 Wed 23:17]
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-03-11 Wed 23:17]
-:END:
-*************** END
-*************** TODO the idea about multibyte is not good for russian text having same width as english...
+In order to make the remainder consistent, the multi-byte characters are considered to be [[39a84dde-88d1-46e8-86d0-28fb8f72f30c][double width]] and all headlines containing multi-byte characters are shortened to less chars accordingly.
+
+*************** TODO the idea about multi-byte is not good for Russian text having same width as English...
 *************** END
 
 #+begin_src emacs-lisp
