@@ -1200,7 +1200,7 @@ Define the most basic movement commands:
 (use-package meta-functions
   :if init-flag
   :config
-  (use-package helm
+  (use-package helm-occur
     :defer t
     :config
     (meta-defun meta-occur "Occur." helm-occur)
