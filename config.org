@@ -75,7 +75,7 @@ Init file, which loads this file.
 :ID:       5d8e1dca-a849-4980-bfde-cbf02801e92b
 :END:
 
-As many others, I run emacs in server mode. Actually, it is an no-brainer considering how long my huge org files are being opened.
+As many others, I run emacs in server mode. Actually, it is an nobrainer considering how long my huge org files are being opened.
 
 Setup environment variables
 *************** TODO load .profile instead of manual setting here
@@ -121,7 +121,7 @@ Instead of the default emacs package manager, I use =straigt.el=.
 My initial motivation was mostly the ability to get packages from github directly.
 In addition, it would be useful to keep track modify the packages in some better way than advising.
 
-*************** TODO Use el-patch and take a look at fork+master handling by package.el
+*************** TODO Use =el-patch= and take a look at fork+master handling by =package.el=
 *************** END
 
 =Straight.el= can use =watchexec= to watch changes in the packages, which is much faster in comparison with default =find=.
@@ -133,8 +133,8 @@ emerge -v watchexec
 *************** TODO Actually, this snippet might be useless on a fresh system. Need to add some check to indicate that missing package is a problem
 *************** END
 
-First, make sure that =straight.el= can fetch remote urls from everywhere.
-Set up the askpass.
+First, make sure that =straight.el= can fetch remote URLs from everywhere.
+Set up the =askpass=.
 
 #+begin_src emacs-lisp
 (setenv "SSH_ASKPASS" "ssh-askpass-fullscreen")
@@ -445,8 +445,8 @@ The frame was in different WM workspace and I was totally confused about what is
    '(
 #+END_SRC
 
-Make help, info, and backtrace pop-up in separate frame
-*************** TODO backtrace buffer with the config below pops-up a newframe every time a step into execution
+Make help, info, and back-trace pop-up in separate frame
+*************** TODO back-trace buffer with the config below pops-up a new frame every time a step into execution
 *************** END
 
 #+BEGIN_SRC emacs-lisp  
@@ -595,7 +595,7 @@ Show some text in buffer differently
 - State "TODO"       from              [2018-03-12 Mon 14:26]
 - State "HOLD"       from              [2018-03-04 Sun 17:57]
 :END:
-*************** TODO Split config to prog-modes. Add more commentary
+*************** TODO Split config to =prog-modes=. Add more commentary
 *************** END
 
 #+begin_src emacs-lisp
@@ -1572,7 +1572,7 @@ If the new path's directories does not exist, create them."
  )
 #+end_src
 
-Since this config is often called in extra batch process, lockfiles can mess everything up. 
+Since this config is often called in extra batch process, lock-files can mess everything up. 
 Disable them.
 
 #+begin_src emacs-lisp
@@ -3220,9 +3220,10 @@ Add meta-bindings
            fill-column)))
     (call-interactively #'fill-paragraph)))
 #+end_src
-*** Paredit
+*** =Paredit=
 :PROPERTIES:
 :CREATED:  [2020-03-22 Sun 21:43]
+:ID:       e802659e-0d50-4658-95b6-fdfe2f4b65f1
 :END:
 
 #+begin_src emacs-lisp
@@ -5007,7 +5008,7 @@ If the task is scheduled, schedule it for tomorrow."
   - REVIEW(e) :: A task is basically done, but should be reviewed (i.e. consider putting to knowledge base)
   - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason)
   - HOLD(h) :: I am not going to do this task for now due to reason explained in the comment
-  - SOMEDAY(s) :: This task does not have to be done at all. But maybe, it I have a mood... The command triggers un-scheduling the task if it is scheduled
+  - SOMEDAY(s) :: This task does not have to be done at all. But maybe, it I have a mood... The command triggers unscheduling the task if it is scheduled
 #+begin_src emacs-lisp
 (defun yant/unschedule-someday-keyword ()
   "Unschedule task when it keyword is changed to SOMEDAY."
@@ -5577,12 +5578,12 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 The links to run =src= blocks.
 Useful if I want to run an =src= block when working on entry.
 Having a link, which runs blocks, allows to simply =C-c C-o= on the heading to follow this link.
-*************** TODO ask in org maillist about save-window-config in emacs src execution
+*************** TODO ask in org mail-list about save-window-config in emacs src execution
 *************** END
-*************** TODO ask maillist about what "internal link means" in org-agenda-open-link. Condition look strange. Why just non-bracket link?
+*************** TODO ask mail-list about what "internal link means" in org-agenda-open-link. Condition look strange. Why just non-bracket link?
 *************** END
 
-*************** TODO my changes broke some C-c C-o beahavior. reverted for now, but need to investigate
+*************** TODO my changes broke some C-c C-o behaviour. reverted for now, but need to investigate
 *************** END
 
 
@@ -5761,7 +5762,7 @@ CLOCK: [2019-07-20 Sat 22:04]--[2019-07-20 Sat 22:34] =>  0:30
 CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 :END:
 
-- need to modify the lib to show abstracts (recollqq -A=)
+- need to modify the lib to show abstracts (=recollqq -A=)
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-recoll
@@ -6695,7 +6696,7 @@ This agenda show the items for the current day and time.
 	  (point))))))
   #+end_src
 
-*************** NEXT [#A] debug org-agenda-skip-nonurgent-fast
+*************** NEXT [#A] debug =org-agenda-skip-nonurgent-fast=
 :PROPERTIES:
 :SHOWFROMDATE: 2019-08-06
 :END:
@@ -7457,7 +7458,7 @@ Also, because my agenda window is usually wide (unlike most windows shrank by [[
                (list (f-join org-directory "inbox.org"))))
 #+end_src
 
-***** TODO use it |- (alphapapa/org-ql: An Org query language, and experimental code for a next-generation Org Agenda) :BOOKMARK:
+***** TODO use it |- (=alphapapa/org-ql=: An Org query language, and experimental code for a next-generation Org Agenda) :BOOKMARK:
 :PROPERTIES:
 :CREATED:  [2019-04-04 Thu 15:20]
 :Source:   https://github.com/alphapapa/org-ql#org-ql-search
@@ -7547,8 +7548,8 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 #+end_src
 The main purpose of clocking for me is to control the time I spend for important projects and for other staff (like configuring Emacs ;)). Hence, it is important to do a continuous tracking of the tasks, which I can choose to do or not to do (e.g. it is useless to keep track of how much time I spend brushing my teeth in the morning - anyway, I have to do it).
 A lot of time, the task I am doing is not useful to add to my org files explicitly (e.g. initial checks on some side project, which may or may not work; routine work). I use special tasks for all kinds of such activity:
-- Organization :: related to work, general
-- Check TORead ... :: related to home, browsing, reading fiction, etc I start the activity from clocking in one of these tasks. Later, I clock in the task, which I am doing at the moment. Once it's done, clocking automatically comes back to higher level task (unless it is marked =:NOCLOCK=, see [[id:adc6f5ae-183f-4c5f-97e8-7bfe18f028d2][General org mode tags]]) or to one of the tasks above when I clocked out top level project.
+- Organisation :: related to work, general
+- Check =TORead= ... :: related to home, browsing, reading fiction, etc I start the activity from clocking in one of these tasks. Later, I clock in the task, which I am doing at the moment. Once it's done, clocking automatically comes back to higher level task (unless it is marked =:NOCLOCK=, see [[id:adc6f5ae-183f-4c5f-97e8-7bfe18f028d2][General org mode tags]]) or to one of the tasks above when I clocked out top level project.
      Captures are also clocked, but once done, clocking comes back to previously active task, if any, or to default task otherwise.
 *************** TODO The default task is not being saved if I restart emacs
 *************** END
@@ -8387,7 +8388,7 @@ The subheadings below such a headlines are promoted up *1 level*.
 				    ("http"  . "\\.\\(jpeg\\|jpg\\|png\\|gif\\|svg\\)\\'")
 				    ("https" . "\\.\\(jpeg\\|jpg\\|png\\|gif\\|svg\\)\\'")))
 #+end_src
-**** md
+**** =md=
 :PROPERTIES:
 :ID:       51a2db82-731b-4daf-bea9-dbcca50bc4e8
 :END:
@@ -8436,7 +8437,7 @@ In the past I only archived the tasks, which where done before the past month, b
 	  next-item)))))
 #+end_src
 
-Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override standard archiving function to make them archivable (into separate location =org-inlinetask-archive-location=)
+Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override standard archiving function to make it possible to archive them (into separate location =org-inlinetask-archive-location=)
 #+BEGIN_SRC emacs-lisp
 (defvar org-inlinetask-archive-location "%s_archive::datetree/* Archived inline tasks"
   "Where to archive inline tasks.")
@@ -8959,11 +8960,11 @@ I hate when org is cluttering org file directory with generated files (=:file=).
     (list arg info params)))
 #+END_SRC
 
-Also, it make sense to show inline images, which I frequently generate via gnuplot after the evaluation
+Also, it make sense to show inline images, which I frequently generate via Gnuplot after the evaluation
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 #+END_SRC
-***** TODO gnuplot
+***** TODO Gnuplot
 :PROPERTIES:
 :CREATED:  [2018-09-28 Fri 18:40]
 :ID:       9c897a8c-e847-456d-9bf9-b905ba90f4fd
@@ -9159,7 +9160,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
     (format "\"%s\"" (replace-regexp-in-string "\\\"" "\\\\\"" result))) ;; escape quote
 #+end_src
 
-*************** TODO make autocompletion possible for babel blocks from inside editing org-src
+*************** TODO make auto-completion possible for babel blocks from inside editing org-src
 *************** END
 
 *** Appearance
@@ -9899,7 +9900,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 Spell check rules for org syntax.
 
 
-[Partially stolen from https://github.com/grettke/help/blob/master/help.org]:
+Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 
 #+begin_src emacs-lisp
 (defun help/block-regex (special)
@@ -9948,6 +9949,7 @@ Spell check rules for org syntax.
           ("LATEX_HEADER" nil)
           ("LATEX_HEADER_EXTRA" nil)
           ("NAME" t)
+          ("name" t)
           ("OPTIONS" t)
           ("PROPERTY" t)
           ("POSTID" nil)
@@ -10145,7 +10147,7 @@ Spell check rules for org syntax.
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 14:45]
 :END:
-*** make.conf
+*** =make.conf=
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 14:45]
 :header-args+: :tangle "/sudo::/etc/portage/make.conf"
@@ -10406,12 +10408,12 @@ ytdl-raw-options=format="[protocol!=http_dash_segments][protocol!=rtmp]",all-sub
 ytdl-format=bestvideo[height<=?1080]+bestaudio/best
 #+end_src
 
-*** Userscripts
+*** User-scripts
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 02:51]
 :ID:       898b5aa0-6f6e-4280-bd44-cc424436a81d
 :END:
-**** Youtube
+**** YouTube
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 02:51]
 :ID:       81208c2c-19ef-432e-88d4-4ab7bcc3d762
