@@ -7495,6 +7495,21 @@ Also, hide the contents once task is clocked out.
 :LOGBOOK:
 - Refiled on [2019-12-23 Mon 18:07]
 :END:
+
+**** Live (=helm=) search in org
+:PROPERTIES:
+:CREATED:  [2020-03-29 Sun 22:02]
+:END:
+
+#+begin_src emacs-lisp
+(use-package org-ql
+  :straight t
+  :init
+  (use-package helm-org :straight t :demand t) ;; required by helm-org-ql
+  :config
+  (require 'helm-org-ql))
+#+end_src
+
 *** TODO Contacts
 :PROPERTIES:
 :CREATED:  [2018-09-05 Wed 06:39]
