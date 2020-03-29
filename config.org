@@ -7374,27 +7374,16 @@ Also, hide the contents once task is clocked out.
   (add-hook 'org-clock-out-hook #'yant/org-agenda-hide-org-quick-peek-overlays))
 #+end_src
 
-Also, because my agenda window is usually wide (unlike most windows shrank by [[id:af9c7d6c-fd15-4d68-b379-3d439ea94370][Centered window mode]]), I prefer to apply =fill-mode= to the entry text.
-
-#+begin_src emacs-lisp
-(use-package org-quick-peek
-  :defer t
-  :config
-  (define-advice org-quick-peek--s-trim-lines (:filter-return (text) fill-text)
-    "Fill the entry text."
-    (s-word-wrap 80 text)))
-#+end_src
 
 **** Trying =org-ql=
 :PROPERTIES:
 :CREATED:  [2019-12-22 Sun 17:16]
 :ID:       43d227d2-2032-4c56-b715-5065b31f1b0c
 :END:
-*************** TODO I do not really use SHOWDATES? think about it
+*************** TODO I do not really use =SHOWDATES=? think about it
 *************** END
 
 #+begin_src emacs-lisp
-
 (add-to-list 'org-default-properties "SHOWDATES")
 
 (defun yant/diary-sexp-match-showdate? (entry) ;; the ENTRY name is important, since it is used internally by calendar
