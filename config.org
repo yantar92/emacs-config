@@ -9218,6 +9218,89 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
  "file"
  :face (lambda (path) (if (file-exists-p (org-link-unescape path)) 'org-link 'org-warning)))
 #+end_src
+***** Use posframe to offer link selection
+:PROPERTIES:
+:CREATED:  [2020-03-28 Sat 18:51]
+:ID:       e8ee8fc7-55ec-4396-83e6-97559ab1d5bf
+:END:
+
+#+begin_src emacs-lisp
+(use-package posframe
+  :if init-flag
+  :straight t
+  :requires el-patch
+  :config
+  (el-patch-feature 'org)
+  (el-patch-defun org-offer-links-in-entry (buffer marker &optional nth zero)
+    "Offer links in the current entry and return the selected link.
+If there is only one link, return it.
+If NTH is an integer, return the NTH link found.
+If ZERO is a string, check also this string for a link, and if
+there is one, return it."
+    (with-current-buffer buffer
+      (org-with-wide-buffer
+       (goto-char marker)
+       (let ((cnt ?0)
+	     have-zero end links link c)
+	 (when (and (stringp zero) (string-match org-link-bracket-re zero))
+	   (push (match-string 0 zero) links)
+	   (setq cnt (1- cnt) have-zero t))
+	 (save-excursion
+	   (org-back-to-heading t)
+	   (setq end (save-excursion (outline-next-heading) (point)))
+	   (while (re-search-forward org-link-any-re end t)
+	     (push (match-string 0) links))
+	   (setq links (org-uniquify (reverse links))))
+	 (cond
+	  ((null links)
+	   (message "No links"))
+	  ((equal (length links) 1)
+	   (setq link (car links)))
+	  ((and (integerp nth) (>= (length links) (if have-zero (1+ nth) nth)))
+	   (setq link (nth (if have-zero nth (1- nth)) links)))
+	  (t				; we have to select a link
+	   (save-excursion
+	     (save-window-excursion
+	       (el-patch-remove (delete-other-windows))
+	       ((el-patch-swap with-output-to-temp-buffer with-current-buffer) (el-patch-swap  "*Select Link*" (get-buffer-create "*Select Link*"))
+                (el-patch-add (erase-buffer))
+                (el-patch-add (insert "Select link to open, RET to open all:\n"))
+		(dolist (l links)
+		  (cond
+		   ((not (string-match org-link-bracket-re l))
+		    ((el-patch-swap princ insert) (format "[%c]  %s\n" (cl-incf cnt)
+							  (org-unbracket-string "<" ">" l))))
+		   ((match-end 2)
+		    ((el-patch-swap princ insert)  (format "[%c]  %s (%s)\n" (cl-incf cnt)
+							   (match-string 2 l) (match-string 1 l))))
+		   (t ((el-patch-swap princ insert)  (format "[%c]  %s\n" (cl-incf cnt)
+							     (match-string 1 l)))))))
+               (el-patch-wrap 1 0
+                 (unwind-protect
+                     (el-patch-wrap 1 0
+		       (progn
+			 (el-patch-swap
+			   (org-fit-window-to-buffer (get-buffer-window "*Select Link*"))
+			   (posframe-show (get-buffer "*Select Link*")
+					  :poshandler 'posframe-poshandler-frame-center
+                                          :background-color "Lemonchiffon1"
+                                          :internal-border-width 20
+                                          :internal-border-color "black"
+					  ))
+			 (message "Select link to open, RET to open all:")
+			 (setq c (read-char-exclusive))))
+		   (and (get-buffer "*Select Link*") (kill-buffer "*Select Link*"))))))
+	   (when (equal c ?q) (user-error "Abort"))
+	   (if (equal c ?\C-m)
+	       (setq link links)
+	     (setq nth (- c ?0))
+	     (when have-zero (setq nth (1+ nth)))
+	     (unless (and (integerp nth) (>= (length links) nth))
+	       (user-error "Invalid link selection"))
+	     (setq link (nth (1- nth) links)))))
+	 (cons link end))))))
+#+end_src
+
 **** Items
 :PROPERTIES:
 :ID:       6b238696-fbbe-4206-91fb-eeebff4a032a
