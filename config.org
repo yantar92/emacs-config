@@ -3172,7 +3172,7 @@ Trying =undo-tree= again
 (use-package undo-tree
   :straight t
   :diminish undo-tree-mode
-  :custom ((undo-tree-auto-save-history t))
+  :custom ((undo-tree-auto-save-history nil)) ;; disabling since it causes cryptic error
   :config
   (global-undo-tree-mode +1))
 #+end_src
