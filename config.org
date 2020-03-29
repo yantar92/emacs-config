@@ -4201,82 +4201,106 @@ Meta bindings for calendar
 	(quick-peek-hide))
       (advice-add 'yant/elfeed-capture-entry :after #'elfeed-search-untag-all-unread@hide-quickpeek))
   
-  (use-package org-capture-pop-frame
-    :defer t
-    :config
-    (define-advice ocpf--org-capture (:around (old-fun orig-fun &optional goto keys) suppress-pop-frame-maybe)
-      "Suppress pop-up frame when ``yant/suppress-pop-frame'' is non nil."
-      (if (bound-and-true-p yant/suppress-pop-frame)
-	  (funcall orig-fun goto keys)
-	(funcall old-fun orig-fun goto keys))))
-  (defun yant/elfeed-capture-entry ()
-    "Capture selected entries into inbox."
-    (interactive)
-    (elfeed-search-tag-all 'opened)
-    (meta-up)
-    (let ((entries (elfeed-search-selected)))
-      (cl-loop for entry in entries
-               do (elfeed-untag entry 'unread)
-               when (elfeed-entry-link entry)
-               do (flet ((raise-frame nil nil))
-		    (let ((yant/suppress-pop-frame t)
-			  (url-present-p (s-replace "\n" "" (shell-command-to-string (format "/home/yantar92/bin/org-check-bookmark.sh \"%s\"" it))))
-                          (content (elfeed-deref (elfeed-entry-content entry)))
-                          (content-type (elfeed-entry-content-type entry)))
-                      (setq content-text (with-temp-buffer (when content
-							     (if (eq content-type 'html)
-								 (elfeed-insert-html content)
-							       (insert content)))
-							   (let ((org-babel-min-lines-for-block-output 0)) ;; handle org-mode syntax in body
-							     (org-escape-code-in-region (point-min) (point-max)))
-							   (buffer-string)))
-                      (if (string= url-present-p "ok")
-			  (org-protocol-capture (list :template "B"
-						      :url it
-						      :title (format "%s: %s"
-								     (elfeed-feed-title (elfeed-entry-feed entry))
-								     (elfeed-entry-title entry))
-                                                      :body content-text))
-			(message url-present-p)))))
-      (mapc #'elfeed-search-update-entry entries)
-      (unless (use-region-p) (forward-line))))
+    (use-package org-capture-pop-frame
+      :defer t
+      :config
+      (define-advice ocpf--org-capture (:around (old-fun orig-fun &optional goto keys) suppress-pop-frame-maybe)
+	"Suppress pop-up frame when ``yant/suppress-pop-frame'' is non nil."
+	(if (bound-and-true-p yant/suppress-pop-frame)
+	    (funcall orig-fun goto keys)
+	  (funcall old-fun orig-fun goto keys))))
+    (defun yant/elfeed-capture-entry ()
+      "Capture selected entries into inbox."
+      (interactive)
+      (elfeed-search-tag-all 'opened)
+      (meta-up)
+      (let ((entries (elfeed-search-selected)))
+	(cl-loop for entry in entries
+		 do (elfeed-untag entry 'unread)
+		 when (elfeed-entry-link entry)
+		 do (flet ((raise-frame nil nil))
+		      (let ((yant/suppress-pop-frame t)
+			    (url-present-p (s-replace "\n" "" (shell-command-to-string (format "/home/yantar92/bin/org-check-bookmark.sh \"%s\"" it))))
+			    (content (elfeed-deref (elfeed-entry-content entry)))
+			    (content-type (elfeed-entry-content-type entry)))
+			(setq content-text (with-temp-buffer (when content
+							       (if (eq content-type 'html)
+								   (elfeed-insert-html content)
+								 (insert content)))
+							     (let ((org-babel-min-lines-for-block-output 0)) ;; handle org-mode syntax in body
+							       (org-escape-code-in-region (point-min) (point-max)))
+							     (buffer-string)))
+			(if (string= url-present-p "ok")
+			    (org-protocol-capture (list :template "B"
+							:url it
+							:title (format "%s: %s"
+								       (elfeed-feed-title (elfeed-entry-feed entry))
+								       (elfeed-entry-title entry))
+							:body content-text))
+			  (message url-present-p)))))
+	(mapc #'elfeed-search-update-entry entries)
+	(unless (use-region-p) (forward-line))))
   
-  (defvar elfeed-search-default-filter "+unread -hide -video -science"
-    "Default filter in elfeed search window.")
-  (setq elfeed-search-filter elfeed-search-default-filter)
-  (setq elfeed-sort-order 'ascending)
-  (setq elfeed-search-title-max-width 100)
-  (setq elfeed-search-date-format '("%d %b, %a, %H:%M" 20 :left))
-  (unless (boundp 'elfeed-search-mode-hook) (setq elfeed-search-mode-hook nil))
-  ;; (add-hook 'elfeed-search-mode-hook (lambda () (toggle-truncate-lines +1)))
+    (defvar elfeed-search-default-filter "+unread -hide -video -science"
+      "Default filter in elfeed search window.")
+    (setq elfeed-search-filter elfeed-search-default-filter)
+    (setq elfeed-sort-order 'ascending)
+    (setq elfeed-search-title-max-width 100)
+    (setq elfeed-search-date-format '("%d %b, %a, %H:%M" 20 :left))
+    (unless (boundp 'elfeed-search-mode-hook) (setq elfeed-search-mode-hook nil))
+    ;; (add-hook 'elfeed-search-mode-hook (lambda () (toggle-truncate-lines +1)))
 
-  (define-advice elfeed-search-live-filter (:around (oldfun &optional arg) default-filter-maybe)
-    "Set `elfeed-search-filter' to `elfeed-search-default-filter' when invoked with C-u prefix argument."
-    (interactive "P")
-    (setq elfeed-search-filter (if arg elfeed-search-default-filter elfeed-search-filter))
-    (call-interactively oldfun))
+    (define-advice elfeed-search-live-filter (:around (oldfun &optional arg) default-filter-maybe)
+      "Set `elfeed-search-filter' to `elfeed-search-default-filter' when invoked with C-u prefix argument."
+      (interactive "P")
+      (setq elfeed-search-filter (if arg elfeed-search-default-filter elfeed-search-filter))
+      (call-interactively oldfun))
   
-  (use-package elfeed-org
-    :straight t
-    :config
-    (elfeed-org)
-    (setq rmh-elfeed-org-files (list "~/Org/rss.org"))))
+    (use-package elfeed-org
+      :straight t
+      :config
+      (elfeed-org)
+      (setq rmh-elfeed-org-files (list "~/Org/rss.org"))))
 #+end_src
 
-Group entries by rss feed
+Sort entries by Gnus-like score 
 
 #+begin_src emacs-lisp
-(defun yant/elfeed-group-by-feed (entry1 entry2)
-  (let ((time1 (elfeed-entry-date entry1))
-	(time2 (elfeed-entry-date entry2))
-        (rss1 (elfeed-entry-feed-id entry1))
-        (rss2 (elfeed-entry-feed-id entry2)))
-    (or (string> rss1 rss2)
-	(and (string= rss1 rss2)
-	     (> time1 time2)))))
-
-(setf elfeed-search-sort-function #'yant/elfeed-group-by-feed)
+(use-package elfeed-score
+  :if init-flag
+  :straight t
+  :requires elfeed
+  :config
+  (elfeed-score-enable nil)
+  (define-key elfeed-search-mode-map "=" elfeed-score-map)
+  (setq elfeed-search-print-entry-function #'elfeed-score-print-entry))
 #+end_src
+
+And group them by rss feed
+
+#+begin_src emacs-lisp
+(use-package elfeed
+  :defer t
+  :after elfeed-score
+  :config
+  (defun yant/elfeed-group-by-feed (entry1 entry2)
+    (let ((time1 (elfeed-entry-date entry1))
+	  (time2 (elfeed-entry-date entry2))
+          (rss1 (elfeed-entry-feed-id entry1))
+          (rss2 (elfeed-entry-feed-id entry2)))
+      (or (string> rss1 rss2)
+	  (and (string= rss1 rss2)
+	       (> time1 time2)))))
+
+  (setf elfeed-search-sort-function (lambda (a b)
+				      (let ((scorea (elfeed-score--get-score-from-entry a))
+					    (scoreb (elfeed-score--get-score-from-entry b)))
+				      (or (< scorea scoreb)
+                                          (and (= scorea scoreb)
+					   (yant/elfeed-group-by-feed a b))))))
+#+end_src
+
+
 *** =Notmuch=
 :PROPERTIES:
 :ID:       f6ca2367-45c4-45bc-acec-49837cadc5ac
