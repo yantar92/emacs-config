@@ -155,7 +155,7 @@ And tell =straight.el= to use file watcher
 
 For now, I use develop branch of =straight.el=
 #+begin_src emacs-lisp
-(setq straight-repository-branch 'develop)
+(setq straight-repository-branch "develop")
 #+end_src
 
 First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as from straight.el readme]])
