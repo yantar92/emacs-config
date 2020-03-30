@@ -7506,7 +7506,7 @@ Also, hide the contents once task is clocked out.
 - Refiled on [2019-12-23 Mon 18:07]
 :END:
 
-**** Live (=helm=) search in org
+**** Live (=helm-org-ql=) search in org
 :PROPERTIES:
 :CREATED:  [2020-03-29 Sun 22:02]
 :END:
@@ -7514,10 +7514,12 @@ Also, hide the contents once task is clocked out.
 #+begin_src emacs-lisp
 (use-package org-ql
   :straight t
+  :custom ((helm-org-ql-reverse-paths nil))
   :init
   (use-package helm-org :straight t :demand t) ;; required by helm-org-ql
   :config
-  (require 'helm-org-ql))
+  (require 'helm-org-ql)
+  )
 #+end_src
 
 *** TODO Contacts
