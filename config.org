@@ -3715,6 +3715,16 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
   (add-hook 'LaTeX-mode-hook 'variable-pitch-mode)
   (diminish 'buffer-face-mode))
 #+end_src
+*** =Auctex=
+:PROPERTIES:
+:CREATED:  [2020-03-30 Mon 14:09]
+:END:
+
+#+begin_src emacs-lisp
+(use-package latex
+  :if init-flag
+  :straight auctex)
+#+end_src
 ** Ledger
 :PROPERTIES:
 :ID:       a0cacc17-641c-4b29-86b2-7dcf609cd803
