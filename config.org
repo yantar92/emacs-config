@@ -8610,16 +8610,14 @@ Toggle preview of an image at point (by =C-c C-c= or =TAB=).
 This is especially useful in large buffers where processing all the images by =org-toggle-inline-images= takes too much time.
 Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current_inline_image_with_tab/
 #+begin_src emacs-lisp
-(use-package zones
-  :straight t
-  :config 
+(use-package org
+  :config
   (defun org-toggle-inline-images-at-point ()
     (interactive)
     (when-let ((link-region (org-in-regexp org-link-bracket-re 1)))
-      (narrow-to-region (car link-region) (cdr link-region))
-      (funcall-interactively #'org-toggle-inline-images)
-      (zz-narrow nil)
-      t))
+      (save-restriction  
+	(narrow-to-region (car link-region) (cdr link-region))
+	(org-toggle-inline-images))))
   (add-hook 'org-tab-first-hook #'org-toggle-inline-images-at-point)
   (add-hook 'org-ctrl-c-ctrl-c-hook #'org-toggle-inline-images-at-point))
 #+end_src
