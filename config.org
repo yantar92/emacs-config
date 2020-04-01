@@ -2231,6 +2231,21 @@ Double space convention is outdated.
   :config
   (global-set-key [remap goto-line] 'goto-line-preview))
 #+end_src
+**** =Isearch=
+:PROPERTIES:
+:CREATED:  [2020-03-31 Tue 01:37]
+:END:
+
+Xah Lee gave an interesting idea to bind extra key in =isearch=. [[http://ergoemacs.org/emacs/emacs_isearch_by_arrow_keys.html][cite]]
+Following my key binding theme for [[id:d388e4f5-214e-4697-a53a-be6fb6c24411][Helm]], I also define extra keys in =isearch= 
+
+#+begin_src emacs-lisp
+(use-package isearch
+  :if init-flag
+  :config
+  (bind-key "M-j" #'isearch-repeat-forward isearch-mode-map)
+  (bind-key "M-k" #'isearch-repeat-backward isearch-mode-map))
+#+end_src
 
 *** Links
 **** Browse URL
