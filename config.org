@@ -5697,93 +5697,12 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 The links to run =src= blocks.
 Useful if I want to run an =src= block when working on entry.
 Having a link, which runs blocks, allows to simply =C-c C-o= on the heading to follow this link.
-*************** TODO ask in org mail-list about save-window-config in emacs src execution
-*************** END
-*************** TODO ask mail-list about what "internal link means" in org-agenda-open-link. Condition look strange. Why just non-bracket link?
-*************** END
-
-*************** TODO my changes broke some C-c C-o behaviour. reverted for now, but need to investigate
-*************** END
 
 
-#+begin_src emacs-lisp
-;; redefine to avoid save-excursion while following link
-(defun org-agenda-open-link (&optional arg)
-  "Open the link(s) in the current entry, if any.
-This looks for a link in the displayed line in the agenda.
-It also looks at the text of the entry itself."
-  (interactive "P")
-  (let* ((marker (or (org-get-at-bol 'org-hd-marker)
-		     (org-get-at-bol 'org-marker)))
-	 (buffer (and marker (marker-buffer marker)))
-	 (prefix (buffer-substring (point-at-bol) (point-at-eol)))
-	 (lkall (and buffer (org-offer-links-in-entry
-			     buffer marker arg prefix)))
-	 (lk0 (car lkall))
-	 (lk (if (stringp lk0) (list lk0) lk0))
-	 (lkend (cdr lkall))
-	 trg)
-    (cond
-     ((and buffer lk)
-      (mapcar (lambda(l)
-		(with-current-buffer buffer
-		  (setq trg (and (string-match org-link-bracket-re l)
-				 (match-string 1 l)))
-		  (if (or (not trg) (string-match org-link-any-re trg))
-		      (org-with-wide-buffer
-		       (goto-char marker)
-		       (when (search-forward l nil lkend)
-			 (goto-char (match-beginning 0))
-			 (org-open-at-point)))
-		    ;; This is an internal link, widen the buffer
-		    (switch-to-buffer-other-window buffer)
-		    (widen)
-		    (goto-char marker)
-		    (when (search-forward l nil lkend)
-		      (goto-char (match-beginning 0))
-		      (org-open-at-point)))))
-	      lk))
-     ((or (org-in-regexp (concat "\\(" org-link-bracket-re "\\)"))
-	  (save-excursion
-	    (beginning-of-line 1)
-	    (looking-at (concat ".*?\\(" org-link-bracket-re "\\)"))))
-      (org-link-open-from-string (match-string 1)))
-     (t (message "No link to open here")))))
-
-;; I have to redefine `org-babel-execute:emacs-lisp' to avoid saving window config.
-;; I sometimes run code to change window config!!
-(defun org-babel-execute:emacs-lisp (body params)
-  "Execute a block of emacs-lisp code with Babel."
-  (let* ((lexical (cdr (assq :lexical params)))
-	 (result-params (cdr (assq :result-params params)))
-	 (body (format (if (member "output" result-params)
-			   "(with-output-to-string %s\n)"
-			 "(progn %s\n)")
-		       (org-babel-expand-body:emacs-lisp body params)))
-	 (result (eval (read (if (or (member "code" result-params)
-				     (member "pp" result-params))
-				 (concat "(pp " body ")")
-			       body))
-		       (org-babel-emacs-lisp-lexical lexical))))
-    (org-babel-result-cond result-params
-      (let ((print-level nil)
-            (print-length nil))
-        (if (or (member "scalar" result-params)
-                (member "verbatim" result-params))
-            (format "%S" result)
-          (format "%s" result)))
-      (org-babel-reassemble-table
-       result
-       (org-babel-pick-name (cdr (assq :colname-names params))
-                            (cdr (assq :colnames params)))
-       (org-babel-pick-name (cdr (assq :rowname-names params))
-                            (cdr (assq :rownames params)))))))
 
 
-#+END_SRC
 
 #+BEGIN_SRC emacs-lisp  
-
 (defun org-link-babel-follow (name &optional return-info)
   "Run src block NAME from babel:name link.
 The NAME is parsed as in #+CALL: specification.
