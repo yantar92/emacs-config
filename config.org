@@ -3703,6 +3703,27 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
   :config
   (rsw-elisp-enable))
 #+END_SRC
+
+**** Smart redefining functions
+:PROPERTIES:
+:CREATED:  [2020-04-01 Wed 21:28]
+:END:
+
+Sometimes, advises and hooks are simply not enough to alter existing functions.
+The only resort then is redefining the whole function.
+However, it can break updated packages if something changes in the original function implementation.
+*************** TODO Actually, same can sometimes happen with advises. Is there a way to deal with it?
+*************** END
+=El-patch= allow changing the whole function definition without a risk to break anything. 
+It warns me if the original definition changes from what I expect.
+
+#+begin_src emacs-lisp
+(use-package el-patch
+  :straight t
+  :demand t)
+#+end_src
+
+
 *** Execute current buffer (c++,python,bash,...)
 :PROPERTIES:
 :ID:       a57244bb-a617-44b4-a806-7cff82a86ac7
