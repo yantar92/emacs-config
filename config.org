@@ -1158,21 +1158,6 @@ And use the wrapper command in interactive mode.
   :demand t)
 #+END_SRC
 
-*************** DOING [#A] revise config from here
-SCHEDULED: <2019-12-20 Fri>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-03-30
-:END:
-:LOGBOOK:
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-*************** END
 
 Define the most basic movement commands:
  - occur :: interactive search in buffer
@@ -1370,11 +1355,6 @@ Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_threa
 	    (kbd ,(string from))
 	    (kbd ,(string to))))))
 #+end_src
-***** TODO Make it work everywhere
-- +This does not work with things like =C-c 'symbol= for now.+
-- +This does not work with boon =command mode= and =special mode=.+
-- this does not work with key chords (again read-event)
-- this does not work with region specifiers on boon (it uses read-event!)
 *** Do not use mouse
 :PROPERTIES:
 :CREATED:  [2019-08-02 Fri 15:44]
@@ -1411,7 +1391,6 @@ Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][
   (setq pyim-page-tooltip 'tooltip)
   (setq pyim-page-length 5))
 #+end_src
-
 
 *** Default major mode
 :PROPERTIES:
@@ -1497,7 +1476,6 @@ The basic idea is to prefix movement commands with meta.
   (helm-global-mode))
 #+end_src
 
-
 *** Company
 :PROPERTIES:
 :ID:       8ca3a911-ad9d-43a6-83a6-a7b12b383984
@@ -1530,10 +1508,8 @@ I use company for completion just because it is easy to use.
   (setq company-idle-delay 0
 	company-minimum-prefix-length 2
 	company-selection-wrap-around t
-	company-show-numbers t ;; quick selection by Alt+[1-9]
 	company-require-match nil))
 #+end_src
-
 
 *** TODO Skeleton
 :PROPERTIES:
@@ -1769,10 +1745,29 @@ Working with forges
   :straight t
   :after magit)
 #+end_src
+
 ** Text highlight & colouring
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
 :END:
+
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-02 Thu>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-03-30
+:END:
+:LOGBOOK:
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
+
 *** Highlight text in buffer
 :PROPERTIES:
 :CREATED:  [2018-03-12 Mon 14:29]
@@ -5754,7 +5749,6 @@ The src block should be in the same org file."
 (org-link-set-parameters "babel"
 			 :follow #'org-link-babel-follow
                          :complete #'org-link-babel-complete)
-
 #+end_src
 **** NEXT Org-ref
 :PROPERTIES:
@@ -9243,7 +9237,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 (use-package posframe
   :if init-flag
   :straight t
-  :requires el-patch
+  :after el-patch
   :config
   (el-patch-feature 'org)
   (el-patch-defun org-offer-links-in-entry (buffer marker &optional nth zero)
@@ -9639,6 +9633,7 @@ Show tags right justified
 :PROPERTIES:
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
 :END:
+
 #+begin_src emacs-lisp
 (defadvice org-agenda (around split-vertically activate)
   (let ((split-width-threshold 1000))  ; or whatever width makes sense for you
