@@ -4362,7 +4362,7 @@ Sort entries by Gnus-like score
 (use-package elfeed-score
   :if init-flag
   :straight t
-  :requires elfeed
+  :after elfeed
   :config
   (elfeed-score-enable nil)
   (define-key elfeed-search-mode-map "=" elfeed-score-map)
@@ -4372,9 +4372,7 @@ Sort entries by Gnus-like score
 And group them by rss feed
 
 #+begin_src emacs-lisp
-(use-package elfeed
-  :defer t
-  :after elfeed-score
+(use-package elfeed-score
   :config
   (defun yant/elfeed-group-by-feed (entry1 entry2)
     (let ((time1 (elfeed-entry-date entry1))
