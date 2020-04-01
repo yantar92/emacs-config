@@ -1232,7 +1232,8 @@ Define the most basic movement commands:
   )
 #+end_src
 
-It should be noted, that the same can be done via setting the proper bindings for "j", "k", etc. in the mode itself. The problem is that it may mess up the cases when want to set special meanings for the single keys in =command-mode=, but leave the normal editing on in the =insert-mode=.
+It should be noted that the same can be done via setting the proper bindings for "j", "k", etc. in the mode itself. 
+The problem is that it may mess up the cases when I want to assign special meanings to some keys in =command-mode=, but leave the normal editing on in the =insert-mode=.
 
 #+begin_src emacs-lisp
 (use-package boon
@@ -1267,7 +1268,8 @@ It should be noted, that the same can be done via setting the proper bindings fo
   (boon-mode))
 #+end_src
 
-Also, I do not like default implementation of =boon-special-mode-p=, which force setting special mode for terminal-modes. I prefer to rewrite it
+Also, I do not like default implementation of =boon-special-mode-p=, which forces setting special mode for terminal-modes. I prefer to rewrite it
+
 #+BEGIN_SRC emacs-lisp
 (use-package boon
   :if init-flag
@@ -1282,6 +1284,12 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 :CREATED:  [2017-12-31 Sun 08:36]
 :ID:       8ad95362-807a-457d-8b59-32e83a350c18
 :END:
+Hydra is useful to quickly run commands in special contexts. 
+It can be treated as a combination of command mode in =boon= to get simple key bindings in context with =which-key= to remind the meanings of these bindings. 
+Additionally, it is possible to build hydras dynamically.
+
+I currently do not use hydras often.
+
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
   :if init-flag
@@ -1308,7 +1316,7 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 :ID:       5656ef63-a887-47c0-9427-f7d53d9ddc13
 :END:
 
-https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_thread/ehcg919/
+Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_thread/ehcg919/
 #+begin_src emacs-lisp
 (when init-flag
 ;; free up blocked keys (GUI only)
@@ -1425,10 +1433,30 @@ From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 :PROPERTIES:
 :ID:       f78e9123-ed35-4c76-a5fd-5549cc8f8210
 :END:
+
+Completion is what makes working in Emacs look like magic. 
+
 *** Helm
 :PROPERTIES:
 :ID:       d388e4f5-214e-4697-a53a-be6fb6c24411
 :END:
+
+*************** TODO The update is delayed terribly sometimes. Not sure why. Sometimes, the helm buffer does not get updated at all, especially on short input (1-2 chars)
+*************** END
+
+Unlike default completion, =helm= lets you see all the possible completions dynamically updated as you type. 
+No need to press TAB like crazy.
+
+In addition to Emacs-wide change of the completion method, =Helm= also provides a bunch of useful commands, which especially benefit from live completion:
+- =M-x= completion does not require the user to remember exact command names and exact sequence of words in command names
+- apropos commands become a lot easier to discover
+- can search in kill ring
+- can search in most of info pages, including Emacs manual
+
+Helm mode is very special in regards to =boon= because it works in mini-buffer. 
+Hence, I had to define special versions of =boon=-like bindings for helm. 
+The basic idea is to prefix movement commands with meta. 
+
 #+begin_src emacs-lisp
 (use-package helm
   :if init-flag
@@ -1477,6 +1505,10 @@ From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 :LOGBOOK:
 - State "CANCELLED"  from              [2017-09-22 Fri 07:58]
 :END:
+
+Context completion is *very* useful, especially if a major mode supports the completion. 
+I use company for completion just because it is easy to use.
+
 #+begin_src emacs-lisp
 (use-package company
   :if init-flag
@@ -1510,15 +1542,26 @@ From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 :LOGBOOK:
 - State "TODO"       from              [2018-10-21 Sun 14:28]
 :END:
-** History & version control
+
+Skeletons go beyond simple completion of a single word. 
+They define a powerful template system making completion programmable and interactive. 
+
+
+** DOING History & version control
 :PROPERTIES:
 :ID:       a76e7822-8153-4adc-a3f8-8f05588eff5e
 :END:
+
+Keeping history of file changes both in short and long term is just like backups. 
+One is already using it or not yet using...
+
+
 *** Save buffer key binding
 :PROPERTIES:
 :ID:       21a8d99d-3f19-48d8-8f50-bfa9e139dbbc
 :END:
-Boon =command mode= allows to translate =c 'symbol= key bindings into =C-c
+
+Boon =command mode= allows translating =c 'symbol= key bindings into =C-c
 'symbol= key bindings. It is useful, but =save-buffer= is more meaningful
 to rebind to =C-c s= is such a case and =save-some-buffers= to =C-c C-s=.
 #+begin_src emacs-lisp
@@ -1640,6 +1683,9 @@ saving all the buffers, is executed.
 :PROPERTIES:
 :ID:       b72d24a2-7692-4e37-b547-10c30b058c22
 :END:
+
+Show recently opened files in =helm-mini= buffer.
+
 #+begin_src emacs-lisp
 (use-package helm
   :if init-flag
@@ -1655,6 +1701,10 @@ saving all the buffers, is executed.
 :PROPERTIES:
 :ID:       b4f4fbea-9315-412c-bb48-6984906c67d8
 :END:
+
+Auto-revert mode is nice, but it slows down Emacs on my huge .org files. 
+Hence, I do not use it globally, but enable only where I need it.
+
 #+begin_src emacs-lisp
 (global-auto-revert-mode -1)
 (diminish 'auto-revert-mode)
@@ -1666,6 +1716,10 @@ saving all the buffers, is executed.
 :CREATED:  [2018-08-11 Sat 20:47]
 :ID:       6e9f1b1e-bcd9-4927-894f-7a3ff773fb8c
 :END:
+
+One more step towards doing all the things in Emacs. 
+Do not even need terminal to interact with Git.
+
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :straight t
