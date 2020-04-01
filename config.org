@@ -7593,10 +7593,12 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 :ID:       aa092c63-f695-4c03-8639-b34fa262d5fe
 :END:
 #+begin_src emacs-lisp
-(use-package org-autosort)
-(setq org-autosort-todo-cmp-order '("WAITING" "REVIEW" "DOING" "NEXT" "HOLD" "TODO" "SOMEDAY" "MERGED" "FAILED" "DONE" "CANCELLED"))
-(bind-key "C-c C-S-s" 'org-autosort-sort-entries-at-point org-mode-map)
-(add-to-list 'org-default-properties "SORT")
+(use-package org-autosort
+  :config
+  (add-hook 'org-mode-hook #'org-autosort-sort-entries-in-file-maybe)
+  (setq org-autosort-todo-cmp-order '("WAITING" "REVIEW" "DOING" "NEXT" "HOLD" "TODO" "SOMEDAY" "MERGED" "FAILED" "DONE" "CANCELLED"))
+  (bind-key "C-c C-S-s" 'org-autosort-sort-entries-at-point org-mode-map)
+  (add-to-list 'org-default-properties "SORT"))
 #+end_src
 *** Clocking & logging
 :PROPERTIES:
