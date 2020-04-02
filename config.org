@@ -1751,28 +1751,15 @@ Working with forges
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
 :END:
 
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-02 Thu>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-03-30
-:END:
-:LOGBOOK:
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-*************** END
 
-*** Highlight text in buffer
+*** Temporary highlight text in buffer
 :PROPERTIES:
 :CREATED:  [2018-03-12 Mon 14:29]
 :ID:       9c3fe725-f67e-4abb-878f-da7b45bea121
 :END:
+
+User-defined temporary highlighting.
+
 #+begin_src emacs-lisp
 (use-package hi-lock
   :if init-flag
@@ -1785,6 +1772,10 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 :LOGBOOK:
 - State "TODO"       from              [2018-07-18 Wed 11:26]
 :END:
+
+Typos are inevitable. 
+Highlighting typos is crucial.
+
 **** =Flyspell=
 :PROPERTIES:
 :CREATED:  [2018-10-12 Fri 14:07]
@@ -1915,6 +1906,9 @@ abort completely with `C-g'."
 :PROPERTIES:
 :ID:       3a550aad-f2a2-4636-a92c-539cdf230aeb
 :END:
+
+Show errors in code with =flycheck=, in tooltips (via =flycheck-tip=).
+
 #+begin_src emacs-lisp
 (use-package flycheck
   :if init-flag
@@ -1937,6 +1931,7 @@ abort completely with `C-g'."
 :PROPERTIES:
 :ID:       767805ca-1482-4299-8a1c-3e3b1a73f94a
 :END:
+
 #+begin_src emacs-lisp
 (use-package highlight-parentheses
   :if init-flag
@@ -1968,6 +1963,10 @@ abort completely with `C-g'."
 :PROPERTIES:
 :ID:       5d7810ea-35d4-4ee9-afaa-61b9c6c624c6
 :END:
+
+Emacs regex escaping in string is often confusing. 
+=easy-escape= helps to avoid mistakes.
+
 #+begin_src emacs-lisp
 (use-package easy-escape
   :if init-flag
@@ -1979,6 +1978,9 @@ abort completely with `C-g'."
 :PROPERTIES:
 :ID:       afa67877-bede-41c1-9c44-bb168070d292
 :END:
+
+Highlight text matching =isearch=.
+
 #+begin_src emacs-lisp
 (when init-flag
 (setf search-highlight t)
@@ -1988,7 +1990,12 @@ abort completely with `C-g'."
 :PROPERTIES:
 :ID:       02c8a98c-a38a-4054-a0a2-400f6757693b
 :END:
-- I changed the background colour here due to clash with my =org-mode= colours
+
+Highlight recently changed text. 
+Especially useful when inserting/replacing big chunks of text.
+
+I changed the background colour here due to clash with my =org-mode= colours
+
   #+begin_src emacs-lisp
 (use-package volatile-highlights
   :if init-flag
@@ -2004,6 +2011,10 @@ abort completely with `C-g'."
 :CREATED:  [2018-04-09 Mon 20:46]
 :ID:       13ec58f5-636b-479f-ad19-ad229ce47603
 :END:
+
+Incrementally expand active region.
+I only use it occasionally though.
+
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
   :if init-flag
@@ -2034,6 +2045,26 @@ abort completely with `C-g'."
 :PROPERTIES:
 :ID:       7f5795bc-6bc1-4095-b31c-ed724bbc942c
 :END:
+
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-02 Thu>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-03-30
+:END:
+:LOGBOOK:
+CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
+
+
 *** =Hideshow= mode
 :PROPERTIES:
 :ID:       6ea2a9f7-7b73-4289-976f-b53adcae8f38
