@@ -768,77 +768,77 @@ One problem with this is that resizing the echo area forces emacs to redraw, whi
 makes some functions laggy.
 
 #+begin_src emacs-lisp
-(defcustom multi-message-timeout 0.5
-  "Number of seconds between messages before clearing the accumulated list."
-  :type 'number
-  :group 'minibuffer
-  :version "28.1")
+  (defcustom multi-message-timeout 0.5
+    "Number of seconds between messages before clearing the accumulated list."
+    :type 'number
+    :group 'minibuffer
+    :version "28.1")
 
-(defcustom multi-message-max 4
-  "Max size of the list of accumulated messages."
-  :type 'number
-  :group 'minibuffer
-  :version "28.1")
+  (defcustom multi-message-max 4
+    "Max size of the list of accumulated messages."
+    :type 'number
+    :group 'minibuffer
+    :version "28.1")
 
-(defun multi-message--ellipsis-p (message)
-  "Return non nil when MESSAGE ends with ellipsis."
-  (string-match-p "\\.\\.\\.\\'" message))
+  (defun multi-message--ellipsis-p (message)
+    "Return non nil when MESSAGE ends with ellipsis."
+    (string-match-p "\\.\\.\\.\\'" message))
 
-(defun multi-message--keystroke-regex-p (message)
-  "Return non nil when MESSAGE looks like a keystroke echo."
-  (string-match-p "^[A-Za-z]\\(-[A-Za-z]\\)*-?$" message))
+  (defun multi-message--keystroke-regex-p (message)
+    "Return non nil when MESSAGE looks like a keystroke echo."
+    (string-match-p "^[A-Za-z]\\(-[A-Za-z]\\)*-?$" message))
 
-(defun multi-message--keystroke-echo-p (message)
-  "Return non nil when MESSAGE is a currently entered keystroke."
-  (string-match-p (key-description (this-command-keys-vector)) message))
+  (defun multi-message--keystroke-echo-p (message)
+    "Return non nil when MESSAGE is a currently entered keystroke."
+    (string-match-p (key-description (this-command-keys-vector)) message))
 
 
-(defcustom multi-message-transient-functions '(multi-message--ellipsis-p multi-message--keystroke-echo-p multi-message--keystroke-regex-p)
-  "List of functions to filter out transient messages that should not be stacked.
-Each function is called in sequence with message string as an only argument.
-If any of the functions returns non nil, the message is filtered out."
-  :type 'list
-  :group 'minibuffer
-  :version "28.1")
+  (defcustom multi-message-transient-functions '(multi-message--ellipsis-p multi-message--keystroke-echo-p multi-message--keystroke-regex-p)
+    "List of functions to filter out transient messages that should not be stacked.
+  Each function is called in sequence with message string as an only argument.
+  If any of the functions returns non nil, the message is filtered out."
+    :type 'list
+    :group 'minibuffer
+    :version "28.1")
 
-(defvar multi-message-separator "\n")
+  (defvar multi-message-separator "\n")
 
-(defvar multi-message-list nil)
+  (defvar multi-message-list nil)
 
-(defun set-multi-message (message)
-  "Return recent messages as one string to display in the echo area.
-Note that this feature works best only when `resize-mini-windows'
-is at its default value `grow-only'."
-  (let ((last-message (car multi-message-list)))
-    (unless (and last-message (equal message (aref last-message 1)))
-      (when last-message
-	(cond
-	 ((> (float-time) (+ (aref last-message 0) multi-message-timeout))
-          (setq multi-message-list nil))
-	 ((or
-           ;; `message-log-max' was nil, potential clutter.
-           (aref last-message 2)
-           (run-hook-with-args-until-success 'multi-message-transient-functions (aref last-message 1)))
-          (setq multi-message-list (cdr multi-message-list)))))
-      (push (vector (float-time) message (not message-log-max)) multi-message-list)
-      (when (> (length multi-message-list) multi-message-max)
-	(setf (nthcdr multi-message-max multi-message-list) nil)))
-    (message-display (mapconcat (lambda (m) (aref m 1))
-				(reverse multi-message-list)
-				multi-message-separator))
-    ;; (let ((message-display (mapconcat (lambda (m) (aref m 1))
-    ;; 				      (reverse multi-message-list)
-    ;; 				      multi-message-separator))
-    ;;       (n-lines (s-count-matches "\n" message-display)))
-    ;;   (if (and last-message
-    ;; 	       (equal this-command (aref 3 last-message))
-    ;;            (< n-lines multi-message-max))
-    ;;       (s-concat message-display (s-repeat (- multi-message-max n-lines) "\n"))
-    ;;     message-display))
+  (defun set-multi-message (message)
+    "Return recent messages as one string to display in the echo area.
+  Note that this feature works best only when `resize-mini-windows'
+  is at its default value `grow-only'."
+    (let ((last-message (car multi-message-list)))
+      (unless (and last-message (equal message (aref last-message 1)))
+	(when last-message
+	  (cond
+	   ((> (float-time) (+ (aref last-message 0) multi-message-timeout))
+	    (setq multi-message-list nil))
+	   ((or
+	     ;; `message-log-max' was nil, potential clutter.
+	     (aref last-message 2)
+	     (run-hook-with-args-until-success 'multi-message-transient-functions (aref last-message 1)))
+	    (setq multi-message-list (cdr multi-message-list)))))
+	(push (vector (float-time) message (not message-log-max)) multi-message-list)
+	(when (> (length multi-message-list) multi-message-max)
+	  (setf (nthcdr multi-message-max multi-message-list) nil)))
+      (mapconcat (lambda (m) (aref m 1))
+		 (reverse multi-message-list)
+		 multi-message-separator)
+      ;; (let ((message-display (mapconcat (lambda (m) (aref m 1))
+      ;; 				      (reverse multi-message-list)
+      ;; 				      multi-message-separator))
+      ;;       (n-lines (s-count-matches "\n" message-display)))
+      ;;   (if (and last-message
+      ;; 	       (equal this-command (aref 3 last-message))
+      ;;            (< n-lines multi-message-max))
+      ;;       (s-concat message-display (s-repeat (- multi-message-max n-lines) "\n"))
+      ;;     message-display))
+      )
     )
-  )
 
-(setq set-message-function 'set-multi-message)
+  (setq set-message-function 'set-multi-message)
 #+end_src
 
 
