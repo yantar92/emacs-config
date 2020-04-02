@@ -2246,6 +2246,7 @@ Double space convention is outdated.
 **** =Isearch=
 :PROPERTIES:
 :CREATED:  [2020-03-31 Tue 01:37]
+:ID:       8faacef7-04f8-4e18-9282-ce5d68757efb
 :END:
 
 Xah Lee gave an interesting idea to bind extra key in =isearch=. [[http://ergoemacs.org/emacs/emacs_isearch_by_arrow_keys.html][cite]]
@@ -2949,7 +2950,6 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 #+BEGIN_SRC emacs-lisp
 (use-package boon
   :if init-flag
-  :defer t
   :config
   (meta-defun meta-open-line "Create an empty line above point." boon-open-line)
   (meta-defun meta-open-line :mode org-mode org-open-line)
@@ -3719,6 +3719,7 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 **** Smart redefining functions
 :PROPERTIES:
 :CREATED:  [2020-04-01 Wed 21:28]
+:ID:       39680274-85c7-4480-bc27-210c4e397655
 :END:
 
 Sometimes, advises and hooks are simply not enough to alter existing functions.
@@ -3816,6 +3817,7 @@ It warns me if the original definition changes from what I expect.
 *** =Auctex=
 :PROPERTIES:
 :CREATED:  [2020-03-30 Mon 14:09]
+:ID:       be8768df-105f-49dd-92e7-fa91d393a9bf
 :END:
 
 #+begin_src emacs-lisp
@@ -7523,6 +7525,7 @@ Also, hide the contents once task is clocked out.
 **** Live (=helm-org-ql=) search in org
 :PROPERTIES:
 :CREATED:  [2020-03-29 Sun 22:02]
+:ID:       1bc88aed-5729-4a0e-b52c-65e5d46f635b
 :END:
 
 #+begin_src emacs-lisp
