@@ -2026,21 +2026,7 @@ I only use it occasionally though.
               ("`" . er/expand-region)))
 
 #+END_SRC
-*** Highlight uncommitted changes in version-controlled files and dirs
-:PROPERTIES:
-:CREATED:  [2019-04-05 Fri 16:37]
-:ID:       c5fc942a-d468-4102-9c90-6275fd605e92
-:END:
 
-#+begin_src emacs-lisp
-(use-package git-gutter-fringe
-  :if init-flag
-  :straight t
-  :init
-  (setq git-gutter-fr:side 'right-fringe)
-  :config
-  (add-hook 'magit-mode-hook #'git-gutter-mode))
-#+end_src
 ** Fold & narrow
 :PROPERTIES:
 :ID:       7f5795bc-6bc1-4095-b31c-ed724bbc942c
