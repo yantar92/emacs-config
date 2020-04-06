@@ -2260,6 +2260,19 @@ Following my key binding theme for [[id:d388e4f5-214e-4697-a53a-be6fb6c24411][He
   (bind-key "M-j" #'isearch-repeat-forward isearch-mode-map)
   (bind-key "M-k" #'isearch-repeat-backward isearch-mode-map))
 #+end_src
+**** Disable "Mark set" message
+:PROPERTIES:
+:CREATED:  [2020-04-06 Mon 00:34]
+:END:
+
+Since I am using boon and a lot of searching for fast movement in the buffers, the "Mark set" message often spams the minibuffer. 
+Disabling it, since it is not very useful for me anyway.
+
+#+begin_src emacs-lisp
+(define-advice push-mark (:filter-args (args) disable-message)
+  "Disable \"Mark set\" message."
+  (list (car args) t (caddr args)))
+#+end_src
 
 *** Links
 **** Browse URL
