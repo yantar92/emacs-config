@@ -1319,8 +1319,9 @@ Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_threa
 :END:
 #+BEGIN_SRC emacs-lisp
 (when init-flag
-(bind-key "M-u" #'ignore global-map)
-(bind-key "M-k"  #'ignore global-map))
+  (unbind-key "M-u" global-map)
+  (unbind-key "M-k" global-map)
+  (unbind-key "M-j" global-map))
 #+END_SRC
 **** Make key bindings work in Ukrainian/Russian =keymap=
 :PROPERTIES:
