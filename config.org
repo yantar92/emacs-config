@@ -1139,7 +1139,8 @@ Otherwise, it is bound to foo%zen-fun is zen a symbol.
                                 t)))
 			  ',conditions)))) ; define meta-function
      (function-put ',name 'meta-functions-cond-plist conditions)
-     (function-put ',name 'meta-functions-default-docstring default-docstring)))
+     (function-put ',name 'meta-functions-default-docstring default-docstring)
+     (byte-compile ',name)))
 
 (defun meta-defun-mapc (list)
   "Defun multiple meta-functions with `meta-defun' trating each element of LIST as argument."
