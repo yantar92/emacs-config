@@ -9702,7 +9702,7 @@ Do not highlight line below mouse
     )
   )
   #+end_src
-- prefix for entries
+Modify prefix for the entries to show if the entry is repeatable and the time [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time balance multiplier]].
   #+begin_src emacs-lisp
 (setq org-agenda-scheduled-leaders '("* today" "* %2d d. ago"))
 ;; (defun yant/format-summary-for-agenda ()
