@@ -1233,10 +1233,10 @@ The problem is that it may mess up the cases when I want to assign special meani
 			notmuch-tree-mode elfeed-show-mode pomidor-mode mingus-mode
 			notmuch-hello-mode ledger-report-mode help-mode
 			dired-mode pdf-view-mode helpful-mode magit-file-mode
-			magit-status-mode magit-revision-mode
+			magit-status-mode magit-revision-mode magit-log-mode
 			mingus-playlist-mode mingus-browse-mode
 			mingus-help-mode calendar-mode undo-tree-visualizer-mode
-                        profiler-report-mode fundamental-mode))
+                        profiler-report-mode fundamental-mode Info-mode))
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   (setq boon-insert-state-major-mode-list
