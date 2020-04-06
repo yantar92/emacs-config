@@ -1523,7 +1523,6 @@ I use company for completion just because it is easy to use.
 Skeletons go beyond simple completion of a single word. 
 They define a powerful template system making completion programmable and interactive. 
 
-
 ** DOING History & version control
 :PROPERTIES:
 :ID:       a76e7822-8153-4adc-a3f8-8f05588eff5e
@@ -2034,9 +2033,9 @@ I only use it occasionally though.
 :END:
 
 *************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-02 Thu>
+SCHEDULED: <2020-04-03 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-03-30
+:SHOWFROMDATE: 2020-04-05
 :END:
 :LOGBOOK:
 CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
