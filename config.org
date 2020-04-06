@@ -2262,15 +2262,25 @@ Following my key binding theme for [[id:d388e4f5-214e-4697-a53a-be6fb6c24411][He
 **** Disable "Mark set" message
 :PROPERTIES:
 :CREATED:  [2020-04-06 Mon 00:34]
+:ID:       36b5ae6e-a53a-466f-984a-d877e5a4617f
 :END:
 
 Since I am using boon and a lot of searching for fast movement in the buffers, the "Mark set" message often spams the minibuffer. 
 Disabling it, since it is not very useful for me anyway.
 
 #+begin_src emacs-lisp
-(define-advice push-mark (:filter-args (args) disable-message)
-  "Disable \"Mark set\" message."
-  (list (car args) t (caddr args)))
+(when init-flag
+  (use-package helm-lib
+    :config
+    ;; helm overrides the `push-mark' function by default (according to `helm-advice-push-mark' value)
+    ;; advice the override as well
+    (define-advice helm--advice-push-mark (:filter-args (args) disable-message)
+      "Disable \"Mark set\" message."
+      (list (car args) t (caddr args))))
+
+  (define-advice push-mark (:filter-args (args) disable-message)
+    "Disable \"Mark set\" message."
+    (list (car args) t (caddr args))))
 #+end_src
 
 *** Links
