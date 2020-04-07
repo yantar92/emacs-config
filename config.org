@@ -9731,107 +9731,168 @@ Showing changed schedule/properties in agenda as an overlay (example : "P => 201
   :demand t
   :config
   (el-patch-feature org-agenda)
-  (with-eval-after-load 'org-agenda
-    (el-patch-defun org-agenda-show-new-time (marker stamp &optional prefix)
-      "Show new date stamp via text properties."
-      ;; We use text properties to make this undoable
-      (let ((inhibit-read-only t))
-	(setq stamp (concat prefix " => " stamp " "))
-	(save-excursion
-	  (goto-char (point-max))
-	  (while (not (bobp))
-	    (when (equal marker (org-get-at-bol 'org-marker))
-              (remove-text-properties (point-at-bol) (point-at-eol) '(display nil))
-	      (el-patch-swap (org-move-to-column (- (window-width) (length stamp)) t)
-			     (org-move-to-column 2 t))
-              (add-text-properties
-	       (1- (point))
-               (el-patch-swap (point-at-eol)
-			      (+ 1 (point-at-bol) (length stamp)))
-	       (list 'display (org-add-props stamp nil
-				'face '(secondary-selection default))))
-	      (beginning-of-line 1))
-	    (beginning-of-line 0)))))
-    )
-  )
+  (defcustom yant/indication-overlay-position 10
+    "A position of the overlay showing changes made in an agenda item instead of the default right-aligned position.
+    This should be more than 1 because putting the overlay at the beginning of line breaks bulk marking command sometimes."
+    :type 'integer)
+  (el-patch-defun org-agenda-show-new-time (marker stamp &optional prefix)
+    "Show new date stamp via text properties."
+    ;; We use text properties to make this undoable
+    (let ((inhibit-read-only t))
+      (setq stamp (concat prefix " => " stamp " "))
+      (save-excursion
+	(goto-char (point-max))
+	(while (not (bobp))
+	  (when (equal marker (org-get-at-bol 'org-marker))
+            (remove-text-properties (point-at-bol) (point-at-eol) '(display nil))
+	    (el-patch-swap (org-move-to-column (- (window-width) (length stamp)) t)
+			   (org-move-to-column yant/indication-overlay-position t))
+            (add-text-properties
+	     (1- (point))
+             (el-patch-swap (point-at-eol)
+			    (+ yant/indication-overlay-position (point-at-bol) (length stamp)))
+	     (list 'display (org-add-props stamp nil
+			      'face '(secondary-selection default))))
+	    (beginning-of-line 1))
+	  (beginning-of-line 0))))))	;
 #+end_src
+
 Also, show todo changes similarly
+*************** TODO do not show changes if the old todo was actually the same
+*************** END
+*************** TODO I solved the issue with losing fontification of todo keywords when keyword actually does not change, but if it changes, still have problem 
+*************** END
+*************** TODO maybe only show done?
+*************** END
+
 #+begin_src emacs-lisp
 (use-package org-agenda
   :if init-flag
   :config
   (el-patch-feature org-agenda)
-  (with-eval-after-load 'org-agenda
-    (el-patch-defun org-agenda-change-all-lines (newhead hdmarker
-							 &optional fixface just-this)
-      "Change all lines in the agenda buffer which match HDMARKER.
-The new content of the line will be NEWHEAD (as modified by
-`org-agenda-format-item').  HDMARKER is checked with
-`equal' against all `org-hd-marker' text properties in the file.
-If FIXFACE is non-nil, the face of each item is modified according to
-the new TODO state.
-If JUST-THIS is non-nil, change just the current line, not all.
-If FORCE-TAGS is non-nil, the car of it returns the new tags."
-      (let* ((inhibit-read-only t)
-	     (line (org-current-line))
-	     (org-agenda-buffer (current-buffer))
-	     (thetags (with-current-buffer (marker-buffer hdmarker)
-			(org-get-tags hdmarker)))
-	     props m pl undone-face done-face finish new dotime level cat tags)
-	(save-excursion
-	  (goto-char (point-max))
-	  (beginning-of-line 1)
-	  (while (not finish)
-	    (setq finish (bobp))
-	    (when (and (setq m (org-get-at-bol 'org-hd-marker))
-		       (or (not just-this) (= (org-current-line) line))
-		       (equal m hdmarker))
-	      (setq props (text-properties-at (point))
-		    dotime (org-get-at-bol 'dotime)
-		    cat (org-agenda-get-category)
-		    level (org-get-at-bol 'level)
-		    tags thetags
-		    new
-		    (let ((org-prefix-format-compiled
-			   (or (get-text-property (min (1- (point-max)) (point)) 'format)
-			       org-prefix-format-compiled))
-			  (extra (org-get-at-bol 'extra)))
-		      (with-current-buffer (marker-buffer hdmarker)
-			(org-with-wide-buffer
-			 (org-agenda-format-item extra newhead level cat tags dotime))))
-		    pl (text-property-any (point-at-bol) (point-at-eol) 'org-heading t)
-		    undone-face (org-get-at-bol 'undone-face)
-		    done-face (org-get-at-bol 'done-face))
-	      (beginning-of-line 1)
-	      (cond
-	       ((equal new "") (delete-region (point) (line-beginning-position 2)))
-	       ((looking-at ".*")
-		;; When replacing the whole line, preserve bulk mark
-		;; overlay, if any.
-		(let ((mark (catch :overlay
-			      (dolist (o (overlays-in (point) (+ 2 (point))))
-				(when (eq (overlay-get o 'type)
-					  'org-marked-entry-overlay)
-				  (throw :overlay o))))))
-		  (replace-match new t t)
-		  (beginning-of-line)
-		  (when mark (move-overlay mark (point) (+ 2 (point)))))
-		(add-text-properties (point-at-bol) (point-at-eol) props)
-		(when fixface
-		  (add-text-properties
-		   (point-at-bol) (point-at-eol)
-		   (list 'face
-			 (if org-last-todo-state-is-todo
-			     undone-face done-face))))
-		(org-agenda-highlight-todo 'line)
-		(el-patch-add (org-agenda-show-new-time (org-get-at-bol 'org-marker) (substring-no-properties (car (s-match "[^* ]+" newhead)))))
-		(beginning-of-line 1))
-	       (t (error "Line update did not work")))
-	      (save-restriction
-		(narrow-to-region (point-at-bol) (point-at-eol))
-		(org-agenda-finalize)))
-	    (beginning-of-line 0)))))
-    )
+  ;;   (with-eval-after-load 'org-agenda
+  ;;     (el-patch-defun org-agenda-change-all-lines (newhead hdmarker
+  ;; 							 &optional fixface just-this)
+  ;;       "Change all lines in the agenda buffer which match HDMARKER.
+  ;; The new content of the line will be NEWHEAD (as modified by
+  ;; `org-agenda-format-item').  HDMARKER is checked with
+  ;; `equal' against all `org-hd-marker' text properties in the file.
+  ;; If FIXFACE is non-nil, the face of each item is modified according to
+  ;; the new TODO state.
+  ;; If JUST-THIS is non-nil, change just the current line, not all.
+  ;; If FORCE-TAGS is non-nil, the car of it returns the new tags."
+  ;;       (let* ((inhibit-read-only t)
+  ;; 	     (line (org-current-line))
+  ;; 	     (org-agenda-buffer (current-buffer))
+  ;; 	     (thetags (with-current-buffer (marker-buffer hdmarker)
+  ;; 			(org-get-tags hdmarker)))
+  ;; 	     props m pl undone-face done-face finish new dotime level cat tags)
+  ;; 	(save-excursion
+  ;; 	  (goto-char (point-max))
+  ;; 	  (beginning-of-line 1)
+  ;; 	  (while (not finish)
+  ;; 	    (setq finish (bobp))
+  ;; 	    (when (and (setq m (org-get-at-bol 'org-hd-marker))
+  ;; 		       (or (not just-this) (= (org-current-line) line))
+  ;; 		       (equal m hdmarker))
+  ;; 	      (setq props (text-properties-at (point))
+  ;; 		    dotime (org-get-at-bol 'dotime)
+  ;; 		    cat (org-agenda-get-category)
+  ;; 		    level (org-get-at-bol 'level)
+  ;; 		    tags thetags
+  ;; 		    new
+  ;; 		    (let ((org-prefix-format-compiled
+  ;; 			   (or (get-text-property (min (1- (point-max)) (point)) 'format)
+  ;; 			       org-prefix-format-compiled))
+  ;; 			  (extra (org-get-at-bol 'extra)))
+  ;; 		      (with-current-buffer (marker-buffer hdmarker)
+  ;; 			(org-with-wide-buffer
+  ;; 			 (org-agenda-format-item extra newhead level cat tags dotime))))
+  ;; 		    pl (text-property-any (point-at-bol) (point-at-eol) 'org-heading t)
+  ;; 		    undone-face (org-get-at-bol 'undone-face)
+  ;; 		    done-face (org-get-at-bol 'done-face))
+  ;; 	      (beginning-of-line 1)
+  ;; 	      (cond
+  ;; 	       ((equal new "") (delete-region (point) (line-beginning-position 2)))
+  ;; 	       ((looking-at ".*")
+  ;; 		;; When replacing the whole line, preserve bulk mark
+  ;; 		;; overlay, if any.
+  ;; 		(let ((mark (catch :overlay
+  ;; 			      (dolist (o (overlays-in (point) (+ 2 (point))))
+  ;; 				(when (eq (overlay-get o 'type)
+  ;; 					  'org-marked-entry-overlay)
+  ;; 				  (throw :overlay o))))))
+  ;; 		  (replace-match new t t)
+  ;; 		  (beginning-of-line)
+  ;; 		  (when mark (move-overlay mark (point) (+ 2 (point)))))
+  ;; 		(add-text-properties (point-at-bol) (point-at-eol) props)
+  ;; 		(when fixface
+  ;; 		  (add-text-properties
+  ;; 		   (point-at-bol) (point-at-eol)
+  ;; 		   (list 'face
+  ;; 			 (if org-last-todo-state-is-todo
+  ;; 			     undone-face done-face))))
+  ;; 		(org-agenda-highlight-todo 'line)
+  ;; 		(el-patch-add (org-agenda-show-new-time (org-get-at-bol 'org-marker) (car (s-match (org-get-at-bol 'org-todo-regexp) new))))
+  ;; 		(beginning-of-line 1))
+  ;; 	       (t (error "Line update did not work")))
+  ;; 	      (save-restriction
+  ;; 		(narrow-to-region (point-at-bol) (point-at-eol))
+  ;; 		(org-agenda-finalize)))
+  ;; 	    (beginning-of-line 0))))))
+  ;; calling `org-agenda-highlight-todo' above breaks 'composition text property of todo keywords, which breaks pretty-symbols fontifications
+  ;; fixing the function to keep 'composition
+  (el-patch-defun org-agenda-highlight-todo (x)
+    (let ((org-done-keywords org-done-keywords-for-agenda)
+	  (case-fold-search nil)
+	  re
+          (el-patch-add composition-property))
+      (if (eq x 'line)
+	  (save-excursion
+	    (beginning-of-line 1)
+	    (setq re (org-get-at-bol 'org-todo-regexp))
+	    (goto-char (or (text-property-any (point-at-bol) (point-at-eol) 'org-heading t) (point)))
+	    (when (looking-at (concat "[ \t]*\\.*\\(" re "\\) +"))
+	      (add-text-properties (match-beginning 0) (match-end 1)
+				   (list 'face (org-get-todo-face 1)))
+              (el-patch-add (setq composition-property (plist-get (text-properties-at (match-beginning 1)) 'composition)))
+	      (let ((s (buffer-substring (match-beginning 1) (match-end 1))))
+		(delete-region (match-beginning 1) (1- (match-end 0)))
+		(goto-char (match-beginning 1))
+		(insert (format org-agenda-todo-keyword-format s))
+                (el-patch-add (add-text-properties (match-beginning 1) (match-end 1) (list 'composition composition-property))))))
+	(let ((pl (text-property-any 0 (length x) 'org-heading t x)))
+	  (setq re (get-text-property 0 'org-todo-regexp x))
+	  (when (and re
+		     ;; Test `pl' because if there's no heading content,
+		     ;; there's no point matching to highlight.  Note
+		     ;; that if we didn't test `pl' first, and there
+		     ;; happened to be no keyword from `org-todo-regexp'
+		     ;; on this heading line, then the `equal' comparison
+		     ;; afterwards would spuriously succeed in the case
+		     ;; where `pl' is nil -- causing an args-out-of-range
+		     ;; error when we try to add text properties to text
+		     ;; that isn't there.
+		     pl
+		     (equal (string-match (concat "\\(\\.*\\)" re "\\( +\\)")
+					  x pl)
+			    pl))
+	    (add-text-properties
+	     (or (match-end 1) (match-end 0)) (match-end 0)
+	     (list 'face (org-get-todo-face (match-string 2 x)))
+	     x)
+	    (when (match-end 1)
+	      (setq x
+		    (concat
+		     (substring x 0 (match-end 1))
+		     (format org-agenda-todo-keyword-format
+			     (match-string 2 x))
+		     ;; Remove `display' property as the icon could leak
+		     ;; on the white space.
+		     (org-add-props " " (org-plist-delete (text-properties-at 0 x)
+							  'display))
+		     (substring x (match-end 3)))))))
+	x)))
   )
 #+end_src
 Fontify headlines in agenda
