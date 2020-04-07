@@ -9967,12 +9967,18 @@ The code below does the trick.
 (when init-flag
   (defun yant/org-agenda-unmark-clocking-task ()
     "Hide all org-quick-peek overlays in `org-agenda-buffer'."
-    (when (buffer-live-p org-agenda-buffer)
-      (with-current-buffer org-agenda-buffer (org-agenda-unmark-clocking-task))))
+    (dolist (agenda-buffer (mapcar #'get-buffer
+				   (seq-filter (apply-partially  #'s-contains-p "*Org Agenda") 
+					       (mapcar #'buffer-name (buffer-list)))))
+      (when (buffer-live-p agenda-buffer)
+	(with-current-buffer agenda-buffer (org-agenda-unmark-clocking-task)))))
   (defun yant/org-agenda-mark-clocking-task ()
     "Hide all org-quick-peek overlays in `org-agenda-buffer'."
-    (when (buffer-live-p org-agenda-buffer)
-      (with-current-buffer org-agenda-buffer (org-agenda-mark-clocking-task))))
+    (dolist (agenda-buffer (mapcar #'get-buffer
+				   (seq-filter (apply-partially  #'s-contains-p "*Org Agenda") 
+					       (mapcar #'buffer-name (buffer-list)))))
+      (when (buffer-live-p agenda-buffer)
+	(with-current-buffer agenda-buffer (org-agenda-mark-clocking-task)))))
 
   (add-hook 'org-clock-out-hook #'yant/org-agenda-unmark-clocking-task)
   (add-hook 'org-clock-in-hook #'yant/org-agenda-mark-clocking-task))
