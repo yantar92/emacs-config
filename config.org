@@ -4331,7 +4331,8 @@ Meta bindings for calendar
     (define-advice elfeed-search-untag-all-unread (:after (&rest args) hide-quickpeek)
       "Hide all quick peek overlays in buffer."
       (quick-peek-hide))
-    (advice-add 'yant/elfeed-capture-entry :after #'elfeed-search-untag-all-unread@hide-quickpeek))
+    (advice-add 'yant/elfeed-capture-entry :after #'elfeed-search-untag-all-unread@hide-quickpeek)
+    (add-hook 'elfeed-search-update-hook #'elfeed-search-untag-all-unread@hide-quickpeek))
   
   (use-package org-capture-pop-frame
     :defer t
