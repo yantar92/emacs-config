@@ -4374,7 +4374,7 @@ Meta bindings for calendar
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
   
-  (defvar elfeed-search-default-filter "+unread -hide -video -science -course"
+  (defvar elfeed-search-default-filter "+unread -hide -video -science -course +news"
     "Default filter in elfeed search window.")
   (setq elfeed-search-filter elfeed-search-default-filter)
   (setq elfeed-sort-order 'ascending)
