@@ -3338,8 +3338,8 @@ Add meta-bindings
     (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
     (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-backward-slurp-sexp)
     (bind-keys :map boon-insert-map
-	       ("M-o" . paredit-forward-slurp-sexp)
-               ("M-i" . paredit-backward-slurp-sexp))))
+	       ("M-o" . meta-move-line-right)
+               ("M-i" . meta-move-line-left))))
 #+end_src
 
 ** Debugging
