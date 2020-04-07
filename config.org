@@ -2976,7 +2976,8 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
   :if init-flag
   :config
   (meta-defun meta-open-line "Create an empty line above point." boon-open-line)
-  (meta-defun meta-open-line :mode org-mode org-open-line)
+  (use-package org :config 
+    (meta-defun meta-open-line :mode org-mode org-open-line))
   (bind-key "C-o" 'meta-open-line boon-command-map))
 #+END_SRC
 
