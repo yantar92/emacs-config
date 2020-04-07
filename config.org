@@ -767,6 +767,9 @@ Credit: [[notmuch:id:87sgldfi9j.fsf@mail.linkov.net][Email from Juri Linkov: Re:
 One problem with this is that resizing the echo area forces emacs to redraw, which 
 makes some functions laggy.
 
+*************** TODO this somehow interferes with eldoc in elisp
+*************** END
+
 #+begin_src emacs-lisp
   (defcustom multi-message-timeout 0.5
     "Number of seconds between messages before clearing the accumulated list."
@@ -9908,6 +9911,8 @@ Hide some uninteresting tags
 
 Shorten too long headlines in agenda. 
 In order to make the remainder consistent, the multi-byte characters are considered to be [[39a84dde-88d1-46e8-86d0-28fb8f72f30c][double width]] and all headlines containing multi-byte characters are shortened to less chars accordingly.
+*************** TODO the current implementation wrongly cuts links
+*************** END
 
 *************** TODO the idea about multi-byte is not good for Russian text having same width as English...
 *************** END
