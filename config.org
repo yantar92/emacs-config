@@ -9728,41 +9728,7 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
     (error "")))
 (setq org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t%(concat (yant/format-time-balance-multiplier) \"\\t\")")
   #+end_src
-Showing changed schedule/properties in agenda as an overlay (example : "P => 2019-12-18"), but at beginning of line (not at the end by default)
-#+begin_src emacs-lisp
-(use-package el-patch
-  :straight t
-  :demand t
-  :config
-  (el-patch-feature org-agenda)
-  (defcustom yant/indication-overlay-position 10
-    "A position of the overlay showing changes made in an agenda item instead of the default right-aligned position.
-    This should be more than 1 because putting the overlay at the beginning of line breaks bulk marking command sometimes."
-    :type 'integer)
-  (el-patch-defun org-agenda-show-new-time (marker stamp &optional prefix)
-    "Show new date stamp via text properties."
-    ;; We use text properties to make this undoable
-    (let ((inhibit-read-only t))
-      (setq stamp (concat prefix " => " stamp " "))
-      (save-excursion
-	(goto-char (point-max))
-	(while (not (bobp))
-	  (when (equal marker (org-get-at-bol 'org-marker))
-            (remove-text-properties (point-at-bol) (point-at-eol) '(display nil))
-	    (el-patch-swap (org-move-to-column (- (window-width) (length stamp)) t)
-			   (org-move-to-column yant/indication-overlay-position t))
-            (add-text-properties
-	     (1- (point))
-             (el-patch-swap (point-at-eol)
-			    (+ yant/indication-overlay-position (point-at-bol) (length stamp)))
-	     (list 'display (org-add-props stamp nil
-			      'face '(secondary-selection default))))
-	    (beginning-of-line 1))
-	  (beginning-of-line 0))))))	;
-#+end_src
 
-Also, show todo changes similarly
-*************** TODO do not show changes if the old todo was actually the same
 *************** END
 *************** TODO I solved the issue with losing fontification of todo keywords when keyword actually does not change, but if it changes, still have problem 
 *************** END
