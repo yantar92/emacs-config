@@ -9729,88 +9729,71 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 (setq org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t%(concat (yant/format-time-balance-multiplier) \"\\t\")")
   #+end_src
 
+Fontify headlines in agenda
+*************** TODO check how it works
 *************** END
-*************** TODO I solved the issue with losing fontification of todo keywords when keyword actually does not change, but if it changes, still have problem 
+#+begin_src emacs-lisp
+;; (add-hook 'org-agenda-hook #'jit-lock-refontify)
+#+end_src
+Hide some uninteresting tags
+#+begin_src emacs-lisp
+(setq org-agenda-hide-tags-regexp (rx-to-string '(or "DEFAULT" "SKIP" "NOARCHIVE" "INBOX" "HOLD" "WAITING" "NODEADLINE" "CANCELLED")))
+#+end_src
+
+Shorten too long headlines in agenda. 
+In order to make the remainder consistent, the multi-byte characters are considered to be [[39a84dde-88d1-46e8-86d0-28fb8f72f30c][double width]] and all headlines containing multi-byte characters are shortened to less chars accordingly.
+*************** TODO the current implementation wrongly cuts links
 *************** END
-*************** TODO maybe only show done?
+
+*************** TODO the idea about multi-byte is not good for Russian text having same width as English...
 *************** END
 
 #+begin_src emacs-lisp
+;; cutoff agenda headlines
+(define-advice org-agenda-format-item (:filter-args (&rest args) trim-heading 100) ;; run last
+  "Trip org-agenda heading to 120 chars."
+  (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
+    (setq txt (s-truncate 120
+			  ;; (- 120 (/ (- (string-bytes txt)
+			  ;; 	       (length txt))
+			  ;; 	    2)
+			  ;;    ) ; multibyte characters are assumed to be twice wider than single byte, though it does not seem to be asolutely accurate
+			  txt))
+    (list extra txt level category tags dotime remove-re habitp)))
+#+END_SRC
+
+Fontify agenda items properly
+#+BEGIN_SRC emacs-lisp  
+(define-advice org-agenda-format-item (:filter-args (&rest args)  fontify-org)
+  "Force fontify ageda item. (hack)"
+  (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
+    (with-temp-buffer
+      (cl-letf (((symbol-function 'yant/process-att-abbrev) #'identity)
+		((symbol-function 'yant/process-att-id-abbrev) #'identity)) ;; expanding sometimes causes errors when attempting to access ancestors
+	(org-mode)
+	(insert "* "
+		txt
+		"\t"
+		(or (and tags (s-join ":" `(nil ,@(cl-remove-duplicates tags) nil)))
+		    "")
+		"\n")
+	(font-lock-fontify-buffer)
+	(goto-char (point-min))
+	(looking-at "^\\* \\(\\([^\t]+\\)[ 	]+\\(:\\([[:alnum:]_@#%:]+\\):\\)*\\)[ 	]*$")
+	(setq txt (match-string 2))
+	(setq tags (and tags (s-split ":" (match-string 3) 't))))
+      (list extra txt level category tags dotime remove-re habitp)))
+  )
+
+(define-advice org-agenda-format-item (:filter-return (item) remove-double-colons)
+  "Remove ::."
+  (s-replace-regexp "::+" ":" item))
+
 (use-package org-agenda
   :if init-flag
   :config
   (el-patch-feature org-agenda)
-  ;;   (with-eval-after-load 'org-agenda
-  ;;     (el-patch-defun org-agenda-change-all-lines (newhead hdmarker
-  ;; 							 &optional fixface just-this)
-  ;;       "Change all lines in the agenda buffer which match HDMARKER.
-  ;; The new content of the line will be NEWHEAD (as modified by
-  ;; `org-agenda-format-item').  HDMARKER is checked with
-  ;; `equal' against all `org-hd-marker' text properties in the file.
-  ;; If FIXFACE is non-nil, the face of each item is modified according to
-  ;; the new TODO state.
-  ;; If JUST-THIS is non-nil, change just the current line, not all.
-  ;; If FORCE-TAGS is non-nil, the car of it returns the new tags."
-  ;;       (let* ((inhibit-read-only t)
-  ;; 	     (line (org-current-line))
-  ;; 	     (org-agenda-buffer (current-buffer))
-  ;; 	     (thetags (with-current-buffer (marker-buffer hdmarker)
-  ;; 			(org-get-tags hdmarker)))
-  ;; 	     props m pl undone-face done-face finish new dotime level cat tags)
-  ;; 	(save-excursion
-  ;; 	  (goto-char (point-max))
-  ;; 	  (beginning-of-line 1)
-  ;; 	  (while (not finish)
-  ;; 	    (setq finish (bobp))
-  ;; 	    (when (and (setq m (org-get-at-bol 'org-hd-marker))
-  ;; 		       (or (not just-this) (= (org-current-line) line))
-  ;; 		       (equal m hdmarker))
-  ;; 	      (setq props (text-properties-at (point))
-  ;; 		    dotime (org-get-at-bol 'dotime)
-  ;; 		    cat (org-agenda-get-category)
-  ;; 		    level (org-get-at-bol 'level)
-  ;; 		    tags thetags
-  ;; 		    new
-  ;; 		    (let ((org-prefix-format-compiled
-  ;; 			   (or (get-text-property (min (1- (point-max)) (point)) 'format)
-  ;; 			       org-prefix-format-compiled))
-  ;; 			  (extra (org-get-at-bol 'extra)))
-  ;; 		      (with-current-buffer (marker-buffer hdmarker)
-  ;; 			(org-with-wide-buffer
-  ;; 			 (org-agenda-format-item extra newhead level cat tags dotime))))
-  ;; 		    pl (text-property-any (point-at-bol) (point-at-eol) 'org-heading t)
-  ;; 		    undone-face (org-get-at-bol 'undone-face)
-  ;; 		    done-face (org-get-at-bol 'done-face))
-  ;; 	      (beginning-of-line 1)
-  ;; 	      (cond
-  ;; 	       ((equal new "") (delete-region (point) (line-beginning-position 2)))
-  ;; 	       ((looking-at ".*")
-  ;; 		;; When replacing the whole line, preserve bulk mark
-  ;; 		;; overlay, if any.
-  ;; 		(let ((mark (catch :overlay
-  ;; 			      (dolist (o (overlays-in (point) (+ 2 (point))))
-  ;; 				(when (eq (overlay-get o 'type)
-  ;; 					  'org-marked-entry-overlay)
-  ;; 				  (throw :overlay o))))))
-  ;; 		  (replace-match new t t)
-  ;; 		  (beginning-of-line)
-  ;; 		  (when mark (move-overlay mark (point) (+ 2 (point)))))
-  ;; 		(add-text-properties (point-at-bol) (point-at-eol) props)
-  ;; 		(when fixface
-  ;; 		  (add-text-properties
-  ;; 		   (point-at-bol) (point-at-eol)
-  ;; 		   (list 'face
-  ;; 			 (if org-last-todo-state-is-todo
-  ;; 			     undone-face done-face))))
-  ;; 		(org-agenda-highlight-todo 'line)
-  ;; 		(el-patch-add (org-agenda-show-new-time (org-get-at-bol 'org-marker) (car (s-match (org-get-at-bol 'org-todo-regexp) new))))
-  ;; 		(beginning-of-line 1))
-  ;; 	       (t (error "Line update did not work")))
-  ;; 	      (save-restriction
-  ;; 		(narrow-to-region (point-at-bol) (point-at-eol))
-  ;; 		(org-agenda-finalize)))
-  ;; 	    (beginning-of-line 0))))))
-  ;; calling `org-agenda-highlight-todo' above breaks 'composition text property of todo keywords, which breaks pretty-symbols fontifications
+  ;; calling `org-agenda-highlight-todo' breaks 'composition text property of todo keywords, which breaks pretty-symbols fontifications
   ;; fixing the function to keep 'composition
   (el-patch-defun org-agenda-highlight-todo (x)
     (let ((org-done-keywords org-done-keywords-for-agenda)
@@ -9864,64 +9847,11 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 		     (substring x (match-end 3)))))))
 	x)))
   )
-#+end_src
-Fontify headlines in agenda
-*************** TODO check how it works
-*************** END
-#+begin_src emacs-lisp
-(add-hook 'org-agenda-hook #'jit-lock-refontify)
-#+end_src
-Hide some uninteresting tags
-#+begin_src emacs-lisp
-(setq org-agenda-hide-tags-regexp (rx-to-string '(or "DEFAULT" "SKIP" "NOARCHIVE" "INBOX" "HOLD" "WAITING" "NODEADLINE" "CANCELLED")))
+
+
 #+end_src
 
-Shorten too long headlines in agenda. 
-In order to make the remainder consistent, the multi-byte characters are considered to be [[39a84dde-88d1-46e8-86d0-28fb8f72f30c][double width]] and all headlines containing multi-byte characters are shortened to less chars accordingly.
-*************** TODO the current implementation wrongly cuts links
-*************** END
-
-*************** TODO the idea about multi-byte is not good for Russian text having same width as English...
-*************** END
-
 #+begin_src emacs-lisp
-;; cutoff agenda headlines
-(define-advice org-agenda-format-item (:filter-args (&rest args) trim-heading 100) ;; run last
-  "Trip org-agenda heading to 120 chars."
-  (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
-    (setq txt (s-truncate (- 120 (/ (- (string-bytes txt)
-				       (length txt))
-                                    2)) ; multibyte characters are assumed to be twice wider than single byte, though it does not seem to be asolutely accurate
-			  txt))
-    (list extra txt level category tags dotime remove-re habitp)))
-#+END_SRC
-
-Fontify agenda items properly
-#+BEGIN_SRC emacs-lisp  
-(define-advice org-agenda-format-item (:filter-args (&rest args)  fontify-org)
-  "Force fontify ageda item. (hack)"
-  (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
-    (with-temp-buffer
-      (cl-letf (((symbol-function 'yant/process-att-abbrev) #'identity)
-		((symbol-function 'yant/process-att-id-abbrev) #'identity)) ;; expanding sometimes causes errors when attempting to access ancestors
-	(org-mode)
-	(insert "* "
-		txt
-		"\t"
-		(or (and tags (s-join ":" `(nil ,@(cl-remove-duplicates tags) nil)))
-		    "")
-		"\n")
-	(font-lock-fontify-buffer)
-	(goto-char (point-min))
-	(looking-at "^\\* \\(\\([^\t]+\\)[ 	]+\\(:\\([[:alnum:]_@#%:]+\\):\\)*\\)[ 	]*$")
-	(setq txt (match-string 2))
-	(setq tags (and tags (s-split ":" (match-string 3) 't))))
-      (list extra txt level category tags dotime remove-re habitp)))
-  )
-
-(define-advice org-agenda-format-item (:filter-return (item) remove-double-colons)
-  "Remove ::."
-  (s-replace-regexp "::+" ":" item))
 #+end_src
 
 **** Update highlight from currently clocked task in agenda even if the task was clocked in/out from outside
