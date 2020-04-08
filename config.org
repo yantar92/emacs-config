@@ -777,7 +777,7 @@ makes some functions laggy.
     :group 'minibuffer
     :version "28.1")
 
-  (defcustom multi-message-max 4
+  (defcustom multi-message-max 2
     "Max size of the list of accumulated messages."
     :type 'number
     :group 'minibuffer
