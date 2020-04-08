@@ -1468,13 +1468,14 @@ The basic idea is to prefix movement commands with meta.
          ("e" . helm-resume)
 	 )
   :defines helm-global-mode
+  :custom ((helm-split-window-inside-p t)
+	   (helm-move-to-line-cycle-in-source t)
+           (helm-ff-file-name-history-use-recentf t)
+           (helm-mode-fuzzy-match t))
   :config
   (use-package helm-config)
   (use-package helm-files)
   (use-package helm-command)
-  (setq helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-	helm-ff-file-name-history-use-recentf t
-	helm-mode-fuzzy-match t)
   (define-global-minor-mode helm-global-mode helm-mode
     (lambda()
       (helm-mode 1)))
