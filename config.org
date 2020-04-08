@@ -9851,10 +9851,15 @@ Fontify agenda items properly
 
 #+end_src
 
+Use a better colour contrast between today's tasks and done tasks:
 #+begin_src emacs-lisp
+(use-package org-agenda
+  :if init-flag
+  :custom-face (org-scheduled-today ((t  (:foreground "DarkSlateGray"))))
+  :custom-face (org-agenda-done ((t . (:foreground "Springgreen4" :slant italic)))))
 #+end_src
 
-**** Update highlight from currently clocked task in agenda even if the task was clocked in/out from outside
+***** Update highlight from currently clocked task in agenda even if the task was clocked in/out from outside
 :PROPERTIES:
 :CREATED:  [2020-04-06 Mon 17:41]
 :ID:       ecd56b01-c56d-4c4a-bbbb-08d8bb4e152e
