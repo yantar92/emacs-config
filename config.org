@@ -3,7 +3,7 @@
 #+EMAIL: yantar92@gmail.com
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
 
-* NEXT Emacs configuration                                     :EMACS:COMMON:
+* NEXT Emacs configuration                                                                          :EMACS:COMMON:
 :PROPERTIES:
 :ID:       a27092a6-25a6-417f-818f-7f83325b58b3
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
@@ -5892,6 +5892,8 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
      #+end_src
 - =:SHOWFROMDATE:= :: The purpose of this is to be able to postpone the scheduled tasks for future if I cannot do it. The property is formatted as an org date.
      This property is especially useful if there is something more pressing, so that there is a temptation to reschedule less pressing event to another day. If the more pressing task is done earlier than expected, the postponed tasks can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
+*************** TODO maybe move showing overlay in agenda to appearance
+*************** END
      #+begin_src emacs-lisp
 (add-to-list 'org-default-properties "SHOWFROMDATE")
 (bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-mode-map)
@@ -9694,7 +9696,7 @@ Do not highlight line below mouse
 (add-hook 'org-agenda-finalize-hook
 	  #'yant/remove-mouse-highlight)
   #+end_src
-- highlight current line in agenda
+Highlight current line in agenda
   #+begin_src emacs-lisp
 (use-package hl-line
   :if init-flag
@@ -9708,6 +9710,7 @@ Do not highlight line below mouse
     )
   )
   #+end_src
+
 Modify prefix for the entries to show if the entry is repeatable and the time [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time balance multiplier]].
   #+begin_src emacs-lisp
 (setq org-agenda-scheduled-leaders '("* today" "* %2d d. ago"))
