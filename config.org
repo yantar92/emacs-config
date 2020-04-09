@@ -2417,7 +2417,7 @@ Do the same for my meta- movement functions.
 
   :bind (:map boon-command-map
 	      ("N" . bm-toggle)
-	      ("C-N" . bm-bookmark-annotate)
+	      ("M-n" . bm-bookmark-annotate)
 	      :map boon-insert-map
 	      ("M-N" . bm-toggle)
 	      ("C-M-N" . bm-toggle)
