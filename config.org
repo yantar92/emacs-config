@@ -2046,29 +2046,14 @@ I only use it occasionally though.
 :ID:       7f5795bc-6bc1-4095-b31c-ed724bbc942c
 :END:
 
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-03 Fri>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-04-05
-:END:
-:LOGBOOK:
-CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-*************** END
-
-
 *** =Hideshow= mode
 :PROPERTIES:
 :ID:       6ea2a9f7-7b73-4289-976f-b53adcae8f38
 :END:
+
+It is useful to explore large source code files with hidden details of implementation.
+I often use it to search interesting things in Emacs packages.
+
 #+begin_src emacs-lisp
 (use-package hideshow
   :if init-flag
@@ -2085,6 +2070,10 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 :PROPERTIES:
 :ID:       9b629716-48c5-41c7-b34e-5e458922368b
 :END:
+
+Narrowing is very useful, especially in large org files or when working with a large function in Elisp code.
+Enable it. 
+
 #+begin_src emacs-lisp
 (when init-flag
   (put 'narrow-to-region 'disabled nil))
@@ -2093,6 +2082,26 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 :PROPERTIES:
 :ID:       46fb459b-7794-4b9a-9fce-85389aba1d95
 :END:
+
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-09 Thu>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-04-05
+:END:
+:LOGBOOK:
+CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
+CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
+
 *** Text
 **** Boon navigation & search
 :PROPERTIES:
@@ -7432,7 +7441,8 @@ Also, hide the contents once task is clocked out.
 
 #+begin_src emacs-lisp
 (setq org-agenda-start-with-entry-text-mode nil)
-(use-package quick-peek :straight t)
+(use-package quick-peek
+  :straight t)
 (use-package org-quick-peek
   :if init-flag
   :straight (org-quick-peek :type git :host github :repo "alphapapa/org-quick-peek"
@@ -7450,9 +7460,11 @@ Also, hide the contents once task is clocked out.
     "Show contents of the org-entry at point when there is any."
     (org-agenda-redo@org-quick-peek--hide-all)
     (org-quick-peek--agenda-show :quiet t))
+  
   (defun yant/org-agenda-hide-org-quick-peek-overlays ()
     "Hide all org-quick-peek overlays in `org-agenda-buffer'."
     (with-current-buffer org-agenda-buffer (quick-peek-hide)))
+  
   (add-hook 'org-clock-out-hook #'yant/org-agenda-hide-org-quick-peek-overlays))
 #+end_src
 
