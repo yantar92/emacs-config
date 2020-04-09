@@ -2296,6 +2296,26 @@ Disabling it, since it is not very useful for me anyway.
     "Disable \"Mark set\" message."
     (list (car args) t (caddr args))))
 #+end_src
+**** Remember previous location after moving around text
+:PROPERTIES:
+:CREATED:  [2020-04-08 Wed 16:08]
+:ID:       256b50fe-7a39-4ca7-87f5-b279feb0321b
+:END:
+
+Many movement commands save the current position into the mark ring before moving. 
+Do the same for my meta- movement functions.
+
+#+begin_src emacs-lisp
+(use-package meta-functions
+  :if init-flag
+  :config
+  (define-advice meta-up-element (:before (&rest args) push-mark)
+    "Call `push-mark'"
+    (when (called-interactively-p)
+      (push-mark)))
+  (advice-add 'meta-down-element :before #'meta-up-element@push-mark))
+
+#+end_src
 
 *** Links
 **** Browse URL
