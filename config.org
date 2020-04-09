@@ -9699,6 +9699,12 @@ Show tags right justified
                              150)))
 #+end_src
 
+Always show the contents of inline tasks instead of hiding/showing it during cycling.
+
+#+begin_src emacs-lisp
+(remove-hook 'org-cycle-hook 'org-inlinetask-hide-tasks)
+#+end_src
+
 **** Agenda
 :PROPERTIES:
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
