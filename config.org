@@ -9074,7 +9074,8 @@ I hate when org is cluttering org file directory with generated files (=:file=).
              (info (cadr args))
              (params (org-babel-merge-params (nth 2 info) (caddr args)))
              (dir-param (alist-get :dir params)))
-        (unless (and dir-param (f-absolute-p dir-param))
+        (unless (and dir-param (or (equal (f-full default-directory) (f-full dir-param))
+				   (f-absolute-p dir-param)))
           (setf (alist-get :dir params)
 		(if dir-param
                     (f-join directory (alist-get :dir params))
