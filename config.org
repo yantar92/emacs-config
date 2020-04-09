@@ -3379,12 +3379,15 @@ Add meta-bindings
 :PROPERTIES:
 :ID:       749e7414-827f-45cb-9ee0-19637eb2274e
 :END:
-*** No visible bell
+*** Use visible bell
 :PROPERTIES:
 :ID:       83e9e494-8646-4118-a574-b35026acd582
 :END:
+
+Visible bell saved me from surprise prompts many times.
+
 #+begin_src emacs-lisp
-(setq visible-bell nil)
+(setq visible-bell t)
 #+end_src
 *** Debug on error
 :PROPERTIES:
