@@ -1232,7 +1232,9 @@ The problem is that it may mess up the cases when I want to assign special meani
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
-  :straight (boon :type git :host github :repo "jyp/boon")
+  :straight (boon :type git :host github :repo "jyp/boon"
+		  :fork (:host github
+			       :repo "yantar92/boon"))
   :diminish boon-local-mode
   :config
   (setq boon-special-mode-list
@@ -1449,7 +1451,9 @@ The basic idea is to prefix movement commands with meta.
 #+begin_src emacs-lisp
 (use-package helm
   :if init-flag
-  :straight t
+  :straight (helm :type git :host github :repo "emacs-helm/helm"
+		  :fork (:host github
+			       :repo "yantar92/helm"))
   :diminish helm-mode
   :bind (
 	 ("M-x" . helm-M-x)
