@@ -3952,12 +3952,12 @@ It warns me if the original definition changes from what I expect.
 :ID:       201475d1-64b3-4e1d-8e78-d850c6067761
 :END:
 
-
-
 #+begin_src emacs-lisp
 (use-package pdf-tools
   :if init-flag
-  :straight t
+  :straight (pdf-tools :type git :host github :repo "politza/pdf-tools"
+		  :fork (:host github
+			       :repo "yantar92/pdf-tools"))
   :magic ("%PDF" . pdf-view-mode)
   :bind (:map pdf-view-mode-map
 	      ("v w" . pdf-view-fit-width-to-window)
