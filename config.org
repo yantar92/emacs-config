@@ -2293,14 +2293,13 @@ Disabling it, since it is not very useful for me anyway.
 
 #+begin_src emacs-lisp
 (when init-flag
-  (use-package helm-lib
-    :config
-    ;; helm overrides the `push-mark' function by default (according to `helm-advice-push-mark' value)
-    ;; advice the override as well
-    (define-advice helm--advice-push-mark (:filter-args (args) disable-message)
-      "Disable \"Mark set\" message."
-      (list (car args) t (caddr args))))
-
+  ;; (use-package helm-lib
+  ;;   :config
+  ;;   ;; helm overrides the `push-mark' function by default (according to `helm-advice-push-mark' value)
+  ;;   ;; advice the override as well
+  ;;   (define-advice helm--advice-push-mark (:filter-args (args) disable-message)
+  ;;     "Disable \"Mark set\" message."
+  ;;     (list (car args) t (caddr args))))
   (define-advice push-mark (:filter-args (args) disable-message)
     "Disable \"Mark set\" message."
     (list (car args) t (caddr args))))
@@ -8673,156 +8672,6 @@ Credit: https://www.reddit.com/r/orgmode/comments/dg43hs/can_i_archive_a_propert
   (my/org-archive-delete-logbook))
 #+end_src
 
-*** Preview
-:PROPERTIES:
-:ID:       a85d2993-1d90-40b3-b69a-52cf7d6bd18b
-:END:
-#+begin_src emacs-lisp
-(when init-flag
-#+end_src
-Preview images and latex formulas.
-#+begin_src emacs-lisp
-(setq org-image-actual-width '(300))
-(setq org-latex-create-formula-image-program 'imagemagick)
-(setq org-format-latex-options
-      (quote
-       (:foreground default :background default :scale 2.0 :justify center :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-		    ("begin" "$1" "$" "$$" "\\(" "\\["))));; 2x height of formulas
-(setq org-latex-inline-image-rules
-      (quote
-       (("file" . "\\.\\(jpeg\\|jpg\\|png\\|eps\\|tikz\\|pgf\\|svg\\|bmp\\|tif\\)\\'"))))
-#+end_src
-
-Toggle preview of an image at point (by =C-c C-c= or =TAB=).
-This is especially useful in large buffers where processing all the images by =org-toggle-inline-images= takes too much time.
-Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current_inline_image_with_tab/
-#+begin_src emacs-lisp
-(use-package org
-  :config
-  (defun org-toggle-inline-images-at-point ()
-    (interactive)
-    (when-let ((link-region (org-in-regexp org-link-bracket-re 1)))
-      (save-restriction  
-	(narrow-to-region (car link-region) (cdr link-region))
-	(org-toggle-inline-images))))
-  (add-hook 'org-tab-first-hook #'org-toggle-inline-images-at-point)
-  (add-hook 'org-ctrl-c-ctrl-c-hook #'org-toggle-inline-images-at-point))
-#+end_src
-
-Justify and number the formulas
-#+begin_src emacs-lisp
-;; from https://github.com/jkitchin/scimax/blob/master/scimax-org.el
-(use-package ov
-  :straight t
-  :config
-  (defun org-latex-fragment-justify (justification)
-    "Justify the latex fragment at point with JUSTIFICATION.
-JUSTIFICATION is a symbol for 'left, 'center or 'right."
-    (interactive
-     (list (intern-soft
-            (completing-read "Justification (left): " '(left center right)
-                             nil t nil nil 'left))))
-
-    (let* ((ov (ov-at))
-	   (beg (ov-beg ov))
-	   (end (ov-end ov))
-	   (shift (- beg (line-beginning-position)))
-	   (img (overlay-get ov 'display))
-	   (img (and (and img (consp img) (eq (car img) 'image)
-			  (image-type-available-p (plist-get (cdr img) :type)))
-		     img))
-	   space-left offset)
-      (when (and img
-		 ;; This means the equation is at the start of the line
-		 (= beg (line-beginning-position))
-		 (or
-		  (string= "" (s-trim (buffer-substring end (line-end-position))))
-		  (eq 'latex-environment (car (org-element-context)))))
-	(setq space-left (- (window-max-chars-per-line) (car (image-size img)))
-	      offset (floor (cond
-			     ((eq justification 'center)
-			      (- (/ space-left 2) shift))
-			     ((eq justification 'right)
-			      (- space-left shift))
-			     (t
-			      0))))
-	(when (>= offset 0)
-	  (overlay-put ov 'before-string (make-string offset ?\ ))))))
-
-  (defun org-latex-fragment-justify-advice (beg end image imagetype)
-    "After advice function to justify fragments."
-    (org-latex-fragment-justify (or (plist-get org-format-latex-options :justify) 'left)))
-
-  (advice-add 'org--format-latex-make-overlay :after 'org-latex-fragment-justify-advice)
-
-  ;; ** numbering latex equations
-
-  ;; Numbered equations all have (1) as the number for fragments with vanilla
-  ;; org-mode. This code injects the correct numbers into the previews so they
-  ;; look good.
-  (defun org-renumber-environment (orig-func &rest args)
-    "A function to inject numbers in LaTeX fragment previews."
-    (let ((results '())
-	  (counter -1)
-	  (numberp))
-
-      (setq results (loop for (begin .  env) in
-			  (org-element-map (org-element-parse-buffer) 'latex-environment
-			    (lambda (env)
-			      (cons
-			       (org-element-property :begin env)
-			       (org-element-property :value env))))
-			  collect
-			  (cond
-			   ((and (string-match "\\\\begin{equation}" env)
-				 (not (string-match "\\\\tag{" env)))
-			    (incf counter)
-			    (cons begin counter))
-			   ((string-match "\\\\begin{align}" env)
-			    (prog2
-				(incf counter)
-				(cons begin counter)
-			      (with-temp-buffer
-				(insert env)
-				(goto-char (point-min))
-				;; \\ is used for a new line. Each one leads to a number
-				(incf counter (count-matches "\\\\$"))
-				;; unless there are nonumbers.
-				(goto-char (point-min))
-				(decf counter (count-matches "\\nonumber")))))
-			   (t
-			    (cons begin nil)))))
-
-      (when (setq numberp (cdr (assoc (point) results)))
-	(setf (car args)
-	      (concat
-	       (format "\\setcounter{equation}{%s}\n" numberp)
-	       (car args)))))
-
-    (apply orig-func args))
-
-  (advice-add 'org-create-formula-image :around #'org-renumber-environment)
-
-  (defun org-inject-latex-fragment (orig-func &rest args)
-    "Advice function to inject latex code before and/or after the equation in a latex fragment.
-You can use this to set \\mathversion{bold} for example to make it bolder."
-    (setf (car args)
-	  (concat
-	   (or (plist-get org-format-latex-options :latex-fragment-pre-body) "")
-	   (car args)
-	   (or (plist-get org-format-latex-options :latex-fragment-post-body) "")))
-    (apply orig-func args))
-
-  (advice-add 'org-create-formula-image :around #'org-inject-latex-fragment )
-  )
-#+end_src
-**** =__epilogue=
-:PROPERTIES:
-:ID:       153a637e-68b2-40fd-b75f-5fea92bcc071
-:END:
-#+begin_src emacs-lisp
-)
-#+end_src
 **** Babel
 :PROPERTIES:
 :ID:       b11124c4-3bad-445e-b8d1-8f2a61471da5
@@ -9305,6 +9154,157 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 *************** TODO make auto-completion possible for babel blocks from inside editing org-src
 *************** END
 
+*** Preview
+:PROPERTIES:
+:ID:       a85d2993-1d90-40b3-b69a-52cf7d6bd18b
+:END:
+#+begin_src emacs-lisp
+(when init-flag
+#+end_src
+Preview images and latex formulas.
+#+begin_src emacs-lisp
+(setq org-image-actual-width '(300))
+(setq org-latex-create-formula-image-program 'imagemagick)
+(setq org-format-latex-options
+      (quote
+       (:foreground default :background default :scale 2.0 :justify center :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+		    ("begin" "$1" "$" "$$" "\\(" "\\["))));; 2x height of formulas
+(setq org-latex-inline-image-rules
+      (quote
+       (("file" . "\\.\\(jpeg\\|jpg\\|png\\|eps\\|tikz\\|pgf\\|svg\\|bmp\\|tif\\)\\'"))))
+#+end_src
+
+Toggle preview of an image at point (by =C-c C-c= or =TAB=).
+This is especially useful in large buffers where processing all the images by =org-toggle-inline-images= takes too much time.
+Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current_inline_image_with_tab/
+#+begin_src emacs-lisp
+(use-package org
+  :config
+  (defun org-toggle-inline-images-at-point ()
+    (interactive)
+    (when-let ((link-region (org-in-regexp org-link-bracket-re 1)))
+      (save-restriction  
+	(narrow-to-region (car link-region) (cdr link-region))
+	(org-toggle-inline-images))))
+  (add-hook 'org-tab-first-hook #'org-toggle-inline-images-at-point)
+  (add-hook 'org-ctrl-c-ctrl-c-hook #'org-toggle-inline-images-at-point))
+#+end_src
+
+Justify and number the formulas
+#+begin_src emacs-lisp
+;; from https://github.com/jkitchin/scimax/blob/master/scimax-org.el
+(use-package ov
+  :straight t
+  :config
+  (defun org-latex-fragment-justify (justification)
+    "Justify the latex fragment at point with JUSTIFICATION.
+JUSTIFICATION is a symbol for 'left, 'center or 'right."
+    (interactive
+     (list (intern-soft
+            (completing-read "Justification (left): " '(left center right)
+                             nil t nil nil 'left))))
+
+    (let* ((ov (ov-at))
+	   (beg (ov-beg ov))
+	   (end (ov-end ov))
+	   (shift (- beg (line-beginning-position)))
+	   (img (overlay-get ov 'display))
+	   (img (and (and img (consp img) (eq (car img) 'image)
+			  (image-type-available-p (plist-get (cdr img) :type)))
+		     img))
+	   space-left offset)
+      (when (and img
+		 ;; This means the equation is at the start of the line
+		 (= beg (line-beginning-position))
+		 (or
+		  (string= "" (s-trim (buffer-substring end (line-end-position))))
+		  (eq 'latex-environment (car (org-element-context)))))
+	(setq space-left (- (window-max-chars-per-line) (car (image-size img)))
+	      offset (floor (cond
+			     ((eq justification 'center)
+			      (- (/ space-left 2) shift))
+			     ((eq justification 'right)
+			      (- space-left shift))
+			     (t
+			      0))))
+	(when (>= offset 0)
+	  (overlay-put ov 'before-string (make-string offset ?\ ))))))
+
+  (defun org-latex-fragment-justify-advice (beg end image imagetype)
+    "After advice function to justify fragments."
+    (org-latex-fragment-justify (or (plist-get org-format-latex-options :justify) 'left)))
+
+  (advice-add 'org--format-latex-make-overlay :after 'org-latex-fragment-justify-advice)
+
+  ;; ** numbering latex equations
+
+  ;; Numbered equations all have (1) as the number for fragments with vanilla
+  ;; org-mode. This code injects the correct numbers into the previews so they
+  ;; look good.
+  (defun org-renumber-environment (orig-func &rest args)
+    "A function to inject numbers in LaTeX fragment previews."
+    (let ((results '())
+	  (counter -1)
+	  (numberp))
+
+      (setq results (loop for (begin .  env) in
+			  (org-element-map (org-element-parse-buffer) 'latex-environment
+			    (lambda (env)
+			      (cons
+			       (org-element-property :begin env)
+			       (org-element-property :value env))))
+			  collect
+			  (cond
+			   ((and (string-match "\\\\begin{equation}" env)
+				 (not (string-match "\\\\tag{" env)))
+			    (incf counter)
+			    (cons begin counter))
+			   ((string-match "\\\\begin{align}" env)
+			    (prog2
+				(incf counter)
+				(cons begin counter)
+			      (with-temp-buffer
+				(insert env)
+				(goto-char (point-min))
+				;; \\ is used for a new line. Each one leads to a number
+				(incf counter (count-matches "\\\\$"))
+				;; unless there are nonumbers.
+				(goto-char (point-min))
+				(decf counter (count-matches "\\nonumber")))))
+			   (t
+			    (cons begin nil)))))
+
+      (when (setq numberp (cdr (assoc (point) results)))
+	(setf (car args)
+	      (concat
+	       (format "\\setcounter{equation}{%s}\n" numberp)
+	       (car args)))))
+
+    (apply orig-func args))
+
+  (advice-add 'org-create-formula-image :around #'org-renumber-environment)
+
+  (defun org-inject-latex-fragment (orig-func &rest args)
+    "Advice function to inject latex code before and/or after the equation in a latex fragment.
+You can use this to set \\mathversion{bold} for example to make it bolder."
+    (setf (car args)
+	  (concat
+	   (or (plist-get org-format-latex-options :latex-fragment-pre-body) "")
+	   (car args)
+	   (or (plist-get org-format-latex-options :latex-fragment-post-body) "")))
+    (apply orig-func args))
+
+  (advice-add 'org-create-formula-image :around #'org-inject-latex-fragment )
+  )
+#+end_src
+**** =__epilogue=
+:PROPERTIES:
+:ID:       153a637e-68b2-40fd-b75f-5fea92bcc071
+:END:
+#+begin_src emacs-lisp
+)
+#+end_src
+
 *** Appearance
 **** Links
 ***** Show broken links to files
@@ -9534,9 +9534,9 @@ hyphen as em-dash (from [[https://github.com/grettke/help/blob/master/help.org][
  '(("^[[:space:]]*\\(-\\) "
     0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "—")))))
 #+end_src
+
 hide property drawers if they are empty or contain only invisible =org-custom-properties=
 also hide the logbooks containing only state changes and clocking
-
 
 *************** TODO Find a faster way to hide empty drawers
 *************** END
