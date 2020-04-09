@@ -7436,8 +7436,7 @@ Also, hide the contents once task is clocked out.
 (use-package org-quick-peek
   :if init-flag
   :straight (org-quick-peek :type git :host github :repo "alphapapa/org-quick-peek"
-			    :fork (:host github
-					 :repo "yantar92/org-quick-peek"))
+			    :fork (:host github :repo "yantar92/org-quick-peek"))
   :requires quick-peek
   :after org
   :bind (:map org-agenda-mode-map
