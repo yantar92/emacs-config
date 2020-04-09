@@ -5266,6 +5266,12 @@ Also, the projects require all the children to be done by default.
 #+begin_src emacs-lisp
 (setq org-enforce-todo-dependencies t)
 #+end_src
+In addition, I force all the check-boxes to be checked before a task can be marked done. 
+Otherwise, there is not much point in check-boxes for me.
+#+begin_src emacs-lisp
+(use-package org
+:custom ((org-enforce-todo-checkbox-dependencies t)))
+#+end_src
 
 ***** Habits
 :PROPERTIES:
