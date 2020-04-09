@@ -3798,23 +3798,6 @@ It warns me if the original definition changes from what I expect.
 #+end_src
 
 
-*** Execute current buffer (c++,python,bash,...)
-:PROPERTIES:
-:ID:       a57244bb-a617-44b4-a806-7cff82a86ac7
-:END:
-#+begin_src emacs-lisp
-(use-package quickrun
-  :if init-flag
-  :straight t
-  :bind (
-	 ("<f10>" . quickrun)
-	 ("<C-XF86Search>" . quickrun-with-arg)
-	 ("<C-M-XF86Search>" . quickrun-shell)
-	 ("<C-XF86Explorer>" . quickrun-region)
-	 ("<C-M-XF86Explorer>" . quickrun-replace-region)
-	 ("<f12>" . helm-quickrun)))
-#+end_src
-
 *** Set executable flag in all the script files
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 13:52]
