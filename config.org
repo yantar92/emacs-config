@@ -5030,18 +5030,26 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 :ID:       2b1456f8-c2fe-41ef-8d3d-99aa4adf362e
 :END:
 *************** END
+
 #+begin_src emacs-lisp
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
   :demand t)
 #+end_src
-*** Project management
+
+
+
+*** Workflow
+:PROPERTIES:
+:CREATED:  [2020-04-08 Wed 15:48]
+:END:
+**** Project management
 :PROPERTIES:
 :ID:       8cef1ba5-d5ea-4ad1-955b-932952c77b0c
 :END:
 I need to deal with many projects running at the same time in my work. Hence, I need some good structure for all these projects to keep track of deadlines, have all the notes to be able to recall what is going on in the project after some time.
-**** Tags
-***** General org mode tags
+***** Tags
+****** General org mode tags
 :PROPERTIES:
 :ID:       adc6f5ae-183f-4c5f-97e8-7bfe18f028d2
 :END:
@@ -5092,8 +5100,8 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =NOCLOCK= :: prevent entry from being clocked in automatically (after child task clock out [[id:d1afb1ae-a3a4-45b4-8186-8e7242e0edc1][Clocking & logging]]). This is not inherited.
 - =DEFAULT= :: Do not list the task in GTD agenda
 - =REFILE= :: can be refile target even if it is not project/sub-project
-***** TODO Tags for everything
-***** TODO try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
+****** TODO Tags for everything
+****** TODO try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
 :PROPERTIES:
 :CREATED:  [2018-02-12 Mon 00:51]
 :Source:   https://www.gnu.org/software/emacs/manual/html_node/elisp/Special-Properties.html#Special-Properties
@@ -5102,13 +5110,13 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 CLOCK: [2018-02-12 Mon 00:51]--[2018-02-12 Mon 00:52] =>  0:01
 :END:
 modified b
-****** TODO may be useful |- (multifiles.el/multifiles.el at master · magnars/multifiles.el) :BOOKMARK:
+******* TODO may be useful |- (multifiles.el/multifiles.el at master · magnars/multifiles.el)          :BOOKMARK:
 :PROPERTIES:
 :CREATED:  [2018-02-12 Mon 00:56]
 :Source:   https://github.com/magnars/multifiles.el/blob/master/multifiles.el
 :END:
 fun create-or
-**** Tasks
+***** Tasks
 :PROPERTIES:
 :ID:       d38441a2-1431-44db-b831-8cdec011b1dc
 :END:
@@ -5205,7 +5213,7 @@ If the task is scheduled, schedule it for tomorrow."
   - MERGED(m) :: become a part of other task. The link to the task is added to =MERGED-WITH= property. The motivation of adding this state is that I sometimes create a duplicate task, find out that it is duplicate, and confused which state to set. It is just faster to set =MERGED= without deciding if it is =CANCELLED= (which is not really) or =DONE= (which is also not).
 *************** TODO Prompt for the link to new task, default is clocked in task. Use helm search. Store link in property
 *************** END
-**** Inline tasks
+***** Inline tasks
 :PROPERTIES:
 :ID:       54ee8e08-0cb5-4104-94c2-948be5830c4e
 :END:
@@ -5237,8 +5245,7 @@ The maximum number of levels is controlled by `org-inlinetask-min-level'."
       (funcall oldfun args))))
 #+end_src
 
-
-**** TODO Task inheritance
+***** TODO Task dependencies 
 :PROPERTIES:
 :CREATED:  [2017-12-29 Fri 06:10]
 :ID:       d982166c-a450-4625-8211-ded63dc03f2d
@@ -5259,7 +5266,8 @@ Also, the projects require all the children to be done by default.
 #+begin_src emacs-lisp
 (setq org-enforce-todo-dependencies t)
 #+end_src
-**** Habits
+
+***** Habits
 :PROPERTIES:
 :ID:       fa036b84-f68e-485b-943c-d5d9ad79c516
 :END:
@@ -5300,7 +5308,7 @@ Do not show consistency graph in agenda
 (define-advice org-habit-insert-consistency-graphs (:override () disable) #'ignore)
 #+end_src
 
-**** Projects
+***** Projects
 :PROPERTIES:
 :ID:       3edce153-2927-4a2d-8b45-87d9a6151913
 :END:
@@ -5323,7 +5331,7 @@ The project is an item with todo keyword and subtask.
       (and is-a-task has-subtask))))
 #+end_src
 This approach is useful in the case if I place some todo under the wrong item during refiling. It will appear in the project list in such a case. Project cannot be =DONE= if any of subtasks is =TODO=, =NEXT=, =WAITING= or =HOLD= (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
-***** Top level project
+****** Top level project
 :PROPERTIES:
 :ID:       aa2f80d5-d05c-418f-ac41-e1c6a138afcb
 :END:
@@ -5351,7 +5359,7 @@ Callers of this function already widen the buffer view."
 	t))))
 #+end_src
 
-***** Sub-project
+****** Sub-project
 :PROPERTIES:
 :ID:       32faf7a0-7af7-4bd9-973b-814549420e07
 :END:
@@ -5387,8 +5395,8 @@ The project with parent projects.
 	    (org-todo "TODO")))))))
 (add-hook 'org-after-todo-state-change-hook 'yant/mark-todo-parent-tasks-next 'append)
   #+end_src
-***** TODO Standard projects
-*** Journal
+****** TODO Standard projects
+**** Journal
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 18:19]
 :ID:       46346e6b-4ed8-4570-bf4c-05639c125046
@@ -5424,7 +5432,7 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
                                         :clock-in t :clock-resume t :jump-to-captured t)))
 #+end_src
 
-*** TODO Files
+**** TODO Files
 :PROPERTIES:
 :ID:       f1be655e-5fc4-44b5-8197-22ce9457e489
 :END:
@@ -5496,11 +5504,11 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
   (remove-buffer-from-agenda-files (current-buffer))
   ))
 #+end_src
-*** Links
+**** Links
 :PROPERTIES:
 :ID:       7122dce7-7d3e-4167-a444-8811d588db42
 :END:
-**** NEXT Link description function
+***** NEXT Link description function
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 10:27]
 :ID:       bd43272d-9ef4-45a6-85ab-bebbef75c18b
@@ -5524,12 +5532,11 @@ Return DESK if :desk is not set."
 (setq org-make-link-description-function #'yant/org-make-link-description-function)
 #+end_src
 
-
-**** External
+***** External
 :PROPERTIES:
 :ID:       e74697d9-3d3e-4db4-8a4c-e9cad8f73d23
 :END:
-***** External apps
+****** External apps
 :PROPERTIES:
 :ID:       2fe2cfaf-3ad4-4b87-99b1-2897e7c0bf20
 :END:
@@ -5545,7 +5552,7 @@ Adjust some of the external application programs
 		      )
       )
 #+end_src
-***** =Pdf-view= links
+****** =Pdf-view= links
 :PROPERTIES:
 :ID:       f6b6301d-6ccb-4ee1-a454-ca6f5af845ea
 :END:
@@ -5556,7 +5563,7 @@ Store links to pages in pdf
   :straight t)
 (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (file link) (org-pdfview-open link))))
 #+end_src
-***** TODO Inkscape links
+****** TODO Inkscape links
 :PROPERTIES:
 :CREATED:  [2018-10-21 Sun 14:05]
 :ID:       824be892-df30-4c07-bf02-93a234fb7885
@@ -5567,7 +5574,7 @@ Copy paste from https://github.com/jkitchin/scimax/blob/master/scimax-inkscape.e
 (use-package scimax-inkscape)
 #+END_SRC
 
-***** Links to attached files
+****** Links to attached files
 :PROPERTIES:
 :CREATED:  [2018-07-09 Mon 21:46]
 :ID:       1460419f-52b8-4687-955c-936a1f99ae7c
@@ -5677,11 +5684,11 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 
 #+end_src
 
-**** Internal
+***** Internal
 :PROPERTIES:
 :ID:       5aebc1b8-8d85-4254-b177-c216c053e8f3
 :END:
-***** Links by ID
+****** Links by ID
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 10:05]
 :ID:       0f7c34bc-bc56-4bbf-954e-b0e03e5240a2
@@ -5692,7 +5699,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 (setq org-id-method (quote uuidgen))
 (setq org-id-link-to-org-use-id 't)
 #+end_src
-***** =id:= link completion
+****** =id:= link completion
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 10:05]
 :ID:       ffb27a1a-735e-4398-b230-a71fc4df0023
@@ -5737,7 +5744,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 
 #+end_src
 
-***** TODO Footnotes
+****** TODO Footnotes
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 21:45]
 :ID:       343d5ae5-613f-4c1e-998d-91e5cd325053
@@ -5749,7 +5756,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 #+begin_src emacs-lisp
 (setq org-footnote-section nil)
 #+end_src
-***** =Src= block links
+****** =Src= block links
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 14:37]
 :ID:       b1ca3ea7-39ec-4489-8a67-8a01d4d61398
@@ -5816,7 +5823,7 @@ The src block should be in the same org file."
 			 :follow #'org-link-babel-follow
                          :complete #'org-link-babel-complete)
 #+end_src
-**** NEXT Org-ref
+***** NEXT Org-ref
 :PROPERTIES:
 :ID:       f944c2c8-f1fa-49ea-ab24-bf1b018013f1
 :END:
@@ -5849,7 +5856,7 @@ The src block should be in the same org file."
   (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
 #+end_src
-***** SOMEDAY search in article PDFs
+****** SOMEDAY search in article PDFs
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
@@ -5870,7 +5877,7 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
   (helm-recoll-create-source "docs" "~/.recoll")
   (bind-key* "C-c }" 'helm-recoll-docs))
 #+END_SRC
-*** TODO Properties
+**** TODO Properties
 :PROPERTIES:
 :ID:       598c2b16-2eb8-404a-b7e9-00969a1c4d72
 :END:
@@ -6011,7 +6018,7 @@ The property is set to TIME if it is supplied."
 - =:TRIGGER:= :: Actions to be done when the item is marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
 - =:MERGED-WITH:= :: If the task is marked =MERGED=, contains a link to the new task
 - =:SOURCE:= :: The link to the file/URL, which this task refers to
-*** NEXT Attach
+**** NEXT Attach
 :PROPERTIES:
 :ID:       bb8263f5-8ef4-4444-941c-9ffbb338185d
 :END:
@@ -6024,7 +6031,7 @@ CLOCK: [2019-04-24 Wed 15:43]--[2019-04-24 Wed 15:46] =>  0:03
 (use-package org-attach
   :config
 #+end_src
-**** Default attachment directory + multi-selection for attach
+***** Default attachment directory + multi-selection for attach
 :PROPERTIES:
 :CREATED:  [2018-09-28 Fri 16:12]
 :ID:       3a0ca96a-3ce5-4f72-ba38-16990342fb5a
@@ -6055,7 +6062,7 @@ The new files are usually coming from my Downloads (=yant/org-attach-default-sou
   (mapc (lambda (file) (apply oldfun file args)) files))
 #+END_SRC
 
-**** Make it possible to attach directories (not only files)
+***** Make it possible to attach directories (not only files)
 :PROPERTIES:
 :CREATED:  [2018-09-28 Fri 16:37]
 :END:
@@ -6063,7 +6070,7 @@ The new files are usually coming from my Downloads (=yant/org-attach-default-sou
 The default =org-attach-attach= function does not allow to attach directories.
 I made it so in the interactive specification in [[id:3a0ca96a-3ce5-4f72-ba38-16990342fb5a][Default attachment directory]].
 
-**** NEXT Store files in folder structure, following my org tree structure
+***** NEXT Store files in folder structure, following my org tree structure
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 18:11]
 :ID:       9361bc68-010b-45f1-bddd-4638d6344758
@@ -6355,14 +6362,14 @@ Files, out of the folder structure, will appear in my agenda to attach them to t
 
 #+end_src
 
-***** TODO handle cases when we need files in the same dir with the org file [[id:9dc72877-1e7b-4084-a262-6e39b08ced49][LaTeX class]]
+****** TODO handle cases when we need files in the same dir with the org file [[id:9dc72877-1e7b-4084-a262-6e39b08ced49][LaTeX class]]
 :PROPERTIES:
 :CREATED:  [2018-07-09 Mon 12:40]
 :END:
 :LOGBOOK:
 CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :END:
-***** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
+****** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
 SCHEDULED: <2019-12-19 Thu>
 :PROPERTIES:
 :CREATED:  [2018-08-26 Sun 22:40]
@@ -6371,7 +6378,7 @@ SCHEDULED: <2019-12-19 Thu>
 - State "NEXT"       from "TODO"       [2018-08-27 Mon 08:39]
 :END:
 
-**** NEXT Make =:ATTACH_DIR_INHERITED:= work again
+***** NEXT Make =:ATTACH_DIR_INHERITED:= work again
 :PROPERTIES:
 :CREATED:  [2019-07-27 Sat 17:03]
 :ID:       58e525e8-18e5-4eb0-8e6d-f8e10ee8f2f1
@@ -6387,7 +6394,7 @@ SCHEDULED: <2019-12-19 Thu>
   	  dir)))
 #+end_src
 
-**** Saving web pages into notes
+***** Saving web pages into notes
 :PROPERTIES:
 :CREATED:  [2017-12-30 Sat 22:20]
 :ID:       8e1af85e-3e47-40c3-9b33-34a5e848b483
@@ -6399,7 +6406,7 @@ SCHEDULED: <2019-12-19 Thu>
 
 Sometimes, I want to save certain interesting online articles to disk to make sure that all the content and comments are preserved regardless of the website changes.
 
-***** org-webtools
+****** org-webtools
 :PROPERTIES:
 :CREATED:  [2019-04-23 Tue 23:44]
 :ID:       f8a52437-48d9-418a-a00d-c1af5680c230
@@ -6434,7 +6441,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
   (setq org-web-tools-pandoc-sleep-time 1.0))
 #+end_src
 
-**** =_epilogue=
+***** =_epilogue=
 :PROPERTIES:
 :ID:       fdd42cf4-96cb-4c9f-b855-3fb8437f9d9c
 :END:
@@ -6442,7 +6449,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
   )
 #+END_SRC
 
-*** Agenda & scheduling
+**** Agenda & scheduling
 :PROPERTIES:
 :ID:       ff70b03f-3876-4b2b-9aab-c3209bd31cb8
 :END:
@@ -6732,7 +6739,7 @@ SUBTREE-END is used as end of the entry if not nil."
 							  (bh/skip-habits)))))))
 	       nil))))
   #+end_src
-**** Focused daily agenda
+***** Focused daily agenda
 :PROPERTIES:
 :ID:       a6054643-449e-48d7-afff-4155465efc19
 :END:
@@ -6883,7 +6890,7 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
        (org-agenda-skip-before-SHOWFROMDATE-property)
        )))
   #+end_src
-**** Normal daily agenda
+***** Normal daily agenda
 :PROPERTIES:
 :ID:       f50074e7-42b2-4da5-9421-04ec9deccf07
 :END:
@@ -6893,7 +6900,7 @@ This is a standard org mode agenda showing deadlines, schedules, diary items and
 (setq org-agenda-skip-deadline-if-done t)
 (setq org-agenda-include-inactive-timestamps nil)
 #+end_src
-**** GTD self-check
+***** GTD self-check
 :PROPERTIES:
 :ID:       d110dae9-f563-48bb-8293-a10b1afbe772
 :END:
@@ -6908,7 +6915,7 @@ This is a standard org mode agenda showing deadlines, schedules, diary items and
 6. Waiting and hold tasks, which are not scheduled
 7. Other tasks which are not part of project or has =SKIP= tag. Useful to catch wrong refiles and look for the new things to do. Blocked tasks are not shown here.
 
-**** Captured items, which should be refiled
+***** Captured items, which should be refiled
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 22:28]
 :ID:       18a47cca-2dfa-4e27-9814-a2edfd54a9f4
@@ -6948,8 +6955,8 @@ Since my org files are really very large, it usually takes a lot of time to rebu
     (funcall oldfun)))
 #+end_src
 
-**** TODO Ever standing project list
-**** TODO [#A] org-timeline
+***** TODO Ever standing project list
+***** TODO [#A] org-timeline
 :PROPERTIES:
 :CREATED:  [2019-07-11 Thu 14:51]
 :ID:       2e34a6d8-e1c6-4261-aaf0-40764571b445
@@ -6971,7 +6978,7 @@ The package idea is cool, but I would prefer vertical view. Need to write my own
   (add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
 #+end_src
 
-**** =CalFW=
+***** =CalFW=
 :PROPERTIES:
 :ID:       1d03f6e7-0f52-4aad-926e-a6762cd2d7dc
 :END:
@@ -7026,14 +7033,14 @@ Agenda is excellent for short term planning, however it is not very useful if I 
 	  cfw:fchar-top-left-corner ?┏
 	  cfw:fchar-top-right-corner ?┓)))
 #+end_src
-**** TODO =Gcal= - sync with Google calendar
+***** TODO =Gcal= - sync with Google calendar
 :PROPERTIES:
 :ID:       b66193fa-9189-4822-b68f-87f5bc30c3fd
 :END:
 :LOGBOOK:
 - State "TODO"       from              [2019-05-10 Fri 00:23]
 :END:
-***** General setup
+****** General setup
 :PROPERTIES:
 :ID:       9eda87f8-8e84-4b3d-b5a6-876ba287c7bb
 :END:
@@ -7056,10 +7063,10 @@ Agenda is excellent for short term planning, however it is not very useful if I 
     (cancel-timer org-gcal-sync-timer))
   (org-gcal-sync-enable))
 #+end_src
-***** TODO Avoid duplicates in agenda for =gcal= entries and other entries
+****** TODO Avoid duplicates in agenda for =gcal= entries and other entries
 
 Usually, I have some events scheduled locally in my computer and some are scheduled in Google calendar. Of course, I want to see both. It is easy - just add my =gcal= org file to agenda. However, the problem appears when I want to see locally scheduled events in Google Calendar (for mobile notifications). In such a case I need to copy the entries from my local org files to =GCal=. In such a case, these entries appears in my local agenda twice, which is annoying.
-***** Suppress =libnotify= notifications
+****** Suppress =libnotify= notifications
 :PROPERTIES:
 :CREATED:  [2018-03-12 Mon 21:18]
 :ID:       a818576a-f55a-428b-86e9-0df97ae445c1
@@ -7070,7 +7077,7 @@ Usually, I have some events scheduled locally in my computer and some are schedu
   (let ((alert-default-style 'message))
     (apply OLDFUN args)))
 #+END_SRC
-**** Handling different time zones in time stamps :ARCHIVE:
+***** Handling different time zones in time stamps                                                :ARCHIVE:
 :PROPERTIES:
 :CREATED:  [2017-12-23 Sat 18:36]
 :END:
@@ -7350,7 +7357,7 @@ scheduled items with an hour specification like [h]h:mm."
 	      (push item scheduled-items))))))
     (nreverse scheduled-items)))
 #+end_src
-**** Agenda bulk actions
+***** Agenda bulk actions
 :PROPERTIES:
 :CREATED:  [2018-11-05 Mon 10:44]
 :ID:       daa2a040-cd9e-4b07-be86-d549d566b42f
@@ -7384,7 +7391,7 @@ Disabling it (at least, until I find when that check is actually useful).
     (apply oldfun arg)))
 #+end_src
 
-**** Agenda search
+***** Agenda search
 :PROPERTIES:
 :CREATED:  [2019-05-18 Sat 20:28]
 :ID:       b646ef49-debd-41d1-b101-13d01db7f9f5
@@ -7395,7 +7402,7 @@ It is possible to search from agenda dispatcher not only in the org files, but a
 (setq org-agenda-text-search-extra-files '(agenda-archives))
 #+end_src
 
-**** Show entry contents in agenda
+***** Show entry contents in agenda
 :PROPERTIES:
 :CREATED:  [2019-07-29 Mon 18:44]
 :ID:       40f833b6-615e-410b-89eb-3ffaea1c5c30
@@ -7444,8 +7451,7 @@ Also, hide the contents once task is clocked out.
   (add-hook 'org-clock-out-hook #'yant/org-agenda-hide-org-quick-peek-overlays))
 #+end_src
 
-
-**** Trying =org-ql=
+***** Trying =org-ql=
 :PROPERTIES:
 :CREATED:  [2019-12-22 Sun 17:16]
 :ID:       43d227d2-2032-4c56-b715-5065b31f1b0c
@@ -7557,7 +7563,7 @@ Also, hide the contents once task is clocked out.
                (list (f-join org-directory "inbox.org"))))
 #+end_src
 
-***** TODO use it |- (=alphapapa/org-ql=: An Org query language, and experimental code for a next-generation Org Agenda) :BOOKMARK:
+****** TODO use it |- (=alphapapa/org-ql=: An Org query language, and experimental code for a next-generation Org Agenda) :BOOKMARK:
 :PROPERTIES:
 :CREATED:  [2019-04-04 Thu 15:20]
 :Source:   https://github.com/alphapapa/org-ql#org-ql-search
@@ -7566,7 +7572,7 @@ Also, hide the contents once task is clocked out.
 - Refiled on [2019-12-23 Mon 18:07]
 :END:
 
-**** Live (=helm-org-ql=) search in org
+***** Live (=helm-org-ql=) search in org
 :PROPERTIES:
 :CREATED:  [2020-03-29 Sun 22:02]
 :ID:       1bc88aed-5729-4a0e-b52c-65e5d46f635b
@@ -7583,7 +7589,7 @@ Also, hide the contents once task is clocked out.
   )
 #+end_src
 
-*** TODO Contacts
+**** TODO Contacts
 :PROPERTIES:
 :CREATED:  [2018-09-05 Wed 06:39]
 :ID:       8074623d-bc14-43c7-908c-28213b2b6149
@@ -7596,7 +7602,7 @@ Also, hide the contents once task is clocked out.
   (use-package helm-org-contacts)
   )
 #+END_SRC
-*** TODO Column mode
+**** TODO Column mode
 :PROPERTIES:
 :ID:       0d6d40dd-e4cb-4297-8695-6b66f2a1a706
 :END:
@@ -7639,14 +7645,14 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 ;;     (setq yant/last-note-taken nil)))
 
 #+end_src
-**** =__epilogue=
+***** =__epilogue=
 :PROPERTIES:
 :ID:       0de5d1d1-568f-4991-a627-e1b46b4e481f
 :END:
 #+begin_src emacs-lisp
 )
 #+end_src
-*** TODO Auto sort
+**** TODO Auto sort
 :PROPERTIES:
 :ID:       aa092c63-f695-4c03-8639-b34fa262d5fe
 :END:
@@ -7658,7 +7664,7 @@ However, I do not find it comfortable to look into notes (which are stored in dr
   (bind-key "C-c C-S-s" 'org-autosort-sort-entries-at-point org-mode-map)
   (add-to-list 'org-default-properties "SORT"))
 #+end_src
-*** Clocking & logging
+**** Clocking & logging
 :PROPERTIES:
 :ID:       d1afb1ae-a3a4-45b4-8186-8e7242e0edc1
 :END:
@@ -7754,7 +7760,7 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
      positive.
 *************** TODO Implement this (current month summary)
 *************** END
-**** Agenda log mode & clock report
+***** Agenda log mode & clock report
 :PROPERTIES:
 :ID:       104927a5-4dea-4ee0-91d7-36afc6b15c7f
 :END:
@@ -7769,7 +7775,7 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
       (plist-put org-agenda-clock-consistency-checks
 		 :max-gap "2:00"))
   #+end_src
-**** Logging
+***** Logging
 :PROPERTIES:
 :ID:       973d6eff-3d91-48f0-a3b5-b438feccf28f
 :END:
@@ -7803,7 +7809,7 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
       "NEXT")))
 (setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
   #+end_src
-**** Display clocked in entry
+***** Display clocked in entry
 :PROPERTIES:
 :ID:       13012cf7-322e-4433-a22c-e81b7c5feda0
 :END:
@@ -7865,7 +7871,7 @@ I do not show current task in Emacs, instead I use =awesome wm= widget. Hence ne
 *************** TODO Do not need async-start-process here
 *************** END
 
-**** Clocking history
+***** Clocking history
 :PROPERTIES:
 :ID:       9e2c7a88-8a56-4213-b458-ccebcd59812a
 :END:
@@ -7892,7 +7898,7 @@ Sometimes I need to jump to some urgent task. After it is done, I hate searching
           helm-org-ignore-autosaves t)
     ))
 #+end_src
-**** Pomodoro technique
+***** Pomodoro technique
 :PROPERTIES:
 :ID:       ee371af1-c478-49d1-9814-1eb78242a341
 :END:
@@ -7906,7 +7912,7 @@ About: [[https://habrahabr.ru/post/323576/][habr]]
   :config
   (setq alert-default-style 'libnotify))
 #+end_src
-**** Bonus/penalty based time management
+***** Bonus/penalty based time management
 :PROPERTIES:
 :CREATED:  [2018-07-21 Sat 16:40]
 :ID:       38d9103d-a969-4c69-ae0e-a9a50912fba0
@@ -8096,14 +8102,14 @@ ignoring the previously saved values."
 (add-to-list 'org-default-properties "ORG-TIME-BALANCE-MULTIPLIER")
 (add-to-list 'org-default-properties "ORG-TIME-BONUS-ON-DONE")
 #+end_src
-**** =__epilogue=
+***** =__epilogue=
 :PROPERTIES:
 :ID:       e26ec668-12c9-41f1-ad8a-a3dd96007f5c
 :END:
 #+begin_src emacs-lisp
 )
 #+end_src
-*** Capture
+**** Capture
 :PROPERTIES:
 :ID:       fbb770b4-2232-431d-b2e5-75d001ff49b0
 :END:
@@ -8116,7 +8122,7 @@ This should be done quickly, and from any place (not only from inside emacs):
 - open new frame for capturing
 - use capture templates for most common types of quick captures
 There is also one more use case when I prefer to use capture - creating a new big projects. The reason to use capture here is that common types of projects require some set of needed actions, which I tend to forget. Capture templates here allows to remind necessary project tasks to myself.
-**** System wide capture
+***** System wide capture
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 21:49]
 :ID:       0702c999-0ee5-494c-a1d7-1bb4024c43f7
@@ -8188,7 +8194,7 @@ Currently =org-capture-pop-frame= resets the line truncation state, which is rat
 	 ,@ocpf-frame-parameters)))))
 #+end_src
 
-**** Capture templates
+***** Capture templates
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 21:51]
 :ID:       e3d02bee-a924-4808-9a2f-fe577065038d
@@ -8279,7 +8285,7 @@ All these templates generally record the creation time in =:CREATED:=
 )
 #+end_src
 
-*** Refile
+**** Refile
 :PROPERTIES:
 :ID:       c048269c-57b9-434a-a19b-6da8d70e5e0f
 :END:
@@ -8336,14 +8342,14 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 *************** END
 
 
-**** =__epilogue=
+***** =__epilogue=
 :PROPERTIES:
 :ID:       2e6f7380-707a-4ff9-992c-4992377ae1ee
 :END:
 #+begin_src emacs-lisp
 )
 #+end_src
-*** TODO Export
+**** TODO Export
 :PROPERTIES:
 :ID:       24d7f8cf-7729-4a05-a09d-bac24ab101b5
 :END:
@@ -8356,7 +8362,7 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 (setq org-export-use-babel t)
 (setf (alist-get :eval org-babel-default-header-args) "never-export")
   #+end_src
-**** Ignore some headlines in a sense that it will not be exported as =\section=.
+***** Ignore some headlines in a sense that it will not be exported as =\section=.
 :PROPERTIES:
 :CREATED:  [2018-03-27 Tue 15:17]
 :ID:       e345057c-cd79-4e89-8ecc-ed81473804f1
@@ -8382,7 +8388,7 @@ The subheadings below such a headlines are promoted up *1 level*.
 
 ;; (add-to-list 'org-export-filter-headline-functions 'yant/org-export-suppress-some-sections)
 #+END_SRC
-**** pdf
+***** pdf
 :PROPERTIES:
 :ID:       6fb7a08a-ed44-46e5-aee3-82f76003de4a
 :END:
@@ -8396,7 +8402,7 @@ The subheadings below such a headlines are promoted up *1 level*.
 (setq org-export-with-timestamps nil)
 (setq org-export-in-background nil)
 #+end_src
-***** Default settings
+****** Default settings
 :PROPERTIES:
 :CREATED:  [2018-03-27 Tue 15:16]
 :ID:       1bf4b848-2cac-4d11-a23d-a9b7cf4bcacb
@@ -8498,7 +8504,7 @@ The subheadings below such a headlines are promoted up *1 level*.
 	)))
 
 #+END_SRC
-**** html
+***** html
 :PROPERTIES:
 :ID:       cc464b8f-4be1-4463-99bc-9f1d1c9a138f
 :END:
@@ -8507,14 +8513,14 @@ The subheadings below such a headlines are promoted up *1 level*.
 				    ("http"  . "\\.\\(jpeg\\|jpg\\|png\\|gif\\|svg\\)\\'")
 				    ("https" . "\\.\\(jpeg\\|jpg\\|png\\|gif\\|svg\\)\\'")))
 #+end_src
-**** =md=
+***** =md=
 :PROPERTIES:
 :ID:       51a2db82-731b-4daf-bea9-dbcca50bc4e8
 :END:
 #+begin_src emacs-lisp
 (use-package ox-md)
 #+end_src
-*** Archiving
+**** Archiving
 :PROPERTIES:
 :ID:       85dadb9c-2a7e-47cf-ba98-a0e73377653d
 :END:
@@ -8828,7 +8834,7 @@ For convenience, add =header-args= property to completion
 (add-to-list 'org-default-properties "header-args")
 #+end_src
 
-**** Structure templates
+***** Structure templates
 :PROPERTIES:
 :CREATED:  [2018-10-18 Thu 21:24]
 :ID:       c9773614-0fec-4d7d-8ee3-72155d16d91c
@@ -8844,7 +8850,7 @@ It can be done using =org-tempo=.
   (push (cons "el" "src emacs-lisp") org-structure-template-alist))
 #+end_src
 
-**** Source block editing functions from scimax
+***** Source block editing functions from scimax
 :PROPERTIES:
 :CREATED:  [2018-10-22 Mon 20:55]
 :ID:       6d452ed8-ddb4-4252-b66e-8609866d0fe1
@@ -8910,7 +8916,7 @@ If point is in a block, copy the header to the new block"
     (insert "\n")
     (forward-line -1)))
 #+end_src
-**** TODO Change major mode in the source blocks
+***** TODO Change major mode in the source blocks
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 17:28]
 :ID:       b9c7a2cd-ef10-4add-aefd-ecc1987ecc69
@@ -8989,7 +8995,7 @@ Leaving the code below for reference.
   (mmm-add-mode-ext-class 'org-mode nil 'org-mode-block))
 #+end_src
 
-**** Backends
+***** Backends
 :PROPERTIES:
 :ID:       397b6a12-0a2f-4d05-9c76-9735314434fa
 :END:
@@ -9018,7 +9024,7 @@ Leaving the code below for reference.
   :init
   (add-to-list 'org-src-lang-modes '("mathematica" . "wolfram")))
 #+end_src
-**** Default arguments
+***** Default arguments
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 15:58]
 :ID:       27e1a878-35c8-4023-8881-645393db0274
@@ -9042,7 +9048,7 @@ Leaving the code below for reference.
       '((:prologue . "exec 2>&1") (:epilogue . ":"))
       )
 #+END_SRC
-**** TODO Evaluation
+***** TODO Evaluation
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 18:03]
 :ID:       49900f8e-cde9-4e41-944a-904852ad92b9
@@ -9081,7 +9087,7 @@ Also, it make sense to show inline images, which I frequently generate via Gnupl
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 #+END_SRC
-***** TODO Gnuplot
+****** TODO Gnuplot
 :PROPERTIES:
 :CREATED:  [2018-09-28 Fri 18:40]
 :ID:       9c897a8c-e847-456d-9bf9-b905ba90f4fd
@@ -9165,7 +9171,7 @@ I had to modify =org-babel-expand-body:gnuplot= to make it respect =:dir= proper
     body))
 #+END_SRC
 
-***** Async evaluation
+****** Async evaluation
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 21:10]
 :ID:       11a37f26-ef17-43ec-bb9b-43155f9fc9ec
@@ -9175,7 +9181,7 @@ I had to modify =org-babel-expand-body:gnuplot= to make it respect =:dir= proper
   :straight t
   )
 #+end_src
-**** TODO Tangle
+***** TODO Tangle
 :PROPERTIES:
 :ID:       6e72e3ca-4679-4caf-9af4-2291096eab58
 :END:
@@ -9244,12 +9250,12 @@ The list is saved between Emacs sessions.")
 (add-hook 'after-save-hook #'yant/org-babel-tangle-current-buffer-async)
 #+end_src
 
-**** Export
+***** Export
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 15:47]
 :END:
 Frequently, I run heavy analytical code as a part of my project. I it totally inconvenient to run these hour longing codes during export. Hence, I [[id:27e1a878-35c8-4023-8881-645393db0274][disable]] babel evaluation on export by default.
-**** Library of babel
+***** Library of babel
 :PROPERTIES:
 :CREATED:  [2019-11-18 Mon 21:53]
 :ID:       301b1c19-8474-444e-b840-06bb8b3ddb69
