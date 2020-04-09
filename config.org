@@ -4376,9 +4376,11 @@ Meta bindings for calendar
 			  (content (elfeed-deref (elfeed-entry-content entry)))
 			  (content-type (elfeed-entry-content-type entry)))
 		      (setq content-text (with-temp-buffer (when content
+							     (insert "#+begin_src org\n")
 							     (if (eq content-type 'html)
 								 (elfeed-insert-html content)
-							       (insert content)))
+							       (insert content))
+                                                             (insert "#+end_src"))
 							   (let ((org-babel-min-lines-for-block-output 0)) ;; handle org-mode syntax in body
 							     (org-escape-code-in-region (point-min) (point-max)))
 							   (buffer-string)))
