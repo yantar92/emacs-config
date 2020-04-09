@@ -8805,7 +8805,7 @@ You can use this to set \\mathversion{bold} for example to make it bolder."
 #+begin_src emacs-lisp
 )
 #+end_src
-*** Babel
+**** Babel
 :PROPERTIES:
 :ID:       b11124c4-3bad-445e-b8d1-8f2a61471da5
 :END:
