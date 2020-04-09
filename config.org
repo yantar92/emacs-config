@@ -8331,7 +8331,8 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 
 (bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks org-mode-map)
 (bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks org-agenda-mode-map)
-(bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks helm-map)
+(use-package helm :config
+  (bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks helm-map))
 
 (defun yant/verify-refile-target ()
   "Exclude tasks and todo keywords with a done state from refile targets."
