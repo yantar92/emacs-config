@@ -9,6 +9,7 @@
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
 :END:
 :LOGBOOK:
+CLOCK: [2020-04-09 Thu 17:43]--[2020-04-09 Thu 17:44] =>  0:01
 CLOCK: [2019-12-27 Fri 23:03]--[2019-12-27 Fri 23:04] =>  0:01
 CLOCK: [2019-12-19 Thu 12:52]--[2019-12-19 Thu 12:53] =>  0:01
 CLOCK: [2019-12-09 Mon 20:45]--[2019-12-09 Mon 20:46] =>  0:01
@@ -930,7 +931,7 @@ In boon, it can be done by forcing global move commands in special state.
 *************** TODO check when trying to bind non-existing function? maybe link to function symbol instead
 *************** END
 
-Second, implement the wrapper command.
+Second, implement the wrapper command <<meta-functions>>.
 
 #+begin_src emacs-lisp :tangle ~/Git/meta-functions/meta-functions.el
 ;;; meta-functions.el --- Define meta-functions to act differently depending on major mode -*- lexical-binding: t; -*-
@@ -1543,7 +1544,6 @@ They define a powerful template system making completion programmable and intera
 Keeping history of file changes both in short and long term is just like backups. 
 One is already using it or not yet using...
 
-
 *** Save buffer key binding
 :PROPERTIES:
 :ID:       21a8d99d-3f19-48d8-8f50-bfa9e139dbbc
@@ -1762,7 +1762,6 @@ Working with forges
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
 :END:
-
 
 *** Temporary highlight text in buffer
 :PROPERTIES:
@@ -2189,12 +2188,16 @@ I do not move by visual line in files. Instead, I prefer to use =avy= to move wi
     :custom
     (avy-timeout-seconds 0.2 "The default is too long.")))
 #+end_src
+
+
 **** End of sentence
 :PROPERTIES:
 :CREATED:  [2018-01-18 Thu 14:43]
 :ID:       40e35090-b8ec-4770-864b-9e286459533c
 :END:
+
 Double space convention is outdated.
+
 #+BEGIN_SRC emacs-lisp
 (setq-default sentence-end-double-space nil)
 #+END_SRC
@@ -10307,6 +10310,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
     (lambda nil (progn (keyfreq-mode 1) (keyfreq-autosave-mode 1))))
   (global-keyfreq-mode))
 #+end_src
+
 * COMMENT Gentoo config
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 14:44]
