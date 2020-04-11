@@ -5113,6 +5113,20 @@ If the task is scheduled, schedule it for tomorrow."
   - DONE(d) :: self explanatory
   - FAILED(f) :: there is some outcome and can mark done, but the outcome is not positive, though can get some conclusions out of it
   - MERGED(m) :: become a part of other task. The link to the task is added to =MERGED-WITH= property. The motivation of adding this state is that I sometimes create a duplicate task, find out that it is duplicate, and confused which state to set. It is just faster to set =MERGED= without deciding if it is =CANCELLED= (which is not really) or =DONE= (which is also not).
+  #+begin_src emacs-lisp
+(defun org-trigger-merged (arg)
+  "Prompt and insert a link to related task when changing to MERGED state."
+  (when (and (eq (plist-get arg :type) 'todo-state-change)
+	     (string= (plist-get arg :to) "MERGED")
+	     (not (string= (plist-get arg :from) (plist-get arg :to))))
+    (let* ((pos (plist-get arg :position)))
+      (org-with-point-at pos
+	(org-set-property "MERGED-WITH" "undefined")
+        (when (re-search-forward (org-re-property "MERGED-WITH") nil 'noerror)
+          (replace-match "" nil nil nil 3)
+          (funcall-interactively #'org-insert-link))))))
+(add-hook 'org-trigger-hook #'org-trigger-merged)
+  #+end_src
 *************** TODO Prompt for the link to new task, default is clocked in task. Use helm search. Store link in property
 *************** END
 ***** Inline tasks
