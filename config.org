@@ -9653,6 +9653,14 @@ Always show the contents of inline tasks instead of hiding/showing it during cyc
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
 :END:
 
+[2020-04-10 Fri] Strange bug causing infinite loop in org-agenda-dim-blocked-tasks when I clock in a dimmed task.
+*************** SOMEDAY investigate this
+*************** END
+#+begin_src emacs-lisp
+(use-package org-agenda
+  :custom (org-agenda-dim-blocked-tasks nil))
+#+end_src
+
 #+begin_src emacs-lisp
 (defadvice org-agenda (around split-vertically activate)
   (let ((split-width-threshold 1000))  ; or whatever width makes sense for you
