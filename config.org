@@ -2081,34 +2081,29 @@ Enable it.
 :ID:       46fb459b-7794-4b9a-9fce-85389aba1d95
 :END:
 
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-09 Thu>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-04-05
-:END:
-:LOGBOOK:
-CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
-CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-*************** END
 
 *** Text
 **** Boon navigation & search
 :PROPERTIES:
 :ID:       e90d8071-a7ed-4aba-a694-a78aa5fded78
 :END:
+
+File navigation and search are the most frequent actions for me. 
+Here, I want to make sure that the navigation commands are bind to easily accessible keys on home row of the keyboard.
+
+The core keys for left hand are =jkl;= =uiop=, and =bn= which are easy to access with pointing finger sitting on top of =j=. I use these keys for buffer navigation. 
+
+The left hand is mostly sitting on =<SHIFT>sdf= with =<TAB>wert= and =zxcv= being easily accessible. Note that I do not include =a=. It is to simplify access to =<CTRL><TAB><SHIFT>=, which are useful for traditional Emacs keys. Also, left thumb is mostly sitting on =<META><SPACE>=. Nothing special here.
+
+Exiting insert mode with =<ESC>= is extremely uncomfortable. I prefer =M-l=, which is very fast to use.
+Because of this, I have to unbind =M-l= in global map (it calls capitalise word by default). 
+
+Note that I use [[meta-functions][meta-functions]] here as much as possible to unify the navigation in different major modes.
+The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especially useful because it can jump backward in the mark-ring, exchange region marks, or jump in global mark ring which is especially useful if I temporary move to some place to look for something. Many of the movement functions are also additionally modified to store mark before moving.
+
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
-  :defer t
   :config
   (define-key boon-x-map "n" narrow-map)
   (bind-keys ("C-M-S-j" . scroll-other-window)
@@ -2466,48 +2461,67 @@ Just use external browser to open URLs.
 :PROPERTIES:
 :ID:       53b113ca-e2be-4f79-a575-aedbd0f0f7ad
 :END:
+
+There is a significant number cases when I want to quickly pop to scratch buffer. 
+Setting a binding for this.
+
 #+begin_src emacs-lisp
 (when init-flag
   (defun yant/show-scratch()
     (interactive)
-    (pop-to-buffer "*scratch*")
-    )
+    (pop-to-buffer "*scratch*"))
+  
   (use-package boon
-    :config
-    (bind-key "8" 'yant/show-scratch boon-goto-map)))
+    :bind (:map boon-goto-map
+		("8" . yant/show-scratch))))
 #+end_src
 **** Kill buffer & buffer manipulation/movement
 :PROPERTIES:
 :ID:       cb74c835-f010-4880-ad84-00736172753f
 :END:
+
+The default function to kill buffer bound to =C-x k= always ask for a buffer to kill. I often just need to kill current buffer without redundant confirmation. 
+
 #+begin_src emacs-lisp
 (when init-flag
-  (bind-key "C-x q" (lambda () (interactive) (kill-buffer (current-buffer))))
-  (use-package boon
-    :defer t
+  (defun yant/kill-this-buffer ()
+    "Kill current buffer."
+    (interactive)
+    (kill-buffer (current-buffer)))
+  (bind-key "C-x q" #'yant/kill-this-buffer))
+#+end_src
+**** Buffer manipulation
+:PROPERTIES:
+:CREATED:  [2020-04-09 Thu 17:30]
+:END:
+
+Sometimes, I want to switch to previous/next buffer in current window.
+The definition of previous/next buffer may depend on the major mode though. 
+ 
+#+begin_src emacs-lisp
+(use-package boon
+  :bind (:map boon-goto-map
+	      ("o" . meta-next-buffer)
+	      ("i" . meta-previous-buffer))
+  :init
+  (use-package meta-functions
     :config
-    (bind-keys
-     ("M-`" . winner-undo)
-     ("M-~" . winner-redo)
-     :map boon-goto-map
-     ("o" . meta-next-buffer)
-     ("i" . meta-previous-buffer)
-     ("u" . winner-undo)
-     ("U" . winner-redo))))
     (meta-defun meta-next-buffer "Go forward in buffer." next-buffer)
     (meta-defun meta-previous-buffer "Go backward in buffer." previous-buffer)))
 #+end_src
+
 *** Windows
 **** Window layout management
 :PROPERTIES:
 :ID:       413ad4db-e20c-432f-8d15-b849d35b6cff
 :END:
+
 If we use boon, it frees up =M-digit= bindings.
-I use them to manage windows.
+I use them to manage windows. It is much faster than default. 
+
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
-  :defer t
   :bind (("M-1" . delete-other-windows)
 	 ("M-2" . split-window-below)
 	 ("M-0" . delete-window)
@@ -2612,14 +2626,16 @@ For example, debugger window may sometimes occupy too much of frame space and de
       (delete-window window)))
   (use-package boon
     :config
-    (bind-key "5" #'my/tear-off-window boon-goto-map)))
+    (bind-key "M-5" #'my/tear-off-window boon-command-map)))
 #+end_src
-
 *** Files
 **** Find files
 :PROPERTIES:
 :ID:       ecf20706-a6b2-4a46-b3c6-db3236a46d0f
 :END:
+
+I use helm to find files. Binding to =boon-*-search-map=, since it is logical. 
+
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
