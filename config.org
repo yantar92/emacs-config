@@ -2798,6 +2798,18 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   :straight t
   :config (treemacs-icons-dired-mode))
 #+end_src
+***** Disk usage
+:PROPERTIES:
+:CREATED:  [2019-07-15 Mon 22:04]
+:ID:       1b72898b-f2e1-4534-862e-143f30e16d3c
+:END:
+
+#+begin_src emacs-lisp
+(use-package disk-usage
+  :if init-flag
+  :straight t)
+#+end_src
+
 **** Tramp
 :PROPERTIES:
 :CREATED:  [2019-12-31 Tue 14:33]
