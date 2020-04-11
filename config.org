@@ -2175,55 +2175,6 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 :END:
 
 I do not move by visual line in files. Instead, I prefer to use =avy= to move within the line.
-However, it is still not fast enough with =avy-goto-char-in-line=.
-Hence, I define a new function - =avy-goto-word-in-line-1= to jump to any word in 2 keys.
-
-#+BEGIN_SRC emacs-lisp
-(use-package avy
-  :if init-flag
-  :defer t
-  :config
-  (defun avy-goto-word-in-line-1 (char &optional arg)
-    "Jump to a currently visible WORD with first CHAR in the current line."
-    (interactive (list (read-char "char: " t)
-                       current-prefix-arg))
-    (funcall-interactively #'avy-goto-word-1 char arg (line-beginning-position) (line-end-position))))
-#+END_SRC
-
-Also, I am not satisfied with moving around the visible text.
-The =avy-goto-char-2= is frequently gives too many options.
-I wrote my own =avy-goto-word-2= to move around.
-
-#+BEGIN_SRC emacs-lisp
-(use-package avy
-  :if init-flag
-  :defer t
-  :config
-  (defun avy-goto-word-2 (char1 char2 &optional arg beg end symbol)
-    "Jump to the currently visible CHAR at a word start.
-The window scope is determined by `avy-all-windows'.
-When ARG is non-nil, do the opposite of `avy-all-windows'.
-BEG and END narrow the scope where candidates are searched."
-    (interactive (list (read-char "char 1: " t)
-                       (read-char "char 2: " t)
-                       current-prefix-arg
-                       nil nil))
-    (when (eq char1 ?)
-      (setq char1 ?\n))
-    (when (eq char2 ?)
-      (setq char2 ?\n))
-    (avy-with avy-goto-word-1
-      (let* ((str (string char1))
-             (regex (cond ((string= str ".")
-                           "\\.")
-                          ((and avy-word-punc-regexp
-				(string-match avy-word-punc-regexp str))
-                           (regexp-quote (concat str (string char2))))
-			  (t
-			   (concat "\\b" str (string char2))))))
-        (avy-jump regex :beg beg :end end))))
-  )
-#+END_SRC
 
 #+begin_src emacs-lisp
 (use-package boon
