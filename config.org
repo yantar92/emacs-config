@@ -1474,10 +1474,11 @@ The basic idea is to prefix movement commands with meta.
          ("e" . helm-resume)
 	 )
   :defines helm-global-mode
-  :custom ((helm-split-window-inside-p t)
-	   (helm-move-to-line-cycle-in-source t)
-           (helm-ff-file-name-history-use-recentf t)
-           (helm-mode-fuzzy-match t))
+  :custom
+  (helm-split-window-inside-p t)
+  (helm-move-to-line-cycle-in-source t)
+  (helm-ff-file-name-history-use-recentf t)
+  (helm-mode-fuzzy-match t)
   :config
   (use-package helm-config)
   (use-package helm-files)
@@ -3306,7 +3307,8 @@ Trying =undo-tree= again
 (use-package undo-tree
   :straight t
   :diminish undo-tree-mode
-  :custom ((undo-tree-auto-save-history nil)) ;; disabling since it causes cryptic error
+  :custom 
+  (undo-tree-auto-save-history nil) ;; disabling since it causes cryptic error
   :config
   (global-undo-tree-mode +1))
 #+end_src
@@ -5272,7 +5274,8 @@ In addition, I force all the check-boxes to be checked before a task can be mark
 Otherwise, there is not much point in check-boxes for me.
 #+begin_src emacs-lisp
 (use-package org
-:custom ((org-enforce-todo-checkbox-dependencies t)))
+  :custom
+  (org-enforce-todo-checkbox-dependencies t))
 #+end_src
 
 ***** Habits
@@ -7457,9 +7460,10 @@ Also, hide the contents once task is clocked out.
   :after org
   :bind (:map org-agenda-mode-map
 	      ("<tab>" . org-quick-peek-agenda-current-item))
-  :custom ((org-quick-peek-show-lines 45)
-	   (org-quick-peek-show-drawers nil)
-	   (org-quick-peek-show-planning nil))
+  :custom
+  (org-quick-peek-show-lines 45)
+  (org-quick-peek-show-drawers nil)
+  (org-quick-peek-show-planning nil)
   :config
   
   (define-advice org-agenda-clock-in (:after (&rest args) quick-peek-maybe)
@@ -7604,7 +7608,8 @@ Also, hide the contents once task is clocked out.
 #+begin_src emacs-lisp
 (use-package org-ql
   :straight t
-  :custom ((helm-org-ql-reverse-paths nil))
+  :custom
+  (helm-org-ql-reverse-paths nil)
   :init
   (use-package helm-org :straight t :demand t) ;; required by helm-org-ql
   :config
@@ -9913,8 +9918,9 @@ Use a better colour contrast between today's tasks and done tasks:
 #+begin_src emacs-lisp
 (use-package org-agenda
   :if init-flag
-  :custom-face (org-scheduled-today ((t  (:foreground "DarkSlateGray"))))
-  :custom-face (org-agenda-done ((t . (:foreground "Springgreen4" :slant italic)))))
+  :custom-face
+  (org-scheduled-today ((t  (:foreground "DarkSlateGray"))))
+  (org-agenda-done ((t . (:foreground "Springgreen4" :slant italic)))))
 #+end_src
 
 ***** Update highlight from currently clocked task in agenda even if the task was clocked in/out from outside
