@@ -2144,6 +2144,7 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 	     ("Y" . transpose-words)
              ("C-Y" . transpose-sexps)
              ("n" . boon-switch-mark)
+             ("N" . pop-global-mark)
              ("m" . bm-previous)
 	     :map boon-forward-search-map
 	     ("C-SPC" . isearch-forward-regexp)
