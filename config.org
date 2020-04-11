@@ -1193,8 +1193,7 @@ Define the most basic movement commands:
   (use-package helm-occur
     :defer t
     :config
-    (meta-defun meta-occur "Occur." helm-occur)
-    (meta-defun meta-goto "Goto place in document." helm-imenu))
+    (meta-defun meta-occur "Occur." helm-occur))
   (use-package boon
     :defer t
     :config
@@ -1218,8 +1217,6 @@ Define the most basic movement commands:
      (meta-forward-element "Move forward one element." forward-word)
      (meta-backward-element "Move backward one element." backward-word)
      (meta-recenter-top-bottom "Recenter text on scree." recenter-top-bottom)
-     (meta-next-buffer "Go forward in buffer." next-buffer)
-     (meta-previous-buffer "Go backward in buffer." previous-buffer)
      (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
      (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore)
      ))
@@ -2282,6 +2279,27 @@ Following my key binding theme for [[id:d388e4f5-214e-4697-a53a-be6fb6c24411][He
   (bind-key "M-j" #'isearch-repeat-forward isearch-mode-map)
   (bind-key "M-k" #'isearch-repeat-backward isearch-mode-map))
 #+end_src
+**** Remember previous location after moving around text
+:PROPERTIES:
+:CREATED:  [2020-04-08 Wed 16:08]
+:ID:       256b50fe-7a39-4ca7-87f5-b279feb0321b
+:END:
+
+Many movement commands save the current position into the mark ring before moving. 
+Do the same for my meta- movement functions.
+
+#+begin_src emacs-lisp
+(use-package meta-functions
+  :if init-flag
+  :config
+  (define-advice meta-up-element (:before (&rest args) push-mark)
+    "Call `push-mark'"
+    (when (and (not (region-active-p))
+	       (called-interactively-p))
+      (push-mark)))
+  (advice-add 'meta-down-element :before #'meta-up-element@push-mark))
+#+end_src
+
 **** Disable "Mark set" message
 :PROPERTIES:
 :CREATED:  [2020-04-06 Mon 00:34]
@@ -2304,40 +2322,26 @@ Disabling it, since it is not very useful for me anyway.
     "Disable \"Mark set\" message."
     (list (car args) t (caddr args))))
 #+end_src
-**** Remember previous location after moving around text
+*** Links
 :PROPERTIES:
-:CREATED:  [2020-04-08 Wed 16:08]
-:ID:       256b50fe-7a39-4ca7-87f5-b279feb0321b
+:ID:       7908bb55-6bc0-4db2-b5d2-258ff985250d
 :END:
 
-Many movement commands save the current position into the mark ring before moving. 
-Do the same for my meta- movement functions.
-
-#+begin_src emacs-lisp
-(use-package meta-functions
-  :if init-flag
-  :config
-  (define-advice meta-up-element (:before (&rest args) push-mark)
-    "Call `push-mark'"
-    (when (called-interactively-p)
-      (push-mark)))
-  (advice-add 'meta-down-element :before #'meta-up-element@push-mark))
-
-#+end_src
-
-*** Links
 **** Browse URL
 :PROPERTIES:
 :ID:       17ccb0ae-e369-45bb-bfab-1d3cac9ca147
 :END:
+
+Just use external browser to open URLs. 
+
 #+begin_src emacs-lisp
 (use-package browse-url
-  :bind (("C-c C-o" . browse-url)
-	 ("C-c C-M-o" . browse-url-of-buffer))
-  :init
-  (setq browse-url-browser-function 'browse-url-generic
-	browse-url-generic-program "/home/yantar92/bin/qutebrowser-call.sh"))
+  :bind (("C-c C-o" . browse-url))
+  :custom
+  (browse-url-browser-function 'browse-url-generic)
+  (browse-url-generic-program "/home/yantar92/bin/qutebrowser-call.sh"))
 #+end_src
+
 *** =Imenu=
 :PROPERTIES:
 :CREATED:  [2018-10-25 Thu 22:45]
@@ -2489,6 +2493,8 @@ Do the same for my meta- movement functions.
      ("i" . meta-previous-buffer)
      ("u" . winner-undo)
      ("U" . winner-redo))))
+    (meta-defun meta-next-buffer "Go forward in buffer." next-buffer)
+    (meta-defun meta-previous-buffer "Go backward in buffer." previous-buffer)))
 #+end_src
 *** Windows
 **** Window layout management
@@ -2519,88 +2525,77 @@ Then I used to delete the window (=M-0)= and re-split, but can as well save a ke
 #+begin_src emacs-lisp
 ;; https://www.emacswiki.org/emacs/ToggleWindowSplit
 (when init-flag
-(bind-key "M-`" #'window-toggle-split-direction)
-(defun window-toggle-split-direction ()
-  "Switch window split from horizontally to vertically, or vice versa.
+  (bind-key "M-`" #'window-toggle-split-direction)
+  (defun window-toggle-split-direction ()
+    "Switch window split from horizontally to vertically, or vice versa.
 
 i.e. change right window to bottom, or change bottom window to right."
-  (interactive)
-  (require 'windmove)
-  (let ((done))
-    (dolist (dirs '((right . down) (down . right)))
-      (unless done
-        (let* ((win (selected-window))
-	       (nextdir (car dirs))
-	       (neighbour-dir (cdr dirs))
-	       (next-win (windmove-find-other-window nextdir win))
-	       (neighbour1 (windmove-find-other-window neighbour-dir win))
-	       (neighbour2 (if next-win (with-selected-window next-win
-                                          (windmove-find-other-window neighbour-dir next-win)))))
-          ;;(message "win: %s\nnext-win: %s\nneighbour1: %s\nneighbour2:%s" win next-win neighbour1 neighbour2)
-          (setq done (and (eq neighbour1 neighbour2)
-                          (not (eq (minibuffer-window) next-win))))
-          (if done
-              (let* ((other-buf (window-buffer next-win)))
-                (delete-window next-win)
-                (if (eq nextdir 'right)
-                    (split-window-vertically)
-                  (split-window-horizontally))
-                (set-window-buffer (windmove-find-other-window neighbour-dir) other-buf)))))))))
-
+    (interactive)
+    (require 'windmove)
+    (let ((done))
+      (dolist (dirs '((right . down) (down . right)))
+	(unless done
+          (let* ((win (selected-window))
+		 (nextdir (car dirs))
+		 (neighbour-dir (cdr dirs))
+		 (next-win (windmove-find-other-window nextdir win))
+		 (neighbour1 (windmove-find-other-window neighbour-dir win))
+		 (neighbour2 (if next-win (with-selected-window next-win
+                                            (windmove-find-other-window neighbour-dir next-win)))))
+            ;;(message "win: %s\nnext-win: %s\nneighbour1: %s\nneighbour2:%s" win next-win neighbour1 neighbour2)
+            (setq done (and (eq neighbour1 neighbour2)
+                            (not (eq (minibuffer-window) next-win))))
+            (if done
+		(let* ((other-buf (window-buffer next-win)))
+                  (delete-window next-win)
+                  (if (eq nextdir 'right)
+                      (split-window-vertically)
+                    (split-window-horizontally))
+                  (set-window-buffer (windmove-find-other-window neighbour-dir) other-buf)))))))))
 #+end_src
 
-**** Wind move
-:PROPERTIES:
-:ID:       8cd8df5e-ff33-46ac-9864-38e990f745de
-:END:
-#+begin_src emacs-lisp
-(use-package boon
-  :if init-flag
-  :config
-  (bind-keys :map boon-forward-search-map
-	     ("j" . windmove-down)
-             ("k" . windmove-up)
-             ("i". windmove-left)
-             ("o" . windmove-right)
-             ("l" . other-window)
-             :map boon-backward-search-map
-	     ("j" . windmove-down)
-             ("k" . windmove-up)
-             ("i". windmove-left)
-             ("o" . windmove-right)
-	     ("l" . other-window)))
-#+end_src
 **** Winner mode
 :PROPERTIES:
 :CREATED:  [2018-10-08 Mon 14:45]
 :ID:       46cd7842-d65f-4794-9ddd-e9dc50f6495c
 :END:
-Undo window configuration changes
+
+Undo window configuration changes.
+ 
 #+BEGIN_SRC emacs-lisp
 (when init-flag
   (winner-mode +1)
   (use-package boon
-    :bind (:map boon-forward-search-map
-		("-" . winner-undo)
-                ("_" . winner-redo)
-                :map boon-backward-search-map
-		("-" . winner-undo)
-                ("_" . winner-redo))))
+    :bind (:map boon-goto-map
+		("u" . winner-undo)
+		("p" . winner-redo))))
 #+END_SRC
 *** Frame
 :PROPERTIES:
 :ID:       bb7ce294-1833-43bd-a837-ab4cd73fca6b
 :END:
+
+**** Deleting frame
+:PROPERTIES:
+:CREATED:  [2020-04-09 Thu 17:36]
+:END:
+
+I need an extra binding here to make =x c= work in boon command map.
+
 #+begin_src emacs-lisp
 (when init-flag
 (global-set-key (kbd "C-x C-c") 'delete-frame)
 (global-set-key (kbd "C-x c") 'delete-frame))
 #+end_src
+
 **** Detach current window from the frame
 :PROPERTIES:
 :CREATED:  [2019-08-02 Fri 23:25]
 :ID:       a80e772c-443e-4e44-a2c1-7891808c3dc0
 :END:
+
+I keep forgetting this, but it is sometimes useful to detach current window into separate frame.
+For example, debugger window may sometimes occupy too much of frame space and detaching it from the frame can be useful.
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -2631,33 +2626,32 @@ Undo window configuration changes
   (bind-keys :map boon-forward-search-map
 	     ("f" . helm-find-files)
              ("F" . helm-locate)
-             ("d" . dired)
              :map boon-backward-search-map
 	     ("f" . helm-find-files)
-             ("F" . helm-locate)
-	     ("d" . dired)))
+             ("F" . helm-locate)))
 #+end_src
-***** Do not abbreviate file names (to avoid strange folders defined in [[id:9361bc68-010b-45f1-bddd-4638d6344758][org attachments]])
-:PROPERTIES:
-:CREATED:  [2018-07-25 Wed 17:28]
-:ID:       7e252121-b5ba-4f9e-ba55-6eabb75d9a47
-:END:
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'after-init-hook (lambda ()
-      (advice-add 'find-file-noselect :around #'dired-find-file@disable-abbreviate-file-name)))
-#+END_SRC
 **** Search directories
-***** Disk usage
-:PROPERTIES:
-:CREATED:  [2019-07-15 Mon 22:04]
-:ID:       1b72898b-f2e1-4534-862e-143f30e16d3c
-:END:
 
-#+begin_src emacs-lisp
-(use-package disk-usage
-  :if init-flag
-  :straight t)
-#+end_src
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-10 Fri>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-04-05
+:END:
+:LOGBOOK:
+CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
+CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
+CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
+
 
 ***** NEXT =Dired=
 :PROPERTIES:
@@ -6392,6 +6386,19 @@ SCHEDULED: <2019-12-19 Thu>
 - State "NEXT"       from "TODO"       [2018-08-27 Mon 08:39]
 :END:
 
+****** Do not abbreviate file names (to avoid strange folders defined in [[id:9361bc68-010b-45f1-bddd-4638d6344758][org attachments]])
+:PROPERTIES:
+:CREATED:  [2018-07-25 Wed 17:28]
+:ID:       7e252121-b5ba-4f9e-ba55-6eabb75d9a47
+:END:
+:LOGBOOK:
+- Refiled on [2020-04-09 Thu 17:42]
+:END:
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'after-init-hook (lambda ()
+      (advice-add 'find-file-noselect :around #'dired-find-file@disable-abbreviate-file-name)))
+#+END_SRC
 ***** NEXT Make =:ATTACH_DIR_INHERITED:= work again
 :PROPERTIES:
 :CREATED:  [2019-07-27 Sat 17:03]
