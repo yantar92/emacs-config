@@ -7985,7 +7985,7 @@ ignoring the previously saved values."
 		 (cl-loop until (eobp)
 			  do (when (outline-next-heading)
 			       (org-accumulate-weighted-time))))))
-    (message "Updating org-time-balance... %shours" (/ org-time-balance 60))
+    (message "Updating org-time-balance... %d hours" (/ org-time-balance 60))
     (setq org-time-balance-update-time (current-time)))
   org-time-balance)
 
