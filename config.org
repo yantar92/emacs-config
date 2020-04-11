@@ -3133,11 +3133,9 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 
 #+begin_src emacs-lisp
 (use-package org
-  :defer t
-  :disabled
   :config
   (bind-keys* :map org-mode-map
-	      ("C-c C-k" . org-cut-subtree)))
+	      ("C-K" . org-cut-subtree)))
 #+end_src
 
 *** TODO =Yasnippet=
