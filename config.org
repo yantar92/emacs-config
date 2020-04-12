@@ -7437,7 +7437,8 @@ Also, hide the contents once task is clocked out.
 
 (use-package org-ql
   :demand t
-  :straight t
+  :straight (org-ql :type git :host github :repo "alphapapa/org-ql"
+	      :fork (:host github :repo "yantar92/org-ql"))
   :init (use-package org-ql-search :demand t)
   :config
   )
