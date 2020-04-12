@@ -9727,12 +9727,6 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 (setq org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t%(concat (yant/format-time-balance-multiplier) \"\\t\")")
   #+end_src
 
-Fontify headlines in agenda
-*************** TODO check how it works
-*************** END
-#+begin_src emacs-lisp
-;; (add-hook 'org-agenda-hook #'jit-lock-refontify)
-#+end_src
 Hide some uninteresting tags
 #+begin_src emacs-lisp
 (setq org-agenda-hide-tags-regexp (rx-to-string '(or "DEFAULT" "SKIP" "NOARCHIVE" "INBOX" "HOLD" "WAITING" "NODEADLINE" "CANCELLED")))
