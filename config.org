@@ -1242,6 +1242,7 @@ The problem is that it may mess up the cases when I want to assign special meani
 			notmuch-hello-mode ledger-report-mode help-mode
 			dired-mode pdf-view-mode helpful-mode magit-file-mode
 			magit-status-mode magit-revision-mode magit-log-mode
+                        magit-diff-mode
 			mingus-playlist-mode mingus-browse-mode
 			mingus-help-mode calendar-mode undo-tree-visualizer-mode
                         profiler-report-mode fundamental-mode Info-mode))
