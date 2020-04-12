@@ -9883,6 +9883,85 @@ The code below does the trick.
   (add-hook 'org-clock-out-hook #'yant/org-agenda-unmark-clocking-task)
   (add-hook 'org-clock-in-hook #'yant/org-agenda-mark-clocking-task))
 #+end_src
+
+***** Show todo state changes in overlay in agenda similarly to how rescheduling is shown
+:PROPERTIES:
+:CREATED:  [2020-04-11 Sat 19:28]
+:END:
+
+In the case if todo state is changed, indicate the change in agenda. 
+Special treatment here is done for =DOING= todo keyword. 
+Since DOING->DOING transition is actually [[id:d38441a2-1431-44db-b831-8cdec011b1dc][meaningful]], also indicate DOING->DOING transition.
+#+begin_src emacs-lisp
+(use-package org-agenda
+  :config
+  (el-patch-feature org-agenda)
+  (el-patch-defun org-agenda-todo (&optional arg)
+    "Cycle TODO state of line at point, also in Org file.
+This changes the line at point, all other lines in the agenda referring to
+the same tree node, and the headline of the tree node in the Org file."
+    (interactive "P")
+    (org-agenda-check-no-diary)
+    (org-agenda-maybe-loop
+     #'org-agenda-todo arg nil nil
+     (let* ((col (current-column))
+	    (marker (or (org-get-at-bol 'org-marker)
+			(org-agenda-error)))
+	    (buffer (marker-buffer marker))
+	    (pos (marker-position marker))
+	    (hdmarker (org-get-at-bol 'org-hd-marker))
+	    (todayp (org-agenda-today-p (org-get-at-bol 'day)))
+	    (inhibit-read-only t)
+	    org-loop-over-headlines-in-active-region
+	    org-agenda-headline-snapshot-before-repeat newhead just-one
+            (el-patch-add todo-from todo-to))
+       (el-patch-add
+	 (save-excursion
+	   (beginning-of-line 1)
+	   (setq re (org-get-at-bol 'org-todo-regexp))
+	   (goto-char (or (text-property-any (point-at-bol) (point-at-eol) 'org-heading t) (point)))
+	   (when (looking-at (concat "[ \t]*\\.*\\(" re "\\) +"))
+             (setq todo-from (match-string-no-properties 1)))))
+       (org-with-remote-undo buffer
+	 (with-current-buffer buffer
+	   (widen)
+	   (goto-char pos)
+	   (org-show-context 'agenda)
+	   (let ((current-prefix-arg arg))
+	     (call-interactively 'org-todo))
+	   (and (bolp) (forward-char 1))
+	   (setq newhead (org-get-heading))
+	   (when (and (bound-and-true-p
+		       org-agenda-headline-snapshot-before-repeat)
+		      (not (equal org-agenda-headline-snapshot-before-repeat
+				newhead))
+		      todayp)
+	     (setq newhead org-agenda-headline-snapshot-before-repeat
+		   just-one t))
+	   (save-excursion
+	     (org-back-to-heading)
+	     (move-marker org-last-heading-marker (point))))
+	 (beginning-of-line 1)
+	 (save-window-excursion
+	   (org-agenda-change-all-lines newhead hdmarker 'fixface just-one))
+         (el-patch-add
+	   (save-excursion
+	     (beginning-of-line 1)
+	     (setq re (org-get-at-bol 'org-todo-regexp))
+	     (goto-char (or (text-property-any (point-at-bol) (point-at-eol) 'org-heading t) (point)))
+	     (when (looking-at (concat "[ \t]*\\.*\\(" re "\\) +"))
+               (setq todo-to (match-string-no-properties 1)))))
+         (el-patch-add
+           (unless (and (not (string= "DOING" todo-from)) (string= todo-from todo-to))
+	     (org-agenda-show-new-time (org-get-at-bol 'org-marker) todo-to (format " %s " todo-from))))
+	 (when (bound-and-true-p org-clock-out-when-done)
+      	   (string-match (concat "^" (regexp-opt org-done-keywords-for-agenda))
+			 newhead)
+	   (org-agenda-unmark-clocking-task))
+	 (org-move-to-column col)
+	 (org-agenda-mark-clocking-task))))))
+#+end_src
+
 **** Babel
 :PROPERTIES:
 :ID:       6fed68f0-c4ca-43f3-b487-4b58d9dc1315
