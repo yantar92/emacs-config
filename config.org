@@ -2524,9 +2524,10 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-10 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-04-05
+:SHOWFROMDATE: 2020-04-13
 :END:
 :LOGBOOK:
+CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
 CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
 CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
 CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
@@ -2541,7 +2542,6 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 :END:
 *************** END
 
-
 ***** NEXT =Dired=
 :PROPERTIES:
 :ID:       66f5dab7-add6-48c2-9824-fed4ef202b7a
@@ -2551,6 +2551,8 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 - State "TODO"       from              [2018-03-12 Mon 14:57]
 - State "CANCELLED"  from              [2017-05-28 Sun 17:46]
 :END:
+
+
 
 #+begin_src emacs-lisp
 (use-package boon
