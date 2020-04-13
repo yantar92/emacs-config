@@ -1714,7 +1714,6 @@ Do not even need terminal to interact with Git.
   :straight t
   :if init-flag
   :init
-  (setq vc-handled-backends nil)
   (use-package transient :straight t)
   :config
   (use-package boon :config
