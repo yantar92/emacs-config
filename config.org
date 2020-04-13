@@ -5597,7 +5597,8 @@ Just links to the current entry are not always sufficient. I sometimes want to l
     (let ((prompt-ans (org-refile-get-location "Link to attachment from")))
       (prog1
 	  (org-id-get (seq-find #'markerp
-				prompt-ans))
+				prompt-ans)
+                      'create)
 	(setq org-att-id-history org-refile-history)
 	(setq org-att-id-cache org-refile-cache)))))
 
