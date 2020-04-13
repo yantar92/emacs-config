@@ -2498,7 +2498,7 @@ For example, debugger window may sometimes occupy too much of frame space and de
       (delete-window window)))
   (use-package boon
     :config
-    (bind-key "M-5" #'my/tear-off-window boon-command-map)))
+    (bind-key "M-5" #'my/tear-off-window)))
 #+end_src
 *** Files
 **** Find files
