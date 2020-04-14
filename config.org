@@ -2366,6 +2366,7 @@ The default function to kill buffer bound to =C-x k= always ask for a buffer to 
 **** Buffer manipulation
 :PROPERTIES:
 :CREATED:  [2020-04-09 Thu 17:30]
+:ID:       6e8fd921-88ca-411d-9045-6141121e9afa
 :END:
 
 Sometimes, I want to switch to previous/next buffer in current window.
@@ -2477,6 +2478,7 @@ Use =boon-*-search-map= to select windows and =C-M-l= to cycle current window.
 **** Deleting frame
 :PROPERTIES:
 :CREATED:  [2020-04-09 Thu 17:36]
+:ID:       dc5f5576-0a2b-4c7f-9f45-871b3777d5c1
 :END:
 
 I need an extra binding here to make =x c= work in boon command map.
@@ -2536,7 +2538,7 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-10 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-04-13
+:SHOWFROMDATE: 2020-04-14
 :END:
 :LOGBOOK:
 CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
@@ -5556,6 +5558,9 @@ However, they can be moved upon refiling.
 Hence, it is better to avoid =file= links to the attached files.
 Therefore, I define a new link type to the attached files of the current entry.
 Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while selecting an image link - it will show the preview of images in separate buffer (idea from [[https://www.reddit.com/r/emacs/comments/9dh45j/preview_images_while_helmfindfiles/][reddit]]).
+
+*************** TODO need to use caching for =org-attach-dir-symlink=. slowing down flycheck too much
+*************** END
 
 #+BEGIN_SRC emacs-lisp
 (defmacro org-with-point-at-org-buffer (&rest body)
