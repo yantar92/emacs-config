@@ -2401,10 +2401,7 @@ I use them to manage windows. It is much faster than default.
 	 ("M-3" . split-window-right)
 	 ("M-4" . (lambda () (interactive)
 		    (split-window-right)
-                    (call-interactively #'clone-indirect-buffer-other-window))))
-  :config
-  (bind-key*  "C-M-o" #'other-window) ; it's really often used: http://ergoemacs.org/emacs/emacs_split_windows.html
-  )
+                    (call-interactively #'clone-indirect-buffer-other-window)))))
 #+end_src
 
 Sometimes, there is a need to split window vertically or horizontally, but I make a mistake and split in wrong direction.
@@ -2441,15 +2438,29 @@ i.e. change right window to bottom, or change bottom window to right."
                     (split-window-horizontally))
                   (set-window-buffer (windmove-find-other-window neighbour-dir) other-buf)))))))))
 #+end_src
+**** Window selection
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 00:00]
+:END:
 
-**** Winner mode
+Use =boon-*-search-map= to select windows and =C-M-l= to cycle current window.
+
+#+begin_src emacs-lisp
+(use-package windmove
+  :bind (("C-M-l" . other-window)
+	 :map boon-forward-search-map
+	 ("j" . windmove-down)
+         ("k" . windmove-up)
+         ("i" . windmove-left)
+         ("o" . windmove-right)))
+#+end_src
+
+**** Undo window configuration changes
 :PROPERTIES:
 :CREATED:  [2018-10-08 Mon 14:45]
 :ID:       46cd7842-d65f-4794-9ddd-e9dc50f6495c
 :END:
 
-Undo window configuration changes.
- 
 #+BEGIN_SRC emacs-lisp
 (when init-flag
   (winner-mode +1)
