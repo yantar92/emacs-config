@@ -2798,11 +2798,10 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :END:
 
 #+begin_src emacs-lisp
-(use-package treemacs-icons-dired
+(use-package all-the-icons-dired
   :if init-flag
-  :after dired
   :straight t
-  :config (treemacs-icons-dired-mode))
+  :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
 ***** Disk usage
 :PROPERTIES:
