@@ -2145,6 +2145,7 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
              ("n" . boon-switch-mark)
              ("N" . pop-global-mark)
              ("m" . bm-previous)
+             ("C-k" . meta-cut-element)
 	     :map boon-forward-search-map
 	     ("C-SPC" . isearch-forward-regexp)
 	     ("C-g" . boon-unhighlight)
@@ -3151,8 +3152,9 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 #+begin_src emacs-lisp
 (use-package org
   :config
-  (bind-keys* :map org-mode-map
-	      ("C-K" . org-cut-subtree)))
+  (use-package meta-functions
+    :config
+    (meta-defun meta-cut-element :mode org-mode :cond org-at-heading-p org-cut-subtree)))
 #+end_src
 
 *** TODO =Yasnippet=
@@ -3400,6 +3402,20 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 (use-package lorem-ipsum
   :if init-flag
   :straight t)
+#+end_src
+*** =meta-cut-element=
+:PROPERTIES:
+:CREATED:  [2020-04-13 Mon 13:55]
+:ID:       eae5f592-a735-487e-b42c-52904c0e5fd7
+:END:
+
+Cut element at point. 
+
+#+begin_src emacs-lisp
+(use-package meta-functions
+  :if init-flag
+  :config
+  (meta-defun meta-cut-element () "Cut element at point" kill-paragraph))
 #+end_src
 
 ** Programming & emacsing
