@@ -9203,9 +9203,10 @@ Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current
   (defun org-toggle-inline-images-at-point ()
     (interactive)
     (when-let ((link-region (org-in-regexp org-link-bracket-re 1)))
-      (save-restriction  
+      (save-restriction
 	(narrow-to-region (car link-region) (cdr link-region))
-	(org-toggle-inline-images))))
+	(org-toggle-inline-images)
+        't)))
   (add-hook 'org-tab-first-hook #'org-toggle-inline-images-at-point)
   (add-hook 'org-ctrl-c-ctrl-c-hook #'org-toggle-inline-images-at-point))
 #+end_src
