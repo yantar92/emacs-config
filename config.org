@@ -2566,7 +2566,7 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 - State "CANCELLED"  from              [2017-05-28 Sun 17:46]
 :END:
 
-
+Run =dired= from =boon-*-search-map=
 
 #+begin_src emacs-lisp
 (use-package boon
@@ -2578,92 +2578,65 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 	     ("d" . dired)))
 #+end_src
 
-#+begin_src emacs-lisp
-(use-package dired-hide-dotfiles
+And extend it with =dired+= 
+
+*************** TODO review possibilities in dired+
+*************** END
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired+
   :if init-flag
-  :straight t
-  :hook ((dired-mode . auto-revert-mode)
-	 ((dired-mode) . dired-hide-dotfiles-mode))
-  :init
-  (use-package autorevert)
-  (setq auto-revert-verbose nil
-	dired-dwim-target t
-	dired-du-size-format t ;; show human readable size
-	;; 2019-12-31 Disabled because it does not play well with ftp 	dired-listing-switches "--time-style=locale -ADhgGBF --group-directories-first"
-	dired-listing-switches "-ADlh"
-        delete-by-moving-to-trash t
-        trash-directory "~/tmp/Trash")
+  :straight t)
+#+END_SRC
+
+*************** TODO re-check performance
+*************** END
+ do not use =dired+= mode-line. Too much performance degradation
+#+begin_src emacs-lisp
+;; (when init-flag
+;;   (remove-hook 'dired-after-readin-hook #'diredp-nb-marked-in-mode-name))
+#+end_src
+
+****** Command loop
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:18]
+:END:
+******* Key bindings
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:18]
+:END:
+******** Dired bindings
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:38]
+:ID:       e5aa5b80-b4dd-41b2-9c43-3dde7ba7d2f7
+:END:
+
+#+BEGIN_SRC emacs-lisp  
+(use-package dired
+  :if init-flag
+  :bind (:map dired-mode-map
+	      ("W" . dired-copy-filename-as-kill)
+	      ("s" . dired-mark)
+	      ("a" . dired-unmark)
+	      ("<tab>" . other-window))
   :config
-  ;; (put 'dired-find-alternate-file 'disabled nil)
-  ;; (defalias 'dired-find-file #'dired-find-alternate-file)
-  (use-package dired-du :straight t)
-  (bind-key "." 'dired-hide-dotfiles-mode dired-mode-map)
   (use-package meta-functions
+    :init
+    (use-package dired-hacks-utils :straight t)
     :config
     (meta-defun meta-down :mode dired-mode dired-hacks-next-file)
     (meta-defun meta-up :mode dired-mode dired-hacks-previous-file)
     (meta-defun meta-up-element :mode dired-mode dired-up-directory)
-    (meta-defun meta-down-element :mode dired-mode dired-find-alternate-file))
-  (bind-keys :map dired-mode-map
-	     ("<return>" . xah-open-in-external-app)
-	     ("W" . dired-copy-filename-as-kill)
-             ("s" . dired-mark)
-             ("a" . dired-unmark)
-	     ("<tab>" . other-window)))
+    (meta-defun meta-down-element :mode dired-mode dired-find-alternate-file)))
 #+end_src
 
-Do not ask confirmation about killing buffers for deleted folders
-#+begin_src emacs-lisp
-(when init-flag
-  (setq dired-clean-confirm-killing-deleted-buffers nil))
-#+end_src
-
-Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
-
-#+begin_src emacs-lisp
-(use-package dired
-  :if init-flag
-  :defer t
-  :config
-  (defun dired-quit-window (&optional kill window)
-    "Run `quit-window' until first non-dired buffer in the current window."
-    (interactive)
-    (let ((window (or window (selected-window))))
-      (with-selected-window window
-	(while (and (window-live-p window)
-		    (eq major-mode 'dired-mode))
-	  (quit-window kill window)))))
-  (bind-key "q" #'dired-quit-window dired-mode-map))
-#+end_src
-
-****** =Dired+=
-:PROPERTIES:
-:CREATED:  [2018-10-08 Mon 14:53]
-:ID:       f7f3a852-237e-491d-9de7-786807aa63cb
-:END:
-- State "DONE"       from "NEXT"       [2019-07-03 Wed 23:28]
-:LOGBOOK:
-CLOCK: [2019-07-03 Wed 23:23]--[2019-07-03 Wed 23:28] =>  0:05
-CLOCK: [2019-07-03 Wed 22:12]--[2019-07-03 Wed 22:28] =>  0:16
-- State "TODO"       from              [2018-10-08 Mon 14:55]
-:END:
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired+ :if init-flag)
-#+END_SRC
-
-- do not use =dired+= mode-line. Too much performance degradation
-
-#+begin_src emacs-lisp
-(when init-flag
-  (remove-hook 'dired-after-readin-hook #'diredp-nb-marked-in-mode-name))
-#+end_src
-
-****** NEXT =Image-dired=
+******** =Image-dired= bindings
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 21:26]
 :ID:       c095c061-ffdc-4adb-a889-bb4e54b6a514
 :END:
+*************** TODO review capabilities of image-dired
+*************** END
 
 #+begin_src emacs-lisp
 (use-package image-dired
@@ -2677,106 +2650,114 @@ CLOCK: [2019-07-03 Wed 22:12]--[2019-07-03 Wed 22:28] =>  0:16
     (meta-defun meta-down :mode image-dired-thumbnail-mode image-dired-next-line)
     (meta-defun meta-up :mode image-dired-thumbnail-mode image-dired-previous-line)))
 #+end_src
+******* =DWIM= target on copy/rename
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:18]
+:ID:       80db1c22-bc50-451f-950c-d8e4d9f373c9
+:END:
 
-****** open file in external app
+#+begin_src emacs-lisp
+(use-package dired
+  :custom (dired-dwim-target t))
+#+end_src
+
+******* Automatically kill =dired= buffers pointing to deleted directories
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:25]
+:ID:       9367d902-8069-4507-becb-3a7688885feb
+:END:
+
+#+begin_src emacs-lisp
+(use-package dired
+  :if init-flag
+  :custom
+  (dired-clean-confirm-killing-deleted-buffers nil))
+#+end_src
+
+******* Kill all the previous =dired= buffers when quitting 
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:27]
+:ID:       3a1bc711-2264-4893-9939-d533de84e91b
+:END:
+
+By default, every time I enter a new directory from =dired=, a new =dired= buffer is created. 
+This makes it annoying to exit the =dired= buffer since I would need to press "q" many times. 
+Some people solve this problem by using 
+
+Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
+
+#+begin_src emacs-lisp
+(use-package dired
+  :if init-flag
+  :bind (:map dired-mode-map
+	      ("q" . dired-quit-window))
+  :init
+  (defun dired-quit-window (&optional kill window)
+    "Run `quit-window' until first non-dired buffer in the current window."
+    (interactive)
+    (let ((window (or window (selected-window))))
+      (with-selected-window window
+	(while (and (window-live-p window)
+		    (eq major-mode 'dired-mode))
+	  (quit-window kill window))))))
+#+end_src
+
+****** Delete to trash
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:23]
+:ID:       854016c9-7412-42f9-b782-c03ece68d609
+:END:
+
+Using trash is safer.
+
+#+begin_src emacs-lisp
+(use-package dired
+  :if init-flag
+  :custom
+  (delete-by-moving-to-trash t)
+  (trash-directory "~/tmp/Trash"))
+#+end_src
+****** Auto-revert =dired= buffers
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:11]
+:ID:       6ac566c7-dbe9-4329-9710-ad05293d7b78
+:END:
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired
+  :if init-flag
+  :hook (dired-mode . auto-revert-mode)
+  :init
+  (use-package autorevert))
+#+END_SRC
+
+****** Open file in external app from dired
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 21:55]
 :ID:       61a29cb9-8c13-4e10-979d-144866c4d122
 :END:
+
 #+begin_src emacs-lisp
-(when init-flag
-  (defun xah-open-in-external-app ()
-    "Open the current file or dired marked files in external app.
-The app is chosen from your OS's preference.
-URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
-Version 2016-10-15"
-    (interactive)
-    (let* ((-file-list
-	    (if (or (string-equal major-mode "dired-mode")
-		    (string-equal major-mode "sr-mode")
-		    )
-		(or (dired-get-marked-files)
-		    (dired-get-filename)
-		    )
-	      (list (buffer-file-name))))
-	   (-do-it-p (if (<= (length -file-list) 5)
-			 t
-		       (y-or-n-p "Open more than 5 files? "))))
-      (when -do-it-p
-	(cond
-	 ((string-equal system-type "windows-nt")
-	  (mapc (lambda (-fpath) (w32-shell-execute "open"
-					       (replace-regexp-in-string "/" "\\" -fpath t t)))
-		-file-list))
-	 ((string-equal system-type "darwin")
-	  (mapc (lambda (-fpath) (shell-command (concat "open "
-						   (shell-quote-argument -fpath))))
-		-file-list))
-	 ((string-equal system-type "gnu/linux")
-	  (mapc (lambda (-fpath) (let ((process-connection-type nil))
-			      (start-process "" nil "mimeopen" -fpath)))
-		-file-list)))))))
+(use-package dired-open
+  :if init-flag
+  :straight t
+  :bind (:map dired-mode-map
+	      ("<return>" . dired-open-xdg)))
 #+end_src
 ****** Async operations
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 21:56]
 :ID:       06e9d624-67fe-42cb-acca-44c1e5e1fde1
 :END:
-
-*************** TODO Do not use async. Use threads instead
-*************** END
-
 #+BEGIN_SRC emacs-lisp
-(use-package async
-  :straight t
-  :config
-  (use-package dired
-    :if init-flag
-    :defer t
+(use-package dired
+  :if init-flag
+  :init
+  (use-package async
+    :straight t
     :config
-    (use-package dired-async
-      :config
-      (dired-async-mode 1))))
-#+END_SRC
-****** Group files
-:PROPERTIES:
-:CREATED:  [2018-04-09 Mon 21:56]
-:ID:       18e2dd1e-dc25-4188-bad4-cdcdb76f506a
-:END:
-#+BEGIN_SRC emacs-lisp
-(use-package dired-filter
-  :if init-flag
-  :straight t
-  :config
-  (setq dired-filter-group-saved-groups '(("default"
-					   ("Dirs"
-					    (directory . nil))
-					   ("Archives"
-					    (extension "zip" "rar" "gz" "bz2" "tar"))
-					   ("Documents"
-					    (extension "org" "cfm" "pdf" "tex" "bib" "mobi" "fb2" "doc" "docx"))
-					   ("Scripts"
-					    (extension "gnuplot" "sh"))
-					   ("Data"
-					    (extension "txt" "hys" "xls" "xlsx"))
-					   ("Images"
-					    (extension "png" "jpg" "jpeg" "tiff" "tif"))
-					   ("Videos"
-					    (extension "avi" "mpeg" "mp4" "mkv"))
-					   )))
-  (add-hook 'dired-mode-hook 'dired-filter-group-mode))
-#+END_SRC
-****** Highlight files
-:PROPERTIES:
-:CREATED:  [2018-04-09 Mon 22:09]
-:ID:       45393002-d153-42bf-ae39-70b6e49b25b0
-:END:
-#+BEGIN_SRC emacs-lisp
-(use-package diredfl
-  :if init-flag
-  :straight t
-  :config
-  (diredfl-global-mode 1))
+    (use-package dired-async))
+  :hook (dired-mode . dired-async-mode))
 #+END_SRC
 ****** TODO Follow symlink structure
 :PROPERTIES:
@@ -2814,8 +2795,93 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 (use-package all-the-icons-dired
   :if init-flag
   :straight t
+  :diminish all-the-icons-dired-mode
   :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
+******* Highlight files
+:PROPERTIES:
+:CREATED:  [2018-04-09 Mon 22:09]
+:ID:       45393002-d153-42bf-ae39-70b6e49b25b0
+:END:
+
+Additional fontification in =dired=
+
+#+BEGIN_SRC emacs-lisp
+(use-package diredfl
+  :if init-flag
+  :straight t
+  :config
+  (diredfl-global-mode 1))
+#+END_SRC
+******* Group files
+:PROPERTIES:
+:CREATED:  [2018-04-09 Mon 21:56]
+:ID:       18e2dd1e-dc25-4188-bad4-cdcdb76f506a
+:END:
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-filter
+  :if init-flag
+  :straight t
+  :custom (dired-filter-group-saved-groups '(("default"
+					      ("Dirs"
+					       (directory . nil))
+					      ("Archives"
+					       (extension "zip" "rar" "gz" "bz2" "tar"))
+					      ("Documents"
+					       (extension "org" "cfm" "pdf" "tex" "bib" "mobi" "fb2" "doc" "docx"))
+					      ("Scripts"
+					       (extension "gnuplot" "sh"))
+					      ("Data"
+					       (extension "txt" "hys" "xls" "xlsx"))
+					      ("Images"
+					       (extension "png" "jpg" "jpeg" "tiff" "tif"))
+					      ("Videos"
+					       (extension "avi" "mpeg" "mp4" "mkv"))
+					      )))
+  :hook (dired-mode . dired-filter-group-mode))
+#+END_SRC
+
+******* Hide uninteresting files
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:10]
+:ID:       3b9c56de-390c-4daf-a582-9006f4d5e7c1
+:END:
+:LOGBOOK:
+- Refiled on [2020-04-14 Tue 14:16]
+:END:
+
+Hide =dotfiles=
+
+#+begin_src emacs-lisp
+(use-package dired-hide-dotfiles
+  :if init-flag
+  :straight t
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :bind (:map dired-mode-map
+	      ("." . dired-hide-dotfiles-mode)))
+#+END_SRC
+
+Hide "." and ".." 
+
+#+begin_src emacs-lisp
+(use-package dired
+  :custom (dired-listing-switches "-ADlhGg"))
+#+end_src
+
+******* Hide details
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 16:05]
+:ID:       e92e4c8f-f8c8-4bdd-8389-3a4a34e8bd30
+:END:
+
+Do not hide symlink target when hiding details.
+#+begin_src emacs-lisp
+(use-package dired
+  :if init-flag
+  :custom (dired-hide-details-hide-symlink-targets nil))
+#+end_src
+
 ***** Disk usage
 :PROPERTIES:
 :CREATED:  [2019-07-15 Mon 22:04]
