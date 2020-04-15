@@ -3012,6 +3012,23 @@ Also, don't break the current line if the cursor is in the middle of a line
     (beginning-of-line)))
 #+end_src
 
+*** =meta-cut-element=
+:PROPERTIES:
+:CREATED:  [2020-04-13 Mon 13:55]
+:ID:       eae5f592-a735-487e-b42c-52904c0e5fd7
+:END:
+:LOGBOOK:
+- Refiled on [2020-04-14 Tue 15:47]
+:END:
+
+Cut element at point. 
+
+#+begin_src emacs-lisp
+(use-package meta-functions
+  :if init-flag
+  :config
+  (meta-defun meta-cut-element () "Cut element at point" kill-paragraph))
+#+end_src
 *** Query replace
 :PROPERTIES:
 :ID:       1825c53a-1f53-4da8-a2b0-04ddea8cc43e
@@ -3212,23 +3229,6 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 		       (meta-move-element-up "Move the element under cursor up." move-text-up))))
   :init (use-package boon))
 #+END_SRC
-*** Org mode editing
-:PROPERTIES:
-:CREATED:  [2018-10-23 Tue 18:45]
-:ID:       184b97b2-df73-4961-9f8f-ad8a6b4e1db8
-:END:
-
-*************** TODO Use boon selection here to call org-cut-subtree conditionally
-*************** END
-
-#+begin_src emacs-lisp
-(use-package org
-  :config
-  (use-package meta-functions
-    :config
-    (meta-defun meta-cut-element :mode org-mode :cond org-at-heading-p org-cut-subtree)))
-#+end_src
-
 *** TODO =Yasnippet=
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 10:53]
@@ -3475,21 +3475,6 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
   :if init-flag
   :straight t)
 #+end_src
-*** =meta-cut-element=
-:PROPERTIES:
-:CREATED:  [2020-04-13 Mon 13:55]
-:ID:       eae5f592-a735-487e-b42c-52904c0e5fd7
-:END:
-
-Cut element at point. 
-
-#+begin_src emacs-lisp
-(use-package meta-functions
-  :if init-flag
-  :config
-  (meta-defun meta-cut-element () "Cut element at point" kill-paragraph))
-#+end_src
-
 ** Programming & emacsing
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
@@ -10137,6 +10122,26 @@ From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bul
 
 #+begin_src emacs-lisp
 (setq org-M-RET-may-split-line '((default . nil)))
+#+end_src
+
+**** Org mode editing
+:PROPERTIES:
+:CREATED:  [2018-10-23 Tue 18:45]
+:ID:       184b97b2-df73-4961-9f8f-ad8a6b4e1db8
+:END:
+:LOGBOOK:
+- Refiled on [2020-04-14 Tue 15:51]
+:END:
+
+*************** TODO Use boon selection here to call org-cut-subtree conditionally
+*************** END
+
+#+begin_src emacs-lisp
+(use-package org
+  :config
+  (use-package meta-functions
+    :config
+    (meta-defun meta-cut-element :mode org-mode :cond org-at-heading-p org-cut-subtree)))
 #+end_src
 
 *** Notmuch interaction
