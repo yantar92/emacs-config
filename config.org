@@ -8900,7 +8900,7 @@ Leaving the code below for reference.
 			       (calc . t)
 			       (dot . t)
 			       (latex . t)
-			       (mathematica . t)
+			       ;;(mathematica . t)
 			       ))
 (use-package wolfram-mode
   :if init-flag
