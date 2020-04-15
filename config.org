@@ -9737,6 +9737,29 @@ Always show the contents of inline tasks instead of hiding/showing it during cyc
 (remove-hook 'org-cycle-hook 'org-inlinetask-hide-tasks)
 #+end_src
 
+Use smaller font for inline headings without keyword 
+
+#+begin_src emacs-lisp
+(use-package org-inlinetask
+  :if init-flag
+  :hook (org-font-lock . yant/org-inlinetask-fontify-notodo)
+  :config
+  (defface org-inlinetask-notodo '((t :inherit shadow  :height 0.8))
+    "Face for inlinetask headlines without todo keywords."
+    :group 'org-faces)
+  (defun yant/org-inlinetask-fontify-notodo (limit)
+    "Fontify the inline tasks with no todo keyword down to LIMIT."
+    (let* ((nstars (if org-odd-levels-only
+		       (1- (* 2 (or org-inlinetask-min-level 200)))
+		     (or org-inlinetask-min-level 200)))
+	   (re (concat "^\\(\\*\\)\\(\\*\\{"
+		       (format "%d" (- nstars 3))
+		       ",\\}\\)\\(\\*\\*[ \t]+\\)")))
+      (while (re-search-forward re limit t)
+	(unless (looking-at-p org-todo-regexp)
+          (add-text-properties (point) (line-end-position) `(face org-inlinetask-notodo font-lock-fontified t)))))))
+#+end_src
+
 **** Agenda
 :PROPERTIES:
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
