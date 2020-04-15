@@ -45,7 +45,7 @@ This Emacs configuration allows loading Emacs in both interactive and batch mode
 - =init-flag= :: normal startup, load all the visual packages and options
 - =org-export-flag= :: load necessary options for org-export
 - =org-tangle-flag= :: load necessary options for org-tangle
-One important note about this configuration is that I do not use =desktop-save-mode. 
+One important note about this configuration is that I do not use =desktop-save-mode=. 
 Everything I intend to do is kept in my org files, which are automatically loaded by org agenda command.
 
 #+begin_src emacs-lisp
@@ -371,6 +371,7 @@ The colour I use is below
 :PROPERTIES:
 :ID:       5450bef9-a57a-4afb-85f3-893dbcb5f4ba
 :END:
+
 Startup message probably only makes sense for someone who is not yet familiar enough with emacs.
 Disabling
 
@@ -382,6 +383,7 @@ Disabling
 :PROPERTIES:
 :ID:       098ff7ca-d99c-493e-a2be-a2e5eeddab82
 :END:
+
 General frame appearance configuration.
 
 First, disable unnecessary graphical elements
@@ -927,9 +929,13 @@ In boon, it can be done by forcing global move commands in special state.
 *************** END
 
 *************** TODO Provide a way to prepend condition
-*************** END
+*************** END 
 *************** TODO check when trying to bind non-existing function? maybe link to function symbol instead
 *************** END
+
+*************** TODO make sure that defining default function after conditional does not mess up anything
+*************** END
+
 
 Second, implement the wrapper command <<meta-functions>>.
 
@@ -2442,6 +2448,7 @@ i.e. change right window to bottom, or change bottom window to right."
 **** Window selection
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 00:00]
+:ID:       e1c38416-fd29-4a1a-ab23-9e70fbc5e6e5
 :END:
 
 Use =boon-*-search-map= to select windows and =C-M-l= to cycle current window.
@@ -2534,29 +2541,7 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
              ("F" . helm-locate)))
 #+end_src
 **** Search directories
-
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-10 Fri>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-04-14
-:END:
-:LOGBOOK:
-CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
-CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
-CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
-CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-*************** END
-
-***** NEXT =Dired=
+***** =Dired=
 :PROPERTIES:
 :ID:       66f5dab7-add6-48c2-9824-fed4ef202b7a
 :END:
@@ -2767,6 +2752,7 @@ Using trash is safer.
 :LOGBOOK:
 - State "TODO"       from              [2018-07-23 Mon 15:45]
 :END:
+
 =dired-find-file= calls =find-file=, which calls =find-file-noselect=, which forces =abbreviate-file-name= to be applied.
 It makes entering symlink in =~/Dropbox/Org/->~/Org= go into "~/Org".
 As a result, =dired-up-directory= goes to =~/= instead of =~/Dropbox=.
@@ -2915,6 +2901,28 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 :LOGBOOK:
 - State "NEXT"       from "TODO"       [2019-03-21 Thu 13:52]
 :END:
+
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-15 Wed>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-04-14
+:END:
+:LOGBOOK:
+CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
+CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
+CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
+CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
+CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
 
 #+begin_src emacs-lisp
 (use-package hyperbole
@@ -8086,19 +8094,20 @@ ignoring the previously saved values."
   "Add the current clock time to `org-time-balance'."
   (unless org-time-balance
     (setq org-time-balance (org-get-total-weighted-time)))
-  (save-excursion ; Do not replace this with `with-current-buffer'.
-    (with-no-warnings (set-buffer (org-clocking-buffer)))
-    (save-restriction
-      (widen)
-      (use-package org-clock)
-      (goto-char org-clock-marker)
-      (let ((old-time-at-point (org-accumulate-weighted-time 'return))
-	    (old-org-time-balance org-time-balance))
-	(apply OLDFUN args)
-	;; (setq org-time-balance-update-time (current-time))
-	(setq org-time-balance (+ old-org-time-balance
-				  (- (org-accumulate-weighted-time 'return)
-                                     old-time-at-point)))))))
+  (when (org-clocking-buffer)
+    (save-excursion ; Do not replace this with `with-current-buffer'.
+      (with-no-warnings (set-buffer (org-clocking-buffer)))
+      (save-restriction
+	(widen)
+	(use-package org-clock)
+	(goto-char org-clock-marker)
+	(let ((old-time-at-point (org-accumulate-weighted-time 'return))
+	      (old-org-time-balance org-time-balance))
+	  (apply OLDFUN args)
+	  ;; (setq org-time-balance-update-time (current-time))
+	  (setq org-time-balance (+ old-org-time-balance
+				    (- (org-accumulate-weighted-time 'return)
+                                       old-time-at-point))))))))
 
 (define-advice org-todo (:around (OLDFUN &optional arg) yant/org-increment-weighted-time)
   "Probably add the current item time bonus to `org-time-balance'."
@@ -9436,7 +9445,7 @@ I do not want bigger items font because I tend to use items a lot
   #+end_src
 Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much faster than overlay-based =org-bullets=.
   #+begin_src emacs-lisp
-(use-package pretty-symbols
+  (use-package pretty-symbols
   :config
   (setq pretty-symbol-patterns
 	(append pretty-symbol-patterns
@@ -9984,6 +9993,7 @@ The code below does the trick.
 ***** Show todo state changes in overlay in agenda similarly to how rescheduling is shown
 :PROPERTIES:
 :CREATED:  [2020-04-11 Sat 19:28]
+:ID:       c466add1-ea89-4473-a597-542be6e483fd
 :END:
 
 In the case if todo state is changed, indicate the change in agenda. 
