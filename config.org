@@ -2894,13 +2894,7 @@ Do not hide symlink target when hiding details.
   :straight t)
 #+end_src
 
-**** Tramp
-:PROPERTIES:
-:CREATED:  [2019-12-31 Tue 14:33]
 :END:
-***** COMMENT FTP
-:PROPERTIES:
-:CREATED:  [2019-12-31 Tue 14:33]
 :END:
 
 Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not accept them
