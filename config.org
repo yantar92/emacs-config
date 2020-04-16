@@ -2905,7 +2905,7 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-15 Wed>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-04-14
+:SHOWFROMDATE: 2020-04-16
 :END:
 :LOGBOOK:
 CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
