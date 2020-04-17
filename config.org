@@ -2406,12 +2406,19 @@ The definition of previous/next buffer may depend on the major mode though.
 :END:
 
 If we use boon, it frees up =M-digit= bindings.
-I use them to manage windows. It is much faster than default. 
+I use them to manage windows. It is much faster than default.
+
+Also, improve the default commands by using =windower=. 
+Instead of =delete-other-windows=, use =windower's= version, which toggles maximised/original layout.
 
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
-  :bind (("M-1" . delete-other-windows)
+  :init
+  (use-package windower
+    :straight (emacs-windower :host gitlab :repo "ambrevar/emacs-windower"
+			      :fork (:host gitlab :repo "yantar92/emacs-windower")))
+  :bind (("M-1" . #'windower-toggle-single)
 	 ("M-2" . split-window-below)
 	 ("M-0" . delete-window)
 	 ("M-3" . split-window-right)
@@ -2424,35 +2431,8 @@ Sometimes, there is a need to split window vertically or horizontally, but I mak
 Then I used to delete the window (=M-0)= and re-split, but can as well save a keystroke if I can change direction of the split.
 
 #+begin_src emacs-lisp
-;; https://www.emacswiki.org/emacs/ToggleWindowSplit
-(when init-flag
-  (bind-key "M-`" #'window-toggle-split-direction)
-  (defun window-toggle-split-direction ()
-    "Switch window split from horizontally to vertically, or vice versa.
-
-i.e. change right window to bottom, or change bottom window to right."
-    (interactive)
-    (require 'windmove)
-    (let ((done))
-      (dolist (dirs '((right . down) (down . right)))
-	(unless done
-          (let* ((win (selected-window))
-		 (nextdir (car dirs))
-		 (neighbour-dir (cdr dirs))
-		 (next-win (windmove-find-other-window nextdir win))
-		 (neighbour1 (windmove-find-other-window neighbour-dir win))
-		 (neighbour2 (if next-win (with-selected-window next-win
-                                            (windmove-find-other-window neighbour-dir next-win)))))
-            ;;(message "win: %s\nnext-win: %s\nneighbour1: %s\nneighbour2:%s" win next-win neighbour1 neighbour2)
-            (setq done (and (eq neighbour1 neighbour2)
-                            (not (eq (minibuffer-window) next-win))))
-            (if done
-		(let* ((other-buf (window-buffer next-win)))
-                  (delete-window next-win)
-                  (if (eq nextdir 'right)
-                      (split-window-vertically)
-                    (split-window-horizontally))
-                  (set-window-buffer (windmove-find-other-window neighbour-dir) other-buf)))))))))
+(use-package windower
+  :bind ("M-`" . #'windower-toggle-split))
 #+end_src
 **** Window selection
 :PROPERTIES:
