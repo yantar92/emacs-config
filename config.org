@@ -5338,7 +5338,8 @@ The project is an item with todo keyword and subtask.
 	(while (and (not has-subtask)
 		    (< (point) subtree-end)
 		    (re-search-forward "^\*+ " subtree-end t))
-	  (when (member (org-get-todo-state) org-todo-keywords-1)
+	  (when (and (not (org-inlinetask-at-task-p))
+		     (member (org-get-todo-state) org-todo-keywords-1))
 	    (setq has-subtask t))))
       (and is-a-task has-subtask))))
 #+end_src
