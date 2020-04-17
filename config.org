@@ -1543,7 +1543,7 @@ I use company for completion just because it is easy to use.
 Skeletons go beyond simple completion of a single word. 
 They define a powerful template system making completion programmable and interactive. 
 
-** DOING History & version control
+** NEXT History & version control
 :PROPERTIES:
 :ID:       a76e7822-8153-4adc-a3f8-8f05588eff5e
 :END:
@@ -1628,7 +1628,7 @@ Walk across the backup files
 :END:
 
 Better auto save.
-*************** TODO This slows down emacs. Investigate
+*************** NEXT This slows down emacs. Investigate
 *************** END
 
 #+begin_src emacs-lisp
@@ -5841,7 +5841,7 @@ The src block should be in the same org file."
 			 :follow #'org-link-babel-follow
                          :complete #'org-link-babel-complete)
 #+end_src
-***** NEXT Org-ref
+***** SOMEDAY Org-ref
 :PROPERTIES:
 :ID:       f944c2c8-f1fa-49ea-ab24-bf1b018013f1
 :END:
@@ -6118,7 +6118,7 @@ For the implementation, the idea is keeping all the actual attachments in a comm
 #+end_src
 
 This is separate package now. All the code below is exported to =org-attach-fs.el=
-*************** TODO rewrite to use lexical binding
+*************** NEXT rewrite to use lexical binding
 *************** END
 #+begin_src emacs-lisp
 ;;; org-attach-fs.el --- Mirror org heading heirarchy to store attachments
@@ -6387,8 +6387,7 @@ Files, out of the folder structure, will appear in my agenda to attach them to t
 :LOGBOOK:
 CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :END:
-****** NEXT in org-attach, put the attachments directly into symlink if no children of the entry
-SCHEDULED: <2019-12-19 Thu>
+****** SOMEDAY in org-attach, put the attachments directly into symlink if no children of the entry
 :PROPERTIES:
 :CREATED:  [2018-08-26 Sun 22:40]
 :END:
@@ -8212,10 +8211,7 @@ Currently =org-capture-pop-frame= resets the line truncation state, which is rat
 		 ((eq system-type 'windows-nt) 'w32)))
           (after-make-frame-functions
            #'(lambda (frame)
-               (progn
-		 (select-frame frame)
-		 ;; (setq word-wrap nil)
-		 ;; (setq truncate-lines nil)
+               (with-selected-frame frame
 		 (funcall orig-fun goto keys)
 		 (setq header-line-format
                        (list "Capture buffer. "
