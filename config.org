@@ -6521,6 +6521,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
 					;      (if (bh/is-project-p)
       (if (and (bh/is-project-p)
+	       (not (member (org-get-todo-state) (list "SOMEDAY")))
 	       (or (not (bh/is-subproject-p))
 		   (member (org-get-todo-state) (list "NEXT"))))
 	  (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
