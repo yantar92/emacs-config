@@ -9851,6 +9851,7 @@ In order to make the remainder consistent, the multi-byte characters are conside
 (define-advice org-agenda-format-item (:filter-args (&rest args) trim-heading 100) ;; run last
   "Trip org-agenda heading to 120 chars."
   (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
+    (setq txt (org-link-display-format txt)) ; remove the hidden link part to not messup with truncation
     (setq txt (s-truncate 120
 			  ;; (- 120 (/ (- (string-bytes txt)
 			  ;; 	       (length txt))
