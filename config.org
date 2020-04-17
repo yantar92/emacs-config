@@ -10070,6 +10070,55 @@ the same tree node, and the headline of the tree node in the Org file."
 	 (org-agenda-mark-clocking-task))))))
 #+end_src
 
+***** Do not show tooltips in agenda
+:PROPERTIES:
+:CREATED:  [2020-04-16 Thu 21:14]
+:END:
+
+Tooltips are useless since I don't use mouse in Emacs.
+I already [[id:1edf3f36-6a30-4374-a47d-2d1b9c7a889a][force the mouse out]], but the tooltips can still show up annoyingly if the mouse is accidentally left within the Emacs frame.
+
+#+begin_src emacs-lisp
+(use-package org-agenda
+  :init
+  (defun yant/remove-help-echo-in-buffer ()
+    "Remove helm-echo text property in the buffer text."
+    (remove-text-properties (point-min) (point-max) '(help-echo t)))
+  :config
+  (add-hook 'org-agenda-finalize-hook #'yant/remove-help-echo-in-buffer))
+#+end_src
+
+Another source of tooltips in agenda is overlay marking currently clocked-in task. 
+Patching the relevant function to not put that tooltip into the overlay.
+
+#+begin_src emacs-lisp
+(use-package org-agenda
+  :config
+  (el-patch-feature 'org-agenda)
+  (el-patch-defun org-agenda-mark-clocking-task ()
+    "Mark the current clock entry in the agenda if it is present."
+    ;; We need to widen when `org-agenda-finalize' is called from
+    ;; `org-agenda-change-all-lines' (e.g. in `org-agenda-clock-in').
+    (when (bound-and-true-p org-clock-current-task)
+      (save-restriction
+	(widen)
+	(org-agenda-unmark-clocking-task)
+	(when (marker-buffer org-clock-hd-marker)
+	  (save-excursion
+	    (goto-char (point-min))
+	    (let (s ov)
+	      (while (setq s (next-single-property-change (point) 'org-hd-marker))
+		(goto-char s)
+		(when (equal (org-get-at-bol 'org-hd-marker)
+			     org-clock-hd-marker)
+		  (setq ov (make-overlay (point-at-bol) (1+ (point-at-eol))))
+		  (overlay-put ov 'type 'org-agenda-clocking)
+		  (overlay-put ov 'face 'org-agenda-clocking)
+                  (el-patch-remove
+		    (overlay-put ov 'help-echo
+				 "The clock is running in this item")))))))))))
+#+end_src
+
 **** Babel
 :PROPERTIES:
 :ID:       6fed68f0-c4ca-43f3-b487-4b58d9dc1315
