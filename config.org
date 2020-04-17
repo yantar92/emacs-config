@@ -4344,9 +4344,11 @@ Meta bindings for calendar
     :config
     (define-advice ocpf--org-capture (:around (old-fun orig-fun &optional goto keys) suppress-pop-frame-maybe)
       "Suppress pop-up frame when ``yant/suppress-pop-frame'' is non nil."
-      (if (bound-and-true-p yant/suppress-pop-frame)
+      (if (or (bound-and-true-p yant/suppress-pop-frame)
+	      (member :immediate-finish (assoc keys org-capture-templates)))
 	  (funcall orig-fun goto keys)
 	(funcall old-fun orig-fun goto keys))))
+  
   (defun yant/elfeed-capture-entry ()
     "Capture selected entries into inbox."
     (interactive)
