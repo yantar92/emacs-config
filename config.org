@@ -4371,9 +4371,9 @@ Meta bindings for calendar
 							     (org-escape-code-in-region (point-min) (point-max)))
                                                            (unless (string-empty-p (buffer-string))
                                                              (goto-char (point-min))
-                                                             (insert "#+begin_src org\n")
+                                                             (insert "#+begin_src org\n\n")
                                                              (goto-char (point-max))
-                                                             (insert "\n#+end_src"))
+                                                             (insert "\n\n#+end_src"))
 							   (buffer-string)))
 		      (if (string= url-present-p "ok")
 			  (org-protocol-capture (list :template "B"
@@ -7469,8 +7469,12 @@ Also, hide the contents once task is clocked out.
   (org-quick-peek-show-lines 45)
   (org-quick-peek-show-drawers nil)
   (org-quick-peek-show-planning nil)
+  (org-quick-peek-filter-functions (list (apply-partially #'s-replace-regexp "\n" "\n\n")
+					 (apply-partially #'s-word-wrap 80)
+					 #'s-trim
+                                         (apply-partially #'s-replace-regexp "\n\n" "\n")))
   :config
-  
+
   (define-advice org-agenda-clock-in (:after (&rest args) quick-peek-maybe)
     "Show contents of the org-entry at point when there is any."
     (org-agenda-redo@org-quick-peek--hide-all)
