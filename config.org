@@ -6523,12 +6523,12 @@ I use different skip functions here in agenda to filter the agenda. Some of them
       (if (and (bh/is-project-p)
 	       (not (member (org-get-todo-state) (list "SOMEDAY")))
 	       (or (not (bh/is-subproject-p))
-		   (member (org-get-todo-state) (list "NEXT"))))
+		   (member (org-get-todo-state) (list "NEXT" "DOING"))))
 	  (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
 		 (has-next ))
 	    (save-excursion
 	      (forward-line 1)
-	      (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+	      (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ \\(NEXT\\|DOING\\) " subtree-end t))
 		(unless (member "WAITING" (org-get-tags nil t))
 		  (setq has-next t))))
 	    (if has-next
