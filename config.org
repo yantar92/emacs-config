@@ -68,7 +68,7 @@ Init file, which loads this file.
 #+begin_src emacs-lisp :tangle "~/.emacs.d/init.el"
 ;;(package-initialize)
 (setq init-flag t)
-;;(setq comp-deferred-compilation t) ;; enable automatic native-compilation
+(setq comp-deferred-compilation t) ;; enable automatic native-compilation
 (load "~/.emacs.d/config.el")
 #+end_src
 ** Emacs server settings
@@ -2883,7 +2883,7 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
   (apply oldfun (list file "-al" parse no-error wildcard)))
 #+end_src
 
-*** NEXT Hyperbole
+*** SOMEDAY Hyperbole
 :PROPERTIES:
 :CREATED:  [2019-03-21 Thu 13:52]
 :ID:       40c2aac3-517c-45cd-bfe4-aa5465e4c3e6
@@ -2892,12 +2892,30 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 - State "NEXT"       from "TODO"       [2019-03-21 Thu 13:52]
 :END:
 
+#+begin_src emacs-lisp
+(use-package hyperbole
+  :if init-flag
+  :straight t
+  :disabled
+  :config
+  (require 'hyperbole-autoloads)
+  (require 'hyperbole)
+  ;; (bind-key* "<tab>" #'action-key)
+  ;; (bind-key* "<backtab>" #'assist-key)
+  )
+#+end_src
+** Editing
+:PROPERTIES:
+:ID:       6d0859b5-5d38-42a6-a676-aebec0867681
+:END:
+
 *************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-15 Wed>
+SCHEDULED: <2020-04-18 Sat>
 :PROPERTIES:
 :SHOWFROMDATE: 2020-04-16
 :END:
 :LOGBOOK:
+CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
 CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
 CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
 CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
@@ -2914,38 +2932,6 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 :END:
 *************** END
 
-#+begin_src emacs-lisp
-(use-package hyperbole
-  :if init-flag
-  :straight t
-  :disabled
-  :config
-  (bind-key* "<tab>" #'action-key)
-  (bind-key* "<backtab>" #'assist-key)
-  )
-#+end_src
-*** Org
-:PROPERTIES:
-:CREATED:  [2019-05-05 Sun 13:43]
-:ID:       d5a656cb-42e1-4b90-881e-992561d803e2
-:END:
-
-#+begin_src emacs-lisp
-(use-package helm-org-rifle
-  :if init-flag
-  :straight t
-  :bind (:map boon-goto-map
-	      ("P" . helm-org-rifle-agenda-files))
-  :init
-  (setq helm-org-rifle-reverse-paths t
-	helm-org-rifle-test-against-path t)
-  (use-package boon))
-#+end_src
-
-** Editing
-:PROPERTIES:
-:ID:       6d0859b5-5d38-42a6-a676-aebec0867681
-:END:
 *** Ingest primary selection from OS
 :PROPERTIES:
 :CREATED:  [2019-12-23 Mon 19:43]
