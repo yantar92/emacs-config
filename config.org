@@ -10417,6 +10417,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 	     ("C-c i" . org-clock-in)
 	     ("C-c o" . org-clock-out)
              :map org-agenda-mode-map
+             ("C-c C-," . org-agenda-priority)
              ("s" . org-agenda-bulk-mark)
              ("S" . org-agenda-bulk-mark-all)
 	     ("a" . org-agenda-bulk-unmark)
