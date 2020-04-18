@@ -4346,6 +4346,8 @@ Meta bindings for calendar
     (define-advice ocpf--org-capture (:around (old-fun orig-fun &optional goto keys) suppress-pop-frame-maybe)
       "Suppress pop-up frame when ``yant/suppress-pop-frame'' is non nil."
       (if (or (bound-and-true-p yant/suppress-pop-frame)
+	      ;; not doing the following check not only makes a frame appear
+	      ;; shortly, but also assigns header text to random other frame 
 	      (member :immediate-finish (assoc keys org-capture-templates)))
 	  (funcall orig-fun goto keys)
 	(funcall old-fun orig-fun goto keys))))
