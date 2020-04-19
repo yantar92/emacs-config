@@ -2112,6 +2112,7 @@ I changed the background colour here due to clash with my =org-mode= colours
 *** Highlight evaluated sexp
 :PROPERTIES:
 :CREATED:  [2020-04-16 Thu 15:15]
+:ID:       e2c5bd27-1c31-4372-8d8a-9d09ac00ce8e
 :END:
 
 #+begin_src emacs-lisp
@@ -3000,7 +3001,7 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-18 Sat>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-04-16
+:SHOWFROMDATE: 2020-04-19
 :END:
 :LOGBOOK:
 CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
@@ -5104,9 +5105,8 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
   :demand t)
+
 #+end_src
-
-
 
 *** Workflow
 :PROPERTIES:
@@ -9519,7 +9519,7 @@ I do not want bigger items font because I tend to use items a lot
   #+end_src
 Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much faster than overlay-based =org-bullets=.
   #+begin_src emacs-lisp
-  (use-package pretty-symbols
+(use-package pretty-symbols
   :config
   (setq pretty-symbol-patterns
 	(append pretty-symbol-patterns
@@ -10147,6 +10147,7 @@ the same tree node, and the headline of the tree node in the Org file."
 ***** Do not show tooltips in agenda
 :PROPERTIES:
 :CREATED:  [2020-04-16 Thu 21:14]
+:ID:       00fad7c6-98c6-45f6-a8ac-719c80cf4ba1
 :END:
 
 Tooltips are useless since I don't use mouse in Emacs.
