@@ -1328,9 +1328,11 @@ The problem is that it may mess up the cases when I want to assign special meani
 			notmuch-search-mode notmuch-show-mode elfeed-search-mode
 			notmuch-tree-mode elfeed-show-mode pomidor-mode mingus-mode
 			notmuch-hello-mode ledger-report-mode help-mode
-			dired-mode pdf-view-mode helpful-mode magit-file-mode
+			dired-mode image-dired-thumbnail-mode image-dired-display-image-mode
+                        pdf-view-mode helpful-mode magit-file-mode
 			magit-status-mode magit-revision-mode magit-log-mode
                         magit-diff-mode
+                        org-lint--report-mode image-mode
 			mingus-playlist-mode mingus-browse-mode
 			mingus-help-mode calendar-mode undo-tree-visualizer-mode
                         profiler-report-mode fundamental-mode Info-mode))
