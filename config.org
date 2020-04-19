@@ -2701,6 +2701,9 @@ And extend it with =dired+=
 #+begin_src emacs-lisp
 (use-package image-dired
   :if init-flag
+  :bind (:map image-dired-thumbnail-mode-map
+	      ("s" . image-dired-mark-thumb-original-file)
+              ("a" . image-dired-unmark-thumb-original-file))
   :config
   (unbind-key "o" image-map)
   (use-package meta-functions
