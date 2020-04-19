@@ -3771,6 +3771,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 (use-package nameless
   :if init-flag
   :straight t
+  :diminish (nameless-mode . "::")
   :init
   (add-hook 'emacs-lisp-mode-hook #'nameless-mode)
   :config
