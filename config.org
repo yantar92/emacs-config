@@ -1894,6 +1894,7 @@ Highlighting typos is crucial.
   :if init-flag
   :straight t
   :after org
+  :diminish (flyspell-mode . "✓")
   :hook ((notmuch-message-mode org-mode) . flyspell-mode)
   :bind (("<f8>" . ispell-word)
 	 ("M-<f8>" . ispell-buffer)
@@ -2015,7 +2016,7 @@ Show errors in code with =flycheck=, in tooltips (via =flycheck-tip=).
 (use-package flycheck
   :if init-flag
   :straight t
-  :diminish flycheck-mode
+  :diminish (flycheck-mode . "λ✓")
   :hook ((prog-mode) . flycheck-mode)
   :config
   (use-package flycheck-tip
