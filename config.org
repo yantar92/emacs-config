@@ -835,6 +835,18 @@ Show some text in buffer differently
       (spaceline-helm-mode +1))
     ))
   #+end_src
+
+Fancy minor mode lighters
+
+#+begin_src emacs-lisp
+(use-package simple
+  :diminish (auto-fill-function . " ☰"))
+(use-package mml
+  :diminish (mml-mode . " 📧"))
+(use-package footnote
+  :diminish (footnote-mode . " ¹⁻⁹"))
+#+end_src
+
 *** Mini-buffer
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 20:29]
@@ -1348,7 +1360,7 @@ The problem is that it may mess up the cases when I want to assign special meani
                         org-lint--report-mode image-mode
 			mingus-playlist-mode mingus-browse-mode
 			mingus-help-mode calendar-mode undo-tree-visualizer-mode
-                        profiler-report-mode fundamental-mode Info-mode))
+                        profiler-report-mode fundamental-mode Info-mode woman-mode))
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   (setq boon-insert-state-major-mode-list
@@ -1907,7 +1919,7 @@ Highlighting typos is crucial.
   :if init-flag
   :straight t
   :after org
-  :diminish (flyspell-mode . "✓")
+  :diminish (flyspell-mode . " ✓")
   :hook ((notmuch-message-mode org-mode) . flyspell-mode)
   :bind (("<f8>" . ispell-word)
 	 ("M-<f8>" . ispell-buffer)
@@ -2029,7 +2041,7 @@ Show errors in code with =flycheck=, in tooltips (via =flycheck-tip=).
 (use-package flycheck
   :if init-flag
   :straight t
-  :diminish (flycheck-mode . "λ✓")
+  :diminish (flycheck-mode . " λ✓")
   :hook ((prog-mode) . flycheck-mode)
   :config
   (use-package flycheck-tip
