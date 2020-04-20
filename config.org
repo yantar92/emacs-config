@@ -9535,7 +9535,8 @@ there is one, return it."
 			   (org-fit-window-to-buffer (get-buffer-window "*Select Link*"))
 			   (posframe-show (get-buffer "*Select Link*")
 					  :poshandler 'posframe-poshandler-frame-center
-                                          :background-color "Lemonchiffon1"
+                                          :foreground-color (face-foreground 'mode-line)
+                                          :background-color (face-background 'mode-line)
                                           :internal-border-width 20
                                           :internal-border-color "black"
 					  ))
