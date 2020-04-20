@@ -825,9 +825,12 @@ Show some text in buffer differently
 				 (powerline-render rhs)))))))
     
     (setq flymake--mode-line-format '(:eval (when flymake-mode (flymake--mode-line-format))))
+    (use-package all-the-icons
+      :init
+      (add-to-list 'all-the-icons-mode-icon-alist '(helpful-mode all-the-icons-faicon "info" :v-adjust -0.1 :face all-the-icons-purple)))
     (yant-powerline-theme)
     (use-package helm
-      :defer t  
+      :defer t
       :config
       (spaceline-helm-mode +1))
     ))
