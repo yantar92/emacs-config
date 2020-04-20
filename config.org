@@ -681,6 +681,16 @@ Show some text in buffer differently
   (global-prettify-symbols-mode t))
 #+end_src
 
+**** Selection
+:PROPERTIES:
+:CREATED:  [2020-04-20 Mon 01:47]
+:END:
+
+#+begin_src emacs-lisp
+(when init-flag
+  (custom-set-faces '(secondary-selection ((t (:background "DarkSeaGreen3"))))))
+#+end_src
+
 *** TODO Mode line
 :PROPERTIES:
 :ID:       ca75c464-f35c-43ed-a90e-d78d4cfaa99a
