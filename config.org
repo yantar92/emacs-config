@@ -795,7 +795,7 @@ Show some text in buffer differently
                               (lhs (list
                                     (powerline-raw (eval (get 'spaceline-all-the-icons-mode-icon-p :code)) mode-line 'l)
                                     ;; (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-id-p :code)) mode-line 'l)
-				    (powerline-buffer-id mode-line 'l)
+				    (powerline-buffer-id mode-line nil)
 				    (when (and (boundp 'which-func-mode) which-func-mode)
 				      (powerline-raw which-func-format mode-line 'l))
 				    (powerline-raw " " mode-line)
