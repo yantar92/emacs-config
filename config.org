@@ -2704,6 +2704,7 @@ And extend it with =dired+=
 	      ("W" . dired-copy-filename-as-kill)
 	      ("s" . dired-mark)
 	      ("a" . dired-unmark)
+              ("A" . dired-unmark-all-marks)
 	      ("<tab>" . other-window))
   :config
   (use-package meta-functions
