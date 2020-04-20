@@ -7608,7 +7608,11 @@ Also, hide the contents once task is clocked out.
   
   (defun yant/org-agenda-hide-org-quick-peek-overlays ()
     "Hide all org-quick-peek overlays in `org-agenda-buffer'."
-    (with-current-buffer org-agenda-buffer (quick-peek-hide)))
+    (dolist (agenda-buffer (mapcar #'get-buffer
+				   (seq-filter (apply-partially  #'s-contains-p "*Org Agenda") 
+					       (mapcar #'buffer-name (buffer-list)))))
+      (when (buffer-live-p agenda-buffer)
+	(with-current-buffer org-agenda-buffer (quick-peek-hide)))))
   
   (add-hook 'org-clock-out-hook #'yant/org-agenda-hide-org-quick-peek-overlays))
 #+end_src
