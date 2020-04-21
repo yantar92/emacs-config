@@ -4475,7 +4475,7 @@ Meta bindings for calendar
 								     (elfeed-feed-title (elfeed-entry-feed entry))
 								     (elfeed-entry-title entry))
 						      :body content-text))
-			(message url-present-p)))))
+			(user-error "%s" url-present-p)))))
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
   
