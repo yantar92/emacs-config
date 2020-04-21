@@ -9894,6 +9894,35 @@ Use smaller font for inline headings without keyword
           (add-text-properties (point) (line-end-position) `(face org-inlinetask-notodo font-lock-fontified t)))))))
 #+end_src
 
+fit inline LaTeX better by increasing the image size [[[https://github.com/tecosaur/emacs-config/blob/master/config.org#latex-fragments][credit]]]
+#+begin_src emacs-lisp
+(setq org-format-latex-header "\\documentclass{article}
+\\usepackage[usenames]{color}
+
+\\usepackage[T1]{fontenc}
+\\usepackage{mathtools}
+\\usepackage{textcomp,amssymb}
+\\usepackage[makeroom]{cancel}
+
+\\pagestyle{empty}             % do not remove
+% The settings below are copied from fullpage.sty
+\\setlength{\\textwidth}{\\paperwidth}
+\\addtolength{\\textwidth}{-3cm}
+\\setlength{\\oddsidemargin}{1.5cm}
+\\addtolength{\\oddsidemargin}{-2.54cm}
+\\setlength{\\evensidemargin}{\\oddsidemargin}
+\\setlength{\\textheight}{\\paperheight}
+\\addtolength{\\textheight}{-\\headheight}
+\\addtolength{\\textheight}{-\\headsep}
+\\addtolength{\\textheight}{-\\footskip}
+\\addtolength{\\textheight}{-3cm}
+\\setlength{\\topmargin}{1.5cm}
+\\addtolength{\\topmargin}{-2.54cm}
+% my custom stuff
+\\usepackage{arev}
+\\usepackage{arevmath}")
+#+end_src
+
 **** Agenda
 :PROPERTIES:
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
