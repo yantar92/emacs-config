@@ -352,7 +352,7 @@ Credit: https://www.reddit.com/r/emacs/comments/fgbnfv/is_there_a_fixed_width_fo
 
   (mapc (lambda (char)
 	  (set-fontset-font "fontset-default" char (font-spec :size 12.0 :family "Symbola")))
-        '(?📧 ?🖳 ?🏠 ?🔗 ?🖹))
+        '(?🖂 ?🖳 ?🏠 ?🔗 ?🖹))
   (mapc (lambda (char)
 	  (set-fontset-font "fontset-default" char (font-spec :size 8.0 :family "Symbola")))
         '(?🖹 ?⛕))
@@ -842,7 +842,7 @@ Fancy minor mode lighters
 (use-package simple
   :diminish (auto-fill-function . " ☰"))
 (use-package mml
-  :diminish (mml-mode . " 📧"))
+  :diminish (mml-mode . " 🖂"))
 (use-package footnote
   :diminish (footnote-mode . " ¹⁻⁹"))
 #+end_src
@@ -9609,7 +9609,7 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
                   (?⏎ org-specific "[ ]*#[+]RESULTS" (org-mode))
                   (?⫘ org-specific "[ ]*#[+]SETUPFILE" (org-mode))
                   (?👨 org-specific "[ ]*#[+]AUTHOR" (org-mode))
-                  (?📧 org-specific "[ ]*#[+]EMAIL" (org-mode))
+                  (?🖂 org-specific "[ ]*#[+]EMAIL" (org-mode))
                   (?⚙ org-specific "[ ]*#[+]PROPERTY" (org-mode))
                   (?⏣ org-specific "[ ]*#[+]OPTIONS" (org-mode))
                   (?🔗 org-specific ":\\(BOOKMARK\\):" (org-mode) 1)
@@ -9617,7 +9617,7 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
                   ((yant/str-to-glyph "📁📁📁") org-specific ":\\(ATTACH\\):" (org-mode) 1)
                   (?🖳 org-specific ":\\(PhD\\):" (org-mode) 1)
                   (?🏠 org-specific ":\\(COMMON\\):" (org-mode) 1)
-                  (?📧 org-specific ":\\(EMAIL\\):" (org-mode) 1)
+                  (?🖂 org-specific ":\\(EMAIL\\):" (org-mode) 1)
       		  (?☐ org-specific "\\(?:^*+ +\\)\\(\\<TODO\\>\\)" (org-mode) 1)
                   (?⯑ org-specific "\\(?:^*+ +\\)\\(\\<SOMEDAY\\>\\)" (org-mode) 1)
       		  (?☑ org-specific "\\(?:^*+ +\\)\\(\\<DONE\\>\\)" (org-mode) 1)
