@@ -5656,7 +5656,7 @@ Return DESK if :desk is not set."
 	(funcall fun link desk)
       desk)))
 
-(setq org-make-link-description-function #'yant/org-make-link-description-function)
+(setq org-link-make-description-function #'yant/org-make-link-description-function)
 #+end_src
 
 ***** External
