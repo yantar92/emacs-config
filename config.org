@@ -2644,6 +2644,33 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
 #+end_src
 **** Search directories
 ***** =Dired=
+**** Open files as root
+:PROPERTIES:
+:CREATED:  [2018-01-10 Wed 02:38]
+:ID:       4229fb72-78fe-4848-b925-fb1f87f75fdf
+:END:
+:LOGBOOK:
+- Refiled on [2020-04-20 Mon 21:21]
+- State "TODO"       from              [2018-01-10 Wed 02:41]
+:END:
+
+#+BEGIN_SRC emacs-lisp
+(when init-flag
+  ;; http://emacs.readthedocs.io/en/latest/file_management.html
+  (defun yt/sudo-find-file (file-name)
+    "Like find file, but opens the file as root."
+    (interactive "FSudo Find File: ")
+    (let ((tramp-file-name (concat "/sudo::" (expand-file-name file-name))))
+      (find-file tramp-file-name)))
+  (use-package boon
+    :defer t
+    :bind (:map boon-forward-search-map
+		("M-f" . yt/sudo-find-file)
+                ("M-S-f" . (lambda () (interactive) (yt/sudo-find-file (buffer-file-name))))
+                :map boon-backward-search-map
+		("M-f" . yt/sudo-find-file)
+                ("M-S-f" . (lambda () (interactive) (yt/sudo-find-file (buffer-file-name)))))))
+#+END_SRC
 :PROPERTIES:
 :ID:       66f5dab7-add6-48c2-9824-fed4ef202b7a
 :END:
@@ -3272,31 +3299,6 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 			   (insert (gui-get-primary-selection))))
   (bind-key "<mouse-2>" #'ignore))
 #+end_src
-*** Open files as root
-:PROPERTIES:
-:CREATED:  [2018-01-10 Wed 02:38]
-:ID:       4229fb72-78fe-4848-b925-fb1f87f75fdf
-:END:
-:LOGBOOK:
-- State "TODO"       from              [2018-01-10 Wed 02:41]
-:END:
-#+BEGIN_SRC emacs-lisp
-(when init-flag
-  ;; http://emacs.readthedocs.io/en/latest/file_management.html
-  (defun yt/sudo-find-file (file-name)
-    "Like find file, but opens the file as root."
-    (interactive "FSudo Find File: ")
-    (let ((tramp-file-name (concat "/sudo::" (expand-file-name file-name))))
-      (find-file tramp-file-name)))
-  (use-package boon
-    :defer t
-    :bind (:map boon-forward-search-map
-		("M-f" . yt/sudo-find-file)
-                ("M-S-f" . (lambda () (interactive) (yt/sudo-find-file (buffer-file-name))))
-                :map boon-backward-search-map
-		("M-f" . yt/sudo-find-file)
-                ("M-S-f" . (lambda () (interactive) (yt/sudo-find-file (buffer-file-name)))))))
-#+END_SRC
 *** Move lines, elements around
 :PROPERTIES:
 :CREATED:  [2018-03-12 Mon 15:00]
