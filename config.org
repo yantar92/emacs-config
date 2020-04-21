@@ -5234,8 +5234,10 @@ The task is any item with todo keyword and no subtask.
 	      (done ("WAITING") ("HOLD"))
 	      ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
 	      ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DOING" ("WAITING") ("CANCELLED") ("HOLD"))
 	      ("DONE" ("WAITING") ("CANCELLED") ("HOLD"))
 	      ("FAILED" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("SOMEDAY" ("WAITING") ("CANCELLED") ("HOLD"))
 	      )))
 #+end_src
   - TODO(t) :: task which needs to be done
