@@ -827,7 +827,8 @@ Show some text in buffer differently
     (setq flymake--mode-line-format '(:eval (when flymake-mode (flymake--mode-line-format))))
     (use-package all-the-icons
       :init
-      (add-to-list 'all-the-icons-mode-icon-alist '(helpful-mode all-the-icons-faicon "info" :v-adjust -0.1 :face all-the-icons-purple)))
+      (add-to-list 'all-the-icons-mode-icon-alist '(helpful-mode all-the-icons-faicon "info" :v-adjust -0.1 :face all-the-icons-purple))
+      (add-to-list 'all-the-icons-mode-icon-alist '(pdf-view-mode all-the-icons-octicon "file-pdf" :v-adjust 0.0 :face all-the-icons-dred)))
     (yant-powerline-theme)
     (use-package helm
       :defer t
@@ -7612,7 +7613,11 @@ Also, hide the contents once task is clocked out.
 				   (seq-filter (apply-partially  #'s-contains-p "*Org Agenda") 
 					       (mapcar #'buffer-name (buffer-list)))))
       (when (buffer-live-p agenda-buffer)
-	(with-current-buffer org-agenda-buffer (quick-peek-hide)))))
+	(with-current-buffer agenda-buffer
+          (mapc (lambda (o)
+		  (when (eq (overlay-get o 'type) 'org-agenda-clocking)
+                    (quick-peek-hide)))
+		(overlays-in (point-min) (point-max)))))))
   
   (add-hook 'org-clock-out-hook #'yant/org-agenda-hide-org-quick-peek-overlays))
 #+end_src
