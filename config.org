@@ -2642,8 +2642,6 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
 	     ("f" . helm-find-files)
              ("F" . helm-locate)))
 #+end_src
-**** Search directories
-***** =Dired=
 **** Open files as root
 :PROPERTIES:
 :CREATED:  [2018-01-10 Wed 02:38]
@@ -2671,6 +2669,8 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
 		("M-f" . yt/sudo-find-file)
                 ("M-S-f" . (lambda () (interactive) (yt/sudo-find-file (buffer-file-name)))))))
 #+END_SRC
+*** Directories
+**** =Dired=
 :PROPERTIES:
 :ID:       66f5dab7-add6-48c2-9824-fed4ef202b7a
 :END:
@@ -2711,15 +2711,15 @@ And extend it with =dired+=
 ;;   (remove-hook 'dired-after-readin-hook #'diredp-nb-marked-in-mode-name))
 #+end_src
 
-****** Command loop
+***** Command loop
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:18]
 :END:
-******* Key bindings
+****** Key bindings
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:18]
 :END:
-******** Dired bindings
+******* Dired bindings
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:38]
 :ID:       e5aa5b80-b4dd-41b2-9c43-3dde7ba7d2f7
@@ -2745,7 +2745,7 @@ And extend it with =dired+=
     (meta-defun meta-down-element :mode dired-mode dired-find-alternate-file)))
 #+end_src
 
-******** =Image-dired= bindings
+******* =Image-dired= bindings
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 21:26]
 :ID:       c095c061-ffdc-4adb-a889-bb4e54b6a514
@@ -2768,7 +2768,7 @@ And extend it with =dired+=
     (meta-defun meta-down :mode image-dired-thumbnail-mode image-dired-next-line)
     (meta-defun meta-up :mode image-dired-thumbnail-mode image-dired-previous-line)))
 #+end_src
-******* =DWIM= target on copy/rename
+****** =DWIM= target on copy/rename
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:18]
 :ID:       80db1c22-bc50-451f-950c-d8e4d9f373c9
@@ -2779,7 +2779,7 @@ And extend it with =dired+=
   :custom (dired-dwim-target t))
 #+end_src
 
-******* Automatically kill =dired= buffers pointing to deleted directories
+****** Automatically kill =dired= buffers pointing to deleted directories
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:25]
 :ID:       9367d902-8069-4507-becb-3a7688885feb
@@ -2792,7 +2792,7 @@ And extend it with =dired+=
   (dired-clean-confirm-killing-deleted-buffers nil))
 #+end_src
 
-******* Kill all the previous =dired= buffers when quitting 
+****** Kill all the previous =dired= buffers when quitting 
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:27]
 :ID:       3a1bc711-2264-4893-9939-d533de84e91b
@@ -2820,7 +2820,7 @@ Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
 	  (quit-window kill window))))))
 #+end_src
 
-****** Delete to trash
+***** Delete to trash
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:23]
 :ID:       854016c9-7412-42f9-b782-c03ece68d609
@@ -2835,7 +2835,7 @@ Using trash is safer.
   (delete-by-moving-to-trash t)
   (trash-directory "~/tmp/Trash"))
 #+end_src
-****** Auto-revert =dired= buffers
+***** Auto-revert =dired= buffers
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:11]
 :ID:       6ac566c7-dbe9-4329-9710-ad05293d7b78
@@ -2849,7 +2849,7 @@ Using trash is safer.
   (use-package autorevert))
 #+END_SRC
 
-****** Open file in external app from dired
+***** Open file in external app from dired
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 21:55]
 :ID:       61a29cb9-8c13-4e10-979d-144866c4d122
@@ -2862,7 +2862,7 @@ Using trash is safer.
   :bind (:map dired-mode-map
 	      ("<return>" . dired-open-xdg)))
 #+end_src
-****** Async operations
+***** Async operations
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 21:56]
 :ID:       06e9d624-67fe-42cb-acca-44c1e5e1fde1
@@ -2877,7 +2877,7 @@ Using trash is safer.
     (use-package dired-async))
   :hook (dired-mode . dired-async-mode))
 #+END_SRC
-****** TODO Follow symlink structure
+***** TODO Follow symlink structure
 :PROPERTIES:
 :CREATED:  [2018-07-23 Mon 15:42]
 :ID:       3f656102-43d7-4a91-b245-92af4ffca9a6
@@ -2903,8 +2903,8 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (apply OLDFUN args)))
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
-****** Appearance
-******* File icons
+***** Appearance
+****** File icons
 :PROPERTIES:
 :CREATED:  [2019-08-27 Tue 17:18]
 :ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
@@ -2917,7 +2917,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
   :diminish all-the-icons-dired-mode
   :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
-******* Highlight files
+****** Highlight files
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 22:09]
 :ID:       45393002-d153-42bf-ae39-70b6e49b25b0
@@ -2932,7 +2932,7 @@ Additional fontification in =dired=
   :config
   (diredfl-global-mode 1))
 #+END_SRC
-******* Group files
+****** Group files
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 21:56]
 :ID:       18e2dd1e-dc25-4188-bad4-cdcdb76f506a
@@ -2961,7 +2961,7 @@ Additional fontification in =dired=
   :hook (dired-mode . dired-filter-group-mode))
 #+END_SRC
 
-******* Hide uninteresting files
+****** Hide uninteresting files
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:10]
 :ID:       3b9c56de-390c-4daf-a582-9006f4d5e7c1
@@ -2988,7 +2988,7 @@ Hide "." and ".."
   :custom (dired-listing-switches "-ADlhGg"))
 #+end_src
 
-******* Hide details
+****** Hide details
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 16:05]
 :ID:       e92e4c8f-f8c8-4bdd-8389-3a4a34e8bd30
@@ -3001,7 +3001,7 @@ Do not hide symlink target when hiding details.
   :custom (dired-hide-details-hide-symlink-targets nil))
 #+end_src
 
-***** Disk usage
+**** Disk usage
 :PROPERTIES:
 :CREATED:  [2019-07-15 Mon 22:04]
 :ID:       1b72898b-f2e1-4534-862e-143f30e16d3c
