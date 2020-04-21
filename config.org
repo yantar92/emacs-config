@@ -6999,9 +6999,9 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 	   )
       (if (equal scheduleddate currentdate) nil next-headline))))
   #+end_src
+- all items scheduled in the past or today with DOING todo keyword, respecting =:SHOWFROMTIME:= and =:SHOWDATES:=
 - items from diary/with timestamps (shown by default in org)
 - habits
-
 *************** TODO can I do it with standard org capabilities? (at least, partially)
 #+begin_src emacs-lisp :tangle no
 (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
@@ -7010,13 +7010,13 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 #+end_src
 *************** END
 
-
   #+begin_src emacs-lisp
 (defun yant/org-agenda-skip-nofocus()
   "Filter tasks for focus agenda."
   (and
    (or
     (and
+     (not (equal "DOING" (org-get-todo-state)))
      (org-agenda-skip-nonurgent) ; show urgent items
      (bh/skip-nohabits) ; and habits
      )
