@@ -3013,9 +3013,6 @@ Do not hide symlink target when hiding details.
   :straight t)
 #+end_src
 
-:END:
-:END:
-
 Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not accept them
 
 #+begin_src emacs-lisp
@@ -3052,28 +3049,6 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 :ID:       6d0859b5-5d38-42a6-a676-aebec0867681
 :END:
 
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-18 Sat>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-04-19
-:END:
-:LOGBOOK:
-CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
-CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
-CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
-CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
-CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
-CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-*************** END
 
 *** Ingest primary selection from OS
 :PROPERTIES:
@@ -3083,30 +3058,37 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 
 #+begin_src emacs-lisp
 (when init-flag
-  (setq select-enable-primary t))
+  (setq select-enable-primary t)
+  (setq save-interprogram-paste-before-kill t))
 #+end_src
 
 *** Boon - set =command state= from =insert state=
 :PROPERTIES:
 :ID:       94ed4714-1f9d-43f7-8ddc-74f855154b2c
 :END:
+
+The boon's default =ESC= key binding to go back to command state is too hard to press.
+I prefer a key on home row. 
+=M-l= have proven to be good enough for me.
+
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
-  :defer t
   :config
   (bind-key "M-l" 'boon-set-command-state boon-insert-map))
-
 #+end_src
-*** Multiple cursors =insert state=
+*** Multiple cursors
 :PROPERTIES:
 :ID:       8cbda343-0d1f-4abd-92d1-75a22b0b8d3c
 :END:
+
+I use multiple cursors in very limited way. 
+Mostly just one command - editing multiple lines from selection. 
+Bind it to command mode in boon.
+
 #+begin_src emacs-lisp
-(setq save-interprogram-paste-before-kill t)
 (use-package boon
   :if init-flag
-  :defer t
   :config
   (use-package multiple-cursors
     :defer t
@@ -3118,6 +3100,10 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 :CREATED:  [2017-12-29 Fri 16:03]
 :ID:       0d1d2022-e094-49b0-abc0-0957536690ee
 :END:
+
+This is one of the frequently used commands and I want it to be available from command state. 
+However, org has its own version of open-line. 
+So, I define a meta-function to make open-line work as correctly regardless of the mode.
 
 #+BEGIN_SRC emacs-lisp
 (use-package boon
@@ -3139,7 +3125,7 @@ Also, don't break the current line if the cursor is in the middle of a line
     (beginning-of-line)))
 #+end_src
 
-*** =meta-cut-element=
+*** Cut element at point
 :PROPERTIES:
 :CREATED:  [2020-04-13 Mon 13:55]
 :ID:       eae5f592-a735-487e-b42c-52904c0e5fd7
@@ -3148,45 +3134,33 @@ Also, don't break the current line if the cursor is in the middle of a line
 - Refiled on [2020-04-14 Tue 15:47]
 :END:
 
-Cut element at point. 
-
 #+begin_src emacs-lisp
 (use-package meta-functions
   :if init-flag
   :config
   (meta-defun meta-cut-element () "Cut element at point" kill-paragraph))
 #+end_src
+
 *** Query replace
 :PROPERTIES:
 :ID:       1825c53a-1f53-4da8-a2b0-04ddea8cc43e
 :END:
+
+Use a query replace version with nice highlights.
+
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
-  :defer t
   :config
   (use-package visual-regexp
-    :init
-    (use-package visual-regexp-steroids :straight t)
     :bind (:map boon-command-map
-		("?" . vr/query-replace)
-		("M-?" . helm-regexp))))
-#+end_src
-*** Comment/uncomment
-:PROPERTIES:
-:ID:       957cd651-ad7a-467d-b6d5-ac8bf92d839d
-:END:
-#+begin_src emacs-lisp
-(use-package comment-dwim-2
-  :if init-flag
-  :straight t
-  :bind (:map prog-mode-map
-	      ("M-;" . comment-dwim-2)))
+		("?" . vr/query-replace))))
 #+end_src
 *** Indent region
 :PROPERTIES:
 :ID:       703f08dd-3ad9-4eba-a60e-2ad4de642375
 :END:
+
 #+begin_src emacs-lisp
 (when init-flag
   (bind-key* "C-<tab>" 'indent-region))
@@ -3195,6 +3169,9 @@ Cut element at point.
 :PROPERTIES:
 :ID:       f3eaeebf-fe50-4ec6-81ed-f42e8b7b71c6
 :END:
+
+Automatic indentation is handy to keep the code nice and readable.
+
 #+begin_src emacs-lisp
 (use-package aggressive-indent
   :if init-flag
@@ -3207,6 +3184,11 @@ Cut element at point.
 :PROPERTIES:
 :ID:       c36d8b82-50ab-4097-a93a-56cbcf376cee
 :END:
+
+Deleting a char/word backward is pretty common command when typing.
+However, <DEL> key is too far on keyboard. 
+I prefer something on home row - =C-h= and =C-M-h=.
+
 #+begin_src emacs-lisp
 (when init-flag
   (bind-keys ("C-M-h" . backward-kill-word)
@@ -3214,11 +3196,6 @@ Cut element at point.
              :map isearch-mode-map
 	     ("C-h" . isearch-delete-char)
              ("C-M-h" . isearch-delete-char)))
-(use-package boon
-  :if init-flag
-  :defer t
-  :bind (:map boon-command-map
-	      ("C-h" . backward-delete-char-untabify)))
 #+end_src
 *** Smarter =backward-kill-word=
 :PROPERTIES:
@@ -3273,6 +3250,9 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 *************** TODO adjust keybindings to avoid interference with WM
 *************** END
 
+Meta-versions of return/return-dwim commands.
+Mostly intended to use with org.
+
 #+begin_src emacs-lisp
 (define-key key-translation-map (kbd "C-j") (kbd "<RET>"))
 
@@ -3293,6 +3273,9 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 :PROPERTIES:
 :ID:       88a3703a-21fe-47a1-9b8c-bce7fdb5d10a
 :END:
+
+I do not use mouse as much as possible and discourage myself to use it unnecessarily.
+
 #+begin_src emacs-lisp
 (when init-flag
   (bind-key "<S-insert>" (lambda () (interactive)
@@ -3304,6 +3287,33 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 :CREATED:  [2018-03-12 Mon 15:00]
 :ID:       61ed40af-8165-4ffa-9412-96d802bb8e18
 :END:
+
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-21 Tue>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-04-19
+:END:
+:LOGBOOK:
+CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
+CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
+CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
+CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
+CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
+CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
+CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
+CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
+CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
+
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
   :if init-flag
@@ -5312,6 +5322,12 @@ If the task is scheduled, schedule it for tomorrow."
   #+end_src
 *************** TODO Prompt for the link to new task, default is clocked in task. Use helm search. Store link in property
 *************** END
+
+In some cases, I do not want to have logging on CANCELLED/FAILED/HOLD/WAITING.
+For example, a task to listen music with outcome of FAILED mostly have the same meaning - I do not like the music.
+Writing the note is useless in such a case.
+So, I define =:LOGGING:= property in some subtrees to avoid logging.
+
 ***** Inline tasks
 :PROPERTIES:
 :ID:       54ee8e08-0cb5-4104-94c2-948be5830c4e
@@ -6889,6 +6905,7 @@ SUBTREE-END is used as end of the entry if not nil."
 :ID:       a6054643-449e-48d7-afff-4155465efc19
 :END:
 This agenda show the items for the current day and time.
+
 - all the items with deadline, according =org-deadline-warning-days=, unless the item is scheduled. If the item is scheduled, it is shown from the scheduled day.
   #+begin_src emacs-lisp
 (defun org-agenda-skip-deadlines-before-schedule ()
@@ -6916,7 +6933,6 @@ This agenda show the items for the current day and time.
 	(re-search-forward (org-get-limited-outline-regexp) nil 'noerror)
 	(point)))))
   #+end_src
-
 - all [#A] priority items, with matching =:SHOWDATES:= and =:SHOWFROMTIME:=, unless they are scheduled in the future
   #+begin_src emacs-lisp
 (defun org-agenda-skip-nonurgent ()
@@ -6973,8 +6989,6 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 - State "NEXT"       from "TODO"       [2019-05-05 Sun 18:42]
 :END:
 *************** END
-
-
 - none of [#C] priority items
 #+BEGIN_SRC emacs-lisp
 (defun org-agenda-skip-lowpriority ()
@@ -7596,7 +7610,7 @@ Also, hide the contents once task is clocked out.
     (org-agenda-redo@org-quick-peek--hide-all)
     (org-quick-peek--agenda-show :quiet t))
   
-  (defun yant/org-agenda-hide-org-quick-peek-overlays ()
+  (defun yant/org-agenda-hide-org-quick-peek-overlays-from-clocking ()
     "Hide all org-quick-peek overlays in `org-agenda-buffer'."
     (dolist (agenda-buffer (mapcar #'get-buffer
 				   (seq-filter (apply-partially  #'s-contains-p "*Org Agenda") 
@@ -7608,7 +7622,7 @@ Also, hide the contents once task is clocked out.
                     (quick-peek-hide)))
 		(overlays-in (point-min) (point-max)))))))
   
-  (add-hook 'org-clock-out-hook #'yant/org-agenda-hide-org-quick-peek-overlays))
+  (add-hook 'org-clock-out-hook #'yant/org-agenda-hide-org-quick-peek-overlays-from-clocking))
 #+end_src
 
 ***** Trying =org-ql=
@@ -10362,8 +10376,7 @@ From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bul
 - Refiled on [2020-04-14 Tue 15:51]
 :END:
 
-*************** TODO Use boon selection here to call org-cut-subtree conditionally
-*************** END
+
 
 #+begin_src emacs-lisp
 (use-package org
