@@ -6025,6 +6025,25 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
   (helm-recoll-create-source "docs" "~/.recoll")
   (bind-key* "C-c }" 'helm-recoll-docs))
 #+END_SRC
+***** TODO Backlinks
+:PROPERTIES:
+:CREATED:  [2020-04-21 Tue 14:50]
+:ID:       248307ef-49c4-4fa9-a812-ab9acb643be4
+:END:
+
+It is handy to be able to find all other headlines having links to current headline.
+=org-super-links= package does exactly this. 
+
+*************** TODO this package does not support actual org-insert-link interface
+*************** END
+
+
+#+begin_src emacs-lisp :tangle no
+(use-package org-super-links
+  :straight (org-super-links :type git :host github :repo "toshism/org-super-links")
+  )
+#+end_src
+
 **** TODO Properties
 :PROPERTIES:
 :ID:       598c2b16-2eb8-404a-b7e9-00969a1c4d72
