@@ -3289,11 +3289,12 @@ I do not use mouse as much as possible and discourage myself to use it unnecessa
 :END:
 
 *************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-21 Tue>
+SCHEDULED: <2020-04-22 Wed>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-04-19
+:SHOWFROMDATE: 2020-04-21 18:00
 :END:
 :LOGBOOK:
+CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
 CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
 CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
 CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
@@ -5971,7 +5972,7 @@ The src block should be in the same org file."
 			 :follow #'org-link-babel-follow
                          :complete #'org-link-babel-complete)
 #+end_src
-***** SOMEDAY Org-ref
+***** NEXT Org-ref
 :PROPERTIES:
 :ID:       f944c2c8-f1fa-49ea-ab24-bf1b018013f1
 :END:
@@ -6004,7 +6005,7 @@ The src block should be in the same org file."
   (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
   (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
 #+end_src
-****** SOMEDAY search in article PDFs
+***** SOMEDAY search in article PDFs
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
@@ -9597,7 +9598,6 @@ there is one, return it."
 	     (setq link (nth (1- nth) links)))))
 	 (cons link end))))))
 #+end_src
-
 **** Items
 :PROPERTIES:
 :ID:       6b238696-fbbe-4206-91fb-eeebff4a032a
@@ -10611,6 +10611,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
    ("C-n" . notes-open)
    )
   (bind-keys :map org-mode-map
+	     ("C-c C-l" . org-insert-link)
 	     ("C-c C-+" . add-current-buffer-to-agenda-files)
 	     ("C-c C--" . remove-current-buffer-from-agenda-files)
 	     ("C-c e" . yant/add-email-to-task)
