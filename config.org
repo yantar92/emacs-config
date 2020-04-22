@@ -9490,6 +9490,20 @@ You can use this to set \\mathversion{bold} for example to make it bolder."
 #+end_src
 
 *** Appearance
+**** Lighter
+:PROPERTIES:
+:CREATED:  [2020-04-21 Tue 11:28]
+:ID:       062a0aaf-3f3b-4eef-b8cf-a19da865e51c
+:END:
+
+org-capture mode lighter
+
+#+begin_src emacs-lisp
+(use-package org-capture
+  :if init-flag
+  :diminish (org-capture-mode . " capture"))
+#+end_src
+
 **** Links
 ***** Show broken links to files
 :PROPERTIES:
