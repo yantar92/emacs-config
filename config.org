@@ -6366,7 +6366,10 @@ Bound search by SUBTREE-END if non nil."
   "Return non nil if the task at point has an attached file."
   (org-with-wide-buffer
    (when (eq major-mode 'org-mode) (org-back-to-heading))
-   (member org-attach-auto-tag (org-get-tags nil t))))
+   (or (member org-attach-auto-tag (org-get-tags nil t))
+       (let ((dir (let ((org-attach-dir-suppress-extra-checks t)) (org-attach-dir))))
+	 (and dir
+	      (org-attach-file-list dir))))))
 
 (defvar yant/--processed-entry-ids nil
   "Variable used to store processed entry ids in `org-attach-dir@yant/org-attach-ensure-attach-dir-symlink'")
@@ -6503,13 +6506,13 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
 				     (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))));; only consider if the entry is the child
 	)
     (org-attach-sync)
-    (letf (((symbol-function 'org-attach-dir) (if (yant/org-task-has-attachments-p)
-						  #'org-attach-dir-symlink
-						(lambda (&rest args)
-                                                  (if (yant/org-subtree-has-attachments-p)
-                                                      (org-attach-dir-symlink 't nil 't)
-                                                    dir
-                                                    )))))
+    (cl-letf (((symbol-function 'org-attach-dir) (if (yant/org-task-has-attachments-p)
+						     #'org-attach-dir-symlink
+						   (lambda (&rest args)
+						     (if (yant/org-subtree-has-attachments-p)
+							 (org-attach-dir-symlink 't nil 't)
+                                                       dir
+                                                       )))))
       (when attach-dir-inherited-p (org-attach-tag 'off))
       (funcall OLDFUN))))
 
