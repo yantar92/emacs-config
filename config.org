@@ -3367,41 +3367,30 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 		       (meta-move-element-up "Move the element under cursor up." move-text-up))))
   :init (use-package boon))
 #+END_SRC
-*** TODO =Yasnippet=
+*** =Yasnippet=
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 10:53]
 :ID:       800d19f3-bbce-4a3c-888d-d8b6ac34eb81
 :END:
 
+=Yasnippet= is a very handy way to use templates as you type.
+There is also built-in skeleton mode, but =yasnippet= also has a good user-contributed snippet database.
+ 
+*************** TODO study the snippets
+*************** END
+
 #+begin_src emacs-lisp
 (use-package yasnippet
   :if init-flag
-  :straight t)
+  :straight t
+  :diminish (yas-minor-mode . " ⇶_")
+  :config
+  (use-package yasnippet-snippets
+    :straight t)
+  (yas-global-mode +1))
 #+end_src
 
 *** Undo
-
-**** COMMENT Persistent undo
-:PROPERTIES:
-:CREATED:  [2019-08-25 Sun 19:29]
-:ID:       ae00a281-ea18-47c8-b75b-a7f643d63b88
-:END:
-
-Keep undo information between sessions.
-Never recover undo if the buffer is modified.
-
-#+begin_src emacs-lisp
-(use-package undohist
-  :if init-flag
-  :straight (undohist :type git :host github :repo "clemera-dev/undohist")
-  :init
-  (define-advice undohist-recover-1 (:around (oldfun &rest args) noask)
-    "Do not ask anything when recovering undo history."
-    (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) nil)))
-      (apply oldfun args)))
-  :config
-  (undohist-initialize))
-#+end_src
 
 **** Undo-tree 
 :PROPERTIES:
@@ -3409,7 +3398,9 @@ Never recover undo if the buffer is modified.
 :ID:       8b8023ed-03c8-4aa7-a47e-6195f94bc63d
 :END:
 
-Trying =undo-tree= again
+Tree view of emacs undo history.
+Very useful to undo and redo after complex edits.
+
 #+begin_src emacs-lisp
 (use-package undo-tree
   :straight t
