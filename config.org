@@ -502,17 +502,17 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
 *************** END
 
 #+begin_src emacs-lisp
-  (use-package centered-window
-    :if init-flag
-    :diminish centered-window-mode
-    :after boon
-    :config
-    (defun pdf-view-mode-p (&rest args)
-      "Return non-nil if in pdf-view-mode."
-      (eq major-mode 'pdf-view-mode))
-    (add-to-list 'cwm-ignore-buffer-predicates 'pdf-view-mode-p)
-    (bind-keys :map boon-x-map ("w" . centered-window-mode))
-    (centered-window-mode +1))
+(use-package centered-window
+  :if init-flag
+  :diminish (centered-window-mode . " ‖□‖")
+  :after boon
+  :config
+  (defun pdf-view-mode-p (&rest args)
+    "Return non-nil if in pdf-view-mode."
+    (eq major-mode 'pdf-view-mode))
+  (add-to-list 'cwm-ignore-buffer-predicates 'pdf-view-mode-p)
+  (bind-keys :map boon-x-map ("w" . centered-window-mode))
+  (centered-window-mode +1))
 #+end_src
 **** Window boundaries
 :PROPERTIES:
@@ -3471,7 +3471,7 @@ Add meta-bindings
 (use-package paredit
   :if init-flag
   :straight t
-  :diminish paredit-mode
+  :diminish (paredit-mode . " (⤑)")
   :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . paredit-mode)
   :config
   (use-package boon
