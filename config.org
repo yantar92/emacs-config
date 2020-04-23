@@ -1394,9 +1394,12 @@ The problem is that it may mess up the cases when I want to assign special meani
                         profiler-report-mode fundamental-mode Info-mode woman-mode))
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
-  (setq boon-insert-state-major-mode-list
-	'(notmuch-message-mode eshell-mode shell-mode calc-mode term-mode
-			       magit-popup-mode vterm-mode))
+  
+  (setq boon-insert-state-major-mode-list '(
+					    notmuch-message-mode eshell-mode
+                                            shell-mode calc-mode
+                                            term-mode vterm-mode
+                                            magit-popup-mode))
   (add-hook 'boon-local-mode-hook
 	    (lambda() (when (and boon-local-mode
 			    (member major-mode boon-insert-state-major-mode-list))
@@ -1905,6 +1908,12 @@ Working with forges
   :if init-flag
   :straight t
   :after magit)
+#+end_src
+
+Activate insert state when editing commits
+#+begin_src emacs-lisp
+(when init-flag
+  (add-hook 'with-editor-mode-hook #'boon-set-insert-state))
 #+end_src
 
 ** Text highlight & colouring
