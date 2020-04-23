@@ -1653,6 +1653,7 @@ I use company for completion just because it is easy to use.
 	 ("M-/" . company-complete)
 	 ("C-/" . hippie-expand)
 	 :map company-active-map
+	 ("<tab>" . company-complete-common-or-cycle)
 	 ("M-j" . company-select-next)
 	 ("M-k" . company-select-previous)
 	 ("C-h" . backward-delete-char-untabify)
