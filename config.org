@@ -10725,6 +10725,13 @@ Patching the relevant function to not put that tooltip into the overlay.
       org-hide-block-startup nil)
 (set-face-background 'org-block "Gainsboro")
 #+end_src
+
+Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#appearance][credit]]]
+
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook #'org-hide-block-all)
+#+end_src
+
 **** Symbols
 :PROPERTIES:
 :ID:       aae027ae-a2b7-42b6-a833-cf038edcad3a
