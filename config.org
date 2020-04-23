@@ -5586,10 +5586,25 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
   :config
   (defvar yant/org-journal-file "~/Org/Journal.org"
     "Filename of the journal file")
-
-  (add-to-list 'org-capture-templates '("j" "Journal entry" entry (file+olp+datetree yant/org-journal-file)
-					"* %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n"
-                                        :clock-in t :clock-resume t :jump-to-captured t)))
+  (use-package doct
+    :defer t
+    :config
+    (asoc-put! org-capture-templates
+	       "j"
+               (cdar (doct '("Journal entry"
+			     :keys "j"
+			     :type entry
+			     :file yant/org-journal-file
+			     :datetree t
+			     :clock-in t
+			     :clock-resume t
+			     :jump-to-captured t
+			     :template
+			     ("* %?"
+			      ":PROPERTIES:"
+			      "CREATED: %U"
+			      ":END:\n"))))
+               'replace)))
 #+end_src
 
 **** TODO Files
@@ -8330,7 +8345,9 @@ ignoring the previously saved values."
 :ID:       fbb770b4-2232-431d-b2e5-75d001ff49b0
 :END:
 #+begin_src emacs-lisp
-(when init-flag
+  (when init-flag
+  (use-package org-capture
+    :config
 #+end_src
 Capturing is an important part of my workflow. It allows me to quickly note down the task or thought for future consideration and continue the current task.
 This should be done quickly, and from any place (not only from inside emacs):
@@ -8412,90 +8429,440 @@ Currently =org-capture-pop-frame= resets the line truncation state, which is rat
 :CREATED:  [2017-12-28 Thu 21:51]
 :ID:       e3d02bee-a924-4808-9a2f-fe577065038d
 :END:
+
+To simplify defining the capture templates, I use =doct= package
+
+#+begin_src emacs-lisp
+(use-package doct
+  :straight (doct :type git :host github :repo "progfolio/doct")
+  :commands (doct))
+#+end_src
+
 All these templates generally record the creation time in =:CREATED:=
 - TODO item :: Normal TODO item.
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "n"
+           (cdar (doct
+		  '("TODO item"
+		    :keys "n"
+                    :type entry
+                    :file "~/Org/inbox.org"
+                    :clock-in t
+                    :clock-resume t
+                    :template
+                    ("* TODO %? %a"
+                     ":PROPERTIES:"
+                     ":CREATED: %U"
+                     ":END:"
+                     "\n")))))
+#+end_src
 - singular TODO item :: Normal TODO item with time bonus on done (60 minutes) - used for the items, which are unlikely to be time tracked.
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "t"
+           (cdar  (doct '("Singular TODO item"
+			  :keys "t"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* TODO %? %a"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":ORG-TIME-BONUS-ON-DONE: 60"
+			   ":END"
+			   "\n"))))
+           'replace)
+#+end_src
 - Habit :: Habit. I default it to no logging.
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "h"
+           (cdar  (doct '("Habit"
+			  :keys "h"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* NEXT %?"
+                           ":SCHEDULED: <%<%Y-%m-%d %a .+1d>>" 
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+                           ":STYLE: habit"
+                           ":REPEAT_TO_STATE: NEXT"
+                           "LOGGING: DONE(!)"
+                           "ARCHIVE: %%s_archive::*Habits"
+			   ":ORG-TIME-BONUS-ON-DONE: 60"
+			   ":END"
+			   "\n"))))
+           'replace)
+#+end_src
 - Meeting/Event :: Scheduled event. It is saved to =org-gcal= org file.
-- Project :: I need literature review, reports and ideas in most of the cases.
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "M"
+           (cdar  (doct '("Scheduled even/meeting"
+			  :keys "M"
+			  :type entry
+			  :file "~/Org/schedule.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* %? :%^G:"
+                           "%^T"
+			   "\n"))))
+           'replace)
+#+end_src
+- Project :: A large task that needs to be studied systematically. A typical project includes the following:
+  1. Literature review to find out what is known about the topic. I only put my notes and thoughts on the literature here.
+  2. Research plan to plan what I need to do to fulfil the project
+  3. Results of the executing the plan and analysis of those results
+  4. Discussion about the meaning of the results in the context of literature
+  5. Conclusion and possible future directions
+  6. Public reports and/or paperwork associated with the project
+     1. Paperwork
+     2. Conference talks/posters
+     3. Publications in public domain
+     4. Funding applications
+  7. List of resources I plan to read, related to the project. I keep this separate from literature review to avoid cluttering.
+  8. Ideas, which may be useful for the project. It is "Inbox" of the project. The items may later come to other sections.
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "P"
+           (cdar  (doct '("Research project"
+			  :keys "P"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* TODO #project %^{Project title} :%^G:NOARCHIVE:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
+                           ":CATEGORY: %^{Category}"
+			   ":END"
+                           "#A short summary about the project."
+                           "\n%?"
+                           "** TODO Literature review"
+                           "# Notes about what is known about the topic\n"
+                           "** TODO Research plan"
+                           "# Action plan to complete the project. All the raw data (if any) is stored here.\n"
+                           "** Results"
+                           "# The raw data is analysed here to be put into human-readable form (in non-trivial ways)."
+                           "# Plots, important observations and thoughs are coming here.\n"
+                           "** Discussion"
+                           "# Trying to make sense of the results. If possible, comparing with similar literature.\n"
+                           "** TODO Conclusion"
+                           "# Takeouts of the project and possible things to be done in future."
+                           "** Reports"
+                           "*** Paperwork :REFILE:"
+                           "*** Presentations :REFILE:"
+                           "*** Papers :REFILE:"
+                           "*** Funding applications :REFILE:"
+                           "** Papers to read :REFILE:"
+                           "** Ideas :REFILE:"))))
+           'replace)
+#+end_src
 - Conference presentation/poster :: I mark this with =conference= tag. Typical workflow here is:
-     1. Write an abstract
-     2. Revise abstract (habit, since it is multiple times most likely)
-     3. Submit abstract
-     4. Get accepted
-     5. Handle finance
-	- Apply for funding
-	- Book flight
-	- Book hotel
-	- Register for conference
-     6. Make presentation/poster
-     7. Do trial + further revisions (habit)
-     8. Print poster if it is poster
-     9. Present
-     10. Reimburse money
+  1. Write an abstract
+  2. Revise abstract (habit, since it is multiple times most likely)
+  3. Submit abstract
+  4. Get accepted
+  5. Handle finance
+     - Apply for funding
+     - Book flight
+     - Book hotel
+     - Register for conference
+  6. Make presentation/poster
+  7. Do trial + further revisions (habit)
+  8. Print poster if it is poster
+  9. Present
+  10. Reimburse money
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "p"
+           (cdar  (doct '("Conference presentation/poster"
+			  :keys "p"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* NEXT #%^{type|presentation|poster} %^{Title of presentation/poster} :conference:NOARCHIVE:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+                           ":ATTACH_DIR_INHERIT: t"
+			   ":END"
+                           "** NEXT Abstract"
+                           "** TODO Revise"
+                           ":PROPERTIES:"
+                           ":REPEAT_TO_STATE: NEXT"
+                           ":LOGGING: nil"
+                           ":END:"
+                           "** TODO Submit abstract"
+                           "DEADLINE: %^t"
+                           "** TODO Get accepted"
+                           "** TODO Paperwork"
+                           "*** TODO Register for the conference"
+                           "*** TODO Apply for conference funding"
+                           "*** TODO Book a flight"
+                           "*** TODO Book accomodation"
+                           "** TODO Presentation draft"
+                           "** TODO Trial presentation"
+                           "** TODO Print poster/slides"
+                           "** TODO Present"
+                           "** TODO Submit the claim"
+                           "** Get reimbursement"))))
+           'replace)
+#+end_src
 - Research publication :: I mark this with =publication= tag. Typical workflow here is:
-     1. Write outline
-	1. Introduction
-	2. Methodology
-	3. Results
-	4. Discussion
-	5. Conclusions
-	6. Abstract
-     2. Revise (habit)
-     3. Write cover letter
-     4. Submit
-     5. Revise according to comments (habit)
-     6. Get accepted
-     7. Publish in ArXiv before journal take over the copyright
-     8. Publish in journal
-     9. Add to publication list
+  1. Write outline
+     1. Introduction
+     2. Methodology
+     3. Results
+     4. Discussion
+     5. Conclusions
+     6. Abstract
+  2. Revise (habit)
+  3. Write cover letter
+  4. Submit
+  5. Revise according to comments (habit)
+  6. Get accepted
+  7. Publish in ArXiv before journal take over the copyright
+  8. Publish in journal
+  9. Add to publication list
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "J"
+           (cdar  (doct '("Journal publication"
+			  :keys "J"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* NEXT #paper %^{Aproximate title of the paper} :publication:NOARCHIVE:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+                           ":ATTACH_DIR_INHERIT: t"
+			   ":END"
+                           "\n%?"
+                           "** NEXT Outline"
+                           "DEADLINE: %^t"
+                           "*** TODO Abstract"
+                           "*** NEXT Introduction"
+                           "*** TODO Methods"
+                           "*** TODO Results"
+                           "*** TODO Discussion"
+                           "*** TODO Conclusions"
+                           "** TODO Revise"
+                           ":PROPERTIES:"
+                           ":REPEAT_TO_STATE: NEXT"
+                           ":LOGGING: nil"
+                           ":END:"
+                           "** TODO Cover letter"
+                           "** TODO Submit"
+                           "** TODO Revise"
+                           ":PROPERTIES:"
+                           ":REPEAT_TO_STATE: NEXT"
+                           ":LOGGING: nil"
+                           ":END"
+                           "** TODO Get accepted"
+                           "** TODO Publish on ArXiv"
+                           "** TODO Get published"
+                           "** TODO Add to publication list"))))
+           'replace)
+#+end_src
+- Research funding application :: I mark this with =grant= tag. The usual funding application workflow includes:
+  1. Budget
+  2. Abstract/summary
+  3. Introduction and motivation of the research
+  4. Research goal, objective, and content
+     1. Research goal
+     2. Research objective
+     3. Details of how to solve the research objective
+  5. Research plan and practicability analysis
+     1. Research plan / stage #1..#n
+     2. Practicability analysis
+  6. Unique features and innovation point
+  7. Annual research plan and expected results (including the activity of academic exchange, international collaboration, etc.)
+  8. Background, prior work, and availability of equipment
+     1. Research background or prior work related to the proposal
+     2. Availability of equipment
+  9. References
+  10. University paperwork
+  11. Application paperwork
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "F"
+           (cdar  (doct '("Funding/grant application"
+			  :keys "F"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* TODO #proposal %^{Project title} :%^G:NOARCHIVE:grant:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":END"
+                           "#A short summary about the proposal."
+                           "# Reference proposal template: [[id:208e5431-bd03-4250-b36e-863ffbdcba6b][Prepare the project proposal]]"
+                           "# I should not forget next time that I will need to fill a form and get the school stamp before submitting the proposal for initial review."
+                           "\n%?"
+                           "** TODO Proposal outline"
+                           "*** TODO Budget"
+                           "*** TODO Research profile"
+                           "*** TODO Summary"
+                           "*** NEXT Introduction and motivation of research"
+                           "*** TODO Research goal, objective, and content"
+                           "**** Research goal"
+                           "**** Research objective"
+                           "**** Details of how to solve the research objective"
+                           "*** TODO Research plan and practicability analysis"
+                           "**** Research plan"
+                           "**** Practicability analysis"
+                           "*** TODO Unique features and innovation point"
+                           "*** TODO Annual research plan and expected results (including the activity of academic exchange, international collaboration, etc.)"
+                           "*** TODO Background, prior work, and availability of equipment"
+                           "**** Research background or prior work related to the proposal"
+                           "**** Availability of equipment"
+                           "*** TODO References"
+                           "** TODO Revise"
+                           ":PROPERTIES:"
+                           ":REPEAT_TO_STATE: NEXT"
+                           ":LOGGING: nil"
+                           ":END:"
+                           "** TODO Prepare univesity intellectual property paperwork"
+                           "** TODO Submit to university review"
+                           "** TODO Submit the grant application"
+                           "** Get accepted"))))
+           'replace)
+#+end_src
 - Link from browser :: It has =:SOURCE:= with URL of the page and page title in headline. =:SOURCE:= is the only place, where the URL is shown. I tag the entry with tag =BOOKMARK= to make it clear.
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "b"
+           (cdar  (doct '("Link from browser"
+			  :keys "b"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* TODO %? %:description :BOOKMARK:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":Source: %:link"
+			   ":END"))))
+           'replace)
+#+end_src
 - Generic link :: Same as link from browser, but silent (don't raise the capture buffer)
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "B"
+           (cdar  (doct '("Generic link"
+			  :keys "B"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :immediate-finish t
+			  :template
+			  ("* TODO %:description :BOOKMARK:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":Source: %:link"
+			   ":END"
+                           "%i"))))
+           'replace)
+#+end_src
 - Selection from browser :: Same as previous, but selection is used as headline
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "s"
+           (cdar  (doct '("Selection from browser"
+			  :keys "s"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* TODO %? :BOOKMARK:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":Source: %:link"
+			   ":END"
+                           "%i"))))
+           'replace)
+#+end_src
 - Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=.
 #+begin_src emacs-lisp
-(setq org-capture-templates
-      (append org-capture-templates
-	      '(("n" "TODO item" entry (file "~/Org/inbox.org")
-		 "* TODO %? %a\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :clock-in t :clock-resume t)
-		("m" "singular TODO item" entry (file "~/Org/inbox.org")
-		 "* TODO %? %a\n:PROPERTIES:\n:CREATED: %U\n:ORG-TIME-BONUS-ON-DONE: 60\n:END:\n\n" :clock-in t :clock-resume t)
-		("p" "Conference presentation/poster" entry (file "~/Org/inbox.org")
-		 "* NEXT [presentation/poster] %^{Title of presentation/poster} :conference:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n** NEXT Write an abstract\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Submit abstract\nDEADLINE: %^t\n** TODO Get accepted\n** TODO Finance matters\n*** TODO Apply for conference funding\n*** TODO Book a flight\n*** TODO Book accomodation\n*** TODO Register for a conference\n** TODO Make presentation/poster\n** TODO Trial presentation\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Print poster/slides\n** TODO Present\n** TODO Submit the claim\n** Get reimbursement\n\n" :clock-in t :clock-resume t)
-		("J" "Journal publication" entry (file "~/Org/inbox.org")
-		 "* NEXT [paper] %^{Aproximate title of the paper} :publication:NOARCHIVE:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Short description}\n** TODO Outline\nDEADLINE: %^t\n*** NEXT Abstract\n*** TODO Introduction\n*** TODO Methods\n*** TODO Results\n*** TODO Discussion\n*** TODO Conclusions\n** TODO Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Cover letter\n** TODO Submit\n** Revise\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:LOGGING: nil\n:END:\n** TODO Get accepted\n** TODO Publish on ArXiv\n** TODO Get published\n** TODO Add to pub list\n\n" :clock-in t :clock-resume t)
-		("P" "Research project" entry (file "~/Org/inbox.org")
-		 "* TODO %^{Project title} :%^G:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?\n** TODO Literature review\n*** TODO Papers :REFILE:\n** TODO Summary\n** TODO Reports\n** Ideas\n\n" :clock-in t :clock-resume t)
-		("e" "Email" entry (file "~/Org/inbox.org")
-		 "* TODO %? email %:from: %:subject :EMAIL:\n:PROPERTIES:\n:CREATED: %U\n:EMAIL-SOURCE: %l\n:END:\n\n" :clock-in t :clock-resume t)
-		("b" "Link from browser" entry (file "~/Org/inbox.org")
-		 "* TODO %? %:description :BOOKMARK:\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n\n" :clock-in t :clock-resume t)
-		("B" "Generic link" entry (file "~/Org/inbox.org")
-		 "* TODO %:description :BOOKMARK:\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n\n" :immediate-finish t)
-		("s" "Selection from browser" entry (file "~/Org/inbox.org")
-		 "* TODO %? :BOOKMARK:\n%(replace-regexp-in-string \"\n.*\" \"\" \"%i\")\n:PROPERTIES:\n:CREATED: %U\n:Source: %:link\n:END:\n%i\n\n" :clock-in t :clock-resume t)
-		("h" "Habit" entry (file "~/Org/inbox.org")
-		 "* NEXT %?\nSCHEDULED: <%<%Y-%m-%d %a .+1d>>\n:PROPERTIES:\n:CREATED: %U\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:LOGGING: DONE(!)\n:ARCHIVE: %%s_archive::* Habits\n:END:\n%U\n\n")
-		("M" "Scheduled event/Meeting" entry (file "~/Org/schedule.org")
-		 "* %? :%^G:\n%^T\n")
-                ("r" "Rss entry" entry (file "~/Org/inbox.org")
-                 "* [[%:link][%^{Title|%:description}]] :rss:\n:PROPERTIES:\n:CREATED: %U\n:END:")
-		("C" "Contacts" entry (file "~/Org/contacts.org")
-		 "* %(org-contacts-template-name)
-  :PROPERTIES:
-  :EMAIL: %(org-contacts-template-email)
-  :PHONE:
-  :ALIAS:
-  :NICKNAME:
-  :IGNORE:
-  :ICON:
-  :NOTE:
-  :ADDRESS:
-  :BIRTHDAY:
-  :END:"\n\n))))
+(asoc-put! org-capture-templates
+	   "e"
+           (cdar  (doct '("Email"
+			  :keys "e"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* TODO %? #email -> $:from %:subject :EMAIL:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+                           ":EMAIL-SOURCE: %l"
+			   ":END"))))
+           'replace)
 #+end_src
+- Rss entry :: An rss to be tracked with =elfeed=. The url is parsed to derive a valid rss page
+*************** TODO make this work
+*************** END
 #+begin_src emacs-lisp
-)
+(asoc-put! org-capture-templates
+	   "r"
+           (cdar  (doct '("Rss entry"
+			  :keys "r"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* TODO [[%:link][%^{Title|%:description}]] :rss:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":END"))))
+           'replace)
+#+end_src
+- New contact :: Add a person to contact list. 
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "C"
+           (cdar  (doct '("Contact"
+			  :keys "C"
+			  :type entry
+			  :file "~/Org/contacts.org"
+			  :template
+			  ("* %(org-contacts-template-name)"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":EMAIL: %(org-contacts-template-email)"
+			   ":PHONE:"
+			   ":ADDRESS:"
+			   ":BIRTHDAY:"
+			   ":END"
+			   "\n"))))
+           'replace)
+#+end_src
+
+Reverse the order of template to make them appear as I put them in the list above
+#+begin_src emacs-lisp
+(setq org-capture-templates (nreverse org-capture-templates))
+#+end_src
+
+#+begin_src emacs-lisp
+))
 #+end_src
 
 **** Refile
