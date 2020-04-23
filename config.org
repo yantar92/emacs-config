@@ -10351,6 +10351,18 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 \\usepackage{arevmath}")
 #+end_src
 
+
+*************** TODO rewrite into smaller chunks
+*************** END
+
+#+begin_src emacs-lisp
+(use-package doom-themes
+  :if init-flag
+  :straight t
+  :config
+  (doom-themes-org-config))
+#+end_src
+
 **** Agenda
 :PROPERTIES:
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
