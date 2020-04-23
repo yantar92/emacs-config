@@ -1,3 +1,6 @@
+:PROPERTIES:
+:ID:       922b85aa-b01d-47ac-b34e-99201b7f9abf
+:END:
 #+SETUPFILE: ~/Org/common.setup
 #+AUTHOR: Ihor Radchenko
 #+EMAIL: yantar92@gmail.com
@@ -25,9 +28,11 @@ CLOCK: [2017-12-28 Thu 18:41]--[2017-12-28 Thu 18:42] =>  0:01
 CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 :END:
 
-This is me 
+This is me
 
 #+begin_src emacs-lisp
+;; setting this is not only fancy, but actually used
+;; for example, by yasnippet when filling elisp file header
 (setq user-full-name "Ihor Radchenko")
 (setq user-mail-address "yantar92@gmail.com")
 #+end_src
@@ -707,6 +712,7 @@ Show some text in buffer differently
 **** Selection
 :PROPERTIES:
 :CREATED:  [2020-04-20 Mon 01:47]
+:ID:       15d30e4a-1e47-4dd9-b7fc-6a90b123dccc
 :END:
 
 #+begin_src emacs-lisp
@@ -1589,47 +1595,48 @@ Hence, I had to define special versions of =boon=-like bindings for helm.
 The basic idea is to prefix movement commands with meta. 
 
 #+begin_src emacs-lisp
-(use-package helm
-  :if init-flag
-  :straight (helm :type git :host github :repo "emacs-helm/helm"
-		  :fork (:host github
-			       :repo "yantar92/helm"))
-  :diminish helm-mode
-  :bind (
-	 ("M-x" . helm-M-x)
-	 ("M-y" . helm-show-kill-ring)
-	 ("<f1> a" . helm-apropos)
-         ("C-x c" . nil)
-	 :map helm-map
-	 ("C-M-y" . helm-yank-selection)
-	 ("M-j" . helm-next-line)
-	 ("M-k" . helm-previous-line)
-	 ("M-o" . helm-next-source)
-	 ("M-i" . helm-previous-source)
-	 ("M-l" . helm-execute-persistent-action)
-	 ("C-u" . helm-execute-persistent-action)
-	 ("C-M-h" . backward-kill-word)
-	 ("M-h" . backward-kill-word)
-	 ("C-h" . backward-delete-char-untabify)
-	 :map helm-find-files-map
-	 ("M-l" . nil)
-         :map boon-goto-map
-         ("e" . helm-resume)
-	 )
-  :defines helm-global-mode
-  :custom
-  (helm-split-window-inside-p t)
-  (helm-move-to-line-cycle-in-source t)
-  (helm-ff-file-name-history-use-recentf t)
-  (helm-mode-fuzzy-match t)
-  :config
-  (use-package helm-config)
-  (use-package helm-files)
-  (use-package helm-command)
-  (define-global-minor-mode helm-global-mode helm-mode
-    (lambda()
-      (helm-mode 1)))
-  (helm-global-mode))
+  (use-package helm
+    :if init-flag
+    :straight (helm :type git :host github :repo "emacs-helm/helm"
+		    :fork (:host github
+				 :repo "yantar92/helm"))
+    :diminish helm-mode
+    :after boon
+    :bind (
+	   ("M-x" . helm-M-x)
+	   ("M-y" . helm-show-kill-ring)
+	   ("<f1> a" . helm-apropos)
+	   ("C-x c" . nil)
+	   :map helm-map
+	   ("C-M-y" . helm-yank-selection)
+	   ("M-j" . helm-next-line)
+	   ("M-k" . helm-previous-line)
+	   ("M-o" . helm-next-source)
+	   ("M-i" . helm-previous-source)
+	   ("M-l" . helm-execute-persistent-action)
+	   ("C-u" . helm-execute-persistent-action)
+	   ("C-M-h" . backward-kill-word)
+	   ("M-h" . backward-kill-word)
+	   ("C-h" . backward-delete-char-untabify)
+	   :map helm-find-files-map
+	   ("M-l" . nil)
+	   :map boon-goto-map
+	   ("e" . helm-resume)
+	   )
+    :defines helm-global-mode
+    :custom
+    (helm-split-window-inside-p t)
+    (helm-move-to-line-cycle-in-source t)
+    (helm-ff-file-name-history-use-recentf t)
+    (helm-mode-fuzzy-match t)
+    :config
+    (use-package helm-config)
+    (use-package helm-files)
+    (use-package helm-command)
+    (define-global-minor-mode helm-global-mode helm-mode
+      (lambda()
+	(helm-mode 1)))
+    (helm-global-mode))
 #+end_src
 
 *** Company
@@ -2480,8 +2487,7 @@ I use =helm-mini= to switch buffers
 	      ("b" . helm-mini)
 	      :map boon-backward-search-map
 	      ("b" . helm-mini))
-  :init
-  (use-package boon))
+  :after boon)
 #+end_src
 **** Go to scratch key binding
 :PROPERTIES:
@@ -3313,39 +3319,11 @@ I do not use mouse as much as possible and discourage myself to use it unnecessa
 :ID:       61ed40af-8165-4ffa-9412-96d802bb8e18
 :END:
 
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-22 Wed>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-04-21 18:00
-:END:
-:LOGBOOK:
-CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
-CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
-CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
-CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
-CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
-CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
-CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
-CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
-CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
-CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-*************** END
-
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
   :if init-flag
   :config
   (use-package move-text
-    :if init-flag
     :straight t
     :bind (:map boon-command-map
 		("M-j" . meta-move-line-down)
@@ -3428,6 +3406,36 @@ Add meta-bindings
 :CREATED:  [2019-08-25 Sun 19:56]
 :ID:       b8575b61-511d-482b-ae5b-bd542db5f443
 :END:
+
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-23 Thu>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-04-21 18:00
+:END:
+:LOGBOOK:
+CLOCK: [2020-04-22 Wed 22:52]--[2020-04-22 Wed 23:07] =>  0:15
+CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
+CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
+CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
+CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
+CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
+CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
+CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
+CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
+CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
+CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
+
+
 =emacs-anywhere= allows to invoke emacs for editing in any other application
 
 #+begin_src emacs-lisp
@@ -5693,8 +5701,6 @@ CLOCK: [2019-08-03 Sat 00:01]--[2019-08-03 Sat 00:02] =>  0:01
 - State "NEXT"       from "TODO"       [2019-05-07 Tue 10:34]
 :END:
 
-
-
 #+begin_src emacs-lisp
 (defun yant/org-make-link-description-function (link desk)
   "Return description of the link LINK according to :desk link property.
@@ -5921,7 +5927,6 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 (org-link-set-parameters "id"
 			 :complete #'org-id-link-complete
                          :desk #'org-id-link-desk)
-
 #+end_src
 
 ****** TODO Footnotes
@@ -6118,61 +6123,62 @@ It is handy to be able to find all other headlines having links to current headl
 *************** TODO maybe move showing overlay in agenda to appearance
 *************** END
      #+begin_src emacs-lisp
-(add-to-list 'org-default-properties "SHOWFROMDATE")
-(bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-mode-map)
-(bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-agenda-mode-map)
-(add-to-list 'org-agenda-bulk-custom-functions '(?F org-command-set-SHOWFROMDATE-property))
+       (require 'org-agenda)
+       (add-to-list 'org-default-properties "SHOWFROMDATE")
+       (bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-mode-map)
+       (bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-agenda-mode-map)
+       (add-to-list 'org-agenda-bulk-custom-functions '(?F org-command-set-SHOWFROMDATE-property))
 
-(defun org-command-set-SHOWFROMDATE-property (&optional arg)
-  "Command to set :SHOWFROMDATE property for the org entry at point.
-  If NOT-IN-AGENDA is not nil, do not check whether we are in agenda now."
-  (interactive "P")
-  (if (equal major-mode 'org-agenda-mode)
-      (progn
-	(org-agenda-check-no-diary)
-	(let* ((marker (or (org-get-at-bol 'org-marker)
-			   (org-agenda-error)))
-	       (buffer (marker-buffer marker))
-	       (pos (marker-position marker))
-	       (inhibit-read-only t)
-	       ts)
-	  (org-with-remote-undo buffer
-	    (with-current-buffer buffer
-	      (widen)
-	      (goto-char pos)
-	      (org-show-context 'agenda)
-	      (funcall-interactively 'org-command-set-SHOWFROMDATE-property arg)
-              (setq ts (org-entry-get (point) "SHOWFROMDATE")))
-            (org-agenda-show-new-time marker ts " P"))))
-    (let ((property "SHOWFROMDATE"))
-      (if (equal arg '(4))
-	  (org-entry-delete (point) property)
-	(let ((value (org-read-property-value property))
-	      (fn (cdr (assoc-string property org-properties-postprocess-alist t))))
-	  (setq org-last-set-property property)
-	  (setq org-last-set-property-value (concat property ": " value))
-	  ;; Possibly postprocess the inserted value:
-	  (when fn (setq value (funcall fn value)))
-	  (unless (equal (org-entry-get nil property) value)
-	    (org-entry-put nil property value)))))))
+       (defun org-command-set-SHOWFROMDATE-property (&optional arg)
+	 "Command to set :SHOWFROMDATE property for the org entry at point.
+	 If NOT-IN-AGENDA is not nil, do not check whether we are in agenda now."
+	 (interactive "P")
+	 (if (equal major-mode 'org-agenda-mode)
+	     (progn
+	       (org-agenda-check-no-diary)
+	       (let* ((marker (or (org-get-at-bol 'org-marker)
+				  (org-agenda-error)))
+		      (buffer (marker-buffer marker))
+		      (pos (marker-position marker))
+		      (inhibit-read-only t)
+		      ts)
+		 (org-with-remote-undo buffer
+		   (with-current-buffer buffer
+		     (widen)
+		     (goto-char pos)
+		     (org-show-context 'agenda)
+		     (funcall-interactively 'org-command-set-SHOWFROMDATE-property arg)
+		     (setq ts (org-entry-get (point) "SHOWFROMDATE")))
+		   (org-agenda-show-new-time marker ts " P"))))
+	   (let ((property "SHOWFROMDATE"))
+	     (if (equal arg '(4))
+		 (org-entry-delete (point) property)
+	       (let ((value (org-read-property-value property))
+		     (fn (cdr (assoc-string property org-properties-postprocess-alist t))))
+		 (setq org-last-set-property property)
+		 (setq org-last-set-property-value (concat property ": " value))
+		 ;; Possibly postprocess the inserted value:
+		 (when fn (setq value (funcall fn value)))
+		 (unless (equal (org-entry-get nil property) value)
+		   (org-entry-put nil property value)))))))
 
-(defun org-set-SHOWFROMDATE-property (PROMPT &rest args)
-  "Read :SHOWFROMDATE: property."
-  (org-read-date 'with-time nil nil PROMPT))
+       (defun org-set-SHOWFROMDATE-property (PROMPT &rest args)
+	 "Read :SHOWFROMDATE: property."
+	 (org-read-date 'with-time nil nil PROMPT))
 
-(add-to-list 'org-property-set-functions-alist '("SHOWFROMDATE" . org-set-SHOWFROMDATE-property))
+       (add-to-list 'org-property-set-functions-alist '("SHOWFROMDATE" . org-set-SHOWFROMDATE-property))
 
-(defun org-agenda-skip-before-SHOWFROMDATE-property ()
-  "Skip agenda item if :SHOWFROMDATE: property is set and the day is before it"
-  (save-restriction
-    (widen)
-    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-      (let ((showfromdate (org-read-date 't 't (or (org-entry-get (point) "SHOWFROMDATE")
-						   "")))
-	    (currenttime (org-read-date 't 't "")))
-	(if (time-less-p currenttime showfromdate)
-	    next-headline
-	  nil)))))
+       (defun org-agenda-skip-before-SHOWFROMDATE-property ()
+	 "Skip agenda item if :SHOWFROMDATE: property is set and the day is before it"
+	 (save-restriction
+	   (widen)
+	   (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+	     (let ((showfromdate (org-read-date 't 't (or (org-entry-get (point) "SHOWFROMDATE")
+							  "")))
+		   (currenttime (org-read-date 't 't "")))
+	       (if (time-less-p currenttime showfromdate)
+		   next-headline
+		 nil)))))
      #+end_src
 - =:SHOWDATES:= (always inheriting) :: It contains dairy =sexps= to set when the project should be shown. For example, I may want to work on Saturday once or twice, but the working items should not be shown on weekend normally. Hence, I can define it. Or some things can only be done on specific dates (say, going to some shop, which is open few days a week only)
      #+begin_src emacs-lisp
@@ -10714,7 +10720,7 @@ Patching the relevant function to not put that tooltip into the overlay.
 				 "The clock is running in this item")))))))))))
 #+end_src
 
-**** Babel
+**** Blocks (source blocks, quotes, etc)
 :PROPERTIES:
 :ID:       6fed68f0-c4ca-43f3-b487-4b58d9dc1315
 :END:
