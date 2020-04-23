@@ -3371,10 +3371,10 @@ There is also built-in skeleton mode, but =yasnippet= also has a good user-contr
   :if init-flag
   :straight t
   :diminish (yas-minor-mode . " ⇶_")
+  :hook ((org-mode latex-mode markdown-mode prog-mode) . yas-minor-mode)
   :config
   (use-package yasnippet-snippets
-    :straight t)
-  (yas-global-mode +1))
+    :straight t))
 #+end_src
 
 *** Undo
