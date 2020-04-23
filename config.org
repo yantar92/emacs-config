@@ -203,10 +203,13 @@ Setup local =load-path= for whatever is not handled by =straigh.el=
 #+end_src
 
 Now, I can setup =use-package= to simplify subsequent package configuration
+*************** TODO make always defer work
+*************** END
   #+begin_src emacs-lisp
-    (eval-and-compile (straight-use-package 'use-package))
-    (use-package diminish :straight t)
-    (use-package bind-key)
+(eval-and-compile (straight-use-package 'use-package))
+;;(setq use-package-always-defer t)
+(use-package diminish :straight t)
+(use-package bind-key)
   #+end_src
 
 Load org to make sure that obsolete built-in org version is not used.
