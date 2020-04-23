@@ -269,6 +269,21 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
     ("q" nil)))
 #+END_SRC
 
+** TODO Elisp libraries to be used further
+:PROPERTIES:
+:CREATED:  [2020-04-22 Wed 16:39]
+:ID:       7b9a8c35-f3f9-4390-8e5e-fb863abd3f8b
+:END:
+
+Extra functions for association lists
+*************** TODO study functions
+*************** END
+#+begin_src emacs-lisp
+  (use-package asoc
+    :demand t
+    :straight (asoc.el :type git :host github :repo "troyp/asoc.el"))
+#+end_src
+
 ** Performance
 :PROPERTIES:
 :CREATED:  [2018-09-12 Wed 19:48]
