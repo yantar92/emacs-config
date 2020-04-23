@@ -65,12 +65,17 @@ Everything I intend to do is kept in my org files, which are automatically loade
 :END:
 
 Init file, which loads this file.
-#+begin_src emacs-lisp :tangle "~/.emacs.d/init.el"
+#+begin_src emacs-lisp :tangle "~/.emacs.d/init.el" :var org-file=(buffer-file-name) :var el-file="~/.emacs.d/config.el"
 ;;(package-initialize)
 (setq init-flag t)
 (setq comp-deferred-compilation t) ;; enable automatic native-compilation
-(load "~/.emacs.d/config.el")
+(when (file-newer-than-file-p org-file el-file)
+  (unless (call-process "emacs" nil nil nil "--batch" "-l" "ob-tangle" "--eval"
+			(format "(org-babel-tangle-file \"%s\" \"%s\" \"emacs-lisp\")" org-file el-file)))
+  (error "Tangling %s failed" org-file))
+(load el-file)
 #+end_src
+
 ** Emacs server settings
 :PROPERTIES:
 :ID:       5d8e1dca-a849-4980-bfde-cbf02801e92b
