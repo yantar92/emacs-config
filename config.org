@@ -2084,7 +2084,7 @@ Show errors in code with =flycheck=, in tooltips (via =flycheck-tip=).
   :if init-flag
   :straight t
   :diminish (flycheck-mode . " λ✓")
-  :hook ((prog-mode) . flycheck-mode)
+  :hook ((prog-mode lisp-interaction-mode) . flycheck-mode)
   :config
   (use-package flycheck-tip
     :straight t
