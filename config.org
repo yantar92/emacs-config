@@ -8006,9 +8006,14 @@ Also, hide the contents once task is clocked out.
   :init
   (setq org-contacts-files '("/home/yantar92/Org/contacts.org"))
   :config
-  (use-package helm-org-contacts)
-  )
+  (use-package helm-org-contacts
+    :straight (helm-org-contacts :host github :repo "tmalsburg/helm-org-contacts")))
 #+END_SRC
+
+*************** TODO make proper contacts link type
+*************** END
+
+
 **** TODO Column mode
 :PROPERTIES:
 :ID:       0d6d40dd-e4cb-4297-8695-6b66f2a1a706
