@@ -5459,7 +5459,9 @@ The task is any item with todo keyword and no subtask.
   #+begin_src emacs-lisp
 (defun org-trigger-doing (arg)
   "Restore DOING keyword after DOING->DONE or DOING->DOING change.
-If the task is scheduled, schedule it for tomorrow."
+DOING->DOING: If the task is unscheduled or has no repeater, schedule it for tomorrow.
+DOING->DOING: If the task has a repeater, re-schedule it accordingly
+DOING->DONE:  Cancel repeater and mark the task DONE."
   (when (and (eq (plist-get arg :type) 'todo-state-change)
 	     (string= (plist-get arg :from) "DOING")
              (or (string= (plist-get arg :to) "DOING")
@@ -5467,12 +5469,18 @@ If the task is scheduled, schedule it for tomorrow."
     (let* ((pos (plist-get arg :position))
 	   (schedule-info (org-with-point-at pos (org-element-property :scheduled (org-element-at-point)))))
       (when schedule-info
-	(if (eq major-mode 'org-agenda-mode)
-            (org-agenda-schedule nil "+1d")
-	  (org-schedule nil "+1d")))
-      (when (string= (plist-get arg :to) "DONE")
-	(unless (y-or-n-p "Trying to mark DOING task as DONE. Proceed?")
-	  (org-todo "DOING")))
+	(let ((repeater (or (org-with-point-at pos (org-get-repeat))
+			    "+1d")))
+          (if (string= (plist-get arg :to) "DONE")
+              (org-schedule nil ".+0d")
+	    (org-schedule nil repeater))
+	  (when (string= (plist-get arg :to) "DONE")
+	    (if (y-or-n-p "Trying to mark DOING task as DONE. Proceed? ")
+		(org-with-point-at pos
+                  
+		  (org-cancel-repeater)
+                  (org-todo "DONE"))
+	      (org-todo "DOING")))))
       (org-clock-out))))
 (add-hook 'org-trigger-hook #'org-trigger-doing)
   #+end_src
