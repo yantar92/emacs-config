@@ -8653,7 +8653,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":ORG-TIME-BONUS-ON-DONE: 60"
-			   ":END"
+			   ":END:"
 			   "\n"))))
            'replace)
 #+end_src
@@ -8677,7 +8677,7 @@ All these templates generally record the creation time in =:CREATED:=
                            "LOGGING: DONE(!)"
                            "ARCHIVE: %%S_archive_%%y.org::*Habits"
 			   ":ORG-TIME-BONUS-ON-DONE: 60"
-			   ":END"
+			   ":END:"
 			   "\n"))))
            'replace)
 #+end_src
@@ -8725,7 +8725,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":CREATED: %U"
 			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
                            ":CATEGORY: %^{Category}"
-			   ":END"
+			   ":END:"
                            "#A short summary about the project."
                            "\n%?"
                            "** TODO Literature review"
@@ -8777,7 +8777,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":ATTACH_DIR_INHERIT: t"
-			   ":END"
+			   ":END:"
                            "** NEXT Abstract"
                            "** TODO Revise"
                            ":PROPERTIES:"
@@ -8830,7 +8830,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":ATTACH_DIR_INHERIT: t"
-			   ":END"
+			   ":END:"
                            "\n%?"
                            "** NEXT Outline"
                            "DEADLINE: %^t"
@@ -8851,7 +8851,7 @@ All these templates generally record the creation time in =:CREATED:=
                            ":PROPERTIES:"
                            ":REPEAT_TO_STATE: NEXT"
                            ":LOGGING: nil"
-                           ":END"
+                           ":END:"
                            "** TODO Get accepted"
                            "** TODO Publish on ArXiv"
                            "** TODO Get published"
@@ -8890,7 +8890,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  ("* TODO #proposal %^{Project title} :%^G:NOARCHIVE:grant:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
-			   ":END"
+			   ":END:"
                            "#A short summary about the proposal."
                            "# Reference proposal template: [[id:208e5431-bd03-4250-b36e-863ffbdcba6b][Prepare the project proposal]]"
                            "# I should not forget next time that I will need to fill a form and get the school stamp before submitting the proposal for initial review."
@@ -8939,7 +8939,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":Source: %:link"
-			   ":END"))))
+			   ":END:"))))
            'replace)
 #+end_src
 - Generic link :: Same as link from browser, but silent (don't raise the capture buffer)
@@ -8956,7 +8956,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":Source: %:link"
-			   ":END"
+			   ":END:"
                            "%i"))))
            'replace)
 #+end_src
@@ -8975,7 +8975,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":Source: %:link"
-			   ":END"
+			   ":END:"
                            "%i"))))
            'replace)
 #+end_src
@@ -8994,7 +8994,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":EMAIL-SOURCE: %l"
-			   ":END"))))
+			   ":END:"))))
            'replace)
 #+end_src
 - Rss entry :: An rss to be tracked with =elfeed=. The url is parsed to derive a valid rss page
@@ -9013,7 +9013,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  ("* TODO [[%:link][%^{Title|%:description}]] :rss:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
-			   ":END"))))
+			   ":END:"))))
            'replace)
 #+end_src
 - New contact :: Add a person to contact list. 
@@ -9025,15 +9025,11 @@ All these templates generally record the creation time in =:CREATED:=
 			  :type entry
 			  :file "~/Org/contacts.org"
 			  :template
-			  ("* %(org-contacts-template-name)"
+			  ("* %(org-contacts-template-name) %?"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":EMAIL: %(org-contacts-template-email)"
-			   ":PHONE:"
-			   ":ADDRESS:"
-			   ":BIRTHDAY:"
-			   ":END"
-			   "\n"))))
+			   ":END:"))))
            'replace)
 #+end_src
 
