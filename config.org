@@ -1062,6 +1062,28 @@ Fancy minor mode lighters
   :diminish (footnote-mode . " ¹⁻⁹"))
 #+end_src
 
+*** Header line
+:PROPERTIES:
+:CREATED:  [2020-04-23 Thu 20:43]
+:ID:       e0d58345-6e68-4672-a9d7-37ff73717cf3
+:END:
+
+Light face for header line.
+
+#+begin_src emacs-lisp
+  (use-package faces
+    :if init-flag
+    :after boon
+    :custom-face
+    (header-line ((t (
+		      :weight bold
+		      ;; :box ,(face-background 'boon-modeline-spc)
+		      :box (:color ,(color-darken-name (face-background 'default) 10) :line-width 5)
+		      ;; :box nil
+		      :foreground ,(color-darken-name (face-foreground 'mode-line) 20)
+		      :background ,(color-darken-name (face-background 'default) 10))))))
+#+end_src
+
 *** Mini-buffer
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 20:29]
