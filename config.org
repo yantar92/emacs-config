@@ -693,6 +693,7 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
 #+begin_src emacs-lisp
 (use-package centered-window
   :if init-flag
+  :straight (centered-window-mode :host github :repo "anler/centered-window-mode")
   :diminish (centered-window-mode . " ‖□‖")
   :after boon
   :config
