@@ -10123,13 +10123,13 @@ there is one, return it."
        (let ((cnt ?0)
 	     have-zero end links link c)
 	 (when (and (stringp zero) (string-match org-link-bracket-re zero))
-	   (push (match-string 0 zero) links)
+	   (push ((el-patch-swap match-string match-string-no-properties) 0 zero) links)
 	   (setq cnt (1- cnt) have-zero t))
 	 (save-excursion
 	   (org-back-to-heading t)
 	   (setq end (save-excursion (outline-next-heading) (point)))
 	   (while (re-search-forward org-link-any-re end t)
-	     (push (match-string 0) links))
+	     (push ((el-patch-swap match-string match-string-no-properties) 0) links))
 	   (setq links (org-uniquify (reverse links))))
 	 (cond
 	  ((null links)
