@@ -2511,7 +2511,6 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 	     ("-" . meta-undo)
 	     ("~" . boon-repeat-command)
 	     ("Q" . kmacro-end-or-call-macro)
-	     ("q" . endless/fill-or-unfill)
 	     ("z" . boon-quote-character)
 	     ("y" . transpose-chars)
 	     ("Y" . transpose-words)
@@ -3664,58 +3663,34 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 :ID:       596fe5bd-824f-4706-a2b5-d4decb90511e
 :END:
 
-#+begin_src emacs-lisp
-;; https://github.com/jethrokuan/.emacs.d/blob/master/init.el
-(defun endless/fill-or-unfill ()
-  "Like `fill-paragraph', but unfill if used twice."
-  (interactive)
-  (let ((fill-column
-         (if (eq last-command 'endless/fill-or-unfill)
-             (progn (setq this-command nil)
-                    (point-max))
-           fill-column)))
-    (call-interactively #'fill-paragraph)))
-#+end_src
-*** =Paredit=
-:PROPERTIES:
-:CREATED:  [2020-03-22 Sun 21:43]
-:ID:       e802659e-0d50-4658-95b6-fdfe2f4b65f1
-:END:
+Interactive fill/unfill paragraph at point.
 
 #+begin_src emacs-lisp
-(use-package paredit
-  :if init-flag
-  :straight t
-  :diminish (paredit-mode . " (⤑)")
-  :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . paredit-mode)
-  :config
+(when init-flag
+    ;; https://github.com/jethrokuan/.emacs.d/blob/master/init.el
+    (defun endless/fill-or-unfill ()
+      "Like `fill-paragraph', but unfill if used twice."
+      (interactive)
+      (let ((fill-column
+             (if (eq last-command 'endless/fill-or-unfill)
+		 (progn (setq this-command nil)
+			(point-max))
+               fill-column)))
+	(call-interactively #'fill-paragraph)))
   (use-package boon
     :defer t
-    :config
-    (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
-    (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-backward-slurp-sexp)
-    (meta-defun meta-forward-element :mode emacs-lisp-mode paredit-forward)
-    (meta-defun meta-backward-element :mode emacs-lisp-mode paredit-backward)
-    (bind-keys :map boon-insert-map
-	       ("M-o" . meta-move-line-right)
-               ("M-i" . meta-move-line-left))))
+    :bind (:map boon-command-map
+		("q" . endless/fill-or-unfill))))
 #+end_src
-
 ** Debugging
 :PROPERTIES:
 :ID:       749e7414-827f-45cb-9ee0-19637eb2274e
 :END:
-*** Use visible bell
+*** Command loop
 :PROPERTIES:
-:ID:       83e9e494-8646-4118-a574-b35026acd582
+:CREATED:  [2020-04-23 Thu 14:44]
 :END:
-
-Visible bell saved me from surprise prompts many times.
-
-#+begin_src emacs-lisp
-(setq visible-bell t)
-#+end_src
-*** Debug on error
+**** Debug on error
 :PROPERTIES:
 :ID:       1b3bb071-a145-43ef-826a-25dacb4c5cc2
 :END:
