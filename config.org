@@ -5630,7 +5630,7 @@ I have two ways to do it:
 	 (funcall-interactively #'org-todo))
      (cl-mapc #'org-set-property
 	      '("STYLE" "REPEAT_TO_STATE" "LOGGING" "ARCHIVE")
-	      '("habit" "NEXT" "DONE(!)" "%%s_archive::* Habits")))))
+	      '("habit" "NEXT" "DONE(!)" "%%S_archive_%%y.org::* Habits")))))
 (bind-key "C-c C-x h" #'yant/org-task-convert-to-habit org-mode-map)
 #+end_src
 
@@ -8671,7 +8671,7 @@ All these templates generally record the creation time in =:CREATED:=
                            ":STYLE: habit"
                            ":REPEAT_TO_STATE: NEXT"
                            "LOGGING: DONE(!)"
-                           "ARCHIVE: %%s_archive::*Habits"
+                           "ARCHIVE: %%S_archive_%%y.org::*Habits"
 			   ":ORG-TIME-BONUS-ON-DONE: 60"
 			   ":END"
 			   "\n"))))
@@ -9290,8 +9290,6 @@ In the case if I want to keep the task and notes, I just add =:NOARCHIVE:= tag t
 In the past I only archived the tasks, which where done before the past month, but it turned out that there are too many tasks (hundreds). When I was looking through all those tasks, I often missed some tasks I actually wanted too keep, which was sub-optimal. Now, I just consider all the done tasks as available to archive (unless marked with =:NOARCHIVE:=) and clean them regularly as a part of my [[id:26a3b0fb-17ba-4d28-8776-61502ce429bf][Work/Habits/Weekly review]].
 
 #+begin_src emacs-lisp
-(setq org-archive-mark-done nil)
-(setq org-archive-location "%s_archive::datetree/* Archived Tasks")
 (defun bh/skip-non-archivable-tasks ()
   "Skip trees that are not available for archiving."
   (save-restriction
@@ -9320,9 +9318,34 @@ In the past I only archived the tasks, which where done before the past month, b
 	  next-item)))))
 #+end_src
 
+The default archiving only allow all the task from a single org file to be archived into another single file.
+However, after several years, the archive files grew over 10Mb and every time I need to open them for archiving, Emacs hangs for a long time. 
+Modifying =org-archive--compute-location= to accept =%y= keyword for archive year [ [[https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#archiving][credit]] ]
+In addition, =%s= and =%S= in =org-archive-location= now mean file name with extension and file without last extension.
+#+begin_src emacs-lisp
+(use-package org-archive
+  :config
+  (setq org-archive-mark-done nil)
+  (setq org-archive-location "%S_archive_%y.org::datetree/* Archived Tasks")
+  (defun org-archive--compute-location (location)
+    (let* ((current-file (buffer-file-name (buffer-base-buffer)))
+           (file-non-directory (file-name-nondirectory current-file))
+           (file-sans-extension (file-name-sans-extension file-non-directory))
+           (case-fold-search nil))
+      (setq location (replace-regexp-in-string (regexp-quote "%s") file-non-directory location t)
+            location (replace-regexp-in-string (regexp-quote "%S") file-sans-extension location t)
+            location (replace-regexp-in-string (regexp-quote "%y") (format-time-string "%Y") location t))
+
+      (unless (string-match "::" location) (error "Invalid archive location: %S" location))
+
+      (let ((file (substring location 0 (match-beginning 0)))
+            (heading (substring location (match-end 0))))
+        (cons (if (org-string-nw-p file) (expand-file-name file) current-file) heading)))))
+#+end_src 
+
 Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override standard archiving function to make it possible to archive them (into separate location =org-inlinetask-archive-location=)
 #+BEGIN_SRC emacs-lisp
-(defvar org-inlinetask-archive-location "%s_archive::datetree/* Archived inline tasks"
+(defvar org-inlinetask-archive-location "%S_archive_%y.org::datetree/* Archived Inline Tasks"
   "Where to archive inline tasks.")
 (defvar org-inlinetask-max-level 100
   "Maximum level for inline task to be archived.")
