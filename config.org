@@ -1865,24 +1865,22 @@ I use company for completion just because it is easy to use.
   :if init-flag
   :straight t
   :diminish (company-mode . " ⭿")
-  :hook ((prog-mode ledger-mode) . company-mode)
-  :bind (
-	 ("M-/" . company-complete)
-	 ("C-/" . hippie-expand)
-	 :map company-active-map
-	 ("<tab>" . company-complete-common-or-cycle)
-	 ("M-j" . company-select-next)
-	 ("M-k" . company-select-previous)
-	 ("C-h" . backward-delete-char-untabify)
-         ("C-M-h" . backward-kill-word)
-         ("M-l" . nil)
-         ("M-h" . company-show-doc-buffer)
-         ("M-s" . company-filter-candidates))
-  :init
-  (setq company-idle-delay 0
-	company-minimum-prefix-length 2
-	company-selection-wrap-around t
-	company-require-match nil))
+  :hook ((prog-mode ledger-mode lisp-interaction-mode) . company-mode)
+  :custom
+  (company-idle-delay 0)
+  (company-minimum-prefix-length 2)
+  (company-selection-wrap-around t)
+  (company-require-match nil)
+  (company-transformers '(company-sort-by-occurrence))
+  :bind (:map company-active-map
+	      ("<tab>" . company-complete-common-or-cycle)
+	      ("M-j" . company-select-next)
+	      ("M-k" . company-select-previous)
+	      ("C-h" . backward-delete-char-untabify)
+              ("C-M-h" . backward-kill-word)
+              ("M-l" . nil)
+              ("M-h" . company-show-doc-buffer)
+              ("M-s" . company-filter-candidates)))
 #+end_src
 
 *** TODO Skeleton
