@@ -3749,39 +3749,13 @@ From: https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
    ;; (expr ...) not expr(...)
    debugger-stack-frame-as-list t))
 #+end_src
-*** Show current value in separate buffer
-:PROPERTIES:
-:CREATED:  [2019-08-11 Sun 15:21]
-:ID:       77bcfa1d-8a0f-47fb-a41b-a41111d5b189
-:END:
-
-#+begin_src emacs-lisp
-;; From https://www.reddit.com/r/emacs/comments/7htdzk/show_reddit_prettyprint_debugger_frames/
-
-(use-package debug
-  :if init-flag
-  :config
-  (defun gk-debugger-pp-frame ()
-    (interactive)
-    (let ((inhibit-read-only t)
-          (frame (backtrace-frame (debugger-frame-number))))
-      (set-buffer (pop-to-buffer "*BT: Frame*"))
-      (destructuring-bind (special fn &rest args) frame
-	(erase-buffer)
-	(progn
-          (insert "(" (pp-to-string fn))
-          (dolist (arg args)
-            (insert "\n" (pp-to-string arg)))
-          (insert ")"))
-	(goto-char (point-min))
-	(indent-pp-sexp))))
-  (define-key debugger-mode-map "r" 'gk-debugger-pp-frame))
-#+end_src
 *** Lorem ipsum
 :PROPERTIES:
 :CREATED:  [2019-08-15 Thu 22:10]
 :ID:       3d17a7be-9f76-4016-92e4-a55205183d97
 :END:
+
+Sometimes, I just need to have any random text in buffer for testing.
 
 #+begin_src emacs-lisp
 (use-package lorem-ipsum
