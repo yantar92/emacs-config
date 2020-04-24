@@ -3397,6 +3397,7 @@ Use a query replace version with nice highlights.
   :if init-flag
   :config
   (use-package visual-regexp
+    :straight t  
     :bind (:map boon-command-map
 		("?" . vr/query-replace))))
 #+end_src
@@ -3614,48 +3615,21 @@ Add meta-bindings
   (meta-defun meta-backward :mode undo-tree-visualizer-mode undo-tree-visualize-switch-branch-left))
 #+end_src
 
-*** TODO Editing outside emacs
+*** SOMEDAY Editing outside emacs
 :PROPERTIES:
 :CREATED:  [2019-08-25 Sun 19:56]
 :ID:       b8575b61-511d-482b-ae5b-bd542db5f443
 :END:
-
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-23 Thu>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-04-21 18:00
-:END:
 :LOGBOOK:
-CLOCK: [2020-04-22 Wed 22:52]--[2020-04-22 Wed 23:07] =>  0:15
-CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
-CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
-CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
-CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
-CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
-CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
-CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
-CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
-CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
-CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+CLOCK: [2020-04-23 Thu 14:49]--[2020-04-23 Thu 14:50] =>  0:01
 :END:
-*************** END
-
 
 =emacs-anywhere= allows to invoke emacs for editing in any other application
 
 #+begin_src emacs-lisp
 (use-package emacs_anywhere
   :disabled t
-  :straight (emacs_anywhere :type git :host github :repo "zachcurry/emacs-anywhere")
-  )
+  :straight (emacs_anywhere :type git :host github :repo "zachcurry/emacs-anywhere"))
 #+end_src
 *** Fill/unfill paragraph
 :PROPERTIES:
@@ -3699,33 +3673,33 @@ Interactive fill/unfill paragraph at point.
 :END:
 #+begin_src emacs-lisp
 (when init-flag
-(setq debug-on-error t)
-(setq debug-on-quit nil)
-(setq debug-ignored-errors '(beginning-of-line
-			     beginning-of-buffer
-			     end-of-line
-			     end-of-buffer
-			     end-of-file
-			     buffer-read-only
-			     quit
-			     file-supersession
-			     mark-inactive
-			     user-error
-                             search-failed
-			     file-missing
-                             file-date-error
-                             "Already at top level of the outline"
-			     "Attempt to delete the sole visible or iconified frame"
-                             "No such page"
-                             "use-package: :[a-z]+ wants"
-                             "The mark is not set now, so there is no region"
-                             "Search string not set"
-			     "use-package: Unrecognized keyword"
-			     "No more buttons"
-                             "No command bound to"
-			     )))
+  (setq debug-on-error t)
+  (setq debug-on-quit nil)
+  (setq debug-ignored-errors '(beginning-of-line
+			       beginning-of-buffer
+			       end-of-line
+			       end-of-buffer
+			       end-of-file
+			       buffer-read-only
+			       quit
+			       file-supersession
+			       mark-inactive
+			       user-error
+                               search-failed
+			       file-missing
+                               file-date-error
+                               "Already at top level of the outline"
+			       "Attempt to delete the sole visible or iconified frame"
+                               "No such page"
+                               "use-package: :[a-z]+ wants"
+                               "The mark is not set now, so there is no region"
+                               "Search string not set"
+			       "use-package: Unrecognized keyword"
+			       "No more buttons"
+                               "No command bound to"
+			       )))
 #+end_src
-*** Debugger key bindings
+**** Debugger key bindings
 :PROPERTIES:
 :ID:       cbca9cd1-9225-45b5-aa88-43ff09f128e5
 :END:
@@ -3735,7 +3709,21 @@ Interactive fill/unfill paragraph at point.
     :config
     (bind-key "s" #'debugger-continue debugger-mode-map))
 #+end_src
-*** =(expr ...)= instead of =expr( ... )=
+*** Appearance
+:PROPERTIES:
+:CREATED:  [2020-04-23 Thu 14:44]
+:END:
+**** Use visible bell
+:PROPERTIES:
+:ID:       83e9e494-8646-4118-a574-b35026acd582
+:END:
+
+Visible bell saved me from surprise prompts many times.
+
+#+begin_src emacs-lisp
+(setq visible-bell t)
+#+end_src
+**** =(expr ...)= instead of =expr( ... )= in debugger
 :PROPERTIES:
 :CREATED:  [2019-08-11 Sun 15:18]
 :ID:       bbf1433b-ed85-4597-aafb-2a8bb4c1cf4a
@@ -3766,17 +3754,35 @@ Sometimes, I just need to have any random text in buffer for testing.
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
 :END:
-*** =((((((= auto close parentheses =)))))))=
-:PROPERTIES:
-:CREATED:  [2019-12-23 Mon 19:36]
-:ID:       a8a2499f-32fc-43ee-b9a0-0176bf9f2ee0
-:END:
 
-#+begin_src emacs-lisp
-(use-package elec-pair
-  :if init-flag
-  :hook (emacs-lisp-mode . electric-pair-local-mode))
-#+end_src
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-24 Fri>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-04-21 18:00
+:END:
+:LOGBOOK:
+CLOCK: [2020-04-23 Thu 14:35]--[2020-04-23 Thu 14:49] =>  0:14
+CLOCK: [2020-04-22 Wed 22:52]--[2020-04-22 Wed 23:07] =>  0:15
+CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
+CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
+CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
+CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
+CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
+CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
+CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
+CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
+CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
+CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
 
 *** Help
 **** Show the continuation of unfinished keybindings
@@ -3975,6 +3981,34 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 :PROPERTIES:
 :CREATED:  [2019-07-08 Mon 20:50]
 :END:
+**** =Paredit=
+:PROPERTIES:
+:CREATED:  [2020-03-22 Sun 21:43]
+:ID:       e802659e-0d50-4658-95b6-fdfe2f4b65f1
+:END:
+:LOGBOOK:
+- Refiled on [2020-04-23 Thu 14:42]
+:END:
+
+#+begin_src emacs-lisp
+(use-package paredit
+  :if init-flag
+  :straight t
+  :diminish (paredit-mode . " (⤑)")
+  :demand t ;; I need it in scratch buffer
+  :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . paredit-mode)
+  :config
+  (use-package boon
+    :defer t
+    :config
+    (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
+    (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-backward-slurp-sexp)
+    (meta-defun meta-forward-element :mode emacs-lisp-mode paredit-forward)
+    (meta-defun meta-backward-element :mode emacs-lisp-mode paredit-backward)
+    (bind-keys :map boon-insert-map
+	       ("M-o" . meta-move-line-right)
+               ("M-i" . meta-move-line-left))))
+#+end_src
 **** Font-lock based namespace for writing modes
 :PROPERTIES:
 :ID:       5b5c84f0-e363-4e5c-b373-69ddf019f9e3
@@ -4071,7 +4105,6 @@ It warns me if the original definition changes from what I expect.
   :straight t
   :demand t)
 #+end_src
-
 
 *** Set executable flag in all the script files
 :PROPERTIES:
@@ -10577,6 +10610,7 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   (doom-themes-org-config))
 #+end_src
 
+
 **** Agenda
 :PROPERTIES:
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
@@ -10975,6 +11009,7 @@ Use UTF symbols for entities
 (add-hook 'org-mode-hook (lambda () (setq-local eldoc-documentation-function #'org-eldoc-documentation-function)))
 #+end_src
 
+
 *** Misc
 :PROPERTIES:
 :ID:       b195d9ea-e3e0-476e-b898-43b69fbd365d
@@ -11027,8 +11062,6 @@ From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bul
 :LOGBOOK:
 - Refiled on [2020-04-14 Tue 15:51]
 :END:
-
-
 
 #+begin_src emacs-lisp
 (use-package org
