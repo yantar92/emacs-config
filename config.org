@@ -9958,6 +9958,20 @@ Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current
   (add-hook 'org-ctrl-c-ctrl-c-hook #'org-toggle-inline-images-at-point))
 #+end_src
 
+Use the same binding to preview LaTeX
+#+begin_src emacs-lisp
+(use-package org
+  :if init-flag
+  :config
+  (defun yant/org-toggle-latex-fragment-at-point-maybe ()
+    "Toggle latex fragment at point or return nil if no fragment is at point."
+    (when (and (eq major-mode 'org-mode)
+	       (eq (org-element-type (org-element-context)) 'latex-fragment))
+      (org-toggle-latex-fragment)))
+  (add-hook 'org-tab-first-hook #'org-toggle-inline-images-at-point)
+  (add-hook 'org-ctrl-c-ctrl-c-hook #'yant/org-toggle-latex-fragment-at-point-maybe))
+#+end_src
+
 Justify and number the formulas
 #+begin_src emacs-lisp
 ;; from https://github.com/jkitchin/scimax/blob/master/scimax-org.el
