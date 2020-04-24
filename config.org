@@ -1864,7 +1864,7 @@ I use company for completion just because it is easy to use.
 (use-package company
   :if init-flag
   :straight t
-  :diminish company-mode
+  :diminish (company-mode . " ⭿")
   :hook ((prog-mode ledger-mode) . company-mode)
   :bind (
 	 ("M-/" . company-complete)
