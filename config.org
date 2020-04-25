@@ -8258,7 +8258,7 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
   #+end_src
 ***** Display clocked in entry
 :PROPERTIES:
-:ID:       13012cf7-322e-4433-a22c-e81b7c5feda0
+:ID:       13012cf7-322e-4433-a22c-e81b7c5feda1
 :END:
 I do not show current task in Emacs, instead I use =awesome wm= widget. Hence need to save current task in file. The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] Project/Subproject/Subsubproject/.../task=) or =[hh:mm] Capturing ...= for capturing (the title is being edited there and it does not make sense to keep that updated in widget as well).
 #+begin_src emacs-lisp
@@ -9378,6 +9378,11 @@ In addition, =%s= and =%S= in =org-archive-location= now mean file name with ext
             (heading (substring location (match-end 0))))
         (cons (if (org-string-nw-p file) (expand-file-name file) current-file) heading)))))
 #+end_src 
+
+Since the archives are not always contained in a single file, org id and text searches may not know all the archive files. Hence, I set more files in =org-agenda-text-search-extra-files= in addition to default 'agenda-archives. 
+*************** TODO make this work
+*************** END
+
 
 Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override standard archiving function to make it possible to archive them (into separate location =org-inlinetask-archive-location=)
 #+BEGIN_SRC emacs-lisp
