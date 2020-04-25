@@ -170,6 +170,12 @@ And use default git protocol for git repositories in =straight.el=
 (setq straight-vc-git-default-protocol 'ssh)
 #+end_src
 
+[2020-04-25 Sat] Because of recent change in =straigh.el=, installing packages blocks Emacs even during async compilation [[https://github.com/raxod502/straight.el/issues/511][github issue #511]]
+Fixing this
+#+begin_src emacs-lisp
+(setq straight--wait-for-async-jobs nil)
+#+end_src
+
 First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as from straight.el readme]])
 #+begin_src emacs-lisp
   (eval-and-compile
