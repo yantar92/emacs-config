@@ -74,10 +74,6 @@ Init file, which loads this file.
 ;;(package-initialize)
 (setq init-flag t)
 (setq comp-deferred-compilation t) ;; enable automatic native-compilation
-(when (file-newer-than-file-p org-file el-file)
-  (unless (call-process "emacs" nil nil nil "--batch" "-l" "ob-tangle" "--eval"
-			(format "(org-babel-tangle-file \"%s\" \"%s\" \"emacs-lisp\")" org-file el-file)))
-  (error "Tangling %s failed" org-file))
 (load el-file)
 #+end_src
 
