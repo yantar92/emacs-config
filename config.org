@@ -6767,8 +6767,7 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
       (when attach-dir-inherited-p (org-attach-tag 'off))
       (funcall OLDFUN))))
 
-(define-advice org-attach-reveal-in-emacs (:around (OLDFUN &rest args) reveal-symlink)
-  #'org-attach-reveal@reveal-symlink)
+(advice-add 'org-attach-reveal-in-emacs :around #'org-attach-reveal@reveal-symlink)
 #+END_SRC
 Files, out of the folder structure, will appear in my agenda to attach them to the relevant project (unless explicitly specified in special variable).
 
