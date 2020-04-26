@@ -10004,11 +10004,16 @@ Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current
 (use-package org
   :config
   (defun org-toggle-inline-images-at-point ()
-    (interactive)
     (when-let ((link-region (org-in-regexp org-link-bracket-re 1)))
       (save-restriction
 	(narrow-to-region (car link-region) (cdr link-region))
-	(org-toggle-inline-images)
+        (if (-intersection (overlays-at (point)) org-inline-image-overlays)
+            (mapc (lambda (ov)
+		    (when (member ov org-inline-image-overlays)
+		      (delete-overlay ov)
+                      (setq org-inline-image-overlays (delete ov org-inline-image-overlays))))
+                  (overlays-at (point)))
+          (org-display-inline-images 'include-linked 'refresh))
         't)))
   (add-hook 'org-tab-first-hook #'org-toggle-inline-images-at-point)
   (add-hook 'org-ctrl-c-ctrl-c-hook #'org-toggle-inline-images-at-point))
