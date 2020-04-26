@@ -9450,11 +9450,20 @@ This function is called by `org-archive-hook'.  The option
 	     (member org-attach-auto-tag (org-get-tags nil t));; do not ask if no attachments
 	     )
     (when (if (eq org-attach-archive-delete 'query)
-	      (yes-or-no-p (format "%s: Delete all attachments? " (org-get-heading
-								   'notags 'notodo 'nopriority 'nocomment)))
+	      (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
+								      (interactive)
+                                                                      (dired-noselect dir nil) )))
+				  (org-attach-reveal-in-emacs))))
+                (save-window-excursion
+                  (dired-pop-to-buffer dired-buf)
+                  (select-window (old-selected-window))
+		  (prog1
+		      (yes-or-no-p (format "%s: Delete all attachments? "
+					   (org-get-heading
+					    'notags 'notodo 'nopriority 'nocomment)))
+                    (kill-buffer dired-buf))))
 	    org-attach-archive-delete)
       (org-attach-delete-all t))))
-
 #+end_src
 
 Archive logbook
