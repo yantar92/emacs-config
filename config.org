@@ -6858,14 +6858,15 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 #+begin_src emacs-lisp
 (use-package org-web-tools
   :if init-flag
-  :straight t
+  :straight (org-web-tools :host github :repo "alphapapa/org-web-tools"
+			   :fork (:host github :repo "yantar92/org-web-tools"))
   :bind (:map org-mode-map
 	      ("C-c C-S-u a" . org-web-tools-archive-attach)
 	      ("C-c C-S-u o" . org-web-tools-archive-view)
 	      ("C-c C-S-u i" . org-web-tools-insert-web-page-as-entry))
   :init (use-package org-web-tools-archive)
   :config
-  (setq org-web-tools-archive-fn #'org-web-tools-archive--wget-tar)
+  ;; (setq org-web-tools-archive-fn #'org-web-tools-archive--wget-tar)
   (setq org-web-tools-archive-wget-options
 	(append (-remove-item  "--execute robots=off" org-web-tools-archive-wget-options) (list "--max-redirect=100")))
   (setq org-web-tools-archive-wget-html-only-options
