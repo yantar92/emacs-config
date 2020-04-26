@@ -4723,6 +4723,7 @@ Meta bindings for calendar
   (unless (boundp 'elfeed-search-mode-hook) (setq elfeed-search-mode-hook nil))
   ;; (add-hook 'elfeed-search-mode-hook (lambda () (toggle-truncate-lines +1)))
 
+  ;; (require 'elfeed-search)
   (define-advice elfeed-search-live-filter (:around (oldfun &optional arg) default-filter-maybe)
     "Set `elfeed-search-filter' to `elfeed-search-default-filter' when invoked with C-u prefix argument."
     (interactive "P")
@@ -8055,7 +8056,6 @@ Also, hide the contents once task is clocked out.
 *************** TODO make proper contacts link type
 *************** END
 
-
 **** TODO Column mode
 :PROPERTIES:
 :ID:       0d6d40dd-e4cb-4297-8695-6b66f2a1a706
@@ -9389,7 +9389,6 @@ Since the archives are not always contained in a single file, org id and text se
 *************** TODO make this work
 *************** END
 
-
 Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override standard archiving function to make it possible to archive them (into separate location =org-inlinetask-archive-location=)
 #+BEGIN_SRC emacs-lisp
 (defvar org-inlinetask-archive-location "%S_archive_%y.org::datetree/* Archived Inline Tasks"
@@ -9424,7 +9423,7 @@ Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override stand
 
 Sometimes, I have a small projects, where I do not want to decide whether I want to archive every single subtask or not. I tag them =:ARCHIVEALL:=.
 
-Thanks God, I do not need to open my archive file frequently - my =TODO.org_archive= is =>1Mb= and takes forever to open. I am not sure if I need to do something with it.
+Thanks God, I do not need to open my archive file frequently - my =TODO.org_archive= is =>3Mb= and takes forever to open. I am not sure if I need to do something with it.
 *************** TODO Speed up opening large org files
 :LOGBOOK:
 - State "TODO"       from "HOLD"       [2019-05-16 Thu 11:30]
@@ -10820,7 +10819,6 @@ Fontify agenda items properly
 
 #+end_src
 
-Use a better colour contrast between today's tasks and done tasks:
 #+begin_src emacs-lisp
 (use-package org-agenda
   :if init-flag
@@ -11036,7 +11034,6 @@ Use UTF symbols for entities
 (use-package org-eldoc)
 (add-hook 'org-mode-hook (lambda () (setq-local eldoc-documentation-function #'org-eldoc-documentation-function)))
 #+end_src
-
 
 *** Misc
 :PROPERTIES:
@@ -11300,8 +11297,10 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
              ("S" . org-agenda-bulk-mark-all)
 	     ("a" . org-agenda-bulk-unmark)
 	     ("A" . org-agenda-bulk-unmark-all)
+             ("-" . meta-undo)
              :map narrow-map
-             ("s" . org-narrow-to-subtree))
+             ("s" . org-narrow-to-subtree)
+             )
 
   (use-package meta-functions
     :config
