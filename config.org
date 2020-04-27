@@ -501,7 +501,7 @@ Though I don't want it in batch mode because it is optimised for interactive use
 (when init-flag
   (use-package gcmh
     :straight (gcmh :type git :host gitlab :repo "koral/gcmh")
-    :hook (after-init-hook . gcmh-mode)))
+    :hook (after-init . gcmh-mode)))
 #+end_src
 
 And increase GC threshold on top of that (I found emacs spend >25% of time doing GC when just moving around the buffer). 
