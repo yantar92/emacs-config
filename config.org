@@ -10320,7 +10320,6 @@ there is one, return it."
                                           :foreground-color (face-foreground 'mode-line)
                                           :background-color (face-background 'mode-line)
                                           :internal-border-width 20
-                                          :internal-border-color "black"
 					  ))
 			 (message "Select link to open, RET to open all:")
 			 (setq c (read-char-exclusive))))
