@@ -3780,7 +3780,7 @@ Sometimes, I just need to have any random text in buffer for testing.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-24 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-04-21 18:00
+:SHOWFROMDATE: 2020-04-27
 :END:
 :LOGBOOK:
 CLOCK: [2020-04-23 Thu 14:35]--[2020-04-23 Thu 14:49] =>  0:14
@@ -7960,6 +7960,7 @@ Also, hide the contents once task is clocked out.
   :init (use-package org-ql-search :demand t)
   :config
   )
+
 (defun yant/org-ql-focused-agenda-block (&rest args)
   "Return expression, suitable for `org-agenda-custom-commands', which matches focused agenda view."
   (org-ql-block
