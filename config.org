@@ -7979,6 +7979,55 @@ Also, hide the contents once task is clocked out.
 	     (ts-active :on 0) ;; diary
 	     ))))
 
+(eval
+ '(defun org-ql-skip-function (query)
+    "Return a function for `org-agenda-skip-function' for QUERY.
+Compared to using QUERY in `org-ql', this effectively turns QUERY
+into (not QUERY)."
+    (let* ((predicate (org-ql--query-predicate (org-ql--pre-process-query query))))
+      (lambda ()
+	;; This duplicates the functionality of `org-ql--select'.
+	(let (orig-fns)
+          (--each org-ql-predicates
+            ;; Save original function mappings.
+            (let ((name (plist-get it :name)))
+              (push (list :name name :fn (symbol-function name)) orig-fns)))
+          (unwind-protect
+              (progn
+		(--each org-ql-predicates
+                  ;; Set predicate functions.
+                  (fset (plist-get it :name) (plist-get it :fn)))
+		;; Run query.
+		;; FIXME: "If this function returns nil, the current match should not be skipped.
+		;; Otherwise, the function must return a position from where the search
+		;; should be continued."
+		(funcall predicate))
+            (--each orig-fns
+              ;; Restore original function mappings.
+              (fset (plist-get it :name) (plist-get it :fn))))))))
+ 'lexical)
+
+(defun yant/org-ql-focused-agenda-query ()
+  "Return org-ql skip function that matches focused agenda view."
+  (org-ql-skip-function
+   '(and (todo)
+	 (not (priority "C"))
+	 (or (and (deadline auto) ;; deadline check first because deadlines are far more scarse in comparison with scheduled
+		  (not (scheduled :from +1)))
+	     (and (priority "A")
+		  (scheduled :to 0) ;; these two are easy checks, do them before heavy property matches
+		  (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
+		      (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
+		  (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)) ;; I have more of this in cmp with SHOWDATES
+		  (yant/diary-sexp-match-showdate? (org-entry-get (point) "SHOWDATES" 'inherit))
+		  )
+	     (and (scheduled :on 0)
+		  (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)))
+	     (ts-active :on 0) ;; diary
+	     )
+	 )))
+
+
 (defun yant/org-ql-full-agenda-block (&rest args)
   "Return expression, suitable for `org-agenda-custom-commands', which lists all the active scheduled todo items."
   (org-ql-block
@@ -8028,11 +8077,19 @@ Also, hide the contents once task is clocked out.
 	       ((yant/org-ql-focused-agenda-block))
 	       ((org-ql-block-header "Focused agenda(ql version)"))))
 
+
+(add-to-list 'org-agenda-custom-commands
+	     `("s" "Focus daily agenda (ql-skip version)" agenda ""
+	       ((org-agenda-overriding-header "Focused daily agenda. Do not forget to filter to work/home scope\n")
+		(org-agenda-skip-function  (yant/org-ql-focused-agenda-query)))))
+
+
 (add-to-list 'org-agenda-custom-commands
 	     `("I" "Inbox (ql version)"
 	       ((yant/org-ql-inbox-block))
 	       ((org-ql-block-header "Inbox"))
                (list (f-join org-directory "inbox.org"))))
+
 #+end_src
 
 ****** TODO use it |- (=alphapapa/org-ql=: An Org query language, and experimental code for a next-generation Org Agenda) :BOOKMARK:
