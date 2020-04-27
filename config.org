@@ -11637,13 +11637,13 @@ SCHEDULED: <2020-04-28 Tue>
 :END:
 
 #+begin_src emacs-lisp
-(use-package dired-hide-dotfiles
-:config
-(defun dired-hide-dotfiles--hide ()
-  "Hide all dot-files in the current `dired' buffer."
-  (when dired-hide-dotfiles-mode
-    (dired-mark-files-regexp "^\\." nil 'localname)
-    (dired-do-kill-lines))))
+;; (use-package dired-hide-dotfiles
+;; :config
+;; (defun dired-hide-dotfiles--hide ()
+;;   "Hide all dot-files in the current `dired' buffer."
+;;   (when dired-hide-dotfiles-mode
+;;     (dired-mark-files-regexp "^\\." nil 'localname)
+;;     (dired-do-kill-lines))))
 #+end_src
 ** Summary of key bindings
 *** COMMENT Command frequency measurement in emacs
