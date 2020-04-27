@@ -2991,9 +2991,12 @@ And extend it with =dired+=
 	      ("W" . dired-copy-filename-as-kill)
 	      ("s" . dired-mark)
 	      ("a" . dired-unmark)
-              ("A" . dired-unmark-all-marks)
-	      ("<tab>" . other-window))
+              ("A" . dired-unmark-all-marks))
   :config
+  (use-package dired-filter
+    :defer t
+    :bind (:map dired-filter-group-header-map
+		("<tab>" . dired-filter-group-toggle-header)))
   (use-package meta-functions
     :init
     (use-package dired-hacks-utils :straight t)
