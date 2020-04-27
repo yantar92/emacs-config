@@ -4024,7 +4024,9 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
     :defer t
     :config
     (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
+    (meta-defun meta-move-line-right :mode lisp-interaction-mode paredit-forward-slurp-sexp)
     (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-backward-slurp-sexp)
+    (meta-defun meta-move-line-left :mode lisp-interaction-mode paredit-backward-slurp-sexp)
     (meta-defun meta-forward-element :mode emacs-lisp-mode paredit-forward)
     (meta-defun meta-backward-element :mode emacs-lisp-mode paredit-backward)
     (bind-keys :map boon-insert-map
