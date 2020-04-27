@@ -700,6 +700,17 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
   :diminish (centered-window-mode . " ‖□‖")
   :after boon
   :config
+  (defun cwm-special-buffer-p (buffer)
+    "Return 't if BUFF buffer name is special (starts with an *).
+
+The *scratch* buffer although special, is treated as not special
+by this function."
+    (let ((buffname (string-trim (buffer-name buffer))))
+      (and buffname
+           (string-prefix-p "*" buffname)
+           (not (eq major-mode 'notmuch-show-mode))
+           (not (string= "*scratch*" buffname)))))
+
   (defun pdf-view-mode-p (&rest args)
     "Return non-nil if in pdf-view-mode."
     (eq major-mode 'pdf-view-mode))
