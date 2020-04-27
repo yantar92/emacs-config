@@ -5537,7 +5537,10 @@ DOING->DONE:  Cancel repeater and mark the task DONE."
 			    "+1d")))
           (if (string= (plist-get arg :to) "DONE")
               (org-schedule nil ".+0d") ;; revert the default re-schedule triggered by DONE
-            (org-set-property "SHOWFROMDATE" (org-read-date nil nil repeater))) ;; do not reschedule (I am still working on the task), but show later
+            (org-set-property "SHOWFROMDATE"
+			      (ts-format "%Y-%m-%d"
+					 (ts-parse-org
+					  (org-read-date nil nil (s-replace "." "" repeater)))))) ;; do not reschedule (I am still working on the task), but show later
 	  (when (string= (plist-get arg :to) "DONE")
 	    (if (y-or-n-p "Trying to mark DOING task as DONE. Proceed? ")
 		(org-with-point-at pos
