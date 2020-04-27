@@ -3004,7 +3004,11 @@ And extend it with =dired+=
     (meta-defun meta-down :mode dired-mode dired-hacks-next-file)
     (meta-defun meta-up :mode dired-mode dired-hacks-previous-file)
     (meta-defun meta-up-element :mode dired-mode dired-up-directory)
-    (meta-defun meta-down-element :mode dired-mode dired-find-alternate-file)))
+    (meta-defun meta-up-element :mode dired-mode :cond (get-text-property (point) 'dired-filter-group-header) dired-filter-group-backward-drawer)
+    (meta-defun meta-down-element :mode dired-mode dired-filter-group-forward-drawer)
+    (meta-defun meta-return :mode dired-mode :cond (get-text-property (point) 'dired-filter-group-header) dired-filter-group-toggle-header)
+    (meta-defun meta-return :mode dired-mode :cond (get-text-property (point) 'dired-filter-group-header) dired-filter-group-toggle-header)
+    ))
 #+end_src
 
 ******* =Image-dired= bindings
