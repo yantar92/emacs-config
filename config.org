@@ -11525,6 +11525,26 @@ SCHEDULED: <2020-04-28 Tue>
 :LOGBOOK:
 - Refiled on [2020-04-26 Sun 23:59]
 :END:
+
+**** NEXT org-entities become hidden because of sticky invisible property
+:PROPERTIES:
+:CREATED:  [2020-04-27 Mon 13:35]
+:END:
+**** TODO invisible text property seems to interfere with links visibility - some parts are shown when they should not
+:PROPERTIES:
+:CREATED: [2020-04-27 Mon 16:20]
+:END:
+:LOGBOOK:
+- Refiled on [2020-04-27 Mon 21:40]
+CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
+:END:
+**** TODO column view is really slow. is it because of overlays?
+:PROPERTIES:
+:CREATED: [2020-04-27 Mon 23:59]
+:END:
+:LOGBOOK:
+- Refiled on [2020-04-27 Mon 23:59]
+:END:
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
