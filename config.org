@@ -10273,6 +10273,16 @@ org-capture mode lighter
   :if init-flag
   :diminish (org-capture-mode . " capture"))
 #+end_src
+**** Text
+:PROPERTIES:
+:CREATED:  [2020-04-27 Mon 13:25]
+:END:
+
+Add some extra rendering for LaTeX:
+#+begin_src emacs-lisp
+(add-to-list 'org-entities-user '("angstrom" "\\AA" nil "&Å;" "A" "A" "Å"))
+#+end_src
+
 
 **** Links
 ***** Show broken links to files
