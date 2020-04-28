@@ -8290,22 +8290,22 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
       (org-with-point-at org-clock-default-task
 	(org-clock-in))))
 
-  (defun bh/clock-in-parent-task ()
-    "Move point to the parent (project) task if any and does not have local tag NOCLOCK and clock in."
-    (let ((parent-task))
-      (save-mark-and-excursion
-	(save-restriction
-	  (widen)
-	  (while (and (not parent-task) (org-up-heading-safe))
-	    (when (and (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-		       (not (member "NOCLOCK" (org-get-tags nil 'LOCAL))))
-	      (setq parent-task (point))))
-	  (if parent-task
-	      (org-with-point-at parent-task
-		(org-clock-in))
-	    (if bh/keep-clock-running
-		(bh/clock-in-default-task)
-	      (org-clock-out)))))))
+  ;; (defun bh/clock-in-parent-task ()
+  ;;   "Move point to the parent (project) task if any and does not have local tag NOCLOCK and clock in."
+  ;;   (let ((parent-task))
+  ;;     (save-mark-and-excursion
+  ;; 	(save-restriction
+  ;; 	  (widen)
+  ;; 	  (while (and (not parent-task) (org-up-heading-safe))
+  ;; 	    (when (and (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+  ;; 		       (not (member "NOCLOCK" (org-get-tags nil 'LOCAL))))
+  ;; 	      (setq parent-task (point))))
+  ;; 	  (if parent-task
+  ;; 	      (org-with-point-at parent-task
+  ;; 		(org-clock-in))
+  ;; 	    (if bh/keep-clock-running
+  ;; 		(bh/clock-in-default-task)
+  ;; 	      (org-clock-out)))))))
 
   (defun yant/clock-out-maybe nil
     "Clock out and clock in to default task if `bh/keep-clock-running' is not nil."
@@ -8313,15 +8313,17 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
 	       (not org-clock-clocking-in)
 	       (marker-buffer org-clock-default-task)
 	       (not org-clock-resolving-clocks-due-to-idleness))
-      (bh/clock-in-parent-task)))
+      (bh/clock-in-default-task)))
 
   (add-hook 'org-clock-out-hook 'yant/clock-out-maybe 'append))
      #+end_src
 
-     Once I keep all my time tracked, I can calculate the estimated balance of my time. The idea is that I assign the weight to each task/project (=:TIMEWEIGHT:=), which is positive for useful tasks I
-     do not want to do, and negative for fun tasks (they may be useful, but the purpose is to force myself doing what I do not like to do). All I need to do now, is to keep this balance
-     positive.
-*************** TODO Implement this (current month summary)
+Once I keep all my time tracked, I can calculate the estimated balance of my time. The idea is that I assign the weight to each task/project (=:ORG-TIME-BALANCE-MULTIPLIER:=), which is positive for useful tasks I do not want to do, and negative for fun tasks (they may be useful, but the purpose is to force myself doing what I do not like to do). All I need to do now, is to keep this balance positive.
+*************** DONE Implement this (current month summary)
+CLOSED: [2020-04-27 Mon 13:04]
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-04-27 Mon 13:04]
+:END:
 *************** END
 ***** Agenda log mode & clock report
 :PROPERTIES:
