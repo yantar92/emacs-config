@@ -3774,98 +3774,28 @@ Sometimes, I just need to have any random text in buffer for testing.
   :if init-flag
   :straight t)
 #+end_src
+*** Bug hunting in =init.el=
+:PROPERTIES:
+:ID:       fa3afe58-87b9-4230-a9a6-298be9f6998d
+:END:
+:LOGBOOK:
+- Refiled on [2020-04-27 Mon 15:06]
+:END:
+
+#+begin_src emacs-lisp
+(use-package bug-hunter
+  :if init-flag
+  :straight t)
+#+end_src
+
 ** Programming & emacsing
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
 :END:
 
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-24 Fri>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-04-27
-:END:
-:LOGBOOK:
-CLOCK: [2020-04-23 Thu 14:35]--[2020-04-23 Thu 14:49] =>  0:14
-CLOCK: [2020-04-22 Wed 22:52]--[2020-04-22 Wed 23:07] =>  0:15
-CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
-CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
-CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
-CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
-CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
-CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
-CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
-CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
-CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
-CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-*************** END
+*** Emacs help
 
-*** Help
-**** Show the continuation of unfinished keybindings
-:PROPERTIES:
-:ID:       af18cad7-734f-491f-85a8-1fc817cf2dbd
-:END:
-#+begin_src emacs-lisp
-(use-package which-key
-  :if init-flag
-  :straight t
-  :diminish which-key-mode
-  :config
-  (which-key-mode))
-#+end_src
-**** Help buffer navigation
-:PROPERTIES:
-:ID:       2bc3b25c-9754-4bce-a885-8d8b1300b6cc
-:END:
-#+begin_src emacs-lisp
-(use-package boon
-  :defer t
-  :if init-flag
-  :config
-  (use-package meta-functions
-    :config
-    (meta-defun meta-next-buffer :mode help-mode help-go-forward)
-    (meta-defun meta-previous-buffer :mode help-mode help-go-back)))
-#+end_src
-**** Info buffer navigation
-:PROPERTIES:
-:CREATED:  [2018-07-11 Wed 14:55]
-:ID:       924cdc83-3ddc-4ef1-ae8d-8ca57682d389
-:END:
-
-#+begin_src emacs-lisp
-(use-package boon
-  :defer t
-  :if init-flag
-  :config
-  (use-package meta-functions
-    :config
-    (meta-defun meta-down-element :mode Info-mode Info-forward-node)
-    (meta-defun meta-up-element :mode Info-mode Info-backward-node)
-    (meta-defun meta-new-line :mode Info-mode Info-follow-nearest-node)
-    (meta-defun meta-previous-buffer :mode Info-mode Info-history-back)
-    (meta-defun meta-next-buffer :mode Info-mode Info-history-forward)))
-#+end_src
-**** COMMENT Info+
-:PROPERTIES:
-:CREATED:  [2019-07-26 Fri 21:36]
-:ID:       e75f029b-943d-4600-933b-e76ceb98f501
-:END:
-Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.201900474][emacswiki]]). Specifically, the package improves the highlighting.
-#+begin_src emacs-lisp
-(use-package info+
-  :if init-flag
-  :disabled
-  :straight (emacswiki.org :type git :host github :repo "emacsmirror/emacswiki.org"))
-#+end_src
+There are various ways Emacs can assist on getting documentation.
 
 **** Symbol&info lookup
 :PROPERTIES:
@@ -3912,7 +3842,42 @@ For the =elisp= built-in docstrings, =helpful= package extension with very usefu
 It provides extra functionality to the standard =help= buffers.
 Another package =elisp-demos= extends =helpful= even further providing examples to many standard functions.
 
-*************** TODO Move elisp-demos and helpful to here
+*************** DONE Move elisp-demos and helpful to here
+CLOSED: [2020-04-27 Mon 15:20]
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-04-27 Mon 15:20]
+:END:
+*************** END
+
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-24 Fri>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-04-28
+:END:
+:LOGBOOK:
+CLOCK: [2020-04-27 Mon 15:17]--[2020-04-27 Mon 15:20] =>  0:03
+CLOCK: [2020-04-27 Mon 15:03]--[2020-04-27 Mon 15:16] =>  0:13
+CLOCK: [2020-04-23 Thu 14:35]--[2020-04-23 Thu 14:49] =>  0:14
+CLOCK: [2020-04-22 Wed 22:52]--[2020-04-22 Wed 23:07] =>  0:15
+CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
+CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
+CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
+CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
+CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
+CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
+CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
+CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
+CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
+CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
 *************** END
 
 
@@ -3967,16 +3932,6 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   :straight t)
 #+end_src
 
-**** Helpful - better help buffers
-:PROPERTIES:
-:CREATED:  [2018-03-29 Thu 23:16]
-:ID:       00d36901-9a96-46c3-be8b-6fe5edd9c3c7
-:END:
-#+BEGIN_SRC emacs-lisp
-(use-package helpful
-  :if init-flag
-  :straight t)
-#+END_SRC
 **** Elisp demos
 :PROPERTIES:
 :CREATED:  [2019-08-15 Thu 12:17]
@@ -3990,17 +3945,79 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   :config
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
-*** Bug hunting in =init.el=
+**** Appearance
 :PROPERTIES:
-:ID:       fa3afe58-87b9-4230-a9a6-298be9f6998d
+:CREATED:  [2020-04-27 Mon 15:19]
 :END:
-
+***** Info+
+:PROPERTIES:
+:CREATED:  [2019-07-26 Fri 21:36]
+:ID:       e75f029b-943d-4600-933b-e76ceb98f501
+:END:
+Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.201900474][emacswiki]]). Specifically, the package improves the highlighting.
 #+begin_src emacs-lisp
-(use-package bug-hunter
+(use-package info+
+  :if init-flag
+  :straight (emacswiki.org :host github :repo "emacsmirror/emacswiki.org"))
+#+end_src
+***** Helpful - better help buffers
+:PROPERTIES:
+:CREATED:  [2018-03-29 Thu 23:16]
+:ID:       00d36901-9a96-46c3-be8b-6fe5edd9c3c7
+:END:
+#+BEGIN_SRC emacs-lisp
+(use-package helpful
   :if init-flag
   :straight t)
+#+END_SRC
+**** Command loop
+:PROPERTIES:
+:CREATED:  [2020-04-27 Mon 15:19]
+:END:
+***** Show the continuation of unfinished keybindings
+:PROPERTIES:
+:ID:       af18cad7-734f-491f-85a8-1fc817cf2dbd
+:END:
+#+begin_src emacs-lisp
+(use-package which-key
+  :if init-flag
+  :straight t
+  :diminish which-key-mode
+  :config
+  (which-key-mode))
 #+end_src
-
+***** Help buffer navigation
+:PROPERTIES:
+:ID:       2bc3b25c-9754-4bce-a885-8d8b1300b6cc
+:END:
+#+begin_src emacs-lisp
+(use-package boon
+  :defer t
+  :if init-flag
+  :config
+  (use-package meta-functions
+    :config
+    (meta-defun meta-next-buffer :mode help-mode help-go-forward)
+    (meta-defun meta-previous-buffer :mode help-mode help-go-back)))
+#+end_src
+***** Info buffer navigation
+:PROPERTIES:
+:CREATED:  [2018-07-11 Wed 14:55]
+:ID:       924cdc83-3ddc-4ef1-ae8d-8ca57682d389
+:END:
+#+begin_src emacs-lisp
+(use-package boon
+  :defer t
+  :if init-flag
+  :config
+  (use-package meta-functions
+    :config
+    (meta-defun meta-down-element :mode Info-mode Info-forward-node)
+    (meta-defun meta-up-element :mode Info-mode Info-backward-node)
+    (meta-defun meta-new-line :mode Info-mode Info-follow-nearest-node)
+    (meta-defun meta-previous-buffer :mode Info-mode Info-history-back)
+    (meta-defun meta-next-buffer :mode Info-mode Info-history-forward)))
+#+end_src
 *** Elisp coding
 :PROPERTIES:
 :CREATED:  [2019-07-08 Mon 20:50]
@@ -4803,8 +4820,6 @@ And group them by rss feed
 I was using notmuch-tree-mode for a while, but find it not very comfortable. 
 Especially in threads with many small messages, which could otherwise appear all together in notmuch-show-mode. 
 Can be still occasionally useful to navigate the complicated threads though. 
-
-
 
 #+begin_src emacs-lisp
 (use-package notmuch
@@ -8234,7 +8249,7 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 #+begin_src emacs-lisp
 (when init-flag
 #+end_src
-The main purpose of clocking for me is to control the time I spend for important projects and for other staff (like configuring Emacs ;)). Hence, it is important to do a continuous tracking of the tasks, which I can choose to do or not to do (e.g. it is useless to keep track of how much time I spend brushing my teeth in the morning - anyway, I have to do it).
+The main purpose of clocking for me is to control the time I spend for important projects and for other staff (like configuring Emacs ;)). Hence, it is important to do a continuous tracking of the tasks, which I can choose to do or not to do (e.g. it is useless to keep track of how much time I spend brushing my teeth in the morning).
 A lot of time, the task I am doing is not useful to add to my org files explicitly (e.g. initial checks on some side project, which may or may not work; routine work). I use special tasks for all kinds of such activity:
 - Organisation :: related to work, general
 - Check =TORead= ... :: related to home, browsing, reading fiction, etc I start the activity from clocking in one of these tasks. Later, I clock in the task, which I am doing at the moment. Once it's done, clocking automatically comes back to higher level task (unless it is marked =:NOCLOCK=, see [[id:adc6f5ae-183f-4c5f-97e8-7bfe18f028d2][General org mode tags]]) or to one of the tasks above when I clocked out top level project.
@@ -10757,7 +10772,6 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   :config
   (doom-themes-org-config))
 #+end_src
-
 
 **** Agenda
 :PROPERTIES:
