@@ -501,6 +501,8 @@ Though I don't want it in batch mode because it is optimised for interactive use
 (when init-flag
   (use-package gcmh
     :straight (gcmh :type git :host gitlab :repo "koral/gcmh")
+    :demand t
+    :diminish gcmh-mode
     :hook (after-init . gcmh-mode)))
 #+end_src
 
