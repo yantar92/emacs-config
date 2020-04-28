@@ -838,7 +838,7 @@ Show some text in buffer differently
   :straight t
   :after org
   :hook ((pretty-symbols-mode . font-lock-fontify-buffer)
-	 ((prog-mode org-mode) . pretty-symbols-mode))
+	 ((prog-mode lisp-interaction-mode org-mode) . pretty-symbols-mode))
   :init
   (setq pretty-symbol-categories '(relational logical lambda org-specific nil cpp general))
 
@@ -2339,7 +2339,7 @@ Show errors in code with =flycheck=, in tooltips (via =flycheck-tip=).
 (use-package rainbow-delimiters
   :if init-flag
   :straight t
-  :hook (prog-mode . rainbow-delimiters-mode))
+  :hook ((prog-mode lisp-interaction-mode) . rainbow-delimiters-mode))
 #+end_src
 *** Highlight numbers
 :PROPERTIES:
@@ -2349,7 +2349,7 @@ Show errors in code with =flycheck=, in tooltips (via =flycheck-tip=).
 (use-package highlight-numbers
   :if init-flag
   :straight t
-  :hook (prog-mode . highlight-numbers-mode))
+  :hook ((prog-mode lisp-interaction-mode) . highlight-numbers-mode))
 #+end_src
 *** Regexp escape smart highlight
 :PROPERTIES:
@@ -2364,7 +2364,7 @@ Emacs regex escaping in string is often confusing.
   :if init-flag
   :straight t
   :diminish easy-escape-minor-mode
-  :hook (prog-mode . easy-escape-minor-mode))
+  :hook ((prog-mode lisp-interaction-mode) . easy-escape-minor-mode))
 #+end_src
 *** Search highlight
 :PROPERTIES:
@@ -3600,7 +3600,7 @@ There is also built-in skeleton mode, but =yasnippet= also has a good user-contr
   :if init-flag
   :straight t
   :diminish (yas-minor-mode . " ⇶_")
-  :hook ((org-mode latex-mode markdown-mode prog-mode) . yas-minor-mode)
+  :hook ((org-mode latex-mode markdown-mode prog-mode lisp-interaction-mode) . yas-minor-mode)
   :config
   (use-package yasnippet-snippets
     :straight t))
