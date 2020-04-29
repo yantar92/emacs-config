@@ -1300,230 +1300,232 @@ In boon, it can be done by forcing global move commands in special state.
 Second, implement the wrapper command <<meta-functions>>.
 
 #+begin_src emacs-lisp :tangle ~/Git/meta-functions/meta-functions.el
-;;; meta-functions.el --- Define meta-functions to act differently depending on major mode -*- lexical-binding: t; -*-
+  ;;; meta-functions.el --- Define meta-functions to act differently depending on major mode -*- lexical-binding: t; -*-
 
-;; Version: 2.0
-;; Author: Ihor Radchenko <yantar92@gmail.com>
-;; Created: 10 March 2018
+  ;; Version: 2.0
+  ;; Author: Ihor Radchenko <yantar92@gmail.com>
+  ;; Created: 10 March 2018
 
-;;; Commentary:
+  ;;; Commentary:
 
-;; Quick implementation of meta-functions, which allows to run multiple
-;; functions, which do similar logical operations by one single "meta"
-;; function in different major modes. For example, one may want to define
-;; meta-next-line to call `next-line' normally, but
-;; `org-agenda-next-line' in org-agenda mode. Both can be binded to, say
-;; "M-j", without a need to change the key-bindings on both fundamental
-;; and org-agenda modes.
-;; Example usage:
-;; (use-package meta-functions
-;;   :config
-;; (meta-defun meta-next-element ()
-;;   "Go to next element."
-;;   :mode org-agenda-mode (org-agenda-next-item 1) ; call org-agenda-next-item in org-agenda
-;;   :cond (lambda () (and (eq major-mode 'org-mode) (org-at-heading-p))) (org-next-visible-heading 1) ; call org-next-visible-headting when at heading in org-mode
-;;   (next-line)) ; call-next line in any other case
-;; )
-;; or the same can be written as
-;; (meta-defun meta-next-element "Go to next element." next-line)
-;; (meta-defun meta-next-element :mode org-agenda-mode (org-agenda-next-item 1))
-;; (meta-defun meta-next-element :mode org-mode :cond org-at-heading-p (org-next-visible-heading 1))
-;;
-;; Similar packages:
-;; https://gitlab.com/jjzmajic/handle implements similar functionality to unify functions across major modes
-;; However, handle is very major-mode centric. meta-functions is more function-centric
-;; Also, meta-functions is not only limited to current major mode defining which function to call.
+  ;; Quick implementation of meta-functions, which allows to run multiple
+  ;; functions, which do similar logical operations by one single "meta"
+  ;; function in different major modes. For example, one may want to define
+  ;; meta-next-line to call `next-line' normally, but
+  ;; `org-agenda-next-line' in org-agenda mode. Both can be binded to, say
+  ;; "M-j", without a need to change the key-bindings on both fundamental
+  ;; and org-agenda modes.
+  ;; Example usage:
+  ;; (use-package meta-functions
+  ;;   :config
+  ;; (meta-defun meta-next-element ()
+  ;;   "Go to next element."
+  ;;   :mode org-agenda-mode (org-agenda-next-item 1) ; call org-agenda-next-item in org-agenda
+  ;;   :cond (lambda () (and (eq major-mode 'org-mode) (org-at-heading-p))) (org-next-visible-heading 1) ; call org-next-visible-headting when at heading in org-mode
+  ;;   (next-line)) ; call-next line in any other case
+  ;; )
+  ;; or the same can be written as
+  ;; (meta-defun meta-next-element "Go to next element." next-line)
+  ;; (meta-defun meta-next-element :mode org-agenda-mode (org-agenda-next-item 1))
+  ;; (meta-defun meta-next-element :mode org-mode :cond org-at-heading-p (org-next-visible-heading 1))
+  ;;
+  ;; Similar packages:
+  ;; https://gitlab.com/jjzmajic/handle implements similar functionality to unify functions across major modes
+  ;; However, handle is very major-mode centric. meta-functions is more function-centric
+  ;; Also, meta-functions is not only limited to current major mode defining which function to call.
 
-;;; Code:
-(require 'seq)
-(require 'dash)
+  ;;; Code:
+  (require 'seq)
+  (require 'dash)
+  (require 'org-id)
 
-(defun meta-functions--process-args-1 (args &optional recursive)
-  "Return list of ((sub-body-symbol condition-func|mode-symbol number-elements-in-args) ...) in front of ARGS."
-  (pcase args
-    (`(:mode ,(and (pred symbolp) s) . ,_)
-     (cons
-      (list (make-symbol (concat "%" (symbol-name s)))
-	    `(quote ,s)
-            2)
-      (meta-functions--process-args-1 (cddr args) 'recursive)))
-    (`(:cond :symbol ,(and (pred symbolp) s) ,(and (pred #'functionp) func) . ,_)
-     (cons
-      (list (make-symbol (concat "%" (symbol-name s)))
-	    `(function ,func)
-            4)
-      (meta-functions--process-args-1 (cddddr args) 'recursive)))
-    (`(:cond :symbol . ,_)
-     (error ":cond :symbol must be followed by symbol and function."))
-    (`(:cond ,(and (pred functionp) func) . ,_)
-     (cons
-      (list (when (symbolp func) (make-symbol (concat "%" (symbol-name func))))
-	    `(function ,func)
-            2)
-      (meta-functions--process-args-1 (cddr args) 'recursive)))
-    (`(:cond ,form . ,_)
-     (cons
-      (list (make-symbol (concat "%lambda" (org-id-uuid)))
-	    `(function (lambda () ,form))
-	    2)
-      (meta-functions--process-args-1 (cddr args) 'recursive)))
-    (_
-     (unless recursive
-       (list (list
-	      '%t
-              `(function t)
-              0))))))
+  
+  (defun meta-functions--process-args-1 (args &optional recursive)
+    "Return list of ((sub-body-symbol condition-func|mode-symbol number-elements-in-args) ...) in front of ARGS."
+    (pcase args
+      (`(:mode ,(and (pred symbolp) s) . ,_)
+       (cons
+	(list (make-symbol (concat "%" (symbol-name s)))
+	      `(quote ,s)
+	      2)
+	(meta-functions--process-args-1 (cddr args) 'recursive)))
+      (`(:cond :symbol ,(and (pred symbolp) s) ,(and (pred #'functionp) func) . ,_)
+       (cons
+	(list (make-symbol (concat "%" (symbol-name s)))
+	      `(function ,func)
+	      4)
+	(meta-functions--process-args-1 (cddddr args) 'recursive)))
+      (`(:cond :symbol . ,_)
+       (error ":cond :symbol must be followed by symbol and function."))
+      (`(:cond ,(and (pred functionp) func) . ,_)
+       (cons
+	(list (when (symbolp func) (make-symbol (concat "%" (symbol-name func))))
+	      `(function ,func)
+	      2)
+	(meta-functions--process-args-1 (cddr args) 'recursive)))
+      (`(:cond ,form . ,_)
+       (cons
+	(list (make-symbol (concat "%lambda" (org-id-uuid)))
+	      `(function (lambda () ,form))
+	      2)
+	(meta-functions--process-args-1 (cddr args) 'recursive)))
+      (_
+       (unless recursive
+	 (list (list
+		'%t
+		`(function t)
+		0))))))
 
-(defun meta-functions--process-args (name args)
-  "Process arguments of `meta-defun'.
-The return value is a list (arglist docstring ((sub-body-symbol condition-func|mode-symbol body) ...))."
-  (when (memq ':override-nil args) (setq args (delq ':override-nil args)))
-  (let* ((arglist (and (listp (car args)) (pop args)))
-	 (docstring (and (stringp (car args)) (pop args)))
-	 conditions)
-    (while args
-      (add-to-list 'conditions
-		   (cl-loop for (symbol subcondition num-remove) in (meta-functions--process-args-1 args)
-			    with condition = nil
-			    with sumsymbol = nil
-			    do (when symbol
-				 (if sumsymbol
+  (defun meta-functions--process-args (name args)
+    "Process arguments of `meta-defun'.
+  The return value is a list (arglist docstring ((sub-body-symbol condition-func|mode-symbol body) ...))."
+    (when (memq ':override-nil args) (setq args (delq ':override-nil args)))
+    (let* ((arglist (and (listp (car args)) (pop args)))
+	   (docstring (and (stringp (car args)) (pop args)))
+	   conditions)
+      (while args
+	(add-to-list 'conditions
+		     (cl-loop for (symbol subcondition num-remove) in (meta-functions--process-args-1 args)
+			      with condition = nil
+			      with sumsymbol = nil
+			      do (when symbol
+				   (if sumsymbol
+				       (setq sumsymbol
+					     (make-symbol (concat (symbol-name sumsymbol)
+								  "+"
+								  (symbol-name symbol))))
 				     (setq sumsymbol
-					   (make-symbol (concat (symbol-name sumsymbol)
-								"+"
-								(symbol-name symbol))))
-				   (setq sumsymbol
-					 (make-symbol (concat (symbol-name name)
-							      (symbol-name symbol))))))
-			    do (dotimes (_ num-remove) (pop args))
-			    do (push subcondition condition)
-			    finally return (cons sumsymbol
-						 (nreverse (push (pcase (cl-loop for el = (pop args)
-										 collect el
-										 until (or (seq-empty-p args) (meta-functions--process-args-1 args 'recursive)))
-								   (`(,(and (pred functionp) func)) `(function ,func))
-								   (`(,form) `(lambda () (interactive) ,form)))
-								 condition))))
-		   'append))
-    (list arglist docstring conditions)))
+					   (make-symbol (concat (symbol-name name)
+								(symbol-name symbol))))))
+			      do (dotimes (_ num-remove) (pop args))
+			      do (push subcondition condition)
+			      finally return (cons sumsymbol
+						   (nreverse (push (pcase (cl-loop for el = (pop args)
+										   collect el
+										   until (or (seq-empty-p args) (meta-functions--process-args-1 args 'recursive)))
+								     (`(,(and (pred functionp) func)) `(function ,func))
+								     (`(,form) `(lambda () (interactive) ,form)))
+								   condition))))
+		     'append))
+      (list arglist docstring conditions)))
 
 
-(defun meta-functions--generate-docstring (name default-docstring conditions)
-  "Generate a docstring for a function define using meta-defun."
-  (->>
-   (concat "[Meta function.]\n"
-	   (when default-docstring default-docstring)
-	   "\n"
-	   "By default, run `"
-	   (format "%s" (cadr (alist-get (make-symbol (concat (symbol-name name) "%t")) conditions nil nil (lambda (a b) (string= (symbol-name a) (symbol-name b))))))
-	   "'\n"
-	   (mapconcat (lambda (condition)
-			(let* ((rcondition (seq-reverse (cdr condition)))
-			       (body (car rcondition))
-                               (subconditions (seq-reverse (cdr rcondition))))
-                          (unless (equal subconditions '(#'t))
-			    (concat "When "
-				    (mapconcat (lambda (el)
-						 (pcase el
-						   ('#'t nil)
-						   (`(function ,_)
-						    (concat "`" (format "%s" el) "' returns 't"))
-						   (_
-						    (concat "major mode is `" (format "%s" (eval el)) "'"))))
-					       subconditions
-					       " and ")
-				    ", run `"
-				    (format "%s" body)
-				    "'"))))
-		      conditions
-		      "\n"))
-   (replace-regexp-in-string "#'" "")))
+  (defun meta-functions--generate-docstring (name default-docstring conditions)
+    "Generate a docstring for a function define using meta-defun."
+    (->>
+     (concat "[Meta function.]\n"
+	     (when default-docstring default-docstring)
+	     "\n"
+	     "By default, run `"
+	     (format "%s" (cadr (alist-get (make-symbol (concat (symbol-name name) "%t")) conditions nil nil (lambda (a b) (string= (symbol-name a) (symbol-name b))))))
+	     "'\n"
+	     (mapconcat (lambda (condition)
+			  (let* ((rcondition (seq-reverse (cdr condition)))
+				 (body (car rcondition))
+				 (subconditions (seq-reverse (cdr rcondition))))
+			    (unless (equal subconditions '(#'t))
+			      (concat "When "
+				      (mapconcat (lambda (el)
+						   (pcase el
+						     ('#'t nil)
+						     (`(function ,_)
+						      (concat "`" (format "%s" el) "' returns 't"))
+						     (_
+						      (concat "major mode is `" (format "%s" (eval el)) "'"))))
+						 subconditions
+						 " and ")
+				      ", run `"
+				      (format "%s" body)
+				      "'"))))
+			conditions
+			"\n"))
+     (replace-regexp-in-string "#'" "")))
 
-(cl-defmacro meta-defun (name &rest args)
-  "Define a meta-function or update its definition.
+  (cl-defmacro meta-defun (name &rest args)
+    "Define a meta-function or update its definition.
 
-USAGE:
-(meta-defun foo [(arglist)]
-[:override-nil]
-[docstring]
-[:mode bar-mode body-sexp]
-[:mode ...]
-[:cond [:symbol zen-func-symbol] zen-func body-sexp]
-[:cond ...]
-[default-body])
+  USAGE:
+  (meta-defun foo [(arglist)]
+  [:override-nil]
+  [docstring]
+  [:mode bar-mode body-sexp]
+  [:mode ...]
+  [:cond [:symbol zen-func-symbol] zen-func body-sexp]
+  [:cond ...]
+  [default-body])
 
-If a command foo has not yet been defined using meta-defun, the above
-defines a command foo, which can call different BODY (which can be a
-function or sexp) depending on major mode or :cond functions. For any
-major mode, the BODY defined in the corresponding [:mode mode body]
-definition is called. If none of the define mode conditions are
-satisfied, the FUNCs in [:cond func body] are called sequentially
-without argument until one of the return 't. Then, the corresponding
-BODY is called. If none of the above conditions can be met,
-DEFAULT-BODY is called.
+  If a command foo has not yet been defined using meta-defun, the above
+  defines a command foo, which can call different BODY (which can be a
+  function or sexp) depending on major mode or :cond functions. For any
+  major mode, the BODY defined in the corresponding [:mode mode body]
+  definition is called. If none of the define mode conditions are
+  satisfied, the FUNCs in [:cond func body] are called sequentially
+  without argument until one of the return 't. Then, the corresponding
+  BODY is called. If none of the above conditions can be met,
+  DEFAULT-BODY is called.
 
-If a command foo has been already defined with meta-defun, the
-existing definition will be updated. All the omitted definitions will
-be preserved (including docstring and default-body) unless
-:override-nil keyword is provided. If :override-nil keyword is
-present, the command foo will be redefined.
+  If a command foo has been already defined with meta-defun, the
+  existing definition will be updated. All the omitted definitions will
+  be preserved (including docstring and default-body) unless
+  :override-nil keyword is provided. If :override-nil keyword is
+  present, the command foo will be redefined.
 
-In addition, every BODY definition in :mode definition is bound to foo%bar-mode symbol.
-This symbol can be used in the following [:mode ...] and [:cond ...] definitions.
-In the [:cond ...] definition, it [:symbol zen-fun-symbol] is present, the BODY
-is bound to foo%zen-fun-symbol.
-Otherwise, it is bound to foo%zen-fun is zen a symbol.
+  In addition, every BODY definition in :mode definition is bound to foo%bar-mode symbol.
+  This symbol can be used in the following [:mode ...] and [:cond ...] definitions.
+  In the [:cond ...] definition, it [:symbol zen-fun-symbol] is present, the BODY
+  is bound to foo%zen-fun-symbol.
+  Otherwise, it is bound to foo%zen-fun is zen a symbol.
 
-\(fn NAME [(ARGLIST)] [DOCSTRING] ARGS...)"
-  (declare (indent defun))
-  `(pcase-let ((`(,arglist ,default-docstring ,conditions) (meta-functions--process-args ',name ',args))
-	       (old-conditions (function-get ',name 'meta-functions-cond-plist))
-               (old-default-docstring (function-get ',name 'meta-functions-default-docstring)))
-     (unless (memq :override-nil ',args)
+  \(fn NAME [(ARGLIST)] [DOCSTRING] ARGS...)"
+    (declare (indent defun))
+    `(pcase-let ((`(,arglist ,default-docstring ,conditions) (meta-functions--process-args ',name ',args))
+		 (old-conditions (function-get ',name 'meta-functions-cond-plist))
+		 (old-default-docstring (function-get ',name 'meta-functions-default-docstring)))
+       (unless (memq :override-nil ',args)
+	 (mapc (lambda (el)
+		 (setf (alist-get (car el) old-conditions nil nil (lambda (a b) (string= (symbol-name a) (symbol-name b)))) (cdr el)))
+	       (reverse conditions))
+	 (setq conditions old-conditions)
+	 (unless default-docstring (setq default-docstring old-default-docstring)))
        (mapc (lambda (el)
-	       (setf (alist-get (car el) old-conditions nil nil (lambda (a b) (string= (symbol-name a) (symbol-name b)))) (cdr el)))
-	     (reverse conditions))
-       (setq conditions old-conditions)
-       (unless default-docstring (setq default-docstring old-default-docstring)))
-     (mapc (lambda (el)
-	     (let ((main-name  ',name)
-		   (sub-name (car el))
-		   (body (car (reverse el))))
-	       (when sub-name
-		 (eval `(defun ,sub-name ()
-			  (concat "Sub-definition in meta-function `" (symbol-name ',main-name) "'.")
-			  ,body)))))
-	   conditions) ; define the sub-bodies
-     (let ((docstring (meta-functions--generate-docstring ',name default-docstring conditions)))
-       (eval `(defun ,',name ,arglist
-		,docstring
-                (interactive)
-		(seq-some (lambda (condition)
-			    (let* ((rcondition (seq-reverse (cdr condition)))
-				   (body (car rcondition))
-                                   (subconditions (seq-reverse (cdr rcondition))))
-                              (when (seq-reduce (lambda (prev el)
-						  (and prev
-                                                       (pcase el
-							 ('#'t t)
-							 (`(function ,_) (eval `(funcall-interactively ,el)))
-							 (_ (eq major-mode (eval el))))))
-						subconditions
-						t)
-				(eval `(call-interactively ,body))
-                                t)))
-			  ',conditions)))) ; define meta-function
-     (function-put ',name 'meta-functions-cond-plist conditions)
-     (function-put ',name 'meta-functions-default-docstring default-docstring)
-     (byte-compile ',name)))
+	       (let ((main-name  ',name)
+		     (sub-name (car el))
+		     (body (car (reverse el))))
+		 (when sub-name
+		   (eval `(defun ,sub-name ()
+			    (concat "Sub-definition in meta-function `" (symbol-name ',main-name) "'.")
+			    ,body)))))
+	     conditions) ; define the sub-bodies
+       (let ((docstring (meta-functions--generate-docstring ',name default-docstring conditions)))
+	 (eval `(defun ,',name ,arglist
+		  ,docstring
+		  (interactive)
+		  (seq-some (lambda (condition)
+			      (let* ((rcondition (seq-reverse (cdr condition)))
+				     (body (car rcondition))
+				     (subconditions (seq-reverse (cdr rcondition))))
+				(when (seq-reduce (lambda (prev el)
+						    (and prev
+							 (pcase el
+							   ('#'t t)
+							   (`(function ,_) (eval `(funcall-interactively ,el)))
+							   (_ (eq major-mode (eval el))))))
+						  subconditions
+						  t)
+				  (eval `(call-interactively ,body))
+				  t)))
+			    ',conditions)))) ; define meta-function
+       (function-put ',name 'meta-functions-cond-plist conditions)
+       (function-put ',name 'meta-functions-default-docstring default-docstring)
+       (byte-compile ',name)))
 
-(defun meta-defun-mapc (list)
-  "Defun multiple meta-functions with `meta-defun' trating each element of LIST as argument."
-  (mapc (lambda (body) (eval `(meta-defun ,@body))) list))
+  (defun meta-defun-mapc (list)
+    "Defun multiple meta-functions with `meta-defun' trating each element of LIST as argument."
+    (mapc (lambda (body) (eval `(meta-defun ,@body))) list))
 
-(provide 'meta-functions)
+  (provide 'meta-functions)
 
-;;; meta-functions.el ends here
+  ;;; meta-functions.el ends here
 #+end_src
 
 And use the wrapper command in interactive mode.
@@ -3792,7 +3794,6 @@ Sometimes, I just need to have any random text in buffer for testing.
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
 :END:
-
 *** Emacs help
 
 There are various ways Emacs can assist on getting documentation.
@@ -3838,74 +3839,17 @@ Similarly, many emacs features are hidden in separate info nodes.
                      helm-source-info-tramp))))
  #+end_src
 
-For the =elisp= built-in docstrings, =helpful= package extension with very useful.
-It provides extra functionality to the standard =help= buffers.
-Another package =elisp-demos= extends =helpful= even further providing examples to many standard functions.
-
-*************** DONE Move elisp-demos and helpful to here
-CLOSED: [2020-04-27 Mon 15:20]
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-04-27 Mon 15:20]
-:END:
-*************** END
-
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-24 Fri>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-04-28
-:END:
-:LOGBOOK:
-CLOCK: [2020-04-27 Mon 15:17]--[2020-04-27 Mon 15:20] =>  0:03
-CLOCK: [2020-04-27 Mon 15:03]--[2020-04-27 Mon 15:16] =>  0:13
-CLOCK: [2020-04-23 Thu 14:35]--[2020-04-23 Thu 14:49] =>  0:14
-CLOCK: [2020-04-22 Wed 22:52]--[2020-04-22 Wed 23:07] =>  0:15
-CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
-CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
-CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
-CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
-CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
-CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
-CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
-CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
-CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
-CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-*************** END
-
+Explore loaded library files
 
 #+begin_src emacs-lisp
 (use-package helm
   :if init-flag
-  :bind (("<f1> l" . helm-locate-library))
-  :init
-  (use-package helm-descbinds :straight t)
-  (use-package boon
-    :defer t
-    :config
-
-    (bind-keys :map boon-goto-map
-	       ("k" . helpful-key)
-	       ("f" . helpful-callable)
-	       ("v" . helpful-at-point)
-	       ("d" . helpful-variable)
-	       ("s" . helpful-symbol)
-	       ("b" . helm-descbinds)
-	       ("h m" . woman)
-	       ("h n" . tldr)
-	       ("h i" . helm-info-elisp-and-libs)
-	       ("h o" . helm-info-org)
-	       ("h e" . helm-info-emacs-and-extra)
-	       ("h t" . helm-info-auctex)
-	       ("h T" . helm-info-texinfo))))
+  :bind (("<f1> l" . helm-locate-library)))
 #+end_src
+
+
+
+
 **** Man
 :PROPERTIES:
 :ID:       45d67bee-9fa3-4c00-8f48-2b41ed03ea46
@@ -3932,11 +3876,42 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
   :straight t)
 #+end_src
 
-**** Elisp demos
+**** Appearance
+:PROPERTIES:
+:CREATED:  [2020-04-27 Mon 15:19]
+:END:
+***** COMMENT Info+
+:PROPERTIES:
+:CREATED:  [2019-07-26 Fri 21:36]
+:ID:       e75f029b-943d-4600-933b-e76ceb98f501
+:END:
+Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.201900474][emacswiki]]). Specifically, the package improves the highlighting.
+
+#+begin_src emacs-lisp
+(use-package info+
+  :if init-flag
+  :straight (info+ :host github :repo "emacsmirror/emacswiki.org"))
+#+end_src
+***** Helpful - better help buffers
+:PROPERTIES:
+:CREATED:  [2018-03-29 Thu 23:16]
+:ID:       00d36901-9a96-46c3-be8b-6fe5edd9c3c7
+:END:
+For the =elisp= built-in docstrings, =helpful= package extension with very useful.
+It provides extra functionality to the standard =help= buffers.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helpful
+  :if init-flag
+  :straight t)
+#+END_SRC
+***** Elisp demos
 :PROPERTIES:
 :CREATED:  [2019-08-15 Thu 12:17]
 :ID:       4e508904-0543-474c-956a-85e56506f403
 :END:
+
+Another package =elisp-demos= extends =helpful= even further providing examples to many standard functions.
 
 #+begin_src emacs-lisp
 (use-package elisp-demos
@@ -3945,35 +3920,22 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
   :config
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
-**** Appearance
-:PROPERTIES:
-:CREATED:  [2020-04-27 Mon 15:19]
-:END:
-***** Info+
-:PROPERTIES:
-:CREATED:  [2019-07-26 Fri 21:36]
-:ID:       e75f029b-943d-4600-933b-e76ceb98f501
-:END:
-Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.201900474][emacswiki]]). Specifically, the package improves the highlighting.
-#+begin_src emacs-lisp
-(use-package info+
-  :if init-flag
-  :straight (emacswiki.org :host github :repo "emacsmirror/emacswiki.org"))
-#+end_src
-***** Helpful - better help buffers
-:PROPERTIES:
-:CREATED:  [2018-03-29 Thu 23:16]
-:ID:       00d36901-9a96-46c3-be8b-6fe5edd9c3c7
-:END:
-#+BEGIN_SRC emacs-lisp
-(use-package helpful
-  :if init-flag
-  :straight t)
-#+END_SRC
 **** Command loop
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 15:19]
 :END:
+***** Explore keymaps
+:PROPERTIES:
+:CREATED:  [2020-04-28 Tue 11:34]
+:END:
+
+#+begin_src emacs-lisp
+(use-package helm
+  :if init-flag
+  :defer t
+  :config
+  (use-package helm-descbinds :straight t))
+#+end_src
 ***** Show the continuation of unfinished keybindings
 :PROPERTIES:
 :ID:       af18cad7-734f-491f-85a8-1fc817cf2dbd
@@ -4018,6 +3980,34 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
     (meta-defun meta-previous-buffer :mode Info-mode Info-history-back)
     (meta-defun meta-next-buffer :mode Info-mode Info-history-forward)))
 #+end_src
+***** Global key bindings
+:PROPERTIES:
+:CREATED:  [2020-04-28 Tue 11:37]
+:END:
+
+#+begin_src emacs-lisp
+(use-package helm
+  :if init-flag
+  :init
+  (use-package boon
+    :defer t
+    :config
+    (bind-keys :map boon-goto-map
+	       ("k" . helpful-key)
+	       ("f" . helpful-callable)
+	       ("v" . helpful-at-point)
+	       ("d" . helpful-variable)
+	       ("s" . helpful-symbol)
+	       ("b" . helm-descbinds)
+	       ("h m" . woman)
+	       ("h n" . tldr)
+	       ("h i" . helm-info-elisp-and-libs)
+	       ("h o" . helm-info-org)
+	       ("h e" . helm-info-emacs-and-extra)
+	       ("h t" . helm-info-auctex)
+	       ("h T" . helm-info-texinfo))))
+#+end_src
+
 *** Elisp coding
 :PROPERTIES:
 :CREATED:  [2019-07-08 Mon 20:50]
@@ -4030,6 +4020,8 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
 :LOGBOOK:
 - Refiled on [2020-04-23 Thu 14:42]
 :END:
+
+Smarter elisp editing
 
 #+begin_src emacs-lisp
 (use-package paredit
@@ -4056,6 +4048,43 @@ Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.20
 :PROPERTIES:
 :ID:       5b5c84f0-e363-4e5c-b373-69ddf019f9e3
 :END:
+
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-24 Fri>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-04-29
+:END:
+:LOGBOOK:
+CLOCK: [2020-04-28 Tue 11:32]--[2020-04-28 Tue 11:50] =>  0:18
+CLOCK: [2020-04-27 Mon 15:17]--[2020-04-27 Mon 15:20] =>  0:03
+CLOCK: [2020-04-27 Mon 15:03]--[2020-04-27 Mon 15:16] =>  0:13
+CLOCK: [2020-04-23 Thu 14:35]--[2020-04-23 Thu 14:49] =>  0:14
+CLOCK: [2020-04-22 Wed 22:52]--[2020-04-22 Wed 23:07] =>  0:15
+CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
+CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
+CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
+CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
+CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
+CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
+CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
+CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
+CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
+CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
+
+
+The convention for writing Emacs packages is using the package name as prefix to every dynamically scoped variable in the package. 
+The result is useful to avoid mess in the global variables, but also makes the variable and function names too long. 
+=nameless= asd
 
 #+begin_src emacs-lisp
 (use-package nameless
@@ -8336,12 +8365,7 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
      #+end_src
 
 Once I keep all my time tracked, I can calculate the estimated balance of my time. The idea is that I assign the weight to each task/project (=:ORG-TIME-BALANCE-MULTIPLIER:=), which is positive for useful tasks I do not want to do, and negative for fun tasks (they may be useful, but the purpose is to force myself doing what I do not like to do). All I need to do now, is to keep this balance positive.
-*************** DONE Implement this (current month summary)
-CLOSED: [2020-04-27 Mon 13:04]
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-04-27 Mon 13:04]
-:END:
-*************** END
+
 ***** Agenda log mode & clock report
 :PROPERTIES:
 :ID:       104927a5-4dea-4ee0-91d7-36afc6b15c7f
@@ -11460,7 +11484,7 @@ SPEC is the invisibility spec, as a symbol."
 Also, now we should avoid deleting 'invisible text property
 #+begin_src emacs-lisp
 (use-package org
-:init
+  :init
   (defun org-unfontify-region (beg end &optional _maybe_loudly)
     "Remove fontification and activation overlays from links."
     (font-lock-default-unfontify-region beg end)
@@ -12419,3 +12443,4 @@ cp autosave.lua ~/.config/mpv/scripts/
 #+end_src
 
 #+RESULTS[29c899f8bda8bf343ecb2be121a022246bfecb15]:
+
