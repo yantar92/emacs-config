@@ -11536,15 +11536,320 @@ Using advice for workaround.
   )
 #+end_src
 
+Because we are using text properties, inserting anything into hidden drawers using =insert= keeps inserted text visible.
+In order to inherit the invisibility spec, we must use =insert-and-inherit=.
+Similarly, there is =insert-before-markers=. It should be changed to =insert-before-markers-and-inherit=. 
+
+
+*************** TODO there are potentially many places in org using insert. need to investigate
+*************** END
+*************** TODO the need to use =insert-and-inherit= may confuse user-written code, which commonly uses simple =insert=. Not sure what can be done about this
+*************** END
+
+#+begin_src emacs-lisp
+(use-package org
+  :init
+  (defun org-entry-put (pom property value)
+    "Set PROPERTY to VALUE for entry at point-or-marker POM.
+
+If the value is nil, it is converted to the empty string.  If it
+is not a string, an error is raised.  Also raise an error on
+invalid property names.
+
+PROPERTY can be any regular property (see
+`org-special-properties').  It can also be \"TODO\",
+\"PRIORITY\", \"SCHEDULED\" and \"DEADLINE\".
+
+For the last two properties, VALUE may have any of the special
+values \"earlier\" and \"later\".  The function then increases or
+decreases scheduled or deadline date by one day."
+    (cond ((null value) (setq value ""))
+	  ((not (stringp value)) (error "Properties values should be strings"))
+	  ((not (org--valid-property-p property))
+	   (user-error "Invalid property name: \"%s\"" property)))
+    (org-with-point-at pom
+      (if (or (not (featurep 'org-inlinetask)) (org-inlinetask-in-task-p))
+	  (org-back-to-heading-or-point-min t)
+	(org-with-limited-levels (org-back-to-heading-or-point-min t)))
+      (let ((beg (point)))
+	(cond
+	 ((equal property "TODO")
+	  (cond ((not (org-string-nw-p value)) (setq value 'none))
+		((not (member value org-todo-keywords-1))
+		 (user-error "\"%s\" is not a valid TODO state" value)))
+	  (org-todo value)
+	  (org-align-tags))
+	 ((equal property "PRIORITY")
+	  (org-priority (if (org-string-nw-p value) (string-to-char value) ?\s))
+	  (org-align-tags))
+	 ((equal property "SCHEDULED")
+	  (forward-line)
+	  (if (and (looking-at-p org-planning-line-re)
+		   (re-search-forward
+		    org-scheduled-time-regexp (line-end-position) t))
+	      (cond ((string= value "earlier") (org-timestamp-change -1 'day))
+		    ((string= value "later") (org-timestamp-change 1 'day))
+		    ((string= value "") (org-schedule '(4)))
+		    (t (org-schedule nil value)))
+	    (if (member value '("earlier" "later" ""))
+		(call-interactively #'org-schedule)
+	      (org-schedule nil value))))
+	 ((equal property "DEADLINE")
+	  (forward-line)
+	  (if (and (looking-at-p org-planning-line-re)
+		   (re-search-forward
+		    org-deadline-time-regexp (line-end-position) t))
+	      (cond ((string= value "earlier") (org-timestamp-change -1 'day))
+		    ((string= value "later") (org-timestamp-change 1 'day))
+		    ((string= value "") (org-deadline '(4)))
+		    (t (org-deadline nil value)))
+	    (if (member value '("earlier" "later" ""))
+		(call-interactively #'org-deadline)
+	      (org-deadline nil value))))
+	 ((member property org-special-properties)
+	  (error "The %s property cannot be set with `org-entry-put'" property))
+	 (t
+	  (let* ((range (org-get-property-block beg 'force))
+		 (end (cdr range))
+		 (case-fold-search t))
+	    (goto-char (car range))
+	    (if (re-search-forward (org-re-property property nil t) end t)
+		(progn (delete-region (match-beginning 0) (match-end 0))
+		       (goto-char (match-beginning 0)))
+	      (goto-char end)
+	      (insert-and-inherit "\n")
+	      (backward-char))
+	    (insert-and-inherit ":" property ":")
+	    (when value (insert-and-inherit " " value))
+	    (org-indent-line)))))
+      (run-hook-with-args 'org-property-changed-functions property value)))
+
+  (defun org-clock-in (&optional select start-time)
+    "Start the clock on the current item.
+
+If necessary, clock-out of the currently active clock.
+
+With a `\\[universal-argument]' prefix argument SELECT, offer a list of \
+recently clocked
+tasks to clock into.
+
+When SELECT is `\\[universal-argument] \ \\[universal-argument]', \
+clock into the current task and mark it as
+the default task, a special task that will always be offered in the
+clocking selection, associated with the letter `d'.
+
+When SELECT is `\\[universal-argument] \\[universal-argument] \
+\\[universal-argument]', clock in by using the last clock-out
+time as the start time.  See `org-clock-continuously' to make this
+the default behavior."
+    (interactive "P")
+    (setq org-clock-notification-was-shown nil)
+    (org-refresh-effort-properties)
+    (catch 'abort
+      (let ((interrupting (and (not org-clock-resolving-clocks-due-to-idleness)
+			       (org-clocking-p)))
+	    ts selected-task target-pos (org--msg-extra "")
+	    (leftover (and (not org-clock-resolving-clocks)
+			   org-clock-leftover-time)))
+
+	(when (and org-clock-auto-clock-resolution
+		   (or (not interrupting)
+		       (eq t org-clock-auto-clock-resolution))
+		   (not org-clock-clocking-in)
+		   (not org-clock-resolving-clocks))
+	  (setq org-clock-leftover-time nil)
+	  (let ((org-clock-clocking-in t))
+	    (org-resolve-clocks)))    ; check if any clocks are dangling
+
+	(when (equal select '(64))
+	  ;; Set start-time to `org-clock-out-time'
+	  (let ((org-clock-continuously t))
+	    (org-clock-in nil org-clock-out-time)
+	    (throw 'abort nil)))
+
+	(when (equal select '(4))
+	  (pcase (org-clock-select-task "Clock-in on task: ")
+	    (`nil (error "Abort"))
+	    (task (setq selected-task (copy-marker task)))))
+
+	(when (equal select '(16))
+	  ;; Mark as default clocking task
+	  (org-clock-mark-default-task))
+
+	(when interrupting
+	  ;; We are interrupting the clocking of a different task.  Save
+	  ;; a marker to this task, so that we can go back.  First check
+	  ;; if we are trying to clock into the same task!
+	  (when (or selected-task (derived-mode-p 'org-mode))
+	    (org-with-point-at selected-task
+	      (unless selected-task (org-back-to-heading t))
+	      (when (and (eq (marker-buffer org-clock-hd-marker)
+			     (org-base-buffer (current-buffer)))
+			 (= (point) (marker-position org-clock-hd-marker))
+			 (equal org-clock-current-task (org-get-heading t t t t)))
+		(message "Clock continues in %S" org-clock-heading)
+		(throw 'abort nil))))
+	  (move-marker org-clock-interrupted-task
+		       (marker-position org-clock-marker)
+		       (marker-buffer org-clock-marker))
+	  (let ((org-clock-clocking-in t))
+	    (org-clock-out nil t)))
+
+	;; Clock in at which position?
+	(setq target-pos
+	      (if (and (eobp) (not (org-at-heading-p)))
+		  (point-at-bol 0)
+		(point)))
+	(save-excursion
+	  (when (and selected-task (marker-buffer selected-task))
+	    ;; There is a selected task, move to the correct buffer
+	    ;; and set the new target position.
+	    (set-buffer (org-base-buffer (marker-buffer selected-task)))
+	    (setq target-pos (marker-position selected-task))
+	    (move-marker selected-task nil))
+	  (org-with-wide-buffer
+	   (goto-char target-pos)
+	   (org-back-to-heading t)
+	   (or interrupting (move-marker org-clock-interrupted-task nil))
+	   (run-hooks 'org-clock-in-prepare-hook)
+	   (org-clock-history-push)
+	   (setq org-clock-current-task (org-get-heading t t t t))
+	   (cond ((functionp org-clock-in-switch-to-state)
+		  (let ((case-fold-search nil))
+		    (looking-at org-complex-heading-regexp))
+		  (let ((newstate (funcall org-clock-in-switch-to-state
+					   (match-string 2))))
+		    (when newstate (org-todo newstate))))
+		 ((and org-clock-in-switch-to-state
+		       (not (looking-at (concat org-outline-regexp "[ \t]*"
+					      org-clock-in-switch-to-state
+					      "\\>"))))
+		  (org-todo org-clock-in-switch-to-state)))
+	   (setq org-clock-heading (org-clock--mode-line-heading))
+	   (org-clock-find-position org-clock-in-resume)
+	   (cond
+	    ((and org-clock-in-resume
+		  (looking-at
+		   (concat "^[ \t]*" org-clock-string
+			   " \\[\\([0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}"
+			   " *\\sw+.? +[012][0-9]:[0-5][0-9]\\)\\][ \t]*$")))
+	     (message "Matched %s" (match-string 1))
+	     (setq ts (concat "[" (match-string 1) "]"))
+	     (goto-char (match-end 1))
+	     (setq org-clock-start-time
+		   (org-time-string-to-time (match-string 1)))
+	     (setq org-clock-effort (org-entry-get (point) org-effort-property))
+	     (setq org-clock-total-time (org-clock-sum-current-item
+					 (org-clock-get-sum-start))))
+	    ((eq org-clock-in-resume 'auto-restart)
+	     ;; called from org-clock-load during startup,
+	     ;; do not interrupt, but warn!
+	     (message "Cannot restart clock because task does not contain unfinished clock")
+	     (ding)
+	     (sit-for 2)
+	     (throw 'abort nil))
+	    (t
+	     (insert-before-markers-and-inherit "\n")
+	     (backward-char 1)
+	     (when (and (save-excursion
+			  (end-of-line 0)
+			  (org-in-item-p)))
+	       (beginning-of-line 1)
+	       (indent-line-to (- (current-indentation) 2)))
+	     (insert-and-inherit org-clock-string " ")
+	     (setq org-clock-effort (org-entry-get (point) org-effort-property))
+	     (setq org-clock-total-time (org-clock-sum-current-item
+					 (org-clock-get-sum-start)))
+	     (setq org-clock-start-time
+		   (or (and org-clock-continuously org-clock-out-time)
+		       (and leftover
+			    (y-or-n-p
+			     (format
+			      "You stopped another clock %d mins ago; start this one from then? "
+			      (/ (org-time-convert-to-integer
+				  (org-time-subtract
+				   (org-current-time org-clock-rounding-minutes t)
+				   leftover))
+				 60)))
+			    leftover)
+		       start-time
+		       (org-current-time org-clock-rounding-minutes t)))
+	     (setq ts (org-insert-time-stamp org-clock-start-time
+					     'with-hm 'inactive))
+	     (org-indent-line)))
+	   (move-marker org-clock-marker (point) (buffer-base-buffer))
+	   (move-marker org-clock-hd-marker
+			(save-excursion (org-back-to-heading t) (point))
+			(buffer-base-buffer))
+	   (setq org-clock-has-been-used t)
+	   ;; add to mode line
+	   (when (or (eq org-clock-clocked-in-display 'mode-line)
+		     (eq org-clock-clocked-in-display 'both))
+	     (or global-mode-string (setq global-mode-string '("")))
+	     (or (memq 'org-mode-line-string global-mode-string)
+		 (setq global-mode-string
+		       (append global-mode-string '(org-mode-line-string)))))
+	   ;; add to frame title
+	   (when (or (eq org-clock-clocked-in-display 'frame-title)
+		     (eq org-clock-clocked-in-display 'both))
+	     (setq org-frame-title-format-backup frame-title-format)
+	     (setq frame-title-format org-clock-frame-title-format))
+	   (org-clock-update-mode-line)
+	   (when org-clock-mode-line-timer
+	     (cancel-timer org-clock-mode-line-timer)
+	     (setq org-clock-mode-line-timer nil))
+	   (when org-clock-clocked-in-display
+	     (setq org-clock-mode-line-timer
+		   (run-with-timer org-clock-update-period
+				   org-clock-update-period
+				   'org-clock-update-mode-line)))
+	   (when org-clock-idle-timer
+	     (cancel-timer org-clock-idle-timer)
+	     (setq org-clock-idle-timer nil))
+	   (setq org-clock-idle-timer
+		 (run-with-timer 60 60 'org-resolve-clocks-if-idle))
+	   (message "Clock starts at %s - %s" ts org--msg-extra)
+	   (run-hooks 'org-clock-in-hook))))))
+
+  (defun org-insert-time-stamp (time &optional with-hm inactive pre post extra)
+    "Insert a date stamp for the date given by the internal TIME.
+See `format-time-string' for the format of TIME.
+WITH-HM means use the stamp format that includes the time of the day.
+INACTIVE means use square brackets instead of angular ones, so that the
+stamp will not contribute to the agenda.
+PRE and POST are optional strings to be inserted before and after the
+stamp.
+The command returns the inserted time stamp."
+    (let ((fmt (funcall (if with-hm 'cdr 'car) org-time-stamp-formats))
+	  stamp)
+      (when inactive (setq fmt (concat "[" (substring fmt 1 -1) "]")))
+      (insert-before-markers-and-inherit (or pre ""))
+      (when (listp extra)
+	(setq extra (car extra))
+	(if (and (stringp extra)
+		 (string-match "\\([0-9]+\\):\\([0-9]+\\)" extra))
+	    (setq extra (format "-%02d:%02d"
+				(string-to-number (match-string 1 extra))
+				(string-to-number (match-string 2 extra))))
+	  (setq extra nil)))
+      (when extra
+	(setq fmt (concat (substring fmt 0 -1) extra (substring fmt -1))))
+      (insert-before-markers-and-inherit (setq stamp (format-time-string fmt time)))
+      (insert-before-markers-and-inherit (or post ""))
+      (setq org-last-inserted-timestamp stamp)))
+  
+  )
+#+end_src
+
 I have to run (org-cycle-hide-drawers 'all) to hide drawers. 
 They are not hidden automatically for some reason.
  
-*************** TODO investigate why drawers are not hidden. org-autosort? 
+*************** NEXT investigate why drawers are not hidden. org-autosort? 
 *************** END
 
 
 **** NEXT [#A] get a reply #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
-SCHEDULED: <2020-04-28 Tue>
+SCHEDULED: <2020-04-30 Thu>
 :PROPERTIES:
 :CREATED: [2020-04-26 Sun 23:59]
 :EMAIL-SOURCE: [[notmuch:id:87y2qi8c8w.fsf@localhost]]
