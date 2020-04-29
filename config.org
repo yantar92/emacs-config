@@ -11877,6 +11877,14 @@ CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
 :LOGBOOK:
 - Refiled on [2020-04-27 Mon 23:59]
 :END:
+**** TODO notmuch-id links are not hidden in drawers
+:PROPERTIES:
+:CREATED:  [2020-04-28 Tue 22:37]
+:END:
+**** TODO helm does not reveal the hidden text
+:PROPERTIES:
+:CREATED:  [2020-04-29 Wed 01:56]
+:END:
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
