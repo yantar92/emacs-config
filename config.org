@@ -10105,6 +10105,23 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 *************** TODO make auto-completion possible for babel blocks from inside editing org-src
 *************** END
 
+**** COMMENT Alerts - system notifications
+:PROPERTIES:
+:CREATED:  [2020-04-28 Tue 23:25]
+:END:
+
+Alert for upcoming scheduled or agenda entries or agenda entries containing deadline.
+*************** TODO this does not work because of my agenda prefix customisation
+*************** END
+
+#+begin_src emacs-lisp
+(use-package org-alert
+  :straight t
+  :config
+  (setq alert-default-style 'libnotify)
+  (org-alert-enable))
+#+end_src
+
 *** Preview
 :PROPERTIES:
 :ID:       a85d2993-1d90-40b3-b69a-52cf7d6bd18b
