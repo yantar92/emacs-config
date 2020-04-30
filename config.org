@@ -4052,7 +4052,7 @@ Smarter elisp editing
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-24 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-04-29
+:SHOWFROMDATE: 2020-05-01
 :END:
 :LOGBOOK:
 CLOCK: [2020-04-28 Tue 11:32]--[2020-04-28 Tue 11:50] =>  0:18
@@ -5635,7 +5635,7 @@ Unschedule when SOMEDAY is set."
 	     (not (string= (plist-get arg :from) "SOMEDAY"))
              (string= (plist-get arg :to) "SOMEDAY"))
     (let ((pos (plist-get arg :position)))
-      (when (equal pos org-clock-marker)  
+      (when (equal pos org-clock-marker)
 	(org-clock-out)))))
 (add-hook 'org-trigger-hook #'org-trigger-someday)
 #+end_src
@@ -11995,6 +11995,7 @@ SCHEDULED: <2020-04-30 Thu>
 :PROPERTIES:
 :CREATED: [2020-04-26 Sun 23:59]
 :EMAIL-SOURCE: [[notmuch:id:87y2qi8c8w.fsf@localhost]]
+:SHOWFROMDATE: 2020-05-02
 :END:
 :LOGBOOK:
 - Refiled on [2020-04-26 Sun 23:59]
@@ -12026,6 +12027,13 @@ CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
 **** TODO helm does not reveal the hidden text
 :PROPERTIES:
 :CREATED:  [2020-04-29 Wed 01:56]
+:END:
+**** TODO links inside drawers may not be rendered correctly because their invisibility spec can only be set once 
+:PROPERTIES:
+:CREATED: [2020-04-29 Wed 23:59]
+:END:
+:LOGBOOK:
+- Refiled on [2020-04-30 Thu 13:01]
 :END:
 *** TODO Key combinations
 :PROPERTIES:
