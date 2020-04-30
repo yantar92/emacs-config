@@ -11887,6 +11887,98 @@ The command returns the inserted time stamp."
       (insert-before-markers-and-inherit (setq stamp (format-time-string fmt time)))
       (insert-before-markers-and-inherit (or post ""))
       (setq org-last-inserted-timestamp stamp)))
+
+  (defun org-clock-out (&optional switch-to-state fail-quietly at-time)
+    "Stop the currently running clock.
+Throw an error if there is no running clock and FAIL-QUIETLY is nil.
+With a universal prefix, prompt for a state to switch the clocked out task
+to, overriding the existing value of `org-clock-out-switch-to-state'."
+    (interactive "P")
+    (catch 'exit
+      (when (not (org-clocking-p))
+	(setq global-mode-string
+	      (delq 'org-mode-line-string global-mode-string))
+	(org-clock-restore-frame-title-format)
+	(force-mode-line-update)
+	(if fail-quietly (throw 'exit t) (user-error "No active clock")))
+      (let ((org-clock-out-switch-to-state
+	     (if switch-to-state
+		 (completing-read "Switch to state: "
+				  (with-current-buffer
+				      (marker-buffer org-clock-marker)
+				    org-todo-keywords-1)
+				  nil t "DONE")
+	       org-clock-out-switch-to-state))
+	    (now (org-current-time org-clock-rounding-minutes))
+	    ts te s h m remove)
+	(setq org-clock-out-time now)
+	(save-excursion ; Do not replace this with `with-current-buffer'.
+	  (with-no-warnings (set-buffer (org-clocking-buffer)))
+	  (save-restriction
+	    (widen)
+	    (goto-char org-clock-marker)
+	    (beginning-of-line 1)
+	    (if (and (looking-at (concat "[ \t]*" org-keyword-time-regexp))
+		     (equal (match-string 1) org-clock-string))
+		(setq ts (match-string 2))
+	      (if fail-quietly (throw 'exit nil) (error "Clock start time is gone")))
+	    (goto-char (match-end 0))
+	    (delete-region (point) (point-at-eol))
+	    (insert-and-inherit "--")
+	    (setq te (org-insert-time-stamp (or at-time now) 'with-hm 'inactive))
+	    (setq s (org-time-convert-to-integer
+		     (time-subtract
+		      (org-time-string-to-time te)
+		      (org-time-string-to-time ts)))
+		  h (floor s 3600)
+		  m (floor (mod s 3600) 60))
+	    (insert-and-inherit " => " (format "%2d:%02d" h m))
+	    (move-marker org-clock-marker nil)
+	    (move-marker org-clock-hd-marker nil)
+	    ;; Possibly remove zero time clocks.  However, do not add
+	    ;; a note associated to the CLOCK line in this case.
+	    (cond ((and org-clock-out-remove-zero-time-clocks
+			(= 0 h m))
+		   (setq remove t)
+		   (delete-region (line-beginning-position)
+				  (line-beginning-position 2)))
+		  (org-log-note-clock-out
+		   (org-add-log-setup
+		    'clock-out nil nil nil
+		    (concat "# Task: " (org-get-heading t) "\n\n"))))
+	    (when org-clock-mode-line-timer
+	      (cancel-timer org-clock-mode-line-timer)
+	      (setq org-clock-mode-line-timer nil))
+	    (when org-clock-idle-timer
+	      (cancel-timer org-clock-idle-timer)
+	      (setq org-clock-idle-timer nil))
+	    (setq global-mode-string
+		  (delq 'org-mode-line-string global-mode-string))
+	    (org-clock-restore-frame-title-format)
+	    (when org-clock-out-switch-to-state
+	      (save-excursion
+		(org-back-to-heading t)
+		(let ((org-clock-out-when-done nil))
+		  (cond
+		   ((functionp org-clock-out-switch-to-state)
+		    (let ((case-fold-search nil))
+		      (looking-at org-complex-heading-regexp))
+		    (let ((newstate (funcall org-clock-out-switch-to-state
+					     (match-string 2))))
+		      (when newstate (org-todo newstate))))
+		   ((and org-clock-out-switch-to-state
+			 (not (looking-at (concat org-outline-regexp "[ \t]*"
+						  org-clock-out-switch-to-state
+						  "\\>"))))
+		    (org-todo org-clock-out-switch-to-state))))))
+	    (force-mode-line-update)
+	    (message (if remove
+			 "Clock stopped at %s after %s => LINE REMOVED"
+		       "Clock stopped at %s after %s")
+		     te (org-duration-from-minutes (+ (* 60 h) m)))
+	    (run-hooks 'org-clock-out-hook)
+	    (unless (org-clocking-p)
+	      (setq org-clock-current-task nil)))))))
   
   )
 #+end_src
