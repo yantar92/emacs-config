@@ -11968,8 +11968,8 @@ to, overriding the existing value of `org-clock-out-switch-to-state'."
 		      (when newstate (org-todo newstate))))
 		   ((and org-clock-out-switch-to-state
 			 (not (looking-at (concat org-outline-regexp "[ \t]*"
-						  org-clock-out-switch-to-state
-						  "\\>"))))
+						org-clock-out-switch-to-state
+						"\\>"))))
 		    (org-todo org-clock-out-switch-to-state))))))
 	    (force-mode-line-update)
 	    (message (if remove
