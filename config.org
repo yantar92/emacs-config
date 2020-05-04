@@ -8465,10 +8465,19 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
 :PROPERTIES:
 :ID:       13012cf7-322e-4433-a22c-e81b7c5feda1
 :END:
-I do not show current task in Emacs, instead I use =awesome wm= widget. Hence need to save current task in file. The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] Project/Subproject/Subsubproject/.../task=) or =[hh:mm] Capturing ...= for capturing (the title is being edited there and it does not make sense to keep that updated in widget as well).
+I do not show current task in Emacs, instead I use =awesome wm= widget. 
+Hence, need to save current task in file. 
+The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] Project/Subproject/Subsubproject/.../task=) or =[hh:mm] Capturing ...= for capturing (the title is being edited there and it does not make sense to keep that updated in widget as well).
+
+[2020-05-03 Sun] Mode-line display is also linked to notification when the clocked-in time exceeds effort estimate. Hence, I still display the task in mode-line for the sole purpose of enabling notification.
+
+*************** TODO report in mail-list about mode-line display dependence of effort notification
+*************** END
+
+
 #+begin_src emacs-lisp
 (setq org-clock-mode-line-total (quote today))
-(setq org-clock-clocked-in-display nil)
+(setq org-clock-clocked-in-display 'mode-line)
 (defvar yant/org-clocking-info-file "~/.org-clock-in"
   "File to save current clocking info.\nIt will be overwriten!")
 
@@ -9180,6 +9189,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":Source: %:link"
+                           ":Effort: 3"
 			   ":END:"))))
            'replace)
 #+end_src
@@ -9197,6 +9207,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":Source: %:link"
+                           ":Effort: 3"
 			   ":END:"
                            "%i"))))
            'replace)
@@ -9216,6 +9227,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":Source: %:link"
+                           ":Effort: 3"
 			   ":END:"
                            "%i"))))
            'replace)
