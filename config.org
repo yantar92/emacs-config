@@ -141,12 +141,17 @@ emerge -v watchexec
 *************** END
 
 First, make sure that =straight.el= can fetch remote URLs from everywhere.
-Set up the =askpass=.
+Set up the =askpass= and cache ssh password.
 
 #+begin_src emacs-lisp
+(setenv "DISPLAY" ":0.0")
 (setenv "SSH_ASKPASS" "ssh-askpass-fullscreen")
-(when org-tangle-flag
-  (setenv "DISPLAY" ":0.0"))
+(when init-flag
+  (let ((ssh-auth-sock (shell-command-to-string "ssh-agent | grep SSH_AUTH_SOCK | cut -d= -f2 | cut -d';' -f1"))
+	(ssh-agent-pid (shell-command-to-string "ssh-agent | grep SSH_AGENT_PID | cut -d= -f2 | cut -d';' -f1")))
+    (setenv "SSH_AUTH_SOCK" (replace-regexp-in-string "\n" "" ssh-auth-sock))
+    (setenv "SSH_AGENT_PID" (replace-regexp-in-string "\n" "" ssh-agent-pid))
+    (shell-command-to-string "ssh-add ~/.ssh/id_rsa")))
 #+end_src
 
 And tell =straight.el= to use file watcher
