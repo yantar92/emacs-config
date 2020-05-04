@@ -6137,7 +6137,10 @@ Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while
 
 (defun yant/process-att-abbrev (arg)
   "Return `org-attach-dir' for the current entry."
-  (s-concat (f-slash (org-attach-dir-symlink 'CREATE))
+  (s-concat (f-slash
+	     ;; (org-attach-dir-symlink 'CREATE)
+             (let ((org-attach-dir-suppress-extra-checks t)) (org-attach-dir))
+             )
 	    arg))
 
 (add-to-list 'org-link-abbrev-alist (cons "att" "file:%(yant/process-att-abbrev)"))
