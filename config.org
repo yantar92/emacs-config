@@ -289,6 +289,9 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
 :END:
 
 *** Extra functions for association lists
+:PROPERTIES:
+:ID:       3967e7cf-4152-4807-bedb-7f6df1312b73
+:END:
 *************** TODO study functions
 *************** END
 #+begin_src emacs-lisp
@@ -298,6 +301,9 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
 #+end_src
 
 *** Handy hook macros [ [[[[https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#hooks][credit]] ]
+:PROPERTIES:
+:ID:       a5b5ec10-bae3-4811-b47d-2c8a0b7408ed
+:END:
 #+begin_src emacs-lisp
 (defun nox-unquote (exp)
   "Return EXP unquoted."
@@ -456,6 +462,7 @@ compilation. This will no-op on features that have been disabled by the user."
 *** Shut things up 
 :PROPERTIES:
 :CREATED:  [2020-04-23 Thu 21:16]
+:ID:       5ed810ca-4028-4f48-93d9-fd086ba8e340
 :END:
 
 Credit: https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#shut-things-up
@@ -855,7 +862,7 @@ Show some text in buffer differently
 	(push char composition)
 	(push '(Br . Bl) composition)
 	)))
-
+  :config
   (setq pretty-symbol-patterns  (let ((lisps '(emacs-lisp-mode
 					       inferior-lisp-mode
 					       inferior-emacs-lisp-mode
@@ -897,7 +904,6 @@ Show some text in buffer differently
 				    (?¬ logical "(\\<\\(not\\)\\>" (,@lisps) 1)
 				    (?∅ nil "\\<nil\\>" (,@lisps))
 				    ))))
-
 #+end_src
 
 ***** Latex pretty symbols
@@ -2584,7 +2590,6 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 	     ("<SPC>" . boon-drop-mark))
   (unbind-key "M-l" global-map))
 #+end_src
-
 **** =Avy= mode - =qutebrowser= like hints to words
 :PROPERTIES:
 :ID:       f645973b-fcd8-466a-9fec-7e8ebcbb0be1
@@ -2605,7 +2610,6 @@ I do not move by visual line in files. Instead, I prefer to use =avy= to move wi
     :custom
     (avy-timeout-seconds 0.2 "The default is too long.")))
 #+end_src
-
 
 **** End of sentence
 :PROPERTIES:
@@ -4085,7 +4089,7 @@ Smarter elisp editing
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-24 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-05-01
+:SHOWFROMDATE: 2020-05-04
 :END:
 :LOGBOOK:
 CLOCK: [2020-04-28 Tue 11:32]--[2020-04-28 Tue 11:50] =>  0:18
@@ -6859,6 +6863,9 @@ Now, when I have the mirror attach folder structure, it make sense to open this 
 
 *************** NEXT [#A] because of org-attach API change, need to rewrite
 SCHEDULED: <2020-05-02 Sat>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-05-05
+:END:
 *************** END
 
 
@@ -10510,6 +10517,7 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
   #+begin_src emacs-lisp
 (use-package pretty-symbols
   :config
+  (require 'org-inlinetask)
   (setq pretty-symbol-patterns
 	(append pretty-symbol-patterns
 		`(;;(?▤ org-specific ":LOGBOOK:" (org-mode))
@@ -12133,7 +12141,7 @@ SCHEDULED: <2020-04-30 Thu>
 :PROPERTIES:
 :CREATED: [2020-04-26 Sun 23:59]
 :EMAIL-SOURCE: [[notmuch:id:87y2qi8c8w.fsf@localhost]]
-:SHOWFROMDATE: 2020-05-02
+:SHOWFROMDATE: 2020-05-04 17:00
 :END:
 :LOGBOOK:
 - Refiled on [2020-04-26 Sun 23:59]
