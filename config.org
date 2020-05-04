@@ -8020,7 +8020,7 @@ Also, hide the contents once task is clocked out.
   (org-quick-peek-filter-functions (list (apply-partially #'s-replace-regexp "\n" "\n\n")
 					 (apply-partially #'s-word-wrap 80)
 					 #'s-trim
-                                         (apply-partially #'s-replace-regexp "\n\n" "\n")))
+                                         (apply-partially #'s-replace-regexp "\n+" "\n")))
   :config
 
   (define-advice org-agenda-clock-in (:after (&rest args) quick-peek-maybe)
