@@ -3597,6 +3597,15 @@ I do not use mouse as much as possible and discourage myself to use it unnecessa
 		("M-O" . meta-move-element-right)
 		("M-I" . meta-move-element-left)
 		("M-o" . meta-move-line-right)
+		("M-i" . meta-move-line-left)
+                :map boon-special-map
+                ("M-j" . meta-move-line-down)
+		("M-k" . meta-move-line-up)
+		("M-J" . meta-move-element-down)
+		("M-K" . meta-move-element-up)
+		("M-O" . meta-move-element-right)
+		("M-I" . meta-move-element-left)
+		("M-o" . meta-move-line-right)
 		("M-i" . meta-move-line-left))
     :config
     (meta-defun-mapc '((meta-move-line-right "Move the line under cursor right." ignore)
