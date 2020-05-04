@@ -7251,6 +7251,11 @@ SUBTREE-END is used as end of the entry if not nil."
 			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline))
 			    (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels nil)))
+		(tags "/"
+		      ((org-agenda-overriding-header "Tasks to Archive")
+		       (org-agenda-prefix-format "%-12:c\t%?-12t")
+		       (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
+		       (org-tags-match-list-sublevels nil)))
 		(tags-todo "-CANCELLED-WAITING-HOLD/!"
 			   ((org-agenda-overriding-header "Stuck Projects")
 			    (org-agenda-dim-blocked-tasks nil)
@@ -7280,18 +7285,6 @@ SUBTREE-END is used as end of the entry if not nil."
 			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))
-		(tags "/"
-		      ((org-agenda-overriding-header "Tasks to Archive")
-		       (org-agenda-prefix-format "%-12:c\t%?-12t")
-		       (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
-		       (org-tags-match-list-sublevels nil)))
-		(tags-todo "-CANCELLED/!"
-			   ((org-agenda-overriding-header "Projects")
-			    (org-agenda-dim-blocked-tasks nil)
-			    (org-agenda-prefix-format "%?-12t")
-			    (org-agenda-skip-function 'bh/skip-non-projects)
-			    (org-agenda-sorting-strategy
-			     '(todo-state-down effort-up category-keep))))
                 (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT/!REVIEW"
 			   ((org-agenda-overriding-header "Tasks to review")
 			    (org-agenda-dim-blocked-tasks 'invisible)
@@ -7315,7 +7308,14 @@ SUBTREE-END is used as end of the entry if not nil."
 							  (and (not (zin/org-agenda-skip-tag "SKIP"))
 							       (bh/skip-subprojects))
 							  (zin/org-agenda-skip-tag "NODEADLINE")
-							  (bh/skip-habits)))))))
+							  (bh/skip-habits))))))
+		(tags-todo "-CANCELLED/!"
+			   ((org-agenda-overriding-header "Projects")
+			    (org-agenda-dim-blocked-tasks nil)
+			    (org-agenda-prefix-format "%?-12t")
+			    (org-agenda-skip-function 'bh/skip-non-projects)
+			    (org-agenda-sorting-strategy
+			     '(todo-state-down effort-up category-keep)))))
 	       nil))))
   #+end_src
 ***** Focused daily agenda
