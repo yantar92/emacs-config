@@ -8631,6 +8631,23 @@ Sometimes I need to jump to some urgent task. After it is done, I hate searching
           helm-org-ignore-autosaves t)
     ))
 #+end_src
+***** Automatic clock-out on idle
+:PROPERTIES:
+:CREATED:  [2020-05-04 Mon 13:31]
+:END:
+
+Sometimes, I clock in some task in the evening, but fall asleep. 
+That excess clocked time is not useful.
+So, let Emacs automatically clock out the current task when Emacs is idle for a long time
+#+begin_src emacs-lisp
+(use-package org-clock
+  :if init-flag
+  :custom
+  (org-clock-auto-clockout-timer (* 60 60 2)) ; 2 hours
+  :config
+  (org-clock-auto-clockout-insinuate))
+#+end_src
+
 ***** Pomodoro technique
 :PROPERTIES:
 :ID:       ee371af1-c478-49d1-9814-1eb78242a341
