@@ -12263,6 +12263,13 @@ CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
 :LOGBOOK:
 - Refiled on [2020-04-30 Thu 13:01]
 :END:
+**** TODO there is still a visual glitch with two collapsed ellipsis shown at the same time for some reason
+:PROPERTIES:
+:CREATED: [2020-05-04 Mon 23:59]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-04 Mon 23:59]
+:END:
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
