@@ -488,6 +488,19 @@ Credit: https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.
   (quiet! (apply orig-fn args)))
 #+end_src
 
+*** Hash table library
+:PROPERTIES:
+:CREATED:  [2019-08-25 Sun 19:32]
+:ID:       c2f4a307-171c-4eee-aef0-e1ee27dd2e47
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-04 Mon 22:44]
+:END:
+
+#+begin_src emacs-lisp
+(use-package ht
+  :straight t)
+#+end_src
 ** Performance
 :PROPERTIES:
 :CREATED:  [2018-09-12 Wed 19:48]
@@ -4086,42 +4099,10 @@ Smarter elisp editing
 :ID:       5b5c84f0-e363-4e5c-b373-69ddf019f9e3
 :END:
 
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-24 Fri>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-05-04
-:END:
-:LOGBOOK:
-CLOCK: [2020-04-28 Tue 11:32]--[2020-04-28 Tue 11:50] =>  0:18
-CLOCK: [2020-04-27 Mon 15:17]--[2020-04-27 Mon 15:20] =>  0:03
-CLOCK: [2020-04-27 Mon 15:03]--[2020-04-27 Mon 15:16] =>  0:13
-CLOCK: [2020-04-23 Thu 14:35]--[2020-04-23 Thu 14:49] =>  0:14
-CLOCK: [2020-04-22 Wed 22:52]--[2020-04-22 Wed 23:07] =>  0:15
-CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
-CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
-CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
-CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
-CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
-CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
-CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
-CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
-CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
-CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-*************** END
 
-
-The convention for writing Emacs packages is using the package name as prefix to every dynamically scoped variable in the package. 
+The convention for writing Emacs packages is using the package name as prefix for every dynamically scoped variable in the package. 
 The result is useful to avoid mess in the global variables, but also makes the variable and function names too long. 
-=nameless= asd
+=nameless= provides a convenient way to hide those long prefixes.
 
 #+begin_src emacs-lisp
 (use-package nameless
@@ -4133,34 +4114,6 @@ The result is useful to avoid mess in the global variables, but also makes the v
   :config
   (setq nameless-private-prefix t)
   (bind-key "_" #'nameless-insert-name-or-self-insert nameless-mode-map))
-#+end_src
-**** Hash table library
-:PROPERTIES:
-:CREATED:  [2019-08-25 Sun 19:32]
-:ID:       c2f4a307-171c-4eee-aef0-e1ee27dd2e47
-:END:
-
-#+begin_src emacs-lisp
-(use-package ht
-  :straight t)
-#+end_src
-**** Measure time of code blocks
-:PROPERTIES:
-:CREATED:  [2019-08-26 Mon 23:56]
-:ID:       8e939e97-3e36-46be-a4fb-887c3fc2ff6a
-:END:
-
-Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
-#+begin_src emacs-lisp
-(defmacro measure-time (&rest body)
-  "Measure and return the running time of the code block."
-  (declare (indent defun))
-  ;; Fresh garbage collection before making any measurements.
-  (garbage-collect)
-  (let ((start (make-symbol "start")))
-    `(let ((,start (float-time)))
-       ,@body
-       (- (float-time) ,start))))
 #+end_src
 **** Show elisp result in overlay
 :PROPERTIES:
@@ -4252,6 +4205,41 @@ It warns me if the original definition changes from what I expect.
 :PROPERTIES:
 :ID:       2fb97bdf-d310-4e5a-8266-d68a1ae10298
 :END:
+
+*************** DOING [#A] revise config from here
+SCHEDULED: <2020-04-24 Fri>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-05-05
+:END:
+:LOGBOOK:
+CLOCK: [2020-05-04 Mon 22:42]--[2020-05-04 Mon 22:51] =>  0:09
+CLOCK: [2020-04-28 Tue 11:32]--[2020-04-28 Tue 11:50] =>  0:18
+CLOCK: [2020-04-27 Mon 15:17]--[2020-04-27 Mon 15:20] =>  0:03
+CLOCK: [2020-04-27 Mon 15:03]--[2020-04-27 Mon 15:16] =>  0:13
+CLOCK: [2020-04-23 Thu 14:35]--[2020-04-23 Thu 14:49] =>  0:14
+CLOCK: [2020-04-22 Wed 22:52]--[2020-04-22 Wed 23:07] =>  0:15
+CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
+CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
+CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
+CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
+CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
+CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
+CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
+CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
+CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
+CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
+CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
+- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
+CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
+CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
+CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
+CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
+CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
+CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
+:END:
+*************** END
+
+
 *** Use =pdf-tools= to view resulting pdf
 :PROPERTIES:
 :ID:       a0515bfd-07df-418a-90a2-5515b1a4deb3
@@ -4285,6 +4273,10 @@ It warns me if the original definition changes from what I expect.
   :if init-flag
   :straight auctex)
 #+end_src
+*** Appearance
+:PROPERTIES:
+:CREATED:  [2020-05-04 Mon 22:49]
+:END:
 ** Ledger
 :PROPERTIES:
 :ID:       a0cacc17-641c-4b29-86b2-7dcf609cd803
@@ -6274,7 +6266,6 @@ Just links to the current entry are not always sufficient. I sometimes want to l
               (user-error "Cannot find ID of the entry: %s" prompt-ans))
 	(setq org-id-history org-refile-history)
 	(setq org-id-cache org-refile-cache)))))
-
 
 (defun org-id-link-complete (&optional arg)
   "Completion function for id: link."
@@ -8488,17 +8479,9 @@ I do not show current task in Emacs, instead I use =awesome wm= widget.
 Hence, need to save current task in file. 
 The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] Project/Subproject/Subsubproject/.../task=) or =[hh:mm] Capturing ...= for capturing (the title is being edited there and it does not make sense to keep that updated in widget as well).
 
-[2020-05-03 Sun] Mode-line display is also linked to notification when the clocked-in time exceeds effort estimate. Hence, I still display the task in mode-line for the sole purpose of enabling notification.
-
-*************** TODO report in mail-list about mode-line display dependence of effort notification
-*************** END
-
-
 #+begin_src emacs-lisp
 (setq org-clock-mode-line-total (quote today))
-(setq org-clock-clocked-in-display 'mode-line)
-(defvar yant/org-clocking-info-file "~/.org-clock-in"
-  "File to save current clocking info.\nIt will be overwriten!")
+
 
 (defun yant/task-fulltitle ()
   "Construct full path for the task at point."
@@ -12226,7 +12209,7 @@ SCHEDULED: <2020-04-30 Thu>
 :PROPERTIES:
 :CREATED: [2020-04-26 Sun 23:59]
 :EMAIL-SOURCE: [[notmuch:id:87y2qi8c8w.fsf@localhost]]
-:SHOWFROMDATE: 2020-05-04 17:00
+:SHOWFROMDATE: 2020-05-05
 :END:
 :LOGBOOK:
 - Refiled on [2020-04-26 Sun 23:59]
