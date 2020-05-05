@@ -4186,11 +4186,10 @@ Source: https://github.com/skeeto/.emacs.d/blob/master/lisp/extras.el
 4. Default Expressions to Evaluate
 5. Editing Default Expressions
 
-[[https://github.com/rswgnu/rsw-elisp]]
-
 #+BEGIN_SRC emacs-lisp
 (use-package rsw-elisp
   :if init-flag
+  :straight (rsw-elisp :host github :repo "rswgnu/rsw-elisp")
   :config
   (rsw-elisp-enable))
 #+END_SRC
