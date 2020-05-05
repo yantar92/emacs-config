@@ -6097,7 +6097,7 @@ Adjust some of the external application programs
 :END:
 Store links to pages in pdf
 #+begin_src emacs-lisp
-(use-package org-pdfview
+(use-package org-pdftools
   :if init-flag
   :straight t)
 (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (file link) (org-pdfview-open link))))
