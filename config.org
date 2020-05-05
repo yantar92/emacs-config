@@ -8030,7 +8030,7 @@ Also, hide the contents once task is clocked out.
   :bind (:map org-agenda-mode-map
 	      ("<tab>" . org-quick-peek-agenda-current-item))
   :custom
-  (org-quick-peek-show-lines 45)
+  (org-quick-peek-show-lines 20)
   (org-quick-peek-show-drawers nil)
   (org-quick-peek-show-planning nil)
   (org-quick-peek-filter-functions (list (apply-partially #'s-replace-regexp "\n" "\n\n")
