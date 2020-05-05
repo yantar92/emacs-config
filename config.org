@@ -6255,13 +6255,10 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 (defvar org-id-history nil
   "ID completion history for id: link type.")
 
-(defvar org-id-cache nil
-  "ID completion cache for id: link type.")
-
 (defun org-id-prompt-id ()
   "Prompt for the id during completion of att-id: link."
   (let ((org-refile-history org-id-history)
-	(org-refile-cache org-id-cache)
+	(org-refile-cache nil)
 	(org-refile-target-verify-function nil))
     (let ((prompt-ans (org-refile-get-location "Select org entry")))
       (prog1
