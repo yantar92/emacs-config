@@ -8533,7 +8533,8 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
 
 #+begin_src emacs-lisp
 (setq org-clock-mode-line-total (quote today))
-
+(defvar yant/org-clocking-info-file "~/.org-clock-in"
+  "File to save current clocking info.\nIt will be overwriten!")
 
 (defun yant/task-fulltitle ()
   "Construct full path for the task at point."
