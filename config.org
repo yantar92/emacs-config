@@ -5464,6 +5464,19 @@ Not sure why I need to set it, but I don't like "i-did-not-set--mail-host-addres
 #+begin_src emacs-lisp
 (setq mail-host-address "localhost")
 #+end_src
+
+*** Warning when I try to send a message mentioning attachments in text, but without actual attachments
+:PROPERTIES:
+:CREATED:  [2020-05-05 Tue 15:01]
+:ID:       dbd472e2-2ab2-4a8d-bd6c-d28acc48e2dc
+:END:
+
+#+begin_src emacs-lisp
+(use-package message-attachment-reminder
+  :if init-flag
+  :straight t)
+#+end_src
+
 ** Org mode
 :PROPERTIES:
 :ID:       58045c39-ffd5-4ccc-bc9d-49048c437f42
