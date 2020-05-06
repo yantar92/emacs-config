@@ -731,9 +731,15 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
 (use-package centered-window
   :if init-flag
   :straight (centered-window-mode :host github :repo "anler/centered-window-mode")
-  :diminish (centered-window-mode . " ‖□‖")
   :after boon
   :config
+  (diminish 'centered-window-mode (s-concat " "
+					    (propertize (all-the-icons-material "tablet")
+							'face `((t (
+								    :family "Material Icons"
+								    :height 1.2
+								    :background nil))))))
+
   (defun cwm-special-buffer-p (buffer)
     "Return 't if BUFF buffer name is special (starts with an *).
 
@@ -1102,7 +1108,13 @@ Fancy minor mode lighters
 
 #+begin_src emacs-lisp
 (use-package simple
-  :diminish (auto-fill-function . " ☰"))
+  :config
+  (diminish 'auto-fill-function (s-concat " "
+					  (propertize (all-the-icons-material "wrap_text")
+						      'face `((t (
+								  :family "Material Icons"
+								  :height 1.2
+								  :background nil)))))))
 (use-package mml
   :diminish (mml-mode . " 🖂"))
 (use-package footnote
@@ -10469,11 +10481,19 @@ org-capture mode lighter
 #+begin_src emacs-lisp
 (use-package org-capture
   :if init-flag
-  :diminish (org-capture-mode . " capture"))
+  :config
+  (diminish 'org-capture-mode (s-concat " "
+					(propertize (all-the-icons-material "note_add")
+						    'face `((t (
+								:family "Material Icons"
+								:height 1.4
+                                                                :foreground "red"
+								:background nil)))))))
 #+end_src
 **** Text
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 13:25]
+:ID:       84e7aa2b-c488-4dfd-a794-16b5059f4082
 :END:
 
 Add some extra rendering for LaTeX:
