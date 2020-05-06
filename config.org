@@ -528,7 +528,14 @@ Though I don't want it in batch mode because it is optimised for interactive use
     :straight (gcmh :type git :host gitlab :repo "koral/gcmh")
     :demand t
     :diminish gcmh-mode
-    :hook (after-init . gcmh-mode)))
+    :hook (after-init . gcmh-mode)
+    :custom
+    (gcmh-idle-delay
+     (* 60 5) ;; 5 min
+     "Garbage collect often takes more than 20 seconds. Make sure I really leave emacs.")
+    (gcmh-low-cons-threshold
+     (* 1000 1000 80) ;; 80Mb
+     "Emacs normally take 1.6Gb memory in my system. Default is too low.")))
 #+end_src
 
 And increase GC threshold on top of that (I found emacs spend >25% of time doing GC when just moving around the buffer). 
