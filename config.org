@@ -4258,7 +4258,25 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 :END:
 *************** END
 
+Nowadays, I do not really write pure LaTeX, but rather use org-mode export.
+The below configuration is here just in case if I need to open and edit tex files for some reason.
 
+*** =Auctex=
+:PROPERTIES:
+:CREATED:  [2020-03-30 Mon 14:09]
+:ID:       be8768df-105f-49dd-92e7-fa91d393a9bf
+:END:
+
+This is also required for =cdlatex= to work with org-mode. 
+
+#+begin_src emacs-lisp
+(use-package latex
+  :if init-flag
+  :straight auctex
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t))
+#+end_src
 *** Use =pdf-tools= to view resulting pdf
 :PROPERTIES:
 :ID:       a0515bfd-07df-418a-90a2-5515b1a4deb3
@@ -4268,34 +4286,9 @@ CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
   (setq TeX-view-program-list '(("pdf tools refresh" (lambda() (pdf-tools-install)
 						       (TeX-pdf-tools-sync-view)))))
   (setq TeX-view-program-selection '((output-pdf "pdf tools refresh")))
-  (setq TeX-source-correlate-start-server t)
-
-  (add-hook 'TeX-after-TeX-LaTeX-command-finished-hook
-	    'TeX-revert-document-buffer)
-
-  (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
-
-  (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-  (diminish 'visual-line-mode)
-  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-  (add-hook 'LaTeX-mode-hook 'variable-pitch-mode)
-  (diminish 'buffer-face-mode))
+  (setq TeX-source-correlate-start-server t))
 #+end_src
-*** =Auctex=
-:PROPERTIES:
-:CREATED:  [2020-03-30 Mon 14:09]
-:ID:       be8768df-105f-49dd-92e7-fa91d393a9bf
-:END:
 
-#+begin_src emacs-lisp
-(use-package latex
-  :if init-flag
-  :straight auctex)
-#+end_src
-*** Appearance
-:PROPERTIES:
-:CREATED:  [2020-05-04 Mon 22:49]
-:END:
 ** Ledger
 :PROPERTIES:
 :ID:       a0cacc17-641c-4b29-86b2-7dcf609cd803
@@ -6454,6 +6447,43 @@ It is handy to be able to find all other headlines having links to current headl
   :straight (org-super-links :type git :host github :repo "toshism/org-super-links")
   )
 #+end_src
+**** LaTeX integration
+:PROPERTIES:
+:CREATED:  [2020-05-05 Tue 23:00]
+:END:
+***** CDLaTeX
+:PROPERTIES:
+:CREATED:  [2020-05-05 Tue 23:00]
+:ID:       6807bed8-dc56-4f1a-adde-e1f2942786dd
+:END:
+
+Additional auto-typing for LaTeX fragments directly inside org. 
+This includes:
+1. C-c { for inserting environment
+2. TAB for LaTeX abbrev expansion
+3. _ and ^ automatically adds curly braces
+4. ` inserts Greek symbols
+5. ' inserts LaTeX accents
+
+#+begin_src emacs-lisp
+(use-package org
+  :if init-flag
+  :init
+  (use-package cdlatex
+    :straight t
+    :config
+    (require 'texmathp))
+  :hook (org-mode . org-cdlatex-mode)
+  :config
+  (diminish 'org-cdlatex-mode (s-concat " CD"
+					(propertize (all-the-icons-fileicon "tex")
+						    'face `((t (
+								:family "file-icons"
+								:height 1.4
+								:background nil))))))
+  )
+#+end_src
+
 
 **** TODO Properties
 :PROPERTIES:
