@@ -10289,9 +10289,11 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 
 https://kdr2.com/tech/emacs/1805-approach-org-ref-code-to-text.html
 In addition to lisp code in =init.el=, it is also possible to define globally available babel functions defined, for example. in this file
+*************** TODO this creates some strange error
+*************** END
 #+begin_src emacs-lisp
 (use-package org
-  :hook (org-load . yant/org-babel-ingest-my-files)
+  ;;:hook (org-load . yant/org-babel-ingest-my-files)
   :config
   (defun yant/org-babel-ingest-my-files ()
     "Load default babel library files."  
