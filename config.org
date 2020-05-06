@@ -6909,12 +6909,14 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 			    (f-delete dir) ; delete the dirs, which do not point to children
 			    )))
 		      dirs)))))))))
+
+(advice-remove 'org-attach-dir #'org-attach-dir@yant/org-attach-ensure-attach-dir-symlink)
 #+END_SRC
 
 Now, when I have the mirror attach folder structure, it make sense to open this structure on =org-attach-reveal= instead of opening the actual attach dirs.
 
 *************** NEXT [#A] because of org-attach API change, need to rewrite
-SCHEDULED: <2020-05-02 Sat>
+SCHEDULED: <2020-05-09 Sat>
 :PROPERTIES:
 :SHOWFROMDATE: 2020-05-05
 :END:
@@ -6969,8 +6971,8 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
     (when attach-dir-inherited-p (org-attach-tag 'off))
     (funcall OLDFUN)
     ))
-
-(advice-add 'org-attach-reveal-in-emacs :around #'org-attach-reveal@reveal-symlink)
+(advice-remove 'org-attach-reveal #'org-attach-reveal@reveal-symlink)
+;; (advice-add 'org-attach-reveal-in-emacs :around #'org-attach-reveal@reveal-symlink)
 #+END_SRC
 Files, out of the folder structure, will appear in my agenda to attach them to the relevant project (unless explicitly specified in special variable).
 
@@ -7020,13 +7022,14 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 :END:
 
 #+begin_src emacs-lisp
-  (define-advice org-attach-dir (:filter-return (dir) yant/org-attach-use-attach-dir-inheritance -100)
-    "Use :ATTACH_DIR_INHERIT: property."
-    (let ((attach-dir-inherited (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
-  				     (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))
-				     (org-with-point-at org-entry-property-inherited-from (org-attach-dir)))))
-      (or attach-dir-inherited
-  	  dir)))
+(define-advice org-attach-dir (:filter-return (dir) yant/org-attach-use-attach-dir-inheritance -100)
+  "Use :ATTACH_DIR_INHERIT: property."
+  (let ((attach-dir-inherited (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
+  				   (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))
+				   (org-with-point-at org-entry-property-inherited-from (org-attach-dir)))))
+    (or attach-dir-inherited
+  	dir)))
+;; (advice-remove 'org-attach-dir #'org-attach-dir@yant/org-attach-use-attach-dir-inheritance)
 #+end_src
 
 ***** Saving web pages into notes
