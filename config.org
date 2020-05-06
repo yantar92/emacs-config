@@ -2521,6 +2521,7 @@ Enable it.
 **** Case fold search
 :PROPERTIES:
 :CREATED:  [2020-05-03 Sun 22:32]
+:ID:       7087ec1b-50ab-4161-9819-db874fe53a21
 :END:
 
 Ignore case during search by default
@@ -3996,6 +3997,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 ***** Explore keymaps
 :PROPERTIES:
 :CREATED:  [2020-04-28 Tue 11:34]
+:ID:       d4a815d0-a548-4913-b47e-a500282624ca
 :END:
 
 #+begin_src emacs-lisp
@@ -4052,6 +4054,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 ***** Global key bindings
 :PROPERTIES:
 :CREATED:  [2020-04-28 Tue 11:37]
+:ID:       88eacd5b-812b-462c-8aa3-144b66ceb697
 :END:
 
 #+begin_src emacs-lisp
@@ -4220,7 +4223,7 @@ It warns me if the original definition changes from what I expect.
   :straight t)
 #+end_src
 
-** TODO LaTeX
+** LaTeX
 :PROPERTIES:
 :ID:       2fb97bdf-d310-4e5a-8266-d68a1ae10298
 :END:
@@ -4228,9 +4231,13 @@ It warns me if the original definition changes from what I expect.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-24 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-05-05
+:SHOWFROMDATE: 2020-05-06
 :END:
 :LOGBOOK:
+CLOCK: [2020-05-05 Tue 23:50]--[2020-05-06 Wed 00:09] =>  0:19
+CLOCK: [2020-05-05 Tue 22:45]--[2020-05-05 Tue 23:06] =>  0:21
+CLOCK: [2020-05-05 Tue 22:21]--[2020-05-05 Tue 22:45] =>  0:24
+CLOCK: [2020-05-05 Tue 22:18]--[2020-05-05 Tue 22:20] =>  0:02
 CLOCK: [2020-05-04 Mon 22:42]--[2020-05-04 Mon 22:51] =>  0:09
 CLOCK: [2020-04-28 Tue 11:32]--[2020-04-28 Tue 11:50] =>  0:18
 CLOCK: [2020-04-27 Mon 15:17]--[2020-04-27 Mon 15:20] =>  0:03
@@ -4880,7 +4887,6 @@ And group them by rss feed
 						   (yant/elfeed-group-by-feed a b)))))))
 #+end_src
 
-
 *** =Notmuch=
 :PROPERTIES:
 :ID:       f6ca2367-45c4-45bc-acec-49837cadc5ac
@@ -5446,6 +5452,7 @@ Here are some workarounds
 ***** Message header face
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 10:50]
+:ID:       954ebb7a-56bd-43e1-8bcc-0590e99fed3b
 :END:
 
 #+begin_src emacs-lisp
@@ -5453,7 +5460,6 @@ Here are some workarounds
   :custom-face
   (notmuch-message-summary-face ((t (:foreground ,(face-foreground 'header-line))))))
 #+end_src
-
 
 *** Mail host address
 :PROPERTIES:
@@ -8626,6 +8632,7 @@ However, they do have uses in my workflow:
   :if init-flag
   :config
   (use-package pomidor
+    :defer t
     :config
     (setq org-clock-sound pomidor-sound-overwork))
   (unless org-clock-sound (setq org-clock-sound "~/Org/alert.wav"))
@@ -8687,6 +8694,7 @@ Sometimes I need to jump to some urgent task. After it is done, I hate searching
 ***** Automatic clock-out on idle
 :PROPERTIES:
 :CREATED:  [2020-05-04 Mon 13:31]
+:ID:       397733e4-a1e4-48f4-80cd-cadb57905d69
 :END:
 
 Sometimes, I clock in some task in the evening, but fall asleep. 
@@ -11656,6 +11664,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 *** Speed up huge org files
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 00:06]
+:ID:       d4b7bc48-8ec1-4af6-9309-3d9c57ec274c
 :END:
 
 The idea here is using text properties instead of overlays:
@@ -12280,17 +12289,6 @@ They are not hidden automatically for some reason.
 *************** NEXT investigate why drawers are not hidden. org-autosort? 
 *************** END
 
-
-**** NEXT [#A] get a reply #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
-SCHEDULED: <2020-04-30 Thu>
-:PROPERTIES:
-:CREATED: [2020-04-26 Sun 23:59]
-:EMAIL-SOURCE: [[notmuch:id:87y2qi8c8w.fsf@localhost]]
-:SHOWFROMDATE: 2020-05-05
-:END:
-:LOGBOOK:
-- Refiled on [2020-04-26 Sun 23:59]
-:END:
 
 **** NEXT org-entities become hidden because of sticky invisible property
 :PROPERTIES:
