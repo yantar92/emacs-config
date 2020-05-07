@@ -797,6 +797,9 @@ If the line wrapping is active, I also want the word wrap to be activated automa
   (bind-key "C-x l" #'toggle-truncate-lines)
   (setq-default truncate-lines 't
 		word-wrap 't))
+(use-package simple
+  :if init-flag
+  :diminish visual-line-mode)
 #+end_src
 *** Text in buffers
 :PROPERTIES:
