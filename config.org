@@ -224,6 +224,9 @@ Now, I can setup =use-package= to simplify subsequent package configuration
 (use-package bind-key)
   #+end_src
 
+*************** TODO separate all the diminish statements into appearance
+*************** END
+
 Load org to make sure that obsolete built-in org version is not used.
 The main org-mode config is provided [[id:58045c39-ffd5-4ccc-bc9d-49048c437f42][later]].
 Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to make sure that =org-plus-contrib= is used any time another packages requires =org=.
@@ -4234,7 +4237,7 @@ It warns me if the original definition changes from what I expect.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-24 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-05-06
+:SHOWFROMDATE: 2020-05-07 18:00
 :END:
 :LOGBOOK:
 CLOCK: [2020-05-05 Tue 23:50]--[2020-05-06 Wed 00:09] =>  0:19
