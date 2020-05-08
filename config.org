@@ -12334,6 +12334,20 @@ CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
 :LOGBOOK:
 - Refiled on [2020-05-04 Mon 23:59]
 :END:
+**** TODO check org-show-context-detail for isearch + properties
+:PROPERTIES:
+:CREATED: [2020-05-08 Fri 11:32]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-08 Fri 12:41]
+:END:
+**** TODO hidden tables are messed sometimes (when realigning?) because of properties
+:PROPERTIES:
+:CREATED: [2020-05-08 Fri 11:50]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-08 Fri 12:41]
+:END:
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
