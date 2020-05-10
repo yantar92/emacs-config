@@ -6506,7 +6506,8 @@ This includes:
     (require 'texmathp))
   :hook (org-mode . org-cdlatex-mode)
   :config
-  (diminish 'org-cdlatex-mode (s-concat " CD"
+  (diminish 'org-cdlatex-mode (s-concat (propertize " CD"
+						    'face `((t (:height 0.7))))
 					(propertize (all-the-icons-fileicon "tex")
 						    'face `((t (
 								:family "file-icons"
