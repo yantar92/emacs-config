@@ -11711,635 +11711,89 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 The idea here is using text properties instead of overlays:
 [[notmuch:id:87h7x9e5jo.fsf@localhost][Email to emacs-orgmode@gnu.org: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers]]
 
-The basic implementation
-#+begin_src emacs-lisp
-(use-package org
-  :init
+The implementation is in =feature/drawertextprop= branch of org.
 
-  (defun org-flag-region (from to flag spec)
-    "Hide or show lines from FROM to TO, according to FLAG.
-SPEC is the invisibility spec, as a symbol."
-    (pcase spec
-      ('outline
-       (remove-overlays from to 'invisible spec)
-       ;; Use `front-advance' since text right before to the beginning of
-       ;; the overlay belongs to the visible line than to the contents.
-       (when flag
-	 (let ((o (make-overlay from to nil 'front-advance)))
-	   (overlay-put o 'evaporate t)
-	   (overlay-put o 'invisible spec)
-	   (overlay-put o 'isearch-open-invisible #'delete-overlay))))
-      (_
-       (with-silent-modifications
-	 (remove-text-properties from to '(invisible nil))
-	 ;; Use `front-advance' since text right before to the beginning of
-	 ;; the overlay belongs to the visible line than to the contents.
-	 (when flag
-	   ;; (let ((o (make-overlay from to nil 'front-advance)))
-	   (put-text-property from to 'rear-non-sticky nil)
-	   (put-text-property from to 'front-sticky t)
-	   (put-text-property from to 'invisible spec)
-	   ))))))
-#+END_SRC
+The basic implementation is changing =org-flag-region= to use text properties, but not for outlines.
+Outlines are not changed since using text properties somehow breaks outline-mode functions.
+It might be dealt with, but there is not much speed degradation from outline overlays - there are not many of them most of time.
 
-Also, now we should avoid deleting 'invisible text property
-#+begin_src emacs-lisp
-(use-package org
-  :init
-  (defun org-unfontify-region (beg end &optional _maybe_loudly)
-    "Remove fontification and activation overlays from links."
-    (font-lock-default-unfontify-region beg end)
-    (let* ((buffer-undo-list t)
-	   (inhibit-read-only t) (inhibit-point-motion-hooks t)
-	   (inhibit-modification-hooks t)
-	   deactivate-mark buffer-file-name buffer-file-truename)
-      (decompose-region beg end)
-      ;; do not remove invisible text properties
-      ;; 'org-hide-block and 'org-hide-drawer (but remove  'org-link)
-      ;; this is needed to keep the drawers and blocks hidden unless
-      ;; they are toggled by user
-      ;; Note: The below may be too specific and create troubles
-      ;; if more invisibility specs are added to org in future
-      (alter-text-property beg end 'invisible
-			   (lambda (spec)
-                             (when (memq spec (list 'org-hide-block
-						    'org-hide-drawer))
-                               spec)))
-      (remove-text-properties beg end
-			      '(mouse-face t keymap t org-linked-text t
-					   ;; Do not remove all invisible during fontification
-					   ;; invisible t
-                                           intangible t
-					   org-emphasis t))
-      (org-remove-font-lock-display-properties beg end))))
-#+end_src
+Also, now we should avoid deleting 'invisible text property for drawers during fontification.
+Changing =org-unfontify-region=.
 
 =Isearch= does not open overlays or search invisible text by default.
 Moreover, it does not even allow using cursor-sensor-functions.
 Using advice for workaround.
 
-*************** TODO maybe report incorrect search-invisible description to emacs
+*************** CANCELLED maybe report incorrect search-invisible description to emacs                              :CANCELLED:
+CLOSED: [2020-05-09 Sat 22:13]
+:PROPERTIES:
+:SUMMARY:  Description is actually fine
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-05-09 Sat 22:13] \\
+  Description is actually fine
+:END:
 *************** END
 *************** TODO maybe request support to text properties in isearch
 *************** END
-*************** TODO find out what is the deal with restoring invisible state
+*************** DONE find out what is the deal with restoring invisible state
+CLOSED: [2020-05-09 Sat 22:14]
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:14]
+:END:
 *************** END
-*************** TODO I may try setting isearch-filter-predicate instead of advice
+*************** DONE I may try setting isearch-filter-predicate instead of advice
+CLOSED: [2020-05-09 Sat 22:14]
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:14]
+:END:
 *************** END
-*************** TODO check why newly added properties are not hidden
+*************** DONE check why newly added properties are not hidden
+CLOSED: [2020-05-09 Sat 22:15]
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:15]
+:END:
 *************** END
 
-#+BEGIN_SRC emacs-lisp  
-(use-package org
-:init
-
-  ;; (setq-local search-invisible 'open)
-  ;; (setq-local isearch-invisible 'open)
-  ;; this does not actually work, despite saying that 'open is same as
-  ;; 't, but also opens overlays
-
-  ;; Unfortunately isearch, sets inhibit-point-motion-hooks and we
-  ;; cannot even use cursor-sensor-functions as a workaround
-
-  (defun org-find-text-property-region (pos prop)
-    "Find a region containing PROP text property around point POS."
-    (require 'org-macs) ;; org-with-point-at
-    (org-with-point-at pos
-      (let* ((beg (and (get-text-property pos prop) pos))
-	     (end beg))
-	(when beg
-	  (setq beg (or (previous-single-property-change pos prop)
-			beg))
-	  (setq end (or (next-single-property-change pos prop)
-			end))
-          (unless (equal beg end)
-            (cons beg end))))))
-
-
-  ;; :FIXME: re-hide properties when point moves away
-  (define-advice isearch-search-string (:after (&rest _) put-overlay)
-    "Reveal hidden text at point."
-    (when-let ((region (org-find-text-property-region (point) 'invisible)))
-      (with-silent-modifications
-	(put-text-property (car region) (cdr region) 'org-invisible (get-text-property (point) 'invisible)))
-      (remove-text-properties (car region) (cdr region) '(invisible nil))))
-
-  (defun org-restore-invisibility-specs (&rest _)
-    ""
-    (let ((pos (point-min)))
-      (while (< (setq pos (next-single-property-change pos 'org-invisible nil (point-max))) (point-max))
-	(when-let ((region (org-find-text-property-region pos 'org-invisible)))
-	  (with-silent-modifications
-	    (put-text-property (car region) (cdr region) 'invisible (get-text-property pos 'org-invisible))
-	    (remove-text-properties (car region) (cdr region) '(org-invisible nil)))))))
-
-  (add-hook 'post-command-hook #'org-restore-invisibility-specs)
-
-  )
-#+end_src
 
 Because we are using text properties, inserting anything into hidden drawers using =insert= keeps inserted text visible.
 In order to inherit the invisibility spec, we must use =insert-and-inherit=.
 Similarly, there is =insert-before-markers=. It should be changed to =insert-before-markers-and-inherit=. 
-
 
 *************** TODO there are potentially many places in org using insert. need to investigate
 *************** END
 *************** TODO the need to use =insert-and-inherit= may confuse user-written code, which commonly uses simple =insert=. Not sure what can be done about this
 *************** END
 
-#+begin_src emacs-lisp
-(use-package org
-  :init
-  (defun org-entry-put (pom property value)
-    "Set PROPERTY to VALUE for entry at point-or-marker POM.
-
-If the value is nil, it is converted to the empty string.  If it
-is not a string, an error is raised.  Also raise an error on
-invalid property names.
-
-PROPERTY can be any regular property (see
-`org-special-properties').  It can also be \"TODO\",
-\"PRIORITY\", \"SCHEDULED\" and \"DEADLINE\".
-
-For the last two properties, VALUE may have any of the special
-values \"earlier\" and \"later\".  The function then increases or
-decreases scheduled or deadline date by one day."
-    (cond ((null value) (setq value ""))
-	  ((not (stringp value)) (error "Properties values should be strings"))
-	  ((not (org--valid-property-p property))
-	   (user-error "Invalid property name: \"%s\"" property)))
-    (org-with-point-at pom
-      (if (or (not (featurep 'org-inlinetask)) (org-inlinetask-in-task-p))
-	  (org-back-to-heading-or-point-min t)
-	(org-with-limited-levels (org-back-to-heading-or-point-min t)))
-      (let ((beg (point)))
-	(cond
-	 ((equal property "TODO")
-	  (cond ((not (org-string-nw-p value)) (setq value 'none))
-		((not (member value org-todo-keywords-1))
-		 (user-error "\"%s\" is not a valid TODO state" value)))
-	  (org-todo value)
-	  (org-align-tags))
-	 ((equal property "PRIORITY")
-	  (org-priority (if (org-string-nw-p value) (string-to-char value) ?\s))
-	  (org-align-tags))
-	 ((equal property "SCHEDULED")
-	  (forward-line)
-	  (if (and (looking-at-p org-planning-line-re)
-		   (re-search-forward
-		    org-scheduled-time-regexp (line-end-position) t))
-	      (cond ((string= value "earlier") (org-timestamp-change -1 'day))
-		    ((string= value "later") (org-timestamp-change 1 'day))
-		    ((string= value "") (org-schedule '(4)))
-		    (t (org-schedule nil value)))
-	    (if (member value '("earlier" "later" ""))
-		(call-interactively #'org-schedule)
-	      (org-schedule nil value))))
-	 ((equal property "DEADLINE")
-	  (forward-line)
-	  (if (and (looking-at-p org-planning-line-re)
-		   (re-search-forward
-		    org-deadline-time-regexp (line-end-position) t))
-	      (cond ((string= value "earlier") (org-timestamp-change -1 'day))
-		    ((string= value "later") (org-timestamp-change 1 'day))
-		    ((string= value "") (org-deadline '(4)))
-		    (t (org-deadline nil value)))
-	    (if (member value '("earlier" "later" ""))
-		(call-interactively #'org-deadline)
-	      (org-deadline nil value))))
-	 ((member property org-special-properties)
-	  (error "The %s property cannot be set with `org-entry-put'" property))
-	 (t
-	  (let* ((range (org-get-property-block beg 'force))
-		 (end (cdr range))
-		 (case-fold-search t))
-	    (goto-char (car range))
-	    (if (re-search-forward (org-re-property property nil t) end t)
-		(progn (delete-region (match-beginning 0) (match-end 0))
-		       (goto-char (match-beginning 0)))
-	      (goto-char end)
-	      (insert-and-inherit "\n")
-	      (backward-char))
-	    (insert-and-inherit ":" property ":")
-	    (when value (insert-and-inherit " " value))
-	    (org-indent-line)))))
-      (run-hook-with-args 'org-property-changed-functions property value)))
-
-  (defun org-clock-in (&optional select start-time)
-    "Start the clock on the current item.
-
-If necessary, clock-out of the currently active clock.
-
-With a `\\[universal-argument]' prefix argument SELECT, offer a list of \
-recently clocked
-tasks to clock into.
-
-When SELECT is `\\[universal-argument] \ \\[universal-argument]', \
-clock into the current task and mark it as
-the default task, a special task that will always be offered in the
-clocking selection, associated with the letter `d'.
-
-When SELECT is `\\[universal-argument] \\[universal-argument] \
-\\[universal-argument]', clock in by using the last clock-out
-time as the start time.  See `org-clock-continuously' to make this
-the default behavior."
-    (interactive "P")
-    (setq org-clock-notification-was-shown nil)
-    (org-refresh-effort-properties)
-    (catch 'abort
-      (let ((interrupting (and (not org-clock-resolving-clocks-due-to-idleness)
-			       (org-clocking-p)))
-	    ts selected-task target-pos (org--msg-extra "")
-	    (leftover (and (not org-clock-resolving-clocks)
-			   org-clock-leftover-time)))
-
-	(when (and org-clock-auto-clock-resolution
-		   (or (not interrupting)
-		       (eq t org-clock-auto-clock-resolution))
-		   (not org-clock-clocking-in)
-		   (not org-clock-resolving-clocks))
-	  (setq org-clock-leftover-time nil)
-	  (let ((org-clock-clocking-in t))
-	    (org-resolve-clocks)))    ; check if any clocks are dangling
-
-	(when (equal select '(64))
-	  ;; Set start-time to `org-clock-out-time'
-	  (let ((org-clock-continuously t))
-	    (org-clock-in nil org-clock-out-time)
-	    (throw 'abort nil)))
-
-	(when (equal select '(4))
-	  (pcase (org-clock-select-task "Clock-in on task: ")
-	    (`nil (error "Abort"))
-	    (task (setq selected-task (copy-marker task)))))
-
-	(when (equal select '(16))
-	  ;; Mark as default clocking task
-	  (org-clock-mark-default-task))
-
-	(when interrupting
-	  ;; We are interrupting the clocking of a different task.  Save
-	  ;; a marker to this task, so that we can go back.  First check
-	  ;; if we are trying to clock into the same task!
-	  (when (or selected-task (derived-mode-p 'org-mode))
-	    (org-with-point-at selected-task
-	      (unless selected-task (org-back-to-heading t))
-	      (when (and (eq (marker-buffer org-clock-hd-marker)
-			     (org-base-buffer (current-buffer)))
-			 (= (point) (marker-position org-clock-hd-marker))
-			 (equal org-clock-current-task (org-get-heading t t t t)))
-		(message "Clock continues in %S" org-clock-heading)
-		(throw 'abort nil))))
-	  (move-marker org-clock-interrupted-task
-		       (marker-position org-clock-marker)
-		       (marker-buffer org-clock-marker))
-	  (let ((org-clock-clocking-in t))
-	    (org-clock-out nil t)))
-
-	;; Clock in at which position?
-	(setq target-pos
-	      (if (and (eobp) (not (org-at-heading-p)))
-		  (point-at-bol 0)
-		(point)))
-	(save-excursion
-	  (when (and selected-task (marker-buffer selected-task))
-	    ;; There is a selected task, move to the correct buffer
-	    ;; and set the new target position.
-	    (set-buffer (org-base-buffer (marker-buffer selected-task)))
-	    (setq target-pos (marker-position selected-task))
-	    (move-marker selected-task nil))
-	  (org-with-wide-buffer
-	   (goto-char target-pos)
-	   (org-back-to-heading t)
-	   (or interrupting (move-marker org-clock-interrupted-task nil))
-	   (run-hooks 'org-clock-in-prepare-hook)
-	   (org-clock-history-push)
-	   (setq org-clock-current-task (org-get-heading t t t t))
-	   (cond ((functionp org-clock-in-switch-to-state)
-		  (let ((case-fold-search nil))
-		    (looking-at org-complex-heading-regexp))
-		  (let ((newstate (funcall org-clock-in-switch-to-state
-					   (match-string 2))))
-		    (when newstate (org-todo newstate))))
-		 ((and org-clock-in-switch-to-state
-		       (not (looking-at (concat org-outline-regexp "[ \t]*"
-					      org-clock-in-switch-to-state
-					      "\\>"))))
-		  (org-todo org-clock-in-switch-to-state)))
-	   (setq org-clock-heading (org-clock--mode-line-heading))
-	   (org-clock-find-position org-clock-in-resume)
-	   (cond
-	    ((and org-clock-in-resume
-		  (looking-at
-		   (concat "^[ \t]*" org-clock-string
-			   " \\[\\([0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}"
-			   " *\\sw+.? +[012][0-9]:[0-5][0-9]\\)\\][ \t]*$")))
-	     (message "Matched %s" (match-string 1))
-	     (setq ts (concat "[" (match-string 1) "]"))
-	     (goto-char (match-end 1))
-	     (setq org-clock-start-time
-		   (org-time-string-to-time (match-string 1)))
-	     (setq org-clock-effort (org-entry-get (point) org-effort-property))
-	     (setq org-clock-total-time (org-clock-sum-current-item
-					 (org-clock-get-sum-start))))
-	    ((eq org-clock-in-resume 'auto-restart)
-	     ;; called from org-clock-load during startup,
-	     ;; do not interrupt, but warn!
-	     (message "Cannot restart clock because task does not contain unfinished clock")
-	     (ding)
-	     (sit-for 2)
-	     (throw 'abort nil))
-	    (t
-	     (insert-before-markers-and-inherit "\n")
-	     (backward-char 1)
-	     (when (and (save-excursion
-			  (end-of-line 0)
-			  (org-in-item-p)))
-	       (beginning-of-line 1)
-	       (indent-line-to (- (current-indentation) 2)))
-	     (insert-and-inherit org-clock-string " ")
-	     (setq org-clock-effort (org-entry-get (point) org-effort-property))
-	     (setq org-clock-total-time (org-clock-sum-current-item
-					 (org-clock-get-sum-start)))
-	     (setq org-clock-start-time
-		   (or (and org-clock-continuously org-clock-out-time)
-		       (and leftover
-			    (y-or-n-p
-			     (format
-			      "You stopped another clock %d mins ago; start this one from then? "
-			      (/ (org-time-convert-to-integer
-				  (org-time-subtract
-				   (org-current-time org-clock-rounding-minutes t)
-				   leftover))
-				 60)))
-			    leftover)
-		       start-time
-		       (org-current-time org-clock-rounding-minutes t)))
-	     (setq ts (org-insert-time-stamp org-clock-start-time
-					     'with-hm 'inactive))
-	     (org-indent-line)))
-	   (move-marker org-clock-marker (point) (buffer-base-buffer))
-	   (move-marker org-clock-hd-marker
-			(save-excursion (org-back-to-heading t) (point))
-			(buffer-base-buffer))
-	   (setq org-clock-has-been-used t)
-	   ;; add to mode line
-	   (when (or (eq org-clock-clocked-in-display 'mode-line)
-		     (eq org-clock-clocked-in-display 'both))
-	     (or global-mode-string (setq global-mode-string '("")))
-	     (or (memq 'org-mode-line-string global-mode-string)
-		 (setq global-mode-string
-		       (append global-mode-string '(org-mode-line-string)))))
-	   ;; add to frame title
-	   (when (or (eq org-clock-clocked-in-display 'frame-title)
-		     (eq org-clock-clocked-in-display 'both))
-	     (setq org-frame-title-format-backup frame-title-format)
-	     (setq frame-title-format org-clock-frame-title-format))
-	   (org-clock-update-mode-line)
-	   (when org-clock-mode-line-timer
-	     (cancel-timer org-clock-mode-line-timer)
-	     (setq org-clock-mode-line-timer nil))
-	   (when org-clock-clocked-in-display
-	     (setq org-clock-mode-line-timer
-		   (run-with-timer org-clock-update-period
-				   org-clock-update-period
-				   'org-clock-update-mode-line)))
-	   (when org-clock-idle-timer
-	     (cancel-timer org-clock-idle-timer)
-	     (setq org-clock-idle-timer nil))
-	   (setq org-clock-idle-timer
-		 (run-with-timer 60 60 'org-resolve-clocks-if-idle))
-	   (message "Clock starts at %s - %s" ts org--msg-extra)
-	   (run-hooks 'org-clock-in-hook))))))
-
-  (defun org-insert-time-stamp (time &optional with-hm inactive pre post extra)
-    "Insert a date stamp for the date given by the internal TIME.
-See `format-time-string' for the format of TIME.
-WITH-HM means use the stamp format that includes the time of the day.
-INACTIVE means use square brackets instead of angular ones, so that the
-stamp will not contribute to the agenda.
-PRE and POST are optional strings to be inserted before and after the
-stamp.
-The command returns the inserted time stamp."
-    (let ((fmt (funcall (if with-hm 'cdr 'car) org-time-stamp-formats))
-	  stamp)
-      (when inactive (setq fmt (concat "[" (substring fmt 1 -1) "]")))
-      (insert-before-markers-and-inherit (or pre ""))
-      (when (listp extra)
-	(setq extra (car extra))
-	(if (and (stringp extra)
-		 (string-match "\\([0-9]+\\):\\([0-9]+\\)" extra))
-	    (setq extra (format "-%02d:%02d"
-				(string-to-number (match-string 1 extra))
-				(string-to-number (match-string 2 extra))))
-	  (setq extra nil)))
-      (when extra
-	(setq fmt (concat (substring fmt 0 -1) extra (substring fmt -1))))
-      (insert-before-markers-and-inherit (setq stamp (format-time-string fmt time)))
-      (insert-before-markers-and-inherit (or post ""))
-      (setq org-last-inserted-timestamp stamp)))
-
-  (defun org-clock-out (&optional switch-to-state fail-quietly at-time)
-    "Stop the currently running clock.
-Throw an error if there is no running clock and FAIL-QUIETLY is nil.
-With a universal prefix, prompt for a state to switch the clocked out task
-to, overriding the existing value of `org-clock-out-switch-to-state'."
-    (interactive "P")
-    (catch 'exit
-      (when (not (org-clocking-p))
-	(setq global-mode-string
-	      (delq 'org-mode-line-string global-mode-string))
-	(org-clock-restore-frame-title-format)
-	(force-mode-line-update)
-	(if fail-quietly (throw 'exit t) (user-error "No active clock")))
-      (let ((org-clock-out-switch-to-state
-	     (if switch-to-state
-		 (completing-read "Switch to state: "
-				  (with-current-buffer
-				      (marker-buffer org-clock-marker)
-				    org-todo-keywords-1)
-				  nil t "DONE")
-	       org-clock-out-switch-to-state))
-	    (now (org-current-time org-clock-rounding-minutes))
-	    ts te s h m remove)
-	(setq org-clock-out-time now)
-	(save-excursion ; Do not replace this with `with-current-buffer'.
-	  (with-no-warnings (set-buffer (org-clocking-buffer)))
-	  (save-restriction
-	    (widen)
-	    (goto-char org-clock-marker)
-	    (beginning-of-line 1)
-	    (if (and (looking-at (concat "[ \t]*" org-keyword-time-regexp))
-		     (equal (match-string 1) org-clock-string))
-		(setq ts (match-string 2))
-	      (if fail-quietly (throw 'exit nil) (error "Clock start time is gone")))
-	    (goto-char (match-end 0))
-	    (delete-region (point) (point-at-eol))
-	    (insert-and-inherit "--")
-	    (setq te (org-insert-time-stamp (or at-time now) 'with-hm 'inactive))
-	    (setq s (org-time-convert-to-integer
-		     (time-subtract
-		      (org-time-string-to-time te)
-		      (org-time-string-to-time ts)))
-		  h (floor s 3600)
-		  m (floor (mod s 3600) 60))
-	    (insert-and-inherit " => " (format "%2d:%02d" h m))
-	    (move-marker org-clock-marker nil)
-	    (move-marker org-clock-hd-marker nil)
-	    ;; Possibly remove zero time clocks.  However, do not add
-	    ;; a note associated to the CLOCK line in this case.
-	    (cond ((and org-clock-out-remove-zero-time-clocks
-			(= 0 h m))
-		   (setq remove t)
-		   (delete-region (line-beginning-position)
-				  (line-beginning-position 2)))
-		  (org-log-note-clock-out
-		   (org-add-log-setup
-		    'clock-out nil nil nil
-		    (concat "# Task: " (org-get-heading t) "\n\n"))))
-	    (when org-clock-mode-line-timer
-	      (cancel-timer org-clock-mode-line-timer)
-	      (setq org-clock-mode-line-timer nil))
-	    (when org-clock-idle-timer
-	      (cancel-timer org-clock-idle-timer)
-	      (setq org-clock-idle-timer nil))
-	    (setq global-mode-string
-		  (delq 'org-mode-line-string global-mode-string))
-	    (org-clock-restore-frame-title-format)
-	    (when org-clock-out-switch-to-state
-	      (save-excursion
-		(org-back-to-heading t)
-		(let ((org-clock-out-when-done nil))
-		  (cond
-		   ((functionp org-clock-out-switch-to-state)
-		    (let ((case-fold-search nil))
-		      (looking-at org-complex-heading-regexp))
-		    (let ((newstate (funcall org-clock-out-switch-to-state
-					     (match-string 2))))
-		      (when newstate (org-todo newstate))))
-		   ((and org-clock-out-switch-to-state
-			 (not (looking-at (concat org-outline-regexp "[ \t]*"
-						org-clock-out-switch-to-state
-						"\\>"))))
-		    (org-todo org-clock-out-switch-to-state))))))
-	    (force-mode-line-update)
-	    (message (if remove
-			 "Clock stopped at %s after %s => LINE REMOVED"
-		       "Clock stopped at %s after %s")
-		     te (org-duration-from-minutes (+ (* 60 h) m)))
-	    (run-hooks 'org-clock-out-hook)
-	    (unless (org-clocking-p)
-	      (setq org-clock-current-task nil)))))))
-  (defun org-store-log-note ()
-    "Finish taking a log note, and insert it to where it belongs."
-    (let ((txt (prog1 (buffer-string)
-		 (kill-buffer)))
-	  (note (cdr (assq org-log-note-purpose org-log-note-headings)))
-	  lines)
-      (while (string-match "\\`# .*\n[ \t\n]*" txt)
-	(setq txt (replace-match "" t t txt)))
-      (when (string-match "\\s-+\\'" txt)
-	(setq txt (replace-match "" t t txt)))
-      (setq lines (and (not (equal "" txt)) (org-split-string txt "\n")))
-      (when (org-string-nw-p note)
-	(setq note
-	      (org-replace-escapes
-	       note
-	       (list (cons "%u" (user-login-name))
-		     (cons "%U" user-full-name)
-		     (cons "%t" (format-time-string
-				 (org-time-stamp-format 'long 'inactive)
-				 org-log-note-effective-time))
-		     (cons "%T" (format-time-string
-				 (org-time-stamp-format 'long nil)
-				 org-log-note-effective-time))
-		     (cons "%d" (format-time-string
-				 (org-time-stamp-format nil 'inactive)
-				 org-log-note-effective-time))
-		     (cons "%D" (format-time-string
-				 (org-time-stamp-format nil nil)
-				 org-log-note-effective-time))
-		     (cons "%s" (cond
-				 ((not org-log-note-state) "")
-				 ((string-match-p org-ts-regexp
-						  org-log-note-state)
-				  (format "\"[%s]\""
-					  (substring org-log-note-state 1 -1)))
-				 (t (format "\"%s\"" org-log-note-state))))
-		     (cons "%S"
-			   (cond
-			    ((not org-log-note-previous-state) "")
-			    ((string-match-p org-ts-regexp
-					     org-log-note-previous-state)
-			     (format "\"[%s]\""
-				     (substring
-				      org-log-note-previous-state 1 -1)))
-			    (t (format "\"%s\""
-				       org-log-note-previous-state)))))))
-	(when lines (setq note (concat note " \\\\")))
-	(push note lines))
-      (when (and lines (not org-note-abort))
-	(with-current-buffer (marker-buffer org-log-note-marker)
-	  (org-with-wide-buffer
-	   ;; Find location for the new note.
-	   (goto-char org-log-note-marker)
-	   (set-marker org-log-note-marker nil)
-	   ;; Note associated to a clock is to be located right after
-	   ;; the clock.  Do not move point.
-	   (unless (eq org-log-note-purpose 'clock-out)
-	     (goto-char (org-log-beginning t)))
-	   ;; Make sure point is at the beginning of an empty line.
-	   (cond ((not (bolp)) (let ((inhibit-read-only t)) (insert-and-inherit "\n")))
-		 ((looking-at "[ \t]*\\S-") (save-excursion (insert-and-inherit "\n"))))
-	   ;; In an existing list, add a new item at the top level.
-	   ;; Otherwise, indent line like a regular one.
-	   (let ((itemp (org-in-item-p)))
-	     (if itemp
-		 (indent-line-to
-		  (let ((struct (save-excursion
-				  (goto-char itemp) (org-list-struct))))
-		    (org-list-get-ind (org-list-get-top-point struct) struct)))
-	       (org-indent-line)))
-	   (insert-and-inherit (org-list-bullet-string "-") (pop lines))
-	   (let ((ind (org-list-item-body-column (line-beginning-position))))
-	     (dolist (line lines)
-	       (insert-and-inherit "\n")
-	       (indent-line-to ind)
-	       (insert-and-inherit line)))
-	   (message "Note stored")
-	   (org-back-to-heading t))
-	  ;; Fix `buffer-undo-list' when `org-store-log-note' is called
-	  ;; from within `org-add-log-note' because `buffer-undo-list'
-	  ;; is then modified outside of `org-with-remote-undo'.
-	  (when (eq this-command 'org-agenda-todo)
-	    (setcdr buffer-undo-list (cddr buffer-undo-list))))))
-    ;; Don't add undo information when called from `org-agenda-todo'.
-    (let ((buffer-undo-list (eq this-command 'org-agenda-todo)))
-      (set-window-configuration org-log-note-window-configuration)
-      (with-current-buffer (marker-buffer org-log-note-return-to)
-	(goto-char org-log-note-return-to))
-      (move-marker org-log-note-return-to nil)
-      (when org-log-post-message (message "%s" org-log-post-message))))
-  )
-#+end_src
-
+[2020-05-09 Sat] Fixed in org-autosort
 I have to run (org-cycle-hide-drawers 'all) to hide drawers. 
 They are not hidden automatically for some reason.
  
-*************** NEXT investigate why drawers are not hidden. org-autosort? 
+*************** DONE investigate why drawers are not hidden. org-autosort? 
+CLOSED: [2020-05-09 Sat 22:15]
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-05-09 Sat 22:15]
+:END:
 *************** END
 
 
-**** NEXT org-entities become hidden because of sticky invisible property
+**** DONE org-entities become hidden because of sticky invisible property
+CLOSED: [2020-05-09 Sat 22:16]
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 13:35]
 :END:
-**** TODO invisible text property seems to interfere with links visibility - some parts are shown when they should not
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-05-09 Sat 22:16]
+:END:
+**** FAILED invisible text property seems to interfere with links visibility - some parts are shown when they should not
+CLOSED: [2020-05-09 Sat 22:20]
 :PROPERTIES:
 :CREATED: [2020-04-27 Mon 16:20]
+:SUMMARY:  Can't reproduce
 :END:
 :LOGBOOK:
+- State "FAILED"     from "TODO"          [2020-05-09 Sat 22:20] \\
+  Can't reproduce
 - Refiled on [2020-04-27 Mon 21:40]
 CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
 :END:
@@ -12350,19 +11804,29 @@ CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
 :LOGBOOK:
 - Refiled on [2020-04-27 Mon 23:59]
 :END:
-**** TODO notmuch-id links are not hidden in drawers
+**** DONE notmuch-id links are not hidden in drawers
+CLOSED: [2020-05-09 Sat 22:21]
 :PROPERTIES:
 :CREATED:  [2020-04-28 Tue 22:37]
 :END:
-**** TODO helm does not reveal the hidden text
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:21]
+:END:
+**** DONE helm does not reveal the hidden text
+CLOSED: [2020-05-09 Sat 22:41]
 :PROPERTIES:
 :CREATED:  [2020-04-29 Wed 01:56]
 :END:
-**** TODO links inside drawers may not be rendered correctly because their invisibility spec can only be set once 
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:41]
+:END:
+**** DONE links inside drawers may not be rendered correctly because their invisibility spec can only be set once 
+CLOSED: [2020-05-09 Sat 22:21]
 :PROPERTIES:
 :CREATED: [2020-04-29 Wed 23:59]
 :END:
 :LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:21]
 - Refiled on [2020-04-30 Thu 13:01]
 :END:
 **** TODO there is still a visual glitch with two collapsed ellipsis shown at the same time for some reason
@@ -12372,11 +11836,13 @@ CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
 :LOGBOOK:
 - Refiled on [2020-05-04 Mon 23:59]
 :END:
-**** TODO check org-show-context-detail for isearch + properties
+**** DONE check org-show-context-detail for isearch + properties
+CLOSED: [2020-05-09 Sat 22:22]
 :PROPERTIES:
 :CREATED: [2020-05-08 Fri 11:32]
 :END:
 :LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:22]
 - Refiled on [2020-05-08 Fri 12:41]
 :END:
 **** TODO hidden tables are messed sometimes (when realigning?) because of properties
@@ -12385,6 +11851,60 @@ CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
 :END:
 :LOGBOOK:
 - Refiled on [2020-05-08 Fri 12:41]
+:END:
+**** CANCELLED cursor-sensor-mode actually works even if inhibit-point-motion-hooks is set to non-nil, though there is a chance things will break later... :CANCELLED:
+CLOSED: [2020-05-09 Sat 23:20]
+:PROPERTIES:
+:CREATED: [2020-05-09 Sat 13:25]
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-05-09 Sat 23:20]
+- Refiled on [2020-05-09 Sat 22:13]
+CLOCK: [2020-05-09 Sat 13:25]--[2020-05-09 Sat 13:27] =>  0:02
+:END:
+**** DONE org actually uses outline-isearch-open-invisible-function taking into account org-show-context-detail variable
+CLOSED: [2020-05-09 Sat 22:41]
+:PROPERTIES:
+:CREATED: [2020-05-09 Sat 13:30]
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:41]
+- Refiled on [2020-05-09 Sat 22:13]
+CLOCK: [2020-05-09 Sat 13:30]--[2020-05-09 Sat 13:31] =>  0:01
+:END:
+
+I am confused how it works.
+There is outline-flag-region setting 'isearch-open-invisible property to outline-isearch-open-invisible-function, which is customised by org.
+
+On the other hand, there is org-flag-region setting 'isearch-open-invisible to #'delete-overlay. ???
+**** DONE helm calls org-reveal to show matches, it calls org-show-set-visibility, which directly operates on overlays!!
+CLOSED: [2020-05-09 Sat 22:39]
+:PROPERTIES:
+:CREATED: [2020-05-09 Sat 13:50]
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:39]
+- Refiled on [2020-05-09 Sat 22:13]
+:END:
+**** FAILED there is isearch-open-invisible-temporary. does it make sense to set it to something for property overlays only? by default, org just leaves everything shown
+CLOSED: [2020-05-09 Sat 22:40]
+:PROPERTIES:
+:CREATED: [2020-05-09 Sat 17:26]
+:SUMMARY:  Org does not leave everything shown
+:END:
+:LOGBOOK:
+- State "FAILED"     from "TODO"          [2020-05-09 Sat 22:40] \\
+  Org does not leave everything shown
+- Refiled on [2020-05-09 Sat 22:13]
+CLOCK: [2020-05-09 Sat 17:26]--[2020-05-09 Sat 17:27] =>  0:01
+:END:
+**** TODO after finishing =isearch= the drawers are not closed back. (actually, they are closed, but reopened again by hi-lock) no idea why
+:PROPERTIES:
+:CREATED: [2020-05-09 Sat 22:11]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-09 Sat 22:13]
+CLOCK: [2020-05-09 Sat 22:11]--[2020-05-09 Sat 22:12] =>  0:01
 :END:
 *** TODO Key combinations
 :PROPERTIES:
