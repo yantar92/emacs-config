@@ -307,7 +307,7 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
     :straight (asoc.el :type git :host github :repo "troyp/asoc.el"))
 #+end_src
 
-*** Handy hook macros [ [[[[https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#hooks][credit]] ]
+*** Handy hook macros [[[https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#hooks][credit]]] 
 :PROPERTIES:
 :ID:       a5b5ec10-bae3-4811-b47d-2c8a0b7408ed
 :END:
@@ -1039,8 +1039,8 @@ Show some text in buffer differently
     (set-face-background 'powerline-inactive2 "#dfe4ea")
     (set-face-background 'powerline-inactive1 "#bfc4ca")
     (set-face-background 'powerline-active2 "grey25")
-    
 
+    
     (defun yant-powerline-theme ()
       "Set up a powerline based on powerline-default-theme and spaceline-all-the-icons-theme which also displays boon-state."
       (interactive)
@@ -3378,10 +3378,7 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 (use-package hyperbole
   :if init-flag
   :straight t
-  :disabled
   :config
-  (require 'hyperbole-autoloads)
-  (require 'hyperbole)
   ;; (bind-key* "<tab>" #'action-key)
   ;; (bind-key* "<backtab>" #'assist-key)
   )
@@ -4243,7 +4240,7 @@ It warns me if the original definition changes from what I expect.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-24 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-05-07 18:00
+:SHOWFROMDATE: 2020-05-08 18:00
 :END:
 :LOGBOOK:
 CLOCK: [2020-05-05 Tue 23:50]--[2020-05-06 Wed 00:09] =>  0:19
@@ -6515,7 +6512,6 @@ This includes:
 								:background nil))))))
   )
 #+end_src
-
 
 **** TODO Properties
 :PROPERTIES:
