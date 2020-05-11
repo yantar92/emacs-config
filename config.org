@@ -6946,7 +6946,7 @@ Now, when I have the mirror attach folder structure, it make sense to open this 
 *************** NEXT [#A] because of org-attach API change, need to rewrite
 SCHEDULED: <2020-05-09 Sat>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-05-05
+:SHOWFROMDATE: 2020-05-16
 :END:
 *************** END
 
@@ -11901,6 +11901,50 @@ CLOCK: [2020-05-09 Sat 17:26]--[2020-05-09 Sat 17:27] =>  0:01
 :LOGBOOK:
 - Refiled on [2020-05-09 Sat 22:13]
 CLOCK: [2020-05-09 Sat 22:11]--[2020-05-09 Sat 22:12] =>  0:01
+:END:
+**** NEXT [#A] reply about ways to handle insert into hidden text #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
+SCHEDULED: <2020-05-11 Mon>
+:PROPERTIES:
+:CREATED: [2020-05-11 Mon 10:21]
+:EMAIL-SOURCE: [[notmuch:id:87pnbby49m.fsf@nicolasgoaziou.fr]]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-11 Mon 10:22]
+:END:
+**** DONE get a reply #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
+:PROPERTIES:
+:CREATED: [2020-05-10 Sun 23:59]
+:EMAIL-SOURCE: [[notmuch:id:87imh34usq.fsf@localhost]]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-11 Mon 10:23]
+- Refiled on [2020-05-11 Mon 10:22]
+- State "DONE"       from "TODO"          [2020-05-11 Mon 10:22]
+:END:
+**** CANCELLED try the remove-overlays idea on master #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:CANCELLED:
+:PROPERTIES:
+:CREATED: [2020-05-10 Sun 23:59]
+:EMAIL-SOURCE: [[notmuch:id:87lflz4v7l.fsf@localhost]]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-11 Mon 10:23]
+- State "CANCELLED"  from "TODO"          [2020-05-11 Mon 10:23]
+:END:
+**** TODO can try to get rid of 'outline overlays by changing some outline-* function calls (calling outline-flag-region) in org
+:PROPERTIES:
+:CREATED: [2020-05-10 Sun 23:59]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-11 Mon 10:23]
+CLOCK: [2020-05-11 Mon 02:45]--[2020-05-11 Mon 02:46] =>  0:01
+:END:
+**** TODO actually, we can simply reveal the hidden text before/after the changed text (unless the inserted text is hidden)
+:PROPERTIES:
+:CREATED: [2020-05-10 Sun 23:59]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-11 Mon 10:24]
+CLOCK: [2020-05-11 Mon 02:43]--[2020-05-11 Mon 02:45] =>  0:02
 :END:
 *** TODO Key combinations
 :PROPERTIES:
