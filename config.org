@@ -6139,6 +6139,8 @@ Store links to pages in pdf
   :if init-flag
   :straight t)
 (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (file link) (org-pdfview-open link))))
+
+(setq org-file-apps  (delete '("\\.pdf\\'" . (lambda (file link) (org-pdfview-open link))) org-file-apps ))
 #+end_src
 ****** TODO Inkscape links
 :PROPERTIES:
