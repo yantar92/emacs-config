@@ -11151,12 +11151,29 @@ Highlight current line in agenda
 Modify prefix for the entries to show if the entry is repeatable and the time [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time balance multiplier]].
   #+begin_src emacs-lisp
 (setq org-agenda-scheduled-leaders '("* today" "* %2d d. ago"))
-;; (defun yant/format-summary-for-agenda ()
-;;   "Format the contents of :SUMMARY: property to show in agenda view."
-;;   (let ((summary (org-entry-get (point) "SUMMARY" 'INHERIT)))
-;;     (if (not (seq-empty-p summary))
-;; 	(concat "\tComment: \"" summary "\"\n\t\t\t\t\t")
-;;       "")))
+(defun yant/format-summary-for-agenda ()
+  "Format the contents of :SUMMARY: property to show in agenda view."
+  (let ((summary (org-entry-get (point) "SUMMARY" 'INHERIT)))
+    (if (not (seq-empty-p summary))
+	(concat "\t\tComment: \"" summary "\"\n")
+      "")))
+
+(defun yant/format-hashtags-for-agenda ()
+  "Format the list of hashtags to show in agenda view."
+  (let* ((entry-text (org-with-wide-buffer
+		      (org-back-to-heading)
+		      ;; Skip heading
+		      (end-of-line 1)
+		      ;; Get entry text
+		      (buffer-substring
+		       (point)
+		       (or (save-excursion (outline-next-heading) (point))
+			   (point-max)))))
+         (entry-hashtags (mapcar #'car (s-match-strings-all " #[^+][^#]+" entry-text))))
+    (if (seq-empty-p entry-hashtags)
+	""
+      (concat "\t\t" (mapconcat #'s-trim entry-hashtags " ") "\n"))))
+
 (defun yant/format-time-balance-multiplier ()
   "Format :ORG-TIME-BALANCE-MULTIPLIER: into agenda."
   (condition-case nil
@@ -11166,7 +11183,7 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 	(format "%s%s%s" (if scheduled? "↰" " ") (if mult (format "%sx" mult) "")
 		(if (and bonus (> bonus 0)) (format "+%s" bonus) "")))
     (error "")))
-(setq org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t%(concat (yant/format-time-balance-multiplier) \"\\t\")")
+(setq org-agenda-prefix-format "%(yant/format-summary-for-agenda)%(yant/format-hashtags-for-agenda)%-12s\t%-12:c\t%?-12t%(yant/format-time-balance-multiplier)	")
   #+end_src
 
 Hide some uninteresting tags
