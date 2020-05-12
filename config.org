@@ -9597,7 +9597,7 @@ The subheadings below such a headlines are promoted up *1 level*.
 (setq org-latex-pdf-process
       (quote
        ;; ("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "/home/yantar92/bin/pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
-       ("latexmk -shell-escape -bibtex -f -pdf -output-directory=%o %f" "/home/yantar92/bin/pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
+       ("latexmk -xelatex -shell-escape -bibtex -f -output-directory=%o %f" "/home/yantar92/bin/pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
        ))
 (setq org-export-with-timestamps nil)
 (setq org-export-in-background nil)
@@ -9673,8 +9673,8 @@ The subheadings below such a headlines are promoted up *1 level*.
 	("" "epstopdf" t)
 	("extendedchars" "grffile" t)
 	"
-      	 \\epstopdfDeclareGraphicsRule{.tif}{png}{.png}{convert #1 `dirname #1`/`basename #1`.tif`-tif-converted-to.png}
-      	 \\AppendGraphicsExtensions{.tif}
+      	 % \\epstopdfDeclareGraphicsRule{.tif}{png}{.png}{convert #1 `dirname #1`/`basename #1`.tif`-tif-converted-to.png}
+      	 % \\AppendGraphicsExtensions{.tif}
       	 \\usepackage{enumitem}
       	 \\setlistdepth{10}
       	 \\setlist[itemize,1]{label=$\\bullet$}
