@@ -4240,7 +4240,7 @@ It warns me if the original definition changes from what I expect.
 *************** DOING [#A] revise config from here
 SCHEDULED: <2020-04-24 Fri>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-05-08 18:00
+:SHOWFROMDATE: 2020-05-13
 :END:
 :LOGBOOK:
 CLOCK: [2020-05-05 Tue 23:50]--[2020-05-06 Wed 00:09] =>  0:19
@@ -9588,7 +9588,7 @@ The subheadings below such a headlines are promoted up *1 level*.
 
 ;; (add-to-list 'org-export-filter-headline-functions 'yant/org-export-suppress-some-sections)
 #+END_SRC
-***** pdf
+***** LaTeX (pdf)
 :PROPERTIES:
 :ID:       6fb7a08a-ed44-46e5-aee3-82f76003de4a
 :END:
@@ -10628,7 +10628,6 @@ Add some extra rendering for LaTeX:
 #+begin_src emacs-lisp
 (add-to-list 'org-entities-user '("angstrom" "\\AA" nil "&Å;" "A" "A" "Å"))
 #+end_src
-
 
 **** Links
 ***** Show broken links to files
@@ -11957,6 +11956,7 @@ SCHEDULED: <2020-05-11 Mon>
 :PROPERTIES:
 :CREATED: [2020-05-11 Mon 10:21]
 :EMAIL-SOURCE: [[notmuch:id:87pnbby49m.fsf@nicolasgoaziou.fr]]
+:SHOWFROMDATE: 2020-05-11 18:00
 :END:
 :LOGBOOK:
 - Refiled on [2020-05-11 Mon 10:22]
