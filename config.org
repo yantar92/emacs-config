@@ -5692,7 +5692,7 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 CLOCK: [2018-02-12 Mon 00:51]--[2018-02-12 Mon 00:52] =>  0:01
 :END:
 modified b
-******* TODO may be useful |- (multifiles.el/multifiles.el at master · magnars/multifiles.el)          :BOOKMARK:
+******* TODO may be useful |- (multifiles.el/multifiles.el at master · magnars/multifiles.el)             :BOOKMARK:
 :PROPERTIES:
 :CREATED:  [2018-02-12 Mon 00:56]
 :Source:   https://github.com/magnars/multifiles.el/blob/master/multifiles.el
@@ -8737,6 +8737,9 @@ For a long time, I did not find any use for effort estimates.
 However, they do have uses in my workflow:
  1. When a task is very large, but cannot be splitted, it is useful to dedicate certain time I plan to spend working on the task. Having this time really helps to start working on the task since I am not demoralised by size of the task. Such tasks are marked with =DOING= todo keyword (see [[id:66396995-13e9-4dfa-854e-476c71a4faa9][#todo_keyword #DOING]])
  2. According to GTD workflow, inbox tasks (see [[id:c048269c-57b9-434a-a19b-6da8d70e5e0f][Refile]]) should be either refiled or quickly worked on (if they are short). However, I do not always know if a task is short. So, I assign default effort estimate to some captured inbox tasks (see [[id:e3d02bee-a924-4808-9a2f-fe577065038d][Capture templates]]) and org-mode [[id:f9bed201-dd79-4a3a-8822-c6c52fea87d3][notifies]] me when I spend too much time on a task. This effort is [[id:3347c627-493d-43e7-8c5f-c089c7bd03f9][automatically removed]] once the task is refiled.
+*************** TODO the second does not really work. I am not willing to clock-in to every task in inbox. better do it as initial estimate? not sure
+*************** END
+
 
 ****** Notify when clocked in time exceeds effort estimate
 :PROPERTIES:
@@ -8864,12 +8867,7 @@ Instead, I use =ORG-TIME-BONUS-ON-DONE= property to add fixed extra time for fin
 
 Also, during exceptionally procrastinated days time balance may go overboard and become terribly negative. If the balance becomes too negative, it is infuriating to see how much I need to makeup. The solution is introducing the idea of /lossage/. When time balance becomes too negative, it is no longer decreased, but the lossage is increased. Later, when the time balance becomes large and positive, it stops growing until the lossage is back to 0.
 
-*************** DONE The bonus is not calculated correctly for the habits now. Fix it.
-CLOSED: [2020-05-10 Sun 21:40]
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-05-10 Sun 21:40]
-:END:
-*************** END
+
 
 *************** TODO the bonus cannot be correctly handled when we need to update the time after certain point
 *************** END
@@ -9276,7 +9274,7 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
                            ":CATEGORY: %^{Category}"
 			   ":END:"
-                           "#A short summary about the project."
+                           "# A short summary about the project."
                            "\n%?"
                            "** TODO Literature review"
                            "# Notes about what is known about the topic\n"
@@ -9819,6 +9817,7 @@ The subheadings below such a headlines are promoted up *1 level*.
 ***** Beamer
 :PROPERTIES:
 :CREATED:  [2020-05-11 Mon 16:56]
+:ID:       6584931a-f8b6-4d2b-8ce2-332d03266c13
 :END:
 
 Use metropolis by default
@@ -11269,7 +11268,7 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 
 (defun yant/format-hashtags-for-agenda ()
   "Format the list of hashtags to show in agenda view."
-  (let* ((entry-text (org-with-wide-buffer
+  (let* ((entry-text (org-with-point-at-org-buffer
 		      (org-back-to-heading)
 		      ;; Skip heading
 		      (end-of-line 1)
@@ -11879,36 +11878,12 @@ Changing =org-unfontify-region=.
 Moreover, it does not even allow using cursor-sensor-functions.
 Using advice for workaround.
 
-*************** CANCELLED maybe report incorrect search-invisible description to emacs                              :CANCELLED:
-CLOSED: [2020-05-09 Sat 22:13]
-:PROPERTIES:
-:SUMMARY:  Description is actually fine
-:END:
-:LOGBOOK:
-- State "CANCELLED"  from "TODO"          [2020-05-09 Sat 22:13] \\
-  Description is actually fine
-:END:
-*************** END
+
 *************** TODO maybe request support to text properties in isearch
 *************** END
-*************** DONE find out what is the deal with restoring invisible state
-CLOSED: [2020-05-09 Sat 22:14]
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-05-09 Sat 22:14]
-:END:
-*************** END
-*************** DONE I may try setting isearch-filter-predicate instead of advice
-CLOSED: [2020-05-09 Sat 22:14]
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-05-09 Sat 22:14]
-:END:
-*************** END
-*************** DONE check why newly added properties are not hidden
-CLOSED: [2020-05-09 Sat 22:15]
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-05-09 Sat 22:15]
-:END:
-*************** END
+
+
+
 
 
 Because we are using text properties, inserting anything into hidden drawers using =insert= keeps inserted text visible.
@@ -11924,65 +11899,15 @@ Similarly, there is =insert-before-markers=. It should be changed to =insert-bef
 I have to run (org-cycle-hide-drawers 'all) to hide drawers. 
 They are not hidden automatically for some reason.
  
-*************** DONE investigate why drawers are not hidden. org-autosort? 
-CLOSED: [2020-05-09 Sat 22:15]
-:LOGBOOK:
-- State "DONE"       from "NEXT"          [2020-05-09 Sat 22:15]
-:END:
-*************** END
 
 
-**** DONE org-entities become hidden because of sticky invisible property
-CLOSED: [2020-05-09 Sat 22:16]
-:PROPERTIES:
-:CREATED:  [2020-04-27 Mon 13:35]
-:END:
-:LOGBOOK:
-- State "DONE"       from "NEXT"          [2020-05-09 Sat 22:16]
-:END:
-**** FAILED invisible text property seems to interfere with links visibility - some parts are shown when they should not
-CLOSED: [2020-05-09 Sat 22:20]
-:PROPERTIES:
-:CREATED: [2020-04-27 Mon 16:20]
-:SUMMARY:  Can't reproduce
-:END:
-:LOGBOOK:
-- State "FAILED"     from "TODO"          [2020-05-09 Sat 22:20] \\
-  Can't reproduce
-- Refiled on [2020-04-27 Mon 21:40]
-CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
-:END:
+
 **** TODO column view is really slow. is it because of overlays?
 :PROPERTIES:
 :CREATED: [2020-04-27 Mon 23:59]
 :END:
 :LOGBOOK:
 - Refiled on [2020-04-27 Mon 23:59]
-:END:
-**** DONE notmuch-id links are not hidden in drawers
-CLOSED: [2020-05-09 Sat 22:21]
-:PROPERTIES:
-:CREATED:  [2020-04-28 Tue 22:37]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-05-09 Sat 22:21]
-:END:
-**** DONE helm does not reveal the hidden text
-CLOSED: [2020-05-09 Sat 22:41]
-:PROPERTIES:
-:CREATED:  [2020-04-29 Wed 01:56]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-05-09 Sat 22:41]
-:END:
-**** DONE links inside drawers may not be rendered correctly because their invisibility spec can only be set once 
-CLOSED: [2020-05-09 Sat 22:21]
-:PROPERTIES:
-:CREATED: [2020-04-29 Wed 23:59]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-05-09 Sat 22:21]
-- Refiled on [2020-04-30 Thu 13:01]
 :END:
 **** TODO there is still a visual glitch with two collapsed ellipsis shown at the same time for some reason
 :PROPERTIES:
@@ -11991,67 +11916,12 @@ CLOSED: [2020-05-09 Sat 22:21]
 :LOGBOOK:
 - Refiled on [2020-05-04 Mon 23:59]
 :END:
-**** DONE check org-show-context-detail for isearch + properties
-CLOSED: [2020-05-09 Sat 22:22]
-:PROPERTIES:
-:CREATED: [2020-05-08 Fri 11:32]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-05-09 Sat 22:22]
-- Refiled on [2020-05-08 Fri 12:41]
-:END:
 **** TODO hidden tables are messed sometimes (when realigning?) because of properties
 :PROPERTIES:
 :CREATED: [2020-05-08 Fri 11:50]
 :END:
 :LOGBOOK:
 - Refiled on [2020-05-08 Fri 12:41]
-:END:
-**** CANCELLED cursor-sensor-mode actually works even if inhibit-point-motion-hooks is set to non-nil, though there is a chance things will break later... :CANCELLED:
-CLOSED: [2020-05-09 Sat 23:20]
-:PROPERTIES:
-:CREATED: [2020-05-09 Sat 13:25]
-:END:
-:LOGBOOK:
-- State "CANCELLED"  from "TODO"          [2020-05-09 Sat 23:20]
-- Refiled on [2020-05-09 Sat 22:13]
-CLOCK: [2020-05-09 Sat 13:25]--[2020-05-09 Sat 13:27] =>  0:02
-:END:
-**** DONE org actually uses outline-isearch-open-invisible-function taking into account org-show-context-detail variable
-CLOSED: [2020-05-09 Sat 22:41]
-:PROPERTIES:
-:CREATED: [2020-05-09 Sat 13:30]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-05-09 Sat 22:41]
-- Refiled on [2020-05-09 Sat 22:13]
-CLOCK: [2020-05-09 Sat 13:30]--[2020-05-09 Sat 13:31] =>  0:01
-:END:
-
-I am confused how it works.
-There is outline-flag-region setting 'isearch-open-invisible property to outline-isearch-open-invisible-function, which is customised by org.
-
-On the other hand, there is org-flag-region setting 'isearch-open-invisible to #'delete-overlay. ???
-**** DONE helm calls org-reveal to show matches, it calls org-show-set-visibility, which directly operates on overlays!!
-CLOSED: [2020-05-09 Sat 22:39]
-:PROPERTIES:
-:CREATED: [2020-05-09 Sat 13:50]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-05-09 Sat 22:39]
-- Refiled on [2020-05-09 Sat 22:13]
-:END:
-**** FAILED there is isearch-open-invisible-temporary. does it make sense to set it to something for property overlays only? by default, org just leaves everything shown
-CLOSED: [2020-05-09 Sat 22:40]
-:PROPERTIES:
-:CREATED: [2020-05-09 Sat 17:26]
-:SUMMARY:  Org does not leave everything shown
-:END:
-:LOGBOOK:
-- State "FAILED"     from "TODO"          [2020-05-09 Sat 22:40] \\
-  Org does not leave everything shown
-- Refiled on [2020-05-09 Sat 22:13]
-CLOCK: [2020-05-09 Sat 17:26]--[2020-05-09 Sat 17:27] =>  0:01
 :END:
 **** TODO after finishing =isearch= the drawers are not closed back. (actually, they are closed, but reopened again by hi-lock) no idea why
 :PROPERTIES:
@@ -12066,37 +11936,10 @@ SCHEDULED: <2020-05-11 Mon>
 :PROPERTIES:
 :CREATED: [2020-05-11 Mon 10:21]
 :EMAIL-SOURCE: [[notmuch:id:87pnbby49m.fsf@nicolasgoaziou.fr]]
-:SHOWFROMDATE: 2020-05-11 18:00
+:SHOWFROMDATE: 2020-05-13
 :END:
 :LOGBOOK:
 - Refiled on [2020-05-11 Mon 10:22]
-:END:
-**** DONE get a reply #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
-:PROPERTIES:
-:CREATED: [2020-05-10 Sun 23:59]
-:EMAIL-SOURCE: [[notmuch:id:87imh34usq.fsf@localhost]]
-:END:
-:LOGBOOK:
-- Refiled on [2020-05-11 Mon 10:23]
-- Refiled on [2020-05-11 Mon 10:22]
-- State "DONE"       from "TODO"          [2020-05-11 Mon 10:22]
-:END:
-**** CANCELLED try the remove-overlays idea on master #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:CANCELLED:
-:PROPERTIES:
-:CREATED: [2020-05-10 Sun 23:59]
-:EMAIL-SOURCE: [[notmuch:id:87lflz4v7l.fsf@localhost]]
-:END:
-:LOGBOOK:
-- Refiled on [2020-05-11 Mon 10:23]
-- State "CANCELLED"  from "TODO"          [2020-05-11 Mon 10:23]
-:END:
-**** TODO can try to get rid of 'outline overlays by changing some outline-* function calls (calling outline-flag-region) in org
-:PROPERTIES:
-:CREATED: [2020-05-10 Sun 23:59]
-:END:
-:LOGBOOK:
-- Refiled on [2020-05-11 Mon 10:23]
-CLOCK: [2020-05-11 Mon 02:45]--[2020-05-11 Mon 02:46] =>  0:01
 :END:
 **** TODO actually, we can simply reveal the hidden text before/after the changed text (unless the inserted text is hidden)
 :PROPERTIES:
@@ -12234,7 +12077,7 @@ CLOCK: [2020-05-11 Mon 02:43]--[2020-05-11 Mon 02:45] =>  0:02
 #+begin_src emacs-lisp
 (add-hook 'org-capture-mode-hook 'boon-insert 'append)
 #+end_src
-** Sensitive info                                                  :NOEXPORT:
+** Sensitive info                                                                                :NOEXPORT:
 :PROPERTIES:
 :ID:       83801f6a-daf5-4738-a15e-2d20c2b4551c
 :END:
@@ -12562,7 +12405,7 @@ ytdl-format=bestvideo[height<=?1080]+bestaudio/best
 :CREATED:  [2019-12-15 Sun 02:51]
 :ID:       81208c2c-19ef-432e-88d4-4ab7bcc3d762
 :END:
-***** Change quality                                                 :ATTACH:
+***** Change quality                                                                                 :ATTACH:
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 02:52]
 :ID:       f8737f19-a0ac-4785-a62c-2504313910ec
@@ -12585,7 +12428,7 @@ cp ./mpv-youtube-quality/youtube-quality.conf ~/.config/mpv/lua-settings/
 :CREATED:  [2019-12-15 Sun 02:59]
 :ID:       533e007d-615a-4f31-aa62-8eb0f732853d
 :END:
-***** Preview screenshot on mouse hover                              :ATTACH:
+***** Preview screenshot on mouse hover                                                              :ATTACH:
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:00]
 :ID:       806164fd-46b1-405c-a1a8-140603466651
@@ -12623,4 +12466,5 @@ cp autosave.lua ~/.config/mpv/scripts/
 #+end_src
 
 #+RESULTS[29c899f8bda8bf343ecb2be121a022246bfecb15]:
+
 
