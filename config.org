@@ -1805,6 +1805,16 @@ Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_threa
 	    (kbd ,(string from))
 	    (kbd ,(string to))))))
 #+end_src
+**** Mnemonic key binding for =exit-recursive-edit=
+:PROPERTIES:
+:CREATED:  [2020-05-13 Wed 00:11]
+:END:
+
+#+begin_src emacs-lisp
+(when init-flag
+  (bind-key* "C-S-g" #'exit-recursive-edit))
+#+end_src
+
 *** Do not use mouse
 :PROPERTIES:
 :CREATED:  [2019-08-02 Fri 15:44]
