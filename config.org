@@ -1045,6 +1045,10 @@ Show some text in buffer differently
     (set-face-background 'powerline-inactive1 "#bfc4ca")
     (set-face-background 'powerline-active2 "grey25")
 
+    (defface powerline-active1-highlight '((t (:inherit powerline-active1)))
+      "Highligh on active modeline.")
+    (set-face-foreground 'powerline-active1-highlight "orange")
+
     
     (defun yant-powerline-theme ()
       "Set up a powerline based on powerline-default-theme and spaceline-all-the-icons-theme which also displays boon-state."
@@ -1057,6 +1061,7 @@ Show some text in buffer differently
                               (mode-line (if active 'mode-line 'mode-line-inactive))
                               (face0 (if active (boon-state-face) 'mode-line-inactive))
                               (face1 (if active 'powerline-active1 'powerline-inactive1))
+                              (face1-highlight (if active 'powerline-active1-highlight 'powerline-inactive1))
                               (face2 (if active 'powerline-active2 'powerline-inactive2))
                               (separator-left (intern (format "powerline-%s-%s"
                                                               powerline-default-separator
@@ -1083,7 +1088,7 @@ Show some text in buffer differently
 				    (funcall separator-left mode-line face1)
 				    (powerline-raw (when (eval (get 'spaceline-all-the-icons-narrowed-p :when))
 						     (eval (get 'spaceline-all-the-icons-narrowed-p :code)))
-						   face1 'l)
+						   face1-highlight 'l)
 				    (powerline-process face1)
 				    (when active (powerline-minor-modes face1 'l))
 				    (powerline-raw " " face1)
