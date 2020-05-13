@@ -245,6 +245,13 @@ Keep customisation away from =init.el= in a separate file
 (load custom-file)
   #+end_src
 
+Keeping track of the new changes in packages 
+https://github.com/raxod502/straight.el/issues/354
+
+#+begin_src emacs-lisp
+(setq straight-vc-git-auto-fast-forward nil)
+#+end_src
+
 Quick hydra menu for =straight.el=
 *************** TODO rewrite using nicer hydras
 *************** END
@@ -269,9 +276,9 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
     ("C" straight-check-package)
     ("r" straight-rebuild-all)
     ("R" straight-rebuild-package)
-    ("f" straight-fetch-all)
+    ("f" straight-x-fetch-all)
     ("F" straight-fetch-package)
-    ("p" straight-pull-all)
+    ("p" straight-x-pull-all)
     ("P" straight-pull-package)
     ("m" straight-merge-all)
     ("M" straight-merge-package)
