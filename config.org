@@ -751,8 +751,7 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
 					    (propertize (all-the-icons-material "tablet")
 							'face `((t (
 								    :family "Material Icons"
-								    :height 1.2
-								    :background nil))))))
+								    :height 1.2))))))
 
   (defun cwm-special-buffer-p (buffer)
     "Return 't if BUFF buffer name is special (starts with an *).
@@ -1130,8 +1129,7 @@ Fancy minor mode lighters
 					  (propertize (all-the-icons-material "wrap_text")
 						      'face `((t (
 								  :family "Material Icons"
-								  :height 1.2
-								  :background nil)))))))
+								  :height 1.2)))))))
 (use-package mml
   :diminish (mml-mode . " 🖂"))
 (use-package footnote
@@ -6516,8 +6514,7 @@ This includes:
 					(propertize (all-the-icons-fileicon "tex")
 						    'face `((t (
 								:family "file-icons"
-								:height 1.4
-								:background nil))))))
+								:height 1.4))))))
   )
 #+end_src
 
@@ -10621,8 +10618,7 @@ org-capture mode lighter
 						    'face `((t (
 								:family "Material Icons"
 								:height 1.4
-                                                                :foreground "red"
-								:background nil)))))))
+                                                                :foreground "red")))))))
 #+end_src
 **** Text
 :PROPERTIES:
