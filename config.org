@@ -6294,7 +6294,8 @@ Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while
 	    (org-with-point-at marker
 	      ,@body)))
          ((eq major-mode 'org-mode)
-	  ,@body)
+          (org-with-wide-buffer
+	   ,@body))
 	 (t (display-warning :warning "Trying to call org function in non-org buffer."))))
 
 (setq org-link-file-path-type 'relative)
