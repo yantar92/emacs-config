@@ -12223,8 +12223,8 @@ CLOCK: [2020-05-11 Mon 02:43]--[2020-05-11 Mon 02:45] =>  0:02
     (meta-defun meta-insert-active-enclosure-new-line :mode org-struct-mode org-insert-todo-heading-respect-content)
     (meta-defun meta-new-line :mode org-struct-mode org-return)
     (meta-defun meta-undo :mode org-agenda-mode org-agenda-undo)
-    (meta-defun meta-up :mode org-agenda-mode org-agenda-previous-line)
-    (meta-defun meta-down :mode org-agenda-mode org-agenda-next-line)))
+    (meta-defun meta-up :mode org-agenda-mode org-agenda-previous-item)
+    (meta-defun meta-down :mode org-agenda-mode org-agenda-next-item)))
 #+end_src
 
 **** Boon integration
