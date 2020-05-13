@@ -231,10 +231,9 @@ Load org to make sure that obsolete built-in org version is not used.
 The main org-mode config is provided [[id:58045c39-ffd5-4ccc-bc9d-49048c437f42][later]].
 Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to make sure that =org-plus-contrib= is used any time another packages requires =org=.
 #+begin_src emacs-lisp
-(straight-use-package '(org-mode
+(straight-use-package '(org
 			:type git :repo "https://code.orgmode.org/bzg/org-mode.git"
 			:files (:defaults "contrib/lisp/*.el")
-                        :includes (org)
 			:fork (:repo "/home/yantar92/Git/org-mode/" :branch "feature/drawertextprop")))
 #+end_src
 
