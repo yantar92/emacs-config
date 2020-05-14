@@ -10759,6 +10759,25 @@ org-capture mode lighter
 								:height 1.4
                                                                 :foreground "red")))))))
 #+end_src
+
+Org src mode lighter
+
+#+begin_src emacs-lisp
+(use-package org-src
+  :if init-flag
+  :after org
+  :config
+  (diminish 'org-src-mode (s-concat " "
+                                    (propertize (all-the-icons-material "code")
+						'face `((t (
+							    :family "Material Icons"
+							    :height 1.2)))
+                                                'display '(raise -0.2))
+                                    (propertize "org"
+						'face `((t (
+							    :height 0.7)))
+						'display '(raise 0.0)))))
+#+end_src
 **** Text
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 13:25]
