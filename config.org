@@ -10789,6 +10789,15 @@ Add some extra rendering for LaTeX:
 (add-to-list 'org-entities-user '("angstrom" "\\AA" nil "&Å;" "A" "A" "Å"))
 #+end_src
 
+Line truncation:
+#+begin_src emacs-lisp
+(use-package org
+  :if init-flag
+  :config
+  (add-hook! 'org-mode-hook (let ((inhibit-message t))
+			      (toggle-truncate-lines -1)
+                              (visual-line-mode +1))))
+#+end_src
 **** Links
 ***** Show broken links to files
 :PROPERTIES:
