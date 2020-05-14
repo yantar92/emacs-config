@@ -1059,6 +1059,16 @@ Show some text in buffer differently
       "Highligh on active modeline.")
     (set-face-foreground 'powerline-active1-highlight "orange")
 
+    (use-package all-the-icons
+      :init
+      (use-package memoize :straight t :demand t)
+      :config
+      ;; the functions below constantly create long lists in memory
+      ;; this triggers GC too often and hangs emacs when I use custom all-the-icons in mode-line
+      ;; memoize them to cache the results
+      (memoize #'all-the-icons-material)
+      (memoize #'all-the-icons-faicon)
+      (memoize #'all-the-icons-fileicon))
     
     (defun yant-powerline-theme ()
       "Set up a powerline based on powerline-default-theme and spaceline-all-the-icons-theme which also displays boon-state."
