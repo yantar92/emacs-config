@@ -11337,7 +11337,7 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 		       (point)
 		       (or (save-excursion (outline-next-heading) (point))
 			   (point-max)))))
-         (entry-hashtags (mapcar #'car (s-match-strings-all " #[^+][^#]+" entry-text))))
+         (entry-hashtags (mapcar #'car (s-match-strings-all " #[^+ ][^# ]+" entry-text))))
     (if (seq-empty-p entry-hashtags)
 	""
       (concat "\t\t" (mapconcat #'s-trim entry-hashtags " ") "\n"))))
