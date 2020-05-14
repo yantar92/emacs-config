@@ -803,11 +803,21 @@ Moreover, a need to wrap lines in =prog-mode= buffers is a sign that the code is
 So, I don't really need line wrapping in most of the major modes.
 I am setting line truncation globally and enable line wrapping only for several certain major modes (i.e. =org-mode=).
 
-If the line wrapping is active, I also want the word wrap to be activated automatically.
+If the line wrapping is active, I also want the word wrap to be activated automatically and obey the indentation of the beginning of the line.
 
 #+begin_src emacs-lisp
+(use-package adaptive-wrap
+  :if init-flag
+  :straight t
+  :after simple
+  :hook (visual-line-mode . adaptive-wrap-prefix-mode))
 (when init-flag
   (bind-key "C-x l" #'toggle-truncate-lines)
+  (define-advice toggle-truncate-lines (:after (&optional arg) toggle-visual-line)
+    "Always use `visual-line-mode' when truncation of lines is disabled."
+    (if truncate-lines
+	(visual-line-mode -1)
+      (visual-line-mode +1)))
   (setq-default truncate-lines 't
 		word-wrap 't))
 (use-package simple
