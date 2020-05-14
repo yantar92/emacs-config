@@ -38,7 +38,7 @@ This is me
 #+end_src
 
 I am not really doing much programming, but rather use Emacs as knowledge base management tool.
-Most of time, I do not even edit or type things directly, but read through the files. 
+Most of time, I do not even edit or type things directly, but read through the files.
 Therefore, the main focus of this setup is =org-mode= and not as much programming, navigating through text and not as much editing.
 
 The usage of =org-mode= unfortunately means that the overall performance of Emacs is generally not very good. 
@@ -1023,17 +1023,17 @@ Show some text in buffer differently
   (spaceline-all-the-icons-slim-render t)
   (spaceline-all-the-icons-hide-long-buffer-path t)
   (spaceline-all-the-icons-minor-modes-p t))
-    #+end_src
+  #+end_src
 - Show column numbers
   #+begin_src emacs-lisp
-(when init-flag
-  (setq column-number-mode t))
-  #+end_src
+    (when init-flag
+      (setq column-number-mode t))
+        #+end_src
 - Show total lines
   #+begin_src emacs-lisp
-(when init-flag
-  (setf size-indication-mode t))
-  #+end_src
+    (when init-flag
+      (setf size-indication-mode t))
+      #+end_src
 - Show boon state
   #+begin_src emacs-lisp
 (use-package boon
@@ -1055,9 +1055,12 @@ Show some text in buffer differently
     (set-face-background 'powerline-inactive1 "#bfc4ca")
     (set-face-background 'powerline-active2 "grey25")
 
-    (defface powerline-active1-highlight '((t (:inherit powerline-active1)))
+
+    (defface powerline-active1-highlight '((t (:foreground "orange" :inherit powerline-active1)))
       "Highligh on active modeline.")
-    (set-face-foreground 'powerline-active1-highlight "orange")
+    (defface mode-line-highlight '((t (:foreground "orange" :box nil :inherit mode-line)))
+      "Highligh on active modeline.")
+    (face-spec-set 'mode-line-highlight '((t (:foreground "orange" :box nil :inherit mode-line)))) ;; why is it needed?
 
     (use-package all-the-icons
       :init
@@ -1155,18 +1158,18 @@ Show some text in buffer differently
       :config
       (spaceline-helm-mode +1))
     ))
-  #+end_src
-
+#+end_src
+    
 Fancy minor mode lighters
 
 #+begin_src emacs-lisp
-(use-package simple
-  :config
-  (diminish 'auto-fill-function (s-concat " "
-					  (propertize (all-the-icons-material "wrap_text")
-						      'face `((t (
-								  :family "Material Icons"
-								  :height 1.2)))))))
+  (use-package simple
+    :config
+    (diminish 'auto-fill-function (s-concat " "
+					    (propertize (all-the-icons-material "wrap_text")
+							'face `((t (
+								    :family "Material Icons"
+									    :height 1.2)))))))
 (use-package mml
   :diminish (mml-mode . " 🖂"))
 (use-package footnote
@@ -1840,6 +1843,7 @@ Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_threa
 **** Mnemonic key binding for =exit-recursive-edit=
 :PROPERTIES:
 :CREATED:  [2020-05-13 Wed 00:11]
+:ID:       9a994fb4-5a44-4a3e-8a12-ce3035f7c558
 :END:
 
 #+begin_src emacs-lisp
@@ -2593,8 +2597,8 @@ Ignore case during search by default
 (use-package isearch
   :if init-flag
   :config
-  (setq-default isearch-case-fold-search t))
-(use-package helm
+  (setq-default isearch-case-fold-search t))(
+  use-package helm
   :if init-flag
   :custom
   (helm-set-case-fold-search 'smart))
@@ -2619,70 +2623,70 @@ Note that I use [[meta-functions][meta-functions]] here as much as possible to u
 The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especially useful because it can jump backward in the mark-ring, exchange region marks, or jump in global mark ring which is especially useful if I temporary move to some place to look for something. Many of the movement functions are also additionally modified to store mark before moving.
 
 #+begin_src emacs-lisp
-(use-package boon
-  :if init-flag
-  :config
-  (define-key boon-x-map "n" narrow-map)
-  (bind-keys ("C-M-S-j" . scroll-other-window)
-	     ("C-M-S-k" . scroll-other-window-down)
-	     :map boon-x-map
-	     ("e" . eval-last-sexp)
-	     ("c" . delete-frame)
-	     :map boon-moves-map
-	     ("j" . meta-down)
-	     ("J" . meta-down-element)
-	     ("k" . meta-up)
-	     ("K" . meta-up-element)
-	     ("o" . meta-forward)
-	     ("O" . meta-forward-element)
-	     ("P" . meta-forward-sexp)
-	     ("i" . meta-backward)
-	     ("I" . meta-backward-element)
-	     ("U" . meta-backward-sexp)
-	     ("l" . meta-scroll-up)
-	     ("L" . meta-scroll-down)
-	     (";" . meta-recenter-top-bottom)
-	     ("G" . end-of-buffer)
-	     ("g" . boon-goto-map)
-	     ;;("U" . move-beginning-of-line)
-	     ;;("P" . move-end-of-line)
-	     ("u" . boon-beginning-of-line)
-	     ("p" . boon-end-of-line)
-	     :map boon-goto-map
-	     ("g" . beginning-of-buffer)
-	     ("G" . end-of-buffer)
-	     :map boon-command-map
-	     ("-" . meta-undo)
-	     ("~" . boon-repeat-command)
-	     ("Q" . kmacro-end-or-call-macro)
-	     ("z" . boon-quote-character)
-	     ("y" . transpose-chars)
-	     ("Y" . transpose-words)
-             ("C-Y" . transpose-sexps)
-             ("n" . boon-switch-mark)
-             ("m" . bm-previous)
-             ("C-k" . meta-cut-element)
-	     :map boon-forward-search-map
-	     ("C-SPC" . isearch-forward-regexp)
-	     ("C-g" . boon-unhighlight)
-	     ("w" . meta-occur)
-             ("g" . meta-goto)
-	     :map boon-backward-search-map
-	     ("C-SPC" . isearch-backward-regexp)
-	     ("C-g" . boon-unhighlight)
-	     ("e" . meta-occur)
-             ("g" . meta-goto)
-	     :map boon-special-map
-	     ("c" . boon-c-god)
-	     ("z" . boon-quote-character)
-	     ("e" . boon-forward-search-map)
-	     ("w" . boon-backward-search-map)
-	     ("q" . nil)
-	     ("g" . boon-goto-map)
-	     ("G" . end-of-buffer)
-	     ("D" . boon-treasure-region)
-	     ("<SPC>" . boon-drop-mark))
-  (unbind-key "M-l" global-map))
+  (use-package boon
+    :if init-flag
+    :config
+    (define-key boon-x-map "n" narrow-map)
+    (bind-keys ("C-M-S-j" . scroll-other-window)
+	       ("C-M-S-k" . scroll-other-window-down)
+	       :map boon-x-map
+	       ("e" . eval-last-sexp)
+	       ("c" . delete-frame)
+	       :map boon-moves-map
+	       ("j" . meta-down)
+	       ("J" . meta-down-element)
+	       ("k" . meta-up)
+	       ("K" . meta-up-element)
+	       ("o" . meta-forward)
+	       ("O" . meta-forward-element)
+	       ("P" . meta-forward-sexp)
+	       ("i" . meta-backward)
+	       ("I" . meta-backward-element)
+	       ("U" . meta-backward-sexp)
+	       ("l" . meta-scroll-up)
+	       ("L" . meta-scroll-down)
+	       (";" . meta-recenter-top-bottom)
+	       ("G" . end-of-buffer)
+	       ("g" . boon-goto-map)
+	       ;;("U" . move-beginning-of-line)
+	       ;;("P" . move-end-of-line)
+	       ("u" . boon-beginning-of-line)
+	       ("p" . boon-end-of-line)
+	       :map boon-goto-map
+	       ("g" . beginning-of-buffer)
+	       ("G" . end-of-buffer)
+	       :map boon-command-map
+	       ("-" . meta-undo)
+	       ("~" . boon-repeat-command)
+	       ("Q" . kmacro-end-or-call-macro)
+	       ("z" . boon-quote-character)
+	       ("y" . transpose-chars)
+	       ("Y" . transpose-words)
+               ("C-Y" . transpose-sexps)
+               ("n" . boon-switch-mark)
+               ("m" . bm-previous)
+               ("C-k" . meta-cut-element)
+	       :map boon-forward-search-map
+	       ("C-SPC" . isearch-forward-regexp)
+	       ("C-g" . boon-unhighlight)
+	       ("w" . meta-occur)
+               ("g" . meta-goto)
+	       :map boon-backward-search-map
+	       ("C-SPC" . isearch-backward-regexp)
+	       ("C-g" . boon-unhighlight)
+	       ("e" . meta-occur)
+               ("g" . meta-goto)
+	       :map boon-special-map
+	       ("c" . boon-c-god)
+	       ("z" . boon-quote-character)
+	       ("e" . boon-forward-search-map)
+	       ("w" . boon-backward-search-map)
+	       ("q" . nil)
+	       ("g" . boon-goto-map)
+	       ("G" . end-of-buffer)
+	       ("D" . boon-treasure-region)
+	       ("<SPC>" . boon-drop-mark))
+    (unbind-key "M-l" global-map))
 #+end_src
 **** =Avy= mode - =qutebrowser= like hints to words
 :PROPERTIES:
@@ -2692,10 +2696,10 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 I do not move by visual line in files. Instead, I prefer to use =avy= to move within the line.
 
 #+begin_src emacs-lisp
-(use-package boon
-  :if init-flag
-  :defer t
-  :config
+  (use-package boon
+    :if init-flag
+    :defer t
+    :config
   (use-package avy
     :straight t
     :bind (:map boon-moves-map
@@ -3296,11 +3300,14 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
 ***** Appearance
-****** File icons
+****** COMMENT File icons
 :PROPERTIES:
 :CREATED:  [2019-08-27 Tue 17:18]
 :ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
 :END:
+
+*************** TODO Investigate how to avoid hangs on large folders
+*************** END
 
 #+begin_src emacs-lisp
 (use-package all-the-icons-dired
@@ -4380,12 +4387,14 @@ It warns me if the original definition changes from what I expect.
 :ID:       2fb97bdf-d310-4e5a-8266-d68a1ae10298
 :END:
 
-*************** DOING [#A] revise config from here
-SCHEDULED: <2020-04-24 Fri>
+*************** HOLD [#A] revise config from here                                                                 :HOLD:
 :PROPERTIES:
-:SHOWFROMDATE: 2020-05-13
+:SHOWFROMDATE: 2020-05-13 18:00
+:SUMMARY:  Later, when I do not have more important emacs things to do
 :END:
 :LOGBOOK:
+- State "HOLD"       from "DOING"         [2020-05-13 Wed 21:56] \\
+  Later, when I do not have more important emacs things to do
 CLOCK: [2020-05-05 Tue 23:50]--[2020-05-06 Wed 00:09] =>  0:19
 CLOCK: [2020-05-05 Tue 22:45]--[2020-05-05 Tue 23:06] =>  0:21
 CLOCK: [2020-05-05 Tue 22:21]--[2020-05-05 Tue 22:45] =>  0:24
@@ -10073,24 +10082,24 @@ Babel is a great way to combine source code and text.
 The source code editing is usually done in a new buffer. However, I do not like the default binding =C-c C-'=. I use =C-c C-b= instead.
 
 #+begin_src emacs-lisp
-(when init-flag
-(bind-key "C-c C-b" 'org-edit-special org-mode-map)
-(bind-key "C-c C-b" 'org-edit-src-exit org-src-mode-map)
-(use-package poly-org
-  :defer t
-  :requires polymode
-  :config
-  (defun poly-org-edit-special ()
-    "Run `org-edit-special' from poly-org."
-    (interactive)
-    (polymode-with-current-base-buffer #'funcall-interactively #'org-edit-special))
-  (bind-key "C-c C-b" #'poly-org-edit-special poly-org-mode-map)))
+  (when init-flag
+    (bind-key "C-c C-b" 'org-edit-special org-mode-map)
+    (bind-key "C-c C-b" 'org-edit-src-exit org-src-mode-map)
+    (use-package poly-org
+      :defer t
+      :after polymode
+      :config
+      (defun poly-org-edit-special ()
+	"Run `org-edit-special' from poly-org."
+	(interactive)
+	(polymode-with-current-base-buffer #'funcall-interactively #'org-edit-special))
+      (bind-key "C-c C-b" #'polymode-toggle-chunk-narrowing poly-org-mode-map)))
 #+end_src
 
 For convenience, add =header-args= property to completion
 
 #+begin_src emacs-lisp
-(add-to-list 'org-default-properties "header-args")
+  (add-to-list 'org-default-properties "header-args")
 #+end_src
 
 ***** Structure templates
@@ -10103,10 +10112,10 @@ I can just type =<el<TAB>= to enter elisp code block.
 It can be done using =org-tempo=.
 
 #+begin_src emacs-lisp
-(use-package org-tempo
-  :if init-flag
-  :init
-  (push (cons "el" "src emacs-lisp") org-structure-template-alist))
+  (use-package org-tempo
+    :if init-flag
+    :init
+    (push (cons "el" "src emacs-lisp") org-structure-template-alist))
 #+end_src
 
 ***** Source block editing functions from scimax
@@ -10175,7 +10184,7 @@ If point is in a block, copy the header to the new block"
     (insert "\n")
     (forward-line -1)))
 #+end_src
-***** TODO Change major mode in the source blocks
+***** TODO COMMENT Change major mode in the source blocks
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 17:28]
 :ID:       b9c7a2cd-ef10-4add-aefd-ecc1987ecc69
@@ -10190,30 +10199,30 @@ It is always annoying that I need switch to separate window to edit source block
 I use it to activate alternative major modes in source blocks.
 
 #+begin_src emacs-lisp
-(use-package polymode
-  :if init-flag
-  :straight t
-  :disabled t
-  :init
-  (use-package poly-org
+  (use-package polymode
+    :if init-flag
     :straight t
     :init
-    (setq poly-lock-allow-fontification nil)
-    (defun org-source-block-major-mode ()
-      "Return the name of major mode for the org source block at point."
-      (when (re-search-forward "#\\+begin_src +\\([^ \t\n]+\\)")
-	(if (string-match "\\(bash\\|sh\\|shell\\)" (match-string 1))
-	    "sh"
-	  (format "%s" (match-string 1)))))
-    (setq pm-inner/org
-	  (pm-inner-auto-chunkmode :name "org"
-				   :mode 'host
-				   :head-mode 'host
-				   :tail-mode 'host
-				   :head-matcher "^[ \t]*#\\+begin_src .*\n"
-				   :tail-matcher "^[ \t]*#\\+end_src"
-				   :head-adjust-face nil
-				   :mode-matcher #'org-source-block-major-mode
+    (use-package poly-org
+      :straight t
+      :magic "\\.org"  
+      :init
+      (setq poly-lock-allow-fontification nil)
+      (defun org-source-block-major-mode ()
+	"Return the name of major mode for the org source block at point."
+	(when (re-search-forward "#\\+begin_src +\\([^ \t\n]+\\)")
+	  (if (string-match "\\(bash\\|sh\\|shell\\)" (match-string 1))
+	      "sh"
+	    (format "%s" (match-string 1)))))
+      (setq pm-inner/org
+	    (pm-inner-auto-chunkmode :name "org"
+				     :mode 'host
+				     :head-mode 'host
+				     :tail-mode 'host
+				     :head-matcher "^[ \t]*#\\+begin_src .*\n"
+				     :tail-matcher "^[ \t]*#\\+end_src"
+				     :head-adjust-face nil
+				     :mode-matcher #'org-source-block-major-mode
 				   :indent-offset org-edit-src-content-indentation))))
 #+end_src
 
@@ -10225,33 +10234,33 @@ It is not acceptable for me and it is not easy to re-implement by myself.
 Leaving the code below for reference.
 
 #+begin_src emacs-lisp :tangle no
-(use-package mmm-mode
-  :if init-flag
-  :straight t
-  :disabled
-  :init
-  (setq mmm-global-mode 'auto
-	mmm-submode-decoration-level 2)
-  (custom-set-faces '(mmm-declaration-submode-face ((t :background "#D1D4D9"))))
-  :config
-  (defun mmm-here-org-block-get-mode (heading)
-    "Detect the submode to be used with the current org source block."
-    (string-match "%\\#\\+begin_src +\\([^ ]+\\)" heading)
-    (let ((lang (match-string-no-properties 1)))
-      (if lang
-	  (org-src--get-lang-mode lang)
-	(signal 'mmm-no-matching-submode nil))))
+  (use-package mmm-mode
+    :if init-flag
+    :straight t
+    :disabled
+    :init
+    (setq mmm-global-mode 'auto
+	  mmm-submode-decoration-level 2)
+    (custom-set-faces '(mmm-declaration-submode-face ((t :background "#D1D4D9"))))
+    :config
+    (defun mmm-here-org-block-get-mode (heading)
+      "Detect the submode to be used with the current org source block."
+      (string-match "%\\#\\+begin_src +\\([^ ]+\\)" heading)
+      (let ((lang (match-string-no-properties 1)))
+	(if lang
+	    (org-src--get-lang-mode lang)
+	  (signal 'mmm-no-matching-submode nil))))
 
-  (mmm-add-classes '((org-mode-block
-		      :face mmm-declaration-submode-face
-		      :front "^\\#\\+begin_src +\\([a-zA-Z-]+\\).*$"
-		      :front-offset (end-of-line 1)
-		      :back "^\\#\\+end_src$"
-		      :back-offset (beginning-of-line)
-		      :match-submode mmm-here-org-block-get-mode
-		      :delimiter-mode nil
-		      )))
-  (mmm-add-mode-ext-class 'org-mode nil 'org-mode-block))
+    (mmm-add-classes '((org-mode-block
+			:face mmm-declaration-submode-face
+			:front "^\\#\\+begin_src +\\([a-zA-Z-]+\\).*$"
+			:front-offset (end-of-line 1)
+			:back "^\\#\\+end_src$"
+			:back-offset (beginning-of-line)
+			:match-submode mmm-here-org-block-get-mode
+			:delimiter-mode nil
+			)))
+    (mmm-add-mode-ext-class 'org-mode nil 'org-mode-block))
 #+end_src
 
 ***** Backends
@@ -10746,7 +10755,7 @@ You can use this to set \\mathversion{bold} for example to make it bolder."
 :ID:       062a0aaf-3f3b-4eef-b8cf-a19da865e51c
 :END:
 
-org-capture mode lighter
+Org-capture mode lighter
 
 #+begin_src emacs-lisp
 (use-package org-capture
@@ -11028,174 +11037,6 @@ hyphen as em-dash (from [[https://github.com/grettke/help/blob/master/help.org][
     0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "—")))))
 #+end_src
 
-hide property drawers if they are empty or contain only invisible =org-custom-properties=
-also hide the logbooks containing only state changes and clocking
-
-*************** TODO Find a faster way to hide empty drawers - maybe use font lock
-*************** END
-
-#+begin_src emacs-lisp :tangle no
-(use-package org
-  :if init-flag
-  :hook (org-mode . org-toggle-custom-properties-visibility)
-  :config
-  (setq org-custom-properties '("ID" "STYLE" "REPEAT_TO_STATE" "CREATED"))
-  (defvar org-custom-logs '(state reschedule delschedule redeadline deldeadline refile)
-    "List of note types to be hidden normally. The types shouls be from `org-log-note-headings'.")
-  (defvar org-custom-drawers (list #'org-log-into-drawer "PROPERTIES")
-    "List of drawer names allowed to be hidden if all the information inside is invisible.")
-  (defvar org-custom-clocking-info t
-    "Non nil means that clocking info is hidden by `org-toggle-custom-properties-visibility'.")
-  (defvar-local org-custom-logs-overlays nil
-    "List of overlays used for custom notes.")
-  (defvar-local org-custom-clocking-overlays nil
-    "List of overlays used for clocking info.")
-  (defvar-local org-empty-drawer-overlays nil
-    "List of overlays used for drawers with empty or hidden content.")
-
-  ;; hide emptied drawers
-  (el-patch-feature 'org)
-  (el-patch-defun org-toggle-custom-properties-visibility ()
-    "Display or hide properties in `org-custom-properties'."
-    (interactive)
-    (if org-custom-properties-overlays
-	(progn (mapc #'delete-overlay org-custom-properties-overlays)
-	       (setq org-custom-properties-overlays nil))
-      (when org-custom-properties
-	(org-with-wide-buffer
-	 (goto-char (point-min))
-	 (let ((regexp (org-re-property (regexp-opt org-custom-properties) t t)))
-	   (while (re-search-forward regexp nil t)
-	     (let ((end (cdr (save-match-data (org-get-property-block))))
-		   (el-patch-add (beg (car (save-match-data (org-get-property-block)))))
-		   (el-patch-add (total-custom-length 0)))
-	       (when (and end (< (point) end))
-		 ;; Hide first custom property in current drawer.
-		 (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-		   (el-patch-add (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0)))))
-		   (overlay-put o 'invisible t)
-		   (overlay-put o 'org-custom-property t)
-		   (push o org-custom-properties-overlays))
-		 ;; Hide additional custom properties in the same drawer.
-		 (while (re-search-forward regexp end t)
-		   (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-		     (el-patch-add (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0)))))
-		     (overlay-put o 'invisible t)
-		     (overlay-put o 'org-custom-property t)
-		     (push o org-custom-properties-overlays)))
-		 ;; hide emptied drawer
-		 (el-patch-add
-		   (when (equal (- end beg) total-custom-length)
-		     (save-excursion
-		       (re-search-backward org-property-start-re)
-		       (looking-at org-property-drawer-re)
-		       (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-			 (overlay-put o 'invisible t)
-			 (overlay-put o 'org-custom-property t)
-			 (push o org-custom-properties-overlays)))))))
-	     ;; Each entry is limited to a single property drawer.
-	     (outline-next-heading)))))))
-
-  ;; (defun org-log-regex (note)
-  ;;   "Transform note definition from `org-log-note-headings' into regex."
-  ;;   (let ((note-def (cdr (assq note org-log-note-headings))))
-  ;;     (when note-def
-  ;; 	(concat "[ \t]*- +"
-  ;; 		(replace-regexp-in-string
-  ;; 		 " +" " +"
-  ;; 		 (org-replace-escapes
-  ;; 		  (regexp-quote note-def)
-  ;; 		  `(("%d" . ,org-ts-regexp-inactive)
-  ;; 		    ("%D" . ,org-ts-regexp)
-  ;; 		    ("%s" . "\\(?:\"\\S-+\"\\)?")
-  ;; 		    ("%S" . "\\(?:\"\\S-+\"\\)?")
-  ;; 		    ("%t" . ,org-ts-regexp-inactive)
-  ;; 		    ("%T" . ,org-ts-regexp)
-  ;; 		    ("%u" . ".*?")
-  ;; 		    ("%U" . ".*?"))))))))
-
-  ;; (defun org-re-logs (notes)
-  ;;   "Construct regexp matching any of the note types from NOTES list.
-  ;; The types must be taken from `org-log-note-headings'."
-  ;;   (concat (s-join "\\|"  (mapcar #'org-log-regex notes))
-  ;; 	    "\\(\n?"
-  ;; 	    (s-join "\\|"  (mapcar #'org-log-regex notes))
-  ;; 	    "\\)*"))
-
-  ;; (defun org-log-end ()
-  ;;   "Return expected end of log notes in current entry."
-  ;;   (org-with-wide-buffer
-  ;;    (save-match-data
-  ;;      (let ((org-log-states-order-reversed nil))
-  ;; 	 (goto-char (org-log-beginning))
-  ;; 	 (let ((regexp (org-re-logs (mapcar #'car org-log-note-headings))))
-  ;; 	   (while (looking-at-p regexp)
-  ;; 	     (next-line))
-  ;; 	   (point))))))
-
-  ;; (defun org-custom-drawer-start-re (drawers)
-  ;;   "Return regex for the first line of a drawer from DRAWERS list.
-  ;;     Each element should be a string containing the drawer name of a function of no arguments returning such string."
-  ;;   (concat "^[ \t]*:"
-  ;; 	    (rx-to-string `(or ,@(mapcar (lambda (el)
-  ;; 					   (if (functionp el) (funcall el) el))
-  ;; 					 org-custom-drawers)))
-  ;; 	    ":[ \t]*"))
-
-  ;; (defvar org-drawer-end-re "[ \t]*:END:[ \t]*"
-  ;;   "Regex of the last line (:END:) of a drawer.")
-
-  ;; (defun org-custom-drawer-re (drawers)
-  ;;   "Return custom drawer regexp in entry at point according to DRAWERS list.
-  ;;     See `org-custom-drawer-start-re' description for more details."
-  ;;   (concat (org-custom-drawer-start-re drawers)
-  ;; 	    "\n\\(?:.*\n\\)*?"
-  ;; 	    org-drawer-end-re))
-
-
-  ;; (define-advice org-toggle-custom-properties-visibility (:before () hide-custom-logs-and-clocks)
-  ;;   "Hide all the custom logs."
-  ;;   (if org-custom-logs-overlays
-  ;; 	(progn (mapc #'delete-overlay org-custom-logs-overlays)
-  ;; 	       (setq org-custom-logs-overlays nil))
-  ;;     (when org-custom-logs
-  ;; 	(org-with-wide-buffer
-  ;; 	 (goto-char (point-min))
-  ;; 	 (let ((regexp (s-join "\\|" (list (org-re-logs org-custom-logs) "[ \t]*CLOCK:.+$"))))
-  ;; 	   (while (re-search-forward regexp nil t)
-  ;; 	     (let ((end (org-log-end))
-  ;; 		   (beg (save-match-data
-  ;; 			  (save-excursion
-  ;; 			    (re-search-backward (org-custom-drawer-start-re org-custom-drawers))
-  ;; 			    (1+ (match-end 0)))))
-  ;; 		   (total-custom-length 0))
-  ;; 	       (when (and end (< (point) end))
-  ;; 		 ;; Hide first custom note in current drawer.
-  ;; 		 (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-  ;;                  (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0))))
-  ;; 		   (overlay-put o 'invisible t)
-  ;; 		   (overlay-put o 'org-custom-property t)
-  ;; 		   (push o org-custom-logs-overlays))
-  ;; 		 ;; Hide additional custom notes in the same drawer.
-  ;; 		 (while (re-search-forward regexp end t)
-  ;; 		   (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-  ;;                    (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0))))
-  ;; 		     (overlay-put o 'invisible t)
-  ;; 		     (overlay-put o 'org-custom-property t)
-  ;; 		     (push o org-custom-logs-overlays)))
-  ;; 		 (when (equal (- end beg) total-custom-length)
-  ;; 		   (save-excursion
-  ;; 		     (re-search-backward (org-custom-drawer-start-re org-custom-drawers))
-  ;; 		     (looking-at (org-custom-drawer-re org-custom-drawers))
-  ;; 		     (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-  ;; 		       (overlay-put o 'invisible t)
-  ;; 		       (overlay-put o 'org-custom-property t)
-  ;; 		       (push o org-custom-logs-overlays))))))
-  ;; 	     ;; Each entry is limited to a single property drawer.
-  ;; 	     (outline-next-heading)))))))
-  )
-#+end_src
-
 Show tags right justified
 #+begin_src emacs-lisp
 (setq org-tags-column (- (length org-ellipsis)
@@ -11321,7 +11162,7 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 (setq org-agenda-scheduled-leaders '("* today" "* %2d d. ago"))
 (defun yant/format-summary-for-agenda ()
   "Format the contents of :SUMMARY: property to show in agenda view."
-  (let ((summary (org-entry-get (point) "SUMMARY" 'INHERIT)))
+  (let ((summary (org-entry-get (point) "SUMMARY")))
     (if (not (seq-empty-p summary))
 	(concat "\t\tComment: \"" summary "\"\n")
       "")))
@@ -11656,6 +11497,179 @@ Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/c
 
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook #'org-hide-block-all)
+#+end_src
+
+**** Property drawers
+:PROPERTIES:
+:CREATED:  [2020-05-13 Wed 23:51]
+:END:
+
+Hide property drawers if they are empty or contain only invisible =org-custom-properties=.
+Also hide the logbooks containing only state changes and clocking.
+
+*************** TODO Find a faster way to hide empty drawers - maybe use font lock
+*************** END
+
+#+begin_src emacs-lisp :tangle no
+(use-package org
+  :if init-flag
+  :hook (org-mode . org-toggle-custom-properties-visibility)
+  :config
+  (setq org-custom-properties '("ID" "STYLE" "REPEAT_TO_STATE" "CREATED"))
+  (defvar org-custom-logs '(state reschedule delschedule redeadline deldeadline refile)
+    "List of note types to be hidden normally. The types shouls be from `org-log-note-headings'.")
+  (defvar org-custom-drawers (list #'org-log-into-drawer "PROPERTIES")
+    "List of drawer names allowed to be hidden if all the information inside is invisible.")
+  (defvar org-custom-clocking-info t
+    "Non nil means that clocking info is hidden by `org-toggle-custom-properties-visibility'.")
+  (defvar-local org-custom-logs-overlays nil
+    "List of overlays used for custom notes.")
+  (defvar-local org-custom-clocking-overlays nil
+    "List of overlays used for clocking info.")
+  (defvar-local org-empty-drawer-overlays nil
+    "List of overlays used for drawers with empty or hidden content.")
+
+  ;; hide emptied drawers
+  (el-patch-feature 'org)
+  (el-patch-defun org-toggle-custom-properties-visibility ()
+    "Display or hide properties in `org-custom-properties'."
+    (interactive)
+    (if org-custom-properties-overlays
+	(progn (mapc #'delete-overlay org-custom-properties-overlays)
+	       (setq org-custom-properties-overlays nil))
+      (when org-custom-properties
+	(org-with-wide-buffer
+	 (goto-char (point-min))
+	 (let ((regexp (org-re-property (regexp-opt org-custom-properties) t t)))
+	   (while (re-search-forward regexp nil t)
+	     (let ((end (cdr (save-match-data (org-get-property-block))))
+		   (el-patch-add (beg (car (save-match-data (org-get-property-block)))))
+		   (el-patch-add (total-custom-length 0)))
+	       (when (and end (< (point) end))
+		 ;; Hide first custom property in current drawer.
+		 (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
+		   (el-patch-add (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0)))))
+		   (overlay-put o 'invisible t)
+		   (overlay-put o 'org-custom-property t)
+		   (push o org-custom-properties-overlays))
+		 ;; Hide additional custom properties in the same drawer.
+		 (while (re-search-forward regexp end t)
+		   (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
+		     (el-patch-add (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0)))))
+		     (overlay-put o 'invisible t)
+		     (overlay-put o 'org-custom-property t)
+		     (push o org-custom-properties-overlays)))
+		 ;; hide emptied drawer
+		 (el-patch-add
+		   (when (equal (- end beg) total-custom-length)
+		     (save-excursion
+		       (re-search-backward org-property-start-re)
+		       (looking-at org-property-drawer-re)
+		       (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
+			 (overlay-put o 'invisible t)
+			 (overlay-put o 'org-custom-property t)
+			 (push o org-custom-properties-overlays)))))))
+	     ;; Each entry is limited to a single property drawer.
+	     (outline-next-heading)))))))
+
+  ;; (defun org-log-regex (note)
+  ;;   "Transform note definition from `org-log-note-headings' into regex."
+  ;;   (let ((note-def (cdr (assq note org-log-note-headings))))
+  ;;     (when note-def
+  ;; 	(concat "[ \t]*- +"
+  ;; 		(replace-regexp-in-string
+  ;; 		 " +" " +"
+  ;; 		 (org-replace-escapes
+  ;; 		  (regexp-quote note-def)
+  ;; 		  `(("%d" . ,org-ts-regexp-inactive)
+  ;; 		    ("%D" . ,org-ts-regexp)
+  ;; 		    ("%s" . "\\(?:\"\\S-+\"\\)?")
+  ;; 		    ("%S" . "\\(?:\"\\S-+\"\\)?")
+  ;; 		    ("%t" . ,org-ts-regexp-inactive)
+  ;; 		    ("%T" . ,org-ts-regexp)
+  ;; 		    ("%u" . ".*?")
+  ;; 		    ("%U" . ".*?"))))))))
+
+  ;; (defun org-re-logs (notes)
+  ;;   "Construct regexp matching any of the note types from NOTES list.
+  ;; The types must be taken from `org-log-note-headings'."
+  ;;   (concat (s-join "\\|"  (mapcar #'org-log-regex notes))
+  ;; 	    "\\(\n?"
+  ;; 	    (s-join "\\|"  (mapcar #'org-log-regex notes))
+  ;; 	    "\\)*"))
+
+  ;; (defun org-log-end ()
+  ;;   "Return expected end of log notes in current entry."
+  ;;   (org-with-wide-buffer
+  ;;    (save-match-data
+  ;;      (let ((org-log-states-order-reversed nil))
+  ;; 	 (goto-char (org-log-beginning))
+  ;; 	 (let ((regexp (org-re-logs (mapcar #'car org-log-note-headings))))
+  ;; 	   (while (looking-at-p regexp)
+  ;; 	     (next-line))
+  ;; 	   (point))))))
+
+  ;; (defun org-custom-drawer-start-re (drawers)
+  ;;   "Return regex for the first line of a drawer from DRAWERS list.
+  ;;     Each element should be a string containing the drawer name of a function of no arguments returning such string."
+  ;;   (concat "^[ \t]*:"
+  ;; 	    (rx-to-string `(or ,@(mapcar (lambda (el)
+  ;; 					   (if (functionp el) (funcall el) el))
+  ;; 					 org-custom-drawers)))
+  ;; 	    ":[ \t]*"))
+
+  ;; (defvar org-drawer-end-re "[ \t]*:END:[ \t]*"
+  ;;   "Regex of the last line (:END:) of a drawer.")
+
+  ;; (defun org-custom-drawer-re (drawers)
+  ;;   "Return custom drawer regexp in entry at point according to DRAWERS list.
+  ;;     See `org-custom-drawer-start-re' description for more details."
+  ;;   (concat (org-custom-drawer-start-re drawers)
+  ;; 	    "\n\\(?:.*\n\\)*?"
+  ;; 	    org-drawer-end-re))
+
+
+  ;; (define-advice org-toggle-custom-properties-visibility (:before () hide-custom-logs-and-clocks)
+  ;;   "Hide all the custom logs."
+  ;;   (if org-custom-logs-overlays
+  ;; 	(progn (mapc #'delete-overlay org-custom-logs-overlays)
+  ;; 	       (setq org-custom-logs-overlays nil))
+  ;;     (when org-custom-logs
+  ;; 	(org-with-wide-buffer
+  ;; 	 (goto-char (point-min))
+  ;; 	 (let ((regexp (s-join "\\|" (list (org-re-logs org-custom-logs) "[ \t]*CLOCK:.+$"))))
+  ;; 	   (while (re-search-forward regexp nil t)
+  ;; 	     (let ((end (org-log-end))
+  ;; 		   (beg (save-match-data
+  ;; 			  (save-excursion
+  ;; 			    (re-search-backward (org-custom-drawer-start-re org-custom-drawers))
+  ;; 			    (1+ (match-end 0)))))
+  ;; 		   (total-custom-length 0))
+  ;; 	       (when (and end (< (point) end))
+  ;; 		 ;; Hide first custom note in current drawer.
+  ;; 		 (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
+  ;;                  (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0))))
+  ;; 		   (overlay-put o 'invisible t)
+  ;; 		   (overlay-put o 'org-custom-property t)
+  ;; 		   (push o org-custom-logs-overlays))
+  ;; 		 ;; Hide additional custom notes in the same drawer.
+  ;; 		 (while (re-search-forward regexp end t)
+  ;; 		   (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
+  ;;                    (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0))))
+  ;; 		     (overlay-put o 'invisible t)
+  ;; 		     (overlay-put o 'org-custom-property t)
+  ;; 		     (push o org-custom-logs-overlays)))
+  ;; 		 (when (equal (- end beg) total-custom-length)
+  ;; 		   (save-excursion
+  ;; 		     (re-search-backward (org-custom-drawer-start-re org-custom-drawers))
+  ;; 		     (looking-at (org-custom-drawer-re org-custom-drawers))
+  ;; 		     (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
+  ;; 		       (overlay-put o 'invisible t)
+  ;; 		       (overlay-put o 'org-custom-property t)
+  ;; 		       (push o org-custom-logs-overlays))))))
+  ;; 	     ;; Each entry is limited to a single property drawer.
+  ;; 	     (outline-next-heading)))))))
+  )
 #+end_src
 
 **** Symbols
@@ -11996,7 +12010,7 @@ SCHEDULED: <2020-05-11 Mon>
 :PROPERTIES:
 :CREATED: [2020-05-11 Mon 10:21]
 :EMAIL-SOURCE: [[notmuch:id:87pnbby49m.fsf@nicolasgoaziou.fr]]
-:SHOWFROMDATE: 2020-05-13
+:SHOWFROMDATE: 2020-05-14 18:00
 :END:
 :LOGBOOK:
 - Refiled on [2020-05-11 Mon 10:22]
@@ -12008,6 +12022,13 @@ SCHEDULED: <2020-05-11 Mon>
 :LOGBOOK:
 - Refiled on [2020-05-11 Mon 10:24]
 CLOCK: [2020-05-11 Mon 02:43]--[2020-05-11 Mon 02:45] =>  0:02
+:END:
+**** TODO goto-line preview does not reveal hidden text in org
+:PROPERTIES:
+:CREATED: [2020-05-13 Wed 15:23]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-13 Wed 15:23]
 :END:
 *** TODO Key combinations
 :PROPERTIES:
