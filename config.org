@@ -6345,7 +6345,7 @@ Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while
 (defun org-att-link-complete (&optional arg)
   "Completion function for att: link."
   (let* ((ref-dir (org-attach-dir 'CREATE))
-	 (filelink (let ((default-directory ref-dir))
+	 (filelink (let ((default-directory (f-slash ref-dir)))
 		     (org-file-complete-link)))
 	 (filepath (apply #'s-concat (cdr (s-split ":" filelink)))))
     (format "att:%s" filepath)))
@@ -6361,9 +6361,9 @@ Just links to the current entry are not always sufficient. I sometimes want to l
   "Return `org-attach-dir' for the entryin att-id: link type."
   (let ((id (car (s-split ":" arg)))
         (file (cadr (s-split ":" arg))))
-    (s-concat (let ((org-attach-dir-suppress-extra-checks t))
-		(org-with-point-at (org-id-find id 'marker)
-		  (org-attach-dir 'CREATE)))
+    (s-concat (f-slash (let ((org-attach-dir-suppress-extra-checks t))
+			 (org-with-point-at (org-id-find id 'marker)
+			   (org-attach-dir 'CREATE))))
 	      file)))
 
 (add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
@@ -6401,7 +6401,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
   (let* ((id (org-att-id-prompt-id))
 	 (ref-dir (org-with-point-at (org-id-find id 'marker)
 		    (org-attach-dir 'CREATE)))
-	 (filelink (let ((default-directory ref-dir))
+	 (filelink (let ((default-directory (f-slash ref-dir)))
 		     (org-file-complete-link)))
 	 (filepath (apply #'s-concat (cdr (s-split ":" filelink)))))
     (format "att-id:%s:%s" id filepath)))
