@@ -1075,40 +1075,52 @@ Show some text in buffer differently
       (interactive)
       (require 'spaceline-all-the-icons-segments)
       (setq-default mode-line-format
-                    '("%e"
-                      (:eval
-                       (let* ((active (powerline-selected-window-active))
-                              (mode-line (if active 'mode-line 'mode-line-inactive))
-                              (face0 (if active (boon-state-face) 'mode-line-inactive))
-                              (face1 (if active 'powerline-active1 'powerline-inactive1))
-                              (face1-highlight (if active 'powerline-active1-highlight 'powerline-inactive1))
-                              (face2 (if active 'powerline-active2 'powerline-inactive2))
-                              (separator-left (intern (format "powerline-%s-%s"
-                                                              powerline-default-separator
-                                                              (car powerline-default-separator-dir))))
-                              (separator-right (intern (format "powerline-%s-%s"
-                                                               powerline-default-separator
-                                                               (cdr powerline-default-separator-dir))))
-                              (boon (list
+		    '("%e"
+		      (:eval
+		       (let* ((active (powerline-selected-window-active))
+			      (mode-line (if active 'mode-line 'mode-line-inactive))
+			      (mode-line-highlight (if active 'mode-line-highlight 'mode-line-inactive))
+			      (face0 (if active (boon-state-face) 'mode-line-inactive))
+			      (face1 (if active 'powerline-active1 'powerline-inactive1))
+			      (face1-highlight (if active 'powerline-active1-highlight 'powerline-inactive1))
+			      (face2 (if active 'powerline-active2 'powerline-inactive2))
+			      (separator-left (intern (format "powerline-%s-%s"
+							      powerline-default-separator
+							      (car powerline-default-separator-dir))))
+			      (separator-right (intern (format "powerline-%s-%s"
+							       powerline-default-separator
+							       (cdr powerline-default-separator-dir))))
+			      (boon (list
 				     (powerline-raw (when current-input-method-title (s-concat " " (s-trim-right current-input-method-title))) face0)
 				     (powerline-raw (eval (get 'spaceline-all-the-icons-modified-p :code)) face0 'l)
 				     (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-size-p :code)) face0 'l)
 				     (powerline-raw " " face0)
 				     (funcall 'powerline-bar-right mode-line face0)
-                                     (when (bound-and-true-p boon-mode) (powerline-raw " " face0))
+				     (when (bound-and-true-p boon-mode) (powerline-raw " " face0))
 				     (when (bound-and-true-p boon-mode) (powerline-raw (boon-state-string) face0 'r))
 				     (when (bound-and-true-p boon-mode) (funcall separator-left face0 mode-line))))
-                              (lhs (list
+			      (lhs (list
 				    (powerline-raw (eval (get 'spaceline-all-the-icons-mode-icon-p :code)) mode-line 'l)
 				    ;; (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-id-p :code)) mode-line 'l)
 				    (powerline-buffer-id mode-line nil)
 				    (when (and (boundp 'which-func-mode) which-func-mode)
 				      (powerline-raw which-func-format mode-line 'l))
-				    (powerline-raw " " mode-line)
-				    (funcall separator-left mode-line face1)
 				    (powerline-raw (when (eval (get 'spaceline-all-the-icons-narrowed-p :when))
 						     (eval (get 'spaceline-all-the-icons-narrowed-p :code)))
-						   face1-highlight 'l)
+						   mode-line-highlight 'l)
+				    (powerline-raw (if truncate-lines
+						       (propertize (all-the-icons-faicon "arrow-right")
+								   'face `((t (
+									       :family "file-icons"
+									       :height 0.6)))
+								   'display '(raise 0.3))
+						     (propertize (all-the-icons-fileicon "factor")
+								 'face `((t (
+									     :family "Material Icons"
+									     :height 0.6)))
+								 'display '(raise 0.3)))
+                                                   mode-line-highlight 'l)
+				    (funcall separator-left mode-line face1)
 				    (powerline-process face1)
 				    (when active (powerline-minor-modes face1 'l))
 				    (powerline-raw " " face1)
