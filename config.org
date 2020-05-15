@@ -8232,11 +8232,14 @@ For example, my typical archiving workflow involves going through archive candid
 I archive some of the tasks and mark some with :NOARCHIVE: tag (see [[id:adc6f5ae-183f-4c5f-97e8-7bfe18f028d2][General org mode tags]]).
 
 By default, marking a task does not result in updated agenda follow buffer, so I fix it below.
+
+[2020-05-14 Thu] Disabling since I am using categories now, which are verbose enough most of time.
+
 #+begin_src emacs-lisp
-(define-advice org-agenda-bulk-mark (:after (&rest args) update-follow-mode)
-  "Update follow mode buffer after marking."
-  (org-agenda-do-context-action))
-(advice-add 'org-agenda-bulk-unmark :after #'org-agenda-bulk-mark@update-follow-mode)
+;; (define-advice org-agenda-bulk-mark (:after (&rest args) update-follow-mode)
+;;   "Update follow mode buffer after marking."
+;;   (org-agenda-do-context-action))
+;; (advice-add 'org-agenda-bulk-unmark :after #'org-agenda-bulk-mark@update-follow-mode)
 #+end_src
 
 *************** TODO send to mail list
