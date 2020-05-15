@@ -1004,7 +1004,7 @@ Show some text in buffer differently
 :END:
 - =Powerline= + =smart-mode-line=
   - triangular arrow shape
-  - set the foreground manually because =boon-powerline= default background is not good with [[id:404c54f5-26eb-4ada-8a0f-c27efc714238][Flatui]]
+  - set the foreground manually because =boon-powerline= default background is not good with [[id:404c54f5-26eb-4ada-8a0f-c27efc714238][Flatui]] 
     #+begin_src emacs-lisp
 (use-package powerline
   :if init-flag
@@ -1028,7 +1028,6 @@ Show some text in buffer differently
     ))
 
 (use-package spaceline-all-the-icons
-  :straight t
   :demand t
   :custom
   (spaceline-all-the-icons-slim-render t)
@@ -1175,9 +1174,9 @@ Show some text in buffer differently
 Fancy minor mode lighters
 
 #+begin_src emacs-lisp
-  (use-package simple
-    :config
-    (diminish 'auto-fill-function (s-concat " "
+(use-package simple
+  :config
+  (diminish 'auto-fill-function (s-concat " "
 					    (propertize (all-the-icons-material "wrap_text")
 							'face `((t (
 								    :family "Material Icons"
@@ -3341,7 +3340,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
 ***** Appearance
-****** COMMENT File icons
+****** File icons
 :PROPERTIES:
 :CREATED:  [2019-08-27 Tue 17:18]
 :ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
@@ -4389,7 +4388,12 @@ It warns me if the original definition changes from what I expect.
   :demand t)
 #+end_src
 
-*** Set executable flag in all the script files
+*** Scripts
+:PROPERTIES:
+:CREATED:  [2020-05-14 Thu 14:39]
+:END:
+
+**** Set executable flag in all the script files
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 13:52]
 :ID:       09ca1291-739f-4949-a7bc-4cb50303c364
@@ -4400,6 +4404,7 @@ It warns me if the original definition changes from what I expect.
 ;; stolen from https://github.com/jethrokuan/.emacs.d/blob/master/init.el
   (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p))
 #+end_src
+
 
 *** Gnuplot
 :PROPERTIES:
@@ -8220,7 +8225,7 @@ scheduled items with an hour specification like [h]h:mm."
 	      (push item scheduled-items))))))
     (nreverse scheduled-items)))
 #+end_src
-***** Agenda bulk actions
+***** TODO Agenda bulk actions
 :PROPERTIES:
 :CREATED:  [2018-11-05 Mon 10:44]
 :ID:       daa2a040-cd9e-4b07-be86-d549d566b42f
@@ -12120,6 +12125,14 @@ CLOCK: [2020-05-11 Mon 02:43]--[2020-05-11 Mon 02:45] =>  0:02
 :END:
 :LOGBOOK:
 - Refiled on [2020-05-13 Wed 15:23]
+:END:
+**** TODO after reverting org buffer, org-reveal does nothing for some reason (point moves to the first visible char)
+:PROPERTIES:
+:CREATED: [2020-05-14 Thu 12:18]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-14 Thu 14:19]
+CLOCK: [2020-05-14 Thu 12:18]--[2020-05-14 Thu 12:19] =>  0:01
 :END:
 *** TODO Key combinations
 :PROPERTIES:
