@@ -3166,7 +3166,16 @@ And extend it with =dired+=
   :if init-flag
   :bind (:map image-dired-thumbnail-mode-map
 	      ("s" . image-dired-mark-thumb-original-file)
-              ("a" . image-dired-unmark-thumb-original-file))
+              ("a" . image-dired-unmark-thumb-original-file)
+              ("A" . image-dired-unmark-all-thumbs-original-files))
+  :init
+  (defun image-dired-unmark-all-thumbs-original-files ()
+    "Unmark all original image files in associated dired buffer."
+    (interactive)
+    (when-let ((dired-buf (image-dired-associated-dired-buffer)))
+      (with-current-buffer dired-buf
+	(dired-unmark-all-marks))))
+
   :config
   (unbind-key "o" image-map)
   (use-package meta-functions
@@ -3226,6 +3235,26 @@ Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
 	(while (and (window-live-p window)
 		    (eq major-mode 'dired-mode))
 	  (quit-window kill window))))))
+#+end_src
+
+***** Image dired
+:PROPERTIES:
+:CREATED:  [2020-05-15 Fri 00:20]
+:END:
+
+
+*************** TODO suggest to add to emacs?
+*************** END
+
+Unselect all the files after showing thumbnails. Useful to mark files from the =image-dired= buffer. 
+#+begin_src emacs-lisp
+(use-package image-dired
+  :if init-flag
+  :config
+  (define-advice image-dired-display-thumbs (:after (&rest _) unmark-all-files)
+    "Unmark all files in current dired buffer."
+    (when (eq major-mode 'dired-mode)
+      (dired-unmark-all-marks))))
 #+end_src
 
 ***** Delete to trash
