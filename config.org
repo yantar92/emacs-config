@@ -630,6 +630,16 @@ The colour I use is below
   (set-face-background 'secondary-selection "#aae59c"))
 #+END_SRC
 
+For =all-the-icons= it is important to install the fonts via [[elisp:all-the-icons-install-fonts]]
+*************** TODO check if hangs disappear
+*************** END
+#+begin_src emacs-lisp
+(use-package all-the-icons
+  :if init-flag
+  :straight t
+  :demand t)
+#+end_src
+
 *** Startup appearance
 :PROPERTIES:
 :ID:       5450bef9-a57a-4afb-85f3-893dbcb5f4ba
