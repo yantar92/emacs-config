@@ -11252,13 +11252,60 @@ In order to make the remainder consistent, the multi-byte characters are conside
 *************** TODO the idea about multi-byte is not good for Russian text having same width as English...
 *************** END
 
+In addition use =:align-to= ='display= spec to align tags to right border of the window.
+
 #+begin_src emacs-lisp
+
+;;; FIXME: may use `window-font-width' to calculate actual pixel width
+;;; FIXME: consider composition specs to determine if the characters are actially going to be in one line
+;;; FIXME: consider other 'display specs. (space .) should be doable
+(defun string-display-length (string)
+  "Calculate the number of displayed characters in STRING.
+This takes into account composition, invisibility, and display properties.
+Only string value of display property is considered.
+Any non-nil value of 'invisible property is considered to be not shown."
+  (let ((full-length (length string)))
+    (let ((pos 0)
+	  next)
+      (while (setq next (next-single-property-change pos 'invisible string))
+	(if (not (get-text-property pos 'invisible string))
+            (setq pos next)
+          (setq full-length (- full-length (- next pos)))
+          (setq string (concat (substring string 0 pos) (substring string next (length string)))))))
+    (let ((pos 0)
+	  next)
+      (while (setq next (next-single-property-change pos 'display string))
+	(let ((prop (get-text-property pos 'display string)))
+          (if (not (and prop (stringp prop)))
+              (setq pos next)
+            (setq full-length (- full-length (- next pos)))
+            (setq full-length (+ full-length (string-display-length prop)))
+            (setq string (concat (substring string 0 pos) (substring string next (length string))))))))
+    (let ((pos 0)
+	  next)
+      (while (setq next (next-single-property-change pos 'composition string))
+	(let ((prop (nth 2 (get-text-property pos 'composition string))))
+          (if (not prop)
+              (setq pos next)
+            (setq full-length (- full-length (- next pos)))
+            (setq full-length (+ full-length (/ (1+ (length prop)) 2)))
+            (setq string (concat (substring string 0 pos) (substring string next (length string))))))))
+    full-length))
+
+(defun org-agenda-fix-tag-alignment ()
+  "Use 'display :align-to instead of spaces in agenda."
+  (goto-char (point-min))
+  (while (re-search-forward org-tag-group-re nil 'noerror)
+    (put-text-property (match-beginning 0) (match-beginning 1) 'display `(space . (:align-to (- right ,(+ 2 (string-display-length (match-string 1)))))))))
+
+(add-hook! 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
+
 ;; cutoff agenda headlines
 (define-advice org-agenda-format-item (:filter-args (&rest args) trim-heading 100) ;; run last
   "Trip org-agenda heading to 120 chars."
   (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
     (setq txt (org-link-display-format txt)) ; remove the hidden link part to not messup with truncation
-    (setq txt (s-truncate 120
+    (setq txt (s-truncate 110
 			  ;; (- 120 (/ (- (string-bytes txt)
 			  ;; 	       (length txt))
 			  ;; 	    2)
