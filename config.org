@@ -823,11 +823,12 @@ If the line wrapping is active, I also want the word wrap to be activated automa
   :hook (visual-line-mode . adaptive-wrap-prefix-mode))
 (when init-flag
   (bind-key "C-x l" #'toggle-truncate-lines)
-  (define-advice toggle-truncate-lines (:after (&optional arg) toggle-visual-line)
-    "Always use `visual-line-mode' when truncation of lines is disabled."
-    (if truncate-lines
-	(visual-line-mode -1)
-      (visual-line-mode +1)))
+  ;; (define-advice toggle-truncate-lines (:after (&optional arg) toggle-visual-line)
+  ;;   "Always use `visual-line-mode' when truncation of lines is disabled."
+  ;;   (if truncate-lines
+  ;; 	(visual-line-mode -1)
+  ;;     (visual-line-mode +1)))
+  
   (setq-default truncate-lines 't
 		word-wrap 't))
 (use-package simple
