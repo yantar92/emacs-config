@@ -944,8 +944,9 @@ Show some text in buffer differently
 				    (?≡ relational "\\(==\\)" (,@c-like ,@lisps org-mode) 1)
 				    (?↠ cpp ">>" (c++-mode))
 				    (?↞ cpp "<<" (c++-mode))
-				    (?⇢ cpp "->" (c++-mode))
-				    (?⋮ cpp "::" (c++-mode))
+				    (?⇢ cpp " \\(->\\) " (c++-mode org-mode) 1)
+                                    (?↠ cpp " \\(->>\\) " (c++-mode org-mode) 1)
+				    (?⋮ cpp "::" (c++-mode org-mode))
 				    (?⏎ cpp "\\<endl\\>" (c++-mode))
 				    (?∞ cpp "\\<INF\\>" (c++-mode))
 				    (?⇰ cpp "\\<return\\>" (c++-mode))
@@ -953,12 +954,9 @@ Show some text in buffer differently
 				    ;; Logical operators
 				    (?∧ logical "&&" (,@c-like org-mode))
 				    (?∨ logical "||" (,@c-like org-mode))
-				    ;;(?¬ logical "\\<!\\>" (,@c-like)) ; TODO: Fix regex so that ! matches
-					; but != doesn't. (\< and \> don't work
-					; because ! isn't considered part of
-					; a word). This will require support
-					; for subgroups and not replacing the
-					; whole match.
+                                    (?… nil "\\.\\.\\." (org-mode))
+                                    (?— nil " \\(-\\) " (org-mode) 1)
+                                    ((yant/str-to-glyph "——") nil " \\(--\\) " (org-mode) 1)
 				    (?¬ logical "(\\<\\(not\\)\\>" (,@lisps) 1)
 				    (?∅ nil "\\<nil\\>" (,@lisps))
 				    ))))
