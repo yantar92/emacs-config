@@ -63,7 +63,7 @@ Everything I intend to do is kept in my org files, which are automatically loade
 #+end_src
 
 
-** =Init.el=
+** =Init.el= 
 :PROPERTIES:
 :ID:       0948a927-42a3-4284-aaed-1ca9dd27a538
 :CREATED:  [2017-12-23 Sat 15:16]
@@ -4423,7 +4423,7 @@ It warns me if the original definition changes from what I expect.
 :ID:       2fb97bdf-d310-4e5a-8266-d68a1ae10298
 :END:
 
-*************** HOLD [#A] revise config from here                                                                 :HOLD:
+*************** HOLD [#A] revise config from here                                                                     :HOLD:
 :PROPERTIES:
 :SHOWFROMDATE: 2020-05-13 18:00
 :SUMMARY:  Later, when I do not have more important emacs things to do
@@ -11209,7 +11209,6 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 \\usepackage{arevmath}")
 #+end_src
 
-
 *************** TODO rewrite into smaller chunks
 *************** END
 
@@ -11346,8 +11345,10 @@ In order to make the remainder consistent, the multi-byte characters are conside
 
 In addition use =:align-to= ='display= spec to align tags to right border of the window.
 
-#+begin_src emacs-lisp
+*************** TODO maybe patch org-string-width 
+*************** END
 
+#+begin_src emacs-lisp
 ;;; FIXME: may use `window-font-width' to calculate actual pixel width
 ;;; FIXME: consider composition specs to determine if the characters are actially going to be in one line
 ;;; FIXME: consider other 'display specs. (space .) should be doable
@@ -12221,7 +12222,7 @@ SCHEDULED: <2020-05-11 Mon>
 :PROPERTIES:
 :CREATED: [2020-05-11 Mon 10:21]
 :EMAIL-SOURCE: [[notmuch:id:87pnbby49m.fsf@nicolasgoaziou.fr]]
-:SHOWFROMDATE: 2020-05-14 18:00
+:SHOWFROMDATE: 2020-05-16
 :END:
 :LOGBOOK:
 - Refiled on [2020-05-11 Mon 10:22]
