@@ -5680,6 +5680,75 @@ Not sure why I need to set it, but I don't like "i-did-not-set--mail-host-addres
   :straight t)
 #+end_src
 
+
+Automatically translate non-English and non-Russian/Ukrainian titles.
+*************** TODO Make it async
+*************** END
+
+#+begin_src emacs-lisp
+(when init-flag 
+  (use-package guess-language
+    :straight t
+    :custom
+    (guess-language-languages '(en ru))
+    :config
+    (defun yant/guess-language-string (string)
+      "Guess language in the specified STRING."
+      (unless guess-language--regexps
+	(guess-language-compile-regexps))
+      (when (cl-set-exclusive-or guess-language-languages (mapcar #'car guess-language--regexps))
+	(guess-language-compile-regexps))
+      (with-temp-buffer
+	(insert string)
+	(let ((tally (cl-loop
+                      for (lang . regexp) in guess-language--regexps
+                      collect (cons lang (how-many regexp (point-min) (point-max))))))
+	  (let ((result (cl-reduce (lambda (x y) (if (> (cdr x) (cdr y)) x y)) tally)))
+	    (unless (= (cdr result) 0)
+              (car result)))))))
+
+  (use-package memoize
+    :straight t
+    :config
+    (defun yant/translate-string (string)
+      "Automatically translate STRING using trans shell command."
+      (s-trim (shell-command-to-string (format "trans -no-warn -b \"%s\"" title))))
+    (memoize #'yant/translate-string))
+
+  (defun elfeed-search-print-entry--auto-translate-chinese (entry)
+    "Print ENTRY to the buffer."
+    (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
+           (title (or (elfeed-meta entry :title) (elfeed-entry-title entry) ""))
+           (title (if (yant/guess-language-string title)
+		      title
+                    (yant/translate-string title)))
+	   (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
+	   (feed (elfeed-entry-feed entry))
+	   (feed-title
+	    (when feed
+	      (or (elfeed-meta feed :title) (elfeed-feed-title feed))))
+	   (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
+	   (tags-str (mapconcat
+		      (lambda (s) (propertize s 'face 'elfeed-search-tag-face))
+		      tags ","))
+	   (title-width (- (window-width) 10 elfeed-search-trailing-width))
+	   (title-column (elfeed-format-column
+			  title (elfeed-clamp
+				 elfeed-search-title-min-width
+				 title-width
+				 elfeed-search-title-max-width)
+			  :left)))
+      (insert (propertize date 'face 'elfeed-search-date-face) " ")
+      (insert (propertize title-column 'face title-faces 'kbd-help title) " ")
+      (when feed-title
+	(insert (propertize feed-title 'face 'elfeed-search-feed-face) " "))
+      (when tags
+	(insert "(" tags-str ")"))))
+
+  (setq elfeed-search-print-entry-function #'elfeed-search-print-entry--auto-translate-chinese)
+  )
+#+end_src
+
 ** Org mode
 :PROPERTIES:
 :ID:       58045c39-ffd5-4ccc-bc9d-49048c437f42
