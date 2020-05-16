@@ -11369,26 +11369,53 @@ Any non-nil value of 'invisible property is considered to be not shown."
       (while (setq next (next-single-property-change pos 'display string))
 	(let ((prop (get-text-property pos 'display string)))
           (if (not (and prop (stringp prop)))
-              (setq pos next)
+	      (setq pos next)
             (setq full-length (- full-length (- next pos)))
             (setq full-length (+ full-length (string-display-length prop)))
             (setq string (concat (substring string 0 pos) (substring string next (length string))))))))
     (let ((pos 0)
 	  next)
       (while (setq next (next-single-property-change pos 'composition string))
-	(let ((prop (nth 2 (get-text-property pos 'composition string))))
+	(let ((prop (get-text-property pos 'composition string)))
+          ;; sometimes, composition is (x y [vector] . decompose-function]
+          ;; sometimes, it is ((list) . decompose-function)
+          ;; we just need the composition vector/list
+          (while (and prop (not (seqp (car prop)))) (pop prop))
+          (setq prop (car prop))
           (if (not prop)
-              (setq pos next)
+	      (setq pos next)
             (setq full-length (- full-length (- next pos)))
             (setq full-length (+ full-length (/ (1+ (length prop)) 2)))
             (setq string (concat (substring string 0 pos) (substring string next (length string))))))))
     full-length))
 
+(defun string-display-width (string)
+  "Calculate diplayed width of STRING."
+  (with-temp-buffer
+    (insert string)
+    (current-column)))
+
+(defun string-display-pixel-width (string)
+  "Calculate pixel width of STRING."
+  (with-temp-buffer
+    (insert string)
+    (if (not (get-buffer-window (current-buffer)))
+	(save-window-excursion
+          ;; Avoid errors if the selected window is a dedicated one,
+          ;; and they just want to insert a document into it.
+          (set-window-dedicated-p nil nil)
+	  (set-window-buffer nil (current-buffer))
+	  (car (window-text-pixel-size nil (line-beginning-position) (point))))
+      (car (window-text-pixel-size nil (line-beginning-position) (point))))))
+
+;;  this may not work in terminal
 (defun org-agenda-fix-tag-alignment ()
   "Use 'display :align-to instead of spaces in agenda."
   (goto-char (point-min))
   (while (re-search-forward org-tag-group-re nil 'noerror)
-    (put-text-property (match-beginning 0) (match-beginning 1) 'display `(space . (:align-to (- right ,(+ 2 (string-display-length (match-string 1)))))))))
+    ;; (put-text-property (match-beginning 0) (match-beginning 1) 'display `(space . (:align-to (- right ,(+ 2 (string-display-length (match-string 1)))))))))
+    (put-text-property (match-beginning 0) (match-beginning 1) 'display `(space . (:align-to (- right (,(string-display-pixel-width (match-string 1)))))))))
+
 
 (add-hook! 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
 
