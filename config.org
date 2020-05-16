@@ -11442,6 +11442,7 @@ Fontify agenda items properly
       (cl-letf (((symbol-function 'yant/process-att-abbrev) #'identity)
 		((symbol-function 'yant/process-att-id-abbrev) #'identity)) ;; expanding sometimes causes errors when attempting to access ancestors
 	(org-mode)
+        (setq txt (replace-regexp-in-string "[ \t]*:[[:alnum:]_@#%:]+:[ 	]*$" "" txt))
 	(insert "* "
 		txt
 		"\t"
