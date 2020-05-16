@@ -816,24 +816,19 @@ I am setting line truncation globally and enable line wrapping only for several 
 If the line wrapping is active, I also want the word wrap to be activated automatically and obey the indentation of the beginning of the line.
 
 #+begin_src emacs-lisp
-(use-package adaptive-wrap
-  :if init-flag
-  :straight t
-  :after simple
-  :hook (visual-line-mode . adaptive-wrap-prefix-mode))
 (when init-flag
-  (bind-key "C-x l" #'toggle-truncate-lines)
-  ;; (define-advice toggle-truncate-lines (:after (&optional arg) toggle-visual-line)
-  ;;   "Always use `visual-line-mode' when truncation of lines is disabled."
-  ;;   (if truncate-lines
-  ;; 	(visual-line-mode -1)
-  ;;     (visual-line-mode +1)))
+  (use-package adaptive-wrap
+    :straight t
+    :bind ("C-x l" . toggle-truncate-lines)
+    :config
+    (define-advice toggle-truncate-lines (:after (&optional arg) toggle-adaptive-wrap)
+      "Always use `adaptive-wrap-prefix-mode' when truncation of lines is disabled."
+      (if truncate-lines
+	  (adaptive-wrap-prefix-mode -1)
+	(adaptive-wrap-prefix-mode +1))))
   
   (setq-default truncate-lines 't
 		word-wrap 't))
-(use-package simple
-  :if init-flag
-  :diminish visual-line-mode)
 #+end_src
 *** Text in buffers
 :PROPERTIES:
