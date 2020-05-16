@@ -7647,7 +7647,13 @@ SUBTREE-END is used as end of the entry if not nil."
 							       (bh/skip-subprojects))
 							  (zin/org-agenda-skip-tag "NODEADLINE")
 							  (bh/skip-habits))))))
-		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT/!TODO"
+		(tags-todo "-CANCELLED/!"
+			   ((org-agenda-overriding-header "Projects")
+			    (org-agenda-dim-blocked-tasks nil)
+			    (org-agenda-prefix-format "%?-12t")
+			    (org-agenda-skip-function 'bh/skip-non-projects)
+			    (org-agenda-sorting-strategy
+			     '(todo-state-down effort-up category-keep))))		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT/!TODO"
 			   ((org-agenda-overriding-header "All other active tasks")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
@@ -7658,14 +7664,7 @@ SUBTREE-END is used as end of the entry if not nil."
 							  (and (not (zin/org-agenda-skip-tag "SKIP"))
 							       (bh/skip-subprojects))
 							  (zin/org-agenda-skip-tag "NODEADLINE")
-							  (bh/skip-habits))))))
-		(tags-todo "-CANCELLED/!"
-			   ((org-agenda-overriding-header "Projects")
-			    (org-agenda-dim-blocked-tasks nil)
-			    (org-agenda-prefix-format "%?-12t")
-			    (org-agenda-skip-function 'bh/skip-non-projects)
-			    (org-agenda-sorting-strategy
-			     '(todo-state-down effort-up category-keep)))))
+							  (bh/skip-habits)))))))
 	       nil))))
   #+end_src
 ***** Focused daily agenda
@@ -11220,6 +11219,34 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   :straight t
   :config
   (doom-themes-org-config))
+#+end_src
+
+Align tags to right, even when the window size changes.
+*************** TODO not reliable, acts on  first space in  empty headline as well
+*************** END
+
+#+begin_src emacs-lisp :tangle no
+(use-package org
+  :if init-flag
+  :hook (org-font-lock . yant/org-align-tags)
+  :config
+
+  (add-hook! 'org-mode-hook (add-to-list 'font-lock-extra-managed-props 'org-align))
+
+  (defun yant/org-align-tags (limit)
+    "Align all the tags in org buffer."
+    (while (re-search-forward "^\\*+ \\(.+?\\)\\([ \t]+\\)*\\(:.+:\\)?$" limit t)
+      (when (and (match-string 2)
+                 (not (get-text-property (match-beginning 2) 'org-align)))
+	(put-text-property (match-beginning 2) (match-end 2) 'display `(space . (:align-to (- right ,(+ 3 (string-display-length (or (match-string 3) "")))))))
+        (put-text-property (match-beginning 2) (match-end 2) 'org-align t))
+      ;; (when (and (not (match-string 2))
+      ;; 		 (looking-at " ?\n")
+      ;; 		 (not (get-text-property (match-beginning 0) 'org-align)))
+      ;;   (unless (looking-at "\\( \\)\n") (goto-char (match-beginning 0)) (insert " ") (looking-at "\\( \\)\n"))
+      ;; 	(put-text-property (match-beginning 1) (match-end 1) 'display `(space . (:align-to (- right 3))))
+      ;;   (put-text-property (match-beginning 1) (match-end 1) 'org-align t))
+      )))
 #+end_src
 
 **** Agenda
