@@ -1059,11 +1059,9 @@ Show some text in buffer differently
     (set-face-background 'powerline-active2 "grey25")
 
 
-    (defface powerline-active1-highlight '((t (:foreground "orange" :inherit powerline-active1)))
+    (defface mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))
       "Highligh on active modeline.")
-    (defface mode-line-highlight '((t (:foreground "orange" :box nil :inherit mode-line)))
-      "Highligh on active modeline.")
-    (face-spec-set 'mode-line-highlight '((t (:foreground "orange" :box nil :inherit mode-line)))) ;; why is it needed?
+    (face-spec-set 'mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))) ;; why is it needed?
 
     ;; (use-package all-the-icons
     ;;   :init
@@ -1089,7 +1087,6 @@ Show some text in buffer differently
 			      (mode-line-highlight (if active 'mode-line-highlight 'mode-line-inactive))
 			      (face0 (if active (boon-state-face) 'mode-line-inactive))
 			      (face1 (if active 'powerline-active1 'powerline-inactive1))
-			      (face1-highlight (if active 'powerline-active1-highlight 'powerline-inactive1))
 			      (face2 (if active 'powerline-active2 'powerline-inactive2))
 			      (separator-left (intern (format "powerline-%s-%s"
 							      powerline-default-separator
