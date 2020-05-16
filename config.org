@@ -11313,6 +11313,7 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 		       (point)
 		       (or (save-excursion (outline-next-heading) (point))
 			   (point-max)))))
+         (entry-text (replace-regexp-in-string org-babel-src-block-regexp "" entry-text))
          (entry-hashtags (mapcar #'car (s-match-strings-all " #[^+ ][^# ]+" entry-text))))
     (if (seq-empty-p entry-hashtags)
 	""
