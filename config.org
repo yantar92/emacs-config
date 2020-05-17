@@ -233,6 +233,7 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
 #+begin_src emacs-lisp
 (straight-use-package '(org
 			:type git :repo "https://code.orgmode.org/bzg/org-mode.git"
+                        :local-repo "org"
 			:files (:defaults "contrib/lisp/*.el")
 			:fork (:repo "/home/yantar92/Git/org-mode/" :branch "feature/drawertextprop")))
 #+end_src
