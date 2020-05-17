@@ -820,6 +820,8 @@ If the line wrapping is active, I also want the word wrap to be activated automa
 (when init-flag
   (use-package adaptive-wrap
     :straight t
+    :demand t
+    :diminish t
     :bind ("C-x l" . toggle-truncate-lines)
     :config
     (define-advice toggle-truncate-lines (:after (&optional arg) toggle-adaptive-wrap)
