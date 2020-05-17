@@ -3233,6 +3233,7 @@ Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
 ***** Image dired
 :PROPERTIES:
 :CREATED:  [2020-05-15 Fri 00:20]
+:ID:       0513c7b0-f723-40f7-85bc-ee3c4b35b823
 :END:
 
 
@@ -7209,7 +7210,7 @@ Now, when I have the mirror attach folder structure, it make sense to open this 
 *************** NEXT [#A] because of org-attach API change, need to rewrite
 SCHEDULED: <2020-05-09 Sat>
 :PROPERTIES:
-:SHOWFROMDATE: 2020-05-16
+:SHOWFROMDATE: 2020-05-23
 :END:
 *************** END
 
@@ -12172,31 +12173,42 @@ Using advice for workaround.
 *************** TODO maybe request support to text properties in isearch
 *************** END
 
-
-
-
-
 Because we are using text properties, inserting anything into hidden drawers using =insert= keeps inserted text visible.
 In order to inherit the invisibility spec, we must use =insert-and-inherit=.
 Similarly, there is =insert-before-markers=. It should be changed to =insert-before-markers-and-inherit=. 
 
-*************** TODO there are potentially many places in org using insert. need to investigate
+*************** CANCELLED there are potentially many places in org using insert. need to investigate                :CANCELLED:
+CLOSED: [2020-05-17 Sun 22:14]
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-05-17 Sun 22:14]
+:END:
 *************** END
-*************** TODO the need to use =insert-and-inherit= may confuse user-written code, which commonly uses simple =insert=. Not sure what can be done about this
+*************** CANCELLED the need to use =insert-and-inherit= may confuse user-written code, which commonly uses simple =insert=. Not sure what can be done about this :CANCELLED:
+CLOSED: [2020-05-17 Sun 22:14]
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-05-17 Sun 22:14] \\
+  used after/before change
+:END:
 *************** END
 
 [2020-05-09 Sat] Fixed in org-autosort
 I have to run (org-cycle-hide-drawers 'all) to hide drawers. 
 They are not hidden automatically for some reason.
- 
 
-
+*************** DONE [#A] finish the email
+CLOSED: [2020-05-17 Sun 23:06] SCHEDULED: <2020-05-17 Sun>
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-05-17 Sun 23:06]
+- State "DONE"       from "NEXT"          [2020-05-17 Sun 22:49]
+:END:
+*************** END
 
 **** TODO column view is really slow. is it because of overlays?
 :PROPERTIES:
 :CREATED: [2020-04-27 Mon 23:59]
 :END:
 :LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-17 Sun 22:49]
 - Refiled on [2020-04-27 Mon 23:59]
 :END:
 **** TODO there is still a visual glitch with two collapsed ellipsis shown at the same time for some reason
@@ -12221,14 +12233,20 @@ They are not hidden automatically for some reason.
 - Refiled on [2020-05-09 Sat 22:13]
 CLOCK: [2020-05-09 Sat 22:11]--[2020-05-09 Sat 22:12] =>  0:01
 :END:
-**** NEXT [#A] reply about ways to handle insert into hidden text #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
-SCHEDULED: <2020-05-11 Mon>
+**** DONE [#A] reply about ways to handle insert into hidden text #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
+CLOSED: [2020-05-17 Sun 23:02] SCHEDULED: <2020-05-11 Mon>
 :PROPERTIES:
 :CREATED: [2020-05-11 Mon 10:21]
 :EMAIL-SOURCE: [[notmuch:id:87pnbby49m.fsf@nicolasgoaziou.fr]]
 :SHOWFROMDATE: 2020-05-16
 :END:
 :LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-05-17 Sun 23:02]
+CLOCK: [2020-05-17 Sun 22:47]--[2020-05-17 Sun 23:02] =>  0:15
+CLOCK: [2020-05-17 Sun 20:33]--[2020-05-17 Sun 22:47] =>  2:14
+CLOCK: [2020-05-17 Sun 20:18]--[2020-05-17 Sun 20:33] =>  0:15
+CLOCK: [2020-05-17 Sun 19:47]--[2020-05-17 Sun 20:18] =>  0:31
+CLOCK: [2020-05-16 Sat 23:06]--[2020-05-17 Sun 02:17] =>  3:11
 - Refiled on [2020-05-11 Mon 10:22]
 :END:
 **** TODO actually, we can simply reveal the hidden text before/after the changed text (unless the inserted text is hidden)
@@ -12254,6 +12272,11 @@ CLOCK: [2020-05-11 Mon 02:43]--[2020-05-11 Mon 02:45] =>  0:02
 - Refiled on [2020-05-14 Thu 14:19]
 CLOCK: [2020-05-14 Thu 12:18]--[2020-05-14 Thu 12:19] =>  0:01
 :END:
+**** TODO notes added on CANCEL are not hidden for some reason
+:PROPERTIES:
+:CREATED:  [2020-05-17 Sun 23:08]
+:END:
+
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
