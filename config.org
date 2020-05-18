@@ -5778,7 +5778,6 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
   :demand t)
-
 #+end_src
 
 *** Workflow
@@ -12286,6 +12285,15 @@ CLOCK: [2020-05-14 Thu 12:18]--[2020-05-14 Thu 12:19] =>  0:01
 :CREATED:  [2020-05-17 Sun 23:08]
 :END:
 
+
+**** NEXT changing the link url here hides the whole thing [[id:6e5e725f-6bba-4455-bae7-0fd37d8df071][Journal of the Mechanics and Physics of Solids]]
+SCHEDULED: <2020-05-18 Mon>
+:PROPERTIES:
+:CREATED: [2020-05-18 Mon 09:58]
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-18 Mon 10:22]
+:END:
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
