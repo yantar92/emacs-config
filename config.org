@@ -3705,6 +3705,15 @@ Automatic indentation is handy to keep the code nice and readable.
   :config
   (global-aggressive-indent-mode t))
 #+end_src
+
+Inhibit message that indentation is completed
+#+begin_src emacs-lisp
+(define-advice indent-region (:around (fun &rest args) silence)
+  "Do not show meessages."
+  (let ((inhibit-message t))
+    (apply fun args)))
+#+end_src
+
 *** Delete backward key bindings
 :PROPERTIES:
 :ID:       c36d8b82-50ab-4097-a93a-56cbcf376cee
