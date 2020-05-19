@@ -762,7 +762,8 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
 					    (propertize (all-the-icons-material "tablet")
 							'face `((t (
 								    :family "Material Icons"
-								    :height 1.2))))))
+								    :height 1.4)))
+                                                        'display '(raise -0.2))))
 
   (defun cwm-special-buffer-p (buffer)
     "Return 't if BUFF buffer name is special (starts with an *).
@@ -1101,7 +1102,7 @@ Show some text in buffer differently
 				     (powerline-raw (when current-input-method-title (s-concat " " (s-trim-right current-input-method-title))) face0)
 				     (powerline-raw (eval (get 'spaceline-all-the-icons-modified-p :code)) face0 'l)
 				     (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-size-p :code)) face0 'l)
-				     (powerline-raw " " face0)
+				     (powerline-raw (propertize " " 'face `((t (:height 1.3)))) face0)
 				     (funcall 'powerline-bar-right mode-line face0)
 				     (when (bound-and-true-p boon-mode) (powerline-raw " " face0))
 				     (when (bound-and-true-p boon-mode) (powerline-raw (boon-state-string) face0 'r))
