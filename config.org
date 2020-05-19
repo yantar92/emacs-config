@@ -6452,7 +6452,7 @@ Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while
 (defmacro org-with-point-at-org-buffer (&rest body)
   "If in agenda, put the point into the corresponding org buffer."
   `(cond ((eq major-mode 'org-agenda-mode)
-	  (let ((marker (org-get-at-bol 'org-hd-marker)))
+	  (when-let ((marker (org-get-at-bol 'org-hd-marker)))
 	    (org-with-point-at marker
 	      ,@body)))
          ((eq major-mode 'org-mode)
