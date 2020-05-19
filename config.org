@@ -6470,18 +6470,18 @@ Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while
              )
 	    arg))
 
-(add-to-list 'org-link-abbrev-alist (cons "att" "file:%(yant/process-att-abbrev)"))
+(add-to-list 'org-link-abbrev-alist (cons "att" "attach:%s"))
 
-(defun org-att-link-complete (&optional arg)
-  "Completion function for att: link."
-  (let* ((ref-dir (org-attach-dir 'CREATE))
-	 (filelink (let ((default-directory (f-slash ref-dir)))
-		     (org-file-complete-link)))
-	 (filepath (apply #'s-concat (cdr (s-split ":" filelink)))))
-    (format "att:%s" filepath)))
+;; (defun org-att-link-complete (&optional arg)
+;;   "Completion function for att: link."
+;;   (let* ((ref-dir (org-attach-dir 'CREATE))
+;; 	 (filelink (let ((default-directory (f-slash ref-dir)))
+;; 		     (org-file-complete-link)))
+;; 	 (filepath (apply #'s-concat (cdr (s-split ":" filelink)))))
+;;     (format "att:%s" filepath)))
 
-(org-link-set-parameters "att"
-			 :complete #'org-att-link-complete)
+;; (org-link-set-parameters "att"
+;; 			 :complete #'org-att-link-complete)
 #+END_SRC
 
 Just links to the current entry are not always sufficient. I sometimes want to link a file from another entry.
