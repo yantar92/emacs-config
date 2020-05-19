@@ -263,6 +263,7 @@ Quick hydra menu for =straight.el=
   :if init-flag
   :straight t
   :after boon
+  :init (use-package straight-x :demand t)
   :bind (:map boon-x-map
 	      ("p" . hydra-straight-helper/body))
   :config
