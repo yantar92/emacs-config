@@ -474,7 +474,7 @@ compilation. This will no-op on features that have been disabled by the user."
             (_ `(after! (:and ,@targets) ,@body))))))
 #+end_src
 
-*** Shut things up 
+*** TODO Shut things up 
 :PROPERTIES:
 :CREATED:  [2020-04-23 Thu 21:16]
 :ID:       5ed810ca-4028-4f48-93d9-fd086ba8e340
@@ -3553,7 +3553,7 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
               )
   )
 #+END_SRC
-*** SOMEDAY Hyperbole
+*** SOMEDAY COMMENT Hyperbole
 :PROPERTIES:
 :CREATED:  [2019-03-21 Thu 13:52]
 :ID:       40c2aac3-517c-45cd-bfe4-aa5465e4c3e6
@@ -6780,7 +6780,7 @@ This includes:
   :hook (org-mode . org-cdlatex-mode)
   :config
   (diminish 'org-cdlatex-mode (s-concat (propertize " CD"
-						    'face `((t (:height 0.7))))
+						    'face `((t (:height 0.5))))
 					(propertize (all-the-icons-fileicon "tex")
 						    'face `((t (
 								:family "file-icons"
@@ -11331,8 +11331,8 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 		       (point)
 		       (or (save-excursion (outline-next-heading) (point))
 			   (point-max)))))
-         (entry-text (replace-regexp-in-string org-babel-src-block-regexp "" entry-text))
-         (entry-hashtags (mapcar #'car (s-match-strings-all " #[^+ ][^# ]+" entry-text))))
+         (entry-text (and entry-text (replace-regexp-in-string org-babel-src-block-regexp "" entry-text)))
+         (entry-hashtags (and entry-text (mapcar #'car (s-match-strings-all " #[^+ ][^# ]+" entry-text)))))
     (if (seq-empty-p entry-hashtags)
 	""
       (concat "\t\t" (mapconcat #'s-trim entry-hashtags " ") "\n"))))
@@ -12174,31 +12174,14 @@ Because we are using text properties, inserting anything into hidden drawers usi
 In order to inherit the invisibility spec, we must use =insert-and-inherit=.
 Similarly, there is =insert-before-markers=. It should be changed to =insert-before-markers-and-inherit=. 
 
-*************** CANCELLED there are potentially many places in org using insert. need to investigate                :CANCELLED:
-CLOSED: [2020-05-17 Sun 22:14]
-:LOGBOOK:
-- State "CANCELLED"  from "TODO"          [2020-05-17 Sun 22:14]
-:END:
-*************** END
-*************** CANCELLED the need to use =insert-and-inherit= may confuse user-written code, which commonly uses simple =insert=. Not sure what can be done about this :CANCELLED:
-CLOSED: [2020-05-17 Sun 22:14]
-:LOGBOOK:
-- State "CANCELLED"  from "TODO"          [2020-05-17 Sun 22:14] \\
-  used after/before change
-:END:
-*************** END
+
+
 
 [2020-05-09 Sat] Fixed in org-autosort
 I have to run (org-cycle-hide-drawers 'all) to hide drawers. 
 They are not hidden automatically for some reason.
 
-*************** DONE [#A] finish the email
-CLOSED: [2020-05-17 Sun 23:06] SCHEDULED: <2020-05-17 Sun>
-:LOGBOOK:
-- State "DONE"       from "NEXT"          [2020-05-17 Sun 23:06]
-- State "DONE"       from "NEXT"          [2020-05-17 Sun 22:49]
-:END:
-*************** END
+
 
 **** TODO column view is really slow. is it because of overlays?
 :PROPERTIES:
@@ -12230,22 +12213,6 @@ CLOSED: [2020-05-17 Sun 23:06] SCHEDULED: <2020-05-17 Sun>
 - Refiled on [2020-05-09 Sat 22:13]
 CLOCK: [2020-05-09 Sat 22:11]--[2020-05-09 Sat 22:12] =>  0:01
 :END:
-**** DONE [#A] reply about ways to handle insert into hidden text #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
-CLOSED: [2020-05-17 Sun 23:02] SCHEDULED: <2020-05-11 Mon>
-:PROPERTIES:
-:CREATED: [2020-05-11 Mon 10:21]
-:EMAIL-SOURCE: [[notmuch:id:87pnbby49m.fsf@nicolasgoaziou.fr]]
-:SHOWFROMDATE: 2020-05-16
-:END:
-:LOGBOOK:
-- State "DONE"       from "NEXT"          [2020-05-17 Sun 23:02]
-CLOCK: [2020-05-17 Sun 22:47]--[2020-05-17 Sun 23:02] =>  0:15
-CLOCK: [2020-05-17 Sun 20:33]--[2020-05-17 Sun 22:47] =>  2:14
-CLOCK: [2020-05-17 Sun 20:18]--[2020-05-17 Sun 20:33] =>  0:15
-CLOCK: [2020-05-17 Sun 19:47]--[2020-05-17 Sun 20:18] =>  0:31
-CLOCK: [2020-05-16 Sat 23:06]--[2020-05-17 Sun 02:17] =>  3:11
-- Refiled on [2020-05-11 Mon 10:22]
-:END:
 **** TODO actually, we can simply reveal the hidden text before/after the changed text (unless the inserted text is hidden)
 :PROPERTIES:
 :CREATED: [2020-05-10 Sun 23:59]
@@ -12275,14 +12242,6 @@ CLOCK: [2020-05-14 Thu 12:18]--[2020-05-14 Thu 12:19] =>  0:01
 :END:
 
 
-**** NEXT changing the link url here hides the whole thing [[id:6e5e725f-6bba-4455-bae7-0fd37d8df071][Journal of the Mechanics and Physics of Solids]]
-SCHEDULED: <2020-05-18 Mon>
-:PROPERTIES:
-:CREATED: [2020-05-18 Mon 09:58]
-:END:
-:LOGBOOK:
-- Refiled on [2020-05-18 Mon 10:22]
-:END:
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
