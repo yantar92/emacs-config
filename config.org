@@ -11368,57 +11368,47 @@ In addition use =:align-to= ='display= spec to align tags to right border of the
 *************** END
 
 #+begin_src emacs-lisp
-;;; FIXME: may use `window-font-width' to calculate actual pixel width
-;;; FIXME: consider composition specs to determine if the characters are actially going to be in one line
-;;; FIXME: consider other 'display specs. (space .) should be doable
-(defun string-display-length (string)
-  "Calculate the number of displayed characters in STRING.
-This takes into account composition, invisibility, and display properties.
-Only string value of display property is considered.
-Any non-nil value of 'invisible property is considered to be not shown."
-  (let ((full-length (length string)))
-    (let ((pos 0)
-	  next)
-      (while (setq next (next-single-property-change pos 'invisible string))
-	(if (not (get-text-property pos 'invisible string))
-            (setq pos next)
-          (setq full-length (- full-length (- next pos)))
-          (setq string (concat (substring string 0 pos) (substring string next (length string)))))))
-    (let ((pos 0)
-	  next)
-      (while (setq next (next-single-property-change pos 'display string))
-	(let ((prop (get-text-property pos 'display string)))
-          (if (not (and prop (stringp prop)))
-	      (setq pos next)
-            (setq full-length (- full-length (- next pos)))
-            (setq full-length (+ full-length (string-display-length prop)))
-            (setq string (concat (substring string 0 pos) (substring string next (length string))))))))
-    (let ((pos 0)
-	  next)
-      (while (setq next (next-single-property-change pos 'composition string))
-	(let ((prop (get-text-property pos 'composition string)))
-          ;; sometimes, composition is (x y [vector] . decompose-function]
-          ;; sometimes, it is ((list) . decompose-function)
-          ;; we just need the composition vector/list
-          (while (and prop (not (seqp (car prop)))) (pop prop))
-          (setq prop (car prop))
-          (if (not prop)
-	      (setq pos next)
-            (setq full-length (- full-length (- next pos)))
-            (setq full-length (+ full-length (/ (1+ (length prop)) 2)))
-            (setq string (concat (substring string 0 pos) (substring string next (length string))))))))
-    full-length))
-
-(defun string-display-width (string)
-  "Calculate diplayed width of STRING."
+(defun string-display-width (string &optional mode)
+  "Calculate diplayed column width of STRING.
+Optional MODE specifies major mode used for display."
   (with-temp-buffer
-    (insert string)
+    (with-silent-modifications
+      (insert string))
+    (when (fboundp mode)
+      (funcall mode)
+      (font-lock-fontify-buffer))
     (current-column)))
 
-(defun string-display-pixel-width (string)
-  "Calculate pixel width of STRING."
+(defun string-display-truncate (string num &optional mode hide-p ellipsis)
+  "Trim displayed STRING to NUM columns.
+Optional MODE specifies major mode used for display.
+Non-nil HIDE-P means that the string should be trimmed by hiding the trailing part with text properties.
+Optional ELLIPSIS string is shown in place of the hidden/deleted part of the string."
   (with-temp-buffer
-    (insert string)
+    (with-silent-modifications
+      (insert string))
+    (when (fboundp mode)
+      (funcall mode)
+      (font-lock-fontify-buffer))
+    (when (> (current-column) num)
+      (move-to-column num)
+      (if hide-p
+	  (if (stringp ellipsis)
+              (put-text-property (point) (point-max) 'display ellipsis)
+	    (put-text-property (point) (point-max) 'invisible t))
+	(kill-line)
+        (when (stringp ellipsis) (insert ellipsis))))
+    (buffer-string)))
+
+(defun string-display-pixel-width (string &optional mode)
+  "Calculate pixel width of STRING.
+Optional MODE specifies major mode used for display."
+  (with-temp-buffer
+    (with-silent-modifications
+      (insert string))
+    (when (fboundp mode)
+      (funcall mode)
+      (font-lock-fontify-buffer))
     (if (not (get-buffer-window (current-buffer)))
 	(save-window-excursion
           ;; Avoid errors if the selected window is a dedicated one,
@@ -11436,20 +11426,13 @@ Any non-nil value of 'invisible property is considered to be not shown."
     ;; (put-text-property (match-beginning 0) (match-beginning 1) 'display `(space . (:align-to (- right ,(+ 2 (string-display-length (match-string 1)))))))))
     (put-text-property (match-beginning 0) (match-beginning 1) 'display `(space . (:align-to (- right (,(string-display-pixel-width (match-string 1)))))))))
 
-
 (add-hook! 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
 
 ;; cutoff agenda headlines
 (define-advice org-agenda-format-item (:filter-args (&rest args) trim-heading 100) ;; run last
   "Trip org-agenda heading to 120 chars."
   (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
-    (setq txt (org-link-display-format txt)) ; remove the hidden link part to not messup with truncation
-    (setq txt (s-truncate 110
-			  ;; (- 120 (/ (- (string-bytes txt)
-			  ;; 	       (length txt))
-			  ;; 	    2)
-			  ;;    ) ; multibyte characters are assumed to be twice wider than single byte, though it does not seem to be asolutely accurate
-			  txt))
+    (setq txt (string-display-truncate txt 110  nil 'hide "…"))
     (list extra txt level category tags dotime remove-re habitp)))
 #+END_SRC
 
