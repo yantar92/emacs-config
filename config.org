@@ -11727,162 +11727,53 @@ Also hide the logbooks containing only state changes and clocking.
 #+begin_src emacs-lisp :tangle no
 (use-package org
   :if init-flag
-  :hook (org-mode . org-toggle-custom-properties-visibility)
   :config
   (setq org-custom-properties '("ID" "STYLE" "REPEAT_TO_STATE" "CREATED"))
-  (defvar org-custom-logs '(state reschedule delschedule redeadline deldeadline refile)
-    "List of note types to be hidden normally. The types shouls be from `org-log-note-headings'.")
-  (defvar org-custom-drawers (list #'org-log-into-drawer "PROPERTIES")
-    "List of drawer names allowed to be hidden if all the information inside is invisible.")
-  (defvar org-custom-clocking-info t
-    "Non nil means that clocking info is hidden by `org-toggle-custom-properties-visibility'.")
-  (defvar-local org-custom-logs-overlays nil
-    "List of overlays used for custom notes.")
-  (defvar-local org-custom-clocking-overlays nil
-    "List of overlays used for clocking info.")
-  (defvar-local org-empty-drawer-overlays nil
-    "List of overlays used for drawers with empty or hidden content.")
+  (defvar-local org--hide-custom-properties nil
+    "When non-nil, hide properties listed in `org-custom-properties'.
+If a property drawer conatins only these properties, hide the drawer as well.")
+  (defvar org--custom-properties-re (concat "^[ \t]*:" (regexp-opt org-custom-properties) ":.*")
+    "Regexp to match property lines from `org-custom-properties'.")
 
-  ;; hide emptied drawers
-  (el-patch-feature 'org)
-  (el-patch-defun org-toggle-custom-properties-visibility ()
-    "Display or hide properties in `org-custom-properties'."
-    (interactive)
-    (if org-custom-properties-overlays
-	(progn (mapc #'delete-overlay org-custom-properties-overlays)
-	       (setq org-custom-properties-overlays nil))
-      (when org-custom-properties
-	(org-with-wide-buffer
-	 (goto-char (point-min))
-	 (let ((regexp (org-re-property (regexp-opt org-custom-properties) t t)))
-	   (while (re-search-forward regexp nil t)
-	     (let ((end (cdr (save-match-data (org-get-property-block))))
-		   (el-patch-add (beg (car (save-match-data (org-get-property-block)))))
-		   (el-patch-add (total-custom-length 0)))
-	       (when (and end (< (point) end))
-		 ;; Hide first custom property in current drawer.
-		 (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-		   (el-patch-add (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0)))))
-		   (overlay-put o 'invisible t)
-		   (overlay-put o 'org-custom-property t)
-		   (push o org-custom-properties-overlays))
-		 ;; Hide additional custom properties in the same drawer.
-		 (while (re-search-forward regexp end t)
-		   (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-		     (el-patch-add (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0)))))
-		     (overlay-put o 'invisible t)
-		     (overlay-put o 'org-custom-property t)
-		     (push o org-custom-properties-overlays)))
-		 ;; hide emptied drawer
-		 (el-patch-add
-		   (when (equal (- end beg) total-custom-length)
-		     (save-excursion
-		       (re-search-backward org-property-start-re)
-		       (looking-at org-property-drawer-re)
-		       (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-			 (overlay-put o 'invisible t)
-			 (overlay-put o 'org-custom-property t)
-			 (push o org-custom-properties-overlays)))))))
-	     ;; Each entry is limited to a single property drawer.
-	     (outline-next-heading)))))))
+  ;; (defvar org-custom-logs '(state reschedule delschedule redeadline deldeadline refile)
+  ;; "List of note types to be hidden normally. The types shouls be from `org-log-note-headings'.")
+  ;; (defvar org-custom-drawers (list #'org-log-into-drawer "PROPERTIES")
+  ;;   "List of drawer names allowed to be hidden if all the information inside is invisible.")
+  ;; (defvar org-custom-clocking-info t
+  ;;   "Non nil means that clocking info is hidden by `org-toggle-custom-properties-visibility'.")
 
-  ;; (defun org-log-regex (note)
-  ;;   "Transform note definition from `org-log-note-headings' into regex."
-  ;;   (let ((note-def (cdr (assq note org-log-note-headings))))
-  ;;     (when note-def
-  ;; 	(concat "[ \t]*- +"
-  ;; 		(replace-regexp-in-string
-  ;; 		 " +" " +"
-  ;; 		 (org-replace-escapes
-  ;; 		  (regexp-quote note-def)
-  ;; 		  `(("%d" . ,org-ts-regexp-inactive)
-  ;; 		    ("%D" . ,org-ts-regexp)
-  ;; 		    ("%s" . "\\(?:\"\\S-+\"\\)?")
-  ;; 		    ("%S" . "\\(?:\"\\S-+\"\\)?")
-  ;; 		    ("%t" . ,org-ts-regexp-inactive)
-  ;; 		    ("%T" . ,org-ts-regexp)
-  ;; 		    ("%u" . ".*?")
-  ;; 		    ("%U" . ".*?"))))))))
+  (defun org-toggle-custom-properties-visibility (&optional arg)
+    "Toggle visibility of properties listen in `org-custom-properties'.
+If a property drawer conatins only these properties, hide the drawer as well."
+    (interactive "p")
+    (if (or org--hide-custom-properties
+	    (< arg 0))
+        (progn
+          (setq org--hide-custom-properties nil)
+	  (remove-hook 'org-font-lock-hook #'org--hide-custom-properties)
+          (advice-remove 'org-cycle #'org--hide-custom-properties))
+      (setq org--hide-custom-properties t)
+      (setq org--custom-properties-re (concat "^[ \t]*:" (regexp-opt org-custom-properties) ":.*"))
+      (advice-add 'org-cycle :after #'org--hide-custom-properties)
+      (add-hook 'org-font-lock-hook #'org--hide-custom-properties))
+    (font-lock-fontify-buffer))
 
-  ;; (defun org-re-logs (notes)
-  ;;   "Construct regexp matching any of the note types from NOTES list.
-  ;; The types must be taken from `org-log-note-headings'."
-  ;;   (concat (s-join "\\|"  (mapcar #'org-log-regex notes))
-  ;; 	    "\\(\n?"
-  ;; 	    (s-join "\\|"  (mapcar #'org-log-regex notes))
-  ;; 	    "\\)*"))
+  (defun org--hide-custom-properties (&optional limit)
+    "Hide the properties according to `org--hide-custom-properties'."
+    (unless (numberp limit) (setq limit (point-max)))
+    (when org--hide-custom-properties
+      (with-silent-modifications
+	(let ((re-drawer (concat "^[ \t]*:PROPERTIES:[ \t]*\n"
+				 "\\(" org--custom-properties-re "\n\\)+"
+				 "[ \t]*:END:[ \t]*\n"))
+              (re-single (concat org--custom-properties-re "\n")))
+	  (save-excursion
+	    (while (re-search-forward re-drawer limit t)
+              (put-text-property (match-beginning 0) (match-end 0) 'invisible t)))
+          (save-excursion
+	    (while (re-search-forward re-single limit t)
+              (put-text-property (match-beginning 0) (match-end 0) 'invisible t)))))))
 
-  ;; (defun org-log-end ()
-  ;;   "Return expected end of log notes in current entry."
-  ;;   (org-with-wide-buffer
-  ;;    (save-match-data
-  ;;      (let ((org-log-states-order-reversed nil))
-  ;; 	 (goto-char (org-log-beginning))
-  ;; 	 (let ((regexp (org-re-logs (mapcar #'car org-log-note-headings))))
-  ;; 	   (while (looking-at-p regexp)
-  ;; 	     (next-line))
-  ;; 	   (point))))))
-
-  ;; (defun org-custom-drawer-start-re (drawers)
-  ;;   "Return regex for the first line of a drawer from DRAWERS list.
-  ;;     Each element should be a string containing the drawer name of a function of no arguments returning such string."
-  ;;   (concat "^[ \t]*:"
-  ;; 	    (rx-to-string `(or ,@(mapcar (lambda (el)
-  ;; 					   (if (functionp el) (funcall el) el))
-  ;; 					 org-custom-drawers)))
-  ;; 	    ":[ \t]*"))
-
-  ;; (defvar org-drawer-end-re "[ \t]*:END:[ \t]*"
-  ;;   "Regex of the last line (:END:) of a drawer.")
-
-  ;; (defun org-custom-drawer-re (drawers)
-  ;;   "Return custom drawer regexp in entry at point according to DRAWERS list.
-  ;;     See `org-custom-drawer-start-re' description for more details."
-  ;;   (concat (org-custom-drawer-start-re drawers)
-  ;; 	    "\n\\(?:.*\n\\)*?"
-  ;; 	    org-drawer-end-re))
-
-
-  ;; (define-advice org-toggle-custom-properties-visibility (:before () hide-custom-logs-and-clocks)
-  ;;   "Hide all the custom logs."
-  ;;   (if org-custom-logs-overlays
-  ;; 	(progn (mapc #'delete-overlay org-custom-logs-overlays)
-  ;; 	       (setq org-custom-logs-overlays nil))
-  ;;     (when org-custom-logs
-  ;; 	(org-with-wide-buffer
-  ;; 	 (goto-char (point-min))
-  ;; 	 (let ((regexp (s-join "\\|" (list (org-re-logs org-custom-logs) "[ \t]*CLOCK:.+$"))))
-  ;; 	   (while (re-search-forward regexp nil t)
-  ;; 	     (let ((end (org-log-end))
-  ;; 		   (beg (save-match-data
-  ;; 			  (save-excursion
-  ;; 			    (re-search-backward (org-custom-drawer-start-re org-custom-drawers))
-  ;; 			    (1+ (match-end 0)))))
-  ;; 		   (total-custom-length 0))
-  ;; 	       (when (and end (< (point) end))
-  ;; 		 ;; Hide first custom note in current drawer.
-  ;; 		 (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-  ;;                  (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0))))
-  ;; 		   (overlay-put o 'invisible t)
-  ;; 		   (overlay-put o 'org-custom-property t)
-  ;; 		   (push o org-custom-logs-overlays))
-  ;; 		 ;; Hide additional custom notes in the same drawer.
-  ;; 		 (while (re-search-forward regexp end t)
-  ;; 		   (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-  ;;                    (setq total-custom-length (+ total-custom-length 1 (- (match-end 0) (match-beginning 0))))
-  ;; 		     (overlay-put o 'invisible t)
-  ;; 		     (overlay-put o 'org-custom-property t)
-  ;; 		     (push o org-custom-logs-overlays)))
-  ;; 		 (when (equal (- end beg) total-custom-length)
-  ;; 		   (save-excursion
-  ;; 		     (re-search-backward (org-custom-drawer-start-re org-custom-drawers))
-  ;; 		     (looking-at (org-custom-drawer-re org-custom-drawers))
-  ;; 		     (let ((o (make-overlay (match-beginning 0) (1+ (match-end 0)))))
-  ;; 		       (overlay-put o 'invisible t)
-  ;; 		       (overlay-put o 'org-custom-property t)
-  ;; 		       (push o org-custom-logs-overlays))))))
-  ;; 	     ;; Each entry is limited to a single property drawer.
-  ;; 	     (outline-next-heading)))))))
   )
 #+end_src
 
