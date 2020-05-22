@@ -3553,7 +3553,7 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
               )
   )
 #+END_SRC
-*** SOMEDAY COMMENT Hyperbole
+*** COMMENT Hyperbole
 :PROPERTIES:
 :CREATED:  [2019-03-21 Thu 13:52]
 :ID:       40c2aac3-517c-45cd-bfe4-aa5465e4c3e6
