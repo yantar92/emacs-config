@@ -11243,28 +11243,26 @@ Align tags to right, even when the window size changes.
 *************** TODO not reliable, acts on  first space in  empty headline as well
 *************** END
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (use-package org
   :if init-flag
-  :hook (org-font-lock . yant/org-align-tags)
   :config
-
-  (add-hook! 'org-mode-hook (add-to-list 'font-lock-extra-managed-props 'org-align))
+  (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords nil '(yant/org-align-tags) t)) 100)
 
   (defun yant/org-align-tags (limit)
     "Align all the tags in org buffer."
-    (while (re-search-forward "^\\*+ \\(.+?\\)\\([ \t]+\\)*\\(:.+:\\)?$" limit t)
-      (when (and (match-string 2)
-                 (not (get-text-property (match-beginning 2) 'org-align)))
-	(put-text-property (match-beginning 2) (match-end 2) 'display `(space . (:align-to (- right ,(+ 3 (string-display-length (or (match-string 3) "")))))))
-        (put-text-property (match-beginning 2) (match-end 2) 'org-align t))
-      ;; (when (and (not (match-string 2))
-      ;; 		 (looking-at " ?\n")
-      ;; 		 (not (get-text-property (match-beginning 0) 'org-align)))
-      ;;   (unless (looking-at "\\( \\)\n") (goto-char (match-beginning 0)) (insert " ") (looking-at "\\( \\)\n"))
-      ;; 	(put-text-property (match-beginning 1) (match-end 1) 'display `(space . (:align-to (- right 3))))
-      ;;   (put-text-property (match-beginning 1) (match-end 1) 'org-align t))
-      )))
+    (while (re-search-forward "^\\*+ \\(.+?\\)\\([ \t]+\\)\\(:\\(?:[^ \n]+:\\)+\\)$" limit t)
+      (when (match-string 2)
+	(with-silent-modifications
+	  (put-text-property (match-beginning 2)
+			     (match-end 2)
+                             'display
+			     `(space . (:align-to (- right
+						     (,(+ (string-display-pixel-width org-ellipsis)
+							  (string-display-pixel-width (or (match-string 3)
+											  ""))))))))))))
+
+  )
 #+end_src
 
 **** Agenda
