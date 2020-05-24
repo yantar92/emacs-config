@@ -63,7 +63,7 @@ Everything I intend to do is kept in my org files, which are automatically loade
 #+end_src
 
 
-** =Init.el= 
+** =Init.el=
 :PROPERTIES:
 :ID:       0948a927-42a3-4284-aaed-1ca9dd27a538
 :CREATED:  [2017-12-23 Sat 15:16]
@@ -609,7 +609,7 @@ Credit: https://www.reddit.com/r/emacs/comments/fgbnfv/is_there_a_fixed_width_fo
 	  (set-fontset-font "fontset-default" char (font-spec :size 12.0 :family "Source Code Pro")))
         '(?λ))
   (mapc (lambda (char)
-	  (set-fontset-font "fontset-default" char (font-spec :size 5.0 :family "Quivira")))
+  (set-fontset-font "fontset-default" char (font-spec :size 5.0 :family "Quivira")))
         '(?⏩ ?⛔))
   (mapc (lambda (char)
 	  (set-fontset-font "fontset-default" char (font-spec :size 10.0 :family "Quivira")))
