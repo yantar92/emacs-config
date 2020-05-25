@@ -5051,7 +5051,7 @@ Meta bindings for calendar
   (unless (boundp 'elfeed-search-mode-hook) (setq elfeed-search-mode-hook nil))
   ;; (add-hook 'elfeed-search-mode-hook (lambda () (toggle-truncate-lines +1)))
 
-  ;; (require 'elfeed-search)
+  (require 'elfeed-search)
   (define-advice elfeed-search-live-filter (:around (oldfun &optional arg) default-filter-maybe)
     "Set `elfeed-search-filter' to `elfeed-search-default-filter' when invoked with C-u prefix argument."
     (interactive "P")
