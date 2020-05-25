@@ -7220,7 +7220,7 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 Now, when I have the mirror attach folder structure, it make sense to open this structure on =org-attach-reveal= instead of opening the actual attach dirs.
 
 *************** NEXT [#A] because of org-attach API change, need to rewrite
-SCHEDULED: <2020-05-09 Sat>
+SCHEDULED: <2020-05-30 Sat>
 :PROPERTIES:
 :SHOWFROMDATE: 2020-05-23
 :END:
