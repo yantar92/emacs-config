@@ -5017,27 +5017,29 @@ Meta bindings for calendar
 	       do (flet ((raise-frame nil nil))
 		    (let ((yant/suppress-pop-frame t)
 			  (url-present-p (s-replace "\n" "" (shell-command-to-string (format "/home/yantar92/bin/org-check-bookmark.sh \"%s\"" it))))
-			  (content (elfeed-deref (elfeed-entry-content entry)))
-			  (content-type (elfeed-entry-content-type entry)))
-		      (setq content-text (with-temp-buffer (when content
-							     (if (eq content-type 'html)
-								 (elfeed-insert-html content)
-							       (insert content)))
-							   (let ((org-babel-min-lines-for-block-output 0)) ;; handle org-mode syntax in body
-							     (org-escape-code-in-region (point-min) (point-max)))
-                                                           (unless (string-empty-p (buffer-string))
-                                                             (goto-char (point-min))
-                                                             (insert "#+begin_src org\n\n")
-                                                             (goto-char (point-max))
-                                                             (insert "\n\n#+end_src"))
-							   (buffer-string)))
+			  ;; (content (elfeed-deref (elfeed-entry-content entry)))
+			  ;; (content-type (elfeed-entry-content-type entry))
+                          )
+		      ;; (setq content-text (with-temp-buffer (when content
+		      ;; 					     (if (eq content-type 'html)
+		      ;; 						 (elfeed-insert-html content)
+		      ;; 					       (insert content)))
+		      ;; 					   (let ((org-babel-min-lines-for-block-output 0)) ;; handle org-mode syntax in body
+		      ;; 					     (org-escape-code-in-region (point-min) (point-max)))
+                      ;;                                      (unless (string-empty-p (buffer-string))
+                      ;;                                        (goto-char (point-min))
+                      ;;                                        (insert "#+begin_src org\n\n")
+                      ;;                                        (goto-char (point-max))
+                      ;;                                        (insert "\n\n#+end_src"))
+		      ;; 					   (buffer-string)))
 		      (if (string= url-present-p "ok")
 			  (org-protocol-capture (list :template "B"
 						      :url it
 						      :title (format "%s: %s"
 								     (elfeed-feed-title (elfeed-entry-feed entry))
 								     (elfeed-entry-title entry))
-						      :body content-text))
+						      ;; :body content-text
+                                                      ))
 			(user-error "%s" url-present-p)))))
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
