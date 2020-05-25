@@ -761,10 +761,9 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
   :config
   (diminish 'centered-window-mode (s-concat " "
 					    (propertize (all-the-icons-material "tablet")
-							'face `((t (
-								    :family "Material Icons"
-								    :height 1.4)))
-                                                        'display '(raise -0.2))))
+							'face `((:family "Material Icons"
+									 :height 1.4))
+							'display '(raise -0.2))))
 
   (defun cwm-special-buffer-p (buffer)
     "Return 't if BUFF buffer name is special (starts with an *).
@@ -1066,7 +1065,8 @@ Show some text in buffer differently
 
 
     (defface mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))
-      "Highligh on active modeline.")
+      "Highligh on active modeline."
+      :group 'mode-line)
     (face-spec-set 'mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))) ;; why is it needed?
 
     ;; (use-package all-the-icons
@@ -1104,51 +1104,50 @@ Show some text in buffer differently
 				     (powerline-raw (when current-input-method-title (s-concat " " (s-trim-right current-input-method-title))) face0)
 				     (powerline-raw (eval (get 'spaceline-all-the-icons-modified-p :code)) face0 'l)
 				     (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-size-p :code)) face0 'l)
-				     (powerline-raw (propertize " " 'face `((t (:height 1.3)))) face0)
+				     (powerline-raw " " face0)
 				     (funcall 'powerline-bar-right mode-line face0)
 				     (when (bound-and-true-p boon-mode) (powerline-raw " " face0))
 				     (when (bound-and-true-p boon-mode) (powerline-raw (boon-state-string) face0 'r))
-				     (when (bound-and-true-p boon-mode) (funcall separator-left face0 mode-line))))
+				     (when (bound-and-true-p boon-mode) (funcall separator-left face0 mode-line))
+                                     ))
 			      (lhs (list
 				    (powerline-raw (eval (get 'spaceline-all-the-icons-mode-icon-p :code)) mode-line 'l)
-				    ;; (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-id-p :code)) mode-line 'l)
 				    (powerline-buffer-id mode-line nil)
 				    (when (and (boundp 'which-func-mode) which-func-mode)
 				      (powerline-raw which-func-format mode-line 'l))
-				    (powerline-raw (when (eval (get 'spaceline-all-the-icons-narrowed-p :when))
-						     (eval (get 'spaceline-all-the-icons-narrowed-p :code)))
-						   mode-line-highlight 'l)
+				    (when (eval (get 'spaceline-all-the-icons-narrowed-p :when))
+				      (powerline-raw (eval (get 'spaceline-all-the-icons-narrowed-p :code))
+						     mode-line-highlight 'l))
 				    (powerline-raw (if truncate-lines
 						       (propertize (all-the-icons-faicon "arrow-right")
-								   'face `((t (
-									       :family "file-icons"
-									       :height 0.6)))
+								   'face `((
+									    :family "file-icons"
+									    :height 0.6))
 								   'display '(raise 0.3))
 						     (propertize (all-the-icons-fileicon "factor")
-								 'face `((t (
-									     :family "Material Icons"
-									     :height 0.6)))
+								 'face `((
+									 :family "Material Icons"
+									 :height 0.6))
 								 'display '(raise 0.3)))
-                                                   mode-line-highlight 'l)
+						   mode-line-highlight 'l)
 				    (funcall separator-left mode-line face1)
 				    (powerline-process face1)
 				    (when active (powerline-minor-modes face1 'l))
 				    (powerline-raw " " face1)
 				    (funcall separator-left face1 face2)
-				    (powerline-vc face2 'r)))
-			      (rhs (list (powerline-raw global-mode-string face2 'r)
-					 (funcall separator-right face2 face1)
-					 (powerline-raw "%l" face1 'l)
-					 (powerline-raw ":" face1)
-					 (powerline-raw "%c" face1 'r)
-					 (funcall separator-right face1 mode-line)
-					 (powerline-raw " " mode-line)
-					 (powerline-raw "%p" mode-line)
-					 (powerline-raw " " mode-line)
-					 ;; (powerline-buffer-size mode-line nil)
-					 ;; (powerline-raw " " mode-line)
-					 ;; (powerline-hud mode-line face1)
-					 )))
+				    (powerline-vc face2 'r)
+				    ))
+			      (rhs (list
+				    (powerline-raw global-mode-string face2 'r)
+				    (funcall separator-right face2 face1)
+				    (powerline-raw "%l" face1 'l)
+				    (powerline-raw ":" face1)
+				    (powerline-raw "%c" face1 'r)
+				    (funcall separator-right face1 mode-line)
+				    (powerline-raw " " mode-line)
+				    (powerline-raw "%p" mode-line)
+				    (powerline-raw " " mode-line)
+				    )))
 			 (concat (powerline-render boon)
 				 (powerline-render lhs)
 				 (powerline-fill face2 (powerline-width rhs))
@@ -1166,7 +1165,7 @@ Show some text in buffer differently
       (spaceline-helm-mode +1))
     ))
 #+end_src
-    
+
 Fancy minor mode lighters
 
 #+begin_src emacs-lisp
@@ -1174,9 +1173,9 @@ Fancy minor mode lighters
   :config
   (diminish 'auto-fill-function (s-concat " "
 					    (propertize (all-the-icons-material "wrap_text")
-							'face `((t (
+							'face `((
 								    :family "Material Icons"
-									    :height 1.2)))))))
+									    :height 1.2))))))
 (use-package mml
   :diminish (mml-mode . " 🖂"))
 (use-package footnote
@@ -6780,11 +6779,11 @@ This includes:
   :hook (org-mode . org-cdlatex-mode)
   :config
   (diminish 'org-cdlatex-mode (s-concat (propertize " CD"
-						    'face `((t (:height 0.5))))
+						    'face `((:height 0.5)))
 					(propertize (all-the-icons-fileicon "tex")
-						    'face `((t (
-								:family "file-icons"
-								:height 1.4))))))
+						    'face `((
+							     :family "file-icons"
+							     :height 1.4)))))
   )
 #+end_src
 
@@ -10889,10 +10888,10 @@ Org-capture mode lighter
   :config
   (diminish 'org-capture-mode (s-concat " "
 					(propertize (all-the-icons-material "note_add")
-						    'face `((t (
-								:family "Material Icons"
-								:height 1.4
-                                                                :foreground "red")))))))
+						    'face `((
+							     :family "Material Icons"
+							     :height 1.4
+                                                             :foreground "red"))))))
 #+end_src
 
 Org src mode lighter
@@ -10904,13 +10903,13 @@ Org src mode lighter
   :config
   (diminish 'org-src-mode (s-concat " "
                                     (propertize (all-the-icons-material "code")
-						'face `((t (
-							    :family "Material Icons"
-							    :height 1.2)))
-                                                'display '(raise -0.2))
-                                    (propertize "org"
-						'face `((t (
-							    :height 0.7)))
+						'face `((
+							 :family "Material Icons"
+							 :height 1.2))
+						'display '(raise -0.2))
+				    (propertize "org"
+						'face `((
+							 :height 0.7))
 						'display '(raise 0.0)))))
 #+end_src
 **** Text
