@@ -11273,17 +11273,22 @@ Align tags to right, even when the window size changes.
 #+begin_src emacs-lisp
 (use-package org
   :if init-flag
+  :custom
+  (org-auto-align-tags nil)
   :config
   (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords nil '(yant/org-align-tags) t)) 100)
+  (add-hook! 'org-mode-hook (add-to-list 'font-lock-extra-managed-props 'org-tag-aligned))
 
   (defun yant/org-align-tags (limit)
     "Align all the tags in org buffer."
     (while (re-search-forward "^\\*+ \\(.+?\\)\\([ \t]+\\)\\(:\\(?:[^ \n]+:\\)+\\)$" limit t)
-      (when (match-string 2)
+      (when (and (match-string 2)
+		 (not (get-text-property (match-beginning 2) 'org-tag-aligned)))
 	(with-silent-modifications
+          (put-text-property (match-beginning 2) (match-end 2) 'org-tag-aligned t)
 	  (put-text-property (match-beginning 2)
 			     (match-end 2)
-                             'display
+			     'display
 			     `(space . (:align-to (- right
 						     (,(+ (string-display-pixel-width org-ellipsis)
 							  (string-display-pixel-width (or (match-string 3)
@@ -11417,12 +11422,15 @@ Optional ELLIPSIS string is shown in place of the hidden/deleted part of the str
       (font-lock-fontify-buffer))
     (when (> (current-column) num)
       (move-to-column num)
-      (if hide-p
-	  (if (stringp ellipsis)
-              (put-text-property (point) (point-max) 'display ellipsis)
-	    (put-text-property (point) (point-max) 'invisible t))
-	(kill-line)
-        (when (stringp ellipsis) (insert ellipsis))))
+      (with-silent-modifications
+	(if hide-p
+	    (progn
+	      (if (stringp ellipsis)
+		  (put-text-property (point) (point-max) 'display ellipsis)
+		(put-text-property (point) (point-max) 'invisible t))
+              (put-text-property (point) (point-max) 'truncated t))
+	  (kill-line)
+          (when (stringp ellipsis) (insert ellipsis)))))
     (buffer-string)))
 
 (defun string-display-pixel-width (string &optional mode)
