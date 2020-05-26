@@ -8895,16 +8895,8 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
 
 (defun yant/save-noclock ()
   "Save info, that there is no clocked in entry."
-  (use-package org-clock)
-  (save-current-buffer
-    (save-mark-and-excursion
-      (let ((buf (find-file-noselect yant/org-clocking-info-file)))
-	(set-buffer buf)
-	(erase-buffer)
-        (setq-local backup-inhibited t)
-	(insert (format "\"No clocked in task\"\n%s" org-time-balance))
-	(save-buffer)
-	(kill-buffer)))))
+  (with-temp-file yant/org-clocking-info-file
+    (insert (format "\"No clocked in task\"\n%s" org-time-balance))))
 
 (defun yant/save-clocked ()
   "Save current clocked state into file."
