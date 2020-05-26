@@ -9408,7 +9408,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  :clock-resume t
 			  :template
 			  ("* NEXT %?"
-                           ":SCHEDULED: <%<%Y-%m-%d %a .+1d>>" 
+                           "SCHEDULED: <%<%Y-%m-%d %a .+1d>>" 
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":STYLE: habit"
