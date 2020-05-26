@@ -4063,6 +4063,25 @@ Sometimes, I just need to have any random text in buffer for testing.
   :if init-flag
   :straight t)
 #+end_src
+*** Hunt for the commands causing hangs
+:PROPERTIES:
+:CREATED:  [2020-05-25 Mon 18:45]
+:END:
+
+#+begin_src emacs-lisp
+(use-package explain-pause-mode
+  :if init-flag
+  :demand t
+  :straight (explain-pause-mode :host github :repo "lastquestion/explain-pause-mode")
+  :custom (explain-pause-blocking-too-long-ms 400)
+  :config
+  (diminish 'explain-pause-mode (propertize (s-concat (all-the-icons-material "watch"))
+					    'face `((
+						     :family "Material Icons"
+						     :height 1.1))
+					    'display '(raise -0.1)))
+  (explain-pause-mode +1))
+#+end_src
 
 ** Programming & emacsing
 :PROPERTIES:
