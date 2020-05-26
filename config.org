@@ -11451,22 +11451,51 @@ Optional MODE specifies major mode used for display."
 	  (car (window-text-pixel-size nil (line-beginning-position) (point))))
       (car (window-text-pixel-size nil (line-beginning-position) (point))))))
 
-;;  this may not work in terminal
 (defun org-agenda-fix-tag-alignment ()
   "Use 'display :align-to instead of spaces in agenda."
   (goto-char (point-min))
   (while (re-search-forward org-tag-group-re nil 'noerror)
-    ;; (put-text-property (match-beginning 0) (match-beginning 1) 'display `(space . (:align-to (- right ,(+ 2 (string-display-length (match-string 1)))))))))
     (put-text-property (match-beginning 0) (match-beginning 1) 'display `(space . (:align-to (- right (,(string-display-pixel-width (match-string 1)))))))))
 
 (add-hook! 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
+(add-hook! :append 'org-agenda-finalize-hook #'org-agenda-truncate-headings)
 
-;; cutoff agenda headlines
-(define-advice org-agenda-format-item (:filter-args (&rest args) trim-heading 100) ;; run last
-  "Trip org-agenda heading to 120 chars."
-  (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
-    (setq txt (string-display-truncate txt 110  nil 'hide "…"))
-    (list extra txt level category tags dotime remove-re habitp)))
+(defun org-agenda-truncate-headings (&rest _)
+  "Truncate agenda headings to fit the window width."
+  (save-excursion
+    (goto-char (point-min))
+    (while (and (setf (point) (next-single-char-property-change (point) 'org-hd-marker nil (point-max)))
+		(< (point) (point-max)))
+      (let* ((tag-width (when (re-search-forward org-tag-group-re (point-at-eol) 'noerror)
+			  (string-display-width (match-string 1))))
+	     (window-width (window-width))
+             (ellipsis "…")
+             (gap "  ")
+             (beg (point-at-bol))
+             (end (if tag-width (match-beginning 0) (point-at-eol)))
+             (tag-width (or tag-width 0)))
+	(setf (buffer-substring beg end)
+	      (string-display-truncate (buffer-substring beg end)
+				       (- window-width
+					  tag-width
+                                          (string-display-width (s-concat ellipsis gap)))
+                                       nil 'hide ellipsis))
+        (goto-char (next-single-char-property-change (point-at-bol) 'truncated nil (point-at-eol)))
+        (let ((truncated-string (buffer-substring (point) (next-single-char-property-change (point) 'truncated nil (point-at-eol)))))
+          (unless (seq-empty-p truncated-string)
+	    (remove-text-properties 0 (length truncated-string) '(truncated nil invisible nil display nil) truncated-string)
+	    (end-of-line)
+            (insert gap)
+            (insert truncated-string)))))))
+
+;; ;; cutoff agenda headlines
+;; (define-advice org-agenda-format-item (:filter-args (&rest args) trim-heading 100) ;; run last
+;;   "Trip org-agenda heading to 120 chars."
+;;   (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
+;;     (setq txt (string-display-truncate txt 110  nil 'hide "…"))
+;;     (list extra txt level category tags dotime remove-re habitp)))
+
+;; (advice-remove 'org-agenda-format-item #'org-agenda-format-item@trim-heading)
 #+END_SRC
 
 Fontify agenda items properly
