@@ -9976,7 +9976,7 @@ The subheadings below such a headlines are promoted up *1 level*.
 	"
       	 % \\epstopdfDeclareGraphicsRule{.tif}{png}{.png}{convert #1 `dirname #1`/`basename #1`.tif`-tif-converted-to.png}
       	 % \\AppendGraphicsExtensions{.tif}
-      	 \\usepackage{enumitem}
+      	 \\usepackage[inline]{enumitem}
       	 \\setlistdepth{10}
       	 \\setlist[itemize,1]{label=$\\bullet$}
       	 \\setlist[itemize,2]{label=$\\bullet$}
