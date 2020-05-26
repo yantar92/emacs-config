@@ -4962,6 +4962,17 @@ Meta bindings for calendar
   (meta-defun meta-forward-element :mode calendar-mode calendar-forward-month)
   (meta-defun meta-backward-element :mode calendar-mode calendar-backward-month))
 #+end_src
+*** Yaml
+:PROPERTIES:
+:CREATED:  [2020-05-26 Tue 00:46]
+:END:
+
+#+begin_src emacs-lisp
+(use-package yaml-mode
+  :if init-flag
+  :straight t)
+#+end_src
+
 ** News & email
 :PROPERTIES:
 :ID:       b53c6b66-4a7c-4eae-ab26-e010fdeb3534
