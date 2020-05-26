@@ -4430,7 +4430,6 @@ It warns me if the original definition changes from what I expect.
   (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p))
 #+end_src
 
-
 *** Gnuplot
 :PROPERTIES:
 :ID:       192254a2-dc90-4a29-a713-f43f794211f6
