@@ -4078,6 +4078,7 @@ Sometimes, I just need to have any random text in buffer for testing.
 *** Hunt for the commands causing hangs
 :PROPERTIES:
 :CREATED:  [2020-05-25 Mon 18:45]
+:ID:       e55d91e3-562c-465b-a564-82729edad44d
 :END:
 
 #+begin_src emacs-lisp
@@ -4976,6 +4977,7 @@ Meta bindings for calendar
 *** Yaml
 :PROPERTIES:
 :CREATED:  [2020-05-26 Tue 00:46]
+:ID:       6a369aa7-2cfb-4866-b238-c2a2ad5758bc
 :END:
 
 #+begin_src emacs-lisp
@@ -11492,7 +11494,7 @@ In addition use =:align-to= ='display= spec to align tags to right border of the
 Optional MODE specifies major mode used for display."
   (with-temp-buffer
     (with-silent-modifications
-      (insert string))
+      (setf (buffer-string) string))
     (when (fboundp mode)
       (funcall mode)
       (font-lock-fontify-buffer))
@@ -11505,7 +11507,7 @@ Non-nil HIDE-P means that the string should be trimmed by hiding the trailing pa
 Optional ELLIPSIS string is shown in place of the hidden/deleted part of the string."
   (with-temp-buffer
     (with-silent-modifications
-      (insert string))
+      (setf (buffer-string) string))
     (when (fboundp mode)
       (funcall mode)
       (font-lock-fontify-buffer))
@@ -11527,7 +11529,7 @@ Optional ELLIPSIS string is shown in place of the hidden/deleted part of the str
 Optional MODE specifies major mode used for display."
   (with-temp-buffer
     (with-silent-modifications
-      (insert string))
+      (setf (buffer-string) string))
     (when (fboundp mode)
       (funcall mode)
       (font-lock-fontify-buffer))
@@ -12364,14 +12366,25 @@ CLOCK: [2020-05-14 Thu 12:18]--[2020-05-14 Thu 12:19] =>  0:01
       (if (org-at-heading-p)
 	  (call-interactively #'org-previous-visible-heading)
 	(backward-paragraph)))
-    (meta-defun meta-down-element :mode org-mode :cond org-at-heading-p :cond (not (buffer-narrowed-p)) (outline-get-next-sibling))
-    (meta-defun meta-down-element :mode org-mode :cond org-at-heading-p :cond buffer-narrowed-p (let ((curpos (point)))
-												  (unless (outline-get-next-sibling)
-                                                                                                    (goto-char curpos)
-												    (widen)
-												    (outline-get-next-sibling)
-												    (org-narrow-to-subtree)
-                                                                                                    (org-show-entry))))
+
+    (meta-defun meta-down-element
+      :mode org-mode
+      :cond org-at-heading-p
+      :cond (not (buffer-narrowed-p))
+      (outline-get-next-sibling))
+
+    (meta-defun meta-down-element
+      :mode org-mode
+      :cond org-at-heading-p
+      :cond buffer-narrowed-p
+      (let ((curpos (point)))
+	(unless (outline-get-next-sibling)
+          (goto-char curpos)
+	  (widen)
+	  (outline-get-next-sibling)
+	  (org-narrow-to-subtree)
+          (org-show-entry))))
+    
     (meta-defun meta-down-element
       :mode org-mode
       :cond (let ((element (org-element-at-point))) (and (eq (org-element-type element) 'src-block) (eq (1+ (point)) (org-element-property :end element))))
@@ -12384,14 +12397,23 @@ CLOCK: [2020-05-14 Thu 12:18]--[2020-05-14 Thu 12:19] =>  0:01
       :mode org-mode
       :cond (eq (org-element-type (org-element-at-point)) 'src-block)
       (goto-char (1- (org-element-property :end (org-element-at-point)))))
-    (meta-defun meta-up-element :mode org-mode :cond org-at-heading-p :cond (not (buffer-narrowed-p)) (outline-get-last-sibling))
-    (meta-defun meta-up-element :mode org-mode :cond org-at-heading-p :cond buffer-narrowed-p (let ((curpos (point)))
-												(unless (outline-get-last-sibling)
-                                                                                                  (goto-char curpos)
-												  (widen)
-												  (outline-get-last-sibling)
-												  (org-narrow-to-subtree)
-												  (org-show-entry))))
+    
+    (meta-defun meta-up-element
+      :mode org-mode
+      :cond org-at-heading-p
+      :cond (not (buffer-narrowed-p))
+      (outline-get-last-sibling))
+    (meta-defun meta-up-element
+      :mode org-mode
+      :cond org-at-heading-p
+      :cond buffer-narrowed-p
+      (let ((curpos (point)))
+	(unless (outline-get-last-sibling)
+          (goto-char curpos)
+	  (widen)
+	  (outline-get-last-sibling)
+	  (org-narrow-to-subtree)
+	  (org-show-entry))))
 
     (meta-defun meta-up-element
       :mode org-mode
