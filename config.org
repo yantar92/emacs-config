@@ -11258,6 +11258,53 @@ Use smaller font for inline headings without keyword
           (add-text-properties (point) (line-end-position) `(face org-inlinetask-notodo font-lock-fontified t)))))))
 #+end_src
 
+Hide END part of inline tasks
+
+#+begin_src emacs-lisp
+(add-hook! 'org-mode-hook (cursor-intangible-mode +1))
+(add-hook! 'org-mode-hook (add-to-list 'font-lock-extra-managed-props 'display))
+
+(use-package org-inlinetask
+  :if init-flag
+  :hook (org-font-lock . yant/org-inlinetask-hide-END)
+  :config
+  (defun yant/org-inlinetask-hide-END (limit)
+    "Hide END line of inlinetasks."
+    (let* ((nstars (if org-odd-levels-only
+		       (1- (* 2 (or org-inlinetask-min-level 200)))
+		     (or org-inlinetask-min-level 200)))
+	   (re (concat "^\\(\\*\\)\\(\\*\\{"
+		       (format "%d" (- nstars 3))
+		       ",\\}\\)\\(\\*\\* END[ \t]*$\\)")))
+      (while (re-search-forward re limit t)
+	(with-silent-modifications
+          (add-text-properties (1- (line-beginning-position)) (line-end-position)
+			       `(
+				 display "🬉"
+                                 cursor-intangible t)))))))
+#+end_src
+
+Disallow user edits inside property drawers
+
+#+begin_src emacs-lisp
+;; (add-hook! 'org-mode-hook (cursor-intangible-mode +1))
+
+;; (use-package org-inlinetask
+;;   :if init-flag
+;;   :hook (org-font-lock . yant/org-intanglible-property)
+;;   :config
+;;   (defun yant/org-intanglible-property (limit)
+;;     "Make property drawers cursor intanglible."
+;;     (while (re-search-forward org-property-drawer-re limit t)
+;;       (with-silent-modifications
+;; 	(save-excursion
+;;           (goto-char (match-beginning 0))
+;;           (forward-line)
+;;           (add-text-properties (point) (match-end 0)
+;; 			       `(cursor-intangible t)))))))
+#+end_src
+
+
 fit inline LaTeX better by increasing the image size [[[https://github.com/tecosaur/emacs-config/blob/master/config.org#latex-fragments][credit]]]
 #+begin_src emacs-lisp
 (setq org-format-latex-header "\\documentclass{article}
