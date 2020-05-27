@@ -9407,6 +9407,27 @@ All these templates generally record the creation time in =:CREATED:=
 			   "\n"))))
            'replace)
 #+end_src
+- note :: A note, which is not actionable or expected to contain a lot of text
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "N"
+           (cdar (doct
+		  '("Note"
+		    :keys "N"
+                    :type entry
+                    :file "~/Org/inbox.org"
+                    :clock-in t
+                    :clock-resume t
+                    :template
+                    ("* TODO %u"
+                     ":PROPERTIES:"
+                     ":CREATED: %U"
+                     ":END:"
+                     "\n"
+                     "%?"
+                     "\n"))))
+           :replace)
+#+end_src
 - Habit :: Habit. I default it to no logging.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
