@@ -11543,39 +11543,55 @@ Optional MODE specifies major mode used for display."
 (defun org-agenda-fix-tag-alignment ()
   "Use 'display :align-to instead of spaces in agenda."
   (goto-char (point-min))
+  (setq-local word-wrap nil) ; tags would be moved to next line if `word-wrap'` is non-nil and `truncate-lines' is nil
   (while (re-search-forward org-tag-group-re nil 'noerror)
     (put-text-property (match-beginning 0) (match-beginning 1) 'display `(space . (:align-to (- right (,(string-display-pixel-width (match-string 1)))))))))
 
 (add-hook! 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
 (add-hook! :append 'org-agenda-finalize-hook #'org-agenda-truncate-headings)
 
-(defun org-agenda-truncate-headings (&rest _)
-  "Truncate agenda headings to fit the window width."
+(defun org-agenda-adaptive-fill-function ()
+  "Fill to the beginning of headline in agenda."
   (save-excursion
+    (when-let ((txt (get-text-property (line-beginning-position) 'txt)))
+      (search-forward (substring txt 0 10))
+      (goto-char (match-beginning 0))
+      (when-let ((re (get-text-property (line-beginning-position) 'org-todo-regexp)))
+	(re-search-forward re (line-end-position) 't)
+        (re-search-forward org-priority-regexp (line-end-position) 't))
+      (make-string (current-column) ?\ ))))
+
+(defun org-agenda-truncate-headings (&rest _)
+  "Truncate agenda headings to fit the WINDOW width."
+  (save-excursion
+    (setq-local adaptive-fill-function #'org-agenda-adaptive-fill-function)
     (goto-char (point-min))
-    (while (and (setf (point) (next-single-char-property-change (point) 'org-hd-marker nil (point-max)))
-		(< (point) (point-max)))
-      (let* ((tag-width (when (re-search-forward org-tag-group-re (point-at-eol) 'noerror)
-			  (string-display-width (match-string 1))))
-	     (window-width (window-width))
-             (ellipsis "…")
-             (gap "  ")
-             (beg (point-at-bol))
-             (end (if tag-width (match-beginning 0) (point-at-eol)))
-             (tag-width (or tag-width 0)))
-	(setf (buffer-substring beg end)
-	      (string-display-truncate (buffer-substring beg end)
-				       (- window-width
-					  tag-width
-                                          (string-display-width (s-concat ellipsis gap)))
-                                       nil 'hide ellipsis))
-        (goto-char (next-single-char-property-change (point-at-bol) 'truncated nil (point-at-eol)))
-        (let ((truncated-string (buffer-substring (point) (next-single-char-property-change (point) 'truncated nil (point-at-eol)))))
-          (unless (seq-empty-p truncated-string)
-	    (remove-text-properties 0 (length truncated-string) '(truncated nil invisible nil display nil) truncated-string)
-	    (end-of-line)
-            (insert gap)
-            (insert truncated-string)))))))
+    (let ((window-width (window-width))
+	  (ellipsis "…")
+	  (gap "  "))
+      (while (and (setf (point) (next-single-char-property-change (point) 'org-hd-marker nil (point-max)))
+		  (< (point) (point-max)))
+	(let* ((tag-width (when (re-search-forward org-tag-group-re (point-at-eol) 'noerror)
+			    (string-display-width (match-string 1))))
+	       (beg (point-at-bol))
+	       (end (if tag-width (match-beginning 0) (point-at-eol)))
+	       (tag-width (or tag-width 0)))
+	  (setf (buffer-substring beg end)
+		(string-display-truncate (buffer-substring beg end)
+					 (- window-width
+					    tag-width
+					    (string-display-width (s-concat ellipsis gap)))
+					 nil 'hide ellipsis))
+	  (goto-char (next-single-char-property-change (point-at-bol) 'truncated nil (point-at-eol)))
+	  (let ((truncated-string (buffer-substring (point) (next-single-char-property-change (point) 'truncated nil (point-at-eol)))))
+	    (unless (seq-empty-p truncated-string)
+	      (remove-text-properties 0 (length truncated-string) '(truncated nil invisible nil display nil) truncated-string)
+	      (end-of-line)
+	      (insert (apply #'propertize ellipsis
+			     (text-properties-at 0 truncated-string)))
+	      (insert truncated-string)))
+          (end-of-line)
+	  )))))
 
 ;; ;; cutoff agenda headlines
 ;; (define-advice org-agenda-format-item (:filter-args (&rest args) trim-heading 100) ;; run last
