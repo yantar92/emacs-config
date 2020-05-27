@@ -2253,9 +2253,21 @@ Working with forges
 Activate insert state when editing commits
 #+begin_src emacs-lisp
 (when init-flag
-  (add-hook 'with-editor-mode-hook #'boon-set-insert-state))
+(add-hook 'with-editor-mode-hook #'boon-set-insert-state))
 #+end_src
+**** Initial section visibility
+:PROPERTIES:
+:CREATED:  [2020-05-26 Tue 16:45]
+:ID:       3b8d01b1-878f-466a-bc75-64be45f7e967
+:END:
+Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial Visibility of Magit Sections]]
 
+#+begin_src emacs-lisp
+(use-package magit
+  :custom
+  (magit-section-initial-visibility-alist
+   '((stashes . hide) (untracked . hide) (unpushed . hide))))
+#+end_src
 ** Text highlight & colouring
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
