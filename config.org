@@ -11358,6 +11358,16 @@ Align tags to right, even when the window size changes.
   (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords nil '(yant/org-align-tags) t)) 100)
   (add-hook! 'org-mode-hook (add-to-list 'font-lock-extra-managed-props 'org-tag-aligned))
 
+  (add-hook! 'org-mode-hook (setq-local adaptive-fill-function #'org-adaptive-fill-function))
+  (defun org-adaptive-fill-function ()
+    "Fill headlines to the beginning of headline in org."
+    (save-excursion
+      (when (org-at-heading-p)
+	(beginning-of-line)
+        (looking-at org-complex-heading-regexp)
+        (goto-char (match-beginning 4)) ;; at headline
+        (make-string (current-column) ?\ ))))
+
   (defun yant/org-align-tags (limit)
     "Align all the tags in org buffer."
     (while (re-search-forward "^\\*+ \\(.+?\\)\\([ \t]+\\)\\(:\\(?:[^ \n]+:\\)+\\)$" limit t)
