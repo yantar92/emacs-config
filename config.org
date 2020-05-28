@@ -1721,7 +1721,7 @@ The problem is that it may mess up the cases when I want to assign special meani
                         org-lint--report-mode image-mode
 			mingus-playlist-mode mingus-browse-mode
 			mingus-help-mode calendar-mode undo-tree-visualizer-mode
-                        profiler-report-mode fundamental-mode
+                        profiler-report-mode fundamental-mode explain-pause-mode
                         bm-show-mode
                         Info-mode woman-mode Man-mode))
   (defvar boon-insert-state-major-mode-list '()
