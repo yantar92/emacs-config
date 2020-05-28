@@ -1859,18 +1859,6 @@ Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_threa
   (bind-key* "C-S-g" #'exit-recursive-edit))
 #+end_src
 
-*** Do not use mouse
-:PROPERTIES:
-:CREATED:  [2019-08-02 Fri 15:44]
-:ID:       1edf3f36-6a30-4374-a47d-2d1b9c7a889a
-:END:
-
-I can force no mouse in emacs (see [[https://www.emacswiki.org/emacs/EmacsNiftyTricks][emacswiki]]).
-Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][pdf-tools]].
-#+begin_src emacs-lisp
-(when init-flag
-    (mouse-avoidance-mode 'banish))
-#+end_src
 *** Chinese input
 :PROPERTIES:
 :CREATED:  [2019-08-03 Sat 17:01]
