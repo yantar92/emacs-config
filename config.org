@@ -5002,6 +5002,7 @@ Meta bindings for calendar
   :config
   (use-package quick-peek
     :straight t
+    :demand t
     :init
     (defun elfeed-quick-peek-current-item ()
       "Show quick peek of current elfeed item or hide if one is already shown."
