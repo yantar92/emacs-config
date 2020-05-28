@@ -5770,7 +5770,8 @@ Automatically translate non-English and non-Russian/Ukrainian titles.
     "Print ENTRY to the buffer."
     (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
            (title (or (elfeed-meta entry :title) (elfeed-entry-title entry) ""))
-           (title (if (yant/guess-language-string title)
+           (title (if (or (elfeed-tagged-p "chinese" entry)
+			  (yant/guess-language-string title))
 		      title
                     (yant/translate-string title)))
 	   (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
