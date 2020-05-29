@@ -11457,10 +11457,10 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
       (let ((mult (org-get-time-balance-multiplier-at-point))
 	    (bonus (org-get-org-time-bonus-on-done-at-point))
             (scheduled? (string-match-p org-repeat-re (or (org-entry-get (point) "SCHEDULED") ""))))
-	(format "%s%s%s" (if scheduled? "↰" " ") (if mult (format "%sx" mult) "")
-		(if (and bonus (> bonus 0)) (format "+%s" bonus) "")))
+	(format "%-9s" (format "%s%s%s" (if scheduled? "↰" " ") (if mult (format "%sx" mult) "")
+				(if (and bonus (> bonus 0)) (format "+%s" bonus) ""))))
     (error "")))
-(setq org-agenda-prefix-format "%(yant/format-summary-for-agenda)%(yant/format-hashtags-for-agenda)%-12s\t%-12:c\t%?-12t%(yant/format-time-balance-multiplier)	")
+(setq org-agenda-prefix-format "%(yant/format-summary-for-agenda)%(yant/format-hashtags-for-agenda)%-12s %-12:c %?-12t%(yant/format-time-balance-multiplier) ")
   #+end_src
 
 Hide some uninteresting tags
