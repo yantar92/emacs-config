@@ -5758,16 +5758,17 @@ Automatically translate non-English and non-Russian/Ukrainian titles.
     (defun yant/translate-string (string)
       "Automatically translate STRING using trans shell command."
       (s-trim (shell-command-to-string (format "trans -no-warn -b \"%s\"" title))))
-    (memoize #'yant/translate-string))
+    (memoize #'yant/translate-string)
+    (memoize #'yant/guess-language-string))
 
   (defun elfeed-search-print-entry--auto-translate-chinese (entry)
     "Print ENTRY to the buffer."
     (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
            (title (or (elfeed-meta entry :title) (elfeed-entry-title entry) ""))
-           (title (if (or (elfeed-tagged-p "chinese" entry)
-			  (yant/guess-language-string title))
-		      title
-                    (yant/translate-string title)))
+           (title (if (and (elfeed-tagged-p "chinese" entry)
+			   (member (yant/guess-language-string title) '("zh-cn" "ko")))
+                      (yant/translate-string title)
+		    title))
 	   (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
 	   (feed (elfeed-entry-feed entry))
 	   (feed-title
