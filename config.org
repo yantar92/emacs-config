@@ -11603,7 +11603,7 @@ Optional MODE specifies major mode used for display."
 
 (add-hook! 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
 (add-hook! :append 'org-agenda-finalize-hook #'org-agenda-truncate-headings)
-(add-hook! 'org-agenda-finalize-hook (add-hook! :local 'window-configuration-change-hook #'org-agenda-truncate-headings))
+;; (add-hook! 'org-agenda-finalize-hook (add-hook! :local 'window-configuration-change-hook #'org-agenda-truncate-headings))
 #+END_SRC
 
 Fontify agenda items properly
