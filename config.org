@@ -9390,7 +9390,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  ("* TODO %? %a"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
-			   ":ORG-TIME-BONUS-ON-DONE: 60"
+			   ":ORG-TIME-BONUS-ON-DONE: 20"
 			   ":END:"
 			   "\n"))))
            'replace)
@@ -9435,7 +9435,7 @@ All these templates generally record the creation time in =:CREATED:=
                            ":REPEAT_TO_STATE: NEXT"
                            "LOGGING: DONE(!)"
                            "ARCHIVE: %%S_archive_%%y.org::*Habits"
-			   ":ORG-TIME-BONUS-ON-DONE: 60"
+			   ":ORG-TIME-BONUS-ON-DONE: 20"
 			   ":END:"
 			   "\n"))))
            'replace)
