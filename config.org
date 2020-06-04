@@ -74,7 +74,7 @@ Init file, which loads this file.
 #+begin_src emacs-lisp :tangle "~/.emacs.d/init.el" :var org-file=(buffer-file-name) :var el-file="~/.emacs.d/config.el"
 ;;(package-initialize)
 (setq init-flag t)
-(setq comp-deferred-compilation t) ;; enable automatic native-compilation
+(setq comp-deferred-compilation 't) ;; enable automatic native-compilation
 (load el-file)
 #+end_src
 
@@ -7252,10 +7252,12 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 
 Now, when I have the mirror attach folder structure, it make sense to open this structure on =org-attach-reveal= instead of opening the actual attach dirs.
 
-*************** NEXT [#A] because of org-attach API change, need to rewrite
-SCHEDULED: <2020-05-30 Sat>
+*************** HOLD [#A] because of org-attach API change, need to rewrite                                       :HOLD:
 :PROPERTIES:
 :SHOWFROMDATE: 2020-05-23
+:END:
+:LOGBOOK:
+- State "HOLD"       from "NEXT"          [2020-05-30 Sat 14:24]
 :END:
 *************** END
 
