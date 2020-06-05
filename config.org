@@ -1811,11 +1811,7 @@ Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_threa
   (unbind-key "M-u" global-map)
   (unbind-key "M-k" global-map)
   (unbind-key "M-j" global-map)
-  (unbind-key "M-." global-map)
-  (use-package org-agenda
-    :after org
-    :config
-    (bind-key "i" #'ignore org-agenda-mode-map)))
+  (unbind-key "M-." global-map))
 #+END_SRC
 **** Make key bindings work in Ukrainian/Russian =keymap=
 :PROPERTIES:
@@ -12339,6 +12335,7 @@ CLOCK: [2020-05-14 Thu 12:18]--[2020-05-14 Thu 12:19] =>  0:01
              ("S" . org-agenda-bulk-mark-all)
 	     ("a" . org-agenda-bulk-unmark)
 	     ("A" . org-agenda-bulk-unmark-all)
+             ("i" . org-agenda-clock-in)
              ("-" . meta-undo)
              :map narrow-map
              ("s" . org-narrow-to-subtree)
