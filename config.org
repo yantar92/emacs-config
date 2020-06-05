@@ -5927,28 +5927,14 @@ The task is any item with todo keyword and no subtask.
               ("SOMEDAY" ("WAITING") ("CANCELLED") ("HOLD"))
 	      )))
 #+end_src
-  - TODO(t) :: task which needs to be done
-  - NEXT(n) :: Task which needs to be done next. If the task is scheduled it is most likely need to be done next. Though can change manually to =TODO= if needed.
-#+begin_src emacs-lisp
-(define-advice org-schedule (:after (&optional ARG TIME) change-todo-after-schedule-state-change)
-  "Make sure that task keyword is always NEXT if it is scheduled."
-  (let ((mystate (or (and (fboundp 'org-state)
-			  state)
-		     (nth 2 (org-heading-components))))
-	(isscheduled (org-agenda-skip-entry-if 'scheduled)))
-    (when isscheduled
-      ;; (when (member mystate (list "NEXT"))
-      ;;   (org-todo "TODO"))
-      (when (member mystate (list "TODO"))
-	(org-todo "NEXT")))))
-#+end_src
+  - TODO(t) :: task which needs to be reviewed and marked with one of the following keywords
+  - NEXT(n) :: Task which needs to be done next
 *************** #todo_keyword #DOING
 :PROPERTIES:
 :ID:       66396995-13e9-4dfa-854e-476c71a4faa9
 :END:
   - DOING(o) :: A task I am working on, but do not expect to finish quickly (e.g. reading book). Marking this task =DOING =-> =DOING=, reschedules it to tomorrow. Marking a task DOING if it had other keyword and not scheduled, schedules it for today and asks for effort estimate. 
 *************** END
-
 *************** TODO make it reschedule according to repeater instead
 *************** END
   #+begin_src emacs-lisp
