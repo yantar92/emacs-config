@@ -7831,7 +7831,7 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
   (and
    (or
     (and
-     (not (equal "DOING" (org-get-todo-state)))
+     ;; (not (equal "DOING" (org-get-todo-state)))
      (org-agenda-skip-nonurgent) ; show urgent items
      (bh/skip-nohabits) ; and habits
      )
