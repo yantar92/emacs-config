@@ -8861,7 +8861,7 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
     (org-remove-empty-drawer-at (point))))
 (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
   #+end_src
-  - Relative to my [[id:d38441a2-1431-44db-b831-8cdec011b1dc][todo keyword structure]], it make sense that clock task is always =NEXT=
+  - Relative to my [[id:d38441a2-1431-44db-b831-8cdec011b1dc][todo keyword structure]], it make sense that clocked task is always =NEXT= and scheduled
   #+begin_src emacs-lisp
 (defun bh/clock-in-to-next (kw)
   "Switch a task from TODO to NEXT when clocking in.
@@ -8871,7 +8871,16 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
     (when (and (member (org-get-todo-state) (list "TODO" "DONE"))
 	       (bh/is-task-p))
       "NEXT")))
+
+(defun yant/schedule-maybe ()
+  "Schedule task at point for today, unless it is already scheduled."
+  (unless (or (and (boundp 'org-capture-mode) org-capture-mode)
+	      (member "DEFAULT" (org-get-tags-at (point) 'local))
+	      (org-get-scheduled-time (point)))
+    (org-schedule nil ".")))
+
 (setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
+(add-hook 'org-clock-in-hook #'yant/schedule-maybe)
   #+end_src
 ***** Display clocked in entry
 :PROPERTIES:
