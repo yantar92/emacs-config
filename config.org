@@ -3433,7 +3433,7 @@ Hide "." and ".."
 
 #+begin_src emacs-lisp
 (use-package dired
-  :custom (dired-listing-switches "-ADlhGg"))
+  :custom (dired-listing-switches "-DlhGg"))
 #+end_src
 
 ****** Hide details
@@ -4999,6 +4999,7 @@ Meta bindings for calendar
 (use-package elfeed
   :if init-flag
   :straight t
+  :demand t
   :bind (:map elfeed-search-mode-map
 	      ("q" . delete-frame)
 	      ("r" . elfeed-search-update--force)
@@ -7713,7 +7714,8 @@ SUBTREE-END is used as end of the entry if not nil."
 			    (org-agenda-prefix-format "%?-12t")
 			    (org-agenda-skip-function 'bh/skip-non-projects)
 			    (org-agenda-sorting-strategy
-			     '(todo-state-down effort-up category-keep))))		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT/!TODO"
+			     '(todo-state-down effort-up category-keep))))
+                (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT/!TODO"
 			   ((org-agenda-overriding-header "All other active tasks")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
@@ -12324,6 +12326,13 @@ CLOCK: [2020-05-14 Thu 12:18]--[2020-05-14 Thu 12:19] =>  0:01
 :END:
 
 
+**** TODO meta-occur on folded source blocks inside folded headline do not show folded blocks on entering the place
+:PROPERTIES:
+:CREATED: [2020-06-04 Thu 15:33]
+:END:
+:LOGBOOK:
+- Refiled on [2020-06-04 Thu 16:50]
+:END:
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
