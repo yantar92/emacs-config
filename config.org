@@ -545,21 +545,32 @@ Reducing help:gcmh-cons-threshold to avoid hangs on undo.
 #+begin_src emacs-lisp
 (when init-flag
   (use-package gcmh
-    :straight (gcmh :type git :host gitlab :repo "koral/gcmh")
+    :straight (gcmh :type git :host gitlab :repo "koral/gcmh"
+		    :fork (:host gitlab :repo "yantar92/gcmh"))
     :demand t
     :diminish gcmh-mode
-    :hook (after-init . gcmh-mode)
-    (gcmh-high-cons-threshold 100000000)
-    ))
+    :hook (after-init . gcmh-mode)))
 #+end_src
 
 And increase GC threshold on top of that (I found emacs spend >25% of time doing GC when just moving around the buffer). 
 In batch mode, increase the threshold to make things faster.
 #+begin_src emacs-lisp
 (if init-flag
-    (setq gc-cons-threshold (* 400 1000 1000))
+    (setq gc-cons-threshold (* 200 1000 1000))
   (setq gc-cons-threshold (* 1 1000 1000 1000)))
 #+end_src
+
+200Mb: [[elisp:(progn (forward-line) (insert (message "%d" (* 1000 (/ gc-elapsed gcs-done)))))]]
+47ms
+
+400Mb: [[elisp:(progn (forward-line) (insert (message "%d" (* 1000 (/ gc-elapsed gcs-done)))))]]
+68ms
+
+800Mb: [[elisp:(progn (forward-line) (insert (message "%d" (* 1000 (/ gc-elapsed gcs-done)))))]]
+228ms
+
+1600Mb: [[elisp:(progn (forward-line) (insert (message "%d" (* 1000 (/ gc-elapsed gcs-done)))))]]
+188ms
 
 ** Appearance
 :PROPERTIES:
