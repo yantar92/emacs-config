@@ -7442,7 +7442,8 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 				    (search category-keep)))
 (setq org-agenda-tags-todo-honor-ignore-options t)
 (setf org-agenda-sticky t)
-(setq org-agenda-skip-scheduled-if-deadline-is-shown 'not-today)
+(setq org-agenda-skip-scheduled-if-deadline-is-shown 'not-today
+      org-agenda-skip-deadline-prewarning-if-scheduled t)
 (setq org-habit-show-habits-only-for-today t) ; do not show habits in future if scheduled withing agenda time range. E.g. do not show future habits in week view/calendar
 #+end_src
 - I use several agenda views
