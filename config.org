@@ -5956,7 +5956,7 @@ The task is any item with todo keyword and no subtask.
 ^DOING->DOING: If the task is unscheduled, schedule it today.
  DOING->DOING: If the task is unscheduled or has no repeater, schedule it for tomorrow.
  DOING->DOING: If the task has a repeater, re-schedule it accordingly
- DOING->DONE:  Cancel repeater and mark the task DONE."
+ DOING->DONE/REVIEW:  Cancel repeater and mark the task DONE."
   (when (and (eq (plist-get arg :type) 'todo-state-change)
 	     (not (string= (plist-get arg :from) "DOING"))
              (string= (plist-get arg :to) "DOING"))
@@ -5967,23 +5967,26 @@ The task is any item with todo keyword and no subtask.
   (when (and (eq (plist-get arg :type) 'todo-state-change)
 	     (string= (plist-get arg :from) "DOING")
              (or (string= (plist-get arg :to) "DOING")
-		 (string= (plist-get arg :to) "DONE")))
+		 (string= (plist-get arg :to) "DONE")
+                 (string= (plist-get arg :to) "REVIEW")))
     (let* ((pos (plist-get arg :position))
 	   (schedule-info (org-with-point-at pos (org-element-property :scheduled (org-element-at-point)))))
       (when schedule-info
 	(let ((repeater (or (org-with-point-at pos (org-get-repeat))
 			    "+1d")))
-          (if (string= (plist-get arg :to) "DONE")
+          (if (or (string= (plist-get arg :to) "DONE")
+		  (string= (plist-get arg :to) "REVIEW"))
               (org-schedule nil ".+0d") ;; revert the default re-schedule triggered by DONE
             (org-set-property "SHOWFROMDATE"
 			      (ts-format "%Y-%m-%d"
 					 (ts-parse-org
 					  (org-read-date nil nil (s-replace "." "" repeater)))))) ;; do not reschedule (I am still working on the task), but show later
-	  (when (string= (plist-get arg :to) "DONE")
-	    (if (y-or-n-p "Trying to mark DOING task as DONE. Proceed? ")
+	  (when (or (string= (plist-get arg :to) "DONE")
+		    (string= (plist-get arg :to) "REVIEW"))
+	    (if (y-or-n-p (format "Trying to mark DOING task as %s. Proceed? " (plist-get arg :to)))
 		(org-with-point-at pos
 		  (org-cancel-repeater)
-                  (org-todo "DONE"))
+                  (org-todo (plist-get arg :to)))
 	      (org-todo "DOING")))))
       (when (and (marker-buffer org-clock-marker)
 		 (marker-position org-clock-marker)
