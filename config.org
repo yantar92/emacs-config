@@ -12253,8 +12253,7 @@ Moreover, it does not even allow using cursor-sensor-functions.
 Using advice for workaround.
 
 
-*************** CANCELLED maybe request support to text properties in isearch                                       :CANCELLED:
-CLOSED: [2020-06-13 Sat 16:09]
+*************** SOMEDAY maybe request support to text properties in isearch
 :LOGBOOK:
 - State "CANCELLED"  from "TODO"          [2020-06-13 Sat 16:09]
 :END:
@@ -12279,51 +12278,6 @@ They are not hidden automatically for some reason.
 - State "DONE"       from "TODO"          [2020-05-17 Sun 22:49]
 - Refiled on [2020-04-27 Mon 23:59]
 :END:
-**** DONE there is still a visual glitch with two collapsed ellipsis shown at the same time for some reason
-CLOSED: [2020-06-13 Sat 16:09]
-:PROPERTIES:
-:CREATED: [2020-05-04 Mon 23:59]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-06-13 Sat 16:09]
-- Refiled on [2020-05-04 Mon 23:59]
-:END:
-**** DONE hidden tables are messed sometimes (when realigning?) because of properties
-CLOSED: [2020-06-13 Sat 16:09]
-:PROPERTIES:
-:CREATED: [2020-05-08 Fri 11:50]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-06-13 Sat 16:09]
-- Refiled on [2020-05-08 Fri 12:41]
-:END:
-**** DONE after finishing =isearch= the drawers are not closed back. (actually, they are closed, but reopened again by hi-lock) no idea why
-CLOSED: [2020-06-13 Sat 16:09]
-:PROPERTIES:
-:CREATED: [2020-05-09 Sat 22:11]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-06-13 Sat 16:09]
-- Refiled on [2020-05-09 Sat 22:13]
-CLOCK: [2020-05-09 Sat 22:11]--[2020-05-09 Sat 22:12] =>  0:01
-:END:
-**** DONE actually, we can simply reveal the hidden text before/after the changed text (unless the inserted text is hidden)
-CLOSED: [2020-06-13 Sat 16:09]
-:PROPERTIES:
-:CREATED: [2020-05-10 Sun 23:59]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-06-13 Sat 16:09]
-- Refiled on [2020-05-11 Mon 10:24]
-CLOCK: [2020-05-11 Mon 02:43]--[2020-05-11 Mon 02:45] =>  0:02
-:END:
-**** TODO goto-line preview does not reveal hidden text in org
-:PROPERTIES:
-:CREATED: [2020-05-13 Wed 15:23]
-:END:
-:LOGBOOK:
-- Refiled on [2020-05-13 Wed 15:23]
-:END:
 **** TODO after reverting org buffer, org-reveal does nothing for some reason (point moves to the first visible char)
 :PROPERTIES:
 :CREATED: [2020-05-14 Thu 12:18]
@@ -12332,15 +12286,6 @@ CLOCK: [2020-05-11 Mon 02:43]--[2020-05-11 Mon 02:45] =>  0:02
 - Refiled on [2020-05-14 Thu 14:19]
 CLOCK: [2020-05-14 Thu 12:18]--[2020-05-14 Thu 12:19] =>  0:01
 :END:
-**** DONE notes added on CANCEL are not hidden for some reason
-CLOSED: [2020-06-13 Sat 16:09]
-:PROPERTIES:
-:CREATED:  [2020-05-17 Sun 23:08]
-:END:
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-06-13 Sat 16:09]
-:END:
-
 **** TODO meta-occur on folded source blocks inside folded headline do not show folded blocks on entering the place
 :PROPERTIES:
 :CREATED: [2020-06-04 Thu 15:33]
