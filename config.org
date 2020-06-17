@@ -9457,8 +9457,8 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":CREATED: %U"
                            ":STYLE: habit"
                            ":REPEAT_TO_STATE: NEXT"
-                           "LOGGING: DONE(!)"
-                           "ARCHIVE: %%S_archive_%%y.org::*Habits"
+                           ":LOGGING: DONE(!)"
+                           ":ARCHIVE: %%S_archive_%%y.org::*Habits"
 			   ":ORG-TIME-BONUS-ON-DONE: 20"
 			   ":END:"
 			   "\n"))))
