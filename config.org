@@ -11004,6 +11004,14 @@ Line truncation:
 			      (toggle-truncate-lines -1)
                               (visual-line-mode +1))))
 #+end_src
+
+Extend line background to the end of buffer in source blocks
+#+begin_src emacs-lisp
+(use-package org-faces
+  :config
+  (set-face-extend 'org-block t))
+#+end_src
+
 **** Links
 ***** Show broken links to files
 :PROPERTIES:
