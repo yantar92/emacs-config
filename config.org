@@ -11273,6 +11273,7 @@ Use smaller font for inline headings without keyword
 	   (re (concat "^\\(\\*\\)\\(\\*\\{"
 		       (format "%d" (- nstars 3))
 		       ",\\}\\)\\(\\*\\*[ \t]+\\)")))
+      (org-back-to-heading-or-point-min 'invisible-ok)
       (while (re-search-forward re limit t)
 	(unless (looking-at-p org-todo-regexp)
           (add-text-properties (point) (line-end-position) `(face org-inlinetask-notodo font-lock-fontified t)))))))
@@ -11298,10 +11299,9 @@ Hide END part of inline tasks
 		       ",\\}\\)\\(\\*\\* END[ \t]*$\\)")))
       (while (re-search-forward re limit t)
 	(with-silent-modifications
-          (add-text-properties (1- (line-beginning-position)) (line-end-position)
-			       `(
-				 display "🬉"
-                                 cursor-intangible t)))))))
+          (compose-region (1- (match-beginning 0)) (match-end 0)
+			  ?🬉 'decompose-region)
+          )))))
 #+end_src
 
 Disallow user edits inside property drawers
