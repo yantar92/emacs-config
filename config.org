@@ -7685,8 +7685,21 @@ SUBTREE-END is used as end of the entry if not nil."
 			    (org-tags-match-list-sublevels nil)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down))))
-		(tags-todo "-CANCELLED-HOLD-WAITING/!NEXT"
+		(tags-todo "-CANCELLED-HOLD-WAITING-SKIP/!NEXT"
 			   ((org-agenda-overriding-header (concat "Project Next Tasks"
+								  (if bh/hide-scheduled-and-waiting-next-tasks
+								      ""
+								    " (including WAITING and SCHEDULED tasks)")))
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
+			    (org-tags-match-list-sublevels t)
+			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-sorting-strategy
+			     '(priority-down todo-state-down effort-up category-keep))))
+		(tags-todo "-CANCELLED-HOLD-WAITING+SKIP/!NEXT"
+			   ((org-agenda-overriding-header (concat "Extra Project Next Tasks"
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
