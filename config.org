@@ -12322,6 +12322,15 @@ CLOCK: [2020-05-14 Thu 12:18]--[2020-05-14 Thu 12:19] =>  0:01
 - Refiled on [2020-06-20 Sat 13:22]
 CLOCK: [2020-06-19 Fri 22:14]--[2020-06-19 Fri 22:15] =>  0:01
 :END:
+**** TODO [#A] get a reply #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
+SCHEDULED: <2020-06-23 Tue>
+:PROPERTIES:
+:CREATED: [2020-06-21 Sun 18:18]
+:EMAIL-SOURCE: [[notmuch:id:87pn9s7nku.fsf@localhost]]
+:END:
+:LOGBOOK:
+- Refiled on [2020-06-21 Sun 19:09]
+:END:
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
