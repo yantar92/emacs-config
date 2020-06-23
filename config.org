@@ -6852,7 +6852,7 @@ This includes:
 :ID:       598c2b16-2eb8-404a-b7e9-00969a1c4d72
 :END:
 #+begin_src emacs-lisp
-(setq org-use-property-inheritance 't)
+(setq org-use-property-inheritance '("ORG-TIME-BONUS-ON-DONE" "ORG-TIME-BALANCE-MULTIPLIER" "SORT" "SHOWDATES" "SHOWFROMDATE" "SHOWFROMTIME" ))
 #+end_src
 - =:SHOWFROMTIME:= (always inheriting) :: The purpose of this is to be able to assign specific projects for different days of week or, say, show the home items only in the evening of weekdays and not annoy it at work when I cannot do it any way. Hence, I can focus on the items I really need to do now in this agenda.
      Additionally, the time of the day after midnight is treated specially here. If =org-extend-today-until= is not 0 and the current time is before its value, the current time is still considered to be yesterday.
