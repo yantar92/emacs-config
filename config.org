@@ -6116,8 +6116,34 @@ I use [[http://www.nongnu.org/org-edna-el/][org-edna]] for managing dependencies
   :straight t
   :diminish org-edna-mode
   :config
-  (org-edna-load))
+  (org-edna-mode))
 #+END_SRC
+
+This can be useful, for example, when watching a series.
+I may add multiple TODOs for different series, but it usually make sense to watch them in sequence.
+I can do it using =org-edna=
+#+begin_src emacs-lisp
+(use-package org-edna
+  :bind (:map org-mode-map
+	      ("C-c C-x M-p" . yant/org-set-preceding-task))
+  :config
+  (defun yant/org-set-preceding-task ()
+    "Make task at point follow other task.
+
+The current task will be marked WAITING and cannot be marked DONE
+until the other task is completed.
+Completing the other task will automatically set the current task to
+NEXT and schedule it the same day."
+    (interactive)
+    (let ((uuid (org-id-prompt-id))
+	  (cur-uuid (org-id-get-create)))
+      (unless uuid (user-error "Did not get a uuid"))
+      (org-todo "WAITING")
+      (org-set-property "BLOCKER" (format "ids(%s)" uuid))
+      (org-with-point-at (org-id-find uuid 'marker)
+	(org-set-property "TRIGGER" (format "ids(%s) todo!(NEXT) scheduled!(\"0\")" cur-uuid))))))
+#+end_src
+
 Also, the projects require all the children to be done by default.
 #+begin_src emacs-lisp
 (setq org-enforce-todo-dependencies t)
