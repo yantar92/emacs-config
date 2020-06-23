@@ -2296,7 +2296,7 @@ User-defined temporary highlighting.
 Typos are inevitable. 
 Highlighting typos is crucial.
 
-**** =Flyspell=
+**** COMMENT =Flyspell=
 :PROPERTIES:
 :CREATED:  [2018-10-12 Fri 14:07]
 :ID:       b79658d1-8d62-4c47-be3b-cc399a0a8c59
