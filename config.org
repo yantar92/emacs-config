@@ -10709,7 +10709,8 @@ I have a lot of small scripts and programs written at some point for some purpos
         (ignore-errors
 	  (load "~/.emacs.d/config.el"))
 	(let ((start-time (current-time)))
-	  (apply #'org-babel-tangle-file ',args)
+          (org-with-wide-buffer
+	   (apply #'org-babel-tangle-file ',args))
 	  (list (float-time (time-since start-time))))))
    (let ((message-string (format "Tangling (%S %S %S) completed in " file target-file lang)))
      `(lambda (tangle-time) (message (concat ,message-string
