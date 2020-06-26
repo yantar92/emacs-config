@@ -9570,7 +9570,7 @@ All these templates generally record the creation time in =:CREATED:=
                            "** Reports"
                            "*** Paperwork :REFILE:"
                            "*** Presentations :REFILE:"
-                           "*** Papers :REFILE:"
+                           "*** Published papers :REFILE:"
                            "*** Funding applications :REFILE:"
                            "** Papers to read :REFILE:"
                            "** Ideas :REFILE:"))))
