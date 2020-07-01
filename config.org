@@ -6142,7 +6142,7 @@ NEXT and schedule it the same day."
       (org-todo "WAITING")
       (org-set-property "BLOCKER" (format "ids(%s)" uuid))
       (org-with-point-at (org-id-find uuid 'marker)
-	(org-set-property "TRIGGER" (format "ids(%s) todo!(NEXT) scheduled!(\"0\")" cur-uuid))))))
+	(org-set-property "TRIGGER" (format "ids(%s) todo!(NEXT) scheduled!(\".\")" cur-uuid))))))
 #+end_src
 
 Also, the projects require all the children to be done by default.
