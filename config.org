@@ -7899,31 +7899,27 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
   #+begin_src emacs-lisp
 (defun yant/org-agenda-skip-nofocus()
   "Filter tasks for focus agenda."
-  (or
-   (and
-    (or
-     (and
-      ;; (not (equal "DOING" (org-get-todo-state)))
-      (org-agenda-skip-nonurgent) ; show urgent items
-      (bh/skip-nohabits) ; and habits
-      )
-					;  if day and time are appropriate
-     (org-agenda-skip-before-SHOWFROMTIME-property)
-     (org-agenda-skip-before-SHOWFROMDATE-property)
-     (org-agenda-skip-noshowdates))
-    (or
-     (org-agenda-skip-not-today) ; and items, scheduled for today
-     (org-agenda-skip-before-SHOWFROMTIME-property) ; if time is appropriate (day is, since it is scheduled)
-     (org-agenda-skip-before-SHOWFROMDATE-property)
-     (org-agenda-skip-lowpriority) ;; and the priorty is not [#C]
+  (and
+   (or
+    (and
+     ;; (not (equal "DOING" (org-get-todo-state)))
+     (org-agenda-skip-nonurgent) ; show urgent items
+     (bh/skip-nohabits) ; and habits
      )
-    (or (org-agenda-skip-deadlines-before-schedule) ; always show deadlines, unless scheduled in future
-	(org-agenda-skip-before-SHOWFROMTIME-property)
-	(org-agenda-skip-before-SHOWFROMDATE-property)
-	))
-   (zin/org-agenda-skip-tag "HOLD")
-   (zin/org-agenda-skip-tag "WAITING")
-   ))
+					;  if day and time are appropriate
+    (org-agenda-skip-before-SHOWFROMTIME-property)
+    (org-agenda-skip-before-SHOWFROMDATE-property)
+    (org-agenda-skip-noshowdates))
+   (or
+    (org-agenda-skip-not-today) ; and items, scheduled for today
+    (org-agenda-skip-before-SHOWFROMTIME-property) ; if time is appropriate (day is, since it is scheduled)
+    (org-agenda-skip-before-SHOWFROMDATE-property)
+    (org-agenda-skip-lowpriority) ;; and the priorty is not [#C]
+    )
+   (or (org-agenda-skip-deadlines-before-schedule) ; always show deadlines, unless scheduled in future
+       (org-agenda-skip-before-SHOWFROMTIME-property)
+       (org-agenda-skip-before-SHOWFROMDATE-property)
+       )))
   #+end_src
 ***** Normal daily agenda
 :PROPERTIES:
