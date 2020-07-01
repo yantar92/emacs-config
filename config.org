@@ -7633,7 +7633,7 @@ SUBTREE-END is used as end of the entry if not nil."
 		(org-agenda-skip-function 'bh/skip-non-projects)
 		(org-agenda-sorting-strategy
 		 '(todo-state-down effort-up category-keep))))
-	      ("d" "Focus daily agenda" agenda "-HOLD-WAITING"
+	      ("d" "Focus daily agenda" agenda ""
 	       ((org-agenda-overriding-header "Focused daily agenda. Do not forget to filter to work/home scope\n")
 		(org-agenda-skip-function 'yant/org-agenda-skip-nofocus)))
 	      ("i" "Inbox items"
