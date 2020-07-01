@@ -11527,7 +11527,7 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 	(format "%-9s" (format "%s%s%s" (if scheduled? "↰" " ") (if mult (format "%sx" mult) "")
 				(if (and bonus (> bonus 0)) (format "+%s" bonus) ""))))
     (error "")))
-(setq org-agenda-prefix-format "%(yant/format-summary-for-agenda)%(yant/format-hashtags-for-agenda)%-12s %-12:c %?-12t%(yant/format-time-balance-multiplier) ")
+(setq org-agenda-prefix-format "%-12s %-12:c %?-12t%(yant/format-time-balance-multiplier) ")
   #+end_src
 
 Hide some uninteresting tags
