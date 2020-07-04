@@ -5928,17 +5928,17 @@ The task is any item with todo keyword and no subtask.
 	      (sequence "SOMEDAY(s)" "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@)" ))))
 ;; set the tags assigned to specific keywords. Not nesessary, but used by a lot of code for filtering later - hence why not
 (setq org-todo-state-tags-triggers
-      (quote (("CANCELLED" ("CANCELLED" . t))
-	      ("WAITING" ("WAITING" . t))
-	      ("HOLD" ("WAITING") ("HOLD" . t))
-	      (done ("WAITING") ("HOLD"))
-	      ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-	      ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("DOING" ("WAITING") ("CANCELLED") ("HOLD"))
-	      ("DONE" ("WAITING") ("CANCELLED") ("HOLD"))
-	      ("FAILED" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("SOMEDAY" ("WAITING") ("CANCELLED") ("HOLD"))
-	      )))
+      (quote (("CANCELLED" ("SOMEDAY") ("CANCELLED" . t))
+	      ("WAITING" ("SOMEDAY") ("CANCELLED") ("WAITING" . t))
+	      ("HOLD" ("SOMEDAY") ("CANCELLED") ("WAITING") ("HOLD" . t))
+              ("SOMEDAY" ("CANCELLED") ("WAITING") ("HOLD") ("SOMEDAY" . t))
+	      (done ("SOMEDAY") ("WAITING") ("HOLD"))
+	      ("TODO" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
+	      ("NEXT" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DOING" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
+	      ("DONE" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
+	      ("FAILED" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD")))
+	     ))
 #+end_src
   - TODO(t) :: task which needs to be reviewed and marked with one of the following keywords
   - NEXT(n) :: Task which needs to be done next
