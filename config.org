@@ -3280,7 +3280,7 @@ Using trash is safer.
   (delete-by-moving-to-trash t)
   (trash-directory "~/tmp/Trash"))
 #+end_src
-***** Auto-revert =dired= buffers
+***** COMMENT Auto-revert =dired= buffers
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:11]
 :ID:       6ac566c7-dbe9-4329-9710-ad05293d7b78
