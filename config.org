@@ -5968,22 +5968,19 @@ The task is any item with todo keyword and no subtask.
   (when (and (eq (plist-get arg :type) 'todo-state-change)
 	     (string= (plist-get arg :from) "DOING")
              (or (string= (plist-get arg :to) "DOING")
-		 (string= (plist-get arg :to) "DONE")
-                 (string= (plist-get arg :to) "REVIEW")))
+		 (member (plist-get arg :to) org-done-keywords)))
     (let* ((pos (plist-get arg :position))
 	   (schedule-info (org-with-point-at pos (org-element-property :scheduled (org-element-at-point)))))
       (when schedule-info
 	(let ((repeater (or (org-with-point-at pos (org-get-repeat))
 			    "+1d")))
-          (if (or (string= (plist-get arg :to) "DONE")
-		  (string= (plist-get arg :to) "REVIEW"))
+          (if (member (plist-get arg :to) org-done-keywords)
               (org-schedule nil ".+0d") ;; revert the default re-schedule triggered by DONE
             (org-set-property "SHOWFROMDATE"
 			      (ts-format "%Y-%m-%d"
 					 (ts-parse-org
 					  (org-read-date nil nil (s-replace "." "" repeater)))))) ;; do not reschedule (I am still working on the task), but show later
-	  (when (or (string= (plist-get arg :to) "DONE")
-		    (string= (plist-get arg :to) "REVIEW"))
+	  (when (member (plist-get arg :to) org-done-keywords)
 	    (if (y-or-n-p (format "Trying to mark DOING task as %s. Proceed? " (plist-get arg :to)))
 		(org-with-point-at pos
 		  (org-cancel-repeater)
