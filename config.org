@@ -11517,11 +11517,15 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 (defun yant/format-time-balance-multiplier ()
   "Format :ORG-TIME-BALANCE-MULTIPLIER: into agenda."
   (condition-case nil
-      (let ((mult (org-get-time-balance-multiplier-at-point))
-	    (bonus (org-get-org-time-bonus-on-done-at-point))
-            (scheduled? (string-match-p org-repeat-re (or (org-entry-get (point) "SCHEDULED") ""))))
-	(format "%-9s" (format "%s%s%s" (if scheduled? "↰" " ") (if mult (format "%sx" mult) "")
-				(if (and bonus (> bonus 0)) (format "+%s" bonus) ""))))
+      (save-match-data
+	(let* ((mult (org-get-time-balance-multiplier-at-point))
+	       (bonus (org-get-org-time-bonus-on-done-at-point))
+               (schedule-string (or (org-entry-get (point) "SCHEDULED") ""))
+               (scheduled? (string-match org-repeat-re schedule-string))
+               (repeat-string (and scheduled? (match-string 1 schedule-string)))
+               (repeat-string (and scheduled? (replace-regexp-in-string "[+.]+" "" repeat-string))))
+	  (format "%-11s" (format "%s%s%s" (if scheduled? (format "%s↰" repeat-string) " ") (if mult (format "%sx" mult) "")
+				  (if (and bonus (> bonus 0)) (format "+%s" bonus) "")))))
     (error "")))
 (setq org-agenda-prefix-format "%-12s %-12:c %?-12t%(yant/format-time-balance-multiplier) ")
   #+end_src
