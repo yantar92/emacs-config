@@ -9564,8 +9564,8 @@ All these templates generally record the creation time in =:CREATED:=
                            "*** Presentations :REFILE:"
                            "*** Published papers :REFILE:"
                            "*** Funding applications :REFILE:"
-                           "** Papers to read :REFILE:"
-                           "** Ideas :REFILE:"))))
+                           "** NEXT Papers to read :REFILE:"
+                           "** NEXT Ideas :REFILE:"))))
            'replace)
 #+end_src
 - Conference presentation/poster :: I mark this with =conference= tag. Typical workflow here is:
