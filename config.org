@@ -9009,15 +9009,16 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
 ***** Efforts
 :PROPERTIES:
 :CREATED:  [2020-05-04 Mon 17:57]
+:ID:       435d7660-576f-42d0-88fd-9882f494712c
 :END:
 
-For a long time, I did not find any use for effort estimates.
-However, they do have uses in my workflow:
- 1. When a task is very large, but cannot be splitted, it is useful to dedicate certain time I plan to spend working on the task. Having this time really helps to start working on the task since I am not demoralised by size of the task. Such tasks are marked with =DOING= todo keyword (see [[id:66396995-13e9-4dfa-854e-476c71a4faa9][#todo_keyword #DOING]])
- 2. According to GTD workflow, inbox tasks (see [[id:c048269c-57b9-434a-a19b-6da8d70e5e0f][Refile]]) should be either refiled or quickly worked on (if they are short). However, I do not always know if a task is short. So, I assign default effort estimate to some captured inbox tasks (see [[id:e3d02bee-a924-4808-9a2f-fe577065038d][Capture templates]]) and org-mode [[id:f9bed201-dd79-4a3a-8822-c6c52fea87d3][notifies]] me when I spend too much time on a task. This effort is [[id:3347c627-493d-43e7-8c5f-c089c7bd03f9][automatically removed]] once the task is refiled.
-*************** TODO the second does not really work. I am not willing to clock-in to every task in inbox. better do it as initial estimate? not sure
-*************** END
 
+For a long time, I did not find any use for effort estimates.
+However, they do have uses in my workflow.
+
+A frequent statement about effort estimates is that if you think that estimate is too much, you just split the task. However, even just the process of splitting generally takes unpredictable time when the task is an exploratory task. For me, as a researcher, such tasks are pretty common. I sometimes have a very rough idea about what should be done and cannot predict how much time east step of a research project is going to take. Things in research fail more often than not and a trivial task may turn out to take 10 times more time that expected. An alternative approach to setting efforts is coming from timeboxing approach when a task is expected to be worked on for a certain period of time per day. However, working on some tasks in research, I can often get a momentum and work on a single task for a single day. Notifications for exceeding the effort are unwanted in such scenario. On the other hand, some tasks may be very difficult to start and not having any time estimate on the task may be discouraging (if there was an effort, at least one can convince himself to work on such task for *some* time). Hence, setting *some* effort estimate on stale tasks is useful.
+
+1. When a task is very large, but cannot be splitted, it is useful to dedicate certain time I plan to spend working on the task. Having this time really helps to start working on the task since I am not demoralised by size of the task. Such tasks are marked with =DOING= todo keyword (see [[id:66396995-13e9-4dfa-854e-476c71a4faa9][#todo_keyword #DOING]])
 
 ****** Notify when clocked in time exceeds effort estimate
 :PROPERTIES:
@@ -9043,28 +9044,6 @@ However, they do have uses in my workflow:
   ;; when clocked in time exceeds effort estimate, while not triggering
   ;; showing the current task in modeline or frame title.
   (setq org-clock-clocked-in-display 't))
-#+end_src
-
-****** Remove default effort estimates from inbox tasks 
-:PROPERTIES:
-:CREATED:  [2020-05-04 Mon 18:07]
-:ID:       3347c627-493d-43e7-8c5f-c089c7bd03f9
-:END:
-
-#+begin_src emacs-lisp
-(defvar org-refile-default-effort-value "3"
-  "Effort estimate to be removed after refile.")
-
-(defun org-remove-effort-maybe ()
-  "Remove effort estimate when it is set to `org-refile-default-effort-value'"
-  (when (string= org-refile-default-effort-value (org-entry-get (point) "Effort"))
-    (org-delete-property "Effort")
-    (when (equal (org-get-heading t t t t)
-		 (bound-and-true-p org-clock-current-task))
-      (setq org-clock-effort nil)
-      (org-clock-update-mode-line))))
-
-(add-hook! 'org-after-refile-insert-hook #'org-remove-effort-maybe)
 #+end_src
 
 ***** Clocking history
