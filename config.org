@@ -7495,12 +7495,19 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
       org-agenda-skip-deadline-prewarning-if-scheduled t)
 (setq org-habit-show-habits-only-for-today t) ; do not show habits in future if scheduled withing agenda time range. E.g. do not show future habits in week view/calendar
 #+end_src
+
+Agendas is my main entry point into daily work. This is where I pickup tasks to work on during the day. I generally use a combination of GTD and "Eating Live Frogs: Do the Worst Thing First", though I am not disciplined enough to follow the latter precisely. In addition, I sometimes use [[id:ee371af1-c478-49d1-9814-1eb78242a341][Pomodoro]], [[id:435d7660-576f-42d0-88fd-9882f494712c][Time blocking (kind of)]], and [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][Bonus/penalty based time management]]. These methods works fine for me at this point, though many more methods do exist [[id:979c767f-0355-4b6d-86a1-1e10d5fa9202][The Ultimate Guide to Personal Productivity Methods]]. 
+
 - I use several agenda views
   - Focused daily agenda :: When we mark the item scheduled, it means that we need to start working on it from that day. However, it leads to a situation when there are so many items being active in agenda that it is useful to focus on what we need to do during the day. That's why I need an additional agenda which focuses on what I really need to do today, but not what I need to start today and what I have started to do which is the case for default daily agenda. See [[id:a6054643-449e-48d7-afff-4155465efc19][Focused daily agenda]].
-  - Normal daily agenda :: Standard agenda with minor tweaks.
+    
+    Indeed, this agenda may as well grow over time. So, I always try to keep it as short as possible: just daily chores + really important things I need to work on. If this agenda grows too much, I consider marking some tasks as HOLD or WAITING and come back to them when I finish the more important tasks. Ideally, there should be no more than 3 big tasks (not chores) to work on each day. Similar concepts are discussed in [[id:6cd01980-7d3f-47c8-8d2f-f2ab43c8b08c][Dave Lee — GTD sucks for creative work. Here's an...]]
+
+  - Normal daily agenda :: Standard agenda with minor tweaks. A can work on it when/if I finish with focused agenda.
+  - Inbox agenda view for captured tasks :: The new tasks and notes I added recently. They must be refiled somewhere. I am not trying to do tasks from here rightaway, but rather just classify the tasks to look at them later in appropriate time. For example, looking into some youtube bookmarks rightaway would not be wise.
+  - Hanging tasks :: The new tasks, which have been refiled, but I did not look into details yet. For example, there can be some online bookmarks I plan to look into, but I only looked into their title so far. I will need some small time to decide if I even want to work on those and when I want to do it. This is the lowest priority agenda during a day. I may or may not look into it on daily basis.
   - Full agenda for GTD self-check :: see [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]].
   - List of projects agenda :: List of all active projects.
-  - *Agenda view for captured tasks* :: tasks, which needs to be refiled (with =:INBOX:= tag)
 
 I use different skip functions here in agenda to filter the agenda. Some of them are used, some of them are just kept here for future if I need them.
   #+begin_src emacs-lisp
@@ -7866,7 +7873,7 @@ This agenda show the items for the current day and time.
 	    (re-search-forward (org-get-limited-outline-regexp) nil 'noerror))
 	  (point))))))
   #+end_src
-
+  
 *************** NEXT [#A] debug =org-agenda-skip-nonurgent-fast=
 :PROPERTIES:
 :SHOWFROMDATE: 2019-08-06
