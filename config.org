@@ -2448,6 +2448,9 @@ abort completely with `C-g'."
 
 Show errors in code with =flycheck=, in tooltips (via =flycheck-tip=).
 
+I also use =shellcheck= software to check my bash scripts (it is automatically used by =flycheck= if available).
+Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's notes: Trying out ShellCheck]] for suggestion!
+
 #+begin_src emacs-lisp
 (use-package flycheck
   :if init-flag
