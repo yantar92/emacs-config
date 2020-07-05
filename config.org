@@ -1983,6 +1983,23 @@ The basic idea is to prefix movement commands with meta.
     (helm-global-mode))
 #+end_src
 
+**** Adaptive sorting of candidates
+:PROPERTIES:
+:CREATED:  [2020-07-04 Sat 17:17]
+:END:
+
+It is handly when frequently used matches are shown on top.
+Credit: [[id:b9619989-5416-463c-a5e9-42d35364cbf2][emacs-tv-config/init-helm.el at master · thierryvolpiatto/emacs-tv-config]]
+
+#+begin_src emacs-lisp
+(use-package helm-adaptive
+  :if init-flag
+  :after helm
+  :config
+  (setq helm-adaptive-history-file nil)
+  (helm-adaptive-mode 1))
+#+end_src
+
 *** Company
 :PROPERTIES:
 :ID:       8ca3a911-ad9d-43a6-83a6-a7b12b383984
