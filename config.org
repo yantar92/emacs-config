@@ -9778,7 +9778,6 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":Source: %:link"
-                           ":Effort: 3"
 			   ":END:"))))
            'replace)
 #+end_src
@@ -9796,7 +9795,6 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":Source: %:link"
-                           ":Effort: 3"
 			   ":END:"
                            "%i"))))
            'replace)
@@ -9816,7 +9814,6 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":Source: %:link"
-                           ":Effort: 3"
 			   ":END:"
                            "%i"))))
            'replace)
