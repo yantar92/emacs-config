@@ -8924,7 +8924,8 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
 :ID:       973d6eff-3d91-48f0-a3b5-b438feccf28f
 :END:
 #+begin_src emacs-lisp
-(setq org-log-into-drawer t
+(setq org-log-into-drawer nil
+      org-log-state-notes-insert-after-drawers t
       org-log-done 'time
       org-log-done-with-time t
       org-log-note-clock-out nil
