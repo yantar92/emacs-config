@@ -4055,6 +4055,18 @@ Visible bell saved me from surprise prompts many times.
 #+begin_src emacs-lisp
 (setq visible-bell t)
 #+end_src
+
+Do not ring the bell when I quit some command via =C-g= or =ESC=.
+Credit: [[id:c0dea452-4742-4355-a0ff-063131c89a6d][bradwright/emacs.d: My Emacs configuration]]
+#+begin_src emacs-lisp
+(setq ring-bell-function
+      (lambda ()
+        "Only rings the bell if it's not a valid quit case, e.g
+keyboard-quit"
+        (unless (memq this-command
+                      '(isearch-abort abort-recursive-edit exit-minibuffer keyboard-quit))
+          (ding))))
+#+end_src
 **** =(expr ...)= instead of =expr( ... )= in debugger
 :PROPERTIES:
 :CREATED:  [2019-08-11 Sun 15:18]
