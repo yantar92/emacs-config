@@ -2209,6 +2209,15 @@ Hence, I do not use it globally, but enable only where I need it.
 (setq revert-without-query '(".*"))
 (bind-key* "M-r" #'revert-buffer)
 #+end_src
+*** Follow symlinks to vc files
+:PROPERTIES:
+:CREATED:  [2020-07-12 Sun 18:35]
+:END:
+
+#+begin_src emacs-lisp
+(setq vc-follow-symlinks t)
+#+end_src
+
 *** =Magit=
 :PROPERTIES:
 :CREATED:  [2018-08-11 Sat 20:47]
