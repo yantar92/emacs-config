@@ -9301,13 +9301,19 @@ Also, during exceptionally procrastinated days time balance may go overboard and
 (defvar org-time-balance-storage (concat user-emacs-directory ".org-time-balance")
   "File used to store time balance between sessions.")
 
-(defvar org-time-balance-lower-bound (* 60 5 -1) ; -5 hours
+(defvar org-time-balance-lower-bound (* 60 2 -1) ; -2 hours
   "Lower bound of possible value of time balance.")
 (defvar org-time-balance-lossage nil
   "Time lossage accumulating when `org-time-balance' reaches `org-time-balance-lower-bound'.")
 (defvar org-time-balance-upper-bound (* 60 10) ; 10 hours
-  "Upper bound of possible value of time balance.
-`org-time-balance' cannot grow above this value when `org-time-balance-lossage' is positive.")
+  "Upper bound of possible value of time balance when `org-time-balance-lossage' is positive.
+Growing time balance will be reducing `org-time-balance-lossage' when
+`org-time-balance' exceeds this value and `org-time-balance-lossage'
+is positive.")
+(defvar org-time-balance-upper-bound-rigid (* 60 30) ; 30 hours
+  "Rigit upper bound of possible value of time balance.
+Growing time balance will be reducing `org-time-balance-lossage' when
+`org-time-balance' exceeds this value.")
 
 (defun org-load-time-balance-session ()
   "Load the current org-time-balance if `org-time-balance-persistant-p' is non nil."
@@ -9318,7 +9324,6 @@ Also, during exceptionally procrastinated days time balance may go overboard and
     (unless org-time-balance (setq org-time-balance 0))
     (unless org-time-balance-lossage (setq org-time-balance-lossage 0))
     (message "Loading time-balance... %d hours" (/ org-time-balance 60))))
-
 
 (defun org-save-time-balance-session ()
   "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
@@ -9383,7 +9388,10 @@ Increment :ORG-TIME-BONUS: for habits, if nesessary."
   (when (and (> org-time-balance-lossage 0)
 	     (> org-time-balance org-time-balance-upper-bound))
     (setq org-time-balance-lossage (- org-time-balance-lossage (- org-time-balance org-time-balance-upper-bound)))
-    (setq org-time-balance org-time-balance-upper-bound)))
+    (setq org-time-balance org-time-balance-upper-bound))
+  (when (> org-time-balance org-time-balance-upper-bound-rigid)
+    (setq org-time-balance-lossage (- org-time-balance-lossage (- org-time-balance org-time-balance-upper-bound-rigid)))
+    (setq org-time-balance org-time-balance-upper-bound-rigid)))
 
 (defun org-accumulate-weighted-time (&optional return)
   "Aggregate `org-time-balance' counter at point from the last save or for all the time.
