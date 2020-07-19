@@ -5891,7 +5891,9 @@ I need to deal with many projects running at the same time in my work. Hence, I 
                             ("ARCHIVEALL" . ?A)
                             ("NOCLOCK" . ?k)
 			    ("ignore" . ?g)
-                            ("REFILE" . ?r))))
+                            ("REFILE" . ?r)
+                            ("@home" . ?h)
+                            ("@work" . ?w))))
 (setq org-tags-exclude-from-inheritance '("ATTACH" "NOCLOCK" "REFILE"))
 #+end_src
 - =COMMON= :: General task
