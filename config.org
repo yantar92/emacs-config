@@ -3309,11 +3309,15 @@ Using trash is safer.
   (delete-by-moving-to-trash t)
   (trash-directory "~/tmp/Trash"))
 #+end_src
-***** COMMENT Auto-revert =dired= buffers
+***** TODO COMMENT Auto-revert =dired= buffers
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:11]
 :ID:       6ac566c7-dbe9-4329-9710-ad05293d7b78
 :END:
+
+Some large dired buffers take a while to update, especially when there are multiple such buffers.
+This gets really annoying if I change some directory externally, switch to Emacs, and have to wait several seconds until Emacs unhangs.
+Instead of using =auto-revert=, I just update dired buffers when they become active.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired
@@ -3377,6 +3381,27 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (apply OLDFUN args)))
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
+***** Do not update mode-line info as in =dired+=
+:PROPERTIES:
+:CREATED:  [2020-07-15 Wed 09:23]
+:ID:       d97e39ed-f771-4675-9cee-dd499e7f53e0
+:END:
+
+=diredp-nb-marked-in-mode-name= from =dired+= is very too slow.
+Disabling it
+
+#+begin_src emacs-lisp
+(use-package dired+
+  :if init-flag
+  :after dired+
+  :config
+  (remove-hook 'dired-after-readin-hook 'diredp-nb-marked-in-mode-name)
+  (remove-hook 'dired-mode-hook         'diredp-nb-marked-in-mode-name))
+
+#+end_src
+
+
+
 ***** Appearance
 ****** COMMENT File icons
 :PROPERTIES:
