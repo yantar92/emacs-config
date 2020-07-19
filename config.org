@@ -7705,8 +7705,8 @@ SUBTREE-END is used as end of the entry if not nil."
 					    (zin/org-agenda-skip-tag "HOLD")
                                             (zin/org-agenda-skip-tag "WAITING")
 					    (org-agenda-skip-before-SHOWFROMDATE-property)
-					    ;; (org-agenda-skip-before-SHOWFROMTIME-property)
-					    ;; (org-agenda-skip-noshowdates)
+					    (org-agenda-skip-before-SHOWFROMTIME-property)
+					    (org-agenda-skip-noshowdates)
                                             (org-agenda-skip-entry-if 'nottodo 'any)))))
 	      ("p" "Projects" tags-todo "-CANCELLED"
 	       ((org-agenda-overriding-header "Project list\n")
