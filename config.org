@@ -11769,10 +11769,15 @@ Optional MODE specifies major mode used for display."
 
 (defun org-agenda-fix-tag-alignment ()
   "Use 'display :align-to instead of spaces in agenda."
-  (goto-char (point-min))
-  (setq-local word-wrap nil) ; tags would be moved to next line if `word-wrap'` is non-nil and `truncate-lines' is nil
-  (while (re-search-forward org-tag-group-re nil 'noerror)
-    (put-text-property (match-beginning 0) (match-beginning 1) 'display `(space . (:align-to (- right (,(string-display-pixel-width (match-string 1)))))))))
+  (save-match-data
+    (goto-char (point-min))
+    (setq-local word-wrap nil) ; tags would be moved to next line if `word-wrap'` is non-nil and `truncate-lines' is nil
+    (while (re-search-forward org-tag-group-re nil 'noerror)
+      (put-text-property (match-beginning 0)
+			 (match-beginning 1)
+                         'display
+                         `(space . (:align-to (- right
+						 (,(string-display-pixel-width (match-string 1))))))))))
 
 (defun org-agenda-adaptive-fill-function ()
   "Fill to the beginning of headline in agenda."
