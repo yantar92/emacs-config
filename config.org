@@ -6271,7 +6271,7 @@ Do not show consistency graph in agenda
 The project is an item with todo keyword and subtask.
 #+begin_src emacs-lisp
 (defun bh/is-project-p ()
-  "Any task with a todo keyword subtask."
+  "Any task with a todo keyword subtask or :REFILE: tag."
   (save-restriction
     (widen)
     (let ((has-subtask)
@@ -6285,7 +6285,8 @@ The project is an item with todo keyword and subtask.
 	  (when (and (not (org-inlinetask-at-task-p))
 		     (member (org-get-todo-state) org-todo-keywords-1))
 	    (setq has-subtask t))))
-      (and is-a-task has-subtask))))
+      (and is-a-task (or has-subtask
+			 (member "REFILE" (org-get-tags nil 'local)))))))
 #+end_src
 This approach is useful in the case if I place some todo under the wrong item during refiling. It will appear in the project list in such a case. Project cannot be =DONE= if any of subtasks is =TODO=, =NEXT=, =WAITING= or =HOLD= (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
 ****** Top level project
