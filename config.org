@@ -7537,6 +7537,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 (setq org-agenda-todo-list-sublevels t)
 (setq org-agenda-show-inherited-tags t)
 (setq org-agenda-search-headline-for-time nil)
+(setq org-agenda-use-time-grid nil)
 (setq org-directory "~/Org")
 (setq org-agenda-files "~/Org/agenda_files")
 (setq org-deadline-warning-days 30)
