@@ -8244,7 +8244,7 @@ Agenda is excellent for short term planning, however it is not very useful if I 
 	  cfw:fchar-top-left-corner ?┏
 	  cfw:fchar-top-right-corner ?┓)))
 #+end_src
-***** TODO =Gcal= - sync with Google calendar
+***** TODO COMMENT =Gcal= - sync with Google calendar
 :PROPERTIES:
 :ID:       b66193fa-9189-4822-b68f-87f5bc30c3fd
 :END:
