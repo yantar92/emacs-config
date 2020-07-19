@@ -11196,7 +11196,7 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
       		  ;;(?⏏ org-specific ":END:" (org-mode))
                   (?— org-specific "\\b---\\b" (org-mode))
       		  (?★ org-specific "\\[#A\\]" (org-mode))
-      		  ("" org-specific "\\[#B\\]" (org-mode))
+      		  (?- org-specific "\\[#B\\]" (org-mode))
       		  (?☕ org-specific "\\[#C\\]" (org-mode))
                   (?■ org-specific "\\(^\\*\\)[^*]" (org-mode) 1)
                   (?• org-specific "^\\(?:\\*\\{1\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
