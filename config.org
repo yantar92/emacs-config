@@ -4454,7 +4454,7 @@ The result is useful to avoid mess in the global variables, but also makes the v
   :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . eros-mode))
 #+end_src
 
-**** Improved interactive evaluation of elisp code
+**** COMMENT Improved interactive evaluation of elisp code
 :PROPERTIES:
 :CREATED:  [2018-07-14 Sat 00:42]
 :ID:       08ca8dd5-a692-470f-97fd-5e46f8255a90
@@ -4466,11 +4466,11 @@ The result is useful to avoid mess in the global variables, but also makes the v
 5. Editing Default Expressions
 
 #+BEGIN_SRC emacs-lisp
-(use-package rsw-elisp
-  :if init-flag
-  :straight (rsw-elisp :host github :repo "rswgnu/rsw-elisp")
-  :config
-  (rsw-elisp-enable))
+  (use-package rsw-elisp
+    :if init-flag
+    :straight (rsw-elisp :host github :repo "rswgnu/rsw-elisp")
+    :config
+    (rsw-elisp-enable))
 #+END_SRC
 
 **** Smart redefining functions
