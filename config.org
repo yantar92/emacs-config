@@ -5968,7 +5968,7 @@ The task is any item with todo keyword and no subtask.
 #+begin_src emacs-lisp
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "DOING(o)" "REVIEW(e)" "|" "DONE(d!)" "FAILED(f@/!)" "MERGED(m!)" )
-	      (sequence "SOMEDAY(s)" "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@)" ))))
+	      (sequence "SOMEDAY(s)" "WAITING(w@/!)" "HOLD(h@/!)" "|" "FROZEN(z@/!)" "CANCELLED(c@)" ))))
 ;; set the tags assigned to specific keywords. Not nesessary, but used by a lot of code for filtering later - hence why not
 (setq org-todo-state-tags-triggers
       (quote (("CANCELLED" ("SOMEDAY") ("CANCELLED" . t))
@@ -6039,6 +6039,7 @@ The task is any item with todo keyword and no subtask.
   - REVIEW(e) :: A task is basically done, but should be reviewed (i.e. consider putting to knowledge base). Unschedule the task when set.
   - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason). The command triggers unscheduling the task.
   - HOLD(h) :: I am not going to do this task for now because of lack of time/low priority. The command triggers unscheduling the task.
+  - FROZEN(z) :: I should have been done, but it haven't and not because of me. It might be in the future, but unlikely. 
   - SOMEDAY(s) :: This task does not have to be done at all. But maybe, it I have a mood... The command triggers unscheduling the task if it is scheduled and clocking out.
 #+begin_src emacs-lisp
 (defun yant/unschedule-maybe ()
@@ -11245,6 +11246,7 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
       		  (?⌛ org-specific "\\(?:^*+ +\\)\\(\\<WAITING\\>\\)" (org-mode) 1)
                   (?⏩ org-specific "\\(?:^*+ +\\)\\(\\<DOING\\>\\)" (org-mode) 1)
       		  (?⛔ org-specific "\\(?:^*+ +\\)\\(\\<HOLD\\>\\)" (org-mode) 1)
+                  (?❄ org-specific "\\(?:^*+ +\\)\\(\\<FROZEN\\>\\)" (org-mode) 1)
                   (?🖹 org-specific "\\(?:^*+ +\\)\\(\\<REVIEW\\>\\)" (org-mode) 1)
       		  ((yant/str-to-glyph "☠D") org-specific "\\<DEADLINE:" (org-mode))
       		  ((yant/str-to-glyph "◴S") org-specific "\\<SCHEDULED:" (org-mode))))))
@@ -11278,6 +11280,7 @@ keyword faces
               ("REVIEW" :foreground "orange" :weight bold)
       	      ("HOLD" :foreground "magenta" :weight bold)
       	      ("CANCELLED" :foreground "gray80" :weight bold)
+              ("FROZEN" :foreground "SkyBlue" :weight bold)
 	      ("MERGED" :foreground "light green" :weight bold))))
 #+end_src
 truncation by default
