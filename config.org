@@ -9923,59 +9923,46 @@ All these templates generally record the creation time in =:CREATED:=
            'replace)
 #+end_src
 - Link from browser :: It has =:SOURCE:= with URL of the page and page title in headline. =:SOURCE:= is the only place, where the URL is shown. I tag the entry with tag =BOOKMARK= to make it clear.
-#+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "b"
-           (cdar  (doct '("Link from browser"
-			  :keys "b"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-			  :template
-			  ("* TODO %? %:description :BOOKMARK:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-			   ":Source: %:link"
-			   ":END:"))))
-           'replace)
-#+end_src
 - Generic link :: Same as link from browser, but silent (don't raise the capture buffer)
+*************** TODO add explanation about special behaviour for different websites
+*************** END
+
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "B"
-           (cdar  (doct '("Generic link"
-			  :keys "B"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :immediate-finish t
-			  :template
-			  ("* TODO %:description :BOOKMARK:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-			   ":Source: %:link"
-			   ":END:"
-                           "%i"))))
-           'replace)
-#+end_src
-- Selection from browser :: Same as previous, but selection is used as headline
-#+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "s"
-           (cdar  (doct '("Selection from browser"
-			  :keys "s"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-			  :template
-			  ("* TODO %? :BOOKMARK:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-			   ":Source: %:link"
-			   ":END:"
-                           "%i"))))
-           'replace)
+(let ((templates (doct '(:group
+			 "Browser link"
+			 :type entry
+			 :file "~/Org/inbox.org"
+                         :extra (lambda ()
+				  (let ((link (plist-get org-store-link-plist :link)))
+                                    (pcase link
+				      ((pred (lambda (link) (s-matches? "sciencedirect\\|elsevier\\|cambridge\\|asme\\.org\\|hanser-elibrary\\.com\\|tandfonline\\|scholarsarchive\\.byu\\.edu\\|osti\\.gov\\|royalsocietypublishing\\.org" link)))
+				       (s-join "\n"
+					       '("- [ ] read paper"
+						 "- [ ] check citing articles"
+						 "- [ ] check related articles"
+						 "- [ ] check references")))
+                                      (_ "")
+                                      )))
+			 :template
+			 ("* TODO %? %:description :BOOKMARK:"
+			  ":PROPERTIES:"
+			  ":CREATED: %U"
+			  ":Source: %:link"
+			  ":END:"
+                          "%{extra}")
+			 :children (("Interactive link"
+				     :keys "b"
+				     :clock-in t
+				     :clock-resume t
+				     )
+				    ("Silent link"
+				     :keys "B"
+				     :immediate-finish t))))))
+  (dolist (template templates)
+    (asoc-put! org-capture-templates
+	       (car template)
+               (cdr  template)
+               'replace)))
 #+end_src
 - Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=.
 #+begin_src emacs-lisp
