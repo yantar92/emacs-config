@@ -9712,7 +9712,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO #project %^{Project title} :%^G:NOARCHIVE:"
+			  ("* TODO #project %^{Project title} :%^G:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
@@ -9722,22 +9722,28 @@ All these templates generally record the creation time in =:CREATED:=
                            "\n%?"
                            "** TODO Literature review"
                            "# Notes about what is known about the topic\n"
-                           "** TODO Research plan"
-                           "# Action plan to complete the project. All the raw data (if any) is stored here.\n"
+                           "** TODO Research plan :NOARCHIVE:REFILE:"
+                           "# Action plan to complete the project.\n"
+                           "** Methods :REFILE:NOARCHIVE:"
+                           "# Nontrivial methods used to execute the action plan."
+                           "** Exp data :REFILE:NOARCHIVE:"
+                           "# The raw experimental data is stored here on per-experiment basis"
                            "** Results"
                            "# The raw data is analysed here to be put into human-readable form (in non-trivial ways)."
+                           "# The data is organised by sample rather than by experiment to avoid dealing with experimental note mess."
                            "# Plots, important observations and thoughs are coming here.\n"
-                           "** Discussion"
+                           "** Discussion :REFILE:"
                            "# Trying to make sense of the results. If possible, comparing with similar literature.\n"
                            "** TODO Conclusion"
                            "# Takeouts of the project and possible things to be done in future."
-                           "** Reports"
+                           "** Reports :NOARCHIVE:"
                            "*** Paperwork :REFILE:"
                            "*** Presentations :REFILE:"
                            "*** Published papers :REFILE:"
                            "*** Funding applications :REFILE:"
                            "** NEXT Papers to read :REFILE:"
-                           "** NEXT Ideas :REFILE:"))))
+                           "** NEXT Ideas :REFILE:"
+			   "# Inbox for project ideas, which are not directly actionable."))))
            'replace)
 #+end_src
 - Conference presentation/poster :: I mark this with =conference= tag. Typical workflow here is:
