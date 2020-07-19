@@ -11762,13 +11762,9 @@ Optional MODE specifies major mode used for display."
     (when (fboundp mode)
       (funcall mode)
       (font-lock-fontify-buffer))
-    (if (not (get-buffer-window (current-buffer)))
-	(save-window-excursion
-          ;; Avoid errors if the selected window is a dedicated one,
-          ;; and they just want to insert a document into it.
-          (set-window-dedicated-p nil nil)
-	  (set-window-buffer nil (current-buffer))
-	  (car (window-text-pixel-size nil (line-beginning-position) (point))))
+    (if (get-buffer-window (current-buffer))
+	(car (window-text-pixel-size nil (line-beginning-position) (point)))
+      (set-window-buffer nil (current-buffer))
       (car (window-text-pixel-size nil (line-beginning-position) (point))))))
 
 (defun org-agenda-fix-tag-alignment ()
