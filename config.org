@@ -12646,22 +12646,6 @@ CLOCK: [2020-06-19 Fri 22:14]--[2020-06-19 Fri 22:15] =>  0:01
       :cond (eq (org-element-type (org-element-at-point)) 'src-block)
       (goto-char (org-element-property :begin (org-element-at-point))))
 
-    (meta-defun meta-down
-      :mode org-mode
-      :cond (save-excursion (beginning-of-line) (org-at-heading-p))
-      :cond
-      (progn
-	(when (save-excursion (next-line)
-			      (looking-at-p org-property-drawer-re))
-	  (re-search-forward org-property-drawer-re)
-          (forward-char)
-          (when (save-excursion (looking-at-p "^:LOGBOOK:$"))
-            (re-search-forward org-property-end-re)
-            (forward-char)))
-        (when (save-excursion (beginning-of-line) (looking-at-p "^:LOGBOOK:$"))
-          (re-search-forward org-property-end-re)
-          (forward-char))))
-
     (meta-defun meta-move-line-up :mode org-struct-mode org-metaup)
     (meta-defun meta-move-line-down :mode org-struct-mode org-metadown)
     (meta-defun meta-move-line-up :mode org-agenda-mode org-agenda-drag-line-backward)
