@@ -740,10 +740,11 @@ Make help, info, and back-trace pop-up in separate frame
 
 #+BEGIN_SRC emacs-lisp  
 ;; ("*Help*" :select t :frame t)
-     ;; (helpful-mode :select t :frame t)
-     ;; ("*info*" :select t :frame t :same t)
-     ("*Select Link*" :align 'below)
-     ;; ("*Backtrace*" :select t :frame t :same t)
+;; (helpful-mode :select t :frame t)
+;; ("*info*" :select t :frame t :same t)
+("*Select Link*" :align 'below)
+("*Async shell command*" :ignore t)
+;; ("*Backtrace*" :select t :frame t :same t)
      #+END_SRC
 
 #+BEGIN_SRC emacs-lisp  
