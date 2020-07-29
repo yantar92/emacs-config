@@ -4209,6 +4209,31 @@ Sometimes, I just need to have any random text in buffer for testing.
 						      'display '(raise -0.1))))
   (explain-pause-mode +1))
 #+end_src
+*** Debugging of font-lock
+:PROPERTIES:
+:CREATED:  [2020-07-28 Tue 17:46]
+:ID:       e8ad6617-d24c-4dfe-8f28-e6336e4c7787
+:END:
+
+By default, font-locking is not debuggable because all the errors thrown by fontification functions are catched and cause the functions to be removed. It indeed makes sense since errors in fontification functions can easily hang Emacs. However, it makes debugging such functions very difficult.
+
+Here is the solution: [[id:d3ad021d-475f-48d6-9b80-315dbff60322][Lindydancer/font-lock-studio: Debugger for Font Lock keywords]]
+Just invoke =M-x font-lock-studio= for interactive debugging.
+
+#+begin_src emacs-lisp
+(use-package font-lock-studio
+  :if init-flag
+  :straight (font-lock-studio :type git :host github :repo "Lindydancer/font-lock-studio"))
+#+end_src
+
+The same author also wrote font-lock profiler: [[id:github_lindydancer_lindy_font_lock_profil_cover][Lindydancer [Github] Lindydancer Font-Lock-Profiler: Coverage and Timing Tool for Font-Lock Keywords]]
+
+#+begin_src emacs-lisp
+(use-package font-lock-profiler
+  :if init-flag
+  :straight (font-lock-profiler :type git :host github :repo "Lindydancer/font-lock-profiler"))
+#+end_src
+
 
 ** Programming & emacsing
 :PROPERTIES:
