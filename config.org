@@ -6015,7 +6015,7 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 *************** END
 - =NOEXPORT= :: Do not export an item
 - =NODEADLINE= :: Do not show these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view
-- =SKIP= :: Some projects contains tasks, which can be done independently on each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belongs to has =NEXT= tasks.
+- =SKIP= :: Some projects contains tasks, which can be done independently to each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belong to have =NEXT= tasks.
 - =NOARCHIVE= :: Do not archive a task. This in not inherited.
 - =ARCHIVE= :: Prevent task from unfolding (e.g. task contains bulky data, I do not want to see)
 - =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only do it all together.
