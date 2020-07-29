@@ -1161,6 +1161,7 @@ Show some text in buffer differently
 				    (funcall separator-right face1 mode-line)
 				    (powerline-raw " " mode-line)
 				    (powerline-raw "%p" mode-line)
+                                    (powerline-raw mode-line-position mode-line)
 				    (powerline-raw " " mode-line)
 				    )))
 			 (concat (powerline-render boon)
