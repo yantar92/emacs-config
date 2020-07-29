@@ -839,12 +839,14 @@ If the line wrapping is active, I also want the word wrap to be activated automa
     (diminish 'visual-line-mode)
     (define-advice toggle-truncate-lines (:after (&optional arg) toggle-adaptive-wrap)
       "Always use `adaptive-wrap-prefix-mode' when truncation of lines is disabled."
+      (setq line-move-visual nil)
       (if truncate-lines
 	  (adaptive-wrap-prefix-mode -1)
 	(adaptive-wrap-prefix-mode +1))))
   
-  (setq-default truncate-lines 't
-		word-wrap 't))
+  (setq-default truncate-lines t
+		word-wrap t
+                line-move-visual nil))
 #+end_src
 *** Text in buffers
 :PROPERTIES:
