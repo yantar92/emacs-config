@@ -5176,7 +5176,7 @@ Meta bindings for calendar
       (quick-peek-hide))
     (advice-add 'yant/elfeed-capture-entry :after #'elfeed-search-untag-all-unread@hide-quickpeek)
     (add-hook 'elfeed-search-update-hook #'elfeed-search-untag-all-unread@hide-quickpeek))
-  
+
   (use-package org-capture-pop-frame
     :defer t
     :config
@@ -5200,7 +5200,6 @@ Meta bindings for calendar
 	       when (elfeed-entry-link entry)
 	       do (flet ((raise-frame nil nil))
 		    (let ((yant/suppress-pop-frame t)
-			  (url-present-p (s-replace "\n" "" (shell-command-to-string (format "/home/yantar92/bin/org-check-bookmark.sh \"%s\"" it))))
 			  ;; (content (elfeed-deref (elfeed-entry-content entry)))
 			  ;; (content-type (elfeed-entry-content-type entry))
                           )
@@ -5216,15 +5215,15 @@ Meta bindings for calendar
                       ;;                                        (goto-char (point-max))
                       ;;                                        (insert "\n\n#+end_src"))
 		      ;; 					   (buffer-string)))
-		      (if (string= url-present-p "ok")
-			  (org-protocol-capture (list :template "B"
-						      :url it
-						      :title (format "%s: %s"
-								     (elfeed-feed-title (elfeed-entry-feed entry))
-								     (elfeed-entry-title entry))
-						      ;; :body content-text
-                                                      ))
-			(user-error "%s" url-present-p)))))
+		      
+		      (org-protocol-capture (list :template "B"
+						  :url it
+						  :title (format "%s: %s"
+								 (elfeed-feed-title (elfeed-entry-feed entry))
+								 (elfeed-entry-title entry))
+                                                  :elfeed-data entry
+						  ;; :body content-text
+                                                  )))))
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
   
