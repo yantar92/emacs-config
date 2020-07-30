@@ -1057,7 +1057,13 @@ Show some text in buffer differently
     (when init-flag
       (setf size-indication-mode t))
       #+end_src
-- Show boon state
+
+By default, the position in buffer =mode-line-position= is shown in %. However, I only need this in pdf-view, where I want to see the page number. Since the pdf-view changes this value anyway, I just let the buffer position be blank most of time, unless something (pdf-view) changes it to more useful value.
+*************** TODO move it close to the definition
+*************** END
+
+
+Show boon state
   #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
@@ -1100,6 +1106,7 @@ Show some text in buffer differently
       "Set up a powerline based on powerline-default-theme and spaceline-all-the-icons-theme which also displays boon-state."
       (interactive)
       (require 'spaceline-all-the-icons-segments)
+      (setq-default mode-line-position " ")
       (setq-default mode-line-format
 		    '("%e"
 		      (:eval
