@@ -1370,11 +1370,9 @@ This section contains customisation relevant to actions associated with running 
 :PROPERTIES:
 :ID:       b1e1c83a-18be-4c5c-bd77-970a0a163b72
 :END:
-- enforce =y-or-n-p= everywhere
 - do not use graphical dialogues
 
   #+begin_src emacs-lisp
-(defalias 'yes-or-no-p 'y-or-n-p)
 (setq use-dialog-box nil)
   #+end_src
 
