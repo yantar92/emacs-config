@@ -5953,6 +5953,33 @@ Automatically translate non-English and non-Russian/Ukrainian titles.
   )
 #+end_src
 
+*** TODO COMMENT Org-mode in messages
+
+[[github_jeremy-compostella_jerem_compos_org_msg_orgms][org-msg]] make it possible to write email in org-mode and export it to html when sending.
+
+#+begin_src emacs-lisp 
+(use-package org-msg
+  :straight t
+  :config
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
+	org-msg-startup "hidestars indent inlineimages"
+	org-msg-greeting-fmt "\nHi *%s*,\n\n"
+	org-msg-greeting-name-limit 3
+	org-msg-text-plain-alternative t))
+#+end_src
+
+Make company completion work in notmuch.
+Credit: [[id:github_jeremy-compostella_notmuc_compan_suppor_org_msg][jeremy-compostella [Github] Notmuch Company Support in Org-Msg-Edit-Mode · Issue #53 · Jeremy-Compostella Org-Msg]]
+#+begin_src emacs-lisp 
+(defun arvindsv/org-msg-notmuch-company (old-fn &rest args)
+  ;; Cheat and say that this buffer, which should be org-msg-edit-mode, is derived from message-mode.
+  (cl-letf (((symbol-function 'derived-mode-p) (lambda (mode) (if (eq mode 'message-mode) t (derived-mode-p mode)))))
+    (apply old-fn args)))
+
+(advice-add 'notmuch-company :around #'arvindsv/org-msg-notmuch-company)
+#+end_src
+
+
 ** Org mode
 :PROPERTIES:
 :ID:       58045c39-ffd5-4ccc-bc9d-49048c437f42
