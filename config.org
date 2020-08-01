@@ -236,7 +236,7 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
 			:type git :repo "https://code.orgmode.org/bzg/org-mode.git"
                         :local-repo "org"
 			:files (:defaults "contrib/lisp/*.el")
-			:fork (:repo "/home/yantar92/Git/org-mode/" :branch "feature/org-fold")))
+			:fork (:repo "/home/yantar92/Git/org-mode/")))
 #+end_src
 
 Keep customisation away from =init.el= in a separate file
