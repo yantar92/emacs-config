@@ -6112,6 +6112,7 @@ The task is any item with todo keyword and no subtask.
 	      (done ("SOMEDAY") ("WAITING") ("HOLD"))
 	      ("TODO" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
 	      ("NEXT" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
+              ("REVIEW" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
               ("DOING" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
 	      ("DONE" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
 	      ("FAILED" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD")))
