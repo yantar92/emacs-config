@@ -1359,6 +1359,26 @@ Change default cursor colour (just my taste)
   (set-cursor-color "IndianRed"))
 #+END_SRC
 
+**** Highlight cursor when it moves far
+:PROPERTIES:
+:ID:       c86d4d84-aa19-43e8-990a-6305db525433
+:ARCHIVE_TIME: 2019-12-09 Mon 13:06
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Appearance/Cursor
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+
+#+begin_src emacs-lisp
+(use-package beacon
+  :if init-flag
+  :straight t
+  :diminish beacon-mode
+  :config
+  (beacon-mode 1))
+#+end_src
+
+
 ** Command loop
 :PROPERTIES:
 :ID:       ff7a4c41-d457-4a90-bcb9-4f653af48ff4
