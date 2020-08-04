@@ -5889,6 +5889,19 @@ Here are some workarounds
   (setq footnote-prefix [(control ?c) ?f]))
 #+end_src
 
+**** Faster address completion
+
+Tip from [[id:notmuchmail_2019_emacs][[notmuchmail] (2019) Emacstips]]
+Using [[id:github_aperezdc_aperez_notmuc_addrl_c_addres][aperezdc [Github] Aperezdc Notmuch-Addrlookup-C: Address Lookup Tool for Notmuch in C Using Glib and Libnotmuch]]
+
+#+begin_src emacs-lisp
+(use-package notmuch-address
+  :after notmuch
+  :if init-flag
+  :config
+  (setq notmuch-address-command "notmuch-addrlookup"))
+#+end_src
+
 **** Appearance
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 10:50]
