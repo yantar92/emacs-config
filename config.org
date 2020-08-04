@@ -1396,6 +1396,12 @@ This section contains customisation relevant to actions associated with running 
 (setq use-dialog-box nil)
   #+end_src
 
+*** Tooltips
+Disable tooltips
+#+begin_src emacs-lisp
+(tooltip-mode -1)
+#+end_src
+
 *** Key bindings
 At some point, a got very annoyed about distance between =C-n=, =C-p=, =C-f=, and =C-b= and did not want to move my hand all the way to arrow keys.
 So, I use modal editing  now, which allows me to move around using the keys, which are close to each other.
