@@ -3100,6 +3100,16 @@ Use =boon-*-search-map= to select windows and =C-M-l= to cycle current window.
 		("u" . winner-undo)
 		("p" . winner-redo))))
 #+END_SRC
+**** Recentering text in window
+
+By default help:recenter-top-bottom goes in the following order: middle top bottom.
+However, most of time I use this function is aligning text to top of the window.
+
+#+begin_src emacs-lisp
+(when init-flag
+  (setq recenter-positions '(top middle bottom)))
+#+end_src
+
 *** Frame
 :PROPERTIES:
 :ID:       bb7ce294-1833-43bd-a837-ab4cd73fca6b
