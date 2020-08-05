@@ -6811,8 +6811,17 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 	 (filepath (apply #'s-concat (cdr (s-split ":" filelink)))))
     (format "att-id:%s:%s" id filepath)))
 
+(defun org-att-id-link-description (link desc)
+  "Return description of an att-id: link."
+  (when-let ((id (nth 1 (s-split ":" link)))
+	     (file (nth 2 (s-split ":" link))))
+    (org-with-point-at (org-id-find id 'marker)
+      (when-let ((heading (org-get-heading 'no-tags 'no-todo 'no-priority 'no-comment)))
+	(s-concat heading ":" file)))))
+
 (org-link-set-parameters "att-id"
-			 :complete #'org-att-id-link-complete)
+			 :complete #'org-att-id-link-complete
+                         :desk #'org-att-id-link-description)
 
 (org-link-set-parameters "id"
 			 :complete #'org-id-prompt-id)
