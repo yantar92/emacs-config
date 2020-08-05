@@ -2052,11 +2052,11 @@ The basic idea is to prefix movement commands with meta.
   (helm-mode-fuzzy-match t)
   :config
   (defun yant/helm-yank-selection-or-execute-persistent-action (arg)
-    "Call `helm-yank-selection' unless some cases listed below."
+    "Call `helm-yank-selection' in some cases listed below."
     (interactive "P")
     (pcase helm--prompt
-      ("File: " (funcall-interactively #'helm-execute-persistent-action))
-      (_ (funcall-interactively #'helm-yank-selection arg))))
+      ((pred (string-match-p "Refile subtree")) (funcall-interactively #'helm-yank-selection arg))
+      (_ (funcall-interactively #'helm-execute-persistent-action))))
   (use-package helm-config)
   (use-package helm-files)
   (use-package helm-command)
