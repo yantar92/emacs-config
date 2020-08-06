@@ -6792,14 +6792,25 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 
 (defun org-att-id-prompt-id ()
   "Prompt for the id during completion of att-id: link."
-  (let ((org-refile-history nil)
-	(org-refile-cache nil)
-	(org-refile-target-verify-function #'org-att-id-skip-function))
-    (let ((prompt-ans (org-refile-get-location "Link to attachment from")))
-      (prog1
-	  (org-id-get (seq-find #'markerp
-				prompt-ans)
-                      'create)))))
+  (let (parent-project)
+    (when (eq major-mode 'org-mode)
+      (org-with-point-at (point)
+	(org-back-to-heading)
+	(while (and (not parent-project)
+		    (org-up-heading-safe))
+	  (when (and (bh/is-project-p)
+		     (not (bh/is-subproject-p)))
+            (setq parent-project (list (s-join "/"
+					       (append (list (f-filename (buffer-file-name)))
+						       (org-get-outline-path 'with-self 'use-cache)))))))))
+    (let ((org-refile-history parent-project)
+	  (org-refile-cache nil)
+	  (org-refile-target-verify-function #'org-att-id-skip-function))
+      (let ((prompt-ans (org-refile-get-location "Link to attachment from")))
+	(prog1
+	    (org-id-get (seq-find #'markerp
+				  prompt-ans)
+			'create))))))
 
 (defun org-att-id-link-complete (&optional arg)
   "Completion function for att-id: link."
