@@ -9461,7 +9461,9 @@ Instead, I use =ORG-TIME-BONUS-ON-DONE= property to add fixed extra time for fin
 
 Also, during exceptionally procrastinated days time balance may go overboard and become terribly negative. If the balance becomes too negative, it is infuriating to see how much I need to makeup. The solution is introducing the idea of /lossage/. When time balance becomes too negative, it is no longer decreased, but the lossage is increased. Later, when the time balance becomes large and positive, it stops growing until the lossage is back to 0.
 
-
+Similar idea is used by John Wiegley in [[id:4dda6631-cace-441d-bc4c-a3d778a09d30][Emacs SF: 2019-07-24: All Things Org-Mode - Multiple Speakers]]
+He tracks his clocking time daily to have an idea how long he worked relative to his daily goal (8 hours).
+This idea is not applicable for my work though. Research is often not regularly structured - I can work during weekdays, weekends, at night time when I suddenly get some idea, etc. In such a way, it is important for me to maintain some average work/leisure balance rather than work certain number of hours every workday.
 
 *************** TODO the bonus cannot be correctly handled when we need to update the time after certain point
 *************** END
