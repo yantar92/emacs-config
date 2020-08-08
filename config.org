@@ -751,7 +751,7 @@ Make help, info, and back-trace pop-up in separate frame
 )))
 #+end_src
 
-**** Centered window mode
+**** Centered text in window
 :PROPERTIES:
 :ID:       af9c7d6c-fd15-4d68-b379-3d439ea94370
 :SHOWFROMDATE: 2019-12-10
@@ -761,6 +761,12 @@ Make help, info, and back-trace pop-up in separate frame
 :END:
 My screen is too wide to read text comfortably.
 I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer width.
+
+***** Centered window mode
+      :PROPERTIES:
+      :ID:       3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad
+      :END:
+
 *************** TODO Move pdf-view config to pdf-view
 *************** END
 
