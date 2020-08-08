@@ -7176,7 +7176,7 @@ This includes:
 	    (with-current-buffer buffer
 	      (widen)
 	      (goto-char pos)
-	      (org-show-context 'agenda)
+	      ;; (org-fold-show-context 'agenda)
 	      (funcall-interactively 'org-command-set-SHOWFROMDATE-property arg)
 	      (setq ts (org-entry-get (point) "SHOWFROMDATE")))
 	    (org-agenda-show-new-time marker ts " P"))))
