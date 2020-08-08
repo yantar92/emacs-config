@@ -6315,12 +6315,13 @@ The maximum number of levels is controlled by `org-inlinetask-min-level'."
 		     (1- (* org-inlinetask-min-level 2))
 		   org-inlinetask-min-level)))
     (format "^\\(\\*\\{1,%d\\}\\)[ \t]+" nstars)))
-(define-advice org-back-to-heading (:around (oldfun &optional args) skip-inlinetasks)
-  "Ignore preceding inline tasks when calling outline-back-to-heading."
-  (if (org-inlinetask-in-task-p)
-      (funcall oldfun args) ;; inside inlinetask - just go to heading
-    (let ((outline-regexp (org-outline-regexp-no-inline)))
-      (funcall oldfun args))))
+;; (define-advice org-back-to-heading (:around (oldfun &optional args) skip-inlinetasks)
+;;   "Ignore preceding inline tasks when calling outline-back-to-heading."
+;;   (if (org-inlinetask-in-task-p)
+;;       (funcall oldfun args) ;; inside inlinetask - just go to heading
+;;     (let ((outline-regexp (org-outline-regexp-no-inline)))
+;;       (funcall oldfun args))))
+;; (advice-remove 'org-back-to-heading #'org-back-to-heading@skip-inlinetasks)
 #+end_src
 
 By default, org-mode does not allow storing links to inline headings.
