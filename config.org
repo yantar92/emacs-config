@@ -9840,14 +9840,39 @@ All these templates generally record the creation time in =:CREATED:=
                     :clock-in t
                     :clock-resume t
                     :template
-                    ("* TODO %u"
+                    ("* TODO Fleeting note on %u"
                      ":PROPERTIES:"
                      ":CREATED: %U"
                      ":END:"
+                     "- [ ] Check what notes are followed by this link"
+                     "- [ ] Make title"
+                     "- [ ] Refile to relevant topics"
+                     "- [ ] Elaborate"
+                     "Following up: %a"
                      "\n"
                      "%? %a"
                      "\n"))))
            :replace)
+(use-package ya-org-capture
+  :straight (ya-org-capture :type git :host github :repo "ag91/ya-org-capture")
+  :config
+  (ya-org-capture/setup)
+  (asoc-put! org-capture-templates
+	     "F"
+             '("Note" entry (file "/tmp/test.org") "* %(ya-org-capture/make-snippet \"note-capture_\")" :empty-lines 2 :clock-in t :clock-resume t)
+             :replace)
+  (asoc-put! org-capture-templates
+	     "E"
+             (cdar (doct
+		    '("Note"
+		      :keys "E"
+                      :type entry
+                      :file "~/Org/inbox.org"
+                      :clock-in t
+                      :clock-resume t
+                      :template
+                      ("* %(ya-org-capture/make-snippet \"note-capture_\")"))))
+             :replace))
 #+end_src
 - Habit :: Habit. I default it to no logging.
 #+begin_src emacs-lisp
