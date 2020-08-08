@@ -11821,7 +11821,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 *************** END
 #+begin_src emacs-lisp
 (use-package org
-  ;;:hook (org-load . yant/org-babel-ingest-my-files)
+  :hook (org-load . yant/org-babel-ingest-my-files)
   :config
   (defun yant/org-babel-ingest-my-files ()
     "Load default babel library files."  
