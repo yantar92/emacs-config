@@ -11277,24 +11277,25 @@ Otherwise, I'd rather keep the task in place to avoid hanging files.
   "Maybe delete subtree attachments when archiving.
 This function is called by `org-archive-hook'.  The option
 `org-attach-archive-delete' controls its behavior."
-  (when (and (org-at-heading-p)
-	     (member org-attach-auto-tag (org-get-tags nil t));; do not ask if no attachments
-	     )
-    (when (if (eq org-attach-archive-delete 'query)
-	      (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
-								      (interactive)
-                                                                      (dired-noselect dir nil) )))
-				  (org-attach-reveal-in-emacs))))
-                (save-window-excursion
-                  (dired-pop-to-buffer dired-buf)
-                  (select-window (old-selected-window))
-		  (prog1
-		      (yes-or-no-p (format "%s: Delete all attachments? "
-					   (org-get-heading
-					    'notags 'notodo 'nopriority 'nocomment)))
-                    (kill-buffer dired-buf))))
-	    org-attach-archive-delete)
-      (org-attach-delete-all t))))
+  (org-with-point-at-org-buffer
+   (when (and (org-at-heading-p)
+	      (member org-attach-auto-tag (org-get-tags nil t));; do not ask if no attachments
+	      )
+     (let ((heading (org-get-heading 'notags 'notodo 'norpiority 'nocommend)))
+       (when (if (eq org-attach-archive-delete 'query)
+		 (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
+									 (interactive)
+									 (dired-noselect dir nil) )))
+				     (org-attach-reveal-in-emacs))))
+                   (save-window-excursion
+                     (dired-pop-to-buffer dired-buf)
+                     (select-window (old-selected-window))
+		     (prog1
+			 (yes-or-no-p (format "%s: Delete all attachments? "
+					      heading))
+                       (kill-buffer dired-buf))))
+	       org-attach-archive-delete)
+	 (org-attach-delete-all t))))))
 #+end_src
 
 Archive logbook
