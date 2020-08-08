@@ -13130,6 +13130,14 @@ Use UTF symbols for entities
 (add-hook 'org-mode-hook (lambda () (setq-local eldoc-documentation-function #'org-eldoc-documentation-function)))
 #+end_src
 
+**** TODO Optimize fontification of priorities
+:PROPERTIES:
+:CREATED:  [2020-07-28 Tue 07:30]
+:END:
+
+To my horror, a single =org-font-lock-add-priority-faces= takes 98% of the whole font-locking makeing the opening take of huge (2M, thousands of headlines) org file several minutes.
+[2020-07-28 Tue] Apparently the reason is because default regex can match too many things in my files. For now, just removed those long lines causing regexp search to be extremely slow.
+
 *** Misc
 :PROPERTIES:
 :ID:       b195d9ea-e3e0-476e-b898-43b69fbd365d
