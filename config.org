@@ -9916,17 +9916,20 @@ All these templates generally record the creation time in =:CREATED:=
 #+end_src
 - Project :: A large task that needs to be studied systematically. A typical project includes the following:
   1. Literature review to find out what is known about the topic. I only put my notes and thoughts on the literature here.
-  2. Research plan to plan what I need to do to fulfil the project
-  3. Results of the executing the plan and analysis of those results
-  4. Discussion about the meaning of the results in the context of literature
-  5. Conclusion and possible future directions
-  6. Public reports and/or paperwork associated with the project
+  2. [optional] Resources I have to execute the project (i.e. samples)
+  3. Research plan to plan what I need to do to fulfil the project
+  4. The information I collected while executing the project (experimental data)
+  5. Non-trivial methods I used to execute the project
+  6. Results of the executing the plan and analysis of those results
+  7. Discussion about the meaning of the results in the context of literature
+  8. Conclusion and possible future directions
+  9. Public reports and/or paperwork associated with the project
      1. Paperwork
      2. Conference talks/posters
      3. Publications in public domain
      4. Funding applications
-  7. List of resources I plan to read, related to the project. I keep this separate from literature review to avoid cluttering.
-  8. Ideas, which may be useful for the project. It is "Inbox" of the project. The items may later come to other sections.
+  10. List of resources I plan to read, related to the project. I keep this separate from literature review to avoid cluttering.
+  11. Ideas, which may be useful for the project. It is "Inbox" of the project. The items may later come to other sections.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "P"
@@ -9949,6 +9952,8 @@ All these templates generally record the creation time in =:CREATED:=
                            "# Notes about what is known about the topic\n"
                            "** TODO Research plan :NOARCHIVE:REFILE:"
                            "# Action plan to complete the project.\n"
+                           "** Sample condition :REFILE:NOARCHIVE:"
+                           "# Limited resources I need to complete the project."
                            "** Methods :REFILE:NOARCHIVE:"
                            "# Nontrivial methods used to execute the action plan."
                            "** Exp data :REFILE:NOARCHIVE:"
@@ -9966,6 +9971,38 @@ All these templates generally record the creation time in =:CREATED:=
                            "*** Presentations :REFILE:"
                            "*** Published papers :REFILE:"
                            "*** Funding applications :REFILE:"
+                           "** NEXT Papers to read :REFILE:"
+                           "** NEXT Ideas :REFILE:"
+			   "# Inbox for project ideas, which are not directly actionable."))))
+           'replace)
+
+(asoc-put! org-capture-templates
+	   "G"
+           (cdar  (doct '("General project"
+			  :keys "G"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* TODO #project %^{Project title} :%^G:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
+                           ":CATEGORY: %^{Category}"
+			   ":END:"
+                           "# A short summary about the project."
+                           "\n%?"
+                           "** TODO Literature review"
+                           "# Notes about what is known about the topic\n"
+                           "** TODO Action plan :NOARCHIVE:REFILE:"
+                           "# Action plan to complete the project.\n"
+                           "** Methods :REFILE:NOARCHIVE:"
+                           "# Nontrivial methods used to execute the action plan."
+                           "** Results"
+                           "** TODO Conclusion"
+                           "# Takeouts of the project and possible things to be done in future."
+                           "** Public results :REFILE:"
                            "** NEXT Papers to read :REFILE:"
                            "** NEXT Ideas :REFILE:"
 			   "# Inbox for project ideas, which are not directly actionable."))))
