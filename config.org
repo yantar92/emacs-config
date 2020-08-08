@@ -5905,7 +5905,7 @@ Using [[id:github_aperezdc_aperez_notmuc_addrl_c_addres][aperezdc [Github] Apere
   :after notmuch
   :if init-flag
   :config
-  (setq notmuch-address-command "notmuch-addrlookup"))
+  (setq notmuch-address-command "~/bin/notmuch-addrlookup"))
 #+end_src
 
 **** Appearance
