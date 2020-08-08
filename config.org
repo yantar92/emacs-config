@@ -12457,9 +12457,16 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   (use-package doom-themes-ext-org
     :demand t))
 #+end_src
+**** Align tags to right, even when the window size changes
+:PROPERTIES:
+:CREATED:  [2020-07-17 Fri 15:21]
+:ID:       d5a3c2c8-c6b1-4f21-a548-f6bb8bf85949
+:END:
 
-Align tags to right, even when the window size changes.
 *************** TODO not reliable, acts on  first space in  empty headline as well
+*************** END
+
+*************** TODO it seems that org-align-tags intereferes with helm completion in bizarre way when tag string appears inside the completion
 *************** END
 
 #+begin_src emacs-lisp
