@@ -12454,7 +12454,8 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   :if init-flag
   :straight t
   :config
-  (doom-themes-org-config))
+  (use-package doom-themes-ext-org
+    :demand t))
 #+end_src
 
 Align tags to right, even when the window size changes.
