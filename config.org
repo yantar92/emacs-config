@@ -7240,14 +7240,7 @@ This includes:
 	       (if (member "Sun" days) '(7 7 30 2017) nil))))
     (some #'(lambda (&rest args) (apply #'diary-cyclic (car args))) (remove nil data))))
      #+end_src
-- =:CREATED:= :: Entry creation time. Inserted for all the new headings.
-#+BEGIN_SRC emacs-lisp
-(defun yant/insert-heading-created-property (&optional time)
-  "Add :CREATED: property to the task at point and set it to current time.
-The property is set to TIME if it is supplied."
-  (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp time t t))))
-(add-hook 'org-insert-heading-hook 'yant/insert-heading-created-property 'append)
- #+END_SRC
+- =:CREATED:= :: Entry creation time. Inserted for all the new captures.
 - =:BLOCKER:= :: Conditions to be met before allowing the entry to be
                  marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
 - =:TRIGGER:= :: Actions to be done when the item is marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
