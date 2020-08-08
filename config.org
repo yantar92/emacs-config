@@ -11175,7 +11175,8 @@ In the past I only archived the tasks, which where done before the past month, b
       (if (and (member "NOARCHIVE" (org-get-tags))
 	       (not (org-inlinetask-at-task-p)))
 	  subtree-end
-	(if (member (org-get-todo-state) org-done-keywords)
+	(if (and (member (org-get-todo-state) org-done-keywords)
+		 (not (member (org-get-todo-state) '("FROZEN"))))
             nil ; available to archive
 	  ;; (let* ((daynr (string-to-number (format-time-string "%d" (current-time))))
 	  ;; 	   ;; (a-month-ago (* 60 60 24 (+ daynr 1)))
