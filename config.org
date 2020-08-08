@@ -11172,7 +11172,8 @@ In the past I only archived the tasks, which where done before the past month, b
            (next-item (if (member "ARCHIVEALL" (org-get-tags))
 			  subtree-end ; do not archive subtasks
 			next-headline)))
-      (if (member "NOARCHIVE" (org-get-tags))
+      (if (and (member "NOARCHIVE" (org-get-tags))
+	       (not (org-inlinetask-at-task-p)))
 	  subtree-end
 	(if (member (org-get-todo-state) org-done-keywords)
             nil ; available to archive
