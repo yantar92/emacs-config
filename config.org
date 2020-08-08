@@ -12468,7 +12468,7 @@ Align tags to right, even when the window size changes.
   :custom
   (org-auto-align-tags nil)
   :config
-  (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords nil '(yant/org-align-tags) t)) 100)
+  ;; (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords nil '(yant/org-align-tags) t)) 100)
   (add-hook! 'org-mode-hook (add-to-list 'font-lock-extra-managed-props 'org-tag-aligned))
 
   (add-hook! 'org-mode-hook (setq-local adaptive-fill-function #'org-adaptive-fill-function))
@@ -12483,23 +12483,25 @@ Align tags to right, even when the window size changes.
 
   (defun yant/org-align-tags (limit &optional force)
     "Align all the tags in org buffer."
-    (while (re-search-forward "^\\*+ \\(.+?\\)\\([ \t]+\\)\\(:\\(?:[^ \n]+:\\)+\\)$" limit t)
-      (when (and (match-string 2)
-		 (or force
-		     (not (get-text-property (match-beginning 2) 'org-tag-aligned))))
-	(with-silent-modifications
-          (put-text-property (match-beginning 2) (match-end 2) 'org-tag-aligned t)
-	  (put-text-property (if (>= 2 (- (match-end 2) (match-beginning 2)))
-				 (match-beginning 2)
-                               ;; multiple whitespaces may mean that we are in process of typing
-                               (1+ (match-beginning 2)))
-			     (match-end 2)
-			     'display
-			     `(space . (:align-to (- right
-						     (,(+ 10 ;; no idea, but otherwise it is sometimes not enough
-							  (string-display-pixel-width org-ellipsis)
-							  (string-display-pixel-width (or (match-string 3)
-											  ""))))))))))))
+    (when (eq major-mode 'org-mode)
+      (save-excursion
+	(while (re-search-forward "^\\*+ \\(.+?\\)\\([ \t]+\\)\\(:\\(?:[^ \n]+:\\)+\\)$" limit t)
+	  (when (and (match-string 2)
+		     (or force
+			 (not (get-text-property (match-beginning 2) 'org-tag-aligned))))
+	    (with-silent-modifications
+              (put-text-property (match-beginning 2) (match-end 2) 'org-tag-aligned t)
+	      (put-text-property (if (>= 2 (- (match-end 2) (match-beginning 2)))
+				     (match-beginning 2)
+				   ;; multiple whitespaces may mean that we are in process of typing
+				   (1+ (match-beginning 2)))
+				 (match-end 2)
+				 'display
+				 `(space . (:align-to (- right
+							 (,(+ 10 ;; no idea, but otherwise it is sometimes not enough
+							      (string-display-pixel-width org-ellipsis)
+							      (string-display-pixel-width (or (match-string 3)
+											      ""))))))))))))))
 
   )
 #+end_src
