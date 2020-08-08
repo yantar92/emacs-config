@@ -8199,7 +8199,7 @@ This agenda show the items for the current day and time.
 		   (or (not tmp-scheduled-time)
 		       (<= tmp-cur-schedule tmp-cur-day)))
 	(unless (re-search-forward "^\\*.+\\[#A\\]" nil 'noerror)
-	  (re-search-forward (org-get-limited-outline-regexp) nil 'noerror))
+	  (re-search-forward org-outline-regexp nil 'noerror))
 	(point)))))
 
 (defun org-agenda-skip-nonurgent-fast ()
