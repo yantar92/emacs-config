@@ -12933,7 +12933,7 @@ the same tree node, and the headline of the tree node in the Org file."
 	 (with-current-buffer buffer
 	   (widen)
 	   (goto-char pos)
-	   (org-show-context 'agenda)
+	   (org-fold-show-context 'agenda)
 	   (let ((current-prefix-arg arg))
 	     (call-interactively 'org-todo))
 	   (and (bolp) (forward-char 1))
@@ -13034,7 +13034,7 @@ Patching the relevant function to not put that tooltip into the overlay.
 Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#appearance][credit]]]
 
 #+begin_src emacs-lisp
-(add-hook 'org-mode-hook #'org-hide-block-all)
+(add-hook 'org-mode-hook #'org-fold-hide-block-all)
 #+end_src
 
 **** Property drawers
@@ -13138,7 +13138,7 @@ Use UTF symbols for entities
 (setq org-catch-invisible-edits 'show-and-error)
 (setq org-M-RET-may-split-line '((default . nil)))
 (setq org-startup-folded nil)
-(setq org-show-context-detail
+(setq org-fold-show-context-detail
       '((agenda . lineage) ;; instead of "local"
 	(bookmark-jump . lineage)
 	(isearch . lineage)
@@ -13523,7 +13523,7 @@ CLOCK: [2020-06-19 Fri 22:14]--[2020-06-19 Fri 22:15] =>  0:01
 	(next-line)
 	;; (org-hide-block-toggle 'hide)
 	(org-babel-next-src-block 1)
-	(org-hide-block-toggle 'off))
+        (org-fold-hide-block-toggle 'off))
       :mode org-mode
       :cond (eq (org-element-type (org-element-at-point)) 'src-block)
       (goto-char (1- (org-element-property :end (org-element-at-point)))))
@@ -13551,7 +13551,7 @@ CLOCK: [2020-06-19 Fri 22:14]--[2020-06-19 Fri 22:15] =>  0:01
       (progn
 	;; (org-hide-block-toggle 'hide)
 	(org-babel-previous-src-block 1)
-	(org-hide-block-toggle 'off))
+	(org-fold-hide-block-toggle 'off))
       :mode org-mode
       :cond (eq (org-element-type (org-element-at-point)) 'src-block)
       (goto-char (org-element-property :begin (org-element-at-point))))
