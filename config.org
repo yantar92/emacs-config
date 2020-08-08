@@ -11601,7 +11601,39 @@ I hate when org is cluttering org file directory with generated files (=:file=).
                   directory)))
 	(list arg info params))
     (list arg info params)))
+
+;; (advice-remove 'org-babel-execute-src-block #'org-babel-execute-src-block@set-detault-dir-to-org-attach-path)
 #+END_SRC
+
+Allow passing file: links as variables to src blocks
+
+#+begin_src emacs-lisp
+(defun org-expand-link (link-string)
+  "Convert file LINK-STRING to file path."
+  (setq link-string (org-link-expand-abbrev link-string))
+  (unless (string-match-p org-bracket-link-regexp link-string)
+    (setq link-string (s-concat "[[" link-string "]]")))
+  (let ((link
+	 (with-temp-buffer
+	   (let ((org-inhibit-startup nil))
+	     (insert link-string)
+	     (org-mode)
+	     (goto-char (point-min))
+	     (org-element-link-parser)))))
+    (pcase (org-element-type link)
+      ('link
+       (org-element-property :path link))
+      (_ link-string))))
+#+end_src
+
+Library of babel function definition:
+#+name: org-expand-link
+#+begin_src emacs-lisp :var link="file:input.txt" :tangle no
+(org-expand-link link)
+#+end_src
+
+*************** TODO it should better be supported natively
+*************** END
 
 Also, it make sense to show inline images, which I frequently generate via Gnuplot after the evaluation
 #+BEGIN_SRC emacs-lisp
