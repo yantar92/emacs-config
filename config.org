@@ -2061,7 +2061,7 @@ The basic idea is to prefix movement commands with meta.
     "Call `helm-yank-selection' in some cases listed below."
     (interactive "P")
     (pcase helm--prompt
-      ((pred (string-match-p "Refile subtree")) (funcall-interactively #'helm-yank-selection arg))
+      ((pred (string-match-p "Refile")) (funcall-interactively #'helm-yank-selection arg))
       (_ (funcall-interactively #'helm-execute-persistent-action))))
   (use-package helm-config)
   (use-package helm-files)
