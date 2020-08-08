@@ -6008,7 +6008,10 @@ Automatically translate non-English and non-Russian/Ukrainian titles.
   )
 #+end_src
 
-*** TODO COMMENT Org-mode in messages
+*** Org-mode in messages
+    :PROPERTIES:
+    :ID:       90e6045d-c09e-4022-bd59-33084bd68114
+    :END:
 
 [[github_jeremy-compostella_jerem_compos_org_msg_orgms][org-msg]] make it possible to write email in org-mode and export it to html when sending.
 
@@ -6016,11 +6019,16 @@ Automatically translate non-English and non-Russian/Ukrainian titles.
 (use-package org-msg
   :straight t
   :config
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
-	org-msg-startup "hidestars indent inlineimages"
-	org-msg-greeting-fmt "\nHi *%s*,\n\n"
-	org-msg-greeting-name-limit 3
-	org-msg-text-plain-alternative t))
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:Ihor Radchenko email:nil \\n:t"
+	org-msg-startup "hidestars inlineimages"
+	org-msg-greeting-fmt ""
+	org-msg-text-plain-alternative t
+        org-msg-signature "Ihor Radchenko,
+PhD,
+Center for Advancing Materials Performance from the Nanoscale (CAMP-nano)
+State Key Laboratory for Mechanical Behavior of Materials, Xi'an Jiaotong University, Xi'an, China
+Email: yantar92@gmail.com, ihor_radchenko@alumni.sutd.edu.sg")
+  (org-msg-mode))
 #+end_src
 
 Make company completion work in notmuch.
@@ -6032,6 +6040,8 @@ Credit: [[id:github_jeremy-compostella_notmuc_compan_suppor_org_msg][jeremy-comp
     (apply old-fn args)))
 
 (advice-add 'notmuch-company :around #'arvindsv/org-msg-notmuch-company)
+
+(add-hook 'org-msg-edit-mode-hook #'notmuch-company-setup)
 #+end_src
 
 
