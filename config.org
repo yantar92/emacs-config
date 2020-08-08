@@ -1403,6 +1403,9 @@ This section contains customisation relevant to actions associated with running 
   #+end_src
 
 *** Tooltips
+:PROPERTIES:
+:ID:       2b71a4fe-82e8-4ec6-9164-ad6958c6767f
+:END:
 Disable tooltips
 #+begin_src emacs-lisp
 (tooltip-mode -1)
@@ -2302,6 +2305,7 @@ Hence, I do not use it globally, but enable only where I need it.
 *** Follow symlinks to vc files
 :PROPERTIES:
 :CREATED:  [2020-07-12 Sun 18:35]
+:ID:       cc9cf78f-888f-488e-98f6-ecb5011af85a
 :END:
 
 #+begin_src emacs-lisp
@@ -3107,6 +3111,9 @@ Use =boon-*-search-map= to select windows and =C-M-l= to cycle current window.
 		("p" . winner-redo))))
 #+END_SRC
 **** Recentering text in window
+:PROPERTIES:
+:ID:       0e666b8b-fed0-45e1-8921-b67e0c24790b
+:END:
 
 By default help:recenter-top-bottom goes in the following order: middle top bottom.
 However, most of time I use this function is aligning text to top of the window.
@@ -5896,6 +5903,9 @@ Here are some workarounds
 #+end_src
 
 **** Faster address completion
+:PROPERTIES:
+:ID:       e6129084-9c4d-4bb8-8b20-c4a900112408
+:END:
 
 Tip from [[id:notmuchmail_2019_emacs][[notmuchmail] (2019) Emacstips]]
 Using [[id:github_aperezdc_aperez_notmuc_addrl_c_addres][aperezdc [Github] Aperezdc Notmuch-Addrlookup-C: Address Lookup Tool for Notmuch in C Using Glib and Libnotmuch]]
@@ -6118,7 +6128,7 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 *************** END
 - =NOEXPORT= :: Do not export an item
 - =NODEADLINE= :: Do not show these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view
-- =SKIP= :: Some projects contains tasks, which can be done independently to each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belong to have =NEXT= tasks.
+- =SKIP= :: Some projects/sub-projects contains tasks, which can be done independently to each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belong to have =NEXT= tasks.
 - =NOARCHIVE= :: Do not archive a task. This in not inherited.
 - =ARCHIVE= :: Prevent task from unfolding (e.g. task contains bulky data, I do not want to see)
 - =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only do it all together.
@@ -6361,6 +6371,9 @@ I use [[http://www.nongnu.org/org-edna-el/][org-edna]] for managing dependencies
   :config
   (org-edna-mode))
 #+END_SRC
+
+*************** TODO rewrite using org-depend, as suggested in https://www.reddit.com/r/orgmode/comments/hljpl3/any_one_uses_org_edna/fwzhldp/
+*************** END
 
 This can be useful, for example, when watching a series.
 I may add multiple TODOs for different series, but it usually make sense to watch them in sequence.
@@ -7751,7 +7764,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 (setq org-habit-show-habits-only-for-today t) ; do not show habits in future if scheduled withing agenda time range. E.g. do not show future habits in week view/calendar
 #+end_src
 
-Agendas is my main entry point into daily work. This is where I pickup tasks to work on during the day. I generally use a combination of GTD and "Eating Live Frogs: Do the Worst Thing First" (see [[id:8d4483f2-7a4f-4508-b403-f8635e33a34e][Rainer König: Orgmode-TV: How do I plan my days]], [[id:979c767f-0355-4b6d-86a1-1e10d5fa9202][The Ultimate Guide to Personal Productivity Methods]]), though I am not disciplined enough to follow the latter precisely. In addition, I sometimes use [[id:ee371af1-c478-49d1-9814-1eb78242a341][Pomodoro]], [[id:435d7660-576f-42d0-88fd-9882f494712c][Time blocking (kind of)]], and [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][Bonus/penalty based time management]]. These methods works fine for me at this point, though many more methods do exist [[id:979c767f-0355-4b6d-86a1-1e10d5fa9202][The Ultimate Guide to Personal Productivity Methods]]. 
+Agendas is my main entry point into daily work. This is where I pickup tasks to work on during the day. I generally use a combination of GTD and "Eating Live Frogs: Do the Worst Thing First" (see [[id:8d4483f2-7a4f-4508-b403-f8635e33a34e][Rainer König: Orgmode-TV: How do I plan my days]], [[id:979c767f-0355-4b6d-86a1-1e10d5fa9202][The Ultimate Guide to Personal Productivity Methods]]), though I am not disciplined enough to follow the latter precisely. In addition, I sometimes use [[id:ee371af1-c478-49d1-9814-1eb78242a341][Pomodoro]], [[id:435d7660-576f-42d0-88fd-9882f494712c][Time blocking]] (kind of), and [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][Bonus/penalty based time management]]. These methods works fine for me at this point, though many more methods do exist [[id:979c767f-0355-4b6d-86a1-1e10d5fa9202][The Ultimate Guide to Personal Productivity Methods]].
 
 - I use several agenda views
   - Focused daily agenda :: When we mark the item scheduled, it means that we need to start working on it from that day. However, it leads to a situation when there are so many items being active in agenda that it is useful to focus on what we need to do during the day. That's why I need an additional agenda which focuses on what I really need to do today, but not what I need to start today and what I have started to do which is the case for default daily agenda. See [[id:a6054643-449e-48d7-afff-4155465efc19][Focused daily agenda]].
@@ -8229,7 +8242,7 @@ This agenda show the items for the current day and time.
 	  (point))))))
   #+end_src
   
-*************** NEXT [#A] debug =org-agenda-skip-nonurgent-fast=
+*************** SOMEDAY [#A] debug =org-agenda-skip-nonurgent-fast=                                              :SOMEDAY:
 :PROPERTIES:
 :SHOWFROMDATE: 2019-08-06
 :END:
@@ -9372,7 +9385,7 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
 For a long time, I did not find any use for effort estimates.
 However, they do have uses in my workflow.
 
-A frequent statement about effort estimates is that if you think that estimate is too much, you just split the task. However, even just the process of splitting generally takes unpredictable time when the task is an exploratory task. For me, as a researcher, such tasks are pretty common. I sometimes have a very rough idea about what should be done and cannot predict how much time east step of a research project is going to take. Things in research fail more often than not and a trivial task may turn out to take 10 times more time that expected. An alternative approach to setting efforts is coming from timeboxing approach when a task is expected to be worked on for a certain period of time per day. However, working on some tasks in research, I can often get a momentum and work on a single task for a single day. Notifications for exceeding the effort are unwanted in such scenario. On the other hand, some tasks may be very difficult to start and not having any time estimate on the task may be discouraging (if there was an effort, at least one can convince himself to work on such task for *some* time). Hence, setting *some* effort estimate on stale tasks is useful.
+A frequent statement about effort estimates is that if you think that estimate is too much, you just split the task. However, even just the process of splitting generally takes unpredictable time when the task is an exploratory task. For me, as a researcher, such tasks are pretty common. I sometimes have a very rough idea about what should be done and cannot predict how much time each step of a research project is going to take. Things in research fail more often than not and a trivial task may turn out to take 10 times more time that expected. An alternative approach to setting efforts is coming from timeboxing approach when a task is expected to be worked on for a certain period of time per day. However, working on some tasks in research, I can often get a momentum and work on a single task for a single day. Notifications for exceeding the effort are unwanted in such scenario. On the other hand, some tasks may be very difficult to start and not having any time estimate on the task may be discouraging (if there was an effort, at least one can convince himself to work on such task for *some* time). Hence, setting *some* effort estimate on stale tasks is useful.
 
 1. When a task is very large, but cannot be splitted, it is useful to dedicate certain time I plan to spend working on the task. Having this time really helps to start working on the task since I am not demoralised by size of the task. Such tasks are marked with =DOING= todo keyword (see [[id:66396995-13e9-4dfa-854e-476c71a4faa9][#todo_keyword #DOING]])
 
@@ -12780,7 +12793,8 @@ Fontify agenda items properly
 	(goto-char (point-min))
 	(looking-at "^\\* \\(\\([^\t]+\\)[ 	]+\\(:\\([[:alnum:]_@#%:]+\\):\\)*\\)[ 	]*$")
 	(setq txt (match-string 2))
-	(setq tags (and tags (s-split ":" (match-string 3) 't))))
+	(setq tags (and tags (s-split ":" (match-string 3) 't)))
+        )
       (list extra txt level category tags dotime remove-re habitp)))
   )
 
@@ -13019,6 +13033,13 @@ Patching the relevant function to not put that tooltip into the overlay.
 				 "The clock is running in this item")))))))))))
 #+end_src
 
+***** TODO this in not truncated properly in agenda [[id:b51c5a05-4a20-469a-b61d-fd71b1fcc32f][paper What governs ductility of ultrafine-grained metals? A microstructure based approach to necking instability]]
+:PROPERTIES:
+:CREATED: [2020-07-13 Mon 08:27]
+:END:
+:LOGBOOK:
+- Refiled on [2020-07-13 Mon 08:35]
+:END:
 **** Blocks (source blocks, quotes, etc)
 :PROPERTIES:
 :ID:       6fed68f0-c4ca-43f3-b487-4b58d9dc1315
