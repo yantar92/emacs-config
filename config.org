@@ -13508,8 +13508,11 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
     (meta-defun meta-insert-active-enclosure-new-line :mode org-struct-mode org-insert-todo-heading-respect-content)
     (meta-defun meta-new-line :mode org-struct-mode org-return)
     (meta-defun meta-undo :mode org-agenda-mode org-agenda-undo)
-    (meta-defun meta-up :mode org-agenda-mode org-agenda-previous-item)
-    (meta-defun meta-down :mode org-agenda-mode org-agenda-next-item)))
+    ;; (meta-defun meta-up :mode org-agenda-mode org-agenda-previous-item)
+    ;; (meta-defun meta-down :mode org-agenda-mode org-agenda-next-item)
+    (meta-defun meta-up :mode org-agenda-mode org-agenda-previous-line)
+    (meta-defun meta-down :mode org-agenda-mode org-agenda-next-line)
+    ))
 #+end_src
 
 **** Boon integration
