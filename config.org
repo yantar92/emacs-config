@@ -12374,7 +12374,7 @@ Use smaller font for inline headings without keyword
 Hide END part of inline tasks
 
 #+begin_src emacs-lisp
-(add-hook! 'org-mode-hook (cursor-intangible-mode +1))
+;; (add-hook! 'org-mode-hook (cursor-intangible-mode +1))
 (add-hook! 'org-mode-hook (add-to-list 'font-lock-extra-managed-props 'display))
 
 (use-package org-inlinetask
