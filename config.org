@@ -11559,7 +11559,7 @@ Leaving the code below for reference.
                                       (:tangle . "no")
                                       (:comments . "link")
                                       (:eval . "never-export")))
-(setq org-babel-default-header-args:shell '((:results output)))
+(setq org-babel-default-header-args:shell '((:results . "output")))
 #+END_SRC
 - Show stderr in the shell output ([[https://github.com/novoid/dot-emacs/blob/master/config.org][Source]])
 #+BEGIN_SRC emacs-lisp
