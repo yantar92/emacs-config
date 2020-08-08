@@ -10118,6 +10118,45 @@ All these templates generally record the creation time in =:CREATED:=
                            "** TODO Add to publication list"))))
            'replace)
 #+end_src
+- Co-authored research publication :: I mark this with =publication= tag. Typical workflow here is:
+  1. Revise
+  2. Revise according to comments
+  3. Get accepted and published
+  4. Add to publication list
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "A"
+           (cdar  (doct '("Co-authored journal publication"
+			  :keys "A"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* NEXT #paper #co-author %^{Aproximate title of the paper} :publication:NOARCHIVE:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+                           ":ATTACH_DIR_INHERIT: t"
+			   ":END:"
+                           "\n%?"
+                           "** Paper versions"
+                           "** TODO Revise"
+                           ":PROPERTIES:"
+                           ":REPEAT_TO_STATE: NEXT"
+                           ":LOGGING: nil"
+                           ":END:"
+                           "** TODO Submit"
+                           "** TODO Revise"
+                           ":PROPERTIES:"
+                           ":REPEAT_TO_STATE: NEXT"
+                           ":LOGGING: nil"
+                           ":END:"
+                           "** TODO Check references"
+                           "** TODO Get accepted"
+                           "** TODO Get published"
+                           "** TODO Add to publication list"))))
+           'replace)
+#+end_src
 - Research funding application :: I mark this with =grant= tag. The usual funding application workflow includes:
   1. Budget
   2. Abstract/summary
