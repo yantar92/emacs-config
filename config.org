@@ -1033,6 +1033,22 @@ Show some text in buffer differently
   (custom-set-faces '(secondary-selection ((t (:background "DarkSeaGreen3"))))))
 #+end_src
 
+**** Highlight todo keywords in code
+
+#+begin_src emacs-lisp
+(use-package hl-todo
+  :if init-flag
+  :straight t
+  :hook (prog-mode . hl-todo-mode)
+  :config
+  (setq hl-todo-keyword-faces
+	'(("TODO"   . "#FF0000")
+          ("FIXME"  . "#FF0000")
+          ("DEBUG"  . "#A020F0")
+          ("GOTCHA" . "#FF4500")
+          ("STUB"   . "#1E90FF"))))
+#+end_src
+
 *** TODO Mode line
 :PROPERTIES:
 :ID:       ca75c464-f35c-43ed-a90e-d78d4cfaa99a
