@@ -9621,10 +9621,14 @@ Increment :ORG-TIME-BONUS: for habits, if nesessary."
   "Return time, clocked on current item in total. Exclude subitems."
   (save-excursion
     (save-restriction
-      (org-narrow-to-subtree)
-      (goto-char (point-min))
-      (outline-next-heading)
-      (narrow-to-region (point-min) (point))
+      (if (or (org-inlinetask-at-task-p)
+	      (org-inlinetask-in-task-p))
+	  (narrow-to-region (save-excursion (org-inlinetask-goto-beginning) (point))
+			    (save-excursion (org-inlinetask-goto-end) (point)))
+	(org-narrow-to-subtree)
+	(goto-char (point-min))
+	(outline-next-heading)
+	(narrow-to-region (point-min) (point)))
       (org-clock-sum tstart)
       org-clock-file-total-minutes)))
 
