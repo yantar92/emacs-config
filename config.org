@@ -762,13 +762,11 @@ Make help, info, and back-trace pop-up in separate frame
 My screen is too wide to read text comfortably.
 I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer width.
 
-***** Centered window mode
+***** COMMENT Centered window mode
       :PROPERTIES:
       :ID:       3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad
       :END:
-
-*************** TODO Move pdf-view config to pdf-view
-*************** END
+[2020-08-08 Sat] There is annoying bug when the mode activates in modes I do not want it to be activated (pdf-mode, org-agenda-mode). Specifically, it happens more often when I create a new frame. 
 
 #+begin_src emacs-lisp
 (use-package centered-window
@@ -799,6 +797,27 @@ by this function."
   (add-to-list 'cwm-ignore-buffer-predicates 'pdf-view-mode-p)
   (bind-keys :map boon-x-map ("w" . centered-window-mode))
   (centered-window-mode +1))
+#+end_src
+
+***** =Olivetti= mode
+:PROPERTIES:
+:ID:       1633927d-77d5-4f0e-a64e-4090454da22a
+:END:
+
+This mode is minor-mode thus it should be less intrusive in comparison with [[id:3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad][Centered window mode]]
+
+#+begin_src emacs-lisp
+(use-package olivetti
+  :if init-flag
+  :hook ((text-mode notmuch-show-mode) . olivetti-mode)
+  :config
+  (setq-default olivetti-body-width 110)
+  (setq olivetti-lighter (s-concat " "
+				   (propertize (all-the-icons-material "tablet")
+					       'face `((:family "Material Icons"
+								:height 1.4))
+					       'display '(raise -0.2))))
+  (bind-keys :map boon-x-map ("w" . olivetti-mode)))
 #+end_src
 **** Window boundaries
 :PROPERTIES:
