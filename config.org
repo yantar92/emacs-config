@@ -1044,6 +1044,9 @@ Show some text in buffer differently
 #+end_src
 
 **** Highlight todo keywords in code
+:PROPERTIES:
+:ID:       bf58379d-d87e-4282-8fee-a36135565b5c
+:END:
 
 #+begin_src emacs-lisp
 (use-package hl-todo
