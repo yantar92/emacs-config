@@ -12827,32 +12827,45 @@ Optional MODE specifies major mode used for display."
 
 Fontify agenda items properly
 #+BEGIN_SRC emacs-lisp  
-(define-advice org-agenda-format-item (:filter-args (&rest args)  fontify-org)
-  "Force fontify ageda item. (hack)"
-  (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
-    (with-temp-buffer
-      (cl-letf (((symbol-function 'yant/process-att-abbrev) #'identity)
-		((symbol-function 'yant/process-att-id-abbrev) #'identity)) ;; expanding sometimes causes errors when attempting to access ancestors
-	(org-mode)
-        (setq txt (replace-regexp-in-string "[ \t]*:[[:alnum:]_@#%:]+:[ 	]*$" "" txt))
-	(insert "* "
-		txt
-		"\t"
-		(or (and tags (s-join ":" `(nil ,@(cl-remove-duplicates tags) nil)))
-		    "")
-		"\n")
-	(font-lock-fontify-buffer)
-	(goto-char (point-min))
-	(looking-at "^\\* \\(\\([^\t]+\\)[ 	]+\\(:\\([[:alnum:]_@#%:]+\\):\\)*\\)[ 	]*$")
-	(setq txt (match-string 2))
-	(setq tags (and tags (s-split ":" (match-string 3) 't)))
-        )
-      (list extra txt level category tags dotime remove-re habitp)))
-  )
-
+;; (define-advice org-agenda-format-item (:filter-args (&rest args)  fontify-org)
+;;   "Force fontify ageda item. (hack)"
+;;   (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
+;;     (with-temp-buffer
+;;       (cl-letf (((symbol-function 'yant/process-att-abbrev) #'identity)
+;; 		((symbol-function 'yant/process-att-id-abbrev) #'identity)) ;; expanding sometimes causes errors when attempting to access ancestors
+;; 	(org-mode)
+;;         (setq txt (replace-regexp-in-string "[ \t]*:[[:alnum:]_@#%:]+:[ 	]*$" "" txt))
+;; 	(insert "* "
+;; 		txt
+;; 		"\t"
+;; 		(or (and tags (s-join ":" `(nil ,@(cl-remove-duplicates tags) nil)))
+;; 		    "")
+;; 		"\n")
+;; 	(font-lock-fontify-buffer)
+;; 	(goto-char (point-min))
+;; 	(looking-at "^\\* \\(\\([^\t]+\\)[ 	]+\\(:\\([[:alnum:]_@#%:]+\\):\\)*\\)[ 	]*$")
+;; 	(setq txt (match-string 2))
+;; 	(setq tags (and tags (s-split ":" (match-string 3) 't)))
+;;         )
+;;       (list extra txt level category tags dotime remove-re habitp)))
+;;   )
 (define-advice org-agenda-format-item (:filter-return (item) remove-double-colons)
   "Remove ::."
   (s-replace-regexp "::+" ":" item))
+
+;; (advice-remove 'org-agenda-format-item #'org-agenda-format-item@fontify-org)
+;; (advice-remove 'org-agenda-format-item #'org-agenda-format-item@remove-double-colons)
+
+;; Credit: https://www.reddit.com/r/orgmode/comments/i3upt6/prettifysymbolsmode_not_working_with_orgagenda/g0r5rx8/
+(define-advice org-agenda-fix-displayed-tags (:filter-return (&rest args)  my-fix-displayed-org-tags)
+  (let ((txt (car args)))
+    (with-temp-buffer
+      (org-mode)
+      (insert "* " txt)
+      (font-lock-fontify-buffer)
+      (goto-char (point-min))
+      (looking-at "^\\* \\(.*\\)$")
+      (match-string 1))))
 
 (use-package org-agenda
   :if init-flag
