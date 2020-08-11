@@ -10038,7 +10038,7 @@ All these templates generally record the creation time in =:CREATED:=
                            "*** Published papers :REFILE:"
                            "*** Funding applications :REFILE:"
                            "** NEXT Papers to read :REFILE:"
-                           "** NEXT Ideas :REFILE:"
+                           "** TODO Ideas :REFILE:"
 			   "# Inbox for project ideas, which are not directly actionable."))))
            'replace)
 
@@ -10070,7 +10070,7 @@ All these templates generally record the creation time in =:CREATED:=
                            "# Takeouts of the project and possible things to be done in future."
                            "** Public results :REFILE:"
                            "** NEXT Papers to read :REFILE:"
-                           "** NEXT Ideas :REFILE:"
+                           "** TODO Ideas :REFILE:"
 			   "# Inbox for project ideas, which are not directly actionable."))))
            'replace)
 #+end_src
