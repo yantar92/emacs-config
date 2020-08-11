@@ -12403,8 +12403,7 @@ hyphen as em-dash (from [[https://github.com/grettke/help/blob/master/help.org][
 Show tags right justified
 #+begin_src emacs-lisp
 (setq org-tags-column (- (length org-ellipsis)
-			 (or cwm-centered-window-width
-                             150)))
+                             150))
 #+end_src
 
 Always show the contents of inline tasks instead of hiding/showing it during cycling.
