@@ -1410,7 +1410,7 @@ Change default cursor colour (just my taste)
   (set-cursor-color "IndianRed"))
 #+END_SRC
 
-**** Highlight cursor when it moves far
+**** COMMENT Highlight cursor when it moves far
 :PROPERTIES:
 :ID:       c86d4d84-aa19-43e8-990a-6305db525433
 :ARCHIVE_TIME: 2019-12-09 Mon 13:06
@@ -1419,6 +1419,8 @@ Change default cursor colour (just my taste)
 :ARCHIVE_CATEGORY: config
 :ARCHIVE_ITAGS: EMACS COMMON
 :END:
+
+[2020-08-10 Mon] Slows down Emacs after some time
 
 #+begin_src emacs-lisp
 (use-package beacon
