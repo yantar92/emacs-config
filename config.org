@@ -517,6 +517,13 @@ Credit: https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.
 (use-package ht
   :straight t)
 #+end_src
+
+*** String manipulation library
+
+#+begin_src emacs-lisp
+(use-package s
+  :straight t)
+#+end_src
 ** Performance
 :PROPERTIES:
 :CREATED:  [2018-09-12 Wed 19:48]
