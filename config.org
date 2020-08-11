@@ -816,8 +816,11 @@ This mode is minor-mode thus it should be less intrusive in comparison with [[id
 #+begin_src emacs-lisp
 (use-package olivetti
   :if init-flag
+  :straight t
+  :demand t
+  :after boon
   :hook ((text-mode notmuch-show-mode) . olivetti-mode)
-  :config
+  :init
   (setq-default olivetti-body-width 110)
   (setq olivetti-lighter (s-concat " "
 				   (propertize (all-the-icons-material "tablet")
