@@ -1052,7 +1052,7 @@ Show some text in buffer differently
 (use-package hl-todo
   :if init-flag
   :straight t
-  :hook (prog-mode . hl-todo-mode)
+  :hook (emacs-lisp-mode . hl-todo-mode)
   :config
   (setq hl-todo-keyword-faces
 	'(("TODO"   . "#FF0000")
