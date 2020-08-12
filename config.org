@@ -10503,40 +10503,40 @@ I define two link types for capturing:
    }")
 
 (defun yant/org-capture-cleanup-bibtex (fields template &optional bibtex-key-prefix)
-"Cleanup bibtex entry defined by FIELDS and return entry string formatted using TEMPLATE. 
+  "Cleanup bibtex entry defined by FIELDS and return entry string formatted using TEMPLATE. 
 Generate cite key according to BIBTEX-KEY-PREFIX." 
-(with-temp-buffer
-(bibtex-mode)
-(bibtex-set-dialect 'BibTeX)
-(let ((title (alist-get :title fields)))
-(setf (alist-get :title fields) (replace-regexp-in-string "[（）【】{}[]\\|\\]" "" title)))
-(insert (if (require 'org-cliplink nil 'noerror)
-;; Sanitize values by replacing html entities
-(org-ref-url-html-replace (s-format template 'aget fields))
-(s-format template 'aget fields)))
-(bibtex-beginning-of-entry)
-(let (;; consider ?/ to be a separator as well
-(split-string-default-separators "[/ \f	\n]+")
-(bibtex-autokey-prefix-string bibtex-key-prefix))
-(org-ref-clean-bibtex-entry))
-;; Some automatically cite keys are not sufficiently unique
-;; Extend them by adding suffix
-(when (alist-get :cite-extra fields)
-(let ((cite-key (bibtex-key-in-head "=key=")))
-;; first we delete the existing key
-(bibtex-beginning-of-entry)
-(re-search-forward bibtex-entry-maybe-empty-head)
-(if (match-beginning bibtex-key-in-head)
-(delete-region (match-beginning bibtex-key-in-head)
-(match-end bibtex-key-in-head)))
-(insert (s-concat cite-key (alist-get :cite-extra fields)))))
-;; set date added for the record
-(let ((ts (funcall doi-utils-timestamp-format-function)))
-(when ts
-(bibtex-set-field doi-utils-timestamp-field
-ts)))
-(buffer-string)
-))
+  (with-temp-buffer
+    (bibtex-mode)
+    (bibtex-set-dialect 'BibTeX)
+    (let ((title (alist-get :title fields)))
+      (setf (alist-get :title fields) (replace-regexp-in-string "[()（）【】{}[]\\|\\]" "" title)))
+    (insert (if (require 'org-cliplink nil 'noerror)
+		;; Sanitize values by replacing html entities
+		(org-ref-url-html-replace (s-format template 'aget fields))
+	      (s-format template 'aget fields)))
+    (bibtex-beginning-of-entry)
+    (let (;; consider ?/ to be a separator as well
+	  (split-string-default-separators "[/ \f	\n]+")
+	  (bibtex-autokey-prefix-string bibtex-key-prefix))
+      (org-ref-clean-bibtex-entry))
+    ;; Some automatically cite keys are not sufficiently unique
+    ;; Extend them by adding suffix
+    (when (alist-get :cite-extra fields)
+      (let ((cite-key (bibtex-key-in-head "=key=")))
+	;; first we delete the existing key
+	(bibtex-beginning-of-entry)
+	(re-search-forward bibtex-entry-maybe-empty-head)
+	(if (match-beginning bibtex-key-in-head)
+	    (delete-region (match-beginning bibtex-key-in-head)
+			   (match-end bibtex-key-in-head)))
+	(insert (s-concat cite-key (alist-get :cite-extra fields)))))
+    ;; set date added for the record
+    (let ((ts (funcall doi-utils-timestamp-format-function)))
+      (when ts
+	(bibtex-set-field doi-utils-timestamp-field
+			  ts)))
+    (buffer-string)
+    ))
 
 (defun yant/org-ref-url-scrape-dois ()
   "Scrape all dois from the captured url matching a pattern in `org-ref-doi-regexps'.
@@ -10610,6 +10610,7 @@ Returns a list of collected DOIs in the order found."
 	      (push (cons :author-homepage channel-url) fields)))
 	  ;; find author
 	  (goto-char (point-min))
+          (push (cons :author "") fields)
 	  (when (re-search-forward "channelName\":\"\\([^\"]+\\)\"" nil t)
 	    (let ((channel-name (match-string 1)))
 	      (push (cons :author channel-name) fields)))
@@ -10618,8 +10619,11 @@ Returns a list of collected DOIs in the order found."
 	  (when (re-search-forward "title\":\"\\([^\"]+\\)\"" nil t)
 	    (let ((title (match-string 1)))
 	      (push (cons :title title) fields)))
+          (unless (alist-get :title fields)
+            (push (cons :title (plist-get org-store-link-plist :description)) fields))
 	  ;; find year
 	  (goto-char (point-min))
+          (push (cons :year "") fields)
 	  (when (re-search-forward "publishDate\":\"\\([^\"]+\\)\"" nil t)
 	    (let ((year (match-string 1)))
 	      (string-match "[0-9]\\{4\\}" year)
