@@ -6076,10 +6076,12 @@ Automatically translate non-English and non-Russian/Ukrainian titles.
   )
 #+end_src
 
-*** Org-mode in messages
+*** COMMENT Org-mode in messages (via =org-msg=)
     :PROPERTIES:
     :ID:       90e6045d-c09e-4022-bd59-33084bd68114
     :END:
+
+[2020-08-11 Tue] It does not seem to handle quotes of quotes from last emails very well
 
 [[github_jeremy-compostella_jerem_compos_org_msg_orgms][org-msg]] make it possible to write email in org-mode and export it to html when sending.
 
