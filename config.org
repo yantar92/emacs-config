@@ -6115,6 +6115,38 @@ Credit: [[id:github_jeremy-compostella_notmuc_compan_suppor_org_msg][jeremy-comp
 #+end_src
 
 
+** Browser
+
+I gave up using Google Chrome and Firefox in my daily browsing long time ago in exchange of qutebrowser providing better control over the browser behaviour and customisation.
+That went pretty well except some cases when I have to use poorly designed government websites requiring mainstream browsers to even directly prohibiting anything other than Chrome, Firefox, or Edge.
+Though torbrowser is usually sufficient to handle those.
+
+However, despite nice featured of qutebrowser, I miss closer integration with Emacs.
+There are userscripts, but I would ideally like to control the internals of browser directly from Emacs.
+This struggle turned my attention to emacs-application-framework [[id:78e3b460-84dd-402f-9b54-e9805e81fa74][Emacs application framework]] offering integrating python programs into Emacs. Since qutebrowser is written in python. I opened an [[https://github.com/manateelazycat/emacs-application-framework/issues/369][issue]], but it turned out that qutebrowser does not play well with Emacs application framework.
+
+Emacs application framework provides its own implementation of keyboard-driven browser, so I am giving it a try.
+
+#+begin_src emacs-lisp
+(use-package eaf
+  :if init-flag
+  :load-path "~/Dist/emacs-application-framework"
+  :custom
+  (eaf-find-alternate-file-in-dired t)
+  :config
+  (eaf-bind-key scroll_up_page "l" eaf-browser-keybinding)
+  (eaf-bind-key scroll_down_page "L" eaf-browser-keybinding)
+  (eaf-bind-key insert_or_open_link_new_buffer "H" eaf-browser-keybinding)
+  (eaf-bind-key insert_or_open_link "h" eaf-browser-keybinding)
+  (eaf-bind-key insert_or_close_buffer "C-x q" eaf-browser-keybinding)
+  (eaf-bind-key insert_or_view_source "w" eaf-browser-keybinding)
+  (setq eaf-browser-keybinding (delete '("v" . "insert_or_view_source") eaf-browser-keybinding))
+
+  (setq eaf-browser-search-engines '(("duckduckgo" . "https://duckduckgo.com/?q=%s")))
+  (setq eaf-browser-continue-where-left-off t)
+  (setq eaf-browser-default-search-engine 'duckduckgo))
+#+end_src
+
 ** Org mode
 :PROPERTIES:
 :ID:       58045c39-ffd5-4ccc-bc9d-49048c437f42
