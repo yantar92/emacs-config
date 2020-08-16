@@ -7107,35 +7107,32 @@ The src block should be in the same org file."
 - State "TODO"       from              [2018-03-12 Mon 18:04]
 :END:
 #+begin_src emacs-lisp
-  (use-package org-ref
-    :if init-flag
-    :straight t
-    :init
-    (use-package lv :straight t)
-    (setq org-ref-show-citation-on-enter nil) ;; this slows down org mode a lot otherwise
-    :config
-    (setq org-latex-prefer-user-labels t)
-    (setq org-ref-show-broken-links nil) ;; it makes typing very slow if 't
-    (use-package org-ref-pdf)
-    (use-package org-ref-url-utils)
-    (setq org-ref-bibliography-notes "~/Books/articles/articles.org"
-	  bibtex-completion-notes-path "~/Books/articles/articles.org"
-	  org-ref-default-bibliography '("~/Books/References.bib")
-	  org-ref-pdf-directory "~/Books/articles/_symlinks/"
-	  bibtex-completion-library-path org-ref-pdf-directory)
-    (setq reftex-default-bibliography (quote ("~/Books/References.bib")))
-    (bind-key* "C-c ]" #'org-ref-helm-insert-cite-link)
-    (bind-keys :map org-mode-map
-	       ("C-c [" . org-ref-helm-insert-ref-link))
-    (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
-    (bind-keys :map pdf-view-mode-map ("C-c [" . org-ref-pdf-to-bibtex)))
-#+end_src
-
-Extra journal abbreviations 
-
-#+begin_src emacs-lisp
 (use-package org-ref
+  :if init-flag
+  :straight t
+  :requires bibtex-completion
+  :init
+  (use-package lv :straight t)
+  (setq org-ref-show-citation-on-enter nil) ;; this slows down org mode a lot otherwise
   :config
+  (setq org-latex-prefer-user-labels t)
+  (setq org-ref-show-broken-links nil) ;; it makes typing very slow if 't
+  (use-package org-ref-pdf)
+  (use-package org-ref-url-utils)
+  (setq org-ref-bibliography-notes "~/Books/articles/articles.org"
+	bibtex-completion-notes-path "~/Books/articles/articles.org"
+	org-ref-default-bibliography '("~/Books/References.bib")
+	org-ref-pdf-directory "~/Books/articles/_symlinks/"
+	bibtex-completion-library-path org-ref-pdf-directory)
+  (setq reftex-default-bibliography (quote ("~/Books/References.bib")))
+  (bind-key* "C-c ]" #'org-ref-helm-insert-cite-link)
+  (bind-keys :map org-mode-map
+	     ("C-c [" . org-ref-helm-insert-ref-link))
+  (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
+  (use-package org-ref
+    :config
+    (add-to-list 'org-ref-bibtex-journal-abbreviations '("MRSBEA" "MRS Bulletin" "MRS Bull."))
+    (add-to-list 'org-ref-bibtex-journal-abbreviations '("ExtrMechL" "Extreme Mechanics Letters" "Extreme Mech. Lett.")))
   (add-to-list 'org-ref-bibtex-journal-abbreviations '("MRSBEA" "MRS Bulletin" "MRS Bull."))
   (add-to-list 'org-ref-bibtex-journal-abbreviations '("ExtrMechL" "Extreme Mechanics Letters" "Extreme Mech. Lett.")))
 #+end_src
