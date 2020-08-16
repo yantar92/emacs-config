@@ -519,6 +519,9 @@ Credit: https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.
 #+end_src
 
 *** String manipulation library
+    :PROPERTIES:
+    :ID:       a373281e-87dc-4dc4-8386-a408168e5c4f
+    :END:
 
 #+begin_src emacs-lisp
 (use-package s
@@ -1827,7 +1830,8 @@ The problem is that it may mess up the cases when I want to assign special meani
 			mingus-help-mode calendar-mode undo-tree-visualizer-mode
                         profiler-report-mode fundamental-mode explain-pause-mode
                         bm-show-mode
-                        Info-mode woman-mode Man-mode))
+                        Info-mode woman-mode Man-mode
+                        eaf-mode))
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   
@@ -5020,6 +5024,9 @@ See https://lists.gnu.org/archive/html/bug-gnu-emacs/2019-11/msg01731.html for d
   (bind-key "q" #'yant/kill-pdf-buffer-and-quit-window pdf-view-mode-map))
 #+end_src
 ** TODO Ebook reader
+   :PROPERTIES:
+   :ID:       b1733b83-8c7d-4254-b2c6-d9b38793542a
+   :END:
 
 #+begin_src emacs-lisp
 (use-package ereader
@@ -6116,6 +6123,9 @@ Credit: [[id:github_jeremy-compostella_notmuc_compan_suppor_org_msg][jeremy-comp
 
 
 ** Browser
+   :PROPERTIES:
+   :ID:       ef9c93cd-e760-407c-82cf-2aeffa7a11ad
+   :END:
 
 I gave up using Google Chrome and Firefox in my daily browsing long time ago in exchange of qutebrowser providing better control over the browser behaviour and customisation.
 That went pretty well except some cases when I have to use poorly designed government websites requiring mainstream browsers to even directly prohibiting anything other than Chrome, Firefox, or Edge.
@@ -7753,10 +7763,15 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
   (add-hook 'after-init-hook (lambda ()
       (advice-add 'find-file-noselect :around #'dired-find-file@disable-abbreviate-file-name)))
 #+END_SRC
-***** NEXT Make =:ATTACH_DIR_INHERITED:= work again
+***** DONE Make =:ATTACH_DIR_INHERITED:= work again                                                                                          :NOARCHIVE:
+CLOSED: [2020-08-11 Tue 22:10]
 :PROPERTIES:
 :CREATED:  [2019-07-27 Sat 17:03]
 :ID:       58e525e8-18e5-4eb0-8e6d-f8e10ee8f2f1
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-08-11 Tue 22:10]
+- State "NEXT"       from "HOLD"         [2020-08-11 Tue 22:10]
 :END:
 
 #+begin_src emacs-lisp
@@ -8409,8 +8424,7 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
     )
    (or (org-agenda-skip-deadlines-before-schedule) ; always show deadlines, unless scheduled in future
        (org-agenda-skip-before-SHOWFROMTIME-property)
-       (org-agenda-skip-before-SHOWFROMDATE-property)
-       )))
+       (org-agenda-skip-before-SHOWFROMDATE-property))))
   #+end_src
 ***** Normal daily agenda
 :PROPERTIES:
@@ -10414,533 +10428,532 @@ I define two link types for capturing:
 *************** END
 
 #+begin_src emacs-lisp
-(require 'org-ref-url-utils)
+  (require 'org-ref-url-utils)
 
-(use-package org-cliplink :straight t)
+  (use-package org-cliplink :straight t)
 
-(setq bibtex-autokey-year-length 4)
+  (setq bibtex-autokey-year-length 4)
 
-(setq bibtex-autokey-title-terminators "[.!?;]\\|--")
-(require 'org-ref-url-utils)
+  (setq bibtex-autokey-title-terminators "[.!?;]\\|--")
+  (require 'org-ref-url-utils)
 
-(use-package org-cliplink :straight t)
+  (use-package org-cliplink :straight t)
 
-(setq bibtex-autokey-year-length 4)
+  (setq bibtex-autokey-year-length 4)
 
-(setq bibtex-autokey-title-terminators "[.!?;]\\|--")
+  (setq bibtex-autokey-title-terminators "[.!?;]\\|--")
 
-(setq org-ref-url-date-re "class=date[^>]*>\\([^<]+\\)</")
+  (setq org-ref-url-date-re "class=date[^>]*>\\([^<]+\\)</")
+  (require 'org-ref)
+  (add-to-list 'org-ref-title-case-types "misc")
+  (add-hook 'org-ref-clean-bibtex-entry-hook #'org-ref-title-case)
 
-(add-to-list 'org-ref-title-case-types "misc")
-(add-hook 'org-ref-clean-bibtex-entry-hook #'org-ref-title-case)
+  (defvar yant/org-capture-science-journal-url-re "sciencedirect\\|elsevier\\|cambridge\\|asme\\.org\\|hanser-elibrary\\.com\\|tandfonline\\|scholarsarchive\\.byu\\.edu\\|osti\\.gov\\|royalsocietypublishing\\.org\\|iopscience\\.iop\\.org"
+    "Regex matching scientific journal URL.")
 
-(defvar yant/org-capture-science-journal-url-re "sciencedirect\\|elsevier\\|cambridge\\|asme\\.org\\|hanser-elibrary\\.com\\|tandfonline\\|scholarsarchive\\.byu\\.edu\\|osti\\.gov\\|royalsocietypublishing\\.org\\|iopscience\\.iop\\.org"
-  "Regex matching scientific journal URL.")
+  (defvar yant/org-capture-current-bibtex nil
+    "Parsed bibtex entry for the currently captured item.")
 
-(defvar yant/org-capture-current-bibtex nil
-  "Parsed bibtex entry for the currently captured item.")
+  (defvar yant/org-capture-html-buffer nil
+    "Buffer containing the captured webpage html.")
 
-(defvar yant/org-capture-html-buffer nil
-  "Buffer containing the captured webpage html.")
+  (defun yant/org-capture-get-html-buffer ()
+    "Get buffer containing the captured webpage html."
+    (if yant/org-capture-html-buffer
+	yant/org-capture-html-buffer
+      (setq yant/org-capture-html-buffer nil)
+      (when-let ((link (plist-get org-store-link-plist :link)))
+	(setq yant/org-capture-html-buffer
+	      (let* ((query (plist-get org-store-link-plist :query))
+		     (html (plist-get query :html)))
+		(if html
+		    (find-file-noselect html)
+		  (url-retrieve-synchronously link)))))))
 
-(defun yant/org-capture-get-html-buffer ()
-  "Get buffer containing the captured webpage html."
-  (if yant/org-capture-html-buffer
-      yant/org-capture-html-buffer
-    (setq yant/org-capture-html-buffer nil)
-    (when-let ((link (plist-get org-store-link-plist :link)))
-      (setq yant/org-capture-html-buffer
-	    (let* ((query (plist-get org-store-link-plist :query))
-		   (html (plist-get query :html)))
-	      (if html
-                  (find-file-noselect html)
-		(url-retrieve-synchronously link)))))))
+  (setq org-ref-url-bibtex-template
+	"@misc{key,
+	title        = {${:title}},
+	author       = {${:author}},
+	howpublished = {${:howpublished}},
+	url          = {${:url}},
+	year         = {${:year}},
+	note         = {Online; accessed ${:urldate}}
+	}")
 
-(setq org-ref-url-bibtex-template
-      "@misc{key,
-      title        = {${:title}},
-      author       = {${:author}},
-      howpublished = {${:howpublished}},
-      url          = {${:url}},
-      year         = {${:year}},
-      note         = {Online; accessed ${:urldate}}
-      }")
+  (defvar yant/org-capture-youtube-bibtex-template
+    "@misc{key,
+     title          = {${:title}},
+     author         = {${:author}},
+     authorhomepage = {${:author-homepage}},
+     howpublished   = {Youtube},
+     url            = {${:url}},
+     year           = {${:year}},
+     note           = {Online; accessed ${:urldate}}
+     }")
 
-(defvar yant/org-capture-youtube-bibtex-template
-  "@misc{key,
-   title          = {${:title}},
-   author         = {${:author}},
-   authorhomepage = {${:author-homepage}},
-   howpublished   = {Youtube},
-   url            = {${:url}},
-   year           = {${:year}},
-   note           = {Online; accessed ${:urldate}}
-   }")
+  (defvar yant/org-capture-habr-bibtex-template
+    "@misc{key,
+     title          = {${:title}},
+     author         = {${:author}},
+     howpublished   = {Habr},
+     url            = {${:url}},
+     year           = {${:year}},
+     note           = {Online; accessed ${:urldate}}
+     }")
 
-(defvar yant/org-capture-habr-bibtex-template
-  "@misc{key,
-   title          = {${:title}},
-   author         = {${:author}},
-   howpublished   = {Habr},
-   url            = {${:url}},
-   year           = {${:year}},
-   note           = {Online; accessed ${:urldate}}
-   }")
+  (defvar yant/org-capture-elfeed-bibtex-template
+    "@misc{key,
+     title          = {${:title}},
+     author         = {${:author}},
+     howpublished   = {${:howpublished}},
+     url            = {${:url}},
+     year           = {${:year}},
+     keywords       = {${:keywords}},
+     note           = {Online; accessed ${:urldate}}
+     }")
 
+  (defvar yant/org-capture-github-bibtex-template
+    "@misc{key,
+     title          = {${:title}},
+     author         = {${:author}},
+     howpublished   = {${:howpublished}},
+     url            = {${:url}},
+     note           = {Online; accessed ${:urldate}}
+     }")
 
-(defvar yant/org-capture-elfeed-bibtex-template
-  "@misc{key,
-   title          = {${:title}},
-   author         = {${:author}},
-   howpublished   = {${:howpublished}},
-   url            = {${:url}},
-   year           = {${:year}},
-   keywords       = {${:keywords}},
-   note           = {Online; accessed ${:urldate}}
-   }")
-
-(defvar yant/org-capture-github-bibtex-template
-  "@misc{key,
-   title          = {${:title}},
-   author         = {${:author}},
-   howpublished   = {${:howpublished}},
-   url            = {${:url}},
-   note           = {Online; accessed ${:urldate}}
-   }")
-
-(defun yant/org-capture-cleanup-bibtex (fields template &optional bibtex-key-prefix)
-  "Cleanup bibtex entry defined by FIELDS and return entry string formatted using TEMPLATE. 
-Generate cite key according to BIBTEX-KEY-PREFIX." 
-  (with-temp-buffer
-    (bibtex-mode)
-    (bibtex-set-dialect 'BibTeX)
-    (let ((title (alist-get :title fields)))
-      (setf (alist-get :title fields) (replace-regexp-in-string "[()（）【】{}[]\\|\\]" "" title)))
-    (insert (if (require 'org-cliplink nil 'noerror)
-		;; Sanitize values by replacing html entities
-		(org-ref-url-html-replace (s-format template 'aget fields))
-	      (s-format template 'aget fields)))
-    (bibtex-beginning-of-entry)
-    (let (;; consider ?/ to be a separator as well
-	  (split-string-default-separators "[/ \f	\n]+")
-	  (bibtex-autokey-prefix-string bibtex-key-prefix))
-      (org-ref-clean-bibtex-entry))
-    ;; Some automatically cite keys are not sufficiently unique
-    ;; Extend them by adding suffix
-    (when (alist-get :cite-extra fields)
-      (let ((cite-key (bibtex-key-in-head "=key=")))
-	;; first we delete the existing key
-	(bibtex-beginning-of-entry)
-	(re-search-forward bibtex-entry-maybe-empty-head)
-	(if (match-beginning bibtex-key-in-head)
-	    (delete-region (match-beginning bibtex-key-in-head)
-			   (match-end bibtex-key-in-head)))
-	(insert (s-concat cite-key (alist-get :cite-extra fields)))))
-    ;; set date added for the record
-    (let ((ts (funcall doi-utils-timestamp-format-function)))
-      (when ts
-	(bibtex-set-field doi-utils-timestamp-field
-			  ts)))
-    (buffer-string)
-    ))
-
-(defun yant/org-ref-url-scrape-dois ()
-  "Scrape all dois from the captured url matching a pattern in `org-ref-doi-regexps'.
-Returns a list of collected DOIs in the order found."
-  (let ((dois '()))
-    (with-current-buffer (yant/org-capture-get-html-buffer)
-      (cl-loop for doi-pattern in org-ref-doi-regexps
-	       do
-	       (goto-char (point-min))
-	       (while (re-search-forward doi-pattern nil t)
-		 (cl-pushnew (match-string 1) dois :test #'equal)))
-      (reverse dois))))
-
-(defun yant/org-capture-get-bibtex-doi-url ()
-  "Try to scrape DOI from current url and return the bibtex entry."
-  (when-let* ((dois (yant/org-ref-url-scrape-dois))
-              (doi (car dois)))
+  (defun yant/org-capture-cleanup-bibtex (fields template &optional bibtex-key-prefix)
+    "Cleanup bibtex entry defined by FIELDS and return entry string formatted using TEMPLATE. 
+  Generate cite key according to BIBTEX-KEY-PREFIX." 
     (with-temp-buffer
       (bibtex-mode)
       (bibtex-set-dialect 'BibTeX)
-      (insert (doi-utils-doi-to-bibtex-string doi))
-      (backward-char)
+      (let ((title (alist-get :title fields)))
+	(setf (alist-get :title fields) (replace-regexp-in-string "[()（）【】{}[]\\|\\]" "" title)))
+      (insert (if (require 'org-cliplink nil 'noerror)
+		  ;; Sanitize values by replacing html entities
+		  (org-ref-url-html-replace (s-format template 'aget fields))
+		(s-format template 'aget fields)))
+      (bibtex-beginning-of-entry)
+      (let (;; consider ?/ to be a separator as well
+	    (split-string-default-separators "[/ \f	\n]+")
+	    (bibtex-autokey-prefix-string bibtex-key-prefix))
+	(org-ref-clean-bibtex-entry))
+      ;; Some automatically cite keys are not sufficiently unique
+      ;; Extend them by adding suffix
+      (when (alist-get :cite-extra fields)
+	(let ((cite-key (bibtex-key-in-head "=key=")))
+	  ;; first we delete the existing key
+	  (bibtex-beginning-of-entry)
+	  (re-search-forward bibtex-entry-maybe-empty-head)
+	  (if (match-beginning bibtex-key-in-head)
+	      (delete-region (match-beginning bibtex-key-in-head)
+			     (match-end bibtex-key-in-head)))
+	  (insert (s-concat cite-key (alist-get :cite-extra fields)))))
       ;; set date added for the record
       (let ((ts (funcall doi-utils-timestamp-format-function)))
 	(when ts
 	  (bibtex-set-field doi-utils-timestamp-field
 			    ts)))
-      (org-ref-clean-bibtex-entry)
-      (buffer-string))))
+      (buffer-string)
+      ))
 
-(defun yant/org-capture-get-bibtex-github ()
-  "Parse github link and generate bibtex entry."
-  (when-let ((link (plist-get org-store-link-plist :link)))
-    (when (string-match "github\\.com" link)
+  (defun yant/org-ref-url-scrape-dois ()
+    "Scrape all dois from the captured url matching a pattern in `org-ref-doi-regexps'.
+  Returns a list of collected DOIs in the order found."
+    (let ((dois '()))
       (with-current-buffer (yant/org-capture-get-html-buffer)
-	(let ((fields `((:url . ,link)
-			(:urldate . ,(format-time-string "%d %B %Y"))))
-	      entry)
-          ;; Fix URL
-          (when (string-match "^\\(.+\\)/tree/[a-zA-Z0-9]+$" link)
-            (setf (alist-get :url fields) (match-string 1 link)))
-	  ;; find author url
-          (when (string-match "\\(?:https://\\)?github\\.com/[^/]+" link)
-            (push (cons :author-homepage (match-string 0 link)) fields))
-	  ;; find author
-          (when (string-match "\\(?:https://\\)?github\\.com/\\([^/]+\\)" link)
-            (push (cons :author (match-string 1 link)) fields))
-	  ;; find title
-	  (goto-char (point-min))
-	  (when (re-search-forward "<title>\\([^>]+\\)</title>" nil t)
-	    (let ((title (match-string 1)))
-              (when (string-match "^\\(.+\\) at [0-9a-zA-Z]\\{20,\\}$" title)
-		(setq title (match-string 1 title)))
-	      (push (cons :title title) fields)))
-          (push (cons :howpublished "Github") fields)
-	  ;; (org-ref-url-add-nil fields)
-          (yant/org-capture-cleanup-bibtex fields yant/org-capture-github-bibtex-template "github_"))))))
+	(cl-loop for doi-pattern in org-ref-doi-regexps
+		 do
+		 (goto-char (point-min))
+		 (while (re-search-forward doi-pattern nil t)
+		   (cl-pushnew (match-string 1) dois :test #'equal)))
+	(reverse dois))))
 
-(defun yant/org-capture-get-bibtex-youtube ()
-  "Parse youtube link and generate bibtex entry."
-  (when-let ((link (plist-get org-store-link-plist :link)))
-    (when (string-match "youtube\\.com/watch" link)
-      (with-current-buffer (yant/org-capture-get-html-buffer)
-	(let ((fields `((:url . ,link)
-			(:urldate . ,(format-time-string "%d %B %Y"))))
-	      entry)
-	  ;; find channel url
-	  (goto-char (point-min))
-	  (when (re-search-forward "/channel/\\([^\"]+\\)\"" nil t)
-	    (let ((channel-url (s-concat "https://youtube.com/channel/" (match-string 1))))
-	      (push (cons :author-homepage channel-url) fields)))
-	  ;; find author
-	  (goto-char (point-min))
-          (push (cons :author "") fields)
-	  (when (re-search-forward "channelName\":\"\\([^\"]+\\)\"" nil t)
-	    (let ((channel-name (match-string 1)))
-	      (push (cons :author channel-name) fields)))
-	  ;; find title
-	  (goto-char (point-min))
-	  (when (re-search-forward "title\":\"\\([^\"]+\\)\"" nil t)
-	    (let ((title (match-string 1)))
-	      (push (cons :title title) fields)))
-          (unless (alist-get :title fields)
-            (push (cons :title (plist-get org-store-link-plist :description)) fields))
-	  ;; find year
-	  (goto-char (point-min))
-          (push (cons :year "") fields)
-	  (when (re-search-forward "publishDate\":\"\\([^\"]+\\)\"" nil t)
-	    (let ((year (match-string 1)))
-	      (string-match "[0-9]\\{4\\}" year)
-	      (push (cons :year (match-string 0 year)) fields)))
-	  ;; (org-ref-url-add-nil fields)
-          (yant/org-capture-cleanup-bibtex fields yant/org-capture-youtube-bibtex-template "youtube_"))))))
+  (defun yant/org-capture-get-bibtex-doi-url ()
+    "Try to scrape DOI from current url and return the bibtex entry."
+    (when-let* ((dois (yant/org-ref-url-scrape-dois))
+		(doi (car dois)))
+      (with-temp-buffer
+	(bibtex-mode)
+	(bibtex-set-dialect 'BibTeX)
+	(insert (doi-utils-doi-to-bibtex-string doi))
+	(backward-char)
+	;; set date added for the record
+	(let ((ts (funcall doi-utils-timestamp-format-function)))
+	  (when ts
+	    (bibtex-set-field doi-utils-timestamp-field
+			      ts)))
+	(org-ref-clean-bibtex-entry)
+	(buffer-string))))
 
-(defvar yant/org-capture-process-elfeed-functions '(yant/org-capture-process-elfeed-scientific-journal
-						    yant/org-capture-process-habr-elfeed
-						    yant/org-capture-process-rgoswami-elfeed
-                                                    yant/org-capture-process-reddit-elfeed
-                                                    yant/org-capture-process-weibo-elfeed)
-  "Funcations used to process captured elfeed entries.
-The first non-nil return value will be used.
-If return value is 'ignore, do not process entry as elfeed entry.
-Each function is called with a single argument - an alist containing the following fields:
-:url - entry URL
-:urldate - date of capture
-:author - comma separated string with entry authors
-:title - entry title
-:keywords - comma separated categories (if provided by feed)
-:year - publication year
-:howpublished - suggested website name")
+  (defun yant/org-capture-get-bibtex-github ()
+    "Parse github link and generate bibtex entry."
+    (when-let ((link (plist-get org-store-link-plist :link)))
+      (when (string-match "github\\.com" link)
+	(with-current-buffer (yant/org-capture-get-html-buffer)
+	  (let ((fields `((:url . ,link)
+			  (:urldate . ,(format-time-string "%d %B %Y"))))
+		entry)
+	    ;; Fix URL
+	    (when (string-match "^\\(.+\\)/tree/[a-zA-Z0-9]+$" link)
+	      (setf (alist-get :url fields) (match-string 1 link)))
+	    ;; find author url
+	    (when (string-match "\\(?:https://\\)?github\\.com/[^/]+" link)
+	      (push (cons :author-homepage (match-string 0 link)) fields))
+	    ;; find author
+	    (when (string-match "\\(?:https://\\)?github\\.com/\\([^/]+\\)" link)
+	      (push (cons :author (match-string 1 link)) fields))
+	    ;; find title
+	    (goto-char (point-min))
+	    (when (re-search-forward "<title>\\([^>]+\\)</title>" nil t)
+	      (let ((title (match-string 1)))
+		(when (string-match "^\\(.+\\) at [0-9a-zA-Z]\\{20,\\}$" title)
+		  (setq title (match-string 1 title)))
+		(push (cons :title title) fields)))
+	    (push (cons :howpublished "Github") fields)
+	    ;; (org-ref-url-add-nil fields)
+	    (yant/org-capture-cleanup-bibtex fields yant/org-capture-github-bibtex-template "github_"))))))
 
-(defun yant/org-capture-process-elfeed-scientific-journal (fields)
-  "Journal RSS are not standardized. Easier to parse the whole html."
-  (when (s-match yant/org-capture-science-journal-url-re (alist-get :url fields))
-    'ignore))
+  (defun yant/org-capture-get-bibtex-youtube ()
+    "Parse youtube link and generate bibtex entry."
+    (when-let ((link (plist-get org-store-link-plist :link)))
+      (when (string-match "youtube\\.com/watch" link)
+	(with-current-buffer (yant/org-capture-get-html-buffer)
+	  (let ((fields `((:url . ,link)
+			  (:urldate . ,(format-time-string "%d %B %Y"))))
+		entry)
+	    ;; find channel url
+	    (goto-char (point-min))
+	    (when (re-search-forward "/channel/\\([^\"]+\\)\"" nil t)
+	      (let ((channel-url (s-concat "https://youtube.com/channel/" (match-string 1))))
+		(push (cons :author-homepage channel-url) fields)))
+	    ;; find author
+	    (goto-char (point-min))
+	    (push (cons :author "") fields)
+	    (when (re-search-forward "channelName\":\"\\([^\"]+\\)\"" nil t)
+	      (let ((channel-name (match-string 1)))
+		(push (cons :author channel-name) fields)))
+	    ;; find title
+	    (goto-char (point-min))
+	    (when (re-search-forward "title\":\"\\([^\"]+\\)\"" nil t)
+	      (let ((title (match-string 1)))
+		(push (cons :title title) fields)))
+	    (unless (alist-get :title fields)
+	      (push (cons :title (plist-get org-store-link-plist :description)) fields))
+	    ;; find year
+	    (goto-char (point-min))
+	    (push (cons :year "") fields)
+	    (when (re-search-forward "publishDate\":\"\\([^\"]+\\)\"" nil t)
+	      (let ((year (match-string 1)))
+		(string-match "[0-9]\\{4\\}" year)
+		(push (cons :year (match-string 0 year)) fields)))
+	    ;; (org-ref-url-add-nil fields)
+	    (yant/org-capture-cleanup-bibtex fields yant/org-capture-youtube-bibtex-template "youtube_"))))))
 
-(defun yant/org-capture-process-habr-elfeed (fields)
-  "Fix title in habr elfeed entries."
-  ;; Habr RSS adds indication if post is translated or from sandbox, but it is not the case in the website
-  (when (s-match "habr\\.com" (alist-get :url fields))
-    (let ((title (alist-get :title fields)))
-      (setf (alist-get :title fields) (s-replace-regexp "^\\[[^]]+\\][ ]*" "" title)))
-    fields))
+  (defvar yant/org-capture-process-elfeed-functions '(yant/org-capture-process-elfeed-scientific-journal
+						      yant/org-capture-process-habr-elfeed
+						      yant/org-capture-process-rgoswami-elfeed
+						      yant/org-capture-process-reddit-elfeed
+						      yant/org-capture-process-weibo-elfeed)
+    "Funcations used to process captured elfeed entries.
+  The first non-nil return value will be used.
+  If return value is 'ignore, do not process entry as elfeed entry.
+  Each function is called with a single argument - an alist containing the following fields:
+  :url - entry URL
+  :urldate - date of capture
+  :author - comma separated string with entry authors
+  :title - entry title
+  :keywords - comma separated categories (if provided by feed)
+  :year - publication year
+  :howpublished - suggested website name")
 
-(defun yant/org-capture-process-rgoswami-elfeed (fields)
-  "Populate author for https://rgoswami.me"
-  (when (s-match "rgoswami\\.me" (alist-get :url fields))
-    (setf (alist-get :author fields) "Rohit Goswami")
-    fields))
+  (defun yant/org-capture-process-elfeed-scientific-journal (fields)
+    "Journal RSS are not standardized. Easier to parse the whole html."
+    (when (s-match yant/org-capture-science-journal-url-re (alist-get :url fields))
+      'ignore))
 
-(defun yant/org-capture-process-reddit-elfeed (fields)
-  "Mention subreddit in :howpublished."
-  (when (s-match "reddit\\.com" (alist-get :url fields))
-    (setf (alist-get :howpublished fields)
-	  (format "%s:%s"
-		  (alist-get :howpublished fields)
-                  (alist-get :keywords fields)))
-    fields))
+  (defun yant/org-capture-process-habr-elfeed (fields)
+    "Fix title in habr elfeed entries."
+    ;; Habr RSS adds indication if post is translated or from sandbox, but it is not the case in the website
+    (when (s-match "habr\\.com" (alist-get :url fields))
+      (let ((title (alist-get :title fields)))
+	(setf (alist-get :title fields) (s-replace-regexp "^\\[[^]]+\\][ ]*" "" title)))
+      fields))
 
-(defun yant/org-capture-process-weibo-elfeed (fields)
-  "Fix too short cite keys in weibo by adding user-id/article-id cite key (setting :cite-extra)."
-  (when (s-match "weibo\\.com" (alist-get :url fields))
-    (let* ((link (alist-get :url fields))
-	   (id (and (string-match "weibo\\.com/\\([^/]+/[^/]+\\)" link)
-		    (match-string 1 link))))
-      (when id
-	(setf (alist-get :cite-extra fields) (format "%s" id))
-        fields))))
+  (defun yant/org-capture-process-rgoswami-elfeed (fields)
+    "Populate author for https://rgoswami.me"
+    (when (s-match "rgoswami\\.me" (alist-get :url fields))
+      (setf (alist-get :author fields) "Rohit Goswami")
+      fields))
 
-(defun yant/org-capture-get-bibtex-from-elfeed ()
-  "Parse elfeed capture and generate bibtex entry."
-  (when-let ((link (plist-get org-store-link-plist :link)))
-    (when-let ((elfeed-entry (plist-get (plist-get org-store-link-plist :query) :elfeed-data)))
-      (let ((fields `((:url . ,(elfeed-entry-link elfeed-entry))
-		      (:howpublished . ,(elfeed-entry-link elfeed-entry))
+  (defun yant/org-capture-process-reddit-elfeed (fields)
+    "Mention subreddit in :howpublished."
+    (when (s-match "reddit\\.com" (alist-get :url fields))
+      (setf (alist-get :howpublished fields)
+	    (format "%s:%s"
+		    (alist-get :howpublished fields)
+		    (alist-get :keywords fields)))
+      fields))
+
+  (defun yant/org-capture-process-weibo-elfeed (fields)
+    "Fix too short cite keys in weibo by adding user-id/article-id cite key (setting :cite-extra)."
+    (when (s-match "weibo\\.com" (alist-get :url fields))
+      (let* ((link (alist-get :url fields))
+	     (id (and (string-match "weibo\\.com/\\([^/]+/[^/]+\\)" link)
+		      (match-string 1 link))))
+	(when id
+	  (setf (alist-get :cite-extra fields) (format "%s" id))
+	  fields))))
+
+  (defun yant/org-capture-get-bibtex-from-elfeed ()
+    "Parse elfeed capture and generate bibtex entry."
+    (when-let ((link (plist-get org-store-link-plist :link)))
+      (when-let ((elfeed-entry (plist-get (plist-get org-store-link-plist :query) :elfeed-data)))
+	(let ((fields `((:url . ,(elfeed-entry-link elfeed-entry))
+			(:howpublished . ,(elfeed-entry-link elfeed-entry))
+			(:urldate . ,(format-time-string "%d %B %Y")))))
+	  (when-let ((howpublished (alist-get :howpublished fields)))
+	    (string-match "\\(?:https?://\\)?\\(?:www\\.\\)?\\([^/]+\\)\\.[^/]+/?" howpublished)
+	    (when (match-string 1 howpublished)
+	      (setf (alist-get :howpublished fields) (match-string 1 howpublished))))
+	  (let ((authors (plist-get (elfeed-entry-meta elfeed-entry) :authors)))
+	    (setq authors (mapcar #'cadr authors))
+	    (if authors
+		(push (cons :author (s-join ", " authors)) fields)
+	      ;; fallback to feed title
+	      (push (cons :author (elfeed-feed-title (elfeed-entry-feed elfeed-entry))) fields)))
+	  (let ((title (elfeed-entry-title elfeed-entry)))
+	    (push (cons :title title) fields))
+	  (let ((keywords (plist-get (elfeed-entry-meta elfeed-entry) :categories)))
+	    (push (cons :keywords (s-join ", " keywords)) fields))
+	  (let ((date (elfeed-entry-date elfeed-entry)))
+	    (push (cons :year (format-time-string "%Y" date)) fields))
+	  (setq fields (or (run-hook-with-args-until-success 'yant/org-capture-process-elfeed-functions fields)
+			   fields))
+	  (unless (eq fields 'ignore)
+	    (yant/org-capture-cleanup-bibtex fields yant/org-capture-elfeed-bibtex-template (s-concat (alist-get :howpublished fields) "_")))))))
+
+  (defun yant/org-capture-get-bibtex-habr ()
+    "Parse habrahabr link and generate bibtex entry."
+    (when-let ((link (plist-get org-store-link-plist :link)))
+      (when (s-match "habr\\.com" link)
+	(with-current-buffer (yant/org-capture-get-html-buffer)
+	  (let ((fields `((:url . ,link)
+			  (:urldate . ,(format-time-string "%d %B %Y"))))
+		entry)
+	    ;; simplify url
+	    (goto-char (point-min))
+	    (when (re-search-forward "\"page_url_canonical\": \"\\([^\"]+\\)\"" nil t)
+	      (let ((url (s-replace "\n" "" (match-string 1))))
+		(setq url (s-replace "?[^/]+$" "" url))
+		(setf (alist-get :url fields) (s-replace "\\" "" url))))
+	    ;; find authors
+	    (goto-char (point-min))
+	    (when (re-search-forward "\"article_authors\": \\[\\([^]]+\\)" nil t)
+	      (let ((authors (s-split "," (s-collapse-whitespace (s-replace "\n" "" (match-string 1))))))
+		(setq authors (mapcar (apply-partially #'s-replace-regexp "^[ ]*\"\\(.+\\)\"[ ]*$" "\\1") authors))
+		(setq authors (s-join ", " authors))
+		(push (cons :author authors) fields)))
+	    ;; find title
+	    (goto-char (point-min))
+	    (when (re-search-forward "\"page_title\": \"\\([^\"]+\\)\"" nil t)
+	      (let ((title (match-string 1)))
+		(push (cons :title title) fields)))
+	    ;; find year
+	    (goto-char (point-min))
+	    (when (re-search-forward "datePublished\": \"\\([^\"]+\\)\"" nil t)
+	      (let ((year (match-string 1)))
+		(string-match "[0-9]\\{4\\}" year)
+		(push (cons :year (match-string 0 year)) fields)))
+	    ;; (org-ref-url-add-nil fields)
+	    (yant/org-capture-cleanup-bibtex fields yant/org-capture-habr-bibtex-template
+					     (s-concat "habr_"
+						       (let ((url (alist-get :url fields)))
+							 (if (string-match "[0-9]+" url)
+							     (match-string 0 url)
+							   "")))))))))
+
+  (defvar yant/org-capture-get-bibtex-functions '(yant/org-capture-get-bibtex-from-elfeed
+						  yant/org-capture-get-bibtex-youtube
+						  ;; yant/org-capture-get-bibtex-habr
+						  yant/org-capture-get-bibtex-github
+						  yant/org-capture-get-bibtex-doi-url)
+    "List of functions to generate bibtex entry during capture.
+  The functions are called in order with defined `org-store-link-plist'.
+  First non-nil return value is used as a headline.
+  If all the functions return nil, `org-ref-url-html-to-bibtex' is used to generate the bibtex.")
+
+  (setq org-ref-url-author-re "\\(?:<meta name=\"author\" content=\"\\(?1:.+\\)\" ?/?>\\)\\|\\(?:<[^>]*?class=\"author[^\"]*name\"[^>]*>\\(?1:[^<]+\\)<\\)")
+
+  (defun yant/org-ref-url-html-read ()
+    "Read capture link content and return fields.
+  Fields include author, title, url, urldate, and year."
+    ;; Start with fields we already know
+    (when-let ((link (plist-get org-store-link-plist :link)))
+      (let ((fields `((:url . ,link)
+		      (:howpublished . ,link)
 		      (:urldate . ,(format-time-string "%d %B %Y")))))
-	(when-let ((howpublished (alist-get :howpublished fields)))
-          (string-match "\\(?:https?://\\)?\\(?:www\\.\\)?\\([^/]+\\)\\.[^/]+/?" howpublished)
-	  (when (match-string 1 howpublished)
-	    (setf (alist-get :howpublished fields) (match-string 1 howpublished))))
-	(let ((authors (plist-get (elfeed-entry-meta elfeed-entry) :authors)))
-          (setq authors (mapcar #'cadr authors))
-          (if authors
-              (push (cons :author (s-join ", " authors)) fields)
-            ;; fallback to feed title
-            (push (cons :author (elfeed-feed-title (elfeed-entry-feed elfeed-entry))) fields)))
-	(let ((title (elfeed-entry-title elfeed-entry)))
-          (push (cons :title title) fields))
-	(let ((keywords (plist-get (elfeed-entry-meta elfeed-entry) :categories)))
-          (push (cons :keywords (s-join ", " keywords)) fields))
-	(let ((date (elfeed-entry-date elfeed-entry)))
-          (push (cons :year (format-time-string "%Y" date)) fields))
-	(setq fields (or (run-hook-with-args-until-success 'yant/org-capture-process-elfeed-functions fields)
-			 fields))
-        (unless (eq fields 'ignore)
-	  (yant/org-capture-cleanup-bibtex fields yant/org-capture-elfeed-bibtex-template (s-concat (alist-get :howpublished fields) "_")))))))
-
-(defun yant/org-capture-get-bibtex-habr ()
-  "Parse habrahabr link and generate bibtex entry."
-  (when-let ((link (plist-get org-store-link-plist :link)))
-    (when (s-match "habr\\.com" link)
-      (with-current-buffer (yant/org-capture-get-html-buffer)
-	(let ((fields `((:url . ,link)
-			(:urldate . ,(format-time-string "%d %B %Y"))))
-	      entry)
-          ;; simplify url
+	(with-current-buffer
+	    (yant/org-capture-get-html-buffer)
+	  ;; find pubdate
 	  (goto-char (point-min))
-	  (when (re-search-forward "\"page_url_canonical\": \"\\([^\"]+\\)\"" nil t)
-	    (let ((url (s-replace "\n" "" (match-string 1))))
-              (setq url (s-replace "?[^/]+$" "" url))
-	      (setf (alist-get :url fields) (s-replace "\\" "" url))))
-	  ;; find authors
+	  (push (cons :year "") fields)
+	  (when (re-search-forward org-ref-url-date-re nil t)
+	    (let ((string (match-string 2)))
+	      (when (string-match "\\([0-9]\\{4\\}\\)" string)
+		(setf (alist-get :year fields) (match-string 1 string)))))
+	  ;; find author
 	  (goto-char (point-min))
-	  (when (re-search-forward "\"article_authors\": \\[\\([^]]+\\)" nil t)
-            (let ((authors (s-split "," (s-collapse-whitespace (s-replace "\n" "" (match-string 1))))))
-              (setq authors (mapcar (apply-partially #'s-replace-regexp "^[ ]*\"\\(.+\\)\"[ ]*$" "\\1") authors))
-              (setq authors (s-join ", " authors))
-	      (push (cons :author authors) fields)))
+	  (push (cons :author "") fields)
+	  (when (re-search-forward org-ref-url-author-re nil t)
+	    (setf (alist-get :author fields) (match-string 1)))
 	  ;; find title
 	  (goto-char (point-min))
-	  (when (re-search-forward "\"page_title\": \"\\([^\"]+\\)\"" nil t)
-	    (let ((title (match-string 1)))
-	      (push (cons :title title) fields)))
-	  ;; find year
-	  (goto-char (point-min))
-	  (when (re-search-forward "datePublished\": \"\\([^\"]+\\)\"" nil t)
-	    (let ((year (match-string 1)))
-	      (string-match "[0-9]\\{4\\}" year)
-	      (push (cons :year (match-string 0 year)) fields)))
-	  ;; (org-ref-url-add-nil fields)
-          (yant/org-capture-cleanup-bibtex fields yant/org-capture-habr-bibtex-template
-					   (s-concat "habr_"
-						     (let ((url (alist-get :url fields)))
-						       (if (string-match "[0-9]+" url)
-							   (match-string 0 url)
-							 "")))))))))
+	  (push (cons :title "") fields)
+	  (when (re-search-forward org-ref-url-title-re nil t)
+	    (setf (alist-get :title fields)
+		  (s-trim (decode-coding-string (match-string 1) 'utf-8))))
+	  fields))))
 
-(defvar yant/org-capture-get-bibtex-functions '(yant/org-capture-get-bibtex-from-elfeed
-						yant/org-capture-get-bibtex-youtube
-						;; yant/org-capture-get-bibtex-habr
-                                                yant/org-capture-get-bibtex-github
-                                                yant/org-capture-get-bibtex-doi-url)
-  "List of functions to generate bibtex entry during capture.
-The functions are called in order with defined `org-store-link-plist'.
-First non-nil return value is used as a headline.
-If all the functions return nil, `org-ref-url-html-to-bibtex' is used to generate the bibtex.")
-
-(setq org-ref-url-author-re "\\(?:<meta name=\"author\" content=\"\\(?1:.+\\)\" ?/?>\\)\\|\\(?:<[^>]*?class=\"author[^\"]*name\"[^>]*>\\(?1:[^<]+\\)<\\)")
-
-(defun yant/org-ref-url-html-read ()
-  "Read capture link content and return fields.
-Fields include author, title, url, urldate, and year."
-  ;; Start with fields we already know
-  (when-let ((link (plist-get org-store-link-plist :link)))
-    (let ((fields `((:url . ,link)
-		    (:howpublished . ,link)
-		    (:urldate . ,(format-time-string "%d %B %Y")))))
-      (with-current-buffer
-	  (yant/org-capture-get-html-buffer)
-	;; find pubdate
-	(goto-char (point-min))
-        (push (cons :year "") fields)
-	(when (re-search-forward org-ref-url-date-re nil t)
-	  (let ((string (match-string 2)))
-	    (when (string-match "\\([0-9]\\{4\\}\\)" string)
-	      (setf (alist-get :year fields) (match-string 1 string)))))
-	;; find author
-	(goto-char (point-min))
-        (push (cons :author "") fields)
-	(when (re-search-forward org-ref-url-author-re nil t)
-	  (setf (alist-get :author fields) (match-string 1)))
-	;; find title
-	(goto-char (point-min))
-        (push (cons :title "") fields)
-	(when (re-search-forward org-ref-url-title-re nil t)
-	  (setf (alist-get :title fields)
-		(s-trim (decode-coding-string (match-string 1) 'utf-8))))
-        fields))))
-
-(defun yant/org-ref-url-html-to-bibtex (url &optional nowarn)
-  "Convert URL to a bibtex entry.
-With optional argument NOWARN, do not show warning."
-  (let* ((alist (yant/org-ref-url-html-read))
-	 entry)
-    (when-let ((howpublished (alist-get :howpublished alist)))
-      (string-match "\\(?:https?://\\)?\\(?:www\\.\\)?\\([^/]+\\)\\.[^/]+/?" howpublished)
-      (when (match-string 1 howpublished)
-	(setf (alist-get :howpublished alist) (match-string 1 howpublished))))
-    (when (string-match "^[:lower:]" (alist-get :title alist))
-      ;; Capitalise title to make sure that `bibtex-autokey-get-title' can generate a valid cite key
-      (setf (alist-get :title alist)
-            (s-replace-regexp "^."
-			      (s-upcase (match-string 0 (alist-get :title alist)))
-                              (alist-get :title alist))))
-    (unless nowarn
-      (when-let ((fifo (plist-get (plist-get org-store-link-plist :query) :fifo)))
-	(start-process-shell-command "Send message to qutebrowser"
-				     nil
-	                             (format "echo 'message-warning \"Bookmarking unknown website using generic parser\"' >> %s" fifo))))
-    (yant/org-capture-cleanup-bibtex alist org-ref-url-bibtex-template (replace-regexp-in-string "\\." "_" (s-concat (alist-get :howpublished alist) "_")))))
-
-(defun yant/org-capture-get-bibtex ()
-  "Generate bibtex entry for currently captured item."
-  (if yant/org-capture-current-bibtex
-      (alist-get "raw-string" yant/org-capture-current-bibtex nil nil #'string=)
-    (let ((result (or (run-hook-with-args-until-success 'yant/org-capture-get-bibtex-functions)
-		      (when (plist-get org-store-link-plist :link)
-			(yant/org-ref-url-html-to-bibtex (plist-get org-store-link-plist :link))))))
-      (when result
-	(with-temp-buffer
-          (bibtex-mode)
-          (bibtex-set-dialect 'BibTeX)
-	  (insert result)
-          (goto-char 1)
-          (setq yant/org-capture-current-bibtex (bibtex-parse-entry))
-          (unless (org-ref-reftex-get-bib-field "title" yant/org-capture-current-bibtex)
-	    (setf (alist-get "title" yant/org-capture-current-bibtex nil nil #'string=) (format "{%s}" (plist-get org-store-link-plist :description))))
-          (setf (alist-get "raw-string" yant/org-capture-current-bibtex) result)))
-      result)))
-
-(defvar yant/org-capture-get-headline-functions '(yant/org-capture-get-title-from-bibtex)
-  "List of functions to generate headline (without tags) during capture.
-The functions are called in order with defined `org-store-link-plist'.
-First non-nil return value is used as a headline.
-If that is also not defined, `%:description' property from `org-store-link-plist' is used.")
-
-(defun yant/org-capture-get-title-from-bibtex ()
-  "Try to get title from bibtex entry."
-  (when (yant/org-capture-get-bibtex)
-    (let ((title (org-ref-reftex-get-bib-field "title" yant/org-capture-current-bibtex))
-	  (author (org-ref-reftex-get-bib-field "author" yant/org-capture-current-bibtex))
-          (year (org-ref-reftex-get-bib-field "year" yant/org-capture-current-bibtex))
-          (journal (org-ref-reftex-get-bib-field "journal" yant/org-capture-current-bibtex))
-	  (howpublished (org-ref-reftex-get-bib-field "howpublished" yant/org-capture-current-bibtex)))
-      (format "%s [%s] %s %s"
-	      (if (seq-empty-p author) "" author)
-              (if (seq-empty-p journal) howpublished journal)
-              (if (seq-empty-p year) "" (format "(%s)" year))
-              (if (seq-empty-p title) "Untitled" title)))))
-
-(defun yant/org-capture-get-title ()
-  "Calculate headline for currently captured item."
-  (with-temp-buffer
-    (insert
-     (or (run-hook-with-args-until-success 'yant/org-capture-get-headline-functions)
-	 (plist-get org-store-link-plist :description)))
-    (shr-render-region (point-min) (point-max))
-    (s-replace "\n" "" (buffer-string))))
-
-(defvar yant/org-capture-get-extra-functions '(yant/org-capture-extra-papers)
-  "List of functions to generate body during capture.
-The functions are called in order with defined `org-store-link-plist'.
-First non-nil return value is inserted.")
-
-(defun yant/org-capture-extra-papers ()
-  "Insert checklist for reading scientific papers."
-  (let ((link (plist-get org-store-link-plist :link)))
-    (pcase link
-      ((pred (lambda (link) (s-matches? yant/org-capture-science-journal-url-re link)))
-       (s-join "\n"
-	       '("- [ ] download and attach pdf"
-		 "- [ ] check if bibtex entry has missing fields"
-                 "- [ ] read paper"
-		 "- [ ] check citing articles"
-		 "- [ ] check related articles"
-		 "- [ ] check references")))
-      (_
-       nil))))
-
-(defun yant/org-capture-get-extra ()
-  "Calculate text to be inserted into body of currently captured item."
-  (or (run-hook-with-args-until-success 'yant/org-capture-get-extra-functions)
-      ""))
-
-(defun yant/org-capture-check-url (url &optional no-error)
-  "Check if URL was captured in the past.
-Do not throw error if NO-ERROR is non-nil."
-  (let ((url-present-p (s-replace "\n" "" (shell-command-to-string (format "/home/yantar92/bin/org-check-bookmark.sh \"%s\"" url)))))
-    (unless (string= "ok" url-present-p)
-      (if no-error
-	  t
+  (defun yant/org-ref-url-html-to-bibtex (url &optional nowarn)
+    "Convert URL to a bibtex entry.
+  With optional argument NOWARN, do not show warning."
+    (let* ((alist (yant/org-ref-url-html-read))
+	   entry)
+      (when-let ((howpublished (alist-get :howpublished alist)))
+	(string-match "\\(?:https?://\\)?\\(?:www\\.\\)?\\([^/]+\\)\\.[^/]+/?" howpublished)
+	(when (match-string 1 howpublished)
+	  (setf (alist-get :howpublished alist) (match-string 1 howpublished))))
+      (when (string-match "^[:lower:]" (alist-get :title alist))
+	;; Capitalise title to make sure that `bibtex-autokey-get-title' can generate a valid cite key
+	(setf (alist-get :title alist)
+	      (s-replace-regexp "^."
+				(s-upcase (match-string 0 (alist-get :title alist)))
+				(alist-get :title alist))))
+      (unless nowarn
 	(when-let ((fifo (plist-get (plist-get org-store-link-plist :query) :fifo)))
 	  (start-process-shell-command "Send message to qutebrowser"
 				       nil
-				       (format "echo 'message-warning \"%s\"' >> %s" url-present-p fifo)))
-        (unless (doct-get :immediate-finish)
-          (org-search-view nil url)
-          (goto-char (point-min))
-          (let (headlines)
-            (while (< (point) (point-max))
-              (when (get-text-property (point) 'org-hd-marker) (push (get-text-property (point) 'org-hd-marker) headlines))
-              (goto-char (next-single-char-property-change (point) 'org-hd-marker)))
-            (when (= 1 (length headlines))
-              (switch-to-buffer (marker-buffer (car headlines)))
-              (goto-char (car headlines))
-              (org-reveal))))
-	(error "%s" url-present-p)))))
+				       (format "echo 'message-warning \"Bookmarking unknown website using generic parser\"' >> %s" fifo))))
+      (yant/org-capture-cleanup-bibtex alist org-ref-url-bibtex-template (replace-regexp-in-string "\\." "_" (s-concat (alist-get :howpublished alist) "_")))))
 
-(defun yant/org-capture-get-id ()
-  "Generate :ID: property."
-  (yant/org-capture-get-bibtex)
-  (if-let ((id (org-ref-reftex-get-bib-field "=key=" yant/org-capture-current-bibtex)))
-      (if (and (not (yant/org-capture-check-url (format "ID: %s" id)))
-	       ;; (not (org-id-find id))
-	       (not (yant/org-capture-check-url (s-concat "Source: " (org-ref-reftex-get-bib-field "url" yant/org-capture-current-bibtex))))
-               (not (yant/org-capture-check-url (s-concat "Source: " (plist-get org-store-link-plist :link)))))
-          id
-	(when-let ((fifo (plist-get (plist-get org-store-link-plist :query) :fifo)))
-	  (start-process-shell-command "Send message to qutebrowser"
-				       nil
-				       (format "echo 'message-warning \"Bookmark with same ID already exist\"' >> %s" fifo)))
-        (unless (doct-get :immediate-finish)
-          (when-let ((marker (org-id-find id 'marker)))
-	    (switch-to-buffer (marker-buffer marker))
-	    (goto-char marker)
-	    (org-show-entry)))
-	(error "Existing entry with id %s" id))
-    (org-id-new)))
+  (defun yant/org-capture-get-bibtex ()
+    "Generate bibtex entry for currently captured item."
+    (if yant/org-capture-current-bibtex
+	(alist-get "raw-string" yant/org-capture-current-bibtex nil nil #'string=)
+      (let ((result (or (run-hook-with-args-until-success 'yant/org-capture-get-bibtex-functions)
+			(when (plist-get org-store-link-plist :link)
+			  (yant/org-ref-url-html-to-bibtex (plist-get org-store-link-plist :link))))))
+	(when result
+	  (with-temp-buffer
+	    (bibtex-mode)
+	    (bibtex-set-dialect 'BibTeX)
+	    (insert result)
+	    (goto-char 1)
+	    (setq yant/org-capture-current-bibtex (bibtex-parse-entry))
+	    (unless (org-ref-reftex-get-bib-field "title" yant/org-capture-current-bibtex)
+	      (setf (alist-get "title" yant/org-capture-current-bibtex nil nil #'string=) (format "{%s}" (plist-get org-store-link-plist :description))))
+	    (setf (alist-get "raw-string" yant/org-capture-current-bibtex) result)))
+	result)))
+
+  (defvar yant/org-capture-get-headline-functions '(yant/org-capture-get-title-from-bibtex)
+    "List of functions to generate headline (without tags) during capture.
+  The functions are called in order with defined `org-store-link-plist'.
+  First non-nil return value is used as a headline.
+  If that is also not defined, `%:description' property from `org-store-link-plist' is used.")
+
+  (defun yant/org-capture-get-title-from-bibtex ()
+    "Try to get title from bibtex entry."
+    (when (yant/org-capture-get-bibtex)
+      (let ((title (org-ref-reftex-get-bib-field "title" yant/org-capture-current-bibtex))
+	    (author (org-ref-reftex-get-bib-field "author" yant/org-capture-current-bibtex))
+	    (year (org-ref-reftex-get-bib-field "year" yant/org-capture-current-bibtex))
+	    (journal (org-ref-reftex-get-bib-field "journal" yant/org-capture-current-bibtex))
+	    (howpublished (org-ref-reftex-get-bib-field "howpublished" yant/org-capture-current-bibtex)))
+	(format "%s [%s] %s %s"
+		(if (seq-empty-p author) "" author)
+		(if (seq-empty-p journal) howpublished journal)
+		(if (seq-empty-p year) "" (format "(%s)" year))
+		(if (seq-empty-p title) "Untitled" title)))))
+
+  (defun yant/org-capture-get-title ()
+    "Calculate headline for currently captured item."
+    (with-temp-buffer
+      (insert
+       (or (run-hook-with-args-until-success 'yant/org-capture-get-headline-functions)
+	   (plist-get org-store-link-plist :description)))
+      (shr-render-region (point-min) (point-max))
+      (s-replace "\n" "" (buffer-string))))
+
+  (defvar yant/org-capture-get-extra-functions '(yant/org-capture-extra-papers)
+    "List of functions to generate body during capture.
+  The functions are called in order with defined `org-store-link-plist'.
+  First non-nil return value is inserted.")
+
+  (defun yant/org-capture-extra-papers ()
+    "Insert checklist for reading scientific papers."
+    (let ((link (plist-get org-store-link-plist :link)))
+      (pcase link
+	((pred (lambda (link) (s-matches? yant/org-capture-science-journal-url-re link)))
+	 (s-join "\n"
+		 '("- [ ] download and attach pdf"
+		   "- [ ] check if bibtex entry has missing fields"
+		   "- [ ] read paper"
+		   "- [ ] check citing articles"
+		   "- [ ] check related articles"
+		   "- [ ] check references")))
+	(_
+	 nil))))
+
+  (defun yant/org-capture-get-extra ()
+    "Calculate text to be inserted into body of currently captured item."
+    (or (run-hook-with-args-until-success 'yant/org-capture-get-extra-functions)
+	""))
+
+  (defun yant/org-capture-check-url (url &optional no-error)
+    "Check if URL was captured in the past.
+  Do not throw error if NO-ERROR is non-nil."
+    (let ((url-present-p (s-replace "\n" "" (shell-command-to-string (format "/home/yantar92/bin/org-check-bookmark.sh \"%s\"" url)))))
+      (unless (string= "ok" url-present-p)
+	(if no-error
+	    t
+	  (when-let ((fifo (plist-get (plist-get org-store-link-plist :query) :fifo)))
+	    (start-process-shell-command "Send message to qutebrowser"
+					 nil
+					 (format "echo 'message-warning \"%s\"' >> %s" url-present-p fifo)))
+	  (unless (doct-get :immediate-finish)
+	    (org-search-view nil url)
+	    (goto-char (point-min))
+	    (let (headlines)
+	      (while (< (point) (point-max))
+		(when (get-text-property (point) 'org-hd-marker) (push (get-text-property (point) 'org-hd-marker) headlines))
+		(goto-char (next-single-char-property-change (point) 'org-hd-marker)))
+	      (when (= 1 (length headlines))
+		(switch-to-buffer (marker-buffer (car headlines)))
+		(goto-char (car headlines))
+		(org-reveal))))
+	  (error "%s" url-present-p)))))
+
+  (defun yant/org-capture-get-id ()
+    "Generate :ID: property."
+    (yant/org-capture-get-bibtex)
+    (if-let ((id (org-ref-reftex-get-bib-field "=key=" yant/org-capture-current-bibtex)))
+	(if (and ;; (not (yant/org-capture-check-url (format "ID: %s\n" id)))
+		 ;; (not (org-id-find id))
+		 (not (yant/org-capture-check-url (s-concat "Source: " (org-ref-reftex-get-bib-field "url" yant/org-capture-current-bibtex))))
+		 (not (yant/org-capture-check-url (s-concat "Source: " (plist-get org-store-link-plist :link)))))
+	    id
+	  (when-let ((fifo (plist-get (plist-get org-store-link-plist :query) :fifo)))
+	    (start-process-shell-command "Send message to qutebrowser"
+					 nil
+					 (format "echo 'message-warning \"Bookmark with same ID already exist\"' >> %s" fifo)))
+	  (unless (doct-get :immediate-finish)
+	    (when-let ((marker (org-id-find id 'marker)))
+	      (switch-to-buffer (marker-buffer marker))
+	      (goto-char marker)
+	      (org-show-entry)))
+	  (error "Existing entry with id %s" id))
+      (org-id-new)))
 #+end_src
 
  #+begin_src emacs-lisp
