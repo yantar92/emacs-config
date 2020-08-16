@@ -8358,14 +8358,23 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 - all the items scheduled for today and matching =:SHOWFROMTIME:=
   #+begin_src emacs-lisp
 (defun org-agenda-skip-not-today ()
-  "Skip items which a not scheduled today."
+  "Skip items which are not scheduled today or scheduled earlier today."
   (save-restriction
     (widen)
     (let* ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
 	   (scheduleddate (subseq (decode-time (org-get-scheduled-time (point))) 3 6))
 	   (currentdate	(list (nth 1 org-agenda-current-date) (nth 0 org-agenda-current-date) (nth 2 org-agenda-current-date)))
-	   )
-      (if (equal scheduleddate currentdate) nil next-headline))))
+           (scheduledhourend (org-element-property
+			      :hour-end
+			      (org-element-property
+                               :scheduled
+                               (org-element-at-point))))
+           (currenthour (string-to-number (format-time-string "%H"))))
+      (if (and (equal scheduleddate currentdate)
+	       (or (not scheduledhourend)
+		   (<= currenthour scheduledhourend)))
+	  nil
+        next-headline))))
   #+end_src
 - all items scheduled in the past or today with DOING todo keyword, respecting =:SHOWFROMTIME:= and =:SHOWDATES:=
 - items from diary/with timestamps (shown by default in org)
