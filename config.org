@@ -6285,7 +6285,7 @@ The task is any item with todo keyword and no subtask.
 	      ("FAILED" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD")))
 	     ))
 #+end_src
-  - TODO(t) :: task which needs to be reviewed and marked with one of the following keywords
+  - TODO(t) :: task which needs to be reviewed and marked with one of the following keywords. TODO tasks are generally tasks I may consider doing, but do not know any details about what they are and how to proceed with doing them.
   - NEXT(n) :: Task which needs to be done next
 *************** #todo_keyword #DOING
 :PROPERTIES:
@@ -6342,7 +6342,7 @@ The task is any item with todo keyword and no subtask.
   - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason). The command triggers unscheduling the task.
   - HOLD(h) :: I am not going to do this task for now because of lack of time/low priority. The command triggers unscheduling the task.
   - FROZEN(z) :: I should have been done, but it haven't and not because of me. It might be in the future, but unlikely. 
-  - SOMEDAY(s) :: This task does not have to be done at all. But maybe, it I have a mood... The command triggers unscheduling the task if it is scheduled and clocking out.
+  - SOMEDAY(s) :: This task appears to be interesting and worth doing but does not have to be done at all. The command triggers unscheduling the task if it is scheduled and clocking out.
 #+begin_src emacs-lisp
 (defun yant/unschedule-maybe ()
   "Unschedule task when it keyword is changed to SOMEDAY."
