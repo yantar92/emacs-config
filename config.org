@@ -10410,6 +10410,27 @@ All these templates generally record the creation time in =:CREATED:=
            'replace)
 #+end_src
 
+- Experimental note :: A new note on an experiment. 
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "E"
+           (cdar  (doct '("Experiment note"
+			  :keys "E"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* TODO %u %^{Experiment title}"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":END:"
+                           "- [ ] copy the data to my laptop"
+                           "- [ ] update sample condition in the project notes"
+                           "%?"))))
+           'replace)
+#+end_src
+
 Reverse the order of template to make them appear as I put them in the list above
 #+begin_src emacs-lisp
 (setq org-capture-templates (nreverse org-capture-templates))
