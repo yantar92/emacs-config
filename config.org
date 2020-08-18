@@ -5410,6 +5410,20 @@ And group them by rss feed
 						   (yant/elfeed-group-by-feed a b)))))))
 #+end_src
 
+Save elfeed buffer on quit to make sure that database is more likely saved if Emacs crashes.
+
+#+begin_src emacs-lisp
+(use-package elfeed
+  :if init-flag
+  :config
+  (defun yant/elfeed-save-and-quit ()
+    "Save elfeed database and quit."
+    (interactive)
+    (elfeed-db-save-safe)
+    (quit-window 'kill))
+  (bind-key "q" #'yant/elfeed-save-and-quit elfeed-search-mode-map))
+#+end_src
+
 *** =Notmuch=
 :PROPERTIES:
 :ID:       f6ca2367-45c4-45bc-acec-49837cadc5ac
