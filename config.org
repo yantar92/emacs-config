@@ -7135,6 +7135,7 @@ The src block should be in the same org file."
 (use-package org-ref
   :if init-flag
   :straight t
+  :demand t
   :requires bibtex-completion
   :init
   (use-package lv :straight t)
