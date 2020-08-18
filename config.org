@@ -6504,6 +6504,7 @@ I can do it using =org-edna=
 
 The current task will be marked WAITING and cannot be marked DONE
 until the other task is completed.
+Its :SUMMARY: property will contain the information about the blocker
 Completing the other task will automatically set the current task to
 NEXT and schedule it the same day."
     (interactive)
@@ -6514,7 +6515,7 @@ NEXT and schedule it the same day."
       (org-set-property "BLOCKER" (format "ids(%s)" uuid))
       (org-set-property "SUMMARY" (format "Blocked by %s" (org-with-point-at (org-id-find uuid 'marker) (org-get-heading t t t t))))
       (org-with-point-at (org-id-find uuid 'marker)
-	(org-set-property "TRIGGER" (format "ids(%s) todo!(NEXT) scheduled!(\".\")" cur-uuid))))))
+	(org-set-property "TRIGGER" (format "ids(%s) todo!(NEXT) scheduled!(\".\") delete-property!(\"SUMMARY\")" cur-uuid))))))
 #+end_src
 
 Also, the projects require all the children to be done by default.
