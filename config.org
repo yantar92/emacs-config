@@ -6139,6 +6139,15 @@ Credit: [[id:github_jeremy-compostella_notmuc_compan_suppor_org_msg][jeremy-comp
 (add-hook 'org-msg-edit-mode-hook #'notmuch-company-setup)
 #+end_src
 
+Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues/58#issuecomment-675185846][credit]])
+#+begin_src emacs-lisp
+(use-package org-msg
+  :if init-flag
+  :config
+  (remove-hook 'notmuch-mua-send-hook #'notmuch-mua-message-send-hook))
+#+end_src
+
+
 
 ** Browser
    :PROPERTIES:
