@@ -1789,6 +1789,10 @@ Define the most basic movement commands:
   (meta-defun-mapc
    '((meta-down "Move down." next-logical-line)
      (meta-up "Move up." previous-logical-line)
+     (meta-end-of-line "Move to the end of line."
+		       (boon-end-of-line)
+                       :mode org-agenda-mode
+                       org-agenda-end-of-line)
      (meta-down-element "Move down one element." forward-paragraph)
      (meta-up-element "Move up one element." backward-paragraph)
      (meta-forward "Move forward." forward-char)
@@ -2819,70 +2823,70 @@ Note that I use [[meta-functions][meta-functions]] here as much as possible to u
 The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especially useful because it can jump backward in the mark-ring, exchange region marks, or jump in global mark ring which is especially useful if I temporary move to some place to look for something. Many of the movement functions are also additionally modified to store mark before moving.
 
 #+begin_src emacs-lisp
-  (use-package boon
-    :if init-flag
-    :config
-    (define-key boon-x-map "n" narrow-map)
-    (bind-keys ("C-M-S-j" . scroll-other-window)
-	       ("C-M-S-k" . scroll-other-window-down)
-	       :map boon-x-map
-	       ("e" . eval-last-sexp)
-	       ("c" . delete-frame)
-	       :map boon-moves-map
-	       ("j" . meta-down)
-	       ("J" . meta-down-element)
-	       ("k" . meta-up)
-	       ("K" . meta-up-element)
-	       ("o" . meta-forward)
-	       ("O" . meta-forward-element)
-	       ("P" . meta-forward-sexp)
-	       ("i" . meta-backward)
-	       ("I" . meta-backward-element)
-	       ("U" . meta-backward-sexp)
-	       ("l" . meta-scroll-up)
-	       ("L" . meta-scroll-down)
-	       (";" . meta-recenter-top-bottom)
-	       ("G" . end-of-buffer)
-	       ("g" . boon-goto-map)
-	       ;;("U" . move-beginning-of-line)
-	       ;;("P" . move-end-of-line)
-	       ("u" . boon-beginning-of-line)
-	       ("p" . boon-end-of-line)
-	       :map boon-goto-map
-	       ("g" . beginning-of-buffer)
-	       ("G" . end-of-buffer)
-	       :map boon-command-map
-	       ("-" . meta-undo)
-	       ("~" . boon-repeat-command)
-	       ("Q" . kmacro-end-or-call-macro)
-	       ("z" . boon-quote-character)
-	       ("y" . transpose-chars)
-	       ("Y" . transpose-words)
-               ("C-Y" . transpose-sexps)
-               ("n" . boon-switch-mark)
-               ("m" . bm-previous)
-               ("C-k" . meta-cut-element)
-	       :map boon-forward-search-map
-	       ("C-SPC" . isearch-forward-regexp)
-	       ("C-g" . boon-unhighlight)
-	       ("w" . meta-occur)
-               ("g" . meta-goto)
-	       :map boon-backward-search-map
-	       ("C-SPC" . isearch-backward-regexp)
-	       ("C-g" . boon-unhighlight)
-	       ("e" . meta-occur)
-               ("g" . meta-goto)
-	       :map boon-special-map
-	       ("c" . boon-c-god)
-	       ("z" . boon-quote-character)
-	       ("e" . boon-forward-search-map)
-	       ("w" . boon-backward-search-map)
-	       ("q" . nil)
-	       ("g" . boon-goto-map)
-	       ("G" . end-of-buffer)
-	       ("D" . boon-treasure-region)
-	       ("<SPC>" . boon-drop-mark))
-    (unbind-key "M-l" global-map))
+(use-package boon
+  :if init-flag
+  :config
+  (define-key boon-x-map "n" narrow-map)
+  (bind-keys ("C-M-S-j" . scroll-other-window)
+	     ("C-M-S-k" . scroll-other-window-down)
+	     :map boon-x-map
+	     ("e" . eval-last-sexp)
+	     ("c" . delete-frame)
+	     :map boon-moves-map
+	     ("j" . meta-down)
+	     ("J" . meta-down-element)
+	     ("k" . meta-up)
+	     ("K" . meta-up-element)
+	     ("o" . meta-forward)
+	     ("O" . meta-forward-element)
+	     ("P" . meta-forward-sexp)
+	     ("i" . meta-backward)
+	     ("I" . meta-backward-element)
+	     ("U" . meta-backward-sexp)
+	     ("l" . meta-scroll-up)
+	     ("L" . meta-scroll-down)
+	     (";" . meta-recenter-top-bottom)
+	     ("G" . end-of-buffer)
+	     ("g" . boon-goto-map)
+	     ;;("U" . move-beginning-of-line)
+	     ;;("P" . move-end-of-line)
+	     ("u" . boon-beginning-of-line)
+	     ("p" . meta-end-of-line)
+	     :map boon-goto-map
+	     ("g" . beginning-of-buffer)
+	     ("G" . end-of-buffer)
+	     :map boon-command-map
+	     ("-" . meta-undo)
+	     ("~" . boon-repeat-command)
+	     ("Q" . kmacro-end-or-call-macro)
+	     ("z" . boon-quote-character)
+	     ("y" . transpose-chars)
+	     ("Y" . transpose-words)
+             ("C-Y" . transpose-sexps)
+             ("n" . boon-switch-mark)
+             ("m" . bm-previous)
+             ("C-k" . meta-cut-element)
+	     :map boon-forward-search-map
+	     ("C-SPC" . isearch-forward-regexp)
+	     ("C-g" . boon-unhighlight)
+	     ("w" . meta-occur)
+             ("g" . meta-goto)
+	     :map boon-backward-search-map
+	     ("C-SPC" . isearch-backward-regexp)
+	     ("C-g" . boon-unhighlight)
+	     ("e" . meta-occur)
+             ("g" . meta-goto)
+	     :map boon-special-map
+	     ("c" . boon-c-god)
+	     ("z" . boon-quote-character)
+	     ("e" . boon-forward-search-map)
+	     ("w" . boon-backward-search-map)
+	     ("q" . nil)
+	     ("g" . boon-goto-map)
+	     ("G" . end-of-buffer)
+	     ("D" . boon-treasure-region)
+	     ("<SPC>" . boon-drop-mark))
+  (unbind-key "M-l" global-map))
 #+end_src
 **** =Avy= mode - =qutebrowser= like hints to words
 :PROPERTIES:
