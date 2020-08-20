@@ -1939,7 +1939,9 @@ I currently do not use hydras often.
 (global-set-key (kbd "S-I") #'ignore)
 (global-set-key (kbd "S-y") #'ignore)
 (global-set-key (kbd "S-u") #'ignore)
-(global-set-key (kbd "S-w") #'ignore))
+(global-set-key (kbd "S-w") #'ignore)
+(global-set-key (kbd "C-s-g") #'ignore)
+(global-set-key (kbd "C-S-g") #'ignore))
 #+end_src
 **** Disable terminal key aliases (I don't use console emacs anyway)
 :PROPERTIES:
