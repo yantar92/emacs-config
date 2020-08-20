@@ -240,12 +240,12 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
 			:fork (:repo "/home/yantar92/Git/org-mode/")))
 #+end_src
 
-Keep customisation away from =init.el= in a separate file
+Keep customisation away from =init.el= in a separate file.
 *************** TODO use :custom use-package keyword for setting customisation
 *************** END
   #+begin_src emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
-(load custom-file)
+;; (load custom-file)
   #+end_src
 
 Keeping track of the new changes in packages 
