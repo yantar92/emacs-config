@@ -10537,16 +10537,29 @@ I define two link types for capturing:
 - Generic link :: Same as link from browser, but silent (don't raise the capture buffer)
 
 
-*************** TODO make separate parser for RSS feeds - maybe just allow setting some fields in advance
+*************** DONE make separate parser for RSS feeds - maybe just allow setting some fields in advance
+CLOSED: [2020-08-18 Tue 14:35]
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-08-18 Tue 14:35]
+:END:
 *************** END
-*************** TODO write parser for journal RSS entries
+*************** CANCELLED show state if ID exists in silent                                                                                                 :CANCELLED:
+CLOSED: [2020-08-18 Tue 14:36]
+:PROPERTIES:
+:ID:       b65810df-f6d7-421a-b8d5-34ba94bd0d0f
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-08-18 Tue 14:36]
+:END:
 *************** END
-*************** TODO show state if ID exists in silent
-*************** END
-*************** TODO make force argument work
+*************** CANCELLED make force argument work                                                                                                          :CANCELLED:
+CLOSED: [2020-08-18 Tue 14:36]
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-08-18 Tue 14:36]
+:END:
 *************** END
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (require 'org-ref-url-utils)
 
   (use-package org-cliplink :straight t)
@@ -11075,7 +11088,7 @@ I define two link types for capturing:
       (org-id-new)))
 #+end_src
 
- #+begin_src emacs-lisp
+ #+begin_src emacs-lisp :tangle no
  (let ((templates (doct '( :group "Browser link"
  			 :type entry
  			 :file "~/Org/inbox.org"
@@ -11115,6 +11128,59 @@ I define two link types for capturing:
                (cdr  template)
                'replace)))
 #+end_src
+
+#+begin_src emacs-lisp
+(use-package org-capture-ref
+  :if init-flag
+  :load-path "~/Git/org-capture-ref/"
+  :after org-capture
+  :demand t
+  :config
+  (let ((templates (doct '( :group "Browser link"
+ 			    :type entry
+ 			    :file "~/Org/inbox.org"
+ 			    :fetch-bibtex (lambda () (org-capture-ref-process-capture)) ; this must run first
+			    :bibtex (lambda () (org-capture-ref-get-bibtex-field :bibtex-string))
+                            :url (lambda () (org-capture-ref-get-bibtex-field :url))
+			    :title (lambda () (format "%s [%s] %s %s"
+						 (or (org-capture-ref-get-bibtex-field :author)
+                                                     "Anonymous")
+                                                 (or (org-capture-ref-get-bibtex-field :journal)
+                                                     (org-capture-ref-get-bibtex-field :howpublished)
+                                                     "")
+                                                 (or (org-capture-ref-get-bibtex-field :year)
+                                                     "")
+                                                 (or (org-capture-ref-get-bibtex-field :title)
+                                                     "")))
+			    :id (lambda () (org-capture-ref-get-bibtex-field :key))
+			    :template
+			    ("%{fetch-bibtex}* TODO %? %{title} :BOOKMARK:"
+			     ":PROPERTIES:"
+			     ":ID: %{id}"
+			     ":CREATED: %U"
+			     ":Source: %{url}"
+			     ":END:"
+                             ":BIBTEX:"
+			     "#+begin_src bibtex"
+			     "%{bibtex}"
+			     "#+end_src"
+                             ":END:")
+			    :children (("Interactive link"
+					:keys "b"
+					:clock-in t
+					:clock-resume t
+					)
+				       ("Silent link"
+					:keys "B"
+					:immediate-finish t))))))
+    (dolist (template templates)
+      (asoc-put! org-capture-templates
+		 (car template)
+		 (cdr  template)
+		 'replace)))
+  )
+#+end_src
+
 - Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
