@@ -11168,13 +11168,23 @@ CLOSED: [2020-08-18 Tue 14:36]
  			    :fetch-bibtex (lambda () (org-capture-ref-process-capture)) ; this must run first
 			    :bibtex (lambda () (org-capture-ref-get-bibtex-field :bibtex-string))
                             :url (lambda () (org-capture-ref-get-bibtex-field :url))
-			    :title (lambda () (format "%s [%s] %s %s"
-						 (or (org-capture-ref-get-bibtex-field :author)
-                                                     "Anonymous")
-                                                 (or (org-capture-ref-get-bibtex-field :journal)
-                                                     (org-capture-ref-get-bibtex-field :howpublished)
+			    :title (lambda () (format "%s%s%s%s"
+						 (or (when (org-capture-ref-get-bibtex-field :author)
+                                                       (let* ((authors (s-split " *and *" (org-capture-ref-get-bibtex-field :author)))
+							      (author-surnames (mapcar (lambda (author)
+											 (car (last (s-split " +" author))))
+										       authors)))
+							 (if (= 1 (length author-surnames))
+                                                             (format "%s " (car author-surnames))
+                                                           (format "%s, %s " (car author-surnames) (car (last author-surnames))))))
                                                      "")
-                                                 (or (org-capture-ref-get-bibtex-field :year)
+                                                 (or (when (org-capture-ref-get-bibtex-field :journal)
+						       (format "[%s] " (org-capture-ref-get-bibtex-field :journal)))
+                                                     (when (org-capture-ref-get-bibtex-field :howpublished)
+                                                       (format "[%s] " (org-capture-ref-get-bibtex-field :howpublished)))
+                                                     "")
+                                                 (or (when (org-capture-ref-get-bibtex-field :year)
+                                                       (format "(%s) " (org-capture-ref-get-bibtex-field :year)))
                                                      "")
                                                  (or (org-capture-ref-get-bibtex-field :title)
                                                      "")))
@@ -11203,8 +11213,7 @@ CLOSED: [2020-08-18 Tue 14:36]
       (asoc-put! org-capture-templates
 		 (car template)
 		 (cdr  template)
-		 'replace)))
-  )
+		 'replace))))
 #+end_src
 
 - Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=.
