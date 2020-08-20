@@ -7191,6 +7191,19 @@ The src block should be in the same org file."
 			 :follow #'org-link-babel-follow
                          :complete #'org-link-babel-complete)
 #+end_src
+***** Active links
+
+I sometimes use elisp: links to execute a meaningful action required to start working on a task.
+For example, checking email require opening notmuch window (I prefer to not bind such action to a key in order to break destructing habit of checking email mindlessly).
+
+Do not ask every time I try to evaluate elisp: links
+#+begin_src emacs-lisp
+(use-package org
+  :if init-flag
+  :config
+  (setq org-link-elisp-confirm-function nil))
+#+end_src
+
 ***** NEXT Org-ref
 :PROPERTIES:
 :ID:       f944c2c8-f1fa-49ea-ab24-bf1b018013f1
