@@ -600,11 +600,15 @@ Later, I found light themes easier for my eyes when it is not dark outside.
 Since it is not really a good idea to work in darkness regardless of the colour scheme, I ended up using a light theme I prefer.
 
 #+begin_src emacs-lisp
-  (use-package flatui-theme
-    :if init-flag
-    :straight t
-    :config
-    (load-theme 'flatui t))
+(use-package flatui-theme
+  :if init-flag
+  :straight t
+  :config
+  (load-theme 'flatui t))
+;; (use-package elegance
+;;   :straight (elegance :host github :repo "rougier/elegant-emacs")
+;;   :config
+;;   (elegance-light))
 #+end_src
 
 For the font, I prefer something that works fine with mixed code and text (e.g. org files).
@@ -844,6 +848,20 @@ When the buffer text takes less space then a window, it's neat to see the beginn
 (when init-flag
   (setq-default indicate-buffer-boundaries 'left))
 #+end_src
+**** Nicer glyph for truncated/wrapped text
+Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
+#+begin_src emacs-lisp
+(when init-flag
+  (defface fallback '((t :family "Fira Code Light"
+			 :inherit 'face-faded)) "Fallback")
+  (set-display-table-slot standard-display-table 'truncation
+                          (make-glyph-code ?… 'fallback))
+  (set-display-table-slot standard-display-table 'wrap
+                          (make-glyph-code ?↩ 'fallback))
+  (set-display-table-slot standard-display-table 'selective-display
+                          (string-to-vector " …")))
+
+#+end_src
 *** Buffer
 
 General buffer appearance.
@@ -1063,6 +1081,23 @@ Show some text in buffer differently
           ("DEBUG"  . "#A020F0")
           ("GOTCHA" . "#FF4500")
           ("STUB"   . "#1E90FF"))))
+#+end_src
+
+**** No ugly button for checkboxes
+Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
+
+#+begin_src emacs-lisp
+(when init-flag
+  (setq widget-image-enable nil))
+#+end_src
+
+**** Underline at descent position
+Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
+Surprisingly, it looks quite nice
+
+#+begin_src emacs-lisp
+(when init-flag
+  (setq x-underline-at-descent-line t))
 #+end_src
 
 *** TODO Mode line
@@ -1396,25 +1431,33 @@ makes some functions laggy.
   (setq set-message-function 'set-multi-message)
 #+end_src
 
-
 *** Cursor
 :PROPERTIES:
 :ID:       3dbc3bed-206e-4132-b8e1-0d1ed338f990
 :END:
 
-Highlight current line
+**** Highlight current line
 
 #+begin_src emacs-lisp
 (when init-flag
   (global-hl-line-mode t))
 #+end_src
 
-Change default cursor colour (just my taste)
+**** Change default cursor colour (just my taste)
 
 #+BEGIN_SRC emacs-lisp
 (when init-flag
   (set-cursor-color "IndianRed"))
 #+END_SRC
+
+**** Do not blink
+
+Blinking does not matter much for me and no blinking is one less timer and hence one more tiny bit of slowing Emacs.
+
+#+begin_src emacs-lisp
+(when init-flag
+  (blink-cursor-mode 0))
+#+end_src
 
 **** COMMENT Highlight cursor when it moves far
 :PROPERTIES:
