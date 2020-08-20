@@ -6996,8 +6996,11 @@ Just links to the current entry are not always sufficient. I sometimes want to l
          (backward-char))))
 
 (defun org-att-id-prompt-id ()
-  "Prompt for the id during completion of att-id: link."
-  (let (parent-project)
+  "Prompt for the id during completion of att-id: link.
+If there is an id: link in `org-store-link-plist' suggest that heading.
+Show parent project as top (or second top) suggestion."
+  (let (parent-project
+	saved-id)
     (when (eq major-mode 'org-mode)
       (org-with-point-at (point)
 	(org-back-to-heading)
@@ -7006,9 +7009,16 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 	  (when (and (bh/is-project-p)
 		     (not (bh/is-subproject-p)))
             (setq parent-project (list (s-join "/"
-					       (append (list (f-filename (buffer-file-name (buffer-base-buffer))))
-						       (org-get-outline-path 'with-self 'use-cache)))))))))
-    (let ((org-refile-history parent-project)
+					       (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
+						       (append (list (f-filename (buffer-file-name (buffer-base-buffer))))
+							       (org-get-outline-path 'with-self 'use-cache))))))))))
+    (when (string= "id" (plist-get org-store-link-plist :type))
+      (org-with-point-at (org-id-find (cadr (split-string (plist-get org-store-link-plist :link) ":")) 'marker)
+	(setq saved-id (list (s-join "/"
+				     (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
+					     (append (list (f-filename (buffer-file-name (buffer-base-buffer))))
+						     (org-get-outline-path 'with-self 'use-cache))))))))
+    (let ((org-refile-history (append saved-id parent-project))
 	  (org-refile-cache nil)
 	  (org-refile-target-verify-function #'org-att-id-skip-function))
       (let ((prompt-ans (org-refile-get-location "Link to attachment from")))
