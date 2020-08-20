@@ -6959,7 +6959,7 @@ Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while
              )
 	    arg))
 
-(add-to-list 'org-link-abbrev-alist (cons "att" "attachment:%s"))
+(add-to-list 'org-link-abbrev-alist (cons "att" "attachment"))
 
 ;; (defun org-att-link-complete (&optional arg)
 ;;   "Completion function for att: link."
