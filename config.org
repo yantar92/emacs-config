@@ -837,11 +837,46 @@ This mode is minor-mode thus it should be less intrusive in comparison with [[id
 					       'display '(raise -0.2))))
   (bind-keys :map boon-x-map ("w" . olivetti-mode)))
 #+end_src
-**** Window boundaries
+**** Text wrap indicators
+
+Nicer text wrap/truncation indicators. 
+Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
+
+This works instead of default fringe indicators and hence I need to disable fringe.  Without fringe there is also a need to put some internal border in frames.  Otherwise, text will be shifted right to the frame edge, which is not nice.
+
+#+begin_src emacs-lisp
+;; Fringe provides the same (but not customisable functionality
+(fringe-mode '(0 . 0))
+(add-to-list 'default-frame-alist '(internal-border-width . 10))
+(set-frame-parameter (selected-frame)
+                     'internal-border-width 10)
+(defface fallback '((t :family "Fira Code Light"
+		       :inherit 'face-faded)) "Fallback")
+(set-display-table-slot standard-display-table 'truncation
+                        (make-glyph-code ?… 'fallback))
+(set-display-table-slot standard-display-table 'wrap
+                        (make-glyph-code ?↩ 'fallback))
+(set-display-table-slot standard-display-table 'selective-display
+                        (string-to-vector " …"))
+;; Org buffers would use empty table by default
+(use-package org
+  :init
+  (setq org-display-table (make-display-table))
+  (set-display-table-slot org-display-table 'truncation
+                          (make-glyph-code ?… 'fallback))
+  (set-display-table-slot org-display-table 'wrap
+                          (make-glyph-code ?↩ 'fallback))
+  (set-display-table-slot org-display-table 'selective-display
+                          (string-to-vector " …")))
+#+end_src
+**** COMMENT Window boundaries
 :PROPERTIES:
 :ID:       00975142-2491-4f85-bd0b-f1f6c2938e36
+:SUMMARY:  Does not work without fringe
 :END:
 :LOGBOOK:
+- Note taken on [2020-08-20 Thu 18:04] \\
+  Does not work without fringe
 - Refiled on [2019-12-25 Wed 14:15]
 :END:
 When the buffer text takes less space then a window, it's neat to see the beginning/end of the buffer in emacs.
@@ -849,20 +884,7 @@ When the buffer text takes less space then a window, it's neat to see the beginn
 (when init-flag
   (setq-default indicate-buffer-boundaries 'left))
 #+end_src
-**** Nicer glyph for truncated/wrapped text
-Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
-#+begin_src emacs-lisp
-(when init-flag
-  (defface fallback '((t :family "Fira Code Light"
-			 :inherit 'face-faded)) "Fallback")
-  (set-display-table-slot standard-display-table 'truncation
-                          (make-glyph-code ?… 'fallback))
-  (set-display-table-slot standard-display-table 'wrap
-                          (make-glyph-code ?↩ 'fallback))
-  (set-display-table-slot standard-display-table 'selective-display
-                          (string-to-vector " …")))
 
-#+end_src
 *** Buffer
 
 General buffer appearance.
