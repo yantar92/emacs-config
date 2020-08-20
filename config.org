@@ -13900,6 +13900,11 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 ;;     (dired-mark-files-regexp "^\\." nil 'localname)
 ;;     (dired-do-kill-lines))))
 #+end_src
+*** SOMEDAY Fix =eldoc= raising error on org src blocks                                                                                           :SOMEDAY:
+
+#+begin_src emacs-lisp
+(defun org-eldoc-documentation-function () "")
+#+end_src
 ** Summary of key bindings
 *** COMMENT Command frequency measurement in emacs
 :PROPERTIES:
