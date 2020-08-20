@@ -7217,8 +7217,8 @@ Do not ask every time I try to evaluate elisp: links
   :if init-flag
   :straight t
   :demand t
-  :requires bibtex-completion
   :init
+  (use-package bibtex-completion :demand t)
   (use-package lv :straight t)
   (setq org-ref-show-citation-on-enter nil) ;; this slows down org mode a lot otherwise
   :config
@@ -7238,10 +7238,11 @@ Do not ask every time I try to evaluate elisp: links
   (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
   (use-package org-ref
     :config
+    (add-to-list 'org-ref-bibtex-journal-abbreviations '("PMAG" "Philosophical Magazine" "Philos. Mag."))
     (add-to-list 'org-ref-bibtex-journal-abbreviations '("MRSBEA" "MRS Bulletin" "MRS Bull."))
-    (add-to-list 'org-ref-bibtex-journal-abbreviations '("ExtrMechL" "Extreme Mechanics Letters" "Extreme Mech. Lett.")))
-  (add-to-list 'org-ref-bibtex-journal-abbreviations '("MRSBEA" "MRS Bulletin" "MRS Bull."))
-  (add-to-list 'org-ref-bibtex-journal-abbreviations '("ExtrMechL" "Extreme Mechanics Letters" "Extreme Mech. Lett.")))
+    (add-to-list 'org-ref-bibtex-journal-abbreviations '("ExtrMechL" "Extreme Mechanics Letters" "Extreme Mech. Lett."))
+    (add-to-list 'org-ref-bibtex-journal-abbreviations '("MRSBEA" "MRS Bulletin" "MRS Bull."))
+    (add-to-list 'org-ref-bibtex-journal-abbreviations '("ExtrMechL" "Extreme Mechanics Letters" "Extreme Mech. Lett."))))
 #+end_src
 
 ***** SOMEDAY search in article PDFs
