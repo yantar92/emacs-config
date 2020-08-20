@@ -11392,7 +11392,7 @@ The subheadings below such a headlines are promoted up *1 level*.
 	("" "graphicx" t)
 	("" "underscore" t)
 	("russian" "babel" t)
-        ("UTF8" "ctex" t)
+        ;; ("UTF8" "ctex" t)
 	;; ("" "epstopdf" t)
 	("extendedchars" "grffile" t)
 	"
