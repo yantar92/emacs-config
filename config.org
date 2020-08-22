@@ -32,27 +32,21 @@ CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 This is me
 
 #+begin_src emacs-lisp
-;; setting this is not only fancy, but actually used
+;; Setting this is not only fancy, but actually used
 ;; for example, by yasnippet when filling elisp file header
 (setq user-full-name "Ihor Radchenko")
 (setq user-mail-address "yantar92@gmail.com")
 #+end_src
 
-I am not really doing much programming, but rather use Emacs as knowledge base management tool.
-Most of time, I do not even edit or type things directly, but read through the files.
-Therefore, the main focus of this setup is =org-mode= and not as much programming, navigating through text and not as much editing.
+I am not really doing much programming, but rather use Emacs as knowledge base management tool.  Most of time, I do not even edit or type things directly, but read through the files.  Therefore, the main focus of this setup is =org-mode= and not as much programming, navigating through text and not as much editing.
 
-The usage of =org-mode= unfortunately means that the overall performance of Emacs is generally not very good. 
-To improve things a little bit, I am trying to run things that "freeze" Emacs most terribly either asynchronously or in separate Emacs process. 
-Running in separate process would be terribly slow if I just load my main =init.el= over and over again as if I open a new instance of emacs interactively.
-Hence, I design my =init.el= in the way that it can load faster in batch mode.
+The usage of =org-mode= unfortunately means that the overall performance of Emacs is generally not very good.  To improve things a little bit, I am trying to run things that "freeze" Emacs most terribly either asynchronously or in separate Emacs process.  Running in separate process would be terribly slow if I just load my main =init.el= over and over again as if I open a new instance of emacs interactively.  Hence, I design my =init.el= in the way that it can load faster in batch mode.
 
-This Emacs configuration allows loading Emacs in both interactive and batch modes. It is controlled by special variables, identifying startup mode:
+This Emacs configuration allows loading Emacs in both interactive and batch modes.  It is controlled by special variables, identifying startup mode:
 - =init-flag= :: normal startup, load all the visual packages and options
 - =org-export-flag= :: load necessary options for org-export
 - =org-tangle-flag= :: load necessary options for org-tangle
-One important note about this configuration is that I do not use =desktop-save-mode=. 
-Everything I intend to do is kept in my org files, which are automatically loaded by org agenda command.
+One important note about this configuration is that I do not use =desktop-save-mode=.  Everything I intend to do is kept in my org files, which are automatically loaded by org agenda command.
 
 #+begin_src emacs-lisp
 (defvar init-flag nil
@@ -62,7 +56,6 @@ Everything I intend to do is kept in my org files, which are automatically loade
 (defvar org-tangle-flag nil
   "Set up org tangle if not nil.")
 #+end_src
-
 
 ** =Init.el=
 :PROPERTIES:
@@ -838,6 +831,9 @@ This mode is minor-mode thus it should be less intrusive in comparison with [[id
   (bind-keys :map boon-x-map ("w" . olivetti-mode)))
 #+end_src
 **** Text wrap indicators
+     :PROPERTIES:
+     :ID:       7b84d543-2d95-4a04-ba1f-a96e47daa853
+     :END:
 
 Nicer text wrap/truncation indicators. 
 Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
@@ -1107,6 +1103,9 @@ Show some text in buffer differently
 #+end_src
 
 **** No ugly button for checkboxes
+:PROPERTIES:
+:ID:       36ef77bf-1a8e-45c5-a306-10f02ebaf671
+:END:
 Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
 
 #+begin_src emacs-lisp
@@ -1115,6 +1114,9 @@ Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very
 #+end_src
 
 **** Underline at descent position
+:PROPERTIES:
+:ID:       506912a1-1daf-4506-8e5a-87f90214b42c
+:END:
 Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
 Surprisingly, it looks quite nice
 
@@ -1460,6 +1462,9 @@ makes some functions laggy.
 :END:
 
 **** Highlight current line
+:PROPERTIES:
+:ID:       eb188515-3363-4f8c-afe4-0110a5cdc185
+:END:
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -1467,6 +1472,9 @@ makes some functions laggy.
 #+end_src
 
 **** Change default cursor colour (just my taste)
+:PROPERTIES:
+:ID:       272e4188-f79d-4597-b4b8-2ce652b349f3
+:END:
 
 #+BEGIN_SRC emacs-lisp
 (when init-flag
@@ -1474,6 +1482,9 @@ makes some functions laggy.
 #+END_SRC
 
 **** Do not blink
+:PROPERTIES:
+:ID:       47b6a282-1ab2-4137-a4eb-db62f8a376fd
+:END:
 
 Blinking does not matter much for me and no blinking is one less timer and hence one more tiny bit of slowing Emacs.
 
@@ -1502,7 +1513,6 @@ Blinking does not matter much for me and no blinking is one less timer and hence
   :config
   (beacon-mode 1))
 #+end_src
-
 
 ** Command loop
 :PROPERTIES:
@@ -4423,7 +4433,6 @@ The same author also wrote font-lock profiler: [[id:github_lindydancer_lindy_fon
   :straight (font-lock-profiler :type git :host github :repo "Lindydancer/font-lock-profiler"))
 #+end_src
 
-
 ** Programming & emacsing
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
@@ -6218,8 +6227,6 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (remove-hook 'notmuch-mua-send-hook #'notmuch-mua-message-send-hook))
 #+end_src
 
-
-
 ** Browser
    :PROPERTIES:
    :ID:       ef9c93cd-e760-407c-82cf-2aeffa7a11ad
@@ -7218,6 +7225,9 @@ The src block should be in the same org file."
                          :complete #'org-link-babel-complete)
 #+end_src
 ***** Active links
+:PROPERTIES:
+:ID:       98951f47-3da1-4be0-9e01-93607a3df065
+:END:
 
 I sometimes use elisp: links to execute a meaningful action required to start working on a task.
 For example, checking email require opening notmuch window (I prefer to not bind such action to a key in order to break destructing habit of checking email mindlessly).
@@ -13419,6 +13429,7 @@ Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/c
 **** Property drawers
 :PROPERTIES:
 :CREATED:  [2020-05-13 Wed 23:51]
+:ID:       8f502b25-1797-4c2d-b12e-32b1f6c6a236
 :END:
 
 Smaller font for property drawers
