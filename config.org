@@ -8164,7 +8164,7 @@ SUBTREE-END is used as end of the entry if not nil."
 		(org-agenda-sorting-strategy
 		 '(todo-state-down effort-up category-keep))))
 	      ("d" "Focus daily agenda" agenda ""
-	       ((org-agenda-overriding-header "Focused daily agenda. Do not forget to filter to work/home scope\n")
+	       ((org-agenda-overriding-header "Focused daily agenda.\n")
 		(org-agenda-skip-function '(or
 					    (zin/org-agenda-skip-tag "HOLD")
 					    (yant/org-agenda-skip-nofocus)))))
@@ -9298,7 +9298,7 @@ into (not QUERY)."
 
 (add-to-list 'org-agenda-custom-commands
 	     `("s" "Focus daily agenda (ql-skip version)" agenda ""
-	       ((org-agenda-overriding-header "Focused daily agenda. Do not forget to filter to work/home scope\n")
+	       ((org-agenda-overriding-header "Focused daily agenda.\n")
 		(org-agenda-skip-function  (yant/org-ql-focused-agenda-query)))))
 
 
