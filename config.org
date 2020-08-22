@@ -5504,7 +5504,7 @@ Save elfeed buffer on quit to make sure that database is more likely saved if Em
     "Save elfeed database and quit."
     (interactive)
     (elfeed-db-save-safe)
-    (quit-window 'kill))
+    (delete-frame))
   (bind-key "q" #'yant/elfeed-save-and-quit elfeed-search-mode-map))
 #+end_src
 
