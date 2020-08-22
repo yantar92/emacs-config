@@ -1179,7 +1179,6 @@ By default, the position in buffer =mode-line-position= is shown in %. However, 
 *************** TODO move it close to the definition
 *************** END
 
-
 Show boon state
   #+begin_src emacs-lisp
 (use-package boon
@@ -2165,53 +2164,57 @@ Hence, I had to define special versions of =boon=-like bindings for helm.
 The basic idea is to prefix movement commands with meta. 
 
 #+begin_src emacs-lisp
-(use-package helm
-  :if init-flag
-  :straight (helm :type git :host github :repo "emacs-helm/helm"
-		  :fork (:host github
-			       :repo "yantar92/helm"))
-  :diminish helm-mode
-  :after boon
-  :bind (
-	 ("M-x" . helm-M-x)
-	 ("M-y" . helm-show-kill-ring)
-	 ("<f1> a" . helm-apropos)
-	 ("C-x c" . nil)
-	 :map helm-map
-	 ("M-j" . helm-next-line)
-	 ("M-k" . helm-previous-line)
-	 ("M-o" . helm-next-source)
-	 ("M-i" . helm-previous-source)
-	 ("M-l" . yant/helm-yank-selection-or-execute-persistent-action)
-	 ("C-u" . helm-execute-persistent-action)
-	 ("C-M-h" . backward-kill-word)
-	 ("M-h" . backward-kill-word)
-	 ("C-h" . backward-delete-char-untabify)
-	 :map helm-find-files-map
-	 ("M-l" . helm-execute-persistent-action)
-	 :map boon-goto-map
-	 ("e" . helm-resume)
-	 )
-  :defines helm-global-mode
-  :custom
-  (helm-split-window-inside-p t)
-  (helm-move-to-line-cycle-in-source t)
-  (helm-ff-file-name-history-use-recentf t)
-  (helm-mode-fuzzy-match t)
-  :config
-  (defun yant/helm-yank-selection-or-execute-persistent-action (arg)
-    "Call `helm-yank-selection' in some cases listed below."
-    (interactive "P")
-    (pcase helm--prompt
-      ((pred (string-match-p "Refile\\|\\(Link to attachment from\\)")) (funcall-interactively #'helm-yank-selection arg))
-      (_ (funcall-interactively #'helm-execute-persistent-action))))
-  (use-package helm-config)
-  (use-package helm-files)
-  (use-package helm-command)
-  (define-global-minor-mode helm-global-mode helm-mode
-    (lambda()
-      (helm-mode 1)))
-  (helm-global-mode))
+  (use-package helm
+    :if init-flag
+    :straight (helm :type git :host github :repo "emacs-helm/helm"
+		    :fork (:host github
+				 :repo "yantar92/helm"))
+    :diminish helm-mode
+    :after boon
+    :init
+    ;; Re-define obsolete variables removed in latest Emacs
+    (defvar minibuffer-local-must-match-filename-map nil)
+    (defvar browse-url-mosaic-program nil)
+    :bind (
+	   ("M-x" . helm-M-x)
+	   ("M-y" . helm-show-kill-ring)
+	   ("<f1> a" . helm-apropos)
+	   ("C-x c" . nil)
+	   :map helm-map
+	   ("M-j" . helm-next-line)
+	   ("M-k" . helm-previous-line)
+	   ("M-o" . helm-next-source)
+	   ("M-i" . helm-previous-source)
+	   ("M-l" . yant/helm-yank-selection-or-execute-persistent-action)
+	   ("C-u" . helm-execute-persistent-action)
+	   ("C-M-h" . backward-kill-word)
+	   ("M-h" . backward-kill-word)
+	   ("C-h" . backward-delete-char-untabify)
+	   :map helm-find-files-map
+	   ("M-l" . helm-execute-persistent-action)
+	   :map boon-goto-map
+	   ("e" . helm-resume)
+	   )
+    :defines helm-global-mode
+    :custom
+    (helm-split-window-inside-p t)
+    (helm-move-to-line-cycle-in-source t)
+    (helm-ff-file-name-history-use-recentf t)
+    (helm-mode-fuzzy-match t)
+    :config
+    (defun yant/helm-yank-selection-or-execute-persistent-action (arg)
+      "Call `helm-yank-selection' in some cases listed below."
+      (interactive "P")
+      (pcase helm--prompt
+	((pred (string-match-p "Refile\\|\\(Link to attachment from\\)")) (funcall-interactively #'helm-yank-selection arg))
+	(_ (funcall-interactively #'helm-execute-persistent-action))))
+    (use-package helm-config)
+    (use-package helm-files)
+    (use-package helm-command)
+    (define-global-minor-mode helm-global-mode helm-mode
+      (lambda()
+	(helm-mode 1)))
+    (helm-global-mode))
 #+end_src
 
 **** Adaptive sorting of candidates
