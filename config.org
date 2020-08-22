@@ -7082,9 +7082,6 @@ Show parent project as top (or second top) suggestion."
 			 :complete #'org-att-id-link-complete
                          :desk #'org-att-id-link-description)
 
-(org-link-set-parameters "id"
-			 :complete #'org-id-prompt-id)
-
 #+end_src
 
 ***** Internal
