@@ -2847,7 +2847,7 @@ I often use it to search interesting things in Emacs packages.
 	      ("<tab>" . hs-toggle-hiding)
 	      ("<backtab>" . hs-hide-all)
 	      ("M-S-<iso-lefttab>" . hs-show-all))
-  :hook ((c-mode-common emacs-lisp-mode sh-mode org-src-mode) . hs-minor-mode))
+  :hook ((c-mode-common emacs-lisp-mode sh-mode) . hs-minor-mode))
 #+end_src
 *** Turn on narrow
 :PROPERTIES:
