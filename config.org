@@ -10066,7 +10066,7 @@ All these templates generally record the creation time in =:CREATED:=
 (asoc-put! org-capture-templates
 	   "n"
            (cdar (doct
-		  '("TODO item"
+		  '("NEXT item"
 		    :keys "n"
                     :type entry
                     :file "~/Org/inbox.org"
@@ -10090,7 +10090,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO %? %a"
+			  ("* NEXT %? %a"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":ORG-TIME-BONUS-ON-DONE: 20"
