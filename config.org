@@ -13055,7 +13055,8 @@ Optional MODE specifies major mode used for display."
 			 (match-beginning 1)
                          'display
                          `(space . (:align-to (- right
-						 (,(string-display-pixel-width (match-string 1))))))))))
+						 (,(string-display-pixel-width (match-string 1)))
+                                                 1)))))))
 
 (defun org-agenda-adaptive-fill-function ()
   "Fill to the beginning of headline in agenda."
