@@ -6252,8 +6252,6 @@ Emacs application framework provides its own implementation of keyboard-driven b
   :custom
   (eaf-find-alternate-file-in-dired t)
   :config
-  (eaf-bind-key scroll_up_page "l" eaf-browser-keybinding)
-  (eaf-bind-key scroll_down_page "L" eaf-browser-keybinding)
   (eaf-bind-key insert_or_open_link_new_buffer "H" eaf-browser-keybinding)
   (eaf-bind-key insert_or_open_link "h" eaf-browser-keybinding)
   (eaf-bind-key insert_or_close_buffer "C-x q" eaf-browser-keybinding)
@@ -10573,27 +10571,9 @@ I define two link types for capturing:
 - Generic link :: Same as link from browser, but silent (don't raise the capture buffer)
 
 
-*************** DONE make separate parser for RSS feeds - maybe just allow setting some fields in advance
-CLOSED: [2020-08-18 Tue 14:35]
-:LOGBOOK:
-- State "DONE"       from "TODO"          [2020-08-18 Tue 14:35]
-:END:
-*************** END
-*************** CANCELLED show state if ID exists in silent                                                                                                 :CANCELLED:
-CLOSED: [2020-08-18 Tue 14:36]
-:PROPERTIES:
-:ID:       b65810df-f6d7-421a-b8d5-34ba94bd0d0f
-:END:
-:LOGBOOK:
-- State "CANCELLED"  from "TODO"          [2020-08-18 Tue 14:36]
-:END:
-*************** END
-*************** CANCELLED make force argument work                                                                                                          :CANCELLED:
-CLOSED: [2020-08-18 Tue 14:36]
-:LOGBOOK:
-- State "CANCELLED"  from "TODO"          [2020-08-18 Tue 14:36]
-:END:
-*************** END
+
+
+
 
 #+begin_src emacs-lisp :tangle no
   (require 'org-ref-url-utils)
