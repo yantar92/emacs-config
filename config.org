@@ -13544,9 +13544,10 @@ Turning on org element cache in attempt to make it faster.
 [2020-05-25 Mon] Trying again
 [2020-07-15 Wed] Again getting strange errors. Probably related to native-comp
 [2020-08-02 Sun] Retrying again
+[2020-08-27 Thu] Disabling because of strange hangs
 
 #+begin_src emacs-lisp
-(custom-set-variables '(org-element-use-cache t))
+(custom-set-variables '(org-element-use-cache nil))
 #+end_src
 
 *************** TODO check if it is good enough
