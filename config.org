@@ -7275,8 +7275,8 @@ Do not ask every time I try to evaluate elisp: links
     (add-to-list 'org-ref-bibtex-journal-abbreviations '("PMAG" "Philosophical Magazine" "Philos. Mag."))
     (add-to-list 'org-ref-bibtex-journal-abbreviations '("MRSBEA" "MRS Bulletin" "MRS Bull."))
     (add-to-list 'org-ref-bibtex-journal-abbreviations '("ExtrMechL" "Extreme Mechanics Letters" "Extreme Mech. Lett."))
-    (add-to-list 'org-ref-bibtex-journal-abbreviations '("MRSBEA" "MRS Bulletin" "MRS Bull."))
-    (add-to-list 'org-ref-bibtex-journal-abbreviations '("ExtrMechL" "Extreme Mechanics Letters" "Extreme Mech. Lett."))))
+    (add-to-list 'org-ref-bibtex-journal-abbreviations '("PRMHBS" "Physical Review Materials" "Phys. Rev. Mater."))
+    ))
 #+end_src
 
 ***** SOMEDAY search in article PDFs
