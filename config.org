@@ -1425,61 +1425,71 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 				      (if (> span 0)
 					  span
 					0))
-				    ?\ ))))))))
-(setq-default header-line-format
-	      '((:eval
-		 (mode-line-render
-		  (concat (format-mode-line (list
-					     (propertize "☰" 'face `(:inherit header-line)
-							 'help-echo "Mode(s) menu"
-							 'mouse-face 'mode-line-highlight
-							 'local-map   mode-line-major-mode-keymap)))
-			  (when (buffer-narrowed-p) (concat " " (propertize (all-the-icons-faicon "filter" :v-adjust 0.04)
-									    'face `((
-										     :family "file-icons")
-										    :foreground ,(face-background 'region)))))
-			  (case major-mode
-			    ('org-agenda-mode (format-mode-line (list " " mode-name " ")))
-			    (t
-			     (or
-			      (and org-src-mode
-                                   (format " %s "
-					   
-					   (substitute-command-keys
-					    (if org-src--allow-write-back
-						"Edit, then exit with `\\[org-edit-src-exit]' or abort with \
+				    ?\ )))))))
+  (setq-default header-line-format
+		'((:eval
+		   (mode-line-render
+		    (concat (format-mode-line (all-the-icons-icon-for-mode major-mode :v-adjust 0.04 :height 0.8 :face `((:foreground ,(face-foreground 'default)))))
+			    ;; (format-mode-line (list
+			    ;; 		       (propertize "☰" 'face `(:inherit header-line)
+			    ;; 				   'help-echo "Mode(s) menu"
+			    ;; 				   'mouse-face 'mode-line-highlight
+			    ;; 				   'local-map   mode-line-major-mode-keymap)))
+			    (when (buffer-narrowed-p) (concat " " (propertize (all-the-icons-faicon "filter" :v-adjust 0.04)
+									      'face `((
+										       :family "file-icons"
+										       :foreground ,(face-background 'region))))))
+			    (case major-mode
+			      ('org-agenda-mode (format-mode-line (list " " mode-name " ")))
+			      (t
+			       (or
+				(and org-src-mode
+				     (format " %s "
+					     
+					     (substitute-command-keys
+					      (if org-src--allow-write-back
+						  "Edit, then exit with `\\[org-edit-src-exit]' or abort with \
   `\\[org-edit-src-abort]'"
-					      "Exit with `\\[org-edit-src-exit]' or abort with \
+						"Exit with `\\[org-edit-src-exit]' or abort with \
   `\\[org-edit-src-abort]'"))))
-			      (format-mode-line (list " %b "
-						      (if (and buffer-file-name (buffer-modified-p))
-							  (propertize "(modified)" 'face `(:inherit header-line))))))))
-			  (if truncate-lines
-			      (propertize (all-the-icons-faicon "arrow-right" :v-adjust 0.04)
+				(format-mode-line (list " %b "
+							(if (and buffer-file-name (buffer-modified-p))
+							    (propertize "(modified)" 'face `(:inherit header-line))))))))
+			    (if truncate-lines
+				(propertize (all-the-icons-faicon "arrow-right" :v-adjust 0.04)
+					    'face `((
+						     :family "file-icons"
+						     :foreground ,(face-background 'region)
+						     :height 0.6)))
+			      (propertize (all-the-icons-fileicon "factor" :v-adjust 0.04)
 					  'face `((
-						   :family "file-icons"
+						   :family "Material Icons"
 						   :foreground ,(face-background 'region)
-						   :height 0.6)))
-			    (propertize (all-the-icons-fileicon "factor" :v-adjust 0.04)
-					'face `((
-						 :family "Material Icons"
-						 :foreground ,(face-background 'region)
-						 :height 0.6)))))
-		  (concat
-		   "("
-		   (format-mode-line minor-mode-alist)
-		   " )"
-		   " "
-		   (format-mode-line
-		    "%4l:%2c  "))))))
+						   :height 0.6)))))
+		    (concat
+                     (propertize (all-the-icons-faicon "angle-left" :v-adjust 0.00)
+				 'face `((
+					  :family "FontAwesome"
+                                          :height 1.5
+					  )))
+		     (format-mode-line minor-mode-alist)
+		     " "
+                     (propertize (all-the-icons-faicon "angle-right" :v-adjust 0.00)
+				 'face `((
+					  :family "FontAwesome"
+                                          :height 1.5
+					  )))
+		     " "
+		     (format-mode-line
+		      "%4l:%2c  "))))))
 
-(defun yant/force-header-line-format ()
-  "Set `header-line-format' to its default value."
-  (setq header-line-format (default-value 'header-line-format)))
-(add-hook 'org-src-mode-hook #'yant/force-header-line-format)
+  (defun yant/force-header-line-format ()
+    "Set `header-line-format' to its default value."
+    (setq header-line-format (default-value 'header-line-format)))
+  (add-hook 'org-src-mode-hook #'yant/force-header-line-format)
 
-;; Comment if you want to keep the modeline at the bottom
-(setq-default mode-line-format '("")))
+  ;; Comment if you want to keep the modeline at the bottom
+  (setq-default mode-line-format '("")))
 
 #+end_src
 
