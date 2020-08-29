@@ -3573,7 +3573,10 @@ And extend it with =dired+=
   (use-package dired-filter
     :defer t
     :bind (:map dired-filter-group-header-map
-		("<tab>" . dired-filter-group-toggle-header)))
+		("<tab>" . dired-filter-group-toggle-header))
+    :config
+    (set-face-attribute 'dired-filter-group-header nil
+			:underline nil))
   (use-package meta-functions
     :init
     (use-package dired-hacks-utils :straight t)
