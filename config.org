@@ -6,7 +6,7 @@
 #+EMAIL: yantar92@gmail.com
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
 
-* NEXT Emacs configuration                                                                     :EMACS:COMMON:
+* NEXT Emacs configuration                                                                                                         :AREA:EMACS:COMMON:
 :PROPERTIES:
 :ID:       a27092a6-25a6-417f-818f-7f83325b58b3
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
@@ -693,9 +693,10 @@ Using =window-divider-mode= to emphasise it more.
 
 #+BEGIN_SRC emacs-lisp
 (when init-flag
-  (setq window-divider-default-places t
-	window-divider-default-bottom-width 2
-	window-divider-default-right-width 2)
+  (setq window-divider-default-places 'right-only
+	window-divider-default-right-width 1)
+  (set-face-attribute 'window-divider nil
+		      :foreground (face-foreground 'default))
   (window-divider-mode +1))
 #+END_SRC
 
@@ -786,7 +787,8 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
 					    (propertize (all-the-icons-material "tablet")
 							'face `((:family "Material Icons"
 									 :height 1.4))
-							'display '(raise -0.2))))
+							;; 'display '(raise -0.2)
+                                                        )))
 
   (defun cwm-special-buffer-p (buffer)
     "Return 't if BUFF buffer name is special (starts with an *).
@@ -823,14 +825,13 @@ This mode is minor-mode thus it should be less intrusive in comparison with [[id
   :hook ((text-mode notmuch-show-mode) . olivetti-mode)
   :init
   (setq-default olivetti-body-width 110)
-  (setq olivetti-lighter (s-concat " "
-				   (propertize (all-the-icons-material "tablet")
-					       'face `((:family "Material Icons"
-								:height 1.4))
-					       'display '(raise -0.2))))
+  (setq olivetti-lighter
+	(s-concat " "
+		  (propertize (all-the-icons-material "tablet")
+	 		      'face `((:family "Material Icons")))))
   (bind-keys :map boon-x-map ("w" . olivetti-mode)))
 #+end_src
-**** Text wrap indicators
+**** COMMENT Text wrap indicators
      :PROPERTIES:
      :ID:       7b84d543-2d95-4a04-ba1f-a96e47daa853
      :END:
@@ -865,7 +866,7 @@ This works instead of default fringe indicators and hence I need to disable frin
   (set-display-table-slot org-display-table 'selective-display
                           (string-to-vector " …")))
 #+end_src
-**** COMMENT Window boundaries
+**** Window boundaries
 :PROPERTIES:
 :ID:       00975142-2491-4f85-bd0b-f1f6c2938e36
 :SUMMARY:  Does not work without fringe
@@ -879,6 +880,14 @@ When the buffer text takes less space then a window, it's neat to see the beginn
 #+begin_src emacs-lisp
 (when init-flag
   (setq-default indicate-buffer-boundaries 'left))
+#+end_src
+**** Fringes
+
+Match default face background
+
+#+begin_src emacs-lisp
+(set-face-attribute 'fringe nil
+		    :background (face-background 'default))
 #+end_src
 
 *** Buffer
@@ -1125,7 +1134,7 @@ Surprisingly, it looks quite nice
   (setq x-underline-at-descent-line t))
 #+end_src
 
-*** TODO Mode line
+*** TODO COMMENT Mode line
 :PROPERTIES:
 :ID:       ca75c464-f35c-43ed-a90e-d78d4cfaa99a
 :END:
@@ -1181,128 +1190,128 @@ By default, the position in buffer =mode-line-position= is shown in %. However, 
 
 Show boon state
   #+begin_src emacs-lisp
-(use-package boon
-  :if init-flag
-  :defer t
-  :config
-  (use-package boon-powerline
-    :config
-    (custom-set-faces '(mode-line-inactive ((t (:background "#dfe4ea" :foreground "dim gray" :box nil)))))
-    (custom-set-faces '(mode-line ((t (:foreground "DarkSeaGreen" :box nil)))))
-    (custom-set-faces '(sml/prefix ((t (:foreground "DarkSeaGreen")))))
-    (custom-set-faces '(boon-modeline-ins ((t (:foreground "White" :background "Brown2")))))
-    (custom-set-faces '(boon-modeline-spc ((t (:foreground "White" :background "DarkSeaGreen")))))
-    
-    (set-face-foreground 'boon-modeline-cmd "white")
-    (set-face-foreground 'boon-modeline-off "white")
-
-    (set-face-background 'powerline-inactive2 "#dfe4ea")
-    (set-face-background 'powerline-inactive1 "#bfc4ca")
-    (set-face-background 'powerline-active2 "grey25")
-
-
-    (defface mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))
-      "Highligh on active modeline."
-      :group 'mode-line)
-    (face-spec-set 'mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))) ;; why is it needed?
-
-    ;; (use-package all-the-icons
-    ;;   :init
-    ;;   (use-package memoize :straight t :demand t)
-    ;;   :config
-    ;;   ;; the functions below constantly create long lists in memory
-    ;;   ;; this triggers GC too often and hangs emacs when I use custom all-the-icons in mode-line
-    ;;   ;; memoize them to cache the results
-    ;;   (memoize #'all-the-icons-material)
-    ;;   (memoize #'all-the-icons-faicon)
-    ;;   (memoize #'all-the-icons-fileicon)
-    ;;   (memoize #'all-the-icons-alltheicon))
-    
-    (defun yant-powerline-theme ()
-      "Set up a powerline based on powerline-default-theme and spaceline-all-the-icons-theme which also displays boon-state."
-      (interactive)
-      (require 'spaceline-all-the-icons-segments)
-      (setq-default mode-line-position " ")
-      (setq-default mode-line-format
-		    '("%e"
-		      (:eval
-		       (let* ((active (powerline-selected-window-active))
-			      (mode-line (if active 'mode-line 'mode-line-inactive))
-			      (mode-line-highlight (if active 'mode-line-highlight 'mode-line-inactive))
-			      (face0 (if active (boon-state-face) 'mode-line-inactive))
-			      (face1 (if active 'powerline-active1 'powerline-inactive1))
-			      (face2 (if active 'powerline-active2 'powerline-inactive2))
-			      (separator-left (intern (format "powerline-%s-%s"
-							      powerline-default-separator
-							      (car powerline-default-separator-dir))))
-			      (separator-right (intern (format "powerline-%s-%s"
-							       powerline-default-separator
-							       (cdr powerline-default-separator-dir))))
-			      (boon (list
-				     (powerline-raw (when current-input-method-title (s-concat " " (s-trim-right current-input-method-title))) face0)
-				     (powerline-raw (eval (get 'spaceline-all-the-icons-modified-p :code)) face0 'l)
-				     (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-size-p :code)) face0 'l)
-				     (powerline-raw " " face0)
-				     (funcall 'powerline-bar-right mode-line face0)
-				     (when (bound-and-true-p boon-mode) (powerline-raw " " face0))
-				     (when (bound-and-true-p boon-mode) (powerline-raw (boon-state-string) face0 'r))
-				     (when (bound-and-true-p boon-mode) (funcall separator-left face0 mode-line))
-                                     ))
-			      (lhs (list
-				    (powerline-raw (eval (get 'spaceline-all-the-icons-mode-icon-p :code)) mode-line 'l)
-				    (powerline-buffer-id mode-line nil)
-				    (when (and (boundp 'which-func-mode) which-func-mode)
-				      (powerline-raw which-func-format mode-line 'l))
-				    (when (eval (get 'spaceline-all-the-icons-narrowed-p :when))
-				      (powerline-raw (eval (get 'spaceline-all-the-icons-narrowed-p :code))
-						     mode-line-highlight 'l))
-				    (powerline-raw (if truncate-lines
-						       (propertize (all-the-icons-faicon "arrow-right")
-								   'face `((
-									    :family "file-icons"
-									    :height 0.6))
-								   'display '(raise 0.3))
-						     (propertize (all-the-icons-fileicon "factor")
-								 'face `((
-									 :family "Material Icons"
-									 :height 0.6))
-								 'display '(raise 0.3)))
-						   mode-line-highlight 'l)
-				    (funcall separator-left mode-line face1)
-				    (powerline-process face1)
-				    (when active (powerline-minor-modes face1 'l))
-				    (powerline-raw " " face1)
-				    (funcall separator-left face1 face2)
-				    (powerline-vc face2 'r)
-				    ))
-			      (rhs (list
-				    (powerline-raw global-mode-string face2 'r)
-				    (funcall separator-right face2 face1)
-				    (powerline-raw "%l" face1 'l)
-				    (powerline-raw ":" face1)
-				    (powerline-raw "%c" face1 'r)
-				    (funcall separator-right face1 mode-line)
-				    (powerline-raw " " mode-line)
-				    (powerline-raw "%p" mode-line)
-                                    (powerline-raw mode-line-position mode-line)
-				    (powerline-raw " " mode-line)
-				    )))
-			 (concat (powerline-render boon)
-				 (powerline-render lhs)
-				 (powerline-fill face2 (powerline-width rhs))
-				 (powerline-render rhs)))))))
-    
-    (setq flymake--mode-line-format '(:eval (when flymake-mode (flymake--mode-line-format))))
-    (use-package all-the-icons
-      :init
-      (add-to-list 'all-the-icons-mode-icon-alist '(helpful-mode all-the-icons-faicon "info" :v-adjust -0.1 :face all-the-icons-purple))
-      (add-to-list 'all-the-icons-mode-icon-alist '(pdf-view-mode all-the-icons-octicon "file-pdf" :v-adjust 0.0 :face all-the-icons-dred)))
-    (yant-powerline-theme)
-    (use-package helm
+    (use-package boon
+      :if init-flag
       :defer t
       :config
-      (spaceline-helm-mode +1))
-    ))
+      (use-package boon-powerline
+	:config
+	(custom-set-faces '(mode-line-inactive ((t (:background "#dfe4ea" :foreground "dim gray" :box nil)))))
+	(custom-set-faces '(mode-line ((t (:foreground "DarkSeaGreen" :box nil)))))
+	(custom-set-faces '(sml/prefix ((t (:foreground "DarkSeaGreen")))))
+	(custom-set-faces '(boon-modeline-ins ((t (:foreground "White" :background "Brown2")))))
+	(custom-set-faces '(boon-modeline-spc ((t (:foreground "White" :background "DarkSeaGreen")))))
+    
+	(set-face-foreground 'boon-modeline-cmd "white")
+	(set-face-foreground 'boon-modeline-off "white")
+
+	(set-face-background 'powerline-inactive2 "#dfe4ea")
+	(set-face-background 'powerline-inactive1 "#bfc4ca")
+	(set-face-background 'powerline-active2 "grey25")
+
+
+	(defface mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))
+	  "Highligh on active modeline."
+	  :group 'mode-line)
+	(face-spec-set 'mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))) ;; why is it needed?
+
+	;; (use-package all-the-icons
+	;;   :init
+	;;   (use-package memoize :straight t :demand t)
+	;;   :config
+	;;   ;; the functions below constantly create long lists in memory
+	;;   ;; this triggers GC too often and hangs emacs when I use custom all-the-icons in mode-line
+	;;   ;; memoize them to cache the results
+	;;   (memoize #'all-the-icons-material)
+	;;   (memoize #'all-the-icons-faicon)
+	;;   (memoize #'all-the-icons-fileicon)
+	;;   (memoize #'all-the-icons-alltheicon))
+    
+	(defun yant-powerline-theme ()
+	  "Set up a powerline based on powerline-default-theme and spaceline-all-the-icons-theme which also displays boon-state."
+	  (interactive)
+	  (require 'spaceline-all-the-icons-segments)
+	  (setq-default mode-line-position " ")
+	  (setq-default mode-line-format
+			'("%e"
+			  (:eval
+			   (let* ((active (powerline-selected-window-active))
+				  (mode-line (if active 'mode-line 'mode-line-inactive))
+				  (mode-line-highlight (if active 'mode-line-highlight 'mode-line-inactive))
+				  (face0 (if active (boon-state-face) 'mode-line-inactive))
+				  (face1 (if active 'powerline-active1 'powerline-inactive1))
+				  (face2 (if active 'powerline-active2 'powerline-inactive2))
+				  (separator-left (intern (format "powerline-%s-%s"
+								  powerline-default-separator
+								  (car powerline-default-separator-dir))))
+				  (separator-right (intern (format "powerline-%s-%s"
+								   powerline-default-separator
+								   (cdr powerline-default-separator-dir))))
+				  (boon (list
+					 (powerline-raw (when current-input-method-title (s-concat " " (s-trim-right current-input-method-title))) face0)
+					 (powerline-raw (eval (get 'spaceline-all-the-icons-modified-p :code)) face0 'l)
+					 (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-size-p :code)) face0 'l)
+					 (powerline-raw " " face0)
+					 (funcall 'powerline-bar-right mode-line face0)
+					 (when (bound-and-true-p boon-mode) (powerline-raw " " face0))
+					 (when (bound-and-true-p boon-mode) (powerline-raw (boon-state-string) face0 'r))
+					 (when (bound-and-true-p boon-mode) (funcall separator-left face0 mode-line))
+					 ))
+				  (lhs (list
+					(powerline-raw (eval (get 'spaceline-all-the-icons-mode-icon-p :code)) mode-line 'l)
+					(powerline-buffer-id mode-line nil)
+					(when (and (boundp 'which-func-mode) which-func-mode)
+					  (powerline-raw which-func-format mode-line 'l))
+					(when (eval (get 'spaceline-all-the-icons-narrowed-p :when))
+					  (powerline-raw (eval (get 'spaceline-all-the-icons-narrowed-p :code))
+							 mode-line-highlight 'l))
+					(powerline-raw (if truncate-lines
+							   (propertize (all-the-icons-faicon "arrow-right")
+								       'face `((
+										:family "file-icons"
+										:height 0.6))
+								       'display '(raise 0.3))
+							 (propertize (all-the-icons-fileicon "factor")
+								     'face `((
+									     :family "Material Icons"
+									     :height 0.6))
+								     'display '(raise 0.3)))
+						       mode-line-highlight 'l)
+					(funcall separator-left mode-line face1)
+					(powerline-process face1)
+					(when active (powerline-minor-modes face1 'l))
+					(powerline-raw " " face1)
+					(funcall separator-left face1 face2)
+					(powerline-vc face2 'r)
+					))
+				  (rhs (list
+					(powerline-raw global-mode-string face2 'r)
+					(funcall separator-right face2 face1)
+					(powerline-raw "%l" face1 'l)
+					(powerline-raw ":" face1)
+					(powerline-raw "%c" face1 'r)
+					(funcall separator-right face1 mode-line)
+					(powerline-raw " " mode-line)
+					(powerline-raw "%p" mode-line)
+					(powerline-raw mode-line-position mode-line)
+					(powerline-raw " " mode-line)
+					)))
+			     (concat (powerline-render boon)
+				     (powerline-render lhs)
+				     (powerline-fill face2 (powerline-width rhs))
+				     (powerline-render rhs)))))))
+    
+	(setq flymake--mode-line-format '(:eval (when flymake-mode (flymake--mode-line-format))))
+	(use-package all-the-icons
+	  :init
+	  (add-to-list 'all-the-icons-mode-icon-alist '(helpful-mode all-the-icons-faicon "info" :v-adjust -0.1 :face all-the-icons-purple))
+	  (add-to-list 'all-the-icons-mode-icon-alist '(pdf-view-mode all-the-icons-octicon "file-pdf" :v-adjust 0.0 :face all-the-icons-dred)))
+	(yant-powerline-theme)
+	(use-package helm
+	  :defer t
+	  :config
+	  (spaceline-helm-mode +1))
+	))
 #+end_src
 
 Fancy minor mode lighters
@@ -1311,10 +1320,11 @@ Fancy minor mode lighters
 (use-package simple
   :config
   (diminish 'auto-fill-function (s-concat " "
-					    (propertize (all-the-icons-material "wrap_text")
-							'face `((
-								    :family "Material Icons"
-									    :height 1.2))))))
+					  (propertize (all-the-icons-material "wrap_text")
+						      'face `((
+							       :family "Material Icons"
+							       ;; :height 1.2
+							       ))))))
 (use-package mml
   :diminish (mml-mode . " 🖂"))
 (use-package footnote
@@ -1330,17 +1340,146 @@ Fancy minor mode lighters
 Light face for header line.
 
 #+begin_src emacs-lisp
-  (use-package faces
-    :if init-flag
-    :after boon
-    :custom-face
-    (header-line ((t (
-		      :weight bold
+(use-package faces
+  :if init-flag
+  :after boon
+  :init
+  (use-package color :demand t)
+  :config
+  (defface header-line-text '((t :inherit header-line))
+    ""  )
+  (set-face-attribute 'header-line nil
+		      :weight 'normal
 		      ;; :box ,(face-background 'boon-modeline-spc)
-		      :box (:color ,(color-darken-name (face-background 'default) 10) :line-width 5)
+		      ;; :box `(:color ,(color-darken-name (face-background 'default) 10) :line-width 5)
+                      :box `(:color ,(face-background 'default) :line-width 5)
 		      ;; :box nil
-		      :foreground ,(color-darken-name (face-foreground 'mode-line) 20)
-		      :background ,(color-darken-name (face-background 'default) 10))))))
+		      :foreground (color-darken-name (face-foreground 'mode-line) 20)
+		      :underline (face-foreground 'default)
+		      ;; :background ,(face-background 'default)
+		      :background (face-background 'default)
+		      )
+  (set-face-attribute 'mode-line nil
+		      :box nil
+                      :underline  (face-foreground 'default)
+		      :background (face-background 'default)
+                      )
+  (set-face-attribute 'mode-line-inactive nil
+		      :box nil
+                      :underline  (face-foreground 'default)
+		      :background (face-background 'default)
+                      ))
+#+end_src
+
+Use header line from [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
+However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64e-4090454da22a][Olivetti mode]] is turned on.
+#+begin_src emacs-lisp
+(when init-flag
+  ;; Mode line (this might be slow because of the "☰" that requires substitution)
+  ;; This line below makes things a bit faster
+  (set-fontset-font "fontset-default"  '(#x2600 . #x26ff) "Fira Code 12")
+
+  (define-key mode-line-major-mode-keymap [header-line]
+    (lookup-key mode-line-major-mode-keymap [mode-line]))
+
+
+  (defun mode-line-render (left right)
+    (let* ((right-width (length right))
+	   (left-width (length left)))
+      (let ((str
+	     (concat
+	      (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
+			     (if (> span 0)
+				 span
+			       0))
+			   ?\ )
+	      left
+	      (make-string (let ((span (- (window-width) right-width left-width)))
+			     (if (> span 0)
+				 span
+			       0))
+			   ?\ )
+	      right
+	      (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
+			     (if (> span 0)
+				 span
+			       0))
+			   ?\ ))))
+	(if (<= (length str) (window-total-width))
+	    str
+	  (s-truncate (window-total-width)
+		      (concat
+		       (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
+				      (if (> span 0)
+					  span
+					0))
+				    ?\ )
+		       left
+		       (make-string (let ((span (- (window-width) left-width)))
+				      (if (> span 0)
+					  span
+					0))
+				    ?\ )
+		       (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
+				      (if (> span 0)
+					  span
+					0))
+				    ?\ ))))))))
+(setq-default header-line-format
+	      '((:eval
+		 (mode-line-render
+		  (concat (format-mode-line (list
+					     (propertize "☰" 'face `(:inherit header-line)
+							 'help-echo "Mode(s) menu"
+							 'mouse-face 'mode-line-highlight
+							 'local-map   mode-line-major-mode-keymap)))
+			  (when (buffer-narrowed-p) (concat " " (propertize (all-the-icons-faicon "filter" :v-adjust 0.04)
+									    'face `((
+										     :family "file-icons")
+										    :foreground ,(face-background 'region)))))
+			  (case major-mode
+			    ('org-agenda-mode (format-mode-line (list " " mode-name " ")))
+			    (t
+			     (or
+			      (and org-src-mode
+                                   (format " %s "
+					   
+					   (substitute-command-keys
+					    (if org-src--allow-write-back
+						"Edit, then exit with `\\[org-edit-src-exit]' or abort with \
+  `\\[org-edit-src-abort]'"
+					      "Exit with `\\[org-edit-src-exit]' or abort with \
+  `\\[org-edit-src-abort]'"))))
+			      (format-mode-line (list " %b "
+						      (if (and buffer-file-name (buffer-modified-p))
+							  (propertize "(modified)" 'face `(:inherit header-line))))))))
+			  (if truncate-lines
+			      (propertize (all-the-icons-faicon "arrow-right" :v-adjust 0.04)
+					  'face `((
+						   :family "file-icons"
+						   :foreground ,(face-background 'region)
+						   :height 0.6)))
+			    (propertize (all-the-icons-fileicon "factor" :v-adjust 0.04)
+					'face `((
+						 :family "Material Icons"
+						 :foreground ,(face-background 'region)
+						 :height 0.6)))))
+		  (concat
+		   "("
+		   (format-mode-line minor-mode-alist)
+		   " )"
+		   " "
+		   (format-mode-line
+		    "%4l:%2c  "))))))
+
+(defun yant/force-header-line-format ()
+  "Set `header-line-format' to its default value."
+  (setq header-line-format (default-value 'header-line-format)))
+(add-hook 'org-src-mode-hook #'yant/force-header-line-format)
+
+;; Comment if you want to keep the modeline at the bottom
+(setq-default mode-line-format '("")))
+
 #+end_src
 
 *** Mini-buffer
@@ -4403,12 +4542,15 @@ Sometimes, I just need to have any random text in buffer for testing.
   :straight (explain-pause-mode :host github :repo "lastquestion/explain-pause-mode")
   :custom (explain-pause-blocking-too-long-ms 400)
   :config
-  (diminish 'explain-pause-mode (s-concat " "
-					  (propertize (all-the-icons-material "watch")
-						      'face `((
-							       :family "Material Icons"
-							       :height 1.1))
-						      'display '(raise -0.1))))
+  (diminish 'explain-pause-mode " ⌚")
+  ;; (diminish 'explain-pause-mode (s-concat " "
+  ;; 					  (propertize (all-the-icons-material "watch")
+  ;; 						      'face `((
+  ;; 							       :family "Material Icons"
+  ;; 							       ;; :height 1.1
+  ;;                                                              ))
+  ;; 						      ;; 'display '(raise -0.1)
+  ;;                                                     )))
   (explain-pause-mode +1))
 #+end_src
 *** Debugging of font-lock
@@ -6309,9 +6451,10 @@ I need to deal with many projects running at the same time in my work. Hence, I 
                             ("NOCLOCK" . ?k)
 			    ("ignore" . ?g)
                             ("REFILE" . ?r)
+			    ("AREA" . ?E)
                             ("@home" . ?h)
                             ("@work" . ?w))))
-(setq org-tags-exclude-from-inheritance '("ATTACH" "NOCLOCK" "REFILE"))
+(setq org-tags-exclude-from-inheritance '("ATTACH" "NOCLOCK" "REFILE" "AREA"))
 #+end_src
 - =COMMON= :: General task
 - =PhD= :: Related to work/PhD
@@ -7346,12 +7489,15 @@ This includes:
     (require 'texmathp))
   :hook (org-mode . org-cdlatex-mode)
   :config
-  (diminish 'org-cdlatex-mode (s-concat (propertize " CD"
-						    'face `((:height 0.5)))
-					(propertize (all-the-icons-fileicon "tex")
-						    'face `((
-							     :family "file-icons"
-							     :height 1.4)))))
+  ;; (diminish 'org-cdlatex-mode (s-concat ;; (propertize " CD"
+  ;; 			       ;; 	    'face `((:height 0.5)))
+  ;;                              "CD"
+  ;; 			       (propertize (all-the-icons-fileicon "tex")
+  ;; 					   'face `((
+  ;; 						    :family "file-icons"
+  ;; 						    ;; :height 1.4
+  ;;                                                   )))))
+  (diminish 'org-cdlatex-mode)
   )
 #+end_src
 
@@ -12413,15 +12559,13 @@ Org src mode lighter
   :after org
   :config
   (diminish 'org-src-mode (s-concat " "
-                                    (propertize (all-the-icons-material "code")
+                                    (propertize (all-the-icons-material "code" :v-adjust 0.04)
 						'face `((
 							 :family "Material Icons"
 							 :height 1.2))
-						'display '(raise -0.2))
-				    (propertize "org"
-						'face `((
-							 :height 0.7))
-						'display '(raise 0.0)))))
+						;; 'display '(raise -0.2)
+                                                )
+				    "org")))
 #+end_src
 **** Text
 :PROPERTIES:
@@ -13389,6 +13533,14 @@ Patching the relevant function to not put that tooltip into the overlay.
 :LOGBOOK:
 - Refiled on [2020-07-13 Mon 08:35]
 :END:
+
+***** Main face
+
+Use normal colour for the default agenda face
+#+begin_src emacs-lisp
+(set-face-attribute 'org-agenda-structure nil
+		    :foreground (face-foreground 'default))
+#+end_src
 **** Blocks (source blocks, quotes, etc)
 :PROPERTIES:
 :ID:       6fed68f0-c4ca-43f3-b487-4b58d9dc1315
@@ -13398,7 +13550,6 @@ Patching the relevant function to not put that tooltip into the overlay.
       org-src-tab-acts-natively nil ;; see https://lists.gnu.org/archive/html/emacs-orgmode/2019-12/msg00318.html
       org-src-preserve-indentation t
       org-hide-block-startup nil)
-(set-face-background 'org-block "Gainsboro")
 #+end_src
 
 Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#appearance][credit]]]
