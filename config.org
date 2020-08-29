@@ -597,12 +597,13 @@ Since it is not really a good idea to work in darkness regardless of the colour 
 (use-package flatui-theme
   :if init-flag
   :straight t
+  :demand t
   :config
   (load-theme 'flatui t))
 ;; (use-package elegance
-;;   :straight (elegance :host github :repo "rougier/elegant-emacs")
-;;   :config
-;;   (elegance-light))
+;;   :if init-flag
+;;   :demand t
+;;   :straight (elegance :host github :repo "rougier/elegant-emacs"))
 #+end_src
 
 For the font, I prefer something that works fine with mixed code and text (e.g. org files).
