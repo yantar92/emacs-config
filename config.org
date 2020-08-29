@@ -7504,14 +7504,15 @@ This includes:
     (require 'texmathp))
   :hook (org-mode . org-cdlatex-mode)
   :config
-  ;; (diminish 'org-cdlatex-mode (s-concat ;; (propertize " CD"
-  ;; 			       ;; 	    'face `((:height 0.5)))
-  ;;                              "CD"
-  ;; 			       (propertize (all-the-icons-fileicon "tex")
-  ;; 					   'face `((
-  ;; 						    :family "file-icons"
-  ;; 						    ;; :height 1.4
-  ;;                                                   )))))
+  (diminish 'org-cdlatex-mode (s-concat
+			       " "
+			       (propertize "CD"
+					   'face `((:height 0.5)))
+			       (propertize (all-the-icons-fileicon "tex" :v-adjust 0.04)
+					   'face `((
+						    :family "file-icons"
+						    ;; :height 1.4
+						    )))))
   (diminish 'org-cdlatex-mode)
   )
 #+end_src
