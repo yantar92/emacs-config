@@ -13206,7 +13206,7 @@ Optional MODE specifies major mode used for display."
       (when-let ((re (get-text-property (line-beginning-position) 'org-todo-regexp)))
 	(re-search-forward re (line-end-position) 't)
         (re-search-forward org-priority-regexp (line-end-position) 't))
-      (make-string (current-column) ?\ ))))
+      (make-string (1+ (current-column)) ?\ ))))
 
 (defun org-agenda-truncate-headings (&rest _)
   "Truncate agenda headings to fit the WINDOW width."
