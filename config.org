@@ -12563,11 +12563,11 @@ Org-capture mode lighter
   :if init-flag
   :config
   (diminish 'org-capture-mode (s-concat " "
-					(propertize (all-the-icons-material "note_add")
-						    'face `((
-							     :family "Material Icons"
-							     :height 1.4
-                                                             :foreground "red"))))))
+					(propertize (all-the-icons-material "note_add" 
+									    :v-adjust 0.04)
+						    'face `(( :family "Material Icons"
+							      :foreground "red"
+                                                              :height 1.4))))))
 #+end_src
 
 Org src mode lighter
