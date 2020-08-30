@@ -1479,9 +1479,10 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 					  :family "FontAwesome"
                                           :height 1.5
 					  )))
-		     " "
-		     (format-mode-line
-		      "%4l:%2c  "))))))
+		     "    "
+		     ;; (format-mode-line
+		     ;;  "%4l:%2c  ")
+		     )))))
 
   (defun yant/force-header-line-format ()
     "Set `header-line-format' to its default value."
