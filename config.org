@@ -8318,9 +8318,7 @@ SUBTREE-END is used as end of the entry if not nil."
 		 '(todo-state-down effort-up category-keep))))
 	      ("d" "Focus daily agenda" agenda ""
 	       ((org-agenda-overriding-header "Focused daily agenda")
-		(org-agenda-skip-function '(or
-					    (zin/org-agenda-skip-tag "HOLD")
-					    (yant/org-agenda-skip-nofocus)))))
+		(org-agenda-skip-function 'yant/org-agenda-skip-nofocus)))
 	      ("i" "Inbox items"
 	       ((tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "Inbox\n")
@@ -8690,20 +8688,21 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 *************** END
 
   #+begin_src emacs-lisp
-(defun yant/org-agenda-skip-nofocus()
+(defun yant/org-agenda-skip-nofocus ()
   "Filter tasks for focus agenda."
   (and
    (or
+    (zin/org-agenda-skip-tag "HOLD")
     (and
-     ;; (not (equal "DOING" (org-get-todo-state)))
      (org-agenda-skip-nonurgent) ; show urgent items
      (bh/skip-nohabits) ; and habits
      )
-					;  if day and time are appropriate
+    ;;  if day and time are appropriate
     (org-agenda-skip-before-SHOWFROMTIME-property)
     (org-agenda-skip-before-SHOWFROMDATE-property)
     (org-agenda-skip-noshowdates))
    (or
+    (zin/org-agenda-skip-tag "HOLD")
     (org-agenda-skip-not-today) ; and items, scheduled for today
     (org-agenda-skip-before-SHOWFROMTIME-property) ; if time is appropriate (day is, since it is scheduled)
     (org-agenda-skip-before-SHOWFROMDATE-property)
