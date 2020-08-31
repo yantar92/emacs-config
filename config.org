@@ -1429,6 +1429,7 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 										       :foreground ,(face-background 'region))))))
 			    (case major-mode
 			      ('org-agenda-mode (format-mode-line (list " " mode-name " ")))
+                              ('notmuch-show-mode (format-mode-line (list " " header-line-name " ")))
 			      (t
 			       (or
 				(and org-src-mode
@@ -1474,9 +1475,11 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 
   (defun yant/force-header-line-format ()
     "Set `header-line-format' to its default value."
+    (when (eq major-mode 'notmuch-show-mode)
+      (setq header-line-name (format-mode-line header-line-format)))
     (setq header-line-format
 	  (default-value 'header-line-format)))
-  (add-hook! (org-src-mode org-capture-mode) #'yant/force-header-line-format)
+  (add-hook! (org-src-mode org-capture-mode notmuch-show) #'yant/force-header-line-format)
 
   ;; Comment if you want to keep the modeline at the bottom
   (setq-default mode-line-format '("")))
