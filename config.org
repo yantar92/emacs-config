@@ -1390,41 +1390,29 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
       (let ((str
 	     (concat
 	      (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
-			     (if (> span 0)
-				 span
-			       0))
+			     (if (> span 0) span 0))
 			   ?\ )
 	      left
 	      (make-string (let ((span (- (window-width) right-width left-width)))
-			     (if (> span 0)
-				 span
-			       0))
+			     (if (> span 0) span 0))
 			   ?\ )
 	      right
 	      (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
-			     (if (> span 0)
-				 span
-			       0))
+			     (if (> span 0) span 0))
 			   ?\ ))))
 	(if (<= (length str) (window-total-width))
 	    str
 	  (s-truncate (window-total-width)
 		      (concat
 		       (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
-				      (if (> span 0)
-					  span
-					0))
+				      (if (> span 0) span 0))
 				    ?\ )
 		       left
 		       (make-string (let ((span (- (window-width) left-width)))
-				      (if (> span 0)
-					  span
-					0))
+				      (if (> span 0) span 0))
 				    ?\ )
 		       (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
-				      (if (> span 0)
-					  span
-					0))
+				      (if (> span 0) span 0))
 				    ?\ )))))))
   (setq-default header-line-format
 		'((:eval
