@@ -1347,8 +1347,6 @@ Light face for header line.
   :init
   (use-package color :demand t)
   :config
-  (defface header-line-text '((t :inherit header-line))
-    ""  )
   (set-face-attribute 'header-line nil
 		      :weight 'normal
 		      ;; :box ,(face-background 'boon-modeline-spc)
@@ -1477,7 +1475,6 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 		     ;; (format-mode-line
 		     ;;  "%4l:%2c  ")
 		     )))))
-
   (defun yant/force-header-line-format ()
     "Set `header-line-format' to its default value."
     (when (eq major-mode 'notmuch-show-mode)
@@ -1486,9 +1483,7 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 	  (default-value 'header-line-format)))
   (add-hook! (org-src-mode org-capture-mode notmuch-show) #'yant/force-header-line-format)
 
-  ;; Comment if you want to keep the modeline at the bottom
   (setq-default mode-line-format '("")))
-
 #+end_src
 
 *** Mini-buffer
