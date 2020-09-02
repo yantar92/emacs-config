@@ -6296,6 +6296,8 @@ Automatically translate non-English and non-Russian/Ukrainian titles.
 
   (use-package memoize
     :straight t
+    :custom
+    (memoize-default-timeout nil)
     :config
     (defun yant/translate-string (string)
       "Automatically translate STRING using trans shell command."
