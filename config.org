@@ -10299,6 +10299,33 @@ All these templates generally record the creation time in =:CREATED:=
                       ("* %(ya-org-capture/make-snippet \"note-capture_\")"))))
              :replace))
 #+end_src
+- inline note :: A note on currently clocked in task
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "I"
+           (cdar (doct
+		  '("Note on clock-in"
+		    :keys "I"
+                    :type plain
+                    :function (lambda ()
+				(switch-to-buffer (or (marker-buffer org-clock-marker)
+						      "inbox.org"))
+				(goto-char (or org-clock-marker
+					       (point-max)))
+                                (org-back-to-heading t)
+                                (org-with-limited-levels
+                                 (outline-next-heading))
+                                (backward-char)
+				(unless (looking-at-p "^$")
+                                  (insert "\n")))
+                    :clock-keep t
+                    :empty-lines-before 1
+                    :template
+                    ("%a"
+                     "%?"
+                     "\n"))))
+           :replace)
+#+end_src
 - Habit :: Habit. I default it to no logging.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
