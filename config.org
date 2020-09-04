@@ -8474,8 +8474,8 @@ SUBTREE-END is used as end of the entry if not nil."
 							       (bh/skip-subprojects))
 							  ;; (zin/org-agenda-skip-tag "NODEADLINE")
 							  (bh/skip-habits))))))
-		(tags-todo "-CANCELLED-AREA"
-			   ((org-agenda-overriding-header "Projects")
+		(tags-todo "-CANCELLED-AREA-TODO=\"TODO\"-SOMEDAY"
+			   ((org-agenda-overriding-header "Active projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t")
 			    (org-agenda-skip-function 'bh/skip-non-projects)
