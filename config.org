@@ -12709,7 +12709,7 @@ there is one, return it."
 			   (posframe-show (get-buffer "*Select Link*")
 					  :poshandler 'posframe-poshandler-frame-center
                                           :foreground-color (face-foreground 'mode-line)
-                                          :background-color (face-background 'mode-line)
+                                          :background-color (face-background 'highlight)
                                           :internal-border-width 20
 					  ))
 			 (message "Select link to open, RET to open all:")
