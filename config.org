@@ -1296,6 +1296,21 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
   (setq-default mode-line-format '("")))
 #+end_src
 
+**** Mode icons
+
+***** Major modes
+
+I use =all-the-icons= for fancy major-mode icons. It knows good icons for many major modes, but not for all.
+Defining some modes below:
+
+#+begin_src emacs-lisp
+(use-package all-the-icons
+  :init
+  (add-to-list 'all-the-icons-mode-icon-alist '(elfeed-search-mode all-the-icons-faicon "rss" :v-adjust 0.0 :face all-the-icons-purple))
+  (add-to-list 'all-the-icons-mode-icon-alist '(helpful-mode all-the-icons-faicon "info" :v-adjust -0.1 :face all-the-icons-purple))
+  (add-to-list 'all-the-icons-mode-icon-alist '(pdf-view-mode all-the-icons-octicon "file-pdf" :v-adjust 0.0 :face all-the-icons-dred)))
+#+end_src
+
 *** Mini-buffer
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 20:29]
