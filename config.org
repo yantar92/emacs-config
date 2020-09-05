@@ -10753,12 +10753,6 @@ The most common type of data I capture is indeed links from browser.
 I define two link types for capturing:
 - Link from browser :: It has =:SOURCE:= with URL of the page and page title in headline. =:SOURCE:= is the only place, where the URL is shown. I tag the entry with tag =BOOKMARK= to make it clear.
 - Generic link :: Same as link from browser, but silent (don't raise the capture buffer)
-
-
-
-
-
-
 #+begin_src emacs-lisp :tangle no
   (require 'org-ref-url-utils)
 
