@@ -11363,6 +11363,15 @@ I define two link types for capturing:
                                                  (or (org-capture-ref-get-bibtex-field :title)
                                                      "")))
 			    :id (lambda () (org-capture-ref-get-bibtex-field :key))
+                            :extra (lambda () (if (org-capture-ref-get-bibtex-field :journal)
+					     (s-join "\n"
+						     '("- [ ] download and attach pdf"
+						       "- [ ] check if bibtex entry has missing fields"
+						       "- [ ] read paper"
+						       "- [ ] check citing articles"
+						       "- [ ] check related articles"
+						       "- [ ] check references"))
+                                           ""))
 			    :template
 			    ("%{fetch-bibtex}* TODO %? %{title} :BOOKMARK:"
 			     ":PROPERTIES:"
@@ -11374,7 +11383,8 @@ I define two link types for capturing:
 			     "#+begin_src bibtex"
 			     "%{bibtex}"
 			     "#+end_src"
-                             ":END:")
+                             ":END:"
+                             "%{extra}")
 			    :children (("Interactive link"
 					:keys "b"
 					:clock-in t
