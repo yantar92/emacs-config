@@ -5,6 +5,7 @@
 #+AUTHOR: Ihor Radchenko
 #+EMAIL: yantar92@gmail.com
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
+#+ARCHIVE: ::* Archived
 
 * NEXT Emacs configuration                                                                                                         :AREA:EMACS:COMMON:
 :PROPERTIES:
@@ -14406,4 +14407,215 @@ cp autosave.lua ~/.config/mpv/scripts/
 
 #+RESULTS[29c899f8bda8bf343ecb2be121a022246bfecb15]:
 
+
+
+* Archived
+
+** TODO COMMENT Mode line                                                                                                            :EMACS:COMMON:
+:PROPERTIES:
+:ID:       ca75c464-f35c-43ed-a90e-d78d4cfaa99a
+:ARCHIVE_TIME: 2020-09-05 Sat 17:42
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Appearance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: TODO
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "TODO"       from              [2018-09-05 Wed 08:57]
+:END:
+
+I moved the mode line to [[id:e0d58345-6e68-4672-a9d7-37ff73717cf3][header]]
+Also, I do not use fancy spaceline or powerline anymore.
+Profiling showed that they take too much CPU time.
+
+- =Powerline= + =smart-mode-line=
+  - triangular arrow shape
+  - set the foreground manually because =boon-powerline= default background is not good with [[id:404c54f5-26eb-4ada-8a0f-c27efc714238][Flatui]] 
+    #+begin_src emacs-lisp
+(use-package powerline
+  :if init-flag
+  :straight t
+  :config
+  ;; (powerline-vim-theme)
+  (use-package smart-mode-line
+    :straight t
+    :config
+    (setq powerline-arrow-shape 'arrow14)
+    (sml/setup))
+  (use-package spaceline
+    :if init-flag
+    :demand t
+    :straight t
+    :config
+    (setq powerline-default-separator 'arrow-fade
+          spaceline-minor-modes-separator " ")
+    (require 'spaceline-config)
+    ;; (spaceline-emacs-theme)
+    ))
+
+(use-package spaceline-all-the-icons
+  :demand t
+  :custom
+  (spaceline-all-the-icons-slim-render t)
+  (spaceline-all-the-icons-hide-long-buffer-path t)
+  (spaceline-all-the-icons-minor-modes-p t))
+  #+end_src
+- Show column numbers
+  #+begin_src emacs-lisp
+    (when init-flag
+      (setq column-number-mode t))
+        #+end_src
+- Show total lines
+  #+begin_src emacs-lisp
+    (when init-flag
+      (setf size-indication-mode t))
+      #+end_src
+
+By default, the position in buffer =mode-line-position= is shown in %. However, I only need this in pdf-view, where I want to see the page number. Since the pdf-view changes this value anyway, I just let the buffer position be blank most of time, unless something (pdf-view) changes it to more useful value.
+*************** TODO move it close to the definition
+*************** END
+
+Show boon state
+  #+begin_src emacs-lisp
+    (use-package boon
+      :if init-flag
+      :defer t
+      :config
+      (use-package boon-powerline
+	:config
+	(custom-set-faces '(mode-line-inactive ((t (:background "#dfe4ea" :foreground "dim gray" :box nil)))))
+	(custom-set-faces '(mode-line ((t (:foreground "DarkSeaGreen" :box nil)))))
+	(custom-set-faces '(sml/prefix ((t (:foreground "DarkSeaGreen")))))
+	(custom-set-faces '(boon-modeline-ins ((t (:foreground "White" :background "Brown2")))))
+	(custom-set-faces '(boon-modeline-spc ((t (:foreground "White" :background "DarkSeaGreen")))))
+    
+	(set-face-foreground 'boon-modeline-cmd "white")
+	(set-face-foreground 'boon-modeline-off "white")
+
+	(set-face-background 'powerline-inactive2 "#dfe4ea")
+	(set-face-background 'powerline-inactive1 "#bfc4ca")
+	(set-face-background 'powerline-active2 "grey25")
+
+
+	(defface mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))
+	  "Highligh on active modeline."
+	  :group 'mode-line)
+	(face-spec-set 'mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))) ;; why is it needed?
+
+	;; (use-package all-the-icons
+	;;   :init
+	;;   (use-package memoize :straight t :demand t)
+	;;   :config
+	;;   ;; the functions below constantly create long lists in memory
+	;;   ;; this triggers GC too often and hangs emacs when I use custom all-the-icons in mode-line
+	;;   ;; memoize them to cache the results
+	;;   (memoize #'all-the-icons-material)
+	;;   (memoize #'all-the-icons-faicon)
+	;;   (memoize #'all-the-icons-fileicon)
+	;;   (memoize #'all-the-icons-alltheicon))
+    
+	(defun yant-powerline-theme ()
+	  "Set up a powerline based on powerline-default-theme and spaceline-all-the-icons-theme which also displays boon-state."
+	  (interactive)
+	  (require 'spaceline-all-the-icons-segments)
+	  (setq-default mode-line-position " ")
+	  (setq-default mode-line-format
+			'("%e"
+			  (:eval
+			   (let* ((active (powerline-selected-window-active))
+				  (mode-line (if active 'mode-line 'mode-line-inactive))
+				  (mode-line-highlight (if active 'mode-line-highlight 'mode-line-inactive))
+				  (face0 (if active (boon-state-face) 'mode-line-inactive))
+				  (face1 (if active 'powerline-active1 'powerline-inactive1))
+				  (face2 (if active 'powerline-active2 'powerline-inactive2))
+				  (separator-left (intern (format "powerline-%s-%s"
+								  powerline-default-separator
+								  (car powerline-default-separator-dir))))
+				  (separator-right (intern (format "powerline-%s-%s"
+								   powerline-default-separator
+								   (cdr powerline-default-separator-dir))))
+				  (boon (list
+					 (powerline-raw (when current-input-method-title (s-concat " " (s-trim-right current-input-method-title))) face0)
+					 (powerline-raw (eval (get 'spaceline-all-the-icons-modified-p :code)) face0 'l)
+					 (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-size-p :code)) face0 'l)
+					 (powerline-raw " " face0)
+					 (funcall 'powerline-bar-right mode-line face0)
+					 (when (bound-and-true-p boon-mode) (powerline-raw " " face0))
+					 (when (bound-and-true-p boon-mode) (powerline-raw (boon-state-string) face0 'r))
+					 (when (bound-and-true-p boon-mode) (funcall separator-left face0 mode-line))
+					 ))
+				  (lhs (list
+					(powerline-raw (eval (get 'spaceline-all-the-icons-mode-icon-p :code)) mode-line 'l)
+					(powerline-buffer-id mode-line nil)
+					(when (and (boundp 'which-func-mode) which-func-mode)
+					  (powerline-raw which-func-format mode-line 'l))
+					(when (eval (get 'spaceline-all-the-icons-narrowed-p :when))
+					  (powerline-raw (eval (get 'spaceline-all-the-icons-narrowed-p :code))
+							 mode-line-highlight 'l))
+					(powerline-raw (if truncate-lines
+							   (propertize (all-the-icons-faicon "arrow-right")
+								       'face `((
+										:family "file-icons"
+										:height 0.6))
+								       'display '(raise 0.3))
+							 (propertize (all-the-icons-fileicon "factor")
+								     'face `((
+									     :family "Material Icons"
+									     :height 0.6))
+								     'display '(raise 0.3)))
+						       mode-line-highlight 'l)
+					(funcall separator-left mode-line face1)
+					(powerline-process face1)
+					(when active (powerline-minor-modes face1 'l))
+					(powerline-raw " " face1)
+					(funcall separator-left face1 face2)
+					(powerline-vc face2 'r)
+					))
+				  (rhs (list
+					(powerline-raw global-mode-string face2 'r)
+					(funcall separator-right face2 face1)
+					(powerline-raw "%l" face1 'l)
+					(powerline-raw ":" face1)
+					(powerline-raw "%c" face1 'r)
+					(funcall separator-right face1 mode-line)
+					(powerline-raw " " mode-line)
+					(powerline-raw "%p" mode-line)
+					(powerline-raw mode-line-position mode-line)
+					(powerline-raw " " mode-line)
+					)))
+			     (concat (powerline-render boon)
+				     (powerline-render lhs)
+				     (powerline-fill face2 (powerline-width rhs))
+				     (powerline-render rhs)))))))
+    
+	(setq flymake--mode-line-format '(:eval (when flymake-mode (flymake--mode-line-format))))
+	(use-package all-the-icons
+	  :init
+	  (add-to-list 'all-the-icons-mode-icon-alist '(helpful-mode all-the-icons-faicon "info" :v-adjust -0.1 :face all-the-icons-purple))
+	  (add-to-list 'all-the-icons-mode-icon-alist '(pdf-view-mode all-the-icons-octicon "file-pdf" :v-adjust 0.0 :face all-the-icons-dred)))
+	(yant-powerline-theme)
+	(use-package helm
+	  :defer t
+	  :config
+	  (spaceline-helm-mode +1))
+	))
+#+end_src
+
+Fancy minor mode lighters
+
+#+begin_src emacs-lisp
+(use-package simple
+  :config
+  (diminish 'auto-fill-function (s-concat " "
+					  (propertize (all-the-icons-material "wrap_text")
+						      'face `((
+							       :family "Material Icons"
+							       ;; :height 1.2
+							       ))))))
+(use-package mml
+  :diminish (mml-mode . " 🖂"))
+(use-package footnote
+  :diminish (footnote-mode . " ¹⁻⁹"))
+#+end_src
 
