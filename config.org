@@ -13015,7 +13015,7 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   :custom
   (org-auto-align-tags nil)
   :config
-  (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords 'org-mode '(yant/org-align-tags) t)) 100)
+  ;; (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords 'org-mode '(yant/org-align-tags) t)) 100)
   (add-hook! 'org-mode-hook (add-to-list 'font-lock-extra-managed-props 'org-tag-aligned))
 
   (add-hook! 'org-mode-hook (setq-local adaptive-fill-function #'org-adaptive-fill-function))
