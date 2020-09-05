@@ -1219,12 +1219,8 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
   (setq-default header-line-format
 		'((:eval
 		   (mode-line-render
+                    ;; Left.
 		    (concat (format-mode-line (all-the-icons-icon-for-mode major-mode :v-adjust 0.04 :height 0.8 :face `((:foreground ,(face-foreground 'default)))))
-			    ;; (format-mode-line (list
-			    ;; 		       (propertize "☰" 'face `(:inherit header-line)
-			    ;; 				   'help-echo "Mode(s) menu"
-			    ;; 				   'mouse-face 'mode-line-highlight
-			    ;; 				   'local-map   mode-line-major-mode-keymap)))
 			    (when (buffer-narrowed-p) (concat " " (propertize (all-the-icons-faicon "filter" :v-adjust 0.04)
 									      'face `((
 										       :family "file-icons"
@@ -1258,7 +1254,19 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 						   :family "Material Icons"
 						   :foreground ,(face-background 'region)
 						   :height 0.8)))))
+                    ;;Right
 		    (concat
+                     (let ((branch (car (vc-git-branches))))
+                       (if (not branch)
+			   ""
+                         (concat (all-the-icons-faicon "angle-left" :v-adjust 0.00)
+				 " "
+				 (all-the-icons-alltheicon "git" :v-adjust 0.04 :height 0.8)
+				 " "
+				 branch
+				 " "
+				 (all-the-icons-faicon "angle-right" :v-adjust 0.00)
+				 " ")))
                      (all-the-icons-faicon "angle-left" :v-adjust 0.00)
 		     (format-mode-line minor-mode-alist)
 		     " "
@@ -1276,10 +1284,8 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
                                position-string
                                " "
                                (all-the-icons-faicon "angle-right" :v-adjust 0.00)))
-		     "    "
-		     ;; (format-mode-line
-		     ;;  "%4l:%2c  ")
-		     )))))
+		     "    ")))))
+  
   (defun yant/force-header-line-format ()
     "Set `header-line-format' to its default value."
     (setq header-line-name (format-mode-line header-line-format))
