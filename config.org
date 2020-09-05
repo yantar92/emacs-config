@@ -7520,7 +7520,7 @@ This includes:
 - =:TRIGGER:= :: Actions to be done when the item is marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
 - =:MERGED-WITH:= :: If the task is marked =MERGED=, contains a link to the new task
 - =:SOURCE:= :: The link to the file/URL, which this task refers to
-**** NEXT Attach
+**** Attach
 :PROPERTIES:
 :ID:       bb8263f5-8ef4-4444-941c-9ffbb338185d
 :END:
@@ -7572,7 +7572,7 @@ The new files are usually coming from my Downloads (=yant/org-attach-default-sou
 The default =org-attach-attach= function does not allow to attach directories.
 I made it so in the interactive specification in [[id:3a0ca96a-3ce5-4f72-ba38-16990342fb5a][Default attachment directory]].
 
-***** TODO Automatically insert link at point after adding new attachment
+***** Automatically insert link at point after adding new attachment
 :PROPERTIES:
 :CREATED:  [2020-07-07 Tue 19:11]
 :ID:       96a327b6-d204-433c-af62-d3700d46674a
@@ -7589,13 +7589,16 @@ So, it makes sense to copy the link to added attachment into link ring.
   (org-attach-store-link-p 'attached))
 #+end_src
 
-***** NEXT Store files in folder structure, following my org tree structure
+***** HOLD Store files in folder structure, following my org tree structure                                                                     :HOLD:
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 18:11]
 :ID:       9361bc68-010b-45f1-bddd-4638d6344758
 :header-args: :tangle ~/Git/org-attach-fs/org-attach-fs.el
+:SUMMARY:  After org-fold
 :END:
 :LOGBOOK:
+- State "HOLD"       from "NEXT"          [2020-09-05 Sat 14:34] \\
+  After org-fold
 - State "TODO"       from "NEXT"          [2018-01-01 Mon 13:17]
 :END:
 
@@ -7619,8 +7622,7 @@ For the implementation, the idea is keeping all the actual attachments in a comm
 #+end_src
 
 This is separate package now. All the code below is exported to =org-attach-fs.el=
-*************** NEXT rewrite to use lexical binding
-*************** END
+
 #+begin_src emacs-lisp
 ;;; org-attach-fs.el --- Mirror org heading heirarchy to store attachments
 
