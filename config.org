@@ -2654,6 +2654,54 @@ abort completely with `C-g'."
   (setq-default abbrev-mode t)
   (diminish 'abbrev-mode))
 #+end_src
+***** Speed-up =flyspell= =post-command-hook=
+
+I often experience long delays when =flyspell= is active in org buffers.
+Profiling revealed that the possible bottleneck is =sit-for= in
+=flyspell-check-word-p=, which causes redisplay - redisplay turns out to
+be very slow in some cases.
+
+I cannot do much about redisplay, but redisplay does not seem to be necessary for =flyspell-check-word-p=.
+Using patched version suppressing redisplay.
+
+#+begin_src emacs-lisp
+(use-package el-patch
+  :demand t
+  :config
+  (el-patch-feature flyspell)
+  (el-patch-defun flyspell-check-word-p ()
+    "Return t when the word at `point' has to be checked.
+The answer depends of several criteria.
+Mostly we check word delimiters."
+    (let ((ispell-otherchars (ispell-get-otherchars)))
+      (cond
+       ((<= (- (point-max) 1) (point-min))
+	;; The buffer is not filled enough.
+	nil)
+       ((and (and (> (current-column) 0)
+		  (not (eq (current-column) flyspell-pre-column)))
+	     (save-excursion
+	       (backward-char 1)
+	       (and (looking-at (flyspell-get-not-casechars))
+		    (or (string= "" ispell-otherchars)
+			(not (looking-at ispell-otherchars)))
+		    (or flyspell-consider-dash-as-word-delimiter-flag
+			(not (looking-at "-"))))))
+	;; Yes because we have reached or typed a word delimiter.
+	t)
+       ((symbolp this-command)
+	(cond
+	 ((get this-command 'flyspell-deplacement)
+	  (not (eq flyspell-previous-command this-command)))
+	 ((get this-command 'flyspell-delayed)
+	  ;; The current command is not delayed, that
+	  ;; is that we must check the word now.
+	  (and (not unread-command-events)
+	       (sit-for flyspell-delay (el-patch-add 'nodisplay))))
+	 (t t)))
+       (t t)))))
+#+end_src
+
 *** Code checking
 :PROPERTIES:
 :ID:       3a550aad-f2a2-4636-a92c-539cdf230aeb
