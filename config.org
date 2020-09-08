@@ -2682,7 +2682,7 @@ Using patched version suppressing redisplay.
 
 #+begin_src emacs-lisp
 (use-package el-patch
-  :demand t
+  :straight t
   :config
   (el-patch-feature flyspell)
   (el-patch-defun flyspell-check-word-p ()
