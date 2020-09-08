@@ -577,6 +577,22 @@ In batch mode, increase the threshold to make things faster.
 1600Mb: [[elisp:(progn (forward-line) (insert (message "%d" (* 1000 (/ gc-elapsed gcs-done)))))]]
 188ms
 
+
+Do not compact font caches
+*************** DONE [#A] check if facep is still slow
+CLOSED: [2020-09-07 Mon 17:57] SCHEDULED: <2020-09-07 Mon>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-09-07 17:00
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"       [2020-09-07 Mon 17:57]
+:END:
+*************** END
+ 
+#+begin_src emacs-lisp
+(setq inhibit-compacting-font-caches t)
+#+end_src
+
 ** Appearance
 :PROPERTIES:
 :ID:       5b50a90f-4f47-4244-a6ac-e3646464539d
