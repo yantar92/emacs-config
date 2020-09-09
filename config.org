@@ -617,10 +617,6 @@ Since it is not really a good idea to work in darkness regardless of the colour 
   :demand t
   :config
   (load-theme 'flatui t))
-;; (use-package elegance
-;;   :if init-flag
-;;   :demand t
-;;   :straight (elegance :host github :repo "rougier/elegant-emacs"))
 #+end_src
 
 For the font, I prefer something that works fine with mixed code and text (e.g. org files).
@@ -7062,6 +7058,14 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 	      file)))
 
 (add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
+
+;; FIXME: file: links cannot have custom follow:
+;; (defun org-att-id-follow (path &optional arg)
+;;   "Follow att-id: link"
+;;   (if arg
+;;       (let ((id (car (s-split ":" path))))
+;; 	(org-link-open-from-string (concat "id:" id)))
+;;     (org-link-open-from-string (concat "file:" (yant/process-att-id-abbrev path)))))
 
 (defun org-att-id-skip-function ()
   "Test if an entry contains attachments. Move point to next candidate location."
