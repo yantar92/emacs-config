@@ -7121,8 +7121,26 @@ Show parent project as top (or second top) suggestion."
       (when-let ((heading (org-get-heading 'no-tags 'no-todo 'no-priority 'no-comment)))
 	(s-concat heading ":" file)))))
 
+(defun org-att-id-store-link ()
+  "Store att-id: link."
+  (save-match-data
+    (when (and (eq major-mode 'dired-mode)
+	       (string-match (regexp-quote (f-expand org-attach-id-dir))
+			     (f-expand default-directory))
+               (string-match (s-concat (regexp-quote (f-expand org-attach-id-dir))
+				       "\\([0-9a-z][0-9a-z]\\)/\\([0-9a-z]+-[0-9a-z-]+\\)/\\(.+\\)$")
+                             (dired-get-filename)))
+      (let ((id (concat (match-string 1 (dired-get-filename))
+			(match-string 2 (dired-get-filename))))
+            (link (match-string 3 (dired-get-filename))))
+        (org-link-store-props :type "att-id"
+			      :link (concat "att-id:" id ":" link)
+                              :description (org-att-id-link-description (concat "att-id:" id ":" link) ""))))))
+
 (org-link-set-parameters "att-id"
 			 :complete #'org-att-id-link-complete
+                         :store #'org-att-id-store-link
+                         :follow #'org-att-id-follow
                          :desk #'org-att-id-link-description)
 
 #+end_src
