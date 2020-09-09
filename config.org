@@ -9202,6 +9202,28 @@ Also, hide the contents once task is clocked out.
   (add-hook 'org-clock-out-hook #'yant/org-agenda-hide-org-quick-peek-overlays-from-clocking))
 #+end_src
 
+
+[2020-09-08 Tue] Fixing org-quick-peek creating invisible overlay when agenda filter is in place and the next item is hidden by the filter
+Bug report: [[id:75b22f226a98806ce13c1834e115450e0aa3c01a][yantar92 [Github] issue#9 The overlay is not always visible when org-agenda-filter is in place]]
+#+begin_src emacs-lisp
+(use-package org-quick-peek
+  :if init-flag
+  :config
+  (defun quick-peek-overlay-ensure-at (pos)
+    "Find or create a quick-peek overlay for the line at POS.
+
+Typical code should not need this method; use `quick-peek-show'
+instead."
+    (or (quick-peek-overlay-at pos)
+	(let* ((ov (save-excursion
+                     (goto-char pos)
+                     (make-overlay (point-at-bol) (1+ (point-at-eol))))))
+          (overlay-put ov 'quick-peek t)
+          ;; Add impossible invisible property
+          (overlay-put ov 'invisible 'nope)
+          (push ov quick-peek--overlays)
+          ov))))
+#+end_src
 ***** Trying =org-ql=
 :PROPERTIES:
 :CREATED:  [2019-12-22 Sun 17:16]
