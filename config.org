@@ -1190,15 +1190,12 @@ Use header line from [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-
 However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64e-4090454da22a][Olivetti mode]] is turned on.
 #+begin_src emacs-lisp
 (when init-flag
-  ;; Mode line (this might be slow because of the "☰" that requires substitution)
-  ;; This line below makes things a bit faster
-  (set-fontset-font "fontset-default"  '(#x2600 . #x26ff) "Fira Code 12")
+  (defun yant/vc-git-current-branch ()
+    "Get current GIT branch."
+    (and vc-mode
+	 (cadr (s-match "Git.\\([^ ]+\\)" vc-mode))))
 
-  (define-key mode-line-major-mode-keymap [header-line]
-    (lookup-key mode-line-major-mode-keymap [mode-line]))
-
-
-  (defun mode-line-render (left right)
+  (defmemoize mode-line-render (left right)
     (let* ((right-width (length right))
 	   (left-width (length left)))
       (let ((str
@@ -1231,7 +1228,7 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
   (setq-default header-line-format
 		'((:eval
 		   (mode-line-render
-                    ;; Left.
+		    ;; Left.
 		    (concat (format-mode-line (all-the-icons-icon-for-mode major-mode :v-adjust 0.04 :height 0.8 :face `((:foreground ,(face-foreground 'default)))))
 			    (when (buffer-narrowed-p) (concat " " (propertize (all-the-icons-faicon "filter" :v-adjust 0.04)
 									      'face `((
@@ -1239,8 +1236,8 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 										       :foreground ,(face-background 'region))))))
 			    (case major-mode
 			      ('org-agenda-mode (format-mode-line (list " " mode-name " ")))
-                              ('notmuch-show-mode (format-mode-line (list " " header-line-name " ")))
-                              ('elfeed-search-mode (format-mode-line (list " " (elfeed-search--header) " ")))
+			      ('notmuch-show-mode (format-mode-line (list " " header-line-name " ")))
+			      ('elfeed-search-mode (format-mode-line (list " " (elfeed-search--header) " ")))
 			      (t
 			       (or
 				(and org-src-mode
@@ -1249,9 +1246,9 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 					     (substitute-command-keys
 					      (if org-src--allow-write-back
 						  "Edit, then exit with `\\[org-edit-src-exit]' or abort with \
-  `\\[org-edit-src-abort]'"
+    `\\[org-edit-src-abort]'"
 						"Exit with `\\[org-edit-src-exit]' or abort with \
-  `\\[org-edit-src-abort]'"))))
+    `\\[org-edit-src-abort]'"))))
 				(format-mode-line (list " %b "
 							(if (and buffer-file-name (buffer-modified-p))
 							    (propertize "(modified)" 'face `(:inherit header-line))))))))
@@ -1266,12 +1263,12 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 						   :family "Material Icons"
 						   :foreground ,(face-background 'region)
 						   :height 0.8)))))
-                    ;;Right
+		    ;;Right
 		    (concat
-                     (let ((branch (car (vc-git-branches))))
-                       (if (not branch)
+		     (let ((branch (yant/vc-git-current-branch)))
+		       (if (not branch)
 			   ""
-                         (concat (all-the-icons-faicon "angle-left" :v-adjust 0.00)
+			 (concat (all-the-icons-faicon "angle-left" :v-adjust 0.00)
 				 " "
 				 (all-the-icons-alltheicon "git" :v-adjust 0.04 :height 0.8)
 				 " "
@@ -1279,25 +1276,25 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 				 " "
 				 (all-the-icons-faicon "angle-right" :v-adjust 0.00)
 				 " ")))
-                     (all-the-icons-faicon "angle-left" :v-adjust 0.00)
+		     (all-the-icons-faicon "angle-left" :v-adjust 0.00)
 		     (format-mode-line minor-mode-alist)
 		     " "
-                     (all-the-icons-faicon "angle-right" :v-adjust 0.00)
-                     " "
-                     (let ((position-string (format-mode-line mode-line-position)))
-                       (when (string-match " *L[0-9]+ *" position-string)
+		     (all-the-icons-faicon "angle-right" :v-adjust 0.00)
+		     " "
+		     (let ((position-string (format-mode-line mode-line-percent-position)))
+		       (when (string-match " *L[0-9]+ *" position-string)
 			 (setq position-string
 			       (replace-match "" nil nil position-string)))
-                       (setq position-string (s-trim position-string))
-                       (setq position-string (replace-regexp-in-string "%" "%%" position-string))
-                       (concat " "
+		       (setq position-string (s-trim position-string))
+		       (setq position-string (replace-regexp-in-string "%" "%%" position-string))
+		       (concat " "
 			       (all-the-icons-faicon "angle-left" :v-adjust 0.00)
-                               " "
-                               position-string
-                               " "
-                               (all-the-icons-faicon "angle-right" :v-adjust 0.00)))
+			       " "
+			       position-string
+			       " "
+			       (all-the-icons-faicon "angle-right" :v-adjust 0.00)))
 		     "    ")))))
-  
+
   (defun yant/force-header-line-format ()
     "Set `header-line-format' to its default value."
     (setq header-line-name (format-mode-line header-line-format))
@@ -1305,12 +1302,16 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 	  (default-value 'header-line-format)))
   (add-hook! (org-src-mode org-capture-mode notmuch-show elfeed-search-mode) #'yant/force-header-line-format)
 
-  (setq-default mode-line-format '("")))
+  (setq-default mode-line-format '(""))
+  )
 #+end_src
 
 **** Mode icons
 
 ***** Major modes
+:PROPERTIES:
+:ID:       04b8a1c2-77d7-437e-83c8-4008e01c5dba
+:END:
 
 I use =all-the-icons= for fancy major-mode icons. It knows good icons for many major modes, but not for all.
 Defining some modes below:
