@@ -11307,7 +11307,7 @@ I define two link types for capturing:
 			     ":PROPERTIES:"
 			     ":ID: %{id}"
 			     ":CREATED: %U"
-			     ":Source: %{url}"
+			     ":Source: [[%{url}]]"
 			     ":END:"
                              ":BIBTEX:"
 			     "#+begin_src bibtex"
