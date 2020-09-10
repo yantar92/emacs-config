@@ -12573,6 +12573,17 @@ Extend line background to the end of buffer in source blocks
   (set-face-extend 'org-block t))
 #+end_src
 
+Do not use box around checkbox items
+#+begin_src emacs-lisp
+(use-package org-faces
+  :config
+  (set-face-attribute 'org-checkbox nil
+		      :box nil
+                      :background (face-background 'default))
+  )
+#+end_src
+
+
 **** Links
 ***** Show broken links to files
 :PROPERTIES:
