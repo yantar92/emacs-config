@@ -14077,13 +14077,13 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 ;;     (dired-mark-files-regexp "^\\." nil 'localname)
 ;;     (dired-do-kill-lines))))
 #+end_src
-*** SOMEDAY COMMENT Fix =eldoc= raising error on org src blocks                                                                                           :SOMEDAY:
+*** Fix =eldoc= raising error on org src blocks                                                                                           :SOMEDAY:
 :PROPERTIES:
 :ID:       d2bebb9f-8613-4e37-968b-4e0908b77a0b
 :END:
 
 #+begin_src emacs-lisp
-(defun org-eldoc-documentation-function () "")
+(defun org-eldoc-documentation-function (&rest _) "")
 #+end_src
 ** Summary of key bindings
 *** COMMENT Command frequency measurement in emacs
