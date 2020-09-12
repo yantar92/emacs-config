@@ -7,7 +7,7 @@
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
 #+ARCHIVE: ::* Archived
 
-* NEXT Emacs configuration                                                                                                         :AREA:EMACS:COMMON:
+* NEXT Emacs configuration :AREA:EMACS:COMMON:
 :PROPERTIES:
 :ID:       a27092a6-25a6-417f-818f-7f83325b58b3
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
@@ -4851,7 +4851,7 @@ It warns me if the original definition changes from what I expect.
 :ID:       2fb97bdf-d310-4e5a-8266-d68a1ae10298
 :END:
 
-*************** HOLD [#A] revise config from here                                                                     :HOLD:
+*************** HOLD [#A] revise config from here :HOLD:
 :PROPERTIES:
 :SHOWFROMDATE: 2020-05-13 18:00
 :SUMMARY:  Later, when I do not have more important emacs things to do
@@ -6398,7 +6398,7 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 CLOCK: [2018-02-12 Mon 00:51]--[2018-02-12 Mon 00:52] =>  0:01
 :END:
 modified b
-******* TODO may be useful |- (multifiles.el/multifiles.el at master · magnars/multifiles.el)             :BOOKMARK:
+******* TODO may be useful |- (multifiles.el/multifiles.el at master · magnars/multifiles.el) :BOOKMARK:
 :PROPERTIES:
 :CREATED:  [2018-02-12 Mon 00:56]
 :Source:   https://github.com/magnars/multifiles.el/blob/master/multifiles.el
@@ -7634,7 +7634,7 @@ So, it makes sense to copy the link to added attachment into link ring.
   (org-attach-store-link-p 'attached))
 #+end_src
 
-***** HOLD Store files in folder structure, following my org tree structure                                                                     :HOLD:
+***** HOLD Store files in folder structure, following my org tree structure :HOLD:
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 18:11]
 :ID:       9361bc68-010b-45f1-bddd-4638d6344758
@@ -7870,7 +7870,7 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 
 Now, when I have the mirror attach folder structure, it make sense to open this structure on =org-attach-reveal= instead of opening the actual attach dirs.
 
-*************** HOLD [#A] because of org-attach API change, need to rewrite                                       :HOLD:
+*************** HOLD [#A] because of org-attach API change, need to rewrite :HOLD:
 :PROPERTIES:
 :SHOWFROMDATE: 2020-05-23
 :END:
@@ -7972,7 +7972,7 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
   (add-hook 'after-init-hook (lambda ()
       (advice-add 'find-file-noselect :around #'dired-find-file@disable-abbreviate-file-name)))
 #+END_SRC
-***** DONE Make =:ATTACH_DIR_INHERITED:= work again                                                                                          :NOARCHIVE:
+***** DONE Make =:ATTACH_DIR_INHERITED:= work again :NOARCHIVE:
 CLOSED: [2020-08-11 Tue 22:10]
 :PROPERTIES:
 :CREATED:  [2019-07-27 Sat 17:03]
@@ -8555,7 +8555,7 @@ This agenda show the items for the current day and time.
 	  (point))))))
   #+end_src
   
-*************** SOMEDAY [#A] debug =org-agenda-skip-nonurgent-fast=                                              :SOMEDAY:
+*************** SOMEDAY [#A] debug =org-agenda-skip-nonurgent-fast= :SOMEDAY:
 :PROPERTIES:
 :SHOWFROMDATE: 2019-08-06
 :END:
@@ -8821,7 +8821,7 @@ Usually, I have some events scheduled locally in my computer and some are schedu
   (let ((alert-default-style 'message))
     (apply OLDFUN args)))
 #+END_SRC
-***** Handling different time zones in time stamps                                                :ARCHIVE:
+***** Handling different time zones in time stamps :ARCHIVE:
 :PROPERTIES:
 :CREATED:  [2017-12-23 Sat 18:36]
 :END:
@@ -14051,7 +14051,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 #+begin_src emacs-lisp
 (add-hook 'org-capture-mode-hook 'boon-insert 'append)
 #+end_src
-** Sensitive info                                                                                :NOEXPORT:
+** Sensitive info :NOEXPORT:
 :PROPERTIES:
 :ID:       83801f6a-daf5-4738-a15e-2d20c2b4551c
 :END:
@@ -14085,7 +14085,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 ;;     (dired-mark-files-regexp "^\\." nil 'localname)
 ;;     (dired-do-kill-lines))))
 #+end_src
-*** Fix =eldoc= raising error on org src blocks                                                                                           :SOMEDAY:
+*** Fix =eldoc= raising error on org src blocks :SOMEDAY:
 :PROPERTIES:
 :ID:       d2bebb9f-8613-4e37-968b-4e0908b77a0b
 :END:
@@ -14299,7 +14299,7 @@ ytdl-format=bestvideo[height<=?1080]+bestaudio/best
 :CREATED:  [2019-12-15 Sun 02:51]
 :ID:       81208c2c-19ef-432e-88d4-4ab7bcc3d762
 :END:
-***** Change quality                                                                                 :ATTACH:
+***** Change quality :ATTACH:
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 02:52]
 :ID:       f8737f19-a0ac-4785-a62c-2504313910ec
@@ -14322,7 +14322,7 @@ cp ./mpv-youtube-quality/youtube-quality.conf ~/.config/mpv/lua-settings/
 :CREATED:  [2019-12-15 Sun 02:59]
 :ID:       533e007d-615a-4f31-aa62-8eb0f732853d
 :END:
-***** Preview screenshot on mouse hover                                                              :ATTACH:
+***** Preview screenshot on mouse hover :ATTACH:
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:00]
 :ID:       806164fd-46b1-405c-a1a8-140603466651
@@ -14365,7 +14365,7 @@ cp autosave.lua ~/.config/mpv/scripts/
 
 * Archived
 
-** TODO COMMENT Mode line                                                                                                            :EMACS:COMMON:
+** TODO COMMENT Mode line :EMACS:COMMON:
 :PROPERTIES:
 :ID:       ca75c464-f35c-43ed-a90e-d78d4cfaa99a
 :ARCHIVE_TIME: 2020-09-05 Sat 17:42
