@@ -146,7 +146,7 @@ Set up the =askpass= and cache ssh password.
 	(ssh-agent-pid (shell-command-to-string "ssh-agent | grep SSH_AGENT_PID | cut -d= -f2 | cut -d';' -f1")))
     (setenv "SSH_AUTH_SOCK" (replace-regexp-in-string "\n" "" ssh-auth-sock))
     (setenv "SSH_AGENT_PID" (replace-regexp-in-string "\n" "" ssh-agent-pid))
-    ;; (shell-command-to-string "ssh-add ~/.ssh/id_rsa")
+    (shell-command-to-string "ssh-add ~/.ssh/id_rsa")
     ))
 #+end_src
 
