@@ -12822,10 +12822,9 @@ hyphen as em-dash (from [[https://github.com/grettke/help/blob/master/help.org][
     0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "—")))))
 #+end_src
 
-Show tags right justified
+Do not adjust tags. It does not work well in resized windows without line truncation.
 #+begin_src emacs-lisp
-(setq org-tags-column (- (length org-ellipsis)
-                             150))
+(setq org-tags-column 0)
 #+end_src
 
 Always show the contents of inline tasks instead of hiding/showing it during cycling.
