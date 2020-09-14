@@ -579,15 +579,7 @@ In batch mode, increase the threshold to make things faster.
 
 
 Do not compact font caches
-*************** DONE [#A] check if facep is still slow
-CLOSED: [2020-09-07 Mon 17:57] SCHEDULED: <2020-09-07 Mon>
-:PROPERTIES:
-:SHOWFROMDATE: 2020-09-07 17:00
-:END:
-:LOGBOOK:
-- State "DONE"       from "NEXT"       [2020-09-07 Mon 17:57]
-:END:
-*************** END
+
  
 #+begin_src emacs-lisp
 (setq inhibit-compacting-font-caches t)
