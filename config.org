@@ -11411,6 +11411,38 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 *************** END
 
 
+***** Refile to here
+
+Use =helm-org= to refile searched heading to point.
+
+#+begin_src emacs-lisp
+(use-package helm-org
+  :if init-flag
+  :straight t
+  :demand t
+  :config
+  (defun helm-org--refile-heading-here (marker)
+    "Refile selected headings to heading at point.
+If multiple candidates are marked in the Helm session, they will
+all be refiled.  If no headings are marked, the selected heading
+will be refiled."
+    (let* ((victims (with-helm-buffer (helm-marked-candidates)))
+           (buffer (current-buffer))
+           (filename (buffer-file-name buffer))
+           ;; get the heading we refile to so org doesn't
+           ;; output 'Refile to "nil" in file ...'
+           (heading (org-get-heading :no-tags :no-todo :no-priority :no-comment))
+	   (rfloc (list heading filename nil (point-marker))))
+      ;; Probably best to check that everything returned a value
+      (when (and victims buffer filename rfloc)
+	(cl-loop for victim in victims
+		 do (org-with-point-at victim
+                      (org-refile nil nil rfloc))))))
+
+  (add-to-list 'helm-org-headings-actions '("Refile heading(s) to heading at point" . helm-org--refile-heading-here))
+  )
+#+end_src
+
 ***** =__epilogue=
 :PROPERTIES:
 :ID:       2e6f7380-707a-4ff9-992c-4992377ae1ee
@@ -11418,6 +11450,8 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 #+begin_src emacs-lisp
 )
 #+end_src
+
+
 **** TODO Export
 :PROPERTIES:
 :ID:       24d7f8cf-7729-4a05-a09d-bac24ab101b5
