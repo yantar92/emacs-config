@@ -4448,6 +4448,14 @@ Sometimes, I just need to have any random text in buffer for testing.
                                                       )))
   (explain-pause-mode +1))
 #+end_src
+*** Hung memory leaks
+
+#+begin_src emacs-lisp
+(use-package memory-usage
+  :if init-flag
+  :straight t)
+#+end_src
+
 *** Debugging of font-lock
 :PROPERTIES:
 :CREATED:  [2020-07-28 Tue 17:46]
@@ -14390,7 +14398,6 @@ cp autosave.lua ~/.config/mpv/scripts/
 #+end_src
 
 #+RESULTS[29c899f8bda8bf343ecb2be121a022246bfecb15]:
-
 
 
 * Archived
