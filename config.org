@@ -4229,11 +4229,13 @@ There is also built-in skeleton mode, but =yasnippet= also has a good user-contr
 
 *** Undo
 
-**** Undo-tree 
+**** COMMENT Undo-tree 
 :PROPERTIES:
 :CREATED:  [2020-01-20 Mon 10:34]
 :ID:       8b8023ed-03c8-4aa7-a47e-6195f94bc63d
 :END:
+
+[2020-09-18 Fri] garbage-collect is slow
 
 Tree view of emacs undo history.
 Very useful to undo and redo after complex edits.
@@ -4426,7 +4428,9 @@ Sometimes, I just need to have any random text in buffer for testing.
 :ID:       e55d91e3-562c-465b-a564-82729edad44d
 :END:
 
-#+begin_src emacs-lisp
+[2020-09-18 Fri] Profiler cache eats a lot of memory. Should only use it when I need to debug
+
+#+begin_src emacs-lisp :tangle no
 (use-package explain-pause-mode
   :if init-flag
   :demand t
@@ -5531,8 +5535,8 @@ And group them by rss feed
 #+end_src
 
 Save elfeed buffer on quit to make sure that database is more likely saved if Emacs crashes.
-
-#+begin_src emacs-lisp
+[2020-09-18 Fri] Disabling because of large memory usage
+#+begin_src emacs-lisp :tangle no
 (use-package elfeed
   :if init-flag
   :config
