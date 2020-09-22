@@ -8250,6 +8250,7 @@ SUBTREE-END is used as end of the entry if not nil."
 	       ((org-agenda-skip-function '(or
 					    (zin/org-agenda-skip-tag "HOLD")
                                             (zin/org-agenda-skip-tag "WAITING")
+                                            (zin/org-agenda-skip-tag "SOMEDAY")
 					    (org-agenda-skip-before-SHOWFROMDATE-property)
 					    (org-agenda-skip-before-SHOWFROMTIME-property)
 					    (org-agenda-skip-noshowdates)
@@ -8382,7 +8383,8 @@ SUBTREE-END is used as end of the entry if not nil."
 			   ((org-agenda-overriding-header (concat "Waiting and Hold Tasks" ""))
 			    (org-agenda-prefix-format "%-12:c\t%?-12t %(yant/format-summary-for-agenda)")
 			    (org-use-tag-inheritance nil)
-			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+			    (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'scheduled)
+							   (bh/skip-projects)))
 			    (org-tags-match-list-sublevels nil)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down))))
@@ -8674,6 +8676,7 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
   (and
    (or
     (zin/org-agenda-skip-tag "HOLD")
+    (zin/org-agenda-skip-tag "SOMEDAY")
     (and
      (org-agenda-skip-nonurgent) ; show urgent items
      (bh/skip-nohabits) ; and habits
@@ -8684,6 +8687,7 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
     (org-agenda-skip-noshowdates))
    (or
     (zin/org-agenda-skip-tag "HOLD")
+    (zin/org-agenda-skip-tag "SOMEDAY")
     (org-agenda-skip-not-today) ; and items, scheduled for today
     (org-agenda-skip-before-SHOWFROMTIME-property) ; if time is appropriate (day is, since it is scheduled)
     (org-agenda-skip-before-SHOWFROMDATE-property)
