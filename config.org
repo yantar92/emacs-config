@@ -6719,21 +6719,24 @@ Do not show consistency graph in agenda
 The project is an item with todo keyword and subtask.
 #+begin_src emacs-lisp
 (defun bh/is-project-p ()
-  "Any task with a todo keyword subtask or :REFILE: tag."
+  "Any task with a todo keyword subtask or :project: tag."
   (save-restriction
     (widen)
     (let ((has-subtask)
 	  (subtree-end (save-excursion (org-end-of-subtree t)))
 	  (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-      (save-excursion
-	(forward-line 1)
-	(while (and (not has-subtask)
-		    (< (point) subtree-end)
-		    (re-search-forward "^\*+ " subtree-end t))
-	  (when (and (not (org-inlinetask-at-task-p))
-		     (member (org-get-todo-state) org-todo-keywords-1))
-	    (setq has-subtask t))))
-      (and is-a-task has-subtask))))
+      (when is-a-task
+	(if (member "project" (org-get-tags-at (point) 'local))
+	    t
+	  (save-excursion
+	    (forward-line 1)
+	    (while (and (not has-subtask)
+			(< (point) subtree-end)
+			(re-search-forward "^\*+ " subtree-end t))
+	      (when (and (not (org-inlinetask-at-task-p))
+			 (member (org-get-todo-state) org-todo-keywords-1))
+		(setq has-subtask t))))
+	  has-subtask)))))
 #+end_src
 This approach is useful in the case if I place some todo under the wrong item during refiling. It will appear in the project list in such a case. Project cannot be =DONE= if any of subtasks is =TODO=, =NEXT=, =WAITING= or =HOLD= (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
 ****** Top level project
@@ -8127,11 +8130,26 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     (widen)
     (let ((subtree-end (save-excursion (org-end-of-subtree t))))
       (cond
-       ((and (bh/is-project-p) (not (bh/is-subproject-p)))
+       ((and (bh/is-project-p)
+	     (or (member "project" (org-get-tags-at nil 'local))
+		 (not (bh/is-subproject-p))))
 	nil)
        (t
 	subtree-end)))
     ))
+
+(defun bh/skip-projects ()
+  "Skip trees that are projects"
+  (save-restriction
+    (widen)
+    (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+      (cond
+       ((bh/is-project-p)
+	subtree-end)
+       (t
+	nil)))
+    ))
+
 (defun bh/skip-non-tasks ()
   "Show non-project tasks.
       Skip project and sub-project tasks, habits, and project related tasks."
@@ -8280,7 +8298,15 @@ SUBTREE-END is used as end of the entry if not nil."
 							  (zin/org-agenda-skip-tag "NODEADLINE")
 							  (bh/skip-habits))))))))
               ("n" "NEXT and REVIEW tasks"
-	       ((tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
+	       ((tags-todo "-CANCELLED-WAITING-HOLD-SOMEDAY"
+			   ((org-agenda-overriding-header "Stuck Projects")
+			    (org-agenda-dim-blocked-tasks nil)
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-skip-function 'bh/skip-non-stuck-projects-and-non-next-subprojects)
+			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-sorting-strategy
+			     '(category-keep))))
+		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
 			   ((org-agenda-overriding-header "Tasks to review")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
@@ -10338,7 +10364,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO #project %^{Project title} :%^G:"
+			  ("* TODO #project %^{Project title} :%^G:project:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
@@ -10383,7 +10409,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO #project %^{Project title} :%^G:"
+			  ("* TODO #project %^{Project title} :%^G:project:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
@@ -10484,7 +10510,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* NEXT #paper %^{Aproximate title of the paper} :publication:NOARCHIVE:"
+			  ("* NEXT #paper %^{Aproximate title of the paper} :publication:project:NOARCHIVE:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":ATTACH_DIR_INHERIT: t"
@@ -10531,7 +10557,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* NEXT #paper #co-author %^{Aproximate title of the paper} :publication:NOARCHIVE:"
+			  ("* NEXT #paper #co-author %^{Aproximate title of the paper} :publication:project:NOARCHIVE:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":ATTACH_DIR_INHERIT: t"
@@ -10584,7 +10610,7 @@ All these templates generally record the creation time in =:CREATED:=
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO #proposal %^{Project title} :%^G:NOARCHIVE:grant:"
+			  ("* TODO #proposal %^{Project title} :%^G:NOARCHIVE:grant:project:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":END:"
