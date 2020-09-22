@@ -4449,6 +4449,9 @@ Sometimes, I just need to have any random text in buffer for testing.
   (explain-pause-mode +1))
 #+end_src
 *** Hung memory leaks
+    :PROPERTIES:
+    :ID:       b6df8ed3-75b4-4e9f-a866-0c6abce32e0d
+    :END:
 
 #+begin_src emacs-lisp
 (use-package memory-usage
@@ -8161,6 +8164,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 	nil)
        (t
 	next-headline)))))
+
 (defun bh/skip-subprojects ()
   "Show non-subproject tasks.
       Skip project and sub-project tasks, habits, and project related tasks."
@@ -11483,6 +11487,9 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 
 
 ***** Refile to here
+      :PROPERTIES:
+      :ID:       70f89ed4-836f-4b09-9398-737d6acf48ba
+      :END:
 
 Use =helm-org= to refile searched heading to point.
 
