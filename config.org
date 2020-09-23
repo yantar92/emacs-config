@@ -1886,7 +1886,7 @@ The problem is that it may mess up the cases when I want to assign special meani
                         profiler-report-mode fundamental-mode explain-pause-mode
                         bm-show-mode
                         Info-mode woman-mode Man-mode
-                        eaf-mode))
+                        eaf-mode image-mode))
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   
@@ -5383,6 +5383,17 @@ Meta bindings for calendar
 (use-package yaml-mode
   :if init-flag
   :straight t)
+#+end_src
+*** Images
+
+Viewing images in Emacs
+
+#+begin_src emacs-lisp
+(use-package image-mode
+  :if init-flag
+  :config
+  (meta-defun meta-down :mode image-mode image-next-file)
+  (meta-defun meta-up :mode image-mode image-previous-file))
 #+end_src
 
 ** News & email
