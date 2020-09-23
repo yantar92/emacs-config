@@ -7147,11 +7147,13 @@ Show parent project as top (or second top) suggestion."
 
 (defun org-att-id-link-description (link desc)
   "Return description of an att-id: link."
-  (when-let ((id (nth 1 (s-split ":" link)))
-	     (file (nth 2 (s-split ":" link))))
-    (org-with-point-at (org-id-find id 'marker)
-      (when-let ((heading (org-get-heading 'no-tags 'no-todo 'no-priority 'no-comment)))
-	(s-concat heading ":" file)))))
+  (if (not (seq-empty-p desc))
+      desc
+      (when-let ((id (nth 1 (s-split ":" link)))
+		 (file (nth 2 (s-split ":" link))))
+	(org-with-point-at (org-id-find id 'marker)
+	  (when-let ((heading (org-get-heading 'no-tags 'no-todo 'no-priority 'no-comment)))
+	    (s-concat heading ":" file))))))
 
 (defun org-att-id-store-link ()
   "Store att-id: link."
