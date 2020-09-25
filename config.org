@@ -11533,7 +11533,7 @@ will be refiled."
 		 do (org-with-point-at victim
                       (org-refile nil nil rfloc))))))
 
-  (add-to-list 'helm-org-headings-actions '("Refile heading(s) to heading at point" . helm-org--refile-heading-here))
+  (add-to-list 'helm-org-headings-actions '("Refile heading(s) to heading at point" . helm-org--refile-heading-here) 'append)
   )
 #+end_src
 
