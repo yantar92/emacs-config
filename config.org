@@ -2343,18 +2343,6 @@ Walk across the backup files
 :ID:       2e32ad16-4c7a-46b9-8c47-06f7f5566032
 :END:
 
-Better auto save.
-*************** NEXT This slows down emacs. Investigate
-*************** END
-
-#+begin_src emacs-lisp
-(use-package auto-save-buffers-enhanced
-  :disabled
-  :straight t
-  :config
-  (auto-save-buffers-enhanced t))
-#+end_src
-
 #+begin_src emacs-lisp
 (setq  auto-save-file-name-transforms `((".*"  "~/.emacs.d/auto-save/" t))
        auto-save-interval 20)
@@ -2367,17 +2355,6 @@ Do it in separate file to avoid accidental overwriting when config is corrupted.
   (setq savehist-file (concat user-emacs-directory "yant.history"))
   (savehist-mode 1))
   #+end_src
-*** TODO Never save some buffers
-:PROPERTIES:
-:ID:       7d188a71-560a-4d37-8037-2f2e44726a06
-:END:
-I got an issue with =org-src= block editing buffers. They are saved
-under some weird name beside the actual org file when some command,
-saving all the buffers, is executed.
-#+begin_src emacs-lisp
-(defvar yant/never-save-buffer-list nil
-  "The buffers, matching any of the regexps in this list will never be saved.")
-#+end_src
 *** Persistent scratch
 :PROPERTIES:
 :ID:       4185d833-9d1f-4763-97a0-d44bcc322da7
@@ -14482,6 +14459,9 @@ cp autosave.lua ~/.config/mpv/scripts/
 
 
 * Archived
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 
 ** TODO COMMENT Mode line :EMACS:COMMON:
 :PROPERTIES:
@@ -14689,5 +14669,229 @@ Fancy minor mode lighters
   :diminish (mml-mode . " 🖂"))
 (use-package footnote
   :diminish (footnote-mode . " ¹⁻⁹"))
+#+end_src
+
+** =auto-save-buffers-enhanced= :EMACS:COMMON:
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-09-24 Thu 18:17
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/History & version control/Auto save
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+[2020-09-24 Thu] This does not work well with large org buffers, especially with my config, which is auto-tangled on save.
+Better auto save.
+
+#+begin_src emacs-lisp
+(use-package auto-save-buffers-enhanced
+  :straight t
+  :config
+  (auto-save-buffers-enhanced t))
+#+end_src
+
+** COMMENT Highlight cursor when it moves far
+:PROPERTIES:
+:ID:       c86d4d84-aa19-43e8-990a-6305db525433
+:ARCHIVE_TIME: 2019-12-09 Mon 13:06
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Appearance/Cursor
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-09-24 Thu 21:20]
+:END:
+=beacon-mode= seems to slow down the org movement like =c u=.
+#+begin_src emacs-lisp :tangle no
+(use-package beacon
+  :if init-flag
+  :straight t
+  :diminish beacon-mode
+  :config
+  (beacon-mode 1))
+#+end_src
+** Show file changes in the fringe
+:PROPERTIES:
+:CREATED:  [2019-07-12 Fri 08:51]
+:ID:       183bac3b-5d30-4123-af4c-6012d7625766
+:ARCHIVE_TIME: 2019-12-25 Wed 14:02
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/History & version control
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: TODO
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-09-24 Thu 21:20]
+:END:
+This slows down emacs on saving large org buffers.
+Disabling
+
+#+begin_src emacs-lisp
+(use-package git-gutter-fringe+
+  :if init-flag
+  :straight t
+  :diminish git-gutter+-mode
+  :init
+  (use-package fringe-helper)
+  :config
+  (global-git-gutter+-mode))
+#+end_src
+** Highlight uncommitted changes in version-controlled files and dirs
+:PROPERTIES:
+:CREATED:  [2019-04-05 Fri 16:37]
+:ID:       c5fc942a-d468-4102-9c90-6275fd605e92
+:ARCHIVE_TIME: 2020-04-02 Thu 13:40
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Text highlight & colouring
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-09-24 Thu 21:21]
+:END:
+
+It slows down large org files though. Not going to use.
+
+#+begin_src emacs-lisp
+(use-package git-gutter-fringe
+  :if init-flag
+  :straight t
+  :init
+  (setq git-gutter-fr:side 'right-fringe)
+  :config
+  (add-hook 'magit-mode-hook #'git-gutter-mode))
+#+end_src
+** Execute current buffer (c++,python,bash,...)
+:PROPERTIES:
+:ID:       a57244bb-a617-44b4-a806-7cff82a86ac7
+:ARCHIVE_TIME: 2020-04-09 Thu 00:50
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Programming & emacsing
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-09-24 Thu 21:21]
+:END:
+#+begin_src emacs-lisp
+(use-package quickrun
+  :if init-flag
+  :straight t
+  :bind (
+	 ("<f10>" . quickrun)
+	 ("<C-XF86Search>" . quickrun-with-arg)
+	 ("<C-M-XF86Search>" . quickrun-shell)
+	 ("<C-XF86Explorer>" . quickrun-region)
+	 ("<C-M-XF86Explorer>" . quickrun-replace-region)
+	 ("<f12>" . helm-quickrun)))
+#+end_src
+** Wind move
+:PROPERTIES:
+:ID:       8cd8df5e-ff33-46ac-9864-38e990f745de
+:ARCHIVE_TIME: 2020-04-09 Thu 17:36
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Windows
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-09-24 Thu 21:21]
+:END:
+#+begin_src emacs-lisp
+(use-package boon
+  :if init-flag
+  :config
+  (bind-keys :map boon-forward-search-map
+	     ("j" . windmove-down)
+             ("k" . windmove-up)
+             ("i". windmove-left)
+             ("o" . windmove-right)
+             ("l" . other-window)
+             :map boon-backward-search-map
+	     ("j" . windmove-down)
+             ("k" . windmove-up)
+             ("i". windmove-left)
+             ("o" . windmove-right)
+	     ("l" . other-window)))
+#+end_src
+** Show recursive directory size
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:20]
+:ARCHIVE_TIME: 2020-04-14 Tue 14:58
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Files/Search directories/=Dired=/Appearance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-09-24 Thu 21:21]
+:END:
+#+begin_src emacs-lisp
+(use-package dired-du
+  :if init-flag
+  :straight t
+  :diminish dired-du-mode
+  :custom
+  ;; human readable size
+  (dired-du-size-format t))
+#+end_src
+** Do not use mouse
+:PROPERTIES:
+:CREATED:  [2019-08-02 Fri 15:44]
+:ID:       1edf3f36-6a30-4374-a47d-2d1b9c7a889a
+:ARCHIVE_TIME: 2020-05-28 Thu 12:58
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Command loop
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-09-24 Thu 21:22]
+:END:
+[2020-05-28 Thu] This interferes with pdf-view annoyingly. Easier to disable mouse globally when needed.
+
+I can force no mouse in emacs (see [[https://www.emacswiki.org/emacs/EmacsNiftyTricks][emacswiki]]).
+Note that it does not interfere with [[id:201475d1-64b3-4e1d-8e78-d850c6067761][pdf-tools]].
+#+begin_src emacs-lisp
+(when init-flag
+    (mouse-avoidance-mode 'banish))
+#+end_src
+
+** Company completion :EMACS:COMMON:
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-09-25 Fri 08:37
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Ledger
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+[2020-09-25 Fri] This prevents completing the account name
+Source: [[id:github_debanjum_deban_compan_ledger][debanjum [Github] Debanjum Company-Ledger]]
+#+begin_src emacs-lisp
+(use-package company-ledger
+  :if init-flag
+  :straight (company-ledger :host github :repo "debanjum/company-ledger")
+  :after company
+  :init
+  (add-to-list 'company-backends 'company-ledger))
+#+end_src
+
+** Never save some buffers :EMACS:COMMON:
+:PROPERTIES:
+:ID:       7d188a71-560a-4d37-8037-2f2e44726a06
+:ARCHIVE_TIME: 2020-09-25 Fri 10:38
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+[2020-09-24 Thu] Seems to be fixed
+I got an issue with =org-src= block editing buffers. They are saved
+under some weird name beside the actual org file when some command,
+saving all the buffers, is executed.
+#+begin_src emacs-lisp
+(defvar yant/never-save-buffer-list nil
+  "The buffers, matching any of the regexps in this list will never be saved.")
 #+end_src
 
