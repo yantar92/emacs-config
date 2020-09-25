@@ -2259,7 +2259,7 @@ I use company for completion just because it is easy to use.
 Skeletons go beyond simple completion of a single word. 
 They define a powerful template system making completion programmable and interactive. 
 
-** NEXT History & version control
+** History & version control
 :PROPERTIES:
 :ID:       a76e7822-8153-4adc-a3f8-8f05588eff5e
 :END:
@@ -2486,6 +2486,7 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
   (magit-section-initial-visibility-alist
    '((stashes . hide) (untracked . hide) (unpushed . hide))))
 #+end_src
+
 ** Text highlight & colouring
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
@@ -4974,7 +4975,6 @@ This is also required for =cdlatex= to work with org-mode.
   :config
   (setq ledger-complete-in-steps t))
 #+end_src
-
 ** Wolfram Mathematica
 :PROPERTIES:
 :CREATED:  [2018-07-23 Mon 17:37]
@@ -6925,12 +6925,16 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
 :PROPERTIES:
 :ID:       7122dce7-7d3e-4167-a444-8811d588db42
 :END:
-***** NEXT Link description function
+***** WAITING Link description function :HOLD:WAITING:
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 10:27]
 :ID:       bd43272d-9ef4-45a6-85ab-bebbef75c18b
+:SUMMARY:  Get reply to my patch
 :END:
 :LOGBOOK:
+- State "WAITING"    from "HOLD"          [2020-09-24 Thu 21:55]
+- State "HOLD"       from "SOMEDAY"    [2020-09-24 Thu 21:55] \\
+  Get reply to my patch
 CLOCK: [2019-08-03 Sat 00:01]--[2019-08-03 Sat 00:02] =>  0:01
 - State "NEXT"       from "TODO"       [2019-05-07 Tue 10:34]
 :END:
@@ -7312,7 +7316,7 @@ Do not ask every time I try to evaluate elisp: links
   (setq org-link-elisp-confirm-function nil))
 #+end_src
 
-***** NEXT Org-ref
+***** Org-ref
 :PROPERTIES:
 :ID:       f944c2c8-f1fa-49ea-ab24-bf1b018013f1
 :END:
