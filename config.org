@@ -1229,6 +1229,10 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 									      'face `((
 										       :family "file-icons"
 										       :foreground ,(face-background 'region))))))
+                            ;; Buffer size.
+                            " "
+                            (format-mode-line "%I")
+                            " "
 			    (case major-mode
 			      ('org-agenda-mode (format-mode-line (list " " mode-name " ")))
 			      ('notmuch-show-mode (format-mode-line (list " " header-line-name " ")))
