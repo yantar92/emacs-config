@@ -11831,25 +11831,59 @@ In addition, =%s= and =%S= in =org-archive-location= now mean file name with ext
   :config
   (setq org-archive-mark-done nil)
   (setq org-archive-location "%S_archive_%y.org::datetree/* Archived Tasks")
-  (defun org-archive--compute-location (location)
+  (defun org-archive--compute-location (location &optional all-archives)
     (let* ((current-file (buffer-file-name (buffer-base-buffer)))
-           (file-non-directory (file-name-nondirectory current-file))
+	   (file-non-directory (file-name-nondirectory current-file))
            (file-sans-extension (file-name-sans-extension file-non-directory))
            (case-fold-search nil))
       (setq location (replace-regexp-in-string (regexp-quote "%s") file-non-directory location t)
             location (replace-regexp-in-string (regexp-quote "%S") file-sans-extension location t)
-            location (replace-regexp-in-string (regexp-quote "%y") (format-time-string "%Y") location t))
+            location (replace-regexp-in-string (regexp-quote "%y")
+					       (if all-archives
+						   "[0-9]\\{4\\}"
+						 (format-time-string "%Y"))
+                                               location t t))
 
       (unless (string-match "::" location) (error "Invalid archive location: %S" location))
 
       (let ((file (substring location 0 (match-beginning 0)))
             (heading (substring location (match-end 0))))
-        (cons (if (org-string-nw-p file) (expand-file-name file) current-file) heading)))))
+        (when (and (org-string-nw-p file) all-archives)
+          (setq file (directory-files default-directory nil file)))
+        (unless (or (not all-archives)  (listp file) (org-string-nw-p file)) (setq file (list current-file)))
+        (if (listp file)
+            (mapcar (lambda (f)
+		      (cons (if (org-string-nw-p f) (expand-file-name f) current-file) heading))
+		    file)
+          (cons (if (org-string-nw-p file) (expand-file-name file) current-file) heading))))))
 #+end_src 
 
-Since the archives are not always contained in a single file, org id and text searches may not know all the archive files. Hence, I set more files in =org-agenda-text-search-extra-files= in addition to default 'agenda-archives. 
-*************** TODO make this work
-*************** END
+Since the archives are not always contained in a single file, org id and text searches may not know all the archive files. Hence, I set more files in =org-agenda-text-search-extra-files= in addition to default 'agenda-archives.
+
+#+begin_src emacs-lisp
+(use-package org-id
+  :custom
+  (org-id-extra-files 'org-agenda-text-search-extra-files)
+  :config
+  (use-package org-archive
+    :config
+    (defun org-all-archive-files ()
+      "List of all archive files used in the current buffer."
+      (let* ((case-fold-search t)
+	     (files (mapcar #'car (org-archive--compute-location org-archive-location t))))
+	(org-with-point-at 1
+	  (while (re-search-forward "^[ \t]*:ARCHIVE:" nil t)
+	    (when (org-at-property-p)
+	      (pcase (org-archive--compute-location (match-string 3))
+		(`(,file . ,_)
+		 (when (org-string-nw-p file)
+		   (cl-pushnew file files :test #'file-equal-p))))))
+	  (cl-remove-if-not #'file-exists-p (nreverse files)))))
+    )
+  )
+#+end_src
+ 
+
 
 Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override standard archiving function to make it possible to archive them (into separate location =org-inlinetask-archive-location=)
 #+BEGIN_SRC emacs-lisp
