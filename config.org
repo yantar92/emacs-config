@@ -3036,6 +3036,10 @@ Double space convention is outdated.
 :CREATED:  [2020-03-31 Tue 01:37]
 :ID:       8faacef7-04f8-4e18-9282-ce5d68757efb
 :END:
+***** Alternative binding for next/previous match
+:PROPERTIES:
+:ID:       49884cbd-f8ce-46aa-9a37-2a5f92859d9e
+:END:
 
 Xah Lee gave an interesting idea to bind extra key in =isearch=. [[http://ergoemacs.org/emacs/emacs_isearch_by_arrow_keys.html][cite]]
 Following my key binding theme for [[id:d388e4f5-214e-4697-a53a-be6fb6c24411][Helm]], I also define extra keys in =isearch= 
@@ -5371,6 +5375,9 @@ Meta bindings for calendar
   :straight t)
 #+end_src
 *** Images
+:PROPERTIES:
+:ID:       da6aa18c-b0bd-4318-a9b4-988f17faa44b
+:END:
 
 Viewing images in Emacs
 
@@ -14982,4 +14989,22 @@ saving all the buffers, is executed.
 (defvar yant/never-save-buffer-list nil
   "The buffers, matching any of the regexps in this list will never be saved.")
 #+end_src
+
+** Warning when I try to send a message mentioning attachments in text, but without actual attachments :EMACS:COMMON:
+:PROPERTIES:
+:CREATED:  [2020-05-05 Tue 15:01]
+:ID:       dbd472e2-2ab2-4a8d-bd6c-d28acc48e2dc
+:ARCHIVE_TIME: 2020-09-26 Sat 15:10
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/News & email
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+[2020-09-26 Sat] Use notmuch built-in system instead
+#+begin_src emacs-lisp
+(use-package message-attachment-reminder
+  :if init-flag
+  :straight t)
+#+end_src
+
 
