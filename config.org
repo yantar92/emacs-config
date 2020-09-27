@@ -11945,7 +11945,7 @@ This function is called by `org-archive-hook'.  The option
    (when (and (org-at-heading-p)
 	      (member org-attach-auto-tag (org-get-tags nil t));; do not ask if no attachments
 	      )
-     (let ((heading (org-get-heading 'notags 'notodo 'norpiority 'nocommend)))
+     (let ((heading (org-get-heading nil nil 'norpiority 'nocomment)))
        (when (if (eq org-attach-archive-delete 'query)
 		 (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
 									 (interactive)
