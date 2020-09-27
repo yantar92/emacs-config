@@ -6146,6 +6146,45 @@ Using [[id:github_aperezdc_aperez_notmuc_addrl_c_addres][aperezdc [Github] Apere
   (notmuch-message-summary-face ((t (:foreground ,(face-foreground 'header-line))))))
 #+end_src
 
+**** Message verification before sending
+
+***** Check message body if there should be attachment and warn me if the actual attachment is missing
+:PROPERTIES:
+:ID:       095ff9d5-cee7-4cb6-8d7e-b936dd23d50b
+:END:
+
+#+begin_src emacs-lisp
+(use-package notmuch
+  :if init-flag
+  :config
+  (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check))
+#+end_src
+
+***** Remind me about adding Woof headers when sending messages to org-mode maillist
+:PROPERTIES:
+:ID:       5b1ce8da-875f-4e49-9d8d-8b0a4814c3c9
+:END:
+
+Making sure to conform to Bastein's [[notmuch:id:87o8lwhek2.fsf@gnu.org][request]] asking to use Woof conventions when sending emails. [[id:74d229fc782c20a7f32a04f07863af51598994b5][[Github] woof: Watch Over Our Folders]]
+
+#+begin_src emacs-lisp
+(use-package notmuch
+  :if init-flag
+  :config
+  (defun yant/notmuch-mua-woof-check-maybe ()
+    "Remind to use Woof headers when sending email to org-mode maillist."
+    (let ((case-fold-search t))
+      (save-excursion
+	(goto-char (point-min))
+	(when (re-search-forward "^\\(To:\\|CC:\\).+emacs-orgmode@gnu\\.org" nil t)
+          (goto-char (point-min))
+          (unless (re-search-forward "^X-Woof-\\(Bug\\|Help\\|Change\\|Release\\|Patch\\):" nil t)
+            (unless (yes-or-no-p "No Woof headers found in message being sent to emacs-orgmode@gnu.org. Send anyway? ")
+	      (error "Forgot Woof headers")))))))
+  (add-hook 'notmuch-mua-send-hook #'yant/notmuch-mua-woof-check-maybe))
+#+end_src
+
+
 *** Mail host address
 :PROPERTIES:
 :CREATED:  [2019-12-23 Mon 12:34]
@@ -6156,20 +6195,10 @@ Not sure why I need to set it, but I don't like "i-did-not-set--mail-host-addres
 (setq mail-host-address "localhost")
 #+end_src
 
-*** Warning when I try to send a message mentioning attachments in text, but without actual attachments
+*** Automatically translate non-English and non-Russian/Ukrainian titles.
 :PROPERTIES:
-:CREATED:  [2020-05-05 Tue 15:01]
-:ID:       dbd472e2-2ab2-4a8d-bd6c-d28acc48e2dc
+:ID:       c8a86cda-7c72-432f-8118-b4b1236db7b8
 :END:
-
-#+begin_src emacs-lisp
-(use-package message-attachment-reminder
-  :if init-flag
-  :straight t)
-#+end_src
-
-
-Automatically translate non-English and non-Russian/Ukrainian titles.
 *************** TODO Make it async
 *************** END
 
