@@ -8142,7 +8142,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
 					;      (if (bh/is-project-p)
       (if (and (bh/is-project-p)
-	       (not (member (org-get-todo-state) (list "SOMEDAY")))
+	       (not (member (org-get-todo-state) (list "SOMEDAY" "TODO")))
 	       (or (not (bh/is-subproject-p))
 		   (member (org-get-todo-state) (list "NEXT" "DOING"))))
 	  (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
@@ -8150,7 +8150,10 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 	    (save-excursion
 	      (forward-line 1)
 	      (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ \\(NEXT\\|DOING\\) " subtree-end t))
-		(unless (member "WAITING" (org-get-tags nil t))
+		(unless (or (member "WAITING" (org-get-tags nil))
+			    (member "CANCELLED" (org-get-tags nil))
+                            (member "HOLD" (org-get-tags nil))
+                            (member "SOMEDAY" (org-get-tags nil)))
 		  (setq has-next t))))
 	    (if has-next
 		next-headline
@@ -8255,15 +8258,16 @@ SUBTREE-END is used as end of the entry if not nil."
 	next-headline)
        (t
 	nil)))))
-(defun zin/org-agenda-skip-tag (tag &optional others)
+(defun zin/org-agenda-skip-tag (tag &optional others local)
   "Skip all entries that correspond to TAG.
-      If OTHERS is true, skip all entries that do not correspond to TAG."
+If OTHERS is true, skip all entries that do not correspond to TAG.
+If LOCAL is non-nil, check only local TAG."
   (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
     (if others
-	(if (not (member tag (org-get-tags-at)))
+	(if (not (member tag (org-get-tags nil local)))
 	    next-headline
 	  nil)
-      (if (member tag (org-get-tags-at))
+      (if (member tag (org-get-tags nil local))
 	  next-headline
 	nil))))
   #+end_src
@@ -8284,8 +8288,12 @@ SUBTREE-END is used as end of the entry if not nil."
       (quote (("a" nil
 	       agenda ""
 	       ((org-agenda-skip-function '(or
-					    (zin/org-agenda-skip-tag "HOLD")
-                                            (zin/org-agenda-skip-tag "WAITING")
+					    (and
+					     (not (zin/org-agenda-skip-tag "HOLD" nil 'local))
+					     (zin/org-agenda-skip-tag "HOLD"))
+                                            (and
+					     (not (zin/org-agenda-skip-tag "WAITING" nil 'local))
+					     (zin/org-agenda-skip-tag "WAITING"))
                                             (zin/org-agenda-skip-tag "SOMEDAY")
 					    (org-agenda-skip-before-SHOWFROMDATE-property)
 					    (org-agenda-skip-before-SHOWFROMTIME-property)
@@ -8382,9 +8390,16 @@ SUBTREE-END is used as end of the entry if not nil."
 			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))))
 	      ("v" "GTD overview"
-	       ((agenda "-HOLD-SOMEDAY"
+	       ((agenda ""
 			((org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t")
-			 (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo 'any))))
+			 (org-agenda-skip-function '(or (and
+							 (not (zin/org-agenda-skip-tag "HOLD" nil 'local))
+							 (zin/org-agenda-skip-tag "HOLD"))
+                                                        (and
+							 (not (zin/org-agenda-skip-tag "WAITING" nil 'local))
+							 (zin/org-agenda-skip-tag "WAITING"))
+							(zin/org-agenda-skip-tag "SOMEDAY")
+							(org-agenda-skip-entry-if 'nottodo 'any)))))
 		(tags-todo "INBOX-DEFAULT"
 			   ((org-agenda-overriding-header "Inbox")
 			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'notscheduled))
