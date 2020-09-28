@@ -6752,7 +6752,7 @@ I have two ways to do it:
 	 (funcall-interactively #'org-todo))
      (cl-mapc #'org-set-property
 	      '("STYLE" "REPEAT_TO_STATE" "LOGGING" "ARCHIVE")
-	      '("habit" "NEXT" "DONE(!)" "%%S_archive_%%y.org::* Habits")))))
+	      '("habit" "NEXT" "DONE(!)" "%S_archive_%y.org::* Habits")))))
 (bind-key "C-c C-x h" #'yant/org-task-convert-to-habit org-mode-map)
 #+end_src
 
