@@ -3564,6 +3564,26 @@ Unselect all the files after showing thumbnails. Useful to mark files from the =
       (dired-unmark-all-marks))))
 #+end_src
 
+
+Increase the border size around thumbnails. Default size make it difficult to me spotting the cursor position.
+Inspired by: [[id:4bc3aabf24f87d95784e463c42b4e114bce3be59][[Protesilaos] GNU Emacs integrated computing environment | Protesilaos Stavrou]]
+#+begin_src emacs-lisp
+(use-package image-dired
+  :if init-flag
+  :custom
+  (image-dired-thumb-relief 6))
+#+end_src
+
+Increase the thumbnail size
+#+begin_src emacs-lisp
+(use-package image-dired
+  :if init-flag
+  :custom
+  ;; Default is 100.
+  (image-dired-thumb-size 200))
+#+end_src
+
+
 ***** Delete to trash
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:23]
