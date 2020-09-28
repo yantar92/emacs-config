@@ -3549,7 +3549,6 @@ Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
 :ID:       0513c7b0-f723-40f7-85bc-ee3c4b35b823
 :END:
 
-
 *************** TODO suggest to add to emacs?
 *************** END
 
@@ -6588,8 +6587,8 @@ Unschedule when SOMEDAY is set."
 	(org-clock-out)))))
 (add-hook 'org-trigger-hook #'org-trigger-someday)
 #+end_src
-  - CANCELLED(c) :: I will never do this task because of what is in the comment
-  - DONE(d) :: self explanatory
+  - CANCELLED(c) :: I will not do this task because of what is in the comment
+  - DONE(d) :: self-explanatory
   - FAILED(f) :: there is some outcome and can mark done, but the outcome is not positive, though can get some conclusions out of it
   - MERGED(m) :: become a part of other task. The link to the task is added to =MERGED-WITH= property. The motivation of adding this state is that I sometimes create a duplicate task, find out that it is duplicate, and confused which state to set. It is just faster to set =MERGED= without deciding if it is =CANCELLED= (which is not really) or =DONE= (which is also not).
   #+begin_src emacs-lisp
