@@ -3444,7 +3444,8 @@ And extend it with =dired+=
 		("<tab>" . dired-filter-group-toggle-header))
     :config
     (set-face-attribute 'dired-filter-group-header nil
-			:underline nil))
+			:underline nil)
+    (unbind-key "<tab>" dired-filter-group-mode-map))
   (use-package meta-functions
     :init
     (use-package dired-hacks-utils :straight t)
@@ -3543,6 +3544,20 @@ Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
 	  (quit-window kill window))))))
 #+end_src
 
+***** Show subtrees - org-mode-like directory folding
+#+begin_src emacs-lisp
+(use-package dired-subtree
+  :if init-flag
+  :straight t
+  :after dired
+  :config
+  (setq dired-subtree-use-backgrounds nil)
+  (unbind-key "<C-tab>" override-global-map)
+  (bind-keys :map dired-mode-map
+	     ("<tab>" . dired-subtree-toggle)
+	     ("<C-tab>" . dired-subtree-cycle)
+	     ("<S-iso-lefttab>" . dired-subtree-remove)))
+#+end_src
 ***** Image dired
 :PROPERTIES:
 :CREATED:  [2020-05-15 Fri 00:20]
@@ -3581,7 +3596,6 @@ Increase the thumbnail size
   ;; Default is 100.
   (image-dired-thumb-size 200))
 #+end_src
-
 
 ***** Delete to trash
 :PROPERTIES:
@@ -3688,7 +3702,6 @@ Disabling it
   (remove-hook 'dired-mode-hook         'diredp-nb-marked-in-mode-name))
 
 #+end_src
-
 
 
 ***** Appearance
