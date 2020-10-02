@@ -8655,6 +8655,8 @@ This agenda show the items for the current day and time.
 	      tmp-scheduled-time
 	      tmp-deadline-time
 	      (> tmp-cur-schedule tmp-cur-day)
+              ;; Catch tasks scheduled after deadline 
+              (>= tmp-cur-deadline tmp-cur-schedule)
 	      ;;(> tmp-cur-deadline tmp-cur-day)
 	      ))
 	(re-search-forward (org-get-limited-outline-regexp) nil 'noerror)
