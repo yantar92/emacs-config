@@ -2234,8 +2234,8 @@ I use company for completion just because it is easy to use.
   :straight t
   :diminish (company-mode . " ⭿")
   :custom
-  (company-idle-delay 0.5)
-  (company-minimum-prefix-length 3)
+  (company-idle-delay 0.2)
+  (company-minimum-prefix-length 2)
   (company-selection-wrap-around t)
   (company-require-match nil)
   (company-transformers '(company-sort-by-occurrence))
