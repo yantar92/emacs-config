@@ -6085,7 +6085,7 @@ Can be still occasionally useful to navigate the complicated threads though.
 				 (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
 				 (:name "all mail" :query "*" :key "a"))))
 #+end_src
-**** Opening large threads
+**** COMMENT Opening large threads
 :PROPERTIES:
 :CREATED:  [2019-12-21 Sat 14:34]
 :ID:       ec8e6f0d-bb74-40fc-9088-becd7fa36d86
