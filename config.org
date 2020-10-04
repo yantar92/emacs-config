@@ -13965,7 +13965,9 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :END:
 
 #+begin_src emacs-lisp
-(use-package ol-notmuch)
+(use-package ol-notmuch
+  :custom
+  (org-notmuch-open-function #'notmuch-tree))
 (use-package helm-notmuch
   :straight t
   :config
@@ -14017,7 +14019,8 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 		 (eq email-link "")))
       (save-current-buffer
 	(interactive)
-	(org-open-link-from-string email-link)
+        (let ((org-notmuch-open-function #'org-notmuch-follow-link))
+	  (org-open-link-from-string email-link))
 	(with-current-buffer (first (buffer-list))
 	  (if (member mystate done-keywords)
 	      (notmuch-show-tag-message "-inbox" "-todo" "-listinbox")
