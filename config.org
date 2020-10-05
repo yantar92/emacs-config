@@ -11439,6 +11439,8 @@ I define two link types for capturing:
 							      (author-surnames (mapcar (lambda (author)
 											 (car (last (s-split " +" author))))
 										       authors)))
+                                                         (unless (string= "article" (org-capture-ref-get-bibtex-field :type))
+                                                           (setq author-surnames authors))
 							 (if (= 1 (length author-surnames))
                                                              (format "%s " (car author-surnames))
                                                            (format "%s, %s " (car author-surnames) (car (last author-surnames))))))
