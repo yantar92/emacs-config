@@ -2492,7 +2492,9 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
   (magit-section-initial-visibility-alist
    '((stashes . hide) (untracked . hide) (unpushed . hide))))
 #+end_src
-**** Working with multiple repositories
+**** COMMENT Working with multiple repositories
+
+[2020-10-12 Mon] Apparently this package is not up-to-date with magit. Need to investigate various errors triggered in advises.
 
 Normally, =magit= only works with a single repository at a time.
 It is possible to display overview of multiple repositories using [[id:25b6e834-e8d8-4c23-b978-60e03147f9a9][luismbo/multi-magit: Multi-repo support for Magit]]
