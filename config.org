@@ -2244,7 +2244,7 @@ I use company for completion just because it is easy to use.
   :config
   (bind-key* "M-/" #'company-complete)
   :bind (:map company-active-map
-	      ("<tab>" . company-complete-common-or-cycle)
+	      ("<tab>" . nil)
 	      ("M-j" . company-select-next)
 	      ("M-k" . company-select-previous)
 	      ("C-h" . backward-delete-char-untabify)
