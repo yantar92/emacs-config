@@ -5542,27 +5542,36 @@ Viewing images in Emacs
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
   
-  (defvar elfeed-search-default-filter "+unread -hide @2month -video -science -course -chinese -emacs +jobs"
-    "Default filter in elfeed search window.")
-  (setq elfeed-search-filter elfeed-search-default-filter)
   (setq elfeed-sort-order 'ascending)
   (setq elfeed-search-title-max-width 100)
   (setq elfeed-search-date-format '("%d %b, %a, %H:%M" 20 :left))
   (unless (boundp 'elfeed-search-mode-hook) (setq elfeed-search-mode-hook nil))
   ;; (add-hook 'elfeed-search-mode-hook (lambda () (toggle-truncate-lines +1)))
 
-  (require 'elfeed-search)
-  (define-advice elfeed-search-live-filter (:around (oldfun &optional arg) default-filter-maybe)
-    "Set `elfeed-search-filter' to `elfeed-search-default-filter' when invoked with C-u prefix argument."
-    (interactive "P")
-    (setq elfeed-search-filter (if arg elfeed-search-default-filter elfeed-search-filter))
-    (call-interactively oldfun))
-  
   (use-package elfeed-org
     :straight t
     :config
     (elfeed-org)
     (setq rmh-elfeed-org-files (list "~/Org/rss.org"))))
+#+end_src
+
+It is very hard to look through many new rss entries when entries from different feeds/topics are mixed. I constantly need to switch my focus thinking about different topics, which makes going through news feeds extremely slow. 
+To mitigate the issue, I prefer to group the feeds by similar topic, so that I can quickly decide what feeds I want to capture. The grouping can be done by progressive search filter, like =+unread -topic1 -topic2 -topic3 ...=. I can simply edit the filter and remove last keyword one by one thus going through the new feeds topic-by-topic.
+
+Similar idea: [[id:36ba1ec888a75c0461e9eeb1cf2fe8c7747ed7bd][Álvaro Ramírez [Xenodium] (2018) Quickly swapping elfeed filters]]
+
+#+begin_src emacs-lisp
+(use-package elfeed-search
+  :after elfeed
+  :config
+  (defvar elfeed-search-default-filter "+unread -hide @2month -video -science -course -chinese -emacs +jobs"
+    "Default filter in elfeed search window.")
+  (setq elfeed-search-filter elfeed-search-default-filter)
+  (define-advice elfeed-search-live-filter (:around (oldfun &optional arg) default-filter-maybe)
+    "Set `elfeed-search-filter' to `elfeed-search-default-filter' when invoked with C-u prefix argument."
+    (interactive "P")
+    (setq elfeed-search-filter (if arg elfeed-search-default-filter elfeed-search-filter))
+    (call-interactively oldfun)))
 #+end_src
 
 Sort entries by Gnus-like score 
