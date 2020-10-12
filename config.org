@@ -1570,13 +1570,13 @@ In boon, it can be done by forcing global move commands in special state.
 Second, implement the wrapper command <<meta-functions>>.
 
 #+begin_src emacs-lisp :tangle ~/Git/meta-functions/meta-functions.el
-  ;;; meta-functions.el --- Define meta-functions to act differently depending on major mode -*- lexical-binding: t; -*-
+;;; meta-functions.el --- Define meta-functions to act differently depending on major mode -*- lexical-binding: t; -*-
 
 ;; Version: 2.0
 ;; Author: Ihor Radchenko <yantar92@gmail.com>
 ;; Created: 10 March 2018
 
-  ;;; Commentary:
+;;; Commentary:
 
 ;; Quick implementation of meta-functions, which allows to run multiple
 ;; functions, which do similar logical operations by one single "meta"
@@ -1604,7 +1604,7 @@ Second, implement the wrapper command <<meta-functions>>.
 ;; However, handle is very major-mode centric. meta-functions is more function-centric
 ;; Also, meta-functions is not only limited to current major mode defining which function to call.
 
-  ;;; Code:
+;;; Code:
 (require 'seq)
 (require 'dash)
 (require 'org-id)
@@ -1648,7 +1648,7 @@ Second, implement the wrapper command <<meta-functions>>.
 
 (defun meta-functions--process-args (name args)
   "Process arguments of `meta-defun'.
-  The return value is a list (arglist docstring ((sub-body-symbol condition-func|mode-symbol body) ...))."
+The return value is a list (arglist docstring ((sub-body-symbol condition-func|mode-symbol body) ...))."
   (when (memq ':override-nil args) (setq args (delq ':override-nil args)))
   (let* ((arglist (and (listp (car args)) (pop args)))
 	 (docstring (and (stringp (car args)) (pop args)))
@@ -1794,7 +1794,7 @@ Second, implement the wrapper command <<meta-functions>>.
 
 (provide 'meta-functions)
 
-  ;;; meta-functions.el ends here
+;;; meta-functions.el ends here
 #+end_src
 
 And use the wrapper command in interactive mode.
