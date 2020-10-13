@@ -8437,7 +8437,7 @@ If LOCAL is non-nil, check only local TAG."
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
-			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
 			    (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
@@ -8450,7 +8450,7 @@ If LOCAL is non-nil, check only local TAG."
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
-			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
 			    (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
@@ -8513,7 +8513,7 @@ If LOCAL is non-nil, check only local TAG."
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
-			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
 			    (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
@@ -8526,7 +8526,7 @@ If LOCAL is non-nil, check only local TAG."
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
-			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
 			    (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
