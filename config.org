@@ -8636,7 +8636,8 @@ Also, no contexts are prompted in Inbox agenda.
     (interactive)
     (unless (eq major-mode 'org-agenda-mode) (user-error "Cannot run %s outside agenda view" this-command))
     (when (and (memq this-command '(org-agenda yant/org-agenda-filter-by-location-context))
-	       (not (string= org-agenda-name "Inbox items")))
+	       (not (string= org-agenda-name "Inbox items"))
+               (not (string= org-agenda-name "Hanging tasks")))
       (unless (local-variable-p 'org-global-tags-completion-table)
 	(setq-local org-global-tags-completion-table
 		    (org-global-tags-completion-table)))
