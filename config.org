@@ -8422,6 +8422,15 @@ If LOCAL is non-nil, check only local TAG."
 							       (bh/skip-subprojects))
 							  (zin/org-agenda-skip-tag "NODEADLINE")
 							  (bh/skip-habits))))))))
+              ("w" "Waiting and hold tasks"
+               ((tags-todo "-CANCELLED+WAITING|HOLD"
+			   ((org-agenda-overriding-header (concat "Waiting and Hold Tasks" ""))
+			    (org-agenda-prefix-format "%-12:c\t%?-12t %(yant/format-summary-for-agenda)")
+			    (org-use-tag-inheritance nil)
+			    (org-agenda-skip-function 'bh/skip-projects)
+			    (org-tags-match-list-sublevels nil)
+			    (org-agenda-sorting-strategy
+			     '(todo-state-down))))))
               ("n" "NEXT and REVIEW tasks"
 	       ((tags-todo "-CANCELLED-WAITING-HOLD-SOMEDAY"
 			   ((org-agenda-overriding-header "Stuck Projects")
