@@ -12884,7 +12884,7 @@ Do not use box around checkbox items
 :CREATED:  [2020-03-28 Sat 18:51]
 :ID:       e8ee8fc7-55ec-4396-83e6-97559ab1d5bf
 :END:
-
+[2020-10-14 Wed] Add smarted duplicate removal: =link= means the same as =[[link]]=
 #+begin_src emacs-lisp
 (use-package posframe
   :if init-flag
@@ -12911,6 +12911,13 @@ there is one, return it."
 	   (setq end (save-excursion (outline-next-heading) (point)))
 	   (while (re-search-forward org-link-any-re end t)
 	     (push ((el-patch-swap match-string match-string-no-properties) 0) links))
+           (el-patch-add
+             (setq links
+		   (mapcar (lambda (link)
+			     (if (string-match-p "^\\[\\[" link)
+				 link
+			       (format "[[%s]]" link)))
+			   links)))
 	   (setq links (org-uniquify (reverse links))))
 	 (cond
 	  ((null links)
