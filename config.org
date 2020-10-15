@@ -8484,7 +8484,7 @@ If LOCAL is non-nil, check only local TAG."
 			 (org-agenda-skip-function '(or (and
 							 (not (zin/org-agenda-skip-tag "HOLD" nil 'local))
 							 (zin/org-agenda-skip-tag "HOLD"))
-                                                        (and
+							(and
 							 (not (zin/org-agenda-skip-tag "WAITING" nil 'local))
 							 (zin/org-agenda-skip-tag "WAITING"))
 							(zin/org-agenda-skip-tag "SOMEDAY")
@@ -8554,7 +8554,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))
-                (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
+		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
 			   ((org-agenda-overriding-header "Tasks to review")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
@@ -8573,21 +8573,21 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-skip-function 'bh/skip-non-projects)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
-                (tags-todo "-CANCELLED-AREA-TODO=\"TODO\"-SOMEDAY+HOLD|WAITING"
+		(tags-todo "-CANCELLED-AREA-TODO=\"TODO\"-SOMEDAY+HOLD|WAITING"
 			   ((org-agenda-overriding-header "Waiting and Hold projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
 			    (org-agenda-skip-function 'bh/skip-non-projects)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
-                (tags-todo "-CANCELLED-AREA+SOMEDAY"
+		(tags-todo "-CANCELLED-AREA+SOMEDAY"
 			   ((org-agenda-overriding-header "Someday projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
 			    (org-agenda-skip-function 'bh/skip-non-projects)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
-                (tags-todo "-CANCELLED-AREA+TODO=\"TODO\""
+		(tags-todo "-CANCELLED-AREA+TODO=\"TODO\""
 			   ((org-agenda-overriding-header "Hanging projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
@@ -8595,14 +8595,14 @@ If LOCAL is non-nil, check only local TAG."
 							   (bh/skip-subprojects)))
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
-                (tags-todo "-CANCELLED+AREA"
+		(tags-todo "-CANCELLED+AREA"
 			   ((org-agenda-overriding-header "Areas of interest")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
 			    (org-agenda-skip-function 'bh/skip-non-projects)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
-                (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"TODO\""
+		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"TODO\""
 			   ((org-agenda-overriding-header "All other active tasks")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
@@ -8614,7 +8614,7 @@ If LOCAL is non-nil, check only local TAG."
 							       (bh/skip-subprojects))
 							  (zin/org-agenda-skip-tag "NODEADLINE")
 							  (bh/skip-habits))))))
-                (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT+TODO=\"SOMEDAY\""
+		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT+TODO=\"SOMEDAY\""
 			   ((org-agenda-overriding-header "Someday tasks outside projects")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
