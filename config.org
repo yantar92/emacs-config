@@ -151,14 +151,16 @@ Set up the =askpass= and cache ssh password.
 #+end_src
 
 And tell =straight.el= to use file watcher
-
+[2020-10-14 Wed] =watchexec= appears to consume too much system resources
 #+begin_src emacs-lisp
+(setq straight-check-for-modifications
+      '(find-at-startup find-when-checking))
 ;; https://github.com/raxod502/radian/blob/develop/emacs/radian.el
-(if (and (executable-find "watchexec")
-         (executable-find "python3"))
-    (setq straight-check-for-modifications '(watch-files find-when-checking))
-  (setq straight-check-for-modifications
-        '(find-at-startup find-when-checking)))
+;; (if (and (executable-find "watchexec")
+;;          (executable-find "python3"))
+;;     (setq straight-check-for-modifications '(watch-files find-when-checking))
+;;   (setq straight-check-for-modifications
+;;         '(find-at-startup find-when-checking)))
 #+end_src
 
 For now, I use develop branch of =straight.el=
