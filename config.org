@@ -3132,8 +3132,16 @@ Just use external browser to open URLs.
 #+begin_src emacs-lisp
 (use-package browse-url
   :bind (("C-c C-o" . browse-url))
+  :init
+  (defun yant/browse-url (url &optional new-window)
+    "Open in mpv or eaf-browser."
+    (if (and (string-match-p "youtube\\.com" url)
+	     (not (string-match-p "/channel" url)))
+	(browse-url-generic url new-window)
+      (eaf-open-browser url new-window)))
   :custom
-  (browse-url-browser-function 'browse-url-generic)
+  (browse-url-browser-function 'yant/browse-url)
+  ;; (browse-url-browser-function 'browse-url-generic)
   (browse-url-generic-program "/home/yantar92/bin/qutebrowser-call.sh"))
 #+end_src
 
@@ -6403,8 +6411,9 @@ Emacs application framework provides its own implementation of keyboard-driven b
   (eaf-bind-key insert_or_open_link "h" eaf-browser-keybinding)
   (eaf-bind-key insert_or_close_buffer "C-x q" eaf-browser-keybinding)
   (eaf-bind-key insert_or_view_source "w" eaf-browser-keybinding)
+  (eaf-bind-key insert_or_scroll_up_page "l" eaf-browser-keybinding)
+  (eaf-bind-key insert_or_scroll_down_page "L" eaf-browser-keybinding)
   (setq eaf-browser-keybinding (delete '("v" . "insert_or_view_source") eaf-browser-keybinding))
-
   (setq eaf-browser-search-engines '(("duckduckgo" . "https://duckduckgo.com/?q=%s")))
   (setq eaf-browser-continue-where-left-off t)
   (setq eaf-browser-default-search-engine 'duckduckgo))
