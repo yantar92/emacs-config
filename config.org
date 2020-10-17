@@ -3138,7 +3138,9 @@ Just use external browser to open URLs.
     (if (and (string-match-p "youtube\\.com" url)
 	     (not (string-match-p "/channel" url)))
 	(browse-url-generic url new-window)
-      (eaf-open-browser url new-window)))
+      (browse-url-generic url new-window)
+      ;; (eaf-open-browser url new-window)
+      ))
   :custom
   (browse-url-browser-function 'yant/browse-url)
   ;; (browse-url-browser-function 'browse-url-generic)
