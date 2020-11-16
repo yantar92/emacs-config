@@ -12844,6 +12844,35 @@ You can use this to set \\mathversion{bold} for example to make it bolder."
 )
 #+end_src
 
+*** Transclusion
+
+Sometimes, org-mode items belong to multiple places at the same time. Link can help for this matter, but they are not ideal. 
+
+For example, take a TODO headline of a research article that should be read and analysed. The same article might belong to multiple projects and should be "done" in different ways depending on the project context. For one project, the article might be useless, while it can be critical for another project. On the other hand, duplicating TODO item does not sound very useful since most of the information about the article needs to be duplicated. Moreover, changes to that information are hard to keep track of when the same text exists in multiple places. 
+
+The solution to this is so-called "transclusion" when the same text/headlines are sheared between different places in a document or even in different files.
+
+**** COMMENT =org-clones= package
+[2020-11-12 Thu] Disabling - it messes up fontification and is generally buggy. Need to provide various fixes (after the author replies to some initial simple commits).
+
+This package is one of the attempts to solve the problem. It allows duplicating and syncing changes for org headings, excluding changes in the property drawer.
+[2020-11-11 Wed] It seems to overwrite the preceding heading when inserting at the end of file (at least)
+#+begin_src emacs-lisp
+(use-package org-clones
+  :straight (org-clones :host github
+			:repo "legalnonsense/org-clones"
+                        :fork "yantar92/org-clones")
+  :hook
+  ;; Note: `org-clones-mode' will only activate
+  ;; `cursor-sensor-mode' if there are cursor-sensor-properties
+  ;; in the buffer.  Therefore, you can safely add `org-clones-mode'
+  ;; to `orgmode-hook' even if you don't plan to use it in every file.
+  (org-mode . org-clones-mode)
+  :custom-face
+  (org-clones-current-clone ((t (:background "wheat" :extend t))))
+  (org-clones-clone ((t (:background "WhiteSmoke" :extend t)))))
+#+end_src
+
 *** Appearance
 **** Lighter
 :PROPERTIES:
@@ -13433,8 +13462,8 @@ Hide some uninteresting tags
                                                      "NODEADLINE"
                                                      "CANCELLED"
                                                      "NOCLOCK"
-                                                     "COMMON"
-                                                     "PhD")))
+                                                     "NOREFILE"
+                                                     "REFILE")))
 #+end_src
 
 Shorten too long headlines in agenda. 
