@@ -8228,6 +8228,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 :END:
 #+begin_src emacs-lisp
 (require 'org-agenda)
+(setq org-agenda-skip-scheduled-delay-if-deadline t)
 (setq org-agenda-restore-windows-after-quit t)
 (setq org-agenda-window-setup 'only-window)
 (setq org-agenda-todo-list-sublevels t)
