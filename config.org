@@ -12990,14 +12990,15 @@ there is one, return it."
 	   (org-back-to-heading t)
 	   (setq end (save-excursion (outline-next-heading) (point)))
 	   (while (re-search-forward org-link-any-re end t)
-	     (push ((el-patch-swap match-string match-string-no-properties) 0) links))
-           (el-patch-add
-             (setq links
-		   (mapcar (lambda (link)
-			     (if (string-match-p "^\\[\\[" link)
-				 link
-			       (format "[[%s]]" link)))
-			   links)))
+             (unless (save-match-data (eq 'src-block (org-element-type (org-element-at-point))))
+	       (push ((el-patch-swap match-string match-string-no-properties) 0) links)))
+           ;; (el-patch-add
+           ;;   (setq links
+	   ;; 	   (mapcar (lambda (link)
+	   ;; 		     (if (string-match-p "^\\[\\[" link)
+	   ;; 			 link
+	   ;; 		       (format "[[%s]]" link)))
+	   ;; 		   links)))
 	   (setq links (org-uniquify (reverse links))))
 	 (cond
 	  ((null links)
