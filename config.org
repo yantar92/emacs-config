@@ -1283,9 +1283,9 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 		     (all-the-icons-faicon "angle-right" :v-adjust 0.00)
 		     " "
 		     (let ((position-string (format-mode-line mode-line-position)))
-		       (when (string-match " *L[0-9]+ *" position-string)
-			 (setq position-string
-			       (replace-match "" nil nil position-string)))
+		       ;; (when (string-match " *L[0-9]+ *" position-string)
+		       ;; 	 (setq position-string
+		       ;; 	       (replace-match "" nil nil position-string)))
 		       (setq position-string (s-trim position-string))
 		       (setq position-string (replace-regexp-in-string "%" "%%" position-string))
 		       (concat " "
