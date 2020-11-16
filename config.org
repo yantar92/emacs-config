@@ -10020,6 +10020,16 @@ I would like to highlight that this second use-case is extremely important to av
   (setq org-clock-clocked-in-display 't))
 #+end_src
 
+****** Effort filtering in agenda views
+
+By default, no effort is considered as very difficult by agenda. However, most of my tasks do not have efforts by default. When I filter by effort in agenda, it is more useful to see tasks without effort listed as "easy" - I can put large effort when necessary.
+
+#+begin_src emacs-lisp
+(setq org-agenda-sort-noeffort-is-high nil)
+#+end_src
+
+
+
 ***** Clocking history
 :PROPERTIES:
 :ID:       9e2c7a88-8a56-4213-b458-ccebcd59812a
