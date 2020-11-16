@@ -6553,6 +6553,7 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =NOCLOCK= :: prevent entry from being clocked in automatically (after child task clock out [[id:d1afb1ae-a3a4-45b4-8186-8e7242e0edc1][Clocking & logging]]). This is not inherited.
 - =DEFAULT= :: Do not list the task in GTD agenda
 - =REFILE= :: can be refile target even if it is not project/sub-project
+- =NOREFILE= :: *cannot* be refile target
 - =AREA= :: Some projects are not "real" projects, but rather areas of interest. The difference with normal projects is that areas are not expected to be ever finished. Thus, it has little point to keep them in weekly review together with projects. However, they can be stuck, as any other project.
 ****** TODO Tags for everything
 ****** TODO try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
@@ -7410,10 +7411,6 @@ Show parent project as top (or second top) suggestion."
 The links to run =src= blocks.
 Useful if I want to run an =src= block when working on entry.
 Having a link, which runs blocks, allows to simply =C-c C-o= on the heading to follow this link.
-
-
-
-
 
 #+BEGIN_SRC emacs-lisp  
 (defun org-link-babel-follow (name &optional return-info)
@@ -11668,7 +11665,8 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 
 (defun yant/verify-refile-target ()
   "Exclude tasks and todo keywords with a done state from refile targets."
-  (and (or refile-to-tasks
+  (and (not (member "NOREFILE" (org-get-tags (point) 'local)))
+       (or refile-to-tasks
 	   (or (member "REFILE" (org-get-tags (point) 'local))
 	       (not (bh/is-task-p))))
        (not (member (nth 2 (org-heading-components)) org-done-keywords))))
