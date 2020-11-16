@@ -3144,7 +3144,11 @@ Just use external browser to open URLs.
   :custom
   (browse-url-browser-function 'yant/browse-url)
   ;; (browse-url-browser-function 'browse-url-generic)
-  (browse-url-generic-program "/home/yantar92/bin/qutebrowser-call.sh"))
+  (browse-url-generic-program "/home/yantar92/bin/qutebrowser-call.sh")
+  :config
+  (use-package notmuch
+    :config
+    (bind-key "C-c C-o" #'w3m-view-url-with-browse-url notmuch-show-mode-map)))
 #+end_src
 
 *** =Imenu=
