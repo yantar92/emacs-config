@@ -5699,11 +5699,23 @@ Can be still occasionally useful to navigate the complicated threads though.
       (notmuch-tree-close-message-window)
       (kill-buffer (current-buffer)))
 
+    (defun notmuch-show-close-and-quit-tree-maybe ()
+      "Close the current message in `notmuch-show-mode' and also close
+the notmuch-tree buffer if it appears after closing the message."
+      (interactive)
+      (notmuch-bury-or-kill-this-buffer)
+      (when (eq major-mode 'notmuch-tree-mode)
+	(notmuch-tree-close-and-quit)))
+
     (defun notmuch-tree-from-search-thread-and-focus-on-message ()
       "Switch to tree view of the thread at point and activate the message window."
       (interactive)
       (notmuch-tree-from-search-thread)
-      (other-window 1))
+      (other-window 1)
+      ;; Open full message in single-message thread.
+      (sleep-for 0.1)
+      (when (= 2 (count-lines (point-min) (point-max)))
+	(notmuch-tree-show-message-out)))
     
     (bind-keys :map notmuch-search-mode-map
 	       ("r" . notmuch-refresh-this-buffer)
@@ -5712,8 +5724,9 @@ Can be still occasionally useful to navigate the complicated threads though.
                ("C-c C-a" . notmuch-search-hide)
                ("C-c C-f" . notmuch-search-nolist)
 	       ("C-c C-S-d" . notmuch-search-delete)
-               ("<RET>" . notmuch-search-show-thread)
+               ("<RET>" . notmuch-tree-from-search-thread-and-focus-on-message)
 	       :map notmuch-show-mode-map
+               ("q" . notmuch-show-close-and-quit-tree-maybe)
 	       ("v" . yant/notmuch-show-view-part)
 	       ("J" . notmuch-show-next-message)
 	       ("K" . notmuch-show-previous-message)
