@@ -14475,6 +14475,37 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
   (global-keyfreq-mode))
 #+end_src
 
+* Git
+
+** Global attributes file
+
+#+begin_src bash :tangle no
+git config --global core.attributesfile ~/.gitattributes
+#+end_src
+
+#+begin_src conf :tangle ~/.gitattributes
+,*.org	diff=org
+#+end_src
+
+** Main config
+
+[2020-11-08 Sun] Added diff handler to name diff chunks by headline in org files
+
+#+begin_src conf :tangle ~/.gitconfig
+[user]
+	email = yantar92@gmail.com
+	name = Ihor Radchenko
+	emacs = yantar92@gmail.com
+[github]
+	user = yantar92
+
+[diff "org"]
+	xfuncname = "^(\\*+ [a-zA-Z0-9]+.+)$"
+        # https://orgmode.org/worg/org-hacks.html#orgc71b227
+[core]
+	attributesfile = /home/yantar92/.gitattributes
+#+end_src
+
 * COMMENT Software
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 14:44]
