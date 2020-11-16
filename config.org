@@ -6428,6 +6428,16 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (remove-hook 'notmuch-mua-send-hook #'notmuch-mua-message-send-hook))
 #+end_src
 
+** =ERC=
+
+#+begin_src emacs-lisp
+(use-package erc
+  :config
+  (use-package meta-functions
+    :config
+    (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
+#+end_src
+
 ** Browser
    :PROPERTIES:
    :ID:       ef9c93cd-e760-407c-82cf-2aeffa7a11ad
