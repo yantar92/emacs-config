@@ -10611,7 +10611,7 @@ All these templates generally record the creation time in =:CREATED:=
                            "\n%?"
                            "** TODO Literature review"
                            "# Notes about what is known about the topic\n"
-                           "** TODO Research plan :NOARCHIVE:REFILE:"
+                           "** TODO Action plan :NOARCHIVE:REFILE:"
                            "# Action plan to complete the project.\n"
                            "** Sample condition :REFILE:NOARCHIVE:"
                            "# Limited resources I need to complete the project."
@@ -10619,7 +10619,7 @@ All these templates generally record the creation time in =:CREATED:=
                            "# Nontrivial methods used to execute the action plan."
                            "** Exp data :REFILE:NOARCHIVE:"
                            "# The raw experimental data is stored here on per-experiment basis"
-                           "** Results"
+                           "** Results :REFILE:"
                            "# The raw data is analysed here to be put into human-readable form (in non-trivial ways)."
                            "# The data is organised by sample rather than by experiment to avoid dealing with experimental note mess."
                            "# Plots, important observations and thoughs are coming here.\n"
@@ -10627,7 +10627,7 @@ All these templates generally record the creation time in =:CREATED:=
                            "# Trying to make sense of the results. If possible, comparing with similar literature.\n"
                            "** TODO Conclusion"
                            "# Takeouts of the project and possible things to be done in future."
-                           "** Reports :NOARCHIVE:"
+                           "** Reports :NOARCHIVE:NOREFILE:"
                            "*** Paperwork :REFILE:"
                            "*** Presentations :REFILE:"
                            "*** Published papers :REFILE:"
@@ -14771,7 +14771,6 @@ cp autosave.lua ~/.config/mpv/scripts/
 #+end_src
 
 #+RESULTS[29c899f8bda8bf343ecb2be121a022246bfecb15]:
-
 
 * Archived
 :PROPERTIES:
