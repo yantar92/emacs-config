@@ -6242,6 +6242,47 @@ Using [[id:github_aperezdc_aperez_notmuc_addrl_c_addres][aperezdc [Github] Apere
   (notmuch-message-summary-face ((t (:foreground ,(face-foreground 'header-line))))))
 #+end_src
 
+
+**** Removing unreadable symbols from messages 
+
+Some email clients add unreadable symbols like =&nbsp;= into text version of the message. These symbols clutter the text and make it hard to read. So, it is better to remove/replace them altogether.
+
+#+begin_src emacs-lisp
+(use-package notmuch
+  :if init-flag
+  :config
+
+  (defvar yant/notmuch-show-repl-regexps '(("&nbsp; ?" . "")
+					   ("\n\n\n+" . "\n\n"))
+    "List of regexps to remove or conses (regexp . replacement) to replace
+in message body.")
+
+  (defun yant/notmuch-show-remove-all-regexs ()
+    "Remove/replace all regexps from message body as defined in `yant/notmuch-show-repl-regexps'."
+    (dolist (el
+	     (mapcar (lambda (el)
+		       (pcase el
+			 ((pred stringp) (list el))
+			 (`(,(and (pred stringp) regex)
+			    .
+			    ,(and (pred stringp) repl))
+			  (list regex repl))
+			 (_ (user-error "Invalid element of `yant/notmuch-show-repl-regexps': %S" el))))
+		     yant/notmuch-show-repl-regexps))
+      (apply #'yant/notmuch-show-remove-regex el)))
+
+  (defun yant/notmuch-show-remove-regex (regex &optional replacement)
+    "Remove text matching REGEX from message body or replace it with REPLACEMENT."
+    (let ((inhibit-read-only t))
+      (message-goto-body)
+      (while (re-search-forward regex nil t)
+	(if replacement
+	    (replace-match replacement)
+          (replace-match "")))))
+
+  (add-hook 'notmuch-show-hook #'yant/notmuch-show-remove-all-regexs))
+#+end_src
+
 **** Message verification before sending
 
 ***** Check message body if there should be attachment and warn me if the actual attachment is missing
