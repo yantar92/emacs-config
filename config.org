@@ -14239,6 +14239,54 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
   (setq org-goto-interface 'outline-path-completion)
   (meta-defun meta-goto :mode org-mode org-goto))
 #+end_src
+*** Magit integration 
+**** Autocommit trivial changes in org files
+
+Some changes in org-files are very trivial and clutter more important changes I actually want to keep an eye on. So, I made a command committing all the trivial changes automatically.
+
+#+begin_src emacs-lisp
+(use-package magit
+  :if init-flag
+  :config
+  (defvar yant/magit-show-autocommit-regexps '("^\\(-\\|\\+\\):SHOWFROMDATE:.+"
+                                               "^\\+- State .+from.+"
+                                               "^\\(-\\|\\+\\):LAST_REPEAT: \\[.+"
+                                               "^\\(-\\|\\+\\):ORG-TIME-BONUS:.+"
+                                               "^\\(-\\|\\+\\)CLOCK: \\[.+"
+                                               "^\\(-\\|\\+\\)SCHEDULED: .+"
+                                               "^\\(-\\|\\+\\)$"
+					       )
+    "List of regexps to be staged automatically")
+
+
+  (defun yant/magit-autocommit ()
+    "Autocommit all the lines matching `yant/magit-show-autocommit-regexps'."
+    (interactive)
+    (unless (eq major-mode 'magit-status-mode)
+      (user-error "Thus command should run in magit-status window."))
+    (magit-section-show-level-4-all)
+    (mapc #'yant/magit-commit-by-regexp yant/magit-show-autocommit-regexps)
+    (magit-jump-to-staged)
+    (funcall-interactively #'magit-commit-create)
+    (while (not (get-buffer "COMMIT_EDITMSG")) (sleep-for 1) (message "Waiting for commit buffer."))
+    (with-current-buffer "COMMIT_EDITMSG"
+      (insert (format-time-string "Autoupdate %Y-%m-%d" (current-time)))))
+
+  (defun yant/magit-commit-by-regexp (regexp)
+    "Commit all the lines matching regexp."
+    (interactive)
+    (goto-char (point-min))
+    (while (re-search-forward regexp
+			      (save-match-data
+				(save-excursion
+				  (unless (magit-jump-to-staged)
+				    (point))))
+                              t)
+      (goto-char (match-beginning 0))
+      (set-mark-command nil)
+      (goto-char (match-end 0))
+      (magit-stage))))
+#+end_src
 
 *** Spell checking
 :PROPERTIES:
