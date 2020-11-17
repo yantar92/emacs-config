@@ -6155,18 +6155,6 @@ Here are some workarounds
 (setq-default notmuch-show-indent-content nil)
 #+end_src
 
-**** TODO Show accept/decline buttons for calendar invitations
-:PROPERTIES:
-:ID:       1735faf3-9249-43bd-ae32-8f30500210fe
-:END:
-#+begin_src emacs-lisp
-(use-package notmuch
-  :if init-flag
-  :defer t
-  :config
-  (use-package notmuch-calendar-x))
-#+end_src
-
 **** TODO Interaction with org
 ***** Capture mail to org task
 :PROPERTIES:
@@ -6242,6 +6230,17 @@ Using [[id:github_aperezdc_aperez_notmuc_addrl_c_addres][aperezdc [Github] Apere
   (notmuch-message-summary-face ((t (:foreground ,(face-foreground 'header-line))))))
 #+end_src
 
+***** TODO Show accept/decline buttons for calendar invitations
+:PROPERTIES:
+:ID:       1735faf3-9249-43bd-ae32-8f30500210fe
+:END:
+#+begin_src emacs-lisp
+(use-package notmuch
+  :if init-flag
+  :defer t
+  :config
+  (use-package notmuch-calendar-x))
+#+end_src
 
 **** Removing unreadable symbols from messages 
 
