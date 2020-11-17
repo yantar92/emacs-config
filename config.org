@@ -5713,7 +5713,8 @@ the notmuch-tree buffer if it appears after closing the message."
       (notmuch-tree-from-search-thread)
       (other-window 1)
       ;; Open full message in single-message thread.
-      (sleep-for 0.1)
+      (sit-for 0.1)
+      (while (not (save-excursion (goto-char 1) (re-search-forward "^End of search results.$" nil t))) (sleep-for 0.1))
       (when (= 2 (count-lines (point-min) (point-max)))
 	(notmuch-tree-show-message-out)))
     
@@ -5940,10 +5941,7 @@ the notmuch-tree buffer if it appears after closing the message."
 		  (if notmuch-frame
 		      (delete-frame)
 		    (notmuch-bury-or-kill-this-buffer)))
-	    notmuch-search-mode-map)
-  (bind-key  "q"
-	     'notmuch-bury-or-kill-this-buffer
-	     notmuch-show-mode-map))
+	    notmuch-search-mode-map))
 #+end_src
 **** Inline display
 :PROPERTIES:
