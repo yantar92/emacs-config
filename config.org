@@ -14248,7 +14248,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
   :if init-flag
   :config
   (defvar yant/magit-show-autocommit-regexps '("^\\(-\\|\\+\\):SHOWFROMDATE:.+"
-                                               "^\\+- State .+from.+"
+                                               "^\\(\\+\\|-\\)- State .+from.+"
                                                "^\\(-\\|\\+\\):LAST_REPEAT: \\[.+"
                                                "^\\(-\\|\\+\\):ORG-TIME-BONUS:.+"
                                                "^\\(-\\|\\+\\)CLOCK: \\[.+"
@@ -14284,7 +14284,8 @@ Some changes in org-files are very trivial and clutter more important changes I 
       (goto-char (match-beginning 0))
       (set-mark-command nil)
       (goto-char (match-end 0))
-      (magit-stage))))
+      (magit-stage)
+      (previous-line))))
 #+end_src
 
 *** Spell checking
