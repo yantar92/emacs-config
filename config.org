@@ -8566,6 +8566,12 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
+			     '(priority-down todo-state-down effort-up category-keep))))
+                (tags-todo "-CANCELLED-HOLD-WAITING-SOMEDAY+TODO=\"DOING\""
+			   ((org-agenda-overriding-header "Taks in progress")
+			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
+			    (org-tags-match-list-sublevels t)
+			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))))
 	      ("v" "GTD overview"
 	       ((agenda ""
