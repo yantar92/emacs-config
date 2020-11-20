@@ -4404,6 +4404,7 @@ Interactive fill/unfill paragraph at point.
 			       "use-package: Unrecognized keyword"
 			       "No more buttons"
                                "No command bound to"
+                               "Attempt to delete minibuffer or sole ordinary window"
 			       )))
 #+end_src
 **** Debugger key bindings
