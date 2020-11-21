@@ -10175,7 +10175,7 @@ This idea is not applicable for my work though. Research is often not regularly 
 (defvar org-time-balance-storage (concat user-emacs-directory ".org-time-balance")
   "File used to store time balance between sessions.")
 
-(defvar org-time-balance-lower-bound (* 60 2 -1) ; -2 hours
+(defvar org-time-balance-lower-bound (* 60 4 -1) ; -4 hours
   "Lower bound of possible value of time balance.")
 (defvar org-time-balance-lossage nil
   "Time lossage accumulating when `org-time-balance' reaches `org-time-balance-lower-bound'.")
