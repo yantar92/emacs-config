@@ -3148,7 +3148,7 @@ Just use external browser to open URLs.
   :config
   (use-package notmuch
     :config
-    (bind-key "C-c C-o" #'w3m-view-url-with-browse-url notmuch-show-mode-map)))
+    (bind-key "C-c C-o" #'goto-address-at-point notmuch-show-mode-map)))
 #+end_src
 
 *** =Imenu=
