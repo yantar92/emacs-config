@@ -14274,7 +14274,9 @@ Some changes in org-files are very trivial and clutter more important changes I 
     (unless (eq major-mode 'magit-status-mode)
       (user-error "Thus command should run in magit-status window."))
     (magit-section-show-level-4-all)
-    (mapc #'yant/magit-hide-by-regexp yant/magit-show-hide-regexps)
+    (save-excursion
+      (mapc #'yant/magit-hide-by-regexp yant/magit-show-hide-regexps))
+    (add-to-invisibility-spec 'magit-trivial-change)
     ;; (magit-jump-to-staged)
     ;; (funcall-interactively #'magit-commit-create)
     ;; (while (not (get-buffer "COMMIT_EDITMSG")) (sleep-for 1) (message "Waiting for commit buffer."))
@@ -14294,13 +14296,15 @@ Some changes in org-files are very trivial and clutter more important changes I 
                               t)
       (let ((inhibit-read-only t))
 	(with-silent-modifications
-          (put-text-property (match-beginning 0) (match-end 0) 'invisible t)))
+          (put-text-property (match-beginning 0) (match-end 0) 'invisible 'magit-trivial-change)))
       ;; (goto-char (match-beginning 0))
       ;; (set-mark-command nil)
       ;; (goto-char (match-end 0))
       ;; (magit-stage)
-      (backward-char)
-      )))
+      ;; (backward-char)
+      ))
+  ;; (remove-hook! 'magit-refresh-buffer-hook #'yant/magit-hide)
+  )
 #+end_src
 
 *** Spell checking
