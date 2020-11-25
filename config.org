@@ -11588,8 +11588,9 @@ I define two link types for capturing:
  			    :type entry
  			    :file "~/Org/inbox.org"
  			    :fetch-bibtex (lambda () (org-capture-ref-process-capture)) ; this must run first
-			    :bibtex (lambda () (replace-regexp-in-string "%" "\\%" (org-capture-ref-get-bibtex-field :bibtex-string) nil t))
-                            :url (lambda () (replace-regexp-in-string "%" "\\%" (org-capture-ref-get-bibtex-field :url) nil t))
+			    :bibtex (lambda () (org-capture-ref-get-bibtex-field :bibtex-string))
+                            :url (lambda () (org-capture-ref-get-bibtex-field :url))
+                            :type-tag (lambda () (org-capture-ref-get-bibtex-field :type))
 			    :title (lambda () (format "%s%s%s%s"
 						 (or (when (org-capture-ref-get-bibtex-field :author)
                                                        (let* ((authors (s-split " *and *" (org-capture-ref-get-bibtex-field :author)))
@@ -11623,7 +11624,7 @@ I define two link types for capturing:
 						       "- [ ] check references"))
                                            ""))
 			    :template
-			    ("%{fetch-bibtex}* TODO %? %{title} :BOOKMARK:"
+			    ("%{fetch-bibtex}* TODO %? %{title} :BOOKMARK:%{type-tag}:"
 			     ":PROPERTIES:"
 			     ":ID: %{id}"
 			     ":CREATED: %U"
