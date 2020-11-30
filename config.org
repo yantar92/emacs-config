@@ -10880,6 +10880,8 @@ I define two link types for capturing:
                                                      "")
                                                  (or (when (org-capture-ref-get-bibtex-field :journal)
 						       (format "[%s] " (org-capture-ref-get-bibtex-field :journal)))
+                                                     (when (org-capture-ref-get-bibtex-field :publisher)
+						       (format "[%s] " (org-capture-ref-get-bibtex-field :publisher)))
                                                      (when (org-capture-ref-get-bibtex-field :howpublished)
                                                        (format "[%s] " (org-capture-ref-get-bibtex-field :howpublished)))
                                                      "")
