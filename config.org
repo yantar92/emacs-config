@@ -207,10 +207,15 @@ Setup local =load-path= for whatever is not handled by =straigh.el=
 *************** END
 
 #+begin_src emacs-lisp
-(eval-and-compile
-  (setq load-path (append '("~/.emacs.d/site-lisp/") load-path))
-  (setq load-path (append (directory-files "~/.emacs.d/site-lisp/" t "^[^.]" t) load-path)))
+  (eval-and-compile
+    (when (file-directory-p "~/.emacs.d/site-lisp/")
+      (setq load-path (append '("~/.emacs.d/site-lisp/") load-path))
+      (setq load-path (append (directory-files "~/.emacs.d/site-lisp/" t "^[^.]" t) load-path))))
 #+end_src
+*** =Use-package=
+:PROPERTIES:
+:ID:       156b45ac-d29b-45d1-9a6c-7cf36070c24a
+:END:
 
 Now, I can setup =use-package= to simplify subsequent package configuration
 *************** TODO make always defer work
