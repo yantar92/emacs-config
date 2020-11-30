@@ -4704,6 +4704,14 @@ It warns me if the original definition changes from what I expect.
   :straight t)
 #+end_src
 
+*** Gentoo ebuilds
+
+#+begin_src emacs-lisp
+(use-package ebuild-mode
+  :if init-flag
+  :straight t)
+#+end_src
+
 ** LaTeX
 :PROPERTIES:
 :ID:       2fb97bdf-d310-4e5a-8266-d68a1ae10298
