@@ -3618,7 +3618,7 @@ Hide "." and ".."
 
 #+begin_src emacs-lisp
 (use-package dired
-  :custom (dired-listing-switches "-DlhGg"))
+  :custom (dired-listing-switches "-DlhGga"))
 #+end_src
 
 ****** Hide details
