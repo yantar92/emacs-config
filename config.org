@@ -7,7 +7,7 @@
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
 #+ARCHIVE: ::* Archived
 
-* NEXT Emacs configuration :AREA:EMACS:COMMON:
+* NEXT Emacs configuration :EMACS:COMMON:
 :PROPERTIES:
 :ID:       a27092a6-25a6-417f-818f-7f83325b58b3
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
@@ -118,6 +118,10 @@ Exit server silently without asking about unsaved buffers.
 :PROPERTIES:
 :ID:       4c0a06f9-9e69-4ead-b570-e3143fa0d61d
 :END:
+*** Package manager: =straight.el=
+:PROPERTIES:
+:ID:       2509e98d-8921-4602-9898-e33b0c0dcaa4
+:END:
 
 Instead of the default emacs package manager, I use =straigt.el=.
 My initial motivation was mostly the ability to get packages from github directly.
@@ -137,7 +141,7 @@ emerge -v watchexec
 
 First, make sure that =straight.el= can fetch remote URLs from everywhere.
 Set up the =askpass= and cache ssh password.
-
+Use [[id:4f11175e-8e12-4596-b651-f21864761e32][net-misc/ssh-askpass-fullscreen]].
 #+begin_src emacs-lisp
 (setenv "DISPLAY" ":0.0")
 (setenv "SSH_ASKPASS" "ssh-askpass-fullscreen")
@@ -195,6 +199,10 @@ First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as fro
 	  (eval-print-last-sexp)))
       (load bootstrap-file nil 'nomessage)))
 #+end_src
+*** Load settings
+:PROPERTIES:
+:ID:       5a8547b6-bd05-4554-930b-69c68369f437
+:END:
 
 Prefer loading fresh versions of lisp files
 #+begin_src emacs-lisp
@@ -245,13 +253,10 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
 			  :files (:defaults "contrib/lisp/*.el")))
 #+end_src
 
-Keep customisation away from =init.el= in a separate file.
-*************** TODO use :custom use-package keyword for setting customisation
-*************** END
-  #+begin_src emacs-lisp
-(setq custom-file (concat user-emacs-directory "custom.el"))
-;; (load custom-file)
-  #+end_src
+*** Working with =straight.el=
+:PROPERTIES:
+:ID:       074753f0-ef60-49af-a6a5-70db021e8f52
+:END:
 
 Keeping track of the new changes in packages 
 https://github.com/raxod502/straight.el/issues/354
@@ -266,43 +271,73 @@ Quick hydra menu for =straight.el=
 *************** TODO move elsewhere, but leave the link
 *************** END
 #+BEGIN_SRC emacs-lisp
-(use-package hydra
-  :if init-flag
-  :straight t
-  :after boon
-  :init (use-package straight-x :demand t)
-  :bind (:map boon-x-map
-	      ("p" . hydra-straight-helper/body))
-  :config
-  (defhydra hydra-straight-helper (:hint nil)
-    "
+(eval-after-load 'use-package
+  (use-package hydra
+    :if init-flag
+    :straight t
+    :after boon
+    :init (use-package straight-x :demand t)
+    :bind (:map boon-x-map
+		("p" . hydra-straight-helper/body))
+    :config
+    (defhydra hydra-straight-helper (:hint nil)
+      "
 _c_heck all       |_f_etch all (download)     |_m_erge all      |_n_ormalize all   |p_u_sh all
 _C_heck package   |_F_etch package (download) |_M_erge package  |_N_ormlize package|p_U_sh package
 ----------------^^+--------------^^+---------------^^+----------------^^+------------||_q_uit||
 _r_ebuild all     |_p_ull all      |_v_ersions freeze|_w_atcher start   |_g_et recipe
 _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_ build"
-    ("c" straight-check-all)
-    ("C" straight-check-package)
-    ("r" straight-rebuild-all)
-    ("R" straight-rebuild-package)
-    ("f" straight-x-fetch-all)
-    ("F" straight-fetch-package)
-    ("p" straight-x-pull-all)
-    ("P" straight-pull-package)
-    ("m" straight-merge-all)
-    ("M" straight-merge-package)
-    ("n" straight-normalize-all)
-    ("N" straight-normalize-package)
-    ("u" straight-push-all)
-    ("U" straight-push-package)
-    ("v" straight-freeze-versions)
-    ("V" straight-thaw-versions)
-    ("w" straight-watcher-start)
-    ("W" straight-watcher-quit)
-    ("g" straight-get-recipe)
-    ("e" straight-prune-build)
-    ("q" nil)))
+      ("c" straight-check-all)
+      ("C" straight-check-package)
+      ("r" straight-rebuild-all)
+      ("R" straight-rebuild-package)
+      ("f" straight-x-fetch-all)
+      ("F" straight-fetch-package)
+      ("p" straight-x-pull-all)
+      ("P" straight-pull-package)
+      ("m" straight-merge-all)
+      ("M" straight-merge-package)
+      ("n" straight-normalize-all)
+      ("N" straight-normalize-package)
+      ("u" straight-push-all)
+      ("U" straight-push-package)
+      ("v" straight-freeze-versions)
+      ("V" straight-thaw-versions)
+      ("w" straight-watcher-start)
+      ("W" straight-watcher-quit)
+      ("g" straight-get-recipe)
+      ("e" straight-prune-build)
+      ("q" nil))))
 #+END_SRC
+*** =.emacs.d= layout
+
+By default, there is no convention about file names and placement in =.emacs.d=. The result is ultimate mess once one install many different packages. Below, I am trying to organise what I can.
+
+
+**** User customisation file
+:PROPERTIES:
+:ID:       4856ba0e-6a7e-4d52-85d1-a2f23c060a65
+:END:
+
+Keep customisation away from =init.el= in a separate file.
+*************** TODO use :custom use-package keyword for setting customisation
+*************** END
+  #+begin_src emacs-lisp
+(setq custom-file (concat user-emacs-directory "custom.el"))
+;; (load custom-file)
+  #+end_src
+
+**** Community effort to solve the problem: =no-littering=
+:PROPERTIES:
+:ID:       d64f3725-f2c9-45d0-a917-4013c987d2b0
+:END:
+
+#+begin_src emacs-lisp
+(use-package no-littering
+  :demand t
+  :straight (no-littering :host github :repo "emacscollective/no-littering"
+			  :fork (:host github :repo "yantar92/no-littering")))
+#+end_src
 
 ** TODO Elisp libraries to be used further
 :PROPERTIES:
