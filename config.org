@@ -5937,6 +5937,19 @@ I am using w3m as rendered. It should also be [[id:66a5989e-9d17-40af-b680-494ef
 	  "text/x-patch" "application/pgp-signature" "application/emacs-lisp"))
   (setq mm-inline-large-images 'resize))
   #+end_src
+**** Opening parts of messages in external programs (via mailcap)
+:PROPERTIES:
+:ID:       a97ed22a-8e5b-4e9a-8b4e-cc290708c219
+:END:
+
+#+begin_src conf :tangle ~/.mailcap
+text/html; /home/yantar92/bin/qutebrowser-call.sh %s
+text/*; mimeopen "%s"
+application/*; xdg-open "%s"
+video/*; mimeopen "%s"
+image/*; mimeopen "%s"
+#+end_src
+
 **** =Notmuch= hello
 :PROPERTIES:
 :ID:       645a5628-289a-4373-9668-b79e10738215
