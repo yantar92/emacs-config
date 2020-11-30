@@ -6169,6 +6169,13 @@ As recommended in [[https://orgmode.org/worg/org-mailing-list.html#orgf343a0f][W
 	      (error "Forgot to cutoff excess citation")))))))
   (add-hook 'notmuch-mua-send-hook #'yant/notmuch-mua-too-long-cite-reminder))
 #+end_src
+**** Fix "Exceed max-specpdl-size"
+
+#+begin_src emacs-lisp
+(setq max-specpdl-size 5000)
+#+end_src
+
+
 
 *** Mail host address
 :PROPERTIES:
