@@ -2340,7 +2340,7 @@ Keep everything in a single folder with tree ([[http://ergoemacs.org/emacs/emacs
   "Return a new file path of a given file path.
 If the new path's directories does not exist, create them."
   (let* (
-         (backupRootDir "~/.emacs.d/backup/")
+         (backupRootDir (cdar backup-directory-alist))
          (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path, for example, “C:”
          (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") ))
          )
@@ -2350,7 +2350,6 @@ If the new path's directories does not exist, create them."
 (setq make-backup-file-name-function 'my-backup-file-name)
 
 (setq
- backup-directory-alist '((".*" . "~/.emacs.d/backups/"))
  backup-by-copying t
  delete-old-versions t
  kept-new-versions 100
@@ -2387,15 +2386,16 @@ Walk across the backup files
 :END:
 
 #+begin_src emacs-lisp
-(setq  auto-save-file-name-transforms `((".*"  "~/.emacs.d/auto-save/" t))
-       auto-save-interval 20)
+(use-package no-littering
+  :demand t
+  :config
+  (setq  auto-save-file-name-transforms `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))
+	 auto-save-interval 20))
 #+end_src
 Save virtual buffers (kill ring, etc.)
 
-Do it in separate file to avoid accidental overwriting when config is corrupted.
   #+begin_src emacs-lisp
 (when init-flag
-  (setq savehist-file (concat user-emacs-directory "yant.history"))
   (savehist-mode 1))
   #+end_src
 *** Persistent scratch
@@ -2607,8 +2607,10 @@ Highlighting typos is crucial.
   :config
   (setq ispell-program-name "/usr/bin/ispell-aspell")
   (setq ispell-dictionary "british")
-  (setq ispell-personal-dictionary "~/.emacs.d/dict")
-  )
+  (use-package no-littering
+    :demand t
+    :config
+    (setq ispell-personal-dictionary "~/.emacs.d/etc/ispell-personal-dictionary.txt")))
 #+end_src
 
 ***** Textual error pop-up
@@ -3912,6 +3914,7 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 (use-package bm
   :if init-flag
   :straight t
+  :after no-littering
   :demand t
 
   :init
@@ -3929,9 +3932,6 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
   (setq bm-highlight-style 'bm-highlight-line-and-fringe)
   (custom-set-faces '(bm-persistent-face ((t (:background "Lightyellow")))))
   (custom-set-faces '(bm-fringe-persistent-face ((t (:background "Lightyellow")))))
-
-  ;; where to store persistant files
-  (setq bm-repository-file "~/.emacs.d/bm-repository")
 
   ;; save bookmarks
   (setq-default bm-buffer-persistence t)
@@ -5604,6 +5604,8 @@ Viewing images in Emacs
 
   (use-package elfeed-org
     :straight t
+    ;; I do not want my rss list to be in .emacs.d/var directory
+    :after no-littering
     :config
     (elfeed-org)
     (setq rmh-elfeed-org-files (list "~/Org/rss.org"))))
@@ -10209,6 +10211,9 @@ This idea is not applicable for my work though. Research is often not regularly 
   "Time of the last update of `org-time-balance'.")
 (defvar org-time-balance-storage (concat user-emacs-directory ".org-time-balance")
   "File used to store time balance between sessions.")
+(use-package no-littering
+  :config
+  (setq org-time-balance-storage (concat no-littering-var-directory "org-time-balance-storage.el")))
 
 (defvar org-time-balance-lower-bound (* 60 4 -1) ; -4 hours
   "Lower bound of possible value of time balance.")
