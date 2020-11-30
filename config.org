@@ -2935,6 +2935,7 @@ Just use external browser to open URLs.
   (browse-url-generic-program "/home/yantar92/bin/qutebrowser-call.sh")
   :config
   (use-package notmuch
+    :after w3m
     :config
     (bind-key "C-c C-o" #'w3m-view-url-with-browse-url notmuch-show-mode-map)))
 #+end_src
@@ -3607,7 +3608,7 @@ Hide =dotfiles=
 #+begin_src emacs-lisp
 (use-package dired-hide-dotfiles
   :if init-flag
-  :straight t
+  :straight (dired-hide-dotfiles :host github :repo "yantar92/dired-hide-dotfiles" :local-repo "~/Git/dired-hide-dotfiles")
   :hook (dired-mode . dired-hide-dotfiles-mode)
   :bind (:map dired-mode-map
 	      ("." . dired-hide-dotfiles-mode)))
@@ -5033,7 +5034,8 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 #+begin_src emacs-lisp
 (use-package vterm
   :if init-flag
-  :load-path  "~/.emacs.d/site-lisp/emacs-libvterm"
+  :straight t
+  :demand t
   ;;:straight (vterm :host github :repo "akermu/emacs-libvterm")
   :commands (vterm vterm-other-window))
 
@@ -5741,7 +5743,13 @@ the notmuch-tree buffer if it appears after closing the message."
 :END:
 - inline view
 - html renderer
+
+I am using w3m as rendered. It should also be [[id:66a5989e-9d17-40af-b680-494ef978198b][installed]] in the system.
+
   #+begin_src emacs-lisp
+(use-package w3m
+  :demand t
+  :straight t)
 (when init-flag
   (custom-set-variables
    '(mm-external-terminal-program "kitty")
@@ -6031,7 +6039,8 @@ Using [[id:github_aperezdc_aperez_notmuc_addrl_c_addres][aperezdc [Github] Apere
   :if init-flag
   :defer t
   :config
-  (use-package notmuch-calendar-x))
+  (use-package notmuch-calendar-x
+    :straight (notmuch-calendar-x :local-repo "~/Git/notmuch-calendar-x")))
 #+end_src
 
 **** Removing unreadable symbols from messages 
@@ -7001,7 +7010,8 @@ Store links to pages in pdf
 Open and preview inkscape svg files.
 Copy paste from https://github.com/jkitchin/scimax/blob/master/scimax-inkscape.el
 #+BEGIN_SRC emacs-lisp
-(use-package scimax-inkscape)
+(use-package scimax-inkscape
+  :straight (scimax-inkscape :host github :files ("scimax-inkscape.el") :repo "jkitchin/scimax"))
 #+END_SRC
 
 ****** Links to attached files
@@ -7671,7 +7681,10 @@ Try to look in symlinks?
 For the implementation, the idea is keeping all the actual attachments in a common folder for all the org files according to their uuid. As a result, I can safely refile tasks between different org files without worrying about moving the attachments around (assuming that there is not change in the task ids).
 
 #+begin_src emacs-lisp :tangle "~/.emacs.d/config.el"
-(use-package org-attach-fs :after org :demand t)
+(use-package org-attach-fs
+  :straight (org-attach-fs :local-repo "~/Git/org-attach-fs")
+  :after org
+  :demand t)
 #+end_src
 
 This is separate package now. All the code below is exported to =org-attach-fs.el=
@@ -9604,6 +9617,7 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 :END:
 #+begin_src emacs-lisp
 (use-package org-autosort
+  :straight (org-autosort :local-repo "~/Git/org-autosort")
   :config
   (add-hook 'org-mode-hook #'org-autosort-sort-entries-in-file-maybe)
   (setq org-autosort-todo-cmp-order '("WAITING" "REVIEW" "DOING" "NEXT" "HOLD" "TODO" "SOMEDAY" "MERGED" "FAILED" "DONE" "CANCELLED"))
@@ -13796,7 +13810,9 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 :ID:       7ce2e20a-7f38-4cb2-9241-6bd1b7e10d39
 :END:
 #+BEGIN_SRC emacs-lisp
-(setq w3m-image-no-idle-timer t)
+(use-package w3m
+  :config
+  (setq w3m-image-no-idle-timer t))
 #+END_SRC
 *** Make =dired-hide-dotfiles= work
 :PROPERTIES:
