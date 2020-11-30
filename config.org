@@ -1876,10 +1876,7 @@ Define the most basic movement commands:
     :defer t
     :config
     (meta-defun meta-new-line "Insert new line." boon-newline-dwim))
-  (use-package undo-tree
-    :defer t
-    :config
-    (meta-defun meta-undo "Undo." undo-tree-undo))
+  (meta-defun meta-undo "Undo." undo)
   
   (meta-defun meta-scroll-up "Scroll up." scroll-up)
   (meta-defun meta-scroll-down "Scroll down." scroll-down)
