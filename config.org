@@ -5636,7 +5636,7 @@ the notmuch-tree buffer if it appears after closing the message."
 	       (notmuch-mua-send-and-exit)
 	       (start-process "Update tags"
 			      nil
-			      "/home/yantar92/bin/notmuch-new-messages-list-silent.sh"))
+			      "/home/yantar92/bin/notmuch-new-messages-list.sh"))
 	     notmuch-message-mode-map))
 #+end_src
 **** Tagging functions
