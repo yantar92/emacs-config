@@ -667,30 +667,41 @@ The result is different character width for Chinese characters.
 Using Sarasa Gothic hc with slightly larger size for Chinese symbols in order to keep the character width same all the time.
 Credit: https://www.reddit.com/r/emacs/comments/fgbnfv/is_there_a_fixed_width_font_supporting_multiple/
 
+Also, automatically detecting and setting any missing fonts (this comes before manual settings to avoid overrides)
+
+#+begin_src emacs-lisp
+(use-package unicode-fonts
+  :if init-flag
+  :straight t
+  :init
+  (use-package persistent-soft
+    :straight t) ;; Speed-up unicode-fonts startup, as suggested in unicode-fonts.el commentary
+  :config
+  (unicode-fonts-setup))
+#+end_src
 
   #+begin_src emacs-lisp
 (when init-flag
   (set-face-attribute 'default nil
-		      :height 100
+		      :height 150
 		      :family "Source Code Pro")
-  (set-fontset-font "fontset-default" 'chinese-gbk (font-spec :size 12.0 :family "Sarasa Mono hc"))
-  (set-fontset-font "fontset-default" 'cyrillic-iso8859-5 (font-spec :size 13 :family "source code pro"))
-  (mapc (lambda (char)
-	  (set-fontset-font "fontset-default" char (font-spec :size 12.0 :family "Source Code Pro")))
-        '(?λ))
-  (mapc (lambda (char)
-  (set-fontset-font "fontset-default" char (font-spec :size 5.0 :family "Quivira")))
-        '(?⏩ ?⛔))
-  (mapc (lambda (char)
-	  (set-fontset-font "fontset-default" char (font-spec :size 10.0 :family "Quivira")))
-        '(?★ ?⌛))
-
-  (mapc (lambda (char)
-	  (set-fontset-font "fontset-default" char (font-spec :size 12.0 :family "Symbola")))
-        '(?🖂 ?🖳 ?🏠 ?🔗 ?🖹))
-  (mapc (lambda (char)
-	  (set-fontset-font "fontset-default" char (font-spec :size 8.0 :family "Symbola")))
-        '(?🖹 ?⛕))
+  (set-fontset-font "fontset-default" 'chinese-gbk (font-spec :size 17.0 :family "Sarasa Mono hc"))
+  (set-fontset-font "fontset-default" 'cyrillic-iso8859-5 (font-spec :size 20 :family "source code pro"))
+  ;; (mapc (lambda (char)
+  ;; 	  (set-fontset-font "fontset-default" char (font-spec :size 12.0 :family "Source Code Pro")))
+  ;;       '(?λ))
+  ;; (mapc (lambda (char)
+  ;; (set-fontset-font "fontset-default" char (font-spec :size 5.0 :family "Quivira")))
+  ;;       '(?⏩ ?⛔))
+  ;; (mapc (lambda (char)
+  ;; 	  (set-fontset-font "fontset-default" char (font-spec :size 10.0 :family "Quivira")))
+  ;;       '(?★ ?⌛))
+  ;; (mapc (lambda (char)
+  ;; 	  (set-fontset-font "fontset-default" char (font-spec :size 12.0 :family "Symbola")))
+  ;;       '(?🖂 ?🖳 ?🏠 ?🔗 ?🖹))
+  ;; (mapc (lambda (char)
+  ;; 	  (set-fontset-font "fontset-default" char (font-spec :size 8.0 :family "Symbola")))
+  ;;       '(?🖹 ?⛕))
   )
   #+end_src
 
@@ -1000,25 +1011,8 @@ Prefer UTF
 (set-language-environment "English")
 (prefer-coding-system 'utf-8)
 (add-to-list 'file-coding-system-alist '("\\.org" utf-8))
-  #+end_src
+ #+end_src
 
-Ensure UTF fonts
-
-Note that the fonts should be installed in the system first
-#+begin_src bash :tangle no
-sudo emerge -a noto dejavu quivira symbola
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package unicode-fonts
-  :if init-flag
-  :straight t
-  :init
-  (use-package persistent-soft
-    :straight t) ;; Speed-up unicode-fonts startup, as suggested in unicode-fonts.el commentary
-  :config
-  (unicode-fonts-setup))
-#+end_src
 **** Line spacing
 :PROPERTIES:
 :CREATED:  [2019-12-23 Mon 20:02]
