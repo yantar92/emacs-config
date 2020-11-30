@@ -13918,100 +13918,78 @@ git config --global core.attributesfile ~/.gitattributes
 	attributesfile = /home/yantar92/.gitattributes
 #+end_src
 
-* COMMENT Software
-:PROPERTIES:
-:CREATED:  [2019-12-15 Sun 14:44]
-:END:
-** mpv
+* Mpv
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 02:51]
 :ID:       2c9568b7-4081-470c-b066-2beb126dbbed
 :header-args+: :tangle no
 :END:
 
-*** Main config
+** Main config
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:08]
 :header-args+: :tangle ~/.config/mpv/mpv.conf
 :END:
 
-**** General
+*** General
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:10]
 :ID:       830c8bf2-3bd8-4002-a367-f4a075bc1826
 :END:
 
+Open window without waiting for video to load (relevant when opening online videos on high-ping connection). Do not auto-play for the same reason - sometimes I need to wait for a quite a long time and suddenly playing video would be a surprise.
+#+begin_src conf
+force-window=immediate
+pause                                   # no autoplay
+#+end_src
+
+Save position 
+#+begin_src conf
+save-position-on-quit
+#+end_src
+
+Initial window placement: center
+#+begin_src conf
+geometry=1440x900+50%+50%
+#+end_src
+
+Save screenshots in =PNG= format into Downloads folder for further refiling. 
+#+begin_src conf
+screenshot-format=png
+screenshot-template='~/Downloads/%F (%P) %n'
+#+end_src
+
 #+begin_src conf
 keepaspect-window=no
-save-position-on-quit
 loop-playlist=yes
-geometry=800x600+250+90
 msg-module                              # prepend module name to log messages
 msg-color                               # color log messages on terminal
 term-osd-bar                            # display a progress bar on the terminal
-use-filedir-conf                        # look for additional config files in the directory of the opened file
-pause                                   # no autoplay
 keep-open                               # keep the player open when a file's end is reached
-cursor-autohide-fs-only                 # don't autohide the cursor in window mode, only fullscreen
-cursor-autohide=1000                    # autohide the curser after 1s
-
-screenshot-format=png
-screenshot-png-compression=8
-screenshot-template='~/Desktop/%F (%P) %n'
-
-hls-bitrate=max                         # use max quality for HLS streams
 #+end_src
 
-**** Cache
+*** Cache
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:10]
 :ID:       87f0b98a-389f-466a-a4d6-7e9fe7719bc1
 :END:
 
+I prefer huge cache to preload online videos if possible. Connection is not always stable.
 #+begin_src conf
 cache=yes
-cache-default=3000000                   # size in KB
-cache-backbuffer=25000                  # size in KB
-cache-initial=0                         # start playback when your cache is filled up with x kB
-cache-secs=10                           # how many seconds of audio/video to prefetch if the cache is active
-cache-file=TMP
-cache-file-size=2000000
+cache-secs=1800                           # how many seconds of audio/video to prefetch if the cache is active
 #+end_src
 
-**** OSD / OSC
-:PROPERTIES:
-:CREATED:  [2019-12-15 Sun 03:10]
-:ID:       206c6f9a-e7f8-4ffa-aa26-757ef196df2f
-:END:
-
-Use custom osc ([[id:806164fd-46b1-405c-a1a8-140603466651][mpv/Userscripts/OSC menu/Preview screenshot on mouse hover]])
-
-#+begin_src conf
-osc=no
-
-osd-level=1                             # enable osd and display --osd-status-msg on interaction
-osd-duration=2500                       # hide the osd after x ms
-osd-status-msg='${time-pos} / ${duration}${?percent-pos:　(${percent-pos}%)}${?vo-drop-frame-count:${!vo-drop-frame-count==0:　Dropped: ${vo-drop-frame-count}}}\n${?hapter:Chapter: ${chapter}}'
-
-osd-font-size=32
-osd-color='#CCFFFFFF'                   # ARGB format
-osd-border-color='#DD322640'            # ARGB format
-osd-shadow-offset=1                    # pixel width for osd text and progress bar
-osd-bar-align-y=0                       # progress bar y alignment (-1 top, 0 centered, 1 bottom)
-osd-border-size=2                       # size for osd text and progress bar
-osd-bar-h=2                             # height of osd bar as a fractional percentage of your screen height
-osd-bar-w=60                            # width of " " "
-#+end_src
-
-**** Subtitles
+*** Subtitles
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:11]
 :ID:       c082d9b8-5f57-493c-8976-45ad93e86dc7
 :END:
 
+Automatically detect subtitle file
+
 #+begin_src conf
 sub-use-margins
-#demuxer-mkv-subtitle-preroll            # try to correctly show embedded subs when seeking
 sub-auto=fuzzy                          # external subs don't have to match the file name exactly to autoload
 sub-file-paths=ass:srt:sub:subs:subtitles    # search for external subs in the listed subdirectories
 embeddedfonts=yes                       # use embedded fonts for SSA/ASS subs
@@ -14028,18 +14006,18 @@ sub-shadow-color="#33000000"
 sub-spacing=0.5
 #+end_src
 
-**** Languages
+*** Languages
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:11]
 :ID:       bf046814-3fbe-4331-a186-58881064fff2
 :END:
 
 #+begin_src conf
-slang=enm,en,eng,de,deu,ger             # automatically select these subtitles (decreasing priority)
-alang=ja,jp,jpn,en,eng,de,deu,ger       # automatically select these audio tracks (decreasing priority)
+slang=enm,en,eng,ru             # automatically select these subtitles (decreasing priority)
+alang=enm,en,ang,ru       # automatically select these audio tracks (decreasing priority)
 #+end_src
 
-**** Audio
+*** Audio
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:11]
 :ID:       7fc2f67a-16cf-411a-8804-bd11f354309c
@@ -14047,132 +14025,146 @@ alang=ja,jp,jpn,en,eng,de,deu,ger       # automatically select these audio track
 
 #+begin_src conf
 af=scaletempo=speed=tempo:stride=30
-audio-file-auto=fuzzy                   # external audio doesn't has to match the file name exactly to autoload
+audio-file-auto=fuzzy                   # external audio doesn't have to match the file name exactly to autoload
 #+end_src
 
-**** Video
+*** Video
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:11]
 :ID:       bbd87fcb-26ea-4b35-b85e-f00a0ad0574e
 :END:
 
 #+begin_src conf
-# Active VOs (and some other options) are set conditionally
-# See here for more information: https://github.com/wm4/mpv-scripts/blob/master/auto-profiles.lua
-# The script was slightly modified, functions from scripts/auto-profiles-functions.lua are imported
-
 # Defaults for all profiles
 vo=opengl
 #+end_src
 
-**** Protocols
+*** Protocols
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:11]
 :ID:       5752739c-70b7-4bf3-9cc6-49610cd47d05
 :END:
 
+=Youtubedl= 
+
 #+begin_src conf
+ytdl-raw-options=format="[protocol!=http_dash_segments][protocol!=rtmp]",all-subs=,mark-watched=,no-check-certificate=
+ytdl-format=bestvideo[height<=720][vcodec=vp9][fps>=60]+bestaudio/bestvideo[height<=720][vcodec=vp9]+bestaudio/bestvideo[height<=720]+bestaudio/best[height<=720]/best
+
+[360p]
+ytdl-format=bestvideo[height<=360][vcodec=vp9]+bestaudio/bestvideo[height<=360]+bestaudio/best[height<=360]/best
+
+[480p]
+ytdl-format=bestvideo[height<=480][vcodec=vp9]+bestaudio/bestvideo[height<=480]+bestaudio/best[height<=480]/best
+
+[720p]
+ytdl-format=bestvideo[height<=720][vcodec=vp9][fps>=60]+bestaudio/bestvideo[height<=720][vcodec=vp9]+bestaudio/bestvideo[height<=720]+bestaudio/best[height<=720]/best
+#+END_SRC
+
+#+BEGIN_SRC conf  
 [protocol.https]
-#cache=yes
-#cache-default=500000                    # size in KB
-#cache-backbuffer=250000                 # size in KB
-cache-secs=100                          # how many seconds of audio/video to prefetch
 user-agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) Gecko/20100101 Firefox/47.0'
 
 [protocol.http]
-#cache=yes
-#cache-default=500000                    # size in KB
-#cache-backbuffer=250000                 # size in KB
-cache-secs=100                          # how many seconds of audio/video to prefetch
 user-agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) Gecko/20100101 Firefox/47.0'
 
 [extension.gif]
 cache=no
 no-pause
 loop-file=yes
-
-[extension.webm]
-#cache=no
-#no-pause
-#loop-file=yes
-
-ytdl-raw-options=format="[protocol!=http_dash_segments][protocol!=rtmp]",all-subs=,mark-watched=,no-check-certificate=
-ytdl-format=bestvideo[height<=?1080]+bestaudio/best
 #+end_src
 
-*** User-scripts
+** Key bindings
+:PROPERTIES:
+:header-args+: :header-args+: :tangle ~/.config/mpv/input.conf
+:ID:       e7397414-188d-47eb-9388-c06bcb4dffd2
+:END:
+
+#+begin_src conf
+ctrl+q quit
+q ignore
+#+end_src
+
+** User-scripts
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 02:51]
 :ID:       898b5aa0-6f6e-4280-bd44-cc424436a81d
 :END:
-**** YouTube
+*** YouTube
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 02:51]
 :ID:       81208c2c-19ef-432e-88d4-4ab7bcc3d762
 :END:
-***** Change quality :ATTACH:
+**** Change quality :ATTACH:
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 02:52]
 :ID:       f8737f19-a0ac-4785-a62c-2504313910ec
 :END:
+*************** SOMEDAY save repo separately :SOMEDAY:
+*************** END
+:PROPERTIES:
+:ID: 81ccc50f-f0a4-4a92-b587-ae82f3dc4f0e
+:END:
 
 =C-f= to call menu.
 
-#+name: quality-url
 https://github.com/jgreco/mpv-youtube-quality
 
-#+begin_src bash :var url=quality-url
-git clone $url
-cp ./mpv-youtube-quality/youtube-quality.lua ~/.config/mpv/scripts/
-cp ./mpv-youtube-quality/youtube-quality.conf ~/.config/mpv/lua-settings/
+#+name: get-file
+#+begin_src bash :tangle no :results output silent :var file=(concat (org-attach-dir) "/mpv-youtube-quality/youtube-quality.lua")
+cat $file
+#+end_src
+
+#+begin_src lua :tangle ~/.config/mpv/scripts/youtube-quality.lua :mkdirp yes :noweb yes
+<<get-file()>>
+#+end_src
+
+#+begin_src conf :tangle ~/.config/mpv/lua-settings/youtube-quality.conf :mkdirp yes
+# KEY BINDINGS
+
+# invoke or dismiss the quality menu
+toggle_menu_binding=ctrl+f
+# move the menu cursor up
+up_binding=Alt+k
+# move the menu cursor down
+down_binding=Alt+j
+# select menu entry
+select_binding=Ctrl+j
+
+# formatting / cursors
+selected_and_active=▶ - 
+selected_and_inactive=● - 
+unselected_and_active=▷ - 
+unselected_and_inactive=○ - 
+
+# font size scales by window, if false requires larger font and padding sizes
+scale_playlist_by_window=yes
+
+# playlist ass style overrides inside curly brackets, \keyvalue is one field, extra \ for escape in lua
+# example {\\fnUbuntu\\fs10\\b0\\bord1} equals: font=Ubuntu, size=10, bold=no, border=1
+# read http://docs.aegisub.org/3.2/ASS_Tags/ for reference of tags
+# undeclared tags will use default osd settings
+# these styles will be used for the whole playlist. More specific styling will need to be hacked in
+#
+# (a monospaced font is recommended but not required)
+style_ass_tags={\\fnmonospace}
+
+# paddings for top left corner
+text_padding_x=5
+text_padding_y=5
+
+# how many seconds until the quality menu times out
+menu_timeout=10
+
+#use youtube-dl to fetch a list of available formats (overrides quality_strings)
+fetch_formats=yes
+
+# list of ytdl-format strings to choose from
+quality_strings=[ {"4320p" : "bestvideo[height<=?4320p]+bestaudio/best"}, {"2160p" : "bestvideo[height<=?2160]+bestaudio/best"}, {"1440p" : "bestvideo[height<=?1440]+bestaudio/best"}, {"1080p" : "bestvideo[height<=?1080]+bestaudio/best"}, {"720p" : "bestvideo[height<=?720]+bestaudio/best"}, {"480p" : "bestvideo[height<=?480]+bestaudio/best"}, {"360p" : "bestvideo[height<=?360]+bestaudio/best"}, {"240p" : "bestvideo[height<=?240]+bestaudio/best"}, {"144p" : "bestvideo[height<=?144]+bestaudio/best"} ]
 #+end_src
 
 #+RESULTS[33e778796fc04ae9b0a18b218e68bf5c5d3a404d]:
-**** OSC menu
-:PROPERTIES:
-:CREATED:  [2019-12-15 Sun 02:59]
-:ID:       533e007d-615a-4f31-aa62-8eb0f732853d
-:END:
-***** Preview screenshot on mouse hover :ATTACH:
-:PROPERTIES:
-:CREATED:  [2019-12-15 Sun 03:00]
-:ID:       806164fd-46b1-405c-a1a8-140603466651
-:END:
-
-=T= to start generation
-
-#+name: osc-url
-https://github.com/TheAMM/mpv_thumbnail_script
-#+begin_src bash :var url=osc-url
-git clone $url
-cd mpv_thumbnail_script
-make
-cp mpv_thumbnail_script_server.lua ~/.config/mpv/scripts/
-cp mpv_thumbnail_script_client_osc.lua ~/.config/mpv/scripts/
-#+end_src
-**** Save position
-:PROPERTIES:
-:CREATED:  [2019-12-15 Sun 03:27]
-:ID:       c88c2dbf-ba9e-4cfa-90fc-e7609173b416
-:END:
-***** Save position periodically (not just on exit)
-:PROPERTIES:
-:CREATED:  [2019-12-15 Sun 03:27]
-:ID:       dcd30527-329d-43bc-91fb-fda33b617e80
-:END:
-
-#+NAME: url-save
-https://gist.github.com/Hakkin/5489e511bd6c8068a0fc09304c9c5a82
-
-#+begin_src bash :var url=url-save
-git clone $url
-cd 5489e511bd6c8068a0fc09304c9c5a82
-cp autosave.lua ~/.config/mpv/scripts/
-#+end_src
-
-#+RESULTS[29c899f8bda8bf343ecb2be121a022246bfecb15]:
-
-* Archived
+* Archived :ARCHIVE:
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -14626,4 +14618,25 @@ saving all the buffers, is executed.
   :straight t)
 #+end_src
 
+** Preview screenshot on mouse hover :ATTACH:
+:PROPERTIES:
+:CREATED:  [2019-12-15 Sun 03:00]
+:ID:       806164fd-46b1-405c-a1a8-140603466651
+:ARCHIVE_TIME: 2020-11-28 Sat 14:04
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Software/mpv/User-scripts/OSC menu
+:ARCHIVE_CATEGORY: config
+:END:
+
+=T= to start generation
+
+#+name: osc-url
+https://github.com/TheAMM/mpv_thumbnail_script
+#+begin_src bash :var url=osc-url
+git clone $url
+cd mpv_thumbnail_script
+make
+cp mpv_thumbnail_script_server.lua ~/.config/mpv/scripts/
+cp mpv_thumbnail_script_client_osc.lua ~/.config/mpv/scripts/
+#+end_src
 
