@@ -12066,6 +12066,9 @@ Preview images and latex formulas.
 Toggle preview of an image at point (by =C-c C-c= or =TAB=).
 This is especially useful in large buffers where processing all the images by =org-toggle-inline-images= takes too much time.
 Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current_inline_image_with_tab/
+
+[2020-11-30 Mon] If the image is a multi-frame (like =gif=), also toggle animation.
+
 #+begin_src emacs-lisp
 (use-package org
   :config
@@ -12077,8 +12080,17 @@ Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current
 	  (if (-intersection (overlays-at (point)) org-inline-image-overlays)
 	      (mapc (lambda (ov)
 		      (when (member ov org-inline-image-overlays)
-			(delete-overlay ov)
-			(setq org-inline-image-overlays (delete ov org-inline-image-overlays))))
+			(if (or (not (image-multi-frame-p (overlay-get ov 'display)))
+				(overlay-get ov 'animation-in-progress))
+                            (progn
+                              ;; Flush image from cache and stop the timers
+                              (cancel-function-timers #'image-animate-timeout)
+                              (image-flush (overlay-get ov 'display) t)
+			      (delete-overlay ov)
+			      (setq org-inline-image-overlays (delete ov org-inline-image-overlays)))
+                          (overlay-put ov 'animation-in-progress t)
+                          ;; Putting 100 sec. Otherwise, may lag too much.
+                          (image-animate (overlay-get ov 'display) nil 100))))
 		    (overlays-at (point)))
 	    (org-display-inline-images 'include-linked 'refresh))
 	  )
