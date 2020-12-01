@@ -4922,8 +4922,7 @@ This is also required for =cdlatex= to work with org-mode.
   :straight t
   :after pdf-tools
   :config
-  (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode)
-  (setq pdf-view-restore-filename "~/.emacs.d/.pdf-view-restore"))
+  (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 #+end_src
 
 *** Pdf rotate
