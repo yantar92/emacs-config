@@ -6215,17 +6215,34 @@ Not sure why I need to set it, but I don't like "i-did-not-set--mail-host-addres
 *************** TODO Make it async
 *************** END
 
+I read some articles in Chinese even though I do not really know how to read. Automatic translation is a bless.
+However, the available translation (in WeChat) do not offer translating article headlines in the new article list - I have to open every individual article and translate the whole thing one by one. It is time-consuming, especially since most of the articles are not really interesting. It would be sufficient to quickly look through the title to recognise that. So, I need some way to quickly get a *translated* list of recent article titles from WeChat (or any other source).
+
+The best way for quick scanning across recent article titles is RSS. I use [[id:9bc385e2-0ed2-460b-875e-be9ad19144a3][Elfeed]] to get updates on pretty much anything. Some websites provide native RSS. Some websites don't, but I can still use [[id:2242c473-3c03-459f-b0d4-9f916850dc6e][RSSHub]] to convert the updates into RSS feed anyway. It provides a unified interface to keep track of all kinds of news.
+
+However, Elfeed does not have the translation feature, so I am going to implement ad-hoc translation utilising [[id:718fd820-8412-49f4-806a-7667fc6d12de][translate-shell]] and [[id:cbeef2db-d5ce-4a80-ba3e-276eef64bd96][langdetect]].
+
+#+begin_src python :tangle ~/bin/detect-language :shebang #!/usr/bin/python
+from langdetect import detect
+import sys
+text=' '.join(sys.argv[1:])
+print(detect(text))
+#+end_src
+
 #+begin_src emacs-lisp
 (when init-flag 
-  (use-package guess-language
-    :straight t
-    :custom
-    (guess-language-languages '(en ru))
-    :config
-    (defun yant/guess-language-string (string)
-      "Guess language in the specified STRING."
-      (s-trim-right 
-       (shell-command-to-string (s-concat "/home/yantar92/bin/detect-language \"" string "\"")))))
+  ;; (use-package guess-language
+  ;;   :straight t
+  ;;   :custom
+  ;;   (guess-language-languages '(en ru))
+  ;;   :config
+  ;;   )
+
+  (defun yant/guess-language-string (string)
+    "Guess language in the specified STRING."
+    (unless (executable-find "detect-language") (user-error "Command detect-language is not in PATH"))
+    (s-trim-right 
+     (shell-command-to-string (s-concat "detect-language \"" string "\""))))
 
   (use-package memoize
     :straight t
@@ -6234,6 +6251,7 @@ Not sure why I need to set it, but I don't like "i-did-not-set--mail-host-addres
     :config
     (defun yant/translate-string (string)
       "Automatically translate STRING using trans shell command."
+      (unless (executable-find "trans") (user-error "Command trans is not in PATH"))
       (s-trim (shell-command-to-string (format "trans -no-warn -b \"%s\"" title))))
     (memoize #'yant/translate-string)
     (memoize #'yant/guess-language-string))
