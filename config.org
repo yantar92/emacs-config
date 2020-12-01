@@ -2301,7 +2301,6 @@ It is possible to display overview of multiple repositories using [[id:25b6e834-
   (bind-key "G" #'multi-magit-status boon-x-map))
 #+end_src
 
-
 ** Text highlight & colouring
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
@@ -13591,41 +13590,40 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 Some changes in org-files are very trivial and clutter more important changes I actually want to keep an eye on. So, I made a command hiding the trivial changes.
 
 [2020-11-21 Sat] Initially, I tried to commit such changes automatically. However, =magit= does it very too slowly in practice.
+[2020-12-01 Tue] Try again on SSD. Should be faster.
 
 #+begin_src emacs-lisp
 (use-package magit
   :if init-flag
   :config
-  (defvar yant/magit-show-hide-regexps '("^\\(-\\|\\+\\):SHOWFROMDATE:.+\n"
-					 "^\\(\\+\\|-\\)- State .+from.+\n"
-					 "^\\(-\\|\\+\\):LAST_REPEAT: \\[.+\n"
-					 "^\\(-\\|\\+\\):ORG-TIME-BONUS:.+\n"
-					 "^\\(-\\|\\+\\)CLOCK: \\[.+\n"
-					 "^\\(-\\|\\+\\)SCHEDULED: .+\n"
-					 "^\\(-\\|\\+\\)$"
-                                         "^\\(-\\|\\+\\)- Refiled on .+\n"
-					 )
+  (defvar yant/magit-show-autocommit-regexps '("^\\(-\\|\\+\\):SHOWFROMDATE:.+\n"
+					       "^\\(\\+\\|-\\)- State .+from.+\n"
+					       "^\\(-\\|\\+\\):LAST_REPEAT: \\[.+\n"
+					       "^\\(-\\|\\+\\):ORG-TIME-BONUS:.+\n"
+					       "^\\(-\\|\\+\\)CLOCK: \\[.+\n"
+					       "^\\(-\\|\\+\\)SCHEDULED: .+\n"
+					       "^\\(-\\|\\+\\)$"
+					       "^\\(-\\|\\+\\)- Refiled on .+\n"
+					       )
     "List of regexps hide in magit buffer.")
 
 
-  (defun yant/magit-hide ()
-    "Hide all the lines matching `yant/magit-show-autocommit-regexps'."
+  (defun yant/magit-autocommit ()
+    "Commit all the lines matching `yant/magit-show-autocommit-regexps'."
     (interactive)
     (unless (eq major-mode 'magit-status-mode)
       (user-error "Thus command should run in magit-status window."))
     (magit-section-show-level-4-all)
     (save-excursion
-      (mapc #'yant/magit-hide-by-regexp yant/magit-show-hide-regexps))
-    (add-to-invisibility-spec 'magit-trivial-change)
-    ;; (magit-jump-to-staged)
-    ;; (funcall-interactively #'magit-commit-create)
-    ;; (while (not (get-buffer "COMMIT_EDITMSG")) (sleep-for 1) (message "Waiting for commit buffer."))
-    ;; (with-current-buffer "COMMIT_EDITMSG"
-    ;;   (insert (format-time-string "Autoupdate %Y-%m-%d" (current-time))))
-    )
+      (mapc #'yant/magit-autocommit-by-regexp yant/magit-show-autocommit-regexps))
+    (magit-jump-to-staged)
+    (funcall-interactively #'magit-commit-create)
+    (while (not (get-buffer "COMMIT_EDITMSG")) (sleep-for 1) (message "Waiting for commit buffer."))
+    (with-current-buffer "COMMIT_EDITMSG"
+      (insert (format-time-string "Autoupdate %Y-%m-%d" (current-time)))))
 
-  (defun yant/magit-hide-by-regexp (regexp)
-    "Hide all the lines matching regexp."
+  (defun yant/magit-autocommit-by-regexp (regexp)
+    "Commit all the lines matching regexp."
     (interactive)
     (goto-char (point-min))
     (while (re-search-forward regexp
@@ -13634,15 +13632,14 @@ Some changes in org-files are very trivial and clutter more important changes I 
 				  (unless (magit-jump-to-staged)
 				    (point))))
                               t)
-      (let ((inhibit-read-only t))
-	(with-silent-modifications
-          (put-text-property (match-beginning 0) (match-end 0) 'invisible 'magit-trivial-change)))
-      ;; (goto-char (match-beginning 0))
-      ;; (set-mark-command nil)
-      ;; (goto-char (match-end 0))
-      ;; (magit-stage)
-      ;; (backward-char)
-      ))
+      ;; (let ((inhibit-read-only t))
+      ;; 	(with-silent-modifications
+      ;;     (put-text-property (match-beginning 0) (match-end 0) 'invisible 'magit-trivial-change)))
+      (goto-char (match-beginning 0))
+      (set-mark-command nil)
+      (goto-char (match-end 0))
+      (magit-stage)
+      (backward-char)))
   ;; (remove-hook! 'magit-refresh-buffer-hook #'yant/magit-hide)
   )
 #+end_src
