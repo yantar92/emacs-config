@@ -12834,7 +12834,10 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 	  (format "%-11s" (format "%s%s%s" (if scheduled? (format "%s↰" repeat-string) " ") (if mult (format "%sx" mult) "")
 				  (if (and bonus (> bonus 0)) (format "+%s" bonus) "")))))
     (error "")))
-(setq org-agenda-prefix-format "%-12s %-12:c [%e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+(setq org-agenda-prefix-format '((agenda . "%-12s %-12:c [%e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+				 (search . "%s %-12:c [%e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+				 (todo . "%-12:c [%e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+                                 (tags . "%-12:c [%e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")))
   #+end_src
 
 Hide some uninteresting tags
