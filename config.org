@@ -5256,6 +5256,28 @@ Viewing images in Emacs
   (meta-defun meta-down :mode image-mode image-next-file)
   (meta-defun meta-up :mode image-mode image-previous-file))
 #+end_src
+*** Screencasting
+
+Record the screencast using =emacs-gif-screencast=.
+Need to install =gifsicle= and =scrot=
+#+begin_src emacs-lisp
+(use-package emacs-gif-screencast
+  :if init-flag
+  :straight (emacs-gif-screencast :host gitlab :repo "ambrevar/emacs-gif-screencast")
+  :config
+  (setq gif-screencast-output-directory "~/Downloads/"))
+#+END_SRC
+
+Show the key strokes.
+#+BEGIN_SRC emacs-lisp  
+(use-package keycast
+  :if init-flag
+  :straight t
+  :config
+  ;; This is because I do not use mode line (it is set to "")
+  (setq keycast-insert-after "")
+  (setq mode-line-keycast-format "%k%c%r"))
+#+end_src
 
 ** News & email
 :PROPERTIES:
