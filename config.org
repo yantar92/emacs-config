@@ -336,7 +336,7 @@ Keep customisation away from =init.el= in a separate file.
 (use-package no-littering
   :demand t
   :straight (no-littering :host github :repo "emacscollective/no-littering"
-			  :fork (:host github :repo "yantar92/no-littering")))
+			  :local-repo "~/Git/no-littering"))
 #+end_src
 
 ** TODO Elisp libraries to be used further
