@@ -12053,7 +12053,7 @@ Alert for upcoming scheduled or agenda entries or agenda entries containing dead
 #+end_src
 Preview images and latex formulas.
 #+begin_src emacs-lisp
-(setq org-image-actual-width '(300))
+(setq org-image-actual-width '(600))
 (setq org-latex-create-formula-image-program 'imagemagick)
 (setq org-format-latex-options
       (quote
