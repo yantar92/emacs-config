@@ -7749,6 +7749,7 @@ For the implementation, the idea is keeping all the actual attachments in a comm
 
 #+begin_src emacs-lisp :tangle "~/.emacs.d/config.el"
 (use-package org-attach-fs
+  :disabled
   :straight (org-attach-fs :local-repo "~/Git/org-attach-fs")
   :after org
   :demand t)
