@@ -1043,7 +1043,7 @@ Show some text in buffer differently
   :config (global-page-break-lines-mode))
 #+end_src
 
-***** NEXT Pretty symbols
+***** TODO Pretty symbols
 :PROPERTIES:
 :ID:       315191d1-6edf-4c10-a1fe-0fb70885fbe1
 :END:
@@ -4705,6 +4705,9 @@ It warns me if the original definition changes from what I expect.
 #+end_src
 
 *** Gentoo ebuilds
+:PROPERTIES:
+:ID:       2063e38e-709d-4e84-9960-91f5660abe31
+:END:
 
 #+begin_src emacs-lisp
 (use-package ebuild-mode
@@ -5257,6 +5260,9 @@ Viewing images in Emacs
   (meta-defun meta-up :mode image-mode image-previous-file))
 #+end_src
 *** Screencasting
+:PROPERTIES:
+:ID:       2aa3e942-e4e9-4703-9539-4be5192072d7
+:END:
 
 Record the screencast using =emacs-gif-screencast=.
 Need to install =gifsicle= and =scrot=
@@ -6191,6 +6197,9 @@ As recommended in [[https://orgmode.org/worg/org-mailing-list.html#orgf343a0f][W
   (add-hook 'notmuch-mua-send-hook #'yant/notmuch-mua-too-long-cite-reminder))
 #+end_src
 **** Fix "Exceed max-specpdl-size"
+:PROPERTIES:
+:ID:       22c94bab-619c-483c-85d1-b552eec0ca66
+:END:
 
 #+begin_src emacs-lisp
 (setq max-specpdl-size 5000)
@@ -7006,11 +7015,13 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
 :PROPERTIES:
 :ID:       7122dce7-7d3e-4167-a444-8811d588db42
 :END:
-***** WAITING Link description function :HOLD:WAITING:
+***** MERGED Link description function
+CLOSED: [2020-12-01 Tue 12:07]
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 10:27]
 :ID:       bd43272d-9ef4-45a6-85ab-bebbef75c18b
 :SUMMARY:  Get reply to my patch
+:MERGED-WITH: [[id:559c721c-5edb-4100-8217-61bb1e2673da][reply #email -> $:from Re: [Feature proposal] Add :description function to org-link-parameters]]
 :END:
 :LOGBOOK:
 - State "WAITING"    from "HOLD"          [2020-09-24 Thu 21:55]
@@ -13584,7 +13595,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
   (meta-defun meta-goto :mode org-mode org-goto))
 #+end_src
 *** Magit integration 
-**** Hide trivial changes in org files
+**** Auto-commit trivial changes in org files
 :PROPERTIES:
 :ID:       791e23b2-bb5b-44a4-8d9f-6dab6c2c2176
 :END:
@@ -13593,6 +13604,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
 
 [2020-11-21 Sat] Initially, I tried to commit such changes automatically. However, =magit= does it very too slowly in practice.
 [2020-12-01 Tue] Try again on SSD. Should be faster.
+[2020-12-02 Wed] Not really.
 
 #+begin_src emacs-lisp
 (use-package magit
