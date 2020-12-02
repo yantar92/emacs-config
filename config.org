@@ -13724,6 +13724,20 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 (add-hook 'org-mode-hook #'endless/org-ispell)
 #+END_SRC
 
+*** Org crypt
+:PROPERTIES:
+:ID:       b9882741-d243-4030-a54d-4aa543f5ade3
+:END:
+
+#+begin_src emacs-lisp
+(use-package org-crypt
+  :after org
+  :custom
+  (org-crypt-key nil)
+  :config
+  (org-crypt-use-before-save-magic))
+#+end_src
+
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
