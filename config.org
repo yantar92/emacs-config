@@ -7427,10 +7427,10 @@ Do not ask every time I try to evaluate elisp: links
   (setq org-ref-show-broken-links nil) ;; it makes typing very slow if 't
   (use-package org-ref-pdf)
   (use-package org-ref-url-utils)
-  (setq org-ref-bibliography-notes "~/Books/articles/articles.org"
-	bibtex-completion-notes-path "~/Books/articles/articles.org"
-	org-ref-default-bibliography '("~/Books/References.bib")
-	org-ref-pdf-directory "~/Books/articles/_symlinks/"
+  (setq org-ref-bibliography-notes "~/Git/Books/articles/articles.org"
+	bibtex-completion-notes-path "~/Git/Books/articles/articles.org"
+	org-ref-default-bibliography '("~/Git/Books/References.bib")
+	org-ref-pdf-directory "~/Git/Books/articles/_symlinks/"
 	bibtex-completion-library-path org-ref-pdf-directory)
   (setq reftex-default-bibliography (quote ("~/Books/References.bib")))
   (bind-key* "C-c ]" #'org-ref-helm-insert-cite-link)
