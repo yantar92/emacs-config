@@ -9605,6 +9605,22 @@ into (not QUERY)."
 :LOGBOOK:
 - Refiled on [2019-12-23 Mon 18:07]
 :END:
+****** =helm-org-ql=
+
+#+begin_src emacs-lisp
+(use-package helm-org-ql
+  :if init-flag
+  :after org-ql
+  :init
+  (defun yant/helm-org-ql-create-link (marker)
+    "Insert link to MARKER at point."
+    (insert (org-with-point-at marker (org-store-link nil))))
+  :custom
+  (helm-org-ql-actions '(("Go to heading" . helm-org-ql-show-marker)
+			 ("Insert link to heading" . yant/helm-org-ql-create-link)))
+  )
+#+end_src
+
 
 ***** Live (=helm-org-ql=) search in org
 :PROPERTIES:
