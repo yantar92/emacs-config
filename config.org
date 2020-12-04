@@ -5972,7 +5972,7 @@ I am using w3m as rendered. It should also be [[id:66a5989e-9d17-40af-b680-494ef
 #+begin_src conf :tangle ~/.mailcap
 text/html; /home/yantar92/bin/qutebrowser-call.sh %s
 text/*; mimeopen "%s"
-application/*; xdg-open "%s"
+application/*; mimeopen %s
 video/*; mimeopen "%s"
 image/*; mimeopen "%s"
 #+end_src
