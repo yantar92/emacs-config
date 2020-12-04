@@ -9609,13 +9609,15 @@ into (not QUERY)."
 (use-package helm-org-ql
   :if init-flag
   :after org-ql
+  :after helm-org
   :init
   (defun yant/helm-org-ql-create-link (marker)
     "Insert link to MARKER at point."
     (insert (org-with-point-at marker (org-store-link nil))))
   :custom
   (helm-org-ql-actions '(("Go to heading" . helm-org-ql-show-marker)
-			 ("Insert link to heading" . yant/helm-org-ql-create-link)))
+			 ("Insert link to heading" . yant/helm-org-ql-create-link)
+                         ("Refile heading(s) to heading at point" . helm-org--refile-heading-here)))
   )
 #+end_src
 
