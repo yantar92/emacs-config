@@ -9459,11 +9459,9 @@ instead."
 
 (use-package org-ql
   :demand t
-  :straight (org-ql :type git :host github :repo "alphapapa/org-ql"
+  :straight (org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
 	      :fork (:host github :repo "yantar92/org-ql"))
-  :init (use-package org-ql-search :demand t)
-  :config
-  )
+  :init (use-package org-ql-search :demand t))
 
 (defun yant/org-ql-focused-agenda-block (&rest args)
   "Return expression, suitable for `org-agenda-custom-commands', which matches focused agenda view."
