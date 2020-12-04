@@ -247,10 +247,11 @@ Load org to make sure that obsolete built-in org version is not used.
 The main org-mode config is provided [[id:58045c39-ffd5-4ccc-bc9d-49048c437f42][later]].
 Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to make sure that =org-plus-contrib= is used any time another packages requires =org=.
 #+begin_src emacs-lisp
-  (straight-use-package '(org
-			  :type git :repo "https://code.orgmode.org/bzg/org-mode.git"
-			  :local-repo "~/Git/org-mode"
-			  :files (:defaults "contrib/lisp/*.el")))
+(straight-use-package '(org
+			:type git :repo "https://code.orgmode.org/bzg/org-mode.git"
+			:local-repo "~/Git/org-mode"
+                        :fork (:host github :repo "yantar92/org" :branch "feature/org-fold")
+			:files (:defaults "contrib/lisp/*.el")))
 #+end_src
 
 *** Working with =straight.el=
@@ -596,7 +597,7 @@ Reducing help:gcmh-cons-threshold to avoid hangs on undo.
 #+begin_src emacs-lisp
 (when init-flag
   (use-package gcmh
-    :straight (gcmh :type git :host gitlab :repo "koral/gcmh"
+    :straight (gcmh :type git :host gitlab :repo "koral/gcmh" :local-repo "~/Git/gcmh"
 		    :fork (:host gitlab :repo "yantar92/gcmh"))
     :demand t
     :diminish gcmh-mode
@@ -1660,7 +1661,7 @@ The problem is that it may mess up the cases when I want to assign special meani
 (use-package boon
   :if init-flag
   :demand t
-  :straight (boon :type git :host github :repo "jyp/boon"
+  :straight (boon :type git :host github :repo "jyp/boon" :local-repo "~/Git/boon"
 		  :fork (:host github
 			       :repo "yantar92/boon"))
   :diminish boon-local-mode
@@ -1936,7 +1937,7 @@ The basic idea is to prefix movement commands with meta.
 #+begin_src emacs-lisp
   (use-package helm
     :if init-flag
-    :straight (helm :type git :host github :repo "emacs-helm/helm"
+    :straight (helm :type git :host github :repo "emacs-helm/helm" :local-repo "~/Git/helm"
 		    :fork (:host github
 				 :repo "yantar92/helm"))
     :diminish helm-mode
@@ -3046,7 +3047,7 @@ Instead of =delete-other-windows=, use =windower's= version, which toggles maxim
   :if init-flag
   :init
   (use-package windower
-    :straight (emacs-windower :host gitlab :repo "ambrevar/emacs-windower"
+    :straight (emacs-windower :host gitlab :repo "ambrevar/emacs-windower" :local-repo "~/Git/emacs-windower"
 			      :fork (:host gitlab :repo "yantar92/emacs-windower")))
   :bind (("M-1" . #'windower-toggle-single)
 	 ("M-2" . split-window-below)
@@ -4875,9 +4876,9 @@ This is also required for =cdlatex= to work with org-mode.
 #+begin_src emacs-lisp
 (use-package pdf-tools
   :if init-flag
-  :straight (pdf-tools :type git :host github :repo "politza/pdf-tools"
-		  :fork (:host github
-			       :repo "yantar92/pdf-tools"))
+  :straight (pdf-tools :type git :host github :repo "politza/pdf-tools" :local-repo "~/Git/pdf-tools"
+		       :fork (:host github
+				    :repo "yantar92/pdf-tools"))
   :magic ("%PDF" . pdf-view-mode)
   :bind (:map pdf-view-mode-map
 	      ("v w" . pdf-view-fit-width-to-window)
@@ -8106,7 +8107,7 @@ CLOSED: [2020-08-11 Tue 22:10]
 
 Sometimes, I want to save certain interesting online articles to disk to make sure that all the content and comments are preserved regardless of the website changes.
 
-****** org-webtools
+****** COMMENT org-web-tools
 :PROPERTIES:
 :CREATED:  [2019-04-23 Tue 23:44]
 :ID:       f8a52437-48d9-418a-a00d-c1af5680c230
@@ -8126,7 +8127,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 #+begin_src emacs-lisp
 (use-package org-web-tools
   :if init-flag
-  :straight (org-web-tools :host github :repo "alphapapa/org-web-tools"
+  :straight (org-web-tools :host github :repo "alphapapa/org-web-tools" :local-repo "~/Git/org-web-tools"
 			   :fork (:host github :repo "yantar92/org-web-tools"))
   :bind (:map org-mode-map
 	      ("C-c C-S-u a" . org-web-tools-archive-attach)
@@ -9368,7 +9369,7 @@ Also, hide the contents once task is clocked out.
   :straight t)
 (use-package org-quick-peek
   :if init-flag
-  :straight (org-quick-peek :type git :host github :repo "alphapapa/org-quick-peek"
+  :straight (org-quick-peek :type git :host github :repo "alphapapa/org-quick-peek" :local-repo "~/Git/org-quick-peek"
 			    :fork (:host github :repo "yantar92/org-quick-peek"))
   :requires quick-peek
   :after org
@@ -10447,7 +10448,8 @@ All these templates generally record the creation time in =:CREATED:=
                      "\n"))))
            :replace)
 (use-package ya-org-capture
-  :straight (ya-org-capture :type git :host github :repo "ag91/ya-org-capture")
+  :straight (ya-org-capture :type git :host github :repo "ag91/ya-org-capture" :local-repo "~/Git/ya-org-capture"
+			    :fork (:host github :repo "yantar92/ya-org-capture"))
   :config
   (ya-org-capture/setup)
   (asoc-put! org-capture-templates
@@ -12276,6 +12278,7 @@ This package is one of the attempts to solve the problem. It allows duplicating 
 (use-package org-clones
   :straight (org-clones :host github
 			:repo "legalnonsense/org-clones"
+                        :local-repo "~/Git/org-clones"
                         :fork "yantar92/org-clones")
   :hook
   ;; Note: `org-clones-mode' will only activate
