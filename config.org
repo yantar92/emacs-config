@@ -9637,7 +9637,9 @@ into (not QUERY)."
   (use-package helm-org :straight t :demand t) ;; required by helm-org-ql
   :config
   (require 'helm-org-ql)
-  )
+  (use-package boon
+    :config  
+    (bind-key "p" #'helm-org-ql-agenda-files boon-goto-map)))
 #+end_src
 
 **** TODO Contacts
@@ -9995,8 +9997,8 @@ Sometimes I need to jump to some urgent task. After it is done, I hate searching
 (use-package boon
   :config
   (use-package helm-org
-    :bind (:map boon-goto-map
-		("p" . helm-org-agenda-files-headings))
+    ;; :bind (:map boon-goto-map
+    ;; 		("p" . helm-org-agenda-files-headings))
     :config
     (defun dfeich/helm-org-clock-in (marker)
       "Clock into the item at MARKER"
