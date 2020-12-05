@@ -7016,13 +7016,10 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
 :PROPERTIES:
 :ID:       7122dce7-7d3e-4167-a444-8811d588db42
 :END:
-***** MERGED Link description function
-CLOSED: [2020-12-01 Tue 12:07]
+***** Link description function
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 10:27]
 :ID:       bd43272d-9ef4-45a6-85ab-bebbef75c18b
-:SUMMARY:  Get reply to my patch
-:MERGED-WITH: [[id:559c721c-5edb-4100-8217-61bb1e2673da][reply #email -> $:from Re: [Feature proposal] Add :description function to org-link-parameters]]
 :END:
 :LOGBOOK:
 - State "WAITING"    from "HOLD"          [2020-09-24 Thu 21:55]
