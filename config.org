@@ -9629,8 +9629,9 @@ into (not QUERY)."
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-ql
-  :straight t
+(use-package helm-org-ql
+  :straight (helm-org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
+			 :fork (:host github :repo "yantar92/org-ql"))
   :custom
   (helm-org-ql-reverse-paths nil)
   :init
@@ -9638,11 +9639,11 @@ into (not QUERY)."
   :config
   (require 'helm-org-ql)
   (use-package boon
-    :config  
+    :config
     (bind-key "p" #'helm-org-ql-agenda-files boon-goto-map)))
 #+end_src
 
-**** TODO Contacts
+**** TODO COMMENT Contacts
 :PROPERTIES:
 :CREATED:  [2018-09-05 Wed 06:39]
 :ID:       8074623d-bc14-43c7-908c-28213b2b6149
