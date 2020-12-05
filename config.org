@@ -8509,8 +8509,7 @@ If LOCAL is non-nil, check only local TAG."
 			   ((org-agenda-overriding-header (concat "Waiting and Hold Tasks" ""))
 			    (org-agenda-prefix-format "%-12:c\t%?-12t %(yant/format-summary-for-agenda)")
 			    (org-use-tag-inheritance nil)
-			    (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'scheduled)
-							   (bh/skip-projects)))
+			    (org-agenda-skip-function  '(org-agenda-skip-entry-if 'scheduled))
 			    (org-tags-match-list-sublevels nil)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down))))
