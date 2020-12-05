@@ -5268,9 +5268,9 @@ Viewing images in Emacs
 Record the screencast using =emacs-gif-screencast=.
 Need to install =gifsicle= and =scrot=
 #+begin_src emacs-lisp
-(use-package emacs-gif-screencast
+(use-package gif-screencast
   :if init-flag
-  :straight (emacs-gif-screencast :host gitlab :repo "ambrevar/emacs-gif-screencast")
+  :straight (gif-screencast :host gitlab :repo "ambrevar/emacs-gif-screencast")
   :config
   (setq gif-screencast-output-directory "~/Downloads/"))
 #+END_SRC
