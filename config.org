@@ -4868,7 +4868,31 @@ This is also required for =cdlatex= to work with org-mode.
   :straight t
   )
 #+END_SRC
-** TODO Pdf view
+** Pdf
+*** Compressing too large pdfs
+:PROPERTIES:
+:ID:       86adb126-19e5-4438-acab-729e58abe7d1
+:END:
+
+#+begin_src bash :tangle ~/bin/pdf-compress.sh :shebang #!/bin/bash
+INPUT="$1"
+if [[ ! -f "$INPUT" ]]; then
+   echo "File not exist \"$INPUT\""
+   exit 1
+fi
+OUTPUT="$2"
+if [[ -f "$2" ]]; then
+    echo "File exists \"$2\""
+    exit 1
+fi
+OUTPUT=${OUTPUT:-${INPUT%.*}.pdf}
+[[ $# > 2 ]] && (echo "Extra arguments found: \"$*\""; exit 1)
+# gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$OUTPUT" "$INPUT"
+# gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$OUTPUT" "$INPUT"
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$OUTPUT" "$INPUT"
+#+end_src
+
+*** TODO Pdf view
 :PROPERTIES:
 :ID:       201475d1-64b3-4e1d-8e78-d850c6067761
 :END:
