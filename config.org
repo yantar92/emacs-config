@@ -4938,7 +4938,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
     (meta-defun meta-up :mode pdf-annot-list-mode tablist-previous-line)))
 #+end_src
 
-*** Restore the last position in pdf
+**** Restore the last position in pdf
 :PROPERTIES:
 :CREATED:  [2019-07-22 Mon 22:25]
 :ID:       298073df-f1e0-4a57-ac78-65ab17582ead
@@ -4953,7 +4953,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
   (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 #+end_src
 
-*** Pdf rotate
+**** Pdf rotate
 :PROPERTIES:
 :ID:       0ec2a69c-4284-48f2-86cb-4bac1f0a3b3f
 :END:
@@ -5006,7 +5006,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
     (interactive "P")
     (pdf-view--rotate :counterclockwise (not arg))))
 #+end_src
-*** TODO Fix page number in boon mode-line when the pdf is opened in a new frame
+**** TODO Fix page number in boon mode-line when the pdf is opened in a new frame
 :PROPERTIES:
 :CREATED:  [2019-07-03 Wed 18:14]
 :ID:       5fb47379-ccda-4f17-a834-7796b0f188dc
@@ -5021,7 +5021,7 @@ It's magic
     :config
     (setq pdf-cache-prefetch-delay 8)))
 #+end_src
-*** Kill pdf buffer on =q=
+**** Kill pdf buffer on =q=
 :PROPERTIES:
 :CREATED:  [2019-12-05 Thu 11:16]
 :ID:       ee42b095-7f3a-4bc9-a07b-3c830287c59c
@@ -9626,6 +9626,9 @@ into (not QUERY)."
 - Refiled on [2019-12-23 Mon 18:07]
 :END:
 ****** =helm-org-ql=
+:PROPERTIES:
+:ID:       09bf4bb3-ce26-4bd8-91b6-3d972cb42a5d
+:END:
 
 #+begin_src emacs-lisp
 (use-package helm-org-ql
@@ -14148,17 +14151,6 @@ alang=enm,en,ang,ru       # automatically select these audio tracks (decreasing 
 #+begin_src conf
 af=scaletempo=speed=tempo:stride=30
 audio-file-auto=fuzzy                   # external audio doesn't have to match the file name exactly to autoload
-#+end_src
-
-*** Video
-:PROPERTIES:
-:CREATED:  [2019-12-15 Sun 03:11]
-:ID:       bbd87fcb-26ea-4b35-b85e-f00a0ad0574e
-:END:
-
-#+begin_src conf
-# Defaults for all profiles
-vo=opengl
 #+end_src
 
 *** Protocols
