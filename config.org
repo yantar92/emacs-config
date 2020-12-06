@@ -7781,6 +7781,7 @@ Try to look in symlinks?
 For the implementation, the idea is keeping all the actual attachments in a common folder for all the org files according to their uuid. As a result, I can safely refile tasks between different org files without worrying about moving the attachments around (assuming that there is not change in the task ids).
 
 #+begin_src emacs-lisp :tangle "~/.emacs.d/config.el"
+(put 'yant/org-attach-file-symlink-path 'safe-local-variable 'stringp)
 (use-package org-attach-fs
   :disabled
   :straight (org-attach-fs :local-repo "~/Git/org-attach-fs")
