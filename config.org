@@ -12139,7 +12139,7 @@ Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current
                             (progn
                               ;; Flush image from cache and stop the timers
                               (cancel-function-timers #'image-animate-timeout)
-                              (image-flush (overlay-get ov 'display) t)
+                              ;; (image-flush (overlay-get ov 'display) t)
 			      (delete-overlay ov)
 			      (setq org-inline-image-overlays (delete ov org-inline-image-overlays)))
                           (overlay-put ov 'animation-in-progress t)
