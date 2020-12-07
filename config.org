@@ -6534,7 +6534,7 @@ The task is any item with todo keyword and no subtask.
 	(forward-line 1)
 	(while (and (not has-subtask)
 		    (< (point) subtree-end)
-		    (re-search-forward "^\*+ " subtree-end t))
+		    (re-search-forward (org-get-limited-outline-regexp) subtree-end t))
 	  (when (member (org-get-todo-state) org-todo-keywords-1)
 	    (setq has-subtask t))))
       (and is-a-task (not has-subtask)))))
