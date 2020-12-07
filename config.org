@@ -10409,26 +10409,58 @@ To simplify defining the capture templates, I use =doct= package
   :commands (doct))
 #+end_src
 
+Also, use yasnippet during capture
+#+begin_src emacs-lisp
+(use-package ya-org-capture
+  :straight (ya-org-capture :type git :host github :repo "ag91/ya-org-capture" :local-repo "~/Git/ya-org-capture"
+			    :fork (:host github :repo "yantar92/ya-org-capture"))
+  :config
+  (ya-org-capture/setup))
+#+end_src
+
 All these templates generally record the creation time in =:CREATED:=
 - TODO item :: Normal TODO item.
+#+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/todo_capture :noweb tangle :comments no
+# -*- mode: snippet -*-
+# name: todo_capture
+# key: todo_capture_
+# --
+TODO ${1:Title} `(s-trim-right (org-capture-fill-template "%a"))`
+:PROPERTIES:
+:CREATED: `(s-trim-right (org-capture-fill-template "%U"))`
+:END:
+
+$0 
+#+end_src
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "n"
-           (cdar (doct
-		  '("NEXT item"
-		    :keys "n"
-                    :type entry
-                    :file "~/Org/inbox.org"
-                    :clock-in t
-                    :clock-resume t
-                    :template
-                    ("* TODO %? %a"
-                     ":PROPERTIES:"
-                     ":CREATED: %U"
-                     ":END:"
-                     "\n")))))
+(use-package ya-org-capture
+  :config
+  (asoc-put! org-capture-templates
+	     "n"
+             (cdar (doct
+		    '("NEXT item"
+		      :keys "n"
+                      :type entry
+                      :file "~/Org/inbox.org"
+                      :clock-in t
+                      :clock-resume t
+                      :template
+                      ("* %(ya-org-capture/make-snippet \"todo_capture_\")"))))))
 #+end_src
 - singular TODO item :: Normal TODO item with time bonus on done (60 minutes) - used for the items, which are unlikely to be time tracked.
+#+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/todo_singular_capture :noweb tangle :comments no
+# -*- mode: snippet -*-
+# name: todo_singular_capture
+# key: todo_singular_capture_
+# --
+TODO ${1:Title} `(s-trim-right (org-capture-fill-template "%a"))`
+:PROPERTIES:
+:CREATED: `(s-trim-right (org-capture-fill-template "%U"))`
+:ORG-TIME-BONUS-ON-DONE: 20
+:END:
+
+$0 
+#+end_src
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "t"
@@ -10439,15 +10471,28 @@ All these templates generally record the creation time in =:CREATED:=
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* NEXT %? %a"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-			   ":ORG-TIME-BONUS-ON-DONE: 20"
-			   ":END:"
-			   "\n"))))
+			  ("*  %(ya-org-capture/make-snippet \"todo_singular_capture_\")"))))
            'replace)
 #+end_src
 - note :: A note, which is not actionable or expected to contain a lot of text
+#+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/note_capture :noweb tangle :comments no
+# -*- mode: snippet -*-
+# name: note_capture
+# key: note_capture_
+# --
+TODO ${1:Fleeting note on `(s-trim-right (org-capture-fill-template "%u"))`}
+:PROPERTIES:
+:CREATED: `(s-trim-right (org-capture-fill-template "%U"))`
+:END:
+
+- [ ] Check what notes are followed by this link
+- [ ] Make title
+- [ ] Refile to relevant topics
+- [ ] Elaborate
+${2:Following up: `(s-trim-right (org-capture-fill-template "%a"))`}
+
+$0
+#+end_src
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "N"
@@ -10459,66 +10504,7 @@ All these templates generally record the creation time in =:CREATED:=
                     :clock-in t
                     :clock-resume t
                     :template
-                    ("* TODO Fleeting note on %u"
-                     ":PROPERTIES:"
-                     ":CREATED: %U"
-                     ":END:"
-                     "- [ ] Check what notes are followed by this link"
-                     "- [ ] Make title"
-                     "- [ ] Refile to relevant topics"
-                     "- [ ] Elaborate"
-                     "Following up: %a"
-                     "\n"
-                     "%? %a"
-                     "\n"))))
-           :replace)
-(use-package ya-org-capture
-  :straight (ya-org-capture :type git :host github :repo "ag91/ya-org-capture" :local-repo "~/Git/ya-org-capture"
-			    :fork (:host github :repo "yantar92/ya-org-capture"))
-  :config
-  (ya-org-capture/setup)
-  (asoc-put! org-capture-templates
-	     "F"
-             '("Note" entry (file "/tmp/test.org") "* %(ya-org-capture/make-snippet \"note-capture_\")" :empty-lines 2 :clock-in t :clock-resume t)
-             :replace)
-  (asoc-put! org-capture-templates
-	     "E"
-             (cdar (doct
-		    '("Note"
-		      :keys "E"
-                      :type entry
-                      :file "~/Org/inbox.org"
-                      :clock-in t
-                      :clock-resume t
-                      :template
-                      ("* %(ya-org-capture/make-snippet \"note-capture_\")"))))
-             :replace))
-#+end_src
-- inline note :: A note on currently clocked in task
-#+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "I"
-           (cdar (doct
-		  '("Note on clock-in"
-		    :keys "I"
-                    :type plain
-                    :function (lambda ()
-				(switch-to-buffer (or (marker-buffer org-clock-marker)
-						      "inbox.org"))
-				(goto-char (or org-clock-marker
-					       (point-max)))
-                                (org-back-to-heading t)
-                                (org-with-limited-levels
-                                 (outline-next-heading))
-                                (backward-char)
-				(unless (looking-at-p "^$")
-                                  (insert "\n")))
-                    :clock-keep t
-                    :empty-lines-before 1
-                    :template
-                    ("%a"
-                     "%?"
-                     "\n"))))
+                    ("* %(ya-org-capture/make-snippet \"note_capture_\")"))))
            :replace)
 #+end_src
 - Habit :: Habit. I default it to no logging.
@@ -10870,25 +10856,6 @@ All these templates generally record the creation time in =:CREATED:=
                            "** Get accepted"))))
            'replace)
 #+end_src
-- Rss entry :: An rss to be tracked with =elfeed=. The url is parsed to derive a valid rss page
-*************** TODO make this work
-*************** END
-#+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "r"
-           (cdar  (doct '("Rss entry"
-			  :keys "r"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-			  :template
-			  ("* TODO [[%:link][%^{Title|%:description}]] :rss:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-			   ":END:"))))
-           'replace)
-#+end_src
 - New contact :: Add a person to contact list. 
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
@@ -10905,7 +10872,8 @@ All these templates generally record the creation time in =:CREATED:=
 			   ":END:"))))
            'replace)
 #+end_src
-
+*************** TODO Should be captured to current project directly
+*************** END
 - Experimental note :: A new note on an experiment. 
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
@@ -11023,7 +10991,6 @@ I define two link types for capturing:
 		 (cdr  template)
 		 'replace))))
 #+end_src
-
 - Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
@@ -11042,7 +11009,6 @@ I define two link types for capturing:
 			   ":END:"))))
            'replace)
 #+end_src
-
 
 #+begin_src emacs-lisp
 ))
