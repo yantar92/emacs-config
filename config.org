@@ -13971,6 +13971,11 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
     (lambda nil (progn (keyfreq-mode 1) (keyfreq-autosave-mode 1))))
   (global-keyfreq-mode))
 #+end_src
+** TODO Fixing slow org priority regexp
+
+#+begin_src emacs-lisp
+(setq org-priority-regexp "^\\*+.*\\(\\[#\\([A-Z0-9]+\\)\\] ?\\)")
+#+end_src
 
 * Git
 
