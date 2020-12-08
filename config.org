@@ -4560,6 +4560,12 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 :PROPERTIES:
 :CREATED:  [2019-07-08 Mon 20:50]
 :END:
+**** Use spaces for indenting
+
+#+begin_src emacs-lisp
+(add-hook! emacs-lisp-mode (setq indent-tabs-mode nil))
+#+end_src
+
 **** =Paredit=
 :PROPERTIES:
 :CREATED:  [2020-03-22 Sun 21:43]
