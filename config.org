@@ -3645,7 +3645,9 @@ Do not hide symlink target when hiding details.
 #+begin_src emacs-lisp
 (use-package disk-usage
   :if init-flag
-  :straight t)
+  :straight t
+  :config
+  (meta-defun meta-up-element :mode disk-usage-mode disk-usage-up))
 #+end_src
 
 Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not accept them
