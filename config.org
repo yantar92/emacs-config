@@ -2599,7 +2599,7 @@ Highlight text matching =isearch=.
 (setf search-highlight t)
 (setf query-replace-highlight t))
 #+end_src
-*** Volatile highlights - highlight actions
+*** Highlight recent changes\actions
 :PROPERTIES:
 :ID:       02c8a98c-a38a-4054-a0a2-400f6757693b
 :END:
@@ -2607,17 +2607,18 @@ Highlight text matching =isearch=.
 Highlight recently changed text. 
 Especially useful when inserting/replacing big chunks of text.
 
-I changed the background colour here due to clash with my =org-mode= colours
+[2020-12-08 Tue] Replacing =volatile-highlights= with [[id:19b9e85375d14376f40911b62bba8876a6de0d56][googles]], as the former is not maintained.
 
   #+begin_src emacs-lisp
-(use-package volatile-highlights
+(use-package goggles
   :if init-flag
-  :straight t
-  :diminish volatile-highlights-mode
+  :straight (goggles :host github :repo "minad/goggles" :local-repo "~/Git/goggles"
+                     :fork (:host github :repo "yantar92/goggles"))
+  :diminish t
   :config
-  (volatile-highlights-mode t)
-  (custom-set-faces
-   '(vhl/default-face ((t :background "LightGray" :inherit secondary-selection)))))
+  (goggles-mode t)
+  :custom
+  (goggles-pulse nil))
   #+end_src
 *** Highlight evaluated sexp
 :PROPERTIES:
