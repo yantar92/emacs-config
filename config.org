@@ -1213,7 +1213,7 @@ Light face for header line.
   (set-face-attribute 'mode-line nil
 		      :box nil
                       :underline  (face-foreground 'default)
-		      :background (face-background 'default)
+                      :background (face-background 'default)
                       )
   (set-face-attribute 'mode-line-inactive nil
 		      :box nil
