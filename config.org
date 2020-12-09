@@ -4910,6 +4910,8 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
   :straight (pdf-tools :type git :host github :repo "politza/pdf-tools" :local-repo "~/Git/pdf-tools"
 		       :fork (:host github
 				    :repo "yantar92/pdf-tools"))
+  :custom
+  (pdf-view-colors 'default)
   :magic ("%PDF" . pdf-view-mode)
   :bind (:map pdf-view-mode-map
 	      ("v w" . pdf-view-fit-width-to-window)
