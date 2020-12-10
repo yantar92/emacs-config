@@ -7700,7 +7700,9 @@ This includes:
                  marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
 - =:TRIGGER:= :: Actions to be done when the item is marked done (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
 - =:MERGED-WITH:= :: If the task is marked =MERGED=, contains a link to the new task
-- =:SOURCE:= :: The link to the file/URL, which this task refers to
+- =:Source:= :: The link to the file/URL, which this task refers to. This property is also used to unblock the URL when needed (see [[id:9562f1fc-9b35-4573-b42e-7bb2fcef8a7a][Distraction-free browsing]])
+- =:DISABLE-HOST-BLOCKING:= :: When set to =t=, unblock everything while clocked-in to the task
+
 **** Attach
 :PROPERTIES:
 :ID:       bb8263f5-8ef4-4444-941c-9ffbb338185d
@@ -12083,6 +12085,96 @@ Alert for upcoming scheduled or agenda entries or agenda entries containing dead
   (setq alert-default-style 'libnotify)
   (org-alert-enable))
 #+end_src
+
+**** Distraction-free browsing
+:PROPERTIES:
+:ID:       9562f1fc-9b35-4573-b42e-7bb2fcef8a7a
+:END:
+
+Mindless browsing of websites like YouTube, Facebook, or reddit is a huge time-sink [[id:lesswrong_benkuhn2020_tools_keepin_focus][benkuhn Lesswrong 2020]]. This happens partially because these websites are designed to attract and hold people's attention [[id:goodreads_digit_minim_choos_focus_life][Digital Minimalism by Newport]]. As highlighted by [[id:lesswrong_benkuhn2020_tools_keepin_focus][benkuhn]], an effective trick to work around this problem is blocking access to destructing activities when more focus on work is desired. [[id:goodreads_digit_minim_choos_focus_lifel][Newport]] suggests to access to these websites/distractions during dedicated time periods.
+
+Realising the described problem for myself, I follow the above recommendations and block certain website access from [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]]:
+
+#+name: blocked-hosts
+| reddit.com      |
+| old.reddit.com  |
+| author.today    |
+| facebook.com    |
+| youtube.com     |
+| www.youtube.com |
+| ficbook.net     |
+| github.com      |
+
+#+name: format-blocked-hosts
+#+begin_src emacs-lisp :tangle no :var hosts=blocked-hosts :results raw silent
+(mapconcat (lambda (host) (format "0.0.0.0 %s" (car host))) hosts "\n")
+#+end_src
+
+#+begin_src conf :tangle ~/.config/qutebrowser/blocked-hosts :noweb tangle
+<<format-blocked-hosts()>>
+#+end_src
+
+The access is only restored while I am doing a task related to that domain (and containing =SOURCE= property with the domain URL)
+
+#+begin_src emacs-lisp
+(defvar yant/hosts-unblocked nil
+  "Non-nil when some hosts are temporarily unblocked.")
+
+(defun yant/unblock-host (url)
+  "Unblock URL in qutebrowser."
+  (with-temp-buffer
+    (insert-file-contents "~/.config/qutebrowser/blocked-hosts")
+    (goto-char (point-min))
+    (let ((hosts))
+      (while (re-search-forward "0\\.0\\.0\\.0 \\(.+\\) *$" nil t)
+        (when (or (s-contains-p (match-string 1) url)
+                  (and (s-contains-p "reddit" url)
+                       (s-contains-p "reddit" (match-string 1))))
+          (push (match-string 1) hosts)))
+      (when hosts
+        (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
+          (setq yant/hosts-unblocked t)
+          (start-process-shell-command "Send message to qutebrowser"
+				       nil
+				       (format "qutebrowser ':set content.host_blocking.whitelist \"%s\"'" hosts-list-string)))))))
+
+(defun yant/unblock-all-hosts ()
+  "Unblock all custom-blocked hosts in qutebrowser."
+  (with-temp-buffer
+    (insert-file-contents "~/.config/qutebrowser/blocked-hosts")
+    (goto-char (point-min))
+    (let ((hosts))
+      (while (re-search-forward "0\\.0\\.0\\.0 \\(.+\\) *$" nil t)
+        (push (match-string 1) hosts))
+      (when hosts
+        (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
+          (setq yant/hosts-unblocked t)
+          (start-process-shell-command "Send message to qutebrowser"
+				       nil
+				       (format "qutebrowser ':set content.host_blocking.whitelist \"%s\"'" hosts-list-string)))))))
+
+(defun yant/org-unblock-heading-source ()
+  "Unblock (`yant/unblock-host') url value stored in Source property of the task at point.
+If the heading has property DISABLE-HOST-BLOCKING set to `t', unblock everything."
+  (when-let ((url (org-entry-get (point) "Source")))
+    (yant/unblock-host url))
+  (when (string= (org-entry-get (point) "DISABLE-HOST-BLOCKING") "t")
+    (yant/unblock-all-hosts)))
+
+(defun yant/restore-host-blocks ()
+  "Restore host blocking in qutebrowser."
+  (when yant/hosts-unblocked
+    (setq yant/hosts-unblocked nil)
+    (start-process-shell-command "Send message to qutebrowser"
+			         nil
+			         (format "pgrep qutebrowser && qutebrowser ':set content.host_blocking.whitelist \"\"'"))))
+
+(add-hook 'org-clock-in-hook #'yant/org-unblock-heading-source)
+(add-hook 'org-clock-out-hook #'yant/restore-host-blocks)
+
+
+#+end_src
+
 
 *** Preview
 :PROPERTIES:
