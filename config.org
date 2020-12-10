@@ -4569,6 +4569,9 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 :CREATED:  [2019-07-08 Mon 20:50]
 :END:
 **** Use spaces for indenting
+:PROPERTIES:
+:ID:       d1802888-2458-4d3c-9891-5c91fd11af6e
+:END:
 
 #+begin_src emacs-lisp
 (add-hook! emacs-lisp-mode (setq indent-tabs-mode nil))
@@ -11034,7 +11037,6 @@ I define two link types for capturing:
 ))
 #+end_src
 
-
 **** Refile
 :PROPERTIES:
 :ID:       c048269c-57b9-434a-a19b-6da8d70e5e0f
@@ -11136,7 +11138,6 @@ will be refiled."
 #+begin_src emacs-lisp
 )
 #+end_src
-
 
 **** TODO Export
 :PROPERTIES:
@@ -14082,6 +14083,9 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
   (global-keyfreq-mode))
 #+end_src
 ** TODO Fixing slow org priority regexp
+:PROPERTIES:
+:ID:       d7b2907d-ac99-4d08-ac79-eee90d1381f2
+:END:
 
 #+begin_src emacs-lisp
 (setq org-priority-regexp "^\\*+.*\\(\\[#\\([A-Z0-9]+\\)\\] ?\\)")
