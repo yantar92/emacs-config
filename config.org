@@ -8432,7 +8432,7 @@ If LOCAL is non-nil, check only local TAG."
 		       (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))))
               ("h" "Hanging tasks"
-               ((tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"TODO\""
+               ((tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY-AREA+TODO=\"TODO\""
 			   ((org-agenda-overriding-header "All other active tasks")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
