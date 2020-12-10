@@ -2599,9 +2599,15 @@ Highlight text matching =isearch=.
 (setf search-highlight t)
 (setf query-replace-highlight t))
 #+end_src
-*** Highlight recent changes\actions
+*** NEXT Highlight recent changes\actions
+SCHEDULED: <2020-12-10 Thu>
 :PROPERTIES:
 :ID:       02c8a98c-a38a-4054-a0a2-400f6757693b
+:SUMMARY:  Fix errors in pull request
+:END:
+:LOGBOOK:
+- Note taken on [2020-12-10 Thu 10:04] \\
+  Fix errors in pull request
 :END:
 
 Highlight recently changed text. 
@@ -2614,9 +2620,8 @@ Especially useful when inserting/replacing big chunks of text.
   :if init-flag
   :straight (goggles :host github :repo "minad/goggles" :local-repo "~/Git/goggles"
                      :fork (:host github :repo "yantar92/goggles"))
-  :diminish t
-  :config
-  (goggles-mode t)
+  :diminish goggles-mode
+  ;; :hook ((text-mode prog-mode) . goggles-mode)
   :custom
   (goggles-pulse nil))
   #+end_src
