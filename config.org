@@ -14075,6 +14075,20 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 #+begin_src emacs-lisp
 (defun org-eldoc-documentation-function (&rest _) "")
 #+end_src
+*** SOMEDAY Prevent some functions from native-compilation :SOMEDAY:
+:PROPERTIES:
+:SUMMARY:  Report to emacs
+:END:
+
+#+begin_src emacs-lisp
+(setq comp-deferred-compilation-deny-list
+      '("pdf-cache"))
+#+end_src
+
+:LOGBOOK:
+- Note taken on [2020-12-10 Thu 21:34] \\
+  Report to emacs
+:END:
 ** Summary of key bindings
 *** COMMENT Command frequency measurement in emacs
 :PROPERTIES:
