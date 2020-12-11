@@ -7718,6 +7718,7 @@ CLOCK: [2019-04-24 Wed 15:43]--[2019-04-24 Wed 15:46] =>  0:03
 :END:
 #+begin_src emacs-lisp
 (use-package org-attach
+  :demand t
   :config
 #+end_src
 ***** Default attachment directory + multi-selection for attach
