@@ -12101,6 +12101,7 @@ Realising the described problem for myself, I follow the above recommendations a
 
 #+name: blocked-hosts
 | reddit.com      |
+| www.reddit.com  |
 | old.reddit.com  |
 | author.today    |
 | facebook.com    |
@@ -12111,14 +12112,14 @@ Realising the described problem for myself, I follow the above recommendations a
 
 #+name: format-blocked-hosts
 #+begin_src emacs-lisp :tangle no :var hosts=blocked-hosts :results raw silent
-(mapconcat (lambda (host) (format "0.0.0.0 %s" (car host))) hosts "\n")
+(mapconcat (lambda (host) (format "127.0.0.1 %s" (car host))) hosts "\n")
 #+end_src
 
 #+begin_src conf :tangle ~/.config/qutebrowser/blocked-hosts :noweb tangle
 <<format-blocked-hosts()>>
 #+end_src
 
-The access is only restored while I am doing a task related to that domain (and containing =SOURCE= property with the domain URL)
+The access is only restored while I am doing a task related to that domain (and containing =Source= property with the domain URL)
 
 #+begin_src emacs-lisp
 (defvar yant/hosts-unblocked nil
@@ -12130,7 +12131,7 @@ The access is only restored while I am doing a task related to that domain (and 
     (insert-file-contents "~/.config/qutebrowser/blocked-hosts")
     (goto-char (point-min))
     (let ((hosts))
-      (while (re-search-forward "0\\.0\\.0\\.0 \\(.+\\) *$" nil t)
+      (while (re-search-forward "127\\.0\\.0\\.1 \\(.+\\) *$" nil t)
         (when (or (s-contains-p (match-string 1) url)
                   (and (s-contains-p "reddit" url)
                        (s-contains-p "reddit" (match-string 1))))
@@ -12148,7 +12149,7 @@ The access is only restored while I am doing a task related to that domain (and 
     (insert-file-contents "~/.config/qutebrowser/blocked-hosts")
     (goto-char (point-min))
     (let ((hosts))
-      (while (re-search-forward "0\\.0\\.0\\.0 \\(.+\\) *$" nil t)
+      (while (re-search-forward "127\\.0\\.0\\.1 \\(.+\\) *$" nil t)
         (push (match-string 1) hosts))
       (when hosts
         (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
@@ -12161,6 +12162,8 @@ The access is only restored while I am doing a task related to that domain (and 
   "Unblock (`yant/unblock-host') url value stored in Source property of the task at point.
 If the heading has property DISABLE-HOST-BLOCKING set to `t', unblock everything."
   (when-let ((url (org-entry-get (point) "Source")))
+    (if (string-match ".+@\\(.+\\)" url) ; email
+        (setq url (match-string 1 url)))
     (yant/unblock-host url))
   (when (string= (org-entry-get (point) "DISABLE-HOST-BLOCKING") "t")
     (yant/unblock-all-hosts)))
