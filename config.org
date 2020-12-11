@@ -84,7 +84,7 @@ Setup environment variables
 *************** END
 
 #+begin_src emacs-lisp
-  (setenv "PATH" (concat (getenv "PATH") ":/home/yantar92/bin/"))
+  (setenv "PATH" (concat (getenv "PATH") ":/home/yantar92/.local/bin/"))
 #+end_src
 
 Ensure one server instance
@@ -2939,7 +2939,7 @@ Just use external browser to open URLs.
   :custom
   (browse-url-browser-function 'yant/browse-url)
   ;; (browse-url-browser-function 'browse-url-generic)
-  (browse-url-generic-program "/home/yantar92/bin/qutebrowser-call.sh")
+  (browse-url-generic-program "qutebrowser-call.sh")
   :config
   (use-package notmuch
     :after w3m
@@ -4891,7 +4891,7 @@ This is also required for =cdlatex= to work with org-mode.
 :ID:       86adb126-19e5-4438-acab-729e58abe7d1
 :END:
 
-#+begin_src bash :tangle ~/bin/pdf-compress.sh :shebang #!/bin/bash
+#+begin_src bash :tangle ~/.local/bin/pdf-compress.sh :shebang #!/bin/bash
 INPUT="$1"
 if [[ ! -f "$INPUT" ]]; then
    echo "File not exist \"$INPUT\""
@@ -5709,7 +5709,7 @@ the notmuch-tree buffer if it appears after closing the message."
 	       (notmuch-mua-send-and-exit)
 	       (start-process "Update tags"
 			      nil
-			      "/home/yantar92/bin/notmuch-new-messages-list.sh"))
+			      "notmuch-new-messages-list.sh"))
 	     notmuch-message-mode-map))
 #+end_src
 **** Tagging functions
@@ -6016,7 +6016,7 @@ I am using w3m as rendered. It should also be [[id:66a5989e-9d17-40af-b680-494ef
 :END:
 
 #+begin_src conf :tangle ~/.mailcap
-text/html; /home/yantar92/bin/qutebrowser-call.sh %s
+text/html; qutebrowser-call.sh %s
 text/*; mimeopen "%s"
 application/*; mimeopen %s
 video/*; mimeopen "%s"
@@ -6277,7 +6277,7 @@ The best way for quick scanning across recent article titles is RSS. I use [[id:
 
 However, Elfeed does not have the translation feature, so I am going to implement ad-hoc translation utilising [[id:718fd820-8412-49f4-806a-7667fc6d12de][translate-shell]] and [[id:cbeef2db-d5ce-4a80-ba3e-276eef64bd96][langdetect]].
 
-#+begin_src python :tangle ~/bin/detect-language :shebang #!/usr/bin/python
+#+begin_src python :tangle ~/.local/bin/detect-language :shebang #!/usr/bin/python
 from langdetect import detect
 import sys
 text=' '.join(sys.argv[1:])
@@ -7101,8 +7101,8 @@ Adjust some of the external application programs
 		      ("\\.x?html?\\'" . default)
 		      ("\\.pdf\\'" . default)
 		      ("\\.mp4\\'" . "mpv %s")
-		      ("\\.tiff?\\'" . "/home/yantar92/bin/feh-open %s")
-		      ("\\.png?\\'" . "/home/yantar92/bin/feh-open %s")
+		      ("\\.tiff?\\'" . "feh-open %s")
+		      ("\\.png?\\'" . "feh-open %s")
 		      )
       )
 #+end_src
@@ -9970,7 +9970,7 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
               (setq-local backup-inhibited t)
               (insert (format "%s\n%s\n%s" str time-balance org-time-multiplier))))))
     (yant/save-noclock))
-  (async-start-process "Update balance widget" "/home/yantar92/bin/balance-monitor.sh" #'ignore))
+  (async-start-process "Update balance widget" "balance-monitor.sh" #'ignore))
 
 (add-hook 'org-clock-in-hook 'yant/save-clocked 'append)
 (add-hook 'org-clock-out-hook 'yant/save-clocked 'append)
@@ -11186,8 +11186,8 @@ The subheadings below such a headlines are promoted up *1 level*.
 (setq org-export-exclude-tags '("NOEXPORT"))
 (setq org-latex-pdf-process
       (quote
-       ;; ("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "/home/yantar92/bin/pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
-       ("latexmk -xelatex -shell-escape -bibtex -f -output-directory=%o %f" "/home/yantar92/bin/pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
+       ;; ("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
+       ("latexmk -xelatex -shell-escape -bibtex -f -output-directory=%o %f" "pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
        ))
 (setq org-export-with-timestamps nil)
 (setq org-export-in-background nil)
