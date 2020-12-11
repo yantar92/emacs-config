@@ -11027,10 +11027,11 @@ I define two link types for capturing:
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO %? #email -> $:from %:subject :EMAIL:"
+			  ("* TODO %? #email -> %:from %:subject :EMAIL:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":EMAIL-SOURCE: %l"
+                           ":Source: %:fromaddress"
 			   ":END:"))))
            'replace)
 #+end_src
