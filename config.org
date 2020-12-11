@@ -2599,13 +2599,15 @@ Highlight text matching =isearch=.
 (setf search-highlight t)
 (setf query-replace-highlight t))
 #+end_src
-*** NEXT Highlight recent changes\actions
-SCHEDULED: <2020-12-10 Thu>
+*** NEXT Highlight recent changes\actions :@home:
+SCHEDULED: <2020-12-11 Fri>
 :PROPERTIES:
 :ID:       02c8a98c-a38a-4054-a0a2-400f6757693b
 :SUMMARY:  Fix errors in pull request
+:SHOWFROMDATE: 2020-12-10 18:00
 :END:
 :LOGBOOK:
+CLOCK: [2020-12-10 Thu 21:45]--[2020-12-10 Thu 21:47] =>  0:02
 - Note taken on [2020-12-10 Thu 10:04] \\
   Fix errors in pull request
 :END:
@@ -7357,6 +7359,7 @@ Show parent project as top (or second top) suggestion."
 			 :complete #'org-id-link-complete
                          :desk #'org-id-link-desk)
 #+end_src
+
 
 ****** TODO Footnotes
 :PROPERTIES:
