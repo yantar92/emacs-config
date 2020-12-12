@@ -7,13 +7,16 @@
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
 #+ARCHIVE: ::* Archived
 
-* NEXT Emacs configuration :EMACS:COMMON:
+* HOLD Emacs configuration :EMACS:COMMON:HOLD:
 :PROPERTIES:
 :ID:       a27092a6-25a6-417f-818f-7f83325b58b3
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
 :CREATED:  [2020-05-28 Thu 13:55]
+:SUMMARY:  No active work before org-mode clears
 :END:
 :LOGBOOK:
+- State "HOLD"       from "NEXT"          [2020-12-11 Fri 16:43] \\
+  No active work before org-mode clears
 CLOCK: [2020-04-09 Thu 17:43]--[2020-04-09 Thu 17:44] =>  0:01
 CLOCK: [2019-12-27 Fri 23:03]--[2019-12-27 Fri 23:04] =>  0:01
 CLOCK: [2019-12-19 Thu 12:52]--[2019-12-19 Thu 12:53] =>  0:01
@@ -3541,7 +3544,6 @@ Disabling it
 
 #+end_src
 
-
 ***** Appearance
 ****** COMMENT File icons
 :PROPERTIES:
@@ -4744,12 +4746,13 @@ It warns me if the original definition changes from what I expect.
 :ID:       2fb97bdf-d310-4e5a-8266-d68a1ae10298
 :END:
 
-*************** HOLD [#A] revise config from here :HOLD:
+*************** SOMEDAY [#A] revise config from here :SOMEDAY:
 :PROPERTIES:
 :SHOWFROMDATE: 2020-05-13 18:00
 :SUMMARY:  Later, when I do not have more important emacs things to do
 :END:
 :LOGBOOK:
+- State "SOMEDAY"    from "HOLD"          [2020-12-11 Fri 15:48]
 - State "HOLD"       from "DOING"         [2020-05-13 Wed 21:56] \\
   Later, when I do not have more important emacs things to do
 CLOCK: [2020-05-05 Tue 23:50]--[2020-05-06 Wed 00:09] =>  0:19
@@ -6852,6 +6855,7 @@ Do not show consistency graph in agenda
 :PROPERTIES:
 :ID:       3edce153-2927-4a2d-8b45-87d9a6151913
 :END:
+
 The project is an item with todo keyword and subtask.
 #+begin_src emacs-lisp
 (defun bh/is-project-p ()
@@ -8723,7 +8727,6 @@ Also, no contexts are prompted in Inbox agenda.
                                                   tags-exclude))
 	      (org-agenda-filter-apply org-agenda-tag-filter 'tag t))))))))
 #+end_src
-
 
 ***** Focused daily agenda
 :PROPERTIES:
@@ -12206,7 +12209,6 @@ If the heading has property DISABLE-HOST-BLOCKING set to `t', unblock everything
 
 
 #+end_src
-
 
 *** Preview
 :PROPERTIES:
