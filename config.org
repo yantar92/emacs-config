@@ -3627,7 +3627,7 @@ Hide "." and ".."
 
 #+begin_src emacs-lisp
 (use-package dired
-  :custom (dired-listing-switches "-DlhGga"))
+  :custom (dired-listing-switches "-DlhGgA"))
 #+end_src
 
 ****** Hide details
@@ -3663,7 +3663,7 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 (define-advice ange-ftp-ls (:around (oldfun file lsargs parse &optional no-error wildcard) force-default-ls-switches)
   "Always use -al in ftp."
   (unless (string= lsargs "-al")
-    (setq lsargs "-al --dired"))
+    (setq lsargs "-Al --dired"))
   (apply oldfun (list file "-al" parse no-error wildcard)))
 #+end_src
 
