@@ -13597,7 +13597,7 @@ To my horror, a single =org-font-lock-add-priority-faces= takes 98% of the whole
 :ID:       b195d9ea-e3e0-476e-b898-43b69fbd365d
 :END:
 #+begin_src emacs-lisp
-(setq org-catch-invisible-edits 'show-and-error)
+(setq org-catch-invisible-edits 'smart)
 (setq org-startup-folded nil)
 (setq org-fold-show-context-detail
       '((agenda . lineage) ;; instead of "local"
