@@ -1667,21 +1667,21 @@ The problem is that it may mess up the cases when I want to assign special meani
   :diminish boon-local-mode
   :config
   (setq boon-special-mode-list
-	'(debugger-mode edebug-mode ediff-mode org-agenda-mode cfw:calendar-mode
-			notmuch-search-mode notmuch-show-mode elfeed-search-mode
-			notmuch-tree-mode elfeed-show-mode pomidor-mode mingus-mode
-			notmuch-hello-mode ledger-report-mode help-mode
-			dired-mode image-dired-thumbnail-mode image-dired-display-image-mode
-                        pdf-view-mode helpful-mode magit-file-mode
-			magit-status-mode magit-revision-mode magit-log-mode
-                        magit-diff-mode timer-list-mode
-                        org-lint--report-mode image-mode
-			mingus-playlist-mode mingus-browse-mode
-			mingus-help-mode calendar-mode undo-tree-visualizer-mode
-                        profiler-report-mode fundamental-mode explain-pause-mode
-                        bm-show-mode
-                        Info-mode woman-mode Man-mode
-                        eaf-mode image-mode))
+	'( debugger-mode edebug-mode ediff-mode org-agenda-mode cfw:calendar-mode
+	   notmuch-search-mode notmuch-show-mode elfeed-search-mode
+	   notmuch-tree-mode elfeed-show-mode pomidor-mode mingus-mode
+	   notmuch-hello-mode ledger-report-mode help-mode
+	   dired-mode image-dired-thumbnail-mode image-dired-display-image-mode
+           pdf-view-mode helpful-mode magit-file-mode
+	   magit-status-mode magit-revision-mode magit-log-mode
+           magit-diff-mode timer-list-mode
+           org-lint--report-mode image-mode
+	   mingus-playlist-mode mingus-browse-mode
+	   mingus-help-mode calendar-mode undo-tree-visualizer-mode
+           profiler-report-mode fundamental-mode explain-pause-mode
+           bm-show-mode font-lock-studio-mode
+           Info-mode woman-mode Man-mode
+           eaf-mode image-mode))
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   
@@ -4336,7 +4336,10 @@ Just invoke =M-x font-lock-studio= for interactive debugging.
 #+begin_src emacs-lisp
 (use-package font-lock-studio
   :if init-flag
-  :straight (font-lock-studio :type git :host github :repo "Lindydancer/font-lock-studio"))
+  :straight (font-lock-studio :type git :host github :repo "Lindydancer/font-lock-studio")
+  :config
+  (bind-keys :map font-lock-studio-mode-map
+             ("d" . font-lock-studio-step-into)))
 #+end_src
 
 The same author also wrote font-lock profiler: [[id:github_lindydancer_lindy_font_lock_profil_cover][Lindydancer [Github] Lindydancer Font-Lock-Profiler: Coverage and Timing Tool for Font-Lock Keywords]]
