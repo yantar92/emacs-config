@@ -6939,7 +6939,16 @@ The project with parent projects.
 	    (org-todo "TODO")))))))
 (add-hook 'org-after-todo-state-change-hook 'yant/mark-todo-parent-tasks-next 'append)
   #+end_src
-****** TODO Standard projects
+****** Tracked projects (listed in GTD project list)
+:PROPERTIES:
+:ID:       52d75b9a-a664-4504-bd64-647d1e955718
+:CUSTOM_ID: 7
+:CREATED: [2020-10-11 Sun]
+:END:
+
+The above definition of a project creates really many small projects and sub-projects. Eventually, the number becomes so high that it is nearly impossible to review them regularly (as recommended by GTD [[id:1f151305-2d61-42b9-9438-503c9b538352][Allen [2015] Getting things done]]). However, some particularly complex (or large) projects do need to be tracked manually to keep the number of daily tasks sane. These projects are marked with =:project:= tag and listed in [[id:d110dae9-f563-48bb-8293-a10b1afbe772][weekly review]].
+Sometimes, I can even mark sub-projects with this tag if the sub-projects are important enough to review the progress regularly.
+
 **** Journal
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 18:19]
