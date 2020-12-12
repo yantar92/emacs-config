@@ -11055,6 +11055,16 @@ I define two link types for capturing:
 ))
 #+end_src
 
+****** Do not keep website text together with personal notes
+:PROPERTIES:
+:ID:       4d551c5a-fe9e-4a10-9fb8-61a206025d67
+:CUSTOM_ID: 8
+:END:
+
+For some time, I was trying to scrape the website text in addition to the title. However, it turned out to mess the ease of full-text search across org-mode files. Text written by other people tends to use different keywords in comparison with my own notes. As a result, my org-mode text searches often yield irrelevant matches - a big problem considering the amount of notes I have in my org files.
+
+For now, I avoid capturing website text directly into org. Instead, I write my own notes about the most important ideas from that website/article. This is also recommended (with providing relevant scientific proofs) in [[id:4ceda166-b266-4746-93cb-b1c181ec25cd][Ahrens (2017) How to Take Smart Notes]]
+
 **** Refile
 :PROPERTIES:
 :ID:       c048269c-57b9-434a-a19b-6da8d70e5e0f
