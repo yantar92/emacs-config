@@ -1294,7 +1294,7 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 						     :family "file-icons"
 						     :foreground ,(face-background 'region)
 						     :height 0.6)))
-			      (propertize (all-the-icons-fileicon "factor" :v-adjust 0.04)
+			      (propertize (all-the-icons-faicon "level-down" :v-adjust 0.04)
 					  'face `((
 						   :family "Material Icons"
 						   :foreground ,(face-background 'region)
