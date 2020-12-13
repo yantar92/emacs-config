@@ -14109,6 +14109,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 *** SOMEDAY Prevent some functions from native-compilation :SOMEDAY:
 :PROPERTIES:
 :SUMMARY:  Report to emacs
+:ID:       1e3165d8-789d-466c-ab42-4deeb129476d
 :END:
 
 #+begin_src emacs-lisp
