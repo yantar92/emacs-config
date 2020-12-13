@@ -4344,6 +4344,17 @@ The same author also wrote font-lock profiler: [[id:github_lindydancer_lindy_fon
   :if init-flag
   :straight (font-lock-profiler :type git :host github :repo "Lindydancer/font-lock-profiler"))
 #+end_src
+*** Profiling font-lock
+
+Similar to the problem with debugging, profiling the time spend on fontification can be tricky.
+=font-lock-profiler= helps with finding bottlenecks in org-fold.
+
+#+begin_src emacs-lisp
+(use-package font-lock-profiler
+  :if init-flag
+  :straight (font-lock-profiler :host github :repo "Lindydancer/font-lock-profiler"))
+#+end_src
+
 
 ** Programming & emacsing
 :PROPERTIES:
