@@ -9686,13 +9686,23 @@ into (not QUERY)."
   (defun yant/helm-org-ql-create-link (marker)
     "Insert link to MARKER at point."
     (insert (org-with-point-at marker (org-store-link nil))))
+  (defun yant/helm-org-ql-insert-url (marker)
+    "Insert URL from link at point."
+    (let ((link (org-entry-get marker "Source")))
+      (save-match-data
+        (string-match "^\\(?:\\[\\[\\)?\\([^]]+\\)" link)
+        (insert (match-string 1 link)))))
+  (defun yant/helm-org-ql-open-url (marker)
+    "Open URL from link"
+    (org-open-link-from-string (org-entry-get marker "Source")))
   :custom
-  (helm-org-ql-actions '(("Go to heading" . helm-org-ql-show-marker)
-			 ("Insert link to heading" . yant/helm-org-ql-create-link)
+  (helm-org-ql-actions '(("Insert link to heading" . yant/helm-org-ql-create-link)
+                         ("Go to heading" . helm-org-ql-show-marker)
+                         ("Open heading source" . yant/helm-org-ql-open-url)
+                         ("Insert URL of heading" . yant/helm-org-ql-insert-url)
                          ("Refile heading(s) to heading at point" . helm-org--refile-heading-here)))
   )
 #+end_src
-
 
 ***** Live (=helm-org-ql=) search in org
 :PROPERTIES:
