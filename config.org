@@ -13916,7 +13916,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 (use-package org-crypt
   :after org
   :custom
-  (org-crypt-key nil)
+  (org-crypt-key "Ihor Radchenko")
   :config
   (org-crypt-use-before-save-magic))
 #+end_src
