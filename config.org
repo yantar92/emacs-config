@@ -8157,7 +8157,7 @@ CLOSED: [2020-08-11 Tue 22:10]
 #+begin_src emacs-lisp
 (define-advice org-attach-dir (:filter-return (dir) yant/org-attach-use-attach-dir-inheritance -100)
   "Use :ATTACH_DIR_INHERIT: property."
-  (let ((attach-dir-inherited (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
+  (let ((attach-dir-inherited (and (not (string= "nil" (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT" t)))
   				   (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))
 				   (org-with-point-at org-entry-property-inherited-from (org-attach-dir)))))
     (or attach-dir-inherited
