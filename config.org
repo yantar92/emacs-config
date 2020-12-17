@@ -11797,7 +11797,9 @@ Leaving the code below for reference.
 :END:
 #+begin_src emacs-lisp
 (setq org-ditaa-jar-path "~/.emacs.d/site-lisp/ditaa.jar")
-(setq org-babel-mathematica-command "~/bin/MathematicaScript -script")
+(use-package ob-mathematica
+  :init
+  (setq org-babel-mathematica-command "wolfram -script"))
 
 (org-babel-do-load-languages 'org-babel-load-languages
 			     '(
