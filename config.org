@@ -12899,10 +12899,7 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   :custom
   (org-auto-align-tags nil)
   :config
-  ;; (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords 'org-mode '(yant/org-align-tags) t)) 100)
-  (add-hook! 'org-mode-hook (add-to-list 'font-lock-extra-managed-props 'org-tag-aligned))
 
-  (add-hook! 'org-mode-hook (setq-local adaptive-fill-function #'org-adaptive-fill-function))
   (defun org-adaptive-fill-function ()
     "Fill headlines to the beginning of headline in org."
     (save-excursion
@@ -12911,7 +12908,7 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
         (looking-at org-complex-heading-regexp)
         (goto-char (match-beginning 4)) ;; at headline
         (make-string (current-column) ?\ ))))
-
+  (add-hook! 'org-mode-hook (setq-local adaptive-fill-function #'org-adaptive-fill-function))
   (defun yant/org-align-tags (limit &optional force)
     "Align all the tags in org buffer."
     (save-match-data
@@ -12929,11 +12926,13 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 				 (match-end 2)
 				 'display
 				 `(space . (:align-to (- right
-							 (,(+ 3 ;; no idea, but otherwise it is sometimes not enough
-							      (string-display-pixel-width org-ellipsis)
+							 (,(+ (string-display-pixel-width org-ellipsis)
 							      (string-display-pixel-width (or (match-string 3)
 											      ""))))))))))))))
-
+  ;; (add-hook! 'pretty-symbols-mode-hook (save-excursion (goto-char (point-min)) (yant/org-align-tags (point-max) t)))
+  ;; (add-hook! 'org-mode-hook (save-excursion (goto-char (point-min)) (yant/org-align-tags (point-max) t)) :append)
+  ;; (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords 'org-mode '(yant/org-align-tags) t)))
+  ;; (add-hook! 'org-mode-hook (add-to-list 'font-lock-extra-managed-props 'org-tag-aligned))
   )
 #+end_src
 
