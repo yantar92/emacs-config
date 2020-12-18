@@ -9730,18 +9730,14 @@ into (not QUERY)."
 :CREATED:  [2018-09-05 Wed 06:39]
 :ID:       8074623d-bc14-43c7-908c-28213b2b6149
 :END:
+
 #+BEGIN_SRC emacs-lisp
 (use-package org-contacts
   :init
   (setq org-contacts-files '("/home/yantar92/Org/contacts.org"))
   :config
   (use-package helm-org-contacts
-    :straight (helm-org-contacts :host github :repo "tmalsburg/helm-org-contacts"))
-  (org-link-set-parameters "org-contact"
-			   :follow 'org-contacts-link-open
-			   :complete 'org-contacts-link-complete
-			   :store nil
-			   :face 'org-contacts-link-face))
+    :straight (helm-org-contacts :host github :repo "tmalsburg/helm-org-contacts")))
 #+END_SRC
 
 *************** TODO make proper contacts link type
