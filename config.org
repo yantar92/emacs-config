@@ -5493,7 +5493,7 @@ Sort entries by Gnus-like score
   (setq elfeed-search-print-entry-function #'elfeed-score-print-entry))
 #+end_src
 
-And group them by rss feed
+And group them by rss feed, which further helps to focus on a single topic at a time.
 
 #+begin_src emacs-lisp
   (use-package elfeed-score
