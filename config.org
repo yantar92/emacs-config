@@ -7,7 +7,7 @@
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
 #+ARCHIVE: ::* Archived
 
-* HOLD Emacs configuration :EMACS:COMMON:HOLD:
+* HOLD Emacs configuration :project:EMACS:COMMON:HOLD:
 :PROPERTIES:
 :ID:       a27092a6-25a6-417f-818f-7f83325b58b3
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
@@ -4345,6 +4345,9 @@ The same author also wrote font-lock profiler: [[id:github_lindydancer_lindy_fon
   :straight (font-lock-profiler :type git :host github :repo "Lindydancer/font-lock-profiler"))
 #+end_src
 *** Profiling font-lock
+:PROPERTIES:
+:ID:       fa7120dc-5089-46c8-a0e7-091cf597288e
+:END:
 
 Similar to the problem with debugging, profiling the time spend on fontification can be tricky.
 =font-lock-profiler= helps with finding bottlenecks in org-fold.
