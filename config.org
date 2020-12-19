@@ -3428,7 +3428,7 @@ Increase the thumbnail size
   :if init-flag
   :custom
   ;; Default is 100.
-  (image-dired-thumb-size 200))
+  (image-dired-thumb-size 400))
 #+end_src
 
 ***** Delete to trash
