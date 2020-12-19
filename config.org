@@ -10484,7 +10484,7 @@ All these templates generally record the creation time in =:CREATED:=
 # name: todo_capture
 # key: todo_capture_
 # --
-TODO ${1:Title} `(s-trim-right (org-capture-fill-template "%a"))`
+TODO ${1:Title} ${2:`(s-trim-right (org-capture-fill-template "%a"))`}
 :PROPERTIES:
 :CREATED: `(s-trim-right (org-capture-fill-template "%U"))`
 :END:
