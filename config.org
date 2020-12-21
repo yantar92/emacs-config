@@ -10111,7 +10111,8 @@ Sometimes I need to jump to some urgent task. After it is done, I hate searching
 Sometimes, I clock in some task in the evening, but fall asleep. 
 That excess clocked time is not useful.
 So, let Emacs automatically clock out the current task when Emacs is idle for a long time
-#+begin_src emacs-lisp
+[2020-12-20 Sun] It creates huge number of dangling clocks, probably affecting performance. Disabling
+#+begin_src emacs-lisp :tangle no
 (use-package org-clock
   :if init-flag
   :custom
