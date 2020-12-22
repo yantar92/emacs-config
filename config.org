@@ -13130,7 +13130,7 @@ Optional MODE specifies major mode used for display."
 			 (match-beginning 1)
                          'display
                          `(space . (:align-to (- right
-						 (,(string-display-pixel-width (match-string 1)))
+						 (,(string-display-pixel-width (match-string 1) 'org-mode))
                                                  1)))))))
 
 (defun org-agenda-adaptive-fill-function ()
@@ -13187,7 +13187,7 @@ Optional MODE specifies major mode used for display."
 					     (- window-width
 						tag-width
 						(string-display-width (s-concat ellipsis gap)))
-					     nil 'hide ellipsis))
+                                             nil 'hide ellipsis))
 	      (goto-char (next-single-char-property-change (point-at-bol) 'truncated nil (point-at-eol)))
 	      (let ((truncated-string (buffer-substring (point) (next-single-char-property-change (point) 'truncated nil (point-at-eol)))))
 		(unless (seq-empty-p truncated-string)
