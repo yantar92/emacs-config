@@ -14188,6 +14188,7 @@ git config --global core.attributesfile ~/.gitattributes
 	email = yantar92@gmail.com
 	name = Ihor Radchenko
 	emacs = yantar92@gmail.com
+        signingkey = 6470762A7DA11D8B
 [github]
 	user = yantar92
 
