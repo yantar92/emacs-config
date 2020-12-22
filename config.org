@@ -4357,6 +4357,18 @@ Similar to the problem with debugging, profiling the time spend on fontification
   :if init-flag
   :straight (font-lock-profiler :host github :repo "Lindydancer/font-lock-profiler"))
 #+end_src
+*** Profiler
+**** Appearance
+***** Allow more space for the function name in profiler report
+
+Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm@muc.de> A tip: how to display longer function names in profiler-report]]
+
+#+begin_src emacs-lisp
+(use-package profiler
+  :init
+  (setq profiler-report-cpu-line-format '((70 left)
+					  (14 right ((9 right) (5 right))))))
+#+end_src
 
 
 ** Programming & emacsing
