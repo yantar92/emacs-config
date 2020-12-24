@@ -13500,6 +13500,24 @@ Use normal colour for the default agenda face
 (set-face-attribute 'org-agenda-structure nil
 		    :foreground (face-foreground 'default))
 #+end_src
+
+***** Highlight items with =:FLAGGED:= tag
+
+#+begin_src emacs-lisp
+(defface yant/org-agenda-highlight-face '((t :weight bold :background "Lightyellow1"))
+  "Face used to highlight flagged entries in agenda view.")
+(defun yant/org-agenda-highlight-flagged ()
+  "Highlight flagged items in agenda."
+  (let ((inhibit-read-only t))
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward ":FLAGGED:" nil t)
+        (font-lock-prepend-text-property (line-beginning-position) (line-end-position) 'face 'yant/org-agenda-highlight-face)))))
+(add-hook 'org-agenda-finalize-hook
+	  #'yant/org-agenda-highlight-flagged)
+
+#+end_src
+
 **** Blocks (source blocks, quotes, etc)
 :PROPERTIES:
 :ID:       6fed68f0-c4ca-43f3-b487-4b58d9dc1315
