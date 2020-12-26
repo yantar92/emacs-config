@@ -11034,10 +11034,9 @@ I define two link types for capturing:
 					     (s-join "\n"
 						     '("- [ ] download and attach pdf"
 						       "- [ ] check if bibtex entry has missing fields"
-						       "- [ ] read paper"
+						       "- [ ] read paper capturing interesting references"
 						       "- [ ] check citing articles"
-						       "- [ ] check related articles"
-						       "- [ ] check references"))
+						       "- [ ] check related articles"))
                                            ""))
 			    :template
 			    ("%{fetch-bibtex}* TODO %? %{title} :BOOKMARK:%{type-tag}:"
