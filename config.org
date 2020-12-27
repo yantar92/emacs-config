@@ -4370,7 +4370,6 @@ Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm
 					  (14 right ((9 right) (5 right))))))
 #+end_src
 
-
 ** Programming & emacsing
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
