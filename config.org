@@ -1681,11 +1681,10 @@ The problem is that it may mess up the cases when I want to assign special meani
   (defvar boon-insert-state-major-mode-list '()
     "List of major modes started with insert state active.")
   
-  (setq boon-insert-state-major-mode-list '(
-					    notmuch-message-mode eshell-mode
-                                            shell-mode calc-mode
-                                            term-mode vterm-mode
-                                            magit-popup-mode))
+  (setq boon-insert-state-major-mode-list '( ediff-mode notmuch-message-mode eshell-mode
+                                             shell-mode calc-mode
+                                             term-mode vterm-mode
+                                             magit-popup-mode))
   (use-package org
     :config
     (add-hook 'org-log-buffer-setup-hook (boon-set-state 'boon-insert-state)))
