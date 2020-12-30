@@ -2017,6 +2017,7 @@ I use company for completion just because it is easy to use.
   :if init-flag
   :straight t
   :diminish (company-mode . " ⭿")
+  :hook (prog-mode . company-mode)
   :custom
   (company-idle-delay 0.05)
   (company-minimum-prefix-length 2)
@@ -2024,8 +2025,6 @@ I use company for completion just because it is easy to use.
   (company-require-match nil)
   (company-transformers '(company-sort-by-occurrence))
   (company-backends '(company-capf company-files))
-  :init
-  (global-company-mode)
   :config
   (bind-key* "M-/" #'company-complete)
   :bind (:map company-active-map
