@@ -11715,6 +11715,58 @@ This function is called by `org-archive-hook'.  The option
 	 (org-attach-delete-all t))))))
 #+end_src
 
+If the archiving is done just with =ARCHIVE= tag, suggest to move the attachments to archive instead.
+#+begin_src emacs-lisp
+(defvar yant/org-archive-archive-path "/mnt/Backup/Archive/"
+  "Path to system archive location.")
+(defun org-archive-move-maybe (&optional unarchive)
+  "Maybe move subtree attachments to Archive folder when archiving.
+Unarchive when UNARCHIVE is non-nil."
+  (org-with-point-at-org-buffer
+   (when (and (org-at-heading-p)
+	      (member org-attach-auto-tag (org-get-tags nil t));; do not ask if no attachments
+	      )
+     (let ((heading (org-get-heading nil nil 'norpiority 'nocomment)))
+       (when (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
+								     (interactive)
+								     (dired-noselect dir nil) )))
+			         (org-attach-reveal-in-emacs))))
+               (save-window-excursion
+                 (dired-pop-to-buffer dired-buf)
+                 (select-window (old-selected-window))
+	         (prog1
+		     (yes-or-no-p (format "%s: %s all attachments? "
+					  heading
+                                          (if unarchive
+                                              "Unarchive"
+                                            "Archive")))
+                   (kill-buffer dired-buf))))
+	 (while (not (file-exists-p yant/org-archive-archive-path))
+           (unless (yes-or-no-p (format "Archive location %s does not exist. Try again? " yant/org-archive-archive-path))
+             (user-error "Archive location not present.")))
+         (debug)
+         (when-let ((old-dir (org-attach-dir))
+                    (new-dir (if (not unarchive)
+                                 (let ((org-attach-id-dir yant/org-archive-archive-path))
+                                   (org-attach-dir 'create))
+                               (org-delete-property "DIR")
+                               (org-attach-dir t))))
+           (let ((attachments (directory-files old-dir 'full "^[^.]+")))
+             (mapc (lambda (file)
+                     (copy-file file (format "%s/%s" new-dir (file-name-nondirectory file)) nil t t t))
+                   attachments)
+             ;; Delete after successfully copy only for safety.
+             (mapc #'delete-file attachments)
+             (delete-directory old-dir)
+             (if (not unarchive)
+                 (org-set-property "DIR" new-dir)
+               (org-delete-property "DIR")))))))))
+
+(define-advice org-toggle-archive-tag (:before (&rest _) archive-attachments)
+  "Move attachments to/from archive directory."
+  (org-archive-move-maybe (member org-archive-tag (org-get-tags))))
+#+end_src
+
 Archive logbook
 Credit: https://www.reddit.com/r/orgmode/comments/dg43hs/can_i_archive_a_property_drawer/f3frk2n/
 *************** TODO automate this
