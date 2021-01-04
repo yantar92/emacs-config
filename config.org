@@ -4357,17 +4357,6 @@ Similar to the problem with debugging, profiling the time spend on fontification
 #+end_src
 *** Profiler
 **** Appearance
-***** Allow more space for the function name in profiler report
-
-Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm@muc.de> A tip: how to display longer function names in profiler-report]]
-
-#+begin_src emacs-lisp
-(use-package profiler
-  :init
-  (setq profiler-report-cpu-line-format '((70 left)
-					  (14 right ((9 right) (5 right))))))
-#+end_src
-
 ** Programming & emacsing
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
@@ -15077,5 +15066,23 @@ cd mpv_thumbnail_script
 make
 cp mpv_thumbnail_script_server.lua ~/.config/mpv/scripts/
 cp mpv_thumbnail_script_client_osc.lua ~/.config/mpv/scripts/
+#+end_src
+
+** Allow more space for the function name in profiler report :EMACS:COMMON:HOLD:
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-01-03 Sun 19:04
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Debugging/Profiler/Appearance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON HOLD
+:END:
+[2021-01-03 Sun] They actually changed it on master
+Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm@muc.de> A tip: how to display longer function names in profiler-report]]
+
+#+begin_src emacs-lisp
+(use-package profiler
+  :init
+  (setq profiler-report-cpu-line-format '((70 left)
+					  (14 right ((9 right) (5 right))))))
 #+end_src
 
