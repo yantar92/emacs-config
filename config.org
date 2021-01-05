@@ -12350,16 +12350,17 @@ Mindless browsing of websites like YouTube, Facebook, or reddit is a huge time-s
 Realising the described problem for myself, I follow the above recommendations and block certain website access from [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]]:
 
 #+name: blocked-hosts
-| reddit.com          |
-| www.reddit.com      |
-| old.reddit.com      |
-| author.today        |
-| facebook.com        |
-| youtube.com         |
-| www.youtube.com     |
-| ficbook.net         |
-| channelnewsasia.com |
-| github.com          |
+| reddit.com              |
+| www.reddit.com          |
+| old.reddit.com          |
+| author.today            |
+| facebook.com            |
+| youtube.com             |
+| www.youtube.com         |
+| ficbook.net             |
+| channelnewsasia.com     |
+| www.channelnewsasia.com |
+| github.com              |
 
 #+name: format-blocked-hosts
 #+begin_src emacs-lisp :tangle no :var hosts=blocked-hosts :results raw silent
@@ -12429,8 +12430,6 @@ If the heading has property DISABLE-HOST-BLOCKING set to `t', unblock everything
 
 (add-hook 'org-clock-in-hook #'yant/org-unblock-heading-source)
 (add-hook 'org-clock-out-hook #'yant/restore-host-blocks)
-
-
 #+end_src
 
 *** Preview
