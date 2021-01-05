@@ -13997,10 +13997,6 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 
 Some changes in org-files are very trivial and clutter more important changes I actually want to keep an eye on. So, I made a command hiding the trivial changes.
 
-[2020-11-21 Sat] Initially, I tried to commit such changes automatically. However, =magit= does it very too slowly in practice.
-[2020-12-01 Tue] Try again on SSD. Should be faster.
-[2020-12-02 Wed] Not really.
-
 #+begin_src emacs-lisp
 (use-package magit
   :if init-flag
@@ -14013,6 +14009,11 @@ Some changes in org-files are very trivial and clutter more important changes I 
 					       "^\\(-\\|\\+\\)SCHEDULED: .+\n"
 					       "^\\(-\\|\\+\\)$"
 					       "^\\(-\\|\\+\\)- Refiled on .+\n"
+                                               "^\\(-\\|\\+\\)- Refiled on .+\n"
+                                               "^\\(-\\|\\+\\)\\*+"
+                                               "^\\(-\\|\\+\\)CLOSED:"
+                                               "^\\+CLOSED:"
+                                               "^\\-SCHEDULED:"
 					       )
     "List of regexps hide in magit buffer.")
 
@@ -14023,33 +14024,33 @@ Some changes in org-files are very trivial and clutter more important changes I 
     (unless (eq major-mode 'magit-status-mode)
       (user-error "Thus command should run in magit-status window."))
     (magit-section-show-level-4-all)
-    (save-excursion
-      (mapc #'yant/magit-autocommit-by-regexp yant/magit-show-autocommit-regexps))
+    (magit-jump-to-unstaged)
+    (while (< (point) (or (save-excursion
+			    (unless (magit-jump-to-staged)
+			      (point)))
+                          (point-max)))
+      (let ((section (magit-current-section)))
+        (if (not (eq 'hunk (oref section type)))
+            (magit-section-forward)
+          (let ((hunk-text (buffer-substring-no-properties (oref section start) (oref section end))))
+            (if (with-temp-buffer
+                  (insert hunk-text)
+                  (goto-char 1)
+                  (keep-lines "^[+-].+$")
+                  (mapc (lambda (regexp)
+                          (goto-char 1)
+                          (delete-matching-lines regexp))
+                        yant/magit-show-autocommit-regexps)
+                  (string-empty-p (buffer-string)))
+                (magit-stage)
+              (magit-section-forward))))))
+    ;; (save-excursion
+    ;;   (mapc #'yant/magit-autocommit-by-regexp yant/magit-show-autocommit-regexps))
     (magit-jump-to-staged)
     (funcall-interactively #'magit-commit-create)
     (while (not (get-buffer "COMMIT_EDITMSG")) (sleep-for 1) (message "Waiting for commit buffer."))
     (with-current-buffer "COMMIT_EDITMSG"
       (insert (format-time-string "Autoupdate %Y-%m-%d" (current-time)))))
-
-  (defun yant/magit-autocommit-by-regexp (regexp)
-    "Commit all the lines matching regexp."
-    (interactive)
-    (goto-char (point-min))
-    (while (re-search-forward regexp
-			      (save-match-data
-				(save-excursion
-				  (unless (magit-jump-to-staged)
-				    (point))))
-                              t)
-      ;; (let ((inhibit-read-only t))
-      ;; 	(with-silent-modifications
-      ;;     (put-text-property (match-beginning 0) (match-end 0) 'invisible 'magit-trivial-change)))
-      (goto-char (match-beginning 0))
-      (set-mark-command nil)
-      (goto-char (match-end 0))
-      (magit-stage)
-      (backward-char)))
-  ;; (remove-hook! 'magit-refresh-buffer-hook #'yant/magit-hide)
   )
 #+end_src
 
