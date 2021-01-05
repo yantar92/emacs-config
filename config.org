@@ -6558,26 +6558,28 @@ fun create-or
 :END:
 The task is any item with todo keyword and no subtask.
 #+begin_src emacs-lisp
-(org-ql-defpred task ()
-  "Match a task without child subtasks."
-  :body (and (or (todo) (done))
-             (not (project))))
+  (use-package org-ql
+    :config
+    (org-ql-defpred task ()
+		    "Match a task without child subtasks."
+		    :body (and (or (todo) (done))
+			       (not (project)))))
 
-(defun bh/is-task-p ()
-  "Any task with a todo keyword and no subtask."
-  (save-restriction
-    (widen)
-    (let ((has-subtask)
-	  (subtree-end (save-excursion (org-end-of-subtree t)))
-	  (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-      (save-excursion
-	(forward-line 1)
-	(while (and (not has-subtask)
-		    (< (point) subtree-end)
-		    (re-search-forward (org-get-limited-outline-regexp) subtree-end t))
-	  (when (member (org-get-todo-state) org-todo-keywords-1)
-	    (setq has-subtask t))))
-      (and is-a-task (not has-subtask)))))
+  (defun bh/is-task-p ()
+    "Any task with a todo keyword and no subtask."
+    (save-restriction
+      (widen)
+      (let ((has-subtask)
+	    (subtree-end (save-excursion (org-end-of-subtree t)))
+	    (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+	(save-excursion
+	  (forward-line 1)
+	  (while (and (not has-subtask)
+		      (< (point) subtree-end)
+		      (re-search-forward (org-get-limited-outline-regexp) subtree-end t))
+	    (when (member (org-get-todo-state) org-todo-keywords-1)
+	      (setq has-subtask t))))
+	(and is-a-task (not has-subtask)))))
 #+end_src
 - keywords for not done tasks: =TODO=, =NEXT=, =DOING=, =REVIEW=, =SOMEDAY=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=
 #+begin_src emacs-lisp
@@ -6868,34 +6870,36 @@ Do not show consistency graph in agenda
 
 The project is an item with todo keyword and subtask.
 #+begin_src emacs-lisp
-(org-ql-defpred project ()
-  "Match a project - task with a todo subtask or :project: tag."
-  :body (or (tags-local "project")
-            (and
-             (todo)
-             (descendants `(and
-                            (or (todo) (done))
-                            (level < ,org-inlinetask-min-level))))))
+  (use-package org-ql
+    :config
+    (org-ql-defpred project ()
+		    "Match a project - task with a todo subtask or :project: tag."
+		    :body (or (tags-local "project")
+			      (and
+			       (todo)
+			       (descendants `(and
+					      (or (todo) (done))
+					      (level < ,org-inlinetask-min-level)))))))
 
-(defun bh/is-project-p ()
-  "Any task with a todo keyword subtask or :project: tag."
-  (save-restriction
-    (widen)
-    (let ((has-subtask)
-	  (subtree-end (save-excursion (org-end-of-subtree t)))
-	  (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-      (when is-a-task
-	(if (member "project" (org-get-tags-at (point) 'local))
-	    t
-	  (save-excursion
-	    (forward-line 1)
-	    (while (and (not has-subtask)
-			(< (point) subtree-end)
-			(re-search-forward "^\*+ " subtree-end t))
-	      (when (and (not (org-inlinetask-at-task-p))
-			 (member (org-get-todo-state) org-todo-keywords-1))
-		(setq has-subtask t))))
-	  has-subtask)))))
+  (defun bh/is-project-p ()
+    "Any task with a todo keyword subtask or :project: tag."
+    (save-restriction
+      (widen)
+      (let ((has-subtask)
+	    (subtree-end (save-excursion (org-end-of-subtree t)))
+	    (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+	(when is-a-task
+	  (if (member "project" (org-get-tags-at (point) 'local))
+	      t
+	    (save-excursion
+	      (forward-line 1)
+	      (while (and (not has-subtask)
+			  (< (point) subtree-end)
+			  (re-search-forward "^\*+ " subtree-end t))
+		(when (and (not (org-inlinetask-at-task-p))
+			   (member (org-get-todo-state) org-todo-keywords-1))
+		  (setq has-subtask t))))
+	    has-subtask)))))
 #+end_src
 This approach is useful in the case if I place some todo under the wrong item during refiling. It will appear in the project list in such a case. Project cannot be =DONE= if any of subtasks is =TODO=, =NEXT=, =WAITING= or =HOLD= (see [[id:d982166c-a450-4625-8211-ded63dc03f2d][Task inheritance]])
 ****** Top level project
@@ -6904,32 +6908,34 @@ This approach is useful in the case if I place some todo under the wrong item du
 :END:
 The project without parent projects.
 #+begin_src emacs-lisp
-(defun bh/find-project-task ()
-  "Move point to the parent (project) task if any."
-  (save-restriction
-    (widen)
-    (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
-      (while (org-up-heading-safe)
-	(when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-	  (setq parent-task (point))))
-      (goto-char parent-task)
-      parent-task)))
+  (defun bh/find-project-task ()
+    "Move point to the parent (project) task if any."
+    (save-restriction
+      (widen)
+      (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+	(while (org-up-heading-safe)
+	  (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+	    (setq parent-task (point))))
+	(goto-char parent-task)
+	parent-task)))
 
-(org-ql-defpred subtask ()
-  "A subtask of a project."
-  :body (and (or (todo) (done))
-             (ancestors 'project)))
+  (use-package org-ql
+    :config
+    (org-ql-defpred subtask ()
+		    "A subtask of a project."
+		    :body (and (or (todo) (done))
+			       (ancestors 'project))))
 
-(defun bh/is-project-subtree-p ()
-  "Any task with a todo keyword that is in a project subtree.
-Callers of this function already widen the buffer view."
-  (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
-			      (point))))
-    (save-excursion
-      (bh/find-project-task)
-      (if (equal (point) task)
-	  nil
-	t))))
+  (defun bh/is-project-subtree-p ()
+    "Any task with a todo keyword that is in a project subtree.
+  Callers of this function already widen the buffer view."
+    (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
+				(point))))
+      (save-excursion
+	(bh/find-project-task)
+	(if (equal (point) task)
+	    nil
+	  t))))
 #+end_src
 
 ****** Sub-project
@@ -6938,20 +6944,22 @@ Callers of this function already widen the buffer view."
 :END:
 The project with parent projects.
 #+begin_src emacs-lisp
-(org-ql-defpred subproject ()
-  "Match a subproject"
-  :body (and (project)
-             (ancestors 'project)))
+  (use-package org-ql
+    :config
+    (org-ql-defpred subproject ()
+		    "Match a subproject"
+		    :body (and (project)
+			       (ancestors 'project))))
 
-(defun bh/is-subproject-p ()
-  "Any task which is a subtask of another project"
-  (let ((is-subproject)
-	(is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-    (save-excursion
-      (while (and (not is-subproject) (org-up-heading-safe))
-	(when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-	  (setq is-subproject t))))
-    (and is-a-task is-subproject)))
+  (defun bh/is-subproject-p ()
+    "Any task which is a subtask of another project"
+    (let ((is-subproject)
+	  (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+      (save-excursion
+	(while (and (not is-subproject) (org-up-heading-safe))
+	  (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+	    (setq is-subproject t))))
+      (and is-a-task is-subproject)))
 #+end_src
 - if any task below is =NEXT= and the project is =TODO= then need to change to =NEXT= (it means that we need to do some task from this sub-project next)
   #+begin_src emacs-lisp
