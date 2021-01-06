@@ -14014,6 +14014,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
                                                "^\\(-\\|\\+\\)CLOSED:"
                                                "^\\+CLOSED:"
                                                "^\\-SCHEDULED:"
+                                               "^[+-]DEADLINE:"
 					       )
     "List of regexps hide in magit buffer.")
 
