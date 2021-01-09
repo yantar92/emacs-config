@@ -69,10 +69,10 @@ One important note about this configuration is that I do not use =desktop-save-m
 
 Init file, which loads this file.
 #+begin_src emacs-lisp :tangle "~/.emacs.d/init.el" :var org-file=(buffer-file-name) :var el-file="~/.emacs.d/config.el"
-;;(package-initialize)
-(setq init-flag t)
-;; (setq comp-deferred-compilation 't) ;; enable automatic native-compilation
-(load el-file)
+  ;;(package-initialize)
+  (setq init-flag t)
+  ;; (setq comp-deferred-compilation 't) ;; enable automatic native-compilation
+  (load el-file)
 #+end_src
 
 ** Emacs server settings
@@ -666,7 +666,8 @@ Credit: https://www.reddit.com/r/emacs/comments/fgbnfv/is_there_a_fixed_width_fo
 
 Also, automatically detecting and setting any missing fonts (this comes before manual settings to avoid overrides)
 
-#+begin_src emacs-lisp
+[2021-01-09 Sat] Does not load
+#+begin_src emacs-lisp :tangle no
 (use-package unicode-fonts
   :if init-flag
   :straight t
@@ -2832,12 +2833,12 @@ Double space convention is outdated.
 #+BEGIN_SRC emacs-lisp
 (setq-default sentence-end-double-space nil)
 #+END_SRC
-**** =goto-line= with preview
+**** COMMENT =goto-line= with preview
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 21:38]
 :ID:       6e7fa2e9-644d-4682-84c9-53e2f0c2d295
 :END:
-
+[2021-01-09 Sat] Not loading on emacs master
 #+begin_src emacs-lisp
 (use-package goto-line-preview
   :if init-flag
