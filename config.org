@@ -69,10 +69,11 @@ One important note about this configuration is that I do not use =desktop-save-m
 
 Init file, which loads this file.
 #+begin_src emacs-lisp :tangle "~/.emacs.d/init.el" :var org-file=(buffer-file-name) :var el-file="~/.emacs.d/config.el"
-  ;;(package-initialize)
-  (setq init-flag t)
-  ;; (setq comp-deferred-compilation 't) ;; enable automatic native-compilation
-  (load el-file)
+;;(package-initialize)
+(setq init-flag t)
+(setq comp-deferred-compilation-deny-list '("pdf-cache" "org-protocol"))
+;; (setq comp-deferred-compilation 't) ;; enable automatic native-compilation
+(load el-file)
 #+end_src
 
 ** Emacs server settings
