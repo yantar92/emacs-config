@@ -10192,7 +10192,6 @@ By default, no effort is considered as very difficult by agenda. However, most o
 #+end_src
 
 
-
 ***** Clocking history
 :PROPERTIES:
 :ID:       9e2c7a88-8a56-4213-b458-ccebcd59812a
@@ -10484,6 +10483,17 @@ ignoring the previously saved values."
 (add-to-list 'org-default-properties "ORG-TIME-BALANCE-MULTIPLIER")
 (add-to-list 'org-default-properties "ORG-TIME-BONUS-ON-DONE")
 #+end_src
+***** Clocked time visualisation
+:PROPERTIES:
+:ID:       889fcf1e-623f-499f-94a8-9a159229556e
+:END:
+
+[[id:4bdd5519-84bc-472c-8a44-f000054f3bcc][rksm/clj-org-analyzer: Fun with org data]] is a java program that parses org files for clocking data and provide a nice web interface to visualise the data. The clock summary can be limited to certain tags to heading text search.
+
+#+begin_src emacs-lisp
+(use-package org-analyzer :straight t)
+#+end_src
+
 ***** =__epilogue=
 :PROPERTIES:
 :ID:       e26ec668-12c9-41f1-ad8a-a3dd96007f5c
