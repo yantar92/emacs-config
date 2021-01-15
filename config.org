@@ -10900,6 +10900,7 @@ $0
   7. Publish in ArXiv before journal take over the copyright
   8. Publish in journal
   9. Add to publication list
+  10. Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "J"
@@ -10939,7 +10940,8 @@ $0
                            "** TODO Get accepted"
                            "** TODO Publish on ArXiv"
                            "** TODO Get published"
-                           "** TODO Add to publication list"))))
+                           "** TODO Add to publication list"
+                           "** TODO Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]"))))
            'replace)
 #+end_src
 - Co-authored research publication :: I mark this with =publication= tag. Typical workflow here is:
@@ -10947,6 +10949,7 @@ $0
   2. Revise according to comments
   3. Get accepted and published
   4. Add to publication list
+  5. Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "A"
@@ -10978,7 +10981,8 @@ $0
                            "** TODO Check references"
                            "** TODO Get accepted"
                            "** TODO Get published"
-                           "** TODO Add to publication list"))))
+                           "** TODO Add to publication list"
+                           "** TODO Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]"))))
            'replace)
 #+end_src
 - Research funding application :: I mark this with =grant= tag. The usual funding application workflow includes:
