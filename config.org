@@ -6033,10 +6033,10 @@ I am using w3m as rendered. It should also be [[id:66a5989e-9d17-40af-b680-494ef
 
 #+begin_src conf :tangle ~/.mailcap
 text/html; qutebrowser-call.sh %s
-text/*; mimeopen "%s"
-application/*; mimeopen %s
-video/*; mimeopen "%s"
-image/*; mimeopen "%s"
+text/*; xdg-open "%s"
+application/*; xdg-open "%s"
+video/*; xdg-open "%s"
+image/*; xdg-open "%s"
 #+end_src
 
 **** =Notmuch= hello
