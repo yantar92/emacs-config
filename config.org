@@ -8524,29 +8524,16 @@ If LOCAL is non-nil, check only local TAG."
                                                         (not (done))
                                                         (not (tags-inherited "HOLD"))
                                                         (not (tags-inherited "WAITING"))
+                                                        (not (tags-inherited "CANCELLED"))
                                                         (not (tags "SOMEDAY"))
                                                         (not (org-agenda-skip-before-SHOWFROMDATE-property))
 					                (not (org-agenda-skip-before-SHOWFROMTIME-property))
-					                (not (org-agenda-skip-noshowdates))))))
-	        ;; (org-agenda-skip-function '(or
-		;; 			    (and
-		;; 			     (not (zin/org-agenda-skip-tag "HOLD" nil 'local))
-		;; 			     (zin/org-agenda-skip-tag "HOLD"))
-                ;;                             (and
-		;; 			     (not (zin/org-agenda-skip-tag "WAITING" nil 'local))
-		;; 			     (zin/org-agenda-skip-tag "WAITING"))
-                ;;                             (zin/org-agenda-skip-tag "SOMEDAY")
-		;; 			    (org-agenda-skip-before-SHOWFROMDATE-property)
-		;; 			    (org-agenda-skip-before-SHOWFROMTIME-property)
-		;; 			    (org-agenda-skip-noshowdates)
-                ;;                             (org-agenda-skip-entry-if 'nottodo 'any)))
-                ))
+					                (not (org-agenda-skip-noshowdates))))))))
 	      ("p" "Projects" tags-todo "-CANCELLED-AREA"
 	       ((org-agenda-overriding-header "Project list\n")
 		(org-agenda-prefix-format "%?-12t")
                 (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                             (quote (project))))
-		;; (org-agenda-skip-function 'bh/skip-non-projects)
 		(org-agenda-sorting-strategy
 		 '(todo-state-down effort-up category-keep))))
 	      ("d" "Focus daily agenda" agenda ""
@@ -8590,15 +8577,7 @@ If LOCAL is non-nil, check only local TAG."
                                                                     (not (tags "DEFAULT"))
                                                                     (not (tags "SOMEDAY"))
                                                                     (not (tags "NODEADLINE"))
-                                                                    (not (habit))))))
-			    ;; (org-agenda-skip-function '(lambda()
-			    ;;     			 (or
-			    ;;     			  (bh/skip-non-tasks)
-			    ;;     			  (and (not (zin/org-agenda-skip-tag "SKIP"))
-			    ;;     			       (bh/skip-subprojects))
-			    ;;     			  (zin/org-agenda-skip-tag "NODEADLINE")
-			    ;;     			  (bh/skip-habits))))
-                            ))))
+                                                                    (not (habit))))))))))
               ("w" "Waiting and hold tasks"
                ((tags-todo "-CANCELLED-SOMEDAY+WAITING|-CANCELLED-SOMEDAY+HOLD"
 			   ((org-agenda-overriding-header (concat "Waiting and Hold Tasks" ""))
@@ -8669,23 +8648,14 @@ If LOCAL is non-nil, check only local TAG."
                                                                  (todo)
                                                                  (not (tags-inherited "HOLD"))
                                                                  (not (tags-inherited "WAITING"))
-                                                                 (not (tags "SOMEDAY"))))))
-			 ;; (org-agenda-skip-function '(or (and
-			 ;;        			 (not (zin/org-agenda-skip-tag "HOLD" nil 'local))
-			 ;;        			 (zin/org-agenda-skip-tag "HOLD"))
-			 ;;        			(and
-			 ;;        			 (not (zin/org-agenda-skip-tag "WAITING" nil 'local))
-			 ;;        			 (zin/org-agenda-skip-tag "WAITING"))
-			 ;;        			(zin/org-agenda-skip-tag "SOMEDAY")
-			 ;;        			(org-agenda-skip-entry-if 'nottodo 'any)))
-                         ))
+                                                                 (not (tags-inherited "CANCELLED"))
+                                                                 (not (tags "SOMEDAY"))))))))
 		(tags-todo "INBOX-DEFAULT"
 			   ((org-agenda-overriding-header "Inbox")
                             (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                                         (quote (and (scheduled)
                                                                     (tags "INBOX")
                                                                     (not (tags "DEFAULT"))))))
-			    ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'notscheduled))
 			    (org-agenda-prefix-format "S\t\t%-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels nil)))
 		(tags-todo "INBOX-DEFAULT"
@@ -8695,7 +8665,6 @@ If LOCAL is non-nil, check only local TAG."
                                                         (quote (and (deadline)
                                                                     (tags "INBOX")
                                                                     (not (tags "DEFAULT"))))))
-			    ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))
 			    (org-agenda-prefix-format "D\t\t%-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels nil)))
 		(tags-todo "INBOX-DEFAULT"
@@ -8706,7 +8675,6 @@ If LOCAL is non-nil, check only local TAG."
                                                                     (not (deadline))
                                                                     (tags "INBOX")
                                                                     (not (tags "DEFAULT"))))))
-			    ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline))
 			    (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels nil)))
 		(tags "/"
@@ -8766,7 +8734,6 @@ If LOCAL is non-nil, check only local TAG."
 							  (bh/skip-non-tasks)
 							  (and (not (zin/org-agenda-skip-tag "SKIP"))
 							       (bh/skip-subprojects))
-							  ;; (zin/org-agenda-skip-tag "NODEADLINE")
 							  (bh/skip-habits))))))
 		(tags-todo "-CANCELLED-AREA-TODO=\"TODO\"-SOMEDAY-HOLD-WAITING"
 			   ((org-agenda-overriding-header "Active projects")
@@ -8820,15 +8787,7 @@ If LOCAL is non-nil, check only local TAG."
                                                                     (not (tags "DEFAULT"))
                                                                     (not (tags "SOMEDAY"))
                                                                     (not (tags "NODEADLINE"))
-                                                                    (not (habit))))))
-			    ;; (org-agenda-skip-function '(lambda()
-			    ;;     			 (or
-			    ;;     			  (bh/skip-non-tasks)
-			    ;;     			  (and (not (zin/org-agenda-skip-tag "SKIP"))
-			    ;;     			       (bh/skip-subprojects))
-			    ;;     			  (zin/org-agenda-skip-tag "NODEADLINE")
-			    ;;     			  (bh/skip-habits))))
-                            ))
+                                                                    (not (habit))))))))
 		(tags-todo "-NODEADLINE-CANCELLED-WAITING-HOLD-DEFAULT+TODO=\"SOMEDAY\""
 			   ((org-agenda-overriding-header "Someday tasks outside projects")
 			    (org-agenda-dim-blocked-tasks 'invisible)
@@ -8844,14 +8803,7 @@ If LOCAL is non-nil, check only local TAG."
                                                                     (not (tags "DEFAULT"))
                                                                     (not (tags "NODEADLINE"))
                                                                     (not (habit))
-                                                                    ))))
-			    ;; (org-agenda-skip-function '(lambda()
-			    ;;     			 (or
-			    ;;     			  (bh/skip-non-tasks)
-			    ;;     			  (bh/skip-subprojects)
-			    ;;     			  (zin/org-agenda-skip-tag "NODEADLINE")
-			    ;;     			  (bh/skip-habits))))
-                            )))
+                                                                    )))))))
 	       nil))))
   #+end_src
 ***** Location contexts
