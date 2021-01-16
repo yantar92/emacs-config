@@ -6498,7 +6498,13 @@ Research projects generally contain several typical components:
 *************** TODO add discussion about project management from the email
 *************** END
 
+*************** Handling ideas
+:PROPERTIES:
+:ID:       92a0a71b-d269-4455-88ae-74e4367e5bfa
+:END:
 [2021-01-15 Fri] The ideas part turned out to be quite tricky. In the past, I kept all the ideas in separate headline. However, practice showed that I tend to forget checking that long list of the ideas. This might be solved by reviewing the idea list regularly, but it is also not very practical since the idea lists tend to grow a lot and require very long time to go through. Instead or reviewing all the ideas together, it would be better to make sure that ideas are reminded to me from time to time without a need for me to think when is the next time I want to be reminded. This is similar to tickler list in GTD [[id:1f151305-2d61-42b9-9438-503c9b538352][Allen David [2015] Getting things done : the art of stress-free productivity]] managed using org-drill, so that spaced repetition method is used to find out when to remind about the idea next time.
+*************** END
+
 
 ***** Tags
 :PROPERTIES:
@@ -11298,7 +11304,6 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 *************** TODO Integrate with helm refile
 *************** END
 
-
 ***** Refile to here
       :PROPERTIES:
       :ID:       70f89ed4-836f-4b09-9398-737d6acf48ba
@@ -11332,6 +11337,23 @@ will be refiled."
 
   (add-to-list 'helm-org-headings-actions '("Refile heading(s) to heading at point" . helm-org--refile-heading-here) 'append)
   )
+#+end_src
+
+***** Refiling [[id:92a0a71b-d269-4455-88ae-74e4367e5bfa][ideas]]
+
+Subtrees containing ideas are marked with :TICKLER: tag. Any task refiled to such subtrees is automatically switched to TICKLER state.
+
+#+begin_src emacs-lisp
+(defun yant/mark-ideas-TICKLER-maybe ()
+  "When a task at point has TICKLER tag, change its todo state to TICKLER."
+  (when (and (org-at-heading-p)
+             (member (org-entry-get (point) "TODO") org-not-done-keywords)
+             (member "TICKLER" (org-get-tags))
+             (not (string= (org-entry-get (point) "TODO") "TICKLER")))
+    (org-todo "TICKLER")))
+
+(add-hook 'org-after-refile-insert-hook #'yant/mark-ideas-TICKLER-maybe)
+
 #+end_src
 
 ***** =__epilogue=
