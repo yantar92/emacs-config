@@ -6486,7 +6486,24 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 :ID:       8cef1ba5-d5ea-4ad1-955b-932952c77b0c
 :END:
 I need to deal with many projects running at the same time in my work. Hence, I need some good structure for all these projects to keep track of deadlines, have all the notes to be able to recall what is going on in the project after some time.
+
+The projects are care most about are my research projects at work. And I treat most of my life projects pretty much like research projects (because when you have a hummer, everything around start looking like nails all of a sudden).
+
+Research projects generally contain several typical components:
+1. Papers related to the project topic that I need to read (this tends to grow quite a lot at times)
+2. Actions I need to perform to understand the research question
+3. Ideas, which are not immediately useful, but might become handy as the project progresses
+4. Reporting/paperwork related to project
+
+*************** TODO add discussion about project management from the email
+*************** END
+
+[2021-01-15 Fri] The ideas part turned out to be quite tricky. In the past, I kept all the ideas in separate headline. However, practice showed that I tend to forget checking that long list of the ideas. This might be solved by reviewing the idea list regularly, but it is also not very practical since the idea lists tend to grow a lot and require very long time to go through. Instead or reviewing all the ideas together, it would be better to make sure that ideas are reminded to me from time to time without a need for me to think when is the next time I want to be reminded. This is similar to tickler list in GTD [[id:1f151305-2d61-42b9-9438-503c9b538352][Allen David [2015] Getting things done : the art of stress-free productivity]] managed using org-drill, so that spaced repetition method is used to find out when to remind about the idea next time.
+
 ***** Tags
+:PROPERTIES:
+:ID:       f87a094b-d4cf-4ade-acb2-08818810dd6e
+:END:
 ****** General org mode tags
 :PROPERTIES:
 :ID:       adc6f5ae-183f-4c5f-97e8-7bfe18f028d2
@@ -6542,6 +6559,7 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =DEFAULT= :: Do not list the task in GTD agenda
 - =REFILE= :: can be refile target even if it is not project/sub-project
 - =NOREFILE= :: *cannot* be refile target
+- =TICKLER= :: The items refiled here will have their todo state changed to =TICKLER=.
 - =AREA= :: Some projects are not "real" projects, but rather areas of interest. The difference with normal projects is that areas are not expected to be ever finished. Thus, it has little point to keep them in weekly review together with projects. However, they can be stuck, as any other project.
 ****** TODO Tags for everything
 ****** TODO try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
@@ -6588,11 +6606,11 @@ The task is any item with todo keyword and no subtask.
 	      (setq has-subtask t))))
 	(and is-a-task (not has-subtask)))))
 #+end_src
-- keywords for not done tasks: =TODO=, =NEXT=, =DOING=, =REVIEW=, =SOMEDAY=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=
+- keywords for not done tasks: =TODO=, =NEXT=, =DOING=, =REVIEW=, =SOMEDAY=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=, =TICKLER=
 #+begin_src emacs-lisp
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "DOING(o)" "REVIEW(e)" "|" "DONE(d!)" "FAILED(f@/!)" "MERGED(m!)" )
-	      (sequence "SOMEDAY(s)" "WAITING(w@/!)" "HOLD(h@/!)" "|" "FROZEN(z@/!)" "CANCELLED(c@)" ))))
+	      (sequence "SOMEDAY(s)" "WAITING(w@/!)" "HOLD(h@/!)" "TICKLER(l)" "|" "FROZEN(z@/!)" "CANCELLED(c@)" ))))
 ;; set the tags assigned to specific keywords. Not nesessary, but used by a lot of code for filtering later - hence why not
 (setq org-todo-state-tags-triggers
       (quote (("CANCELLED" ("SOMEDAY") ("CANCELLED" . t))
@@ -6664,7 +6682,49 @@ The task is any item with todo keyword and no subtask.
   - REVIEW(e) :: A task is basically done, but should be reviewed (i.e. consider putting to knowledge base). Unschedule the task when set.
   - WAITING(w) :: I am waiting for someone/something which does not depend on me to start the task (should add comment about reason). The command triggers unscheduling the task.
   - HOLD(h) :: I am not going to do this task for now because of lack of time/low priority. The command triggers unscheduling the task.
-  - FROZEN(z) :: I should have been done, but it haven't and not because of me. It might be in the future, but unlikely. 
+  - FROZEN(z) :: I should have been done, but it haven't and not because of me. It might be in the future, but unlikely.
+  - TICKLER(l) :: This task should appear in agenda from time to time, so that I do not forget about it. When the task state is changed TICKLER->TICKLER, it is rescheduled using spaced repetition method.
+#+begin_src emacs-lisp
+(use-package org-drill
+  :demand t
+  :straight t
+  :config
+  (defun yant/org-smart-reschedule (quality)
+    "Interactively call `org-drill-smart-reschedule'."
+    (interactive "nHow well did you remember the information (on a scale of 0-5)? ")
+    (let ((next-days (org-drill-hypothetical-next-review-date quality)))
+      (if (= next-days 0) (setq next-days 1))
+      (org-drill-smart-reschedule quality next-days))))
+
+(defun org-trigger-tickler (arg)
+  "Restore TICKLER keyword after TICKLER->DONE or TICKLER->TICKLER change and handle setting TICKLER.
+^TICKLER->TICKLER: If the task is unscheduled, schedule it today.
+ TICKLER->TICKLER: Reschedule the task using `org-drill-smart-reschedule'.
+ TICKLER->DONE/REVIEW: Mark the task DONE."
+  (require 'org-learn)
+  (when (and (eq (plist-get arg :type) 'todo-state-change)
+	     (not (string= (plist-get arg :from) "TICKLER"))
+             (string= (plist-get arg :to) "TICKLER"))
+    (unless (org-with-point-at (plist-get arg :position) (org-element-property :scheduled (org-element-at-point)))
+      (org-schedule nil ".")))
+  (when (and (eq (plist-get arg :type) 'todo-state-change)
+	     (string= (plist-get arg :from) "TICKLER")
+             (or (string= (plist-get arg :to) "TICKLER")
+		 (member (plist-get arg :to) org-done-keywords)))
+    (let* ((pos (plist-get arg :position))
+	   (schedule-info (org-with-point-at pos (org-element-property :scheduled (org-element-at-point)))))
+      (unless schedule-info (org-schedule nil "."))
+      (if (member (plist-get arg :to) org-done-keywords)
+	  (unless (y-or-n-p (format "Trying to mark TICKLER task as %s. Proceed? " (plist-get arg :to)))
+	    (org-todo "TICKLER"))
+        (call-interactively #'yant/org-smart-reschedule))
+      (when (and (marker-buffer org-clock-marker)
+		 (marker-position org-clock-marker)
+		 (equal (marker-position pos)
+			(org-with-point-at org-clock-marker (org-back-to-heading 't))))
+	(org-clock-out)))))
+(add-hook 'org-trigger-hook #'org-trigger-tickler)
+#+end_src    
   - SOMEDAY(s) :: This task appears to be interesting and worth doing but does not have to be done at all. The command triggers unscheduling the task if it is scheduled and clocking out.
 #+begin_src emacs-lisp
 (defun yant/unschedule-maybe ()
@@ -8983,7 +9043,11 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 (defun yant/org-agenda-skip-nofocus ()
   "Filter tasks for focus agenda."
   (yant/org-agenda-skip-org-ql
-   '(and (or
+   '(and (not (tags "CANCELLED"))
+         (or (not (or (tags "WAITING")
+                    (tags "HOLD")))
+             (not (todo "TICKLER")))
+         (or
           (and (ts-active :to today)
                (or (habit)
                    (priority "A")
@@ -10795,13 +10859,13 @@ $0
                            "# Trying to make sense of the results. If possible, comparing with similar literature.\n"
                            "** TODO Conclusion"
                            "# Takeouts of the project and possible things to be done in future."
-                           "** Reports :NOARCHIVE:NOREFILE:"
+                           "** Reports \ Paperwork \ Legal :NOARCHIVE:NOREFILE:"
                            "*** Paperwork :REFILE:"
                            "*** Presentations :REFILE:"
                            "*** Published papers :REFILE:"
                            "*** Funding applications :REFILE:"
                            "** NEXT Papers to read :REFILE:"
-                           "** TODO Ideas :REFILE:"
+                           "** TODO Ideas :REFILE:TICKLER:"
 			   "# Inbox for project ideas, which are not directly actionable."))))
            'replace)
 
@@ -10833,7 +10897,7 @@ $0
                            "# Takeouts of the project and possible things to be done in future."
                            "** Public results :REFILE:"
                            "** NEXT Papers to read :REFILE:"
-                           "** TODO Ideas :REFILE:"
+                           "** TODO Ideas :REFILE:TICKLER:"
 			   "# Inbox for project ideas, which are not directly actionable."))))
            'replace)
 #+end_src
@@ -12917,6 +12981,7 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
       		  (?✘ org-specific "\\(?:^*+ +\\)\\(\\<FAILED\\>\\)" (org-mode) 1)
       		  (?✘ org-specific "\\(?:^*+ +\\)\\(\\<CANCELLED\\>\\)" (org-mode) 1)
       		  (?▶ org-specific "\\(?:^*+ +\\)\\(\\<NEXT\\>\\)" (org-mode) 1)
+      		  (?🧠 org-specific "\\(?:^*+ +\\)\\(\\<TICKLER\\>\\)" (org-mode) 1)
                   (?🔁 org-specific "\\(?:^*+ +\\)\\(\\<MERGED\\>\\)" (org-mode) 1)
       		  (?⌛ org-specific "\\(?:^*+ +\\)\\(\\<WAITING\\>\\)" (org-mode) 1)
                   (?⏩ org-specific "\\(?:^*+ +\\)\\(\\<DOING\\>\\)" (org-mode) 1)
@@ -12953,6 +13018,7 @@ keyword faces
       	      ("FAILED" :foreground "red" :weight bold)
       	      ("WAITING" :foreground "orange" :weight bold)
               ("REVIEW" :foreground "orange" :weight bold)
+              ("TICKLER" :foreground "black" :weight bold)
       	      ("HOLD" :foreground "magenta" :weight bold)
       	      ("CANCELLED" :foreground "gray80" :weight bold)
               ("FROZEN" :foreground "SkyBlue" :weight bold)
