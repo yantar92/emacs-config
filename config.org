@@ -2022,14 +2022,16 @@ I use company for completion just because it is easy to use.
   :if init-flag
   :straight t
   :diminish (company-mode . " ⭿")
-  :hook (prog-mode . company-mode)
+  :hook ((prog-mode ledger-mode) . company-mode)
   :custom
   (company-idle-delay 0.05)
   (company-minimum-prefix-length 2)
   (company-selection-wrap-around t)
   (company-require-match nil)
   (company-transformers '(company-sort-by-occurrence))
-  (company-backends '(company-capf company-files))
+  (company-backends '(company-bbdb company-semantic company-cmake company-capf company-clang company-files
+	                           (company-dabbrev-code company-gtags company-etags company-keywords)
+	                           company-oddmuse company-dabbrev))
   :config
   (bind-key* "M-/" #'company-complete)
   :bind (:map company-active-map
