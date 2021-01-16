@@ -8842,7 +8842,8 @@ Also, no contexts are prompted in Inbox agenda.
     (unless (eq major-mode 'org-agenda-mode) (user-error "Cannot run %s outside agenda view" this-command))
     (when (and (memq this-command '(org-agenda yant/org-agenda-filter-by-location-context))
 	       (not (string= org-agenda-name "Inbox items"))
-               (not (string= org-agenda-name "Hanging tasks")))
+               (not (string= org-agenda-name "Hanging tasks"))
+               (not (bound-and-true-p 'org-agenda-skip-location-context)))
       (unless (local-variable-p 'org-global-tags-completion-table)
 	(setq-local org-global-tags-completion-table
 		    (org-global-tags-completion-table)))
@@ -9844,12 +9845,31 @@ into (not QUERY)."
   (defun yant/helm-org-ql-open-url (marker)
     "Open URL from link"
     (org-open-link-from-string (org-entry-get marker "Source")))
+  (defun yant/helm-org-ql-show-in-agenda (markers)
+    "Show agenda view with all the matches."
+    (let ((org-agenda-skip-function `(lambda ()
+                                       (org-back-to-heading t)
+                                       (let ((markerhere (point-marker))
+                                             (markers ',(helm-marked-candidates)))
+                                         (setq markers (-filter (lambda (marker) (eq (current-buffer) (marker-buffer marker))) markers))
+                                         (if (member (point-marker) markers)
+                                             nil
+                                           (while (and markers
+                                                       (> markerhere (car markers)))
+                                             (setq markers (cdr markers)))
+                                           (if (car markers)
+                                               (goto-char (car markers))
+                                             (goto-char (point-max)))))))
+          (org-agenda-skip-location-context t)
+          (org-agenda-sticky nil))
+      (org-tags-view nil "!")))
   :custom
   (helm-org-ql-actions '(("Insert link to heading" . yant/helm-org-ql-create-link)
                          ("Go to heading" . helm-org-ql-show-marker)
                          ("Open heading source" . yant/helm-org-ql-open-url)
                          ("Insert URL of heading" . yant/helm-org-ql-insert-url)
-                         ("Refile heading(s) to heading at point" . helm-org--refile-heading-here)))
+                         ("Refile heading(s) to heading at point" . helm-org--refile-heading-here)
+                         ("Show in agenda" . yant/helm-org-ql-show-in-agenda)))
   )
 #+end_src
 
