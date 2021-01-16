@@ -12269,6 +12269,7 @@ I have a lot of small scripts and programs written at some point for some purpos
    (let ((args (list file target-file lang)))
      `(lambda ()
 	(require 'org)
+        (require 'org-attach)
 	(setq org-tangle-flag t)
         (ignore-errors
 	  (load "~/.emacs.d/config.el"))
