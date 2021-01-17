@@ -6589,12 +6589,13 @@ fun create-or
 :END:
 The task is any item with todo keyword and no subtask.
 #+begin_src emacs-lisp
-  (use-package org-ql
-    :config
-    (org-ql-defpred task ()
-		    "Match a task without child subtasks."
-		    :body (and (or (todo) (done))
-			       (not (project)))))
+(use-package org-ql
+  :demand t
+  :config
+  (org-ql-defpred task ()
+    "Match a task without child subtasks."
+    :body (and (or (todo) (done))
+	       (not (project)))))
 
   (defun bh/is-task-p ()
     "Any task with a todo keyword and no subtask."
@@ -6943,16 +6944,17 @@ Do not show consistency graph in agenda
 
 The project is an item with todo keyword and subtask.
 #+begin_src emacs-lisp
-  (use-package org-ql
-    :config
-    (org-ql-defpred project ()
-		    "Match a project - task with a todo subtask or :project: tag."
-		    :body (or (tags-local "project")
-			      (and
-			       (todo)
-			       (descendants `(and
-					      (or (todo) (done))
-					      (level < ,org-inlinetask-min-level)))))))
+(use-package org-ql
+  :demand t
+  :config
+  (org-ql-defpred project ()
+    "Match a project - task with a todo subtask or :project: tag."
+    :body (or (tags-local "project")
+	      (and
+	       (todo)
+	       (descendants `(and
+			      (or (todo) (done))
+			      (level < ,org-inlinetask-min-level)))))))
 
   (defun bh/is-project-p ()
     "Any task with a todo keyword subtask or :project: tag."
@@ -6981,34 +6983,35 @@ This approach is useful in the case if I place some todo under the wrong item du
 :END:
 The project without parent projects.
 #+begin_src emacs-lisp
-  (defun bh/find-project-task ()
-    "Move point to the parent (project) task if any."
-    (save-restriction
-      (widen)
-      (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
-	(while (org-up-heading-safe)
-	  (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-	    (setq parent-task (point))))
-	(goto-char parent-task)
-	parent-task)))
+(defun bh/find-project-task ()
+  "Move point to the parent (project) task if any."
+  (save-restriction
+    (widen)
+    (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+      (while (org-up-heading-safe)
+	(when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+	  (setq parent-task (point))))
+      (goto-char parent-task)
+      parent-task)))
 
-  (use-package org-ql
-    :config
-    (org-ql-defpred subtask ()
-		    "A subtask of a project."
-		    :body (and (or (todo) (done))
-			       (ancestors 'project))))
+(use-package org-ql
+  :demand t
+  :config
+  (org-ql-defpred subtask ()
+    "A subtask of a project."
+    :body (and (or (todo) (done))
+	       (ancestors 'project))))
 
-  (defun bh/is-project-subtree-p ()
-    "Any task with a todo keyword that is in a project subtree.
+(defun bh/is-project-subtree-p ()
+  "Any task with a todo keyword that is in a project subtree.
   Callers of this function already widen the buffer view."
-    (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
-				(point))))
-      (save-excursion
-	(bh/find-project-task)
-	(if (equal (point) task)
-	    nil
-	  t))))
+  (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
+			      (point))))
+    (save-excursion
+      (bh/find-project-task)
+      (if (equal (point) task)
+	  nil
+	t))))
 #+end_src
 
 ****** Sub-project
@@ -7017,12 +7020,13 @@ The project without parent projects.
 :END:
 The project with parent projects.
 #+begin_src emacs-lisp
-  (use-package org-ql
-    :config
-    (org-ql-defpred subproject ()
-		    "Match a subproject"
-		    :body (and (project)
-			       (ancestors 'project))))
+(use-package org-ql
+  :demand t
+  :config
+  (org-ql-defpred subproject ()
+    "Match a subproject"
+    :body (and (project)
+	       (ancestors 'project))))
 
   (defun bh/is-subproject-p ()
     "Any task which is a subtask of another project"
