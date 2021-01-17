@@ -8847,7 +8847,7 @@ Also, no contexts are prompted in Inbox agenda.
     (when (and (memq this-command '(org-agenda yant/org-agenda-filter-by-location-context))
 	       (not (string= org-agenda-name "Inbox items"))
                (not (string= org-agenda-name "Hanging tasks"))
-               (not (bound-and-true-p 'org-agenda-skip-location-context)))
+               (not (bound-and-true-p org-agenda-skip-location-context)))
       (unless (local-variable-p 'org-global-tags-completion-table)
 	(setq-local org-global-tags-completion-table
 		    (org-global-tags-completion-table)))
