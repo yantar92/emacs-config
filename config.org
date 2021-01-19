@@ -6627,6 +6627,8 @@ The task is any item with todo keyword and no subtask.
 	      (done ("SOMEDAY") ("WAITING") ("HOLD"))
 	      ("TODO" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
 	      ("NEXT" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
+              ("TICKLER" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
+              ("" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
               ("REVIEW" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
               ("DOING" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
 	      ("DONE" ("SOMEDAY") ("WAITING") ("CANCELLED") ("HOLD"))
@@ -13318,6 +13320,7 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 Hide some uninteresting tags
 #+begin_src emacs-lisp
 (setq org-agenda-hide-tags-regexp (rx-to-string '(or "DEFAULT"
+                                                     "TICKLER"
 						     "SKIP"
                                                      "NOARCHIVE"
                                                      "INBOX"
