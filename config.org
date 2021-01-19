@@ -7414,15 +7414,20 @@ Show parent project as top (or second top) suggestion."
 (defun org-att-id-store-link ()
   "Store att-id: link."
   (save-match-data
-    (when (and (eq major-mode 'dired-mode)
+    (when (and (memq major-mode '(dired-mode image-mode))
 	       (string-match (regexp-quote (f-expand org-attach-id-dir))
 			     (f-expand default-directory))
                (string-match (s-concat (regexp-quote (f-expand org-attach-id-dir))
 				       "\\([0-9a-z][0-9a-z]\\)/\\([0-9a-z]+-[0-9a-z-]+\\)/\\(.+\\)$")
-                             (dired-get-filename)))
-      (let ((id (concat (match-string 1 (dired-get-filename))
-			(match-string 2 (dired-get-filename))))
-            (link (match-string 3 (dired-get-filename))))
+                             (pcase major-mode
+                               ('dired-mode (dired-get-filename))
+                               ('image-mode (buffer-file-name)))))
+      (let* ((filename (pcase major-mode
+                         ('dired-mode (dired-get-filename))
+                         ('image-mode (buffer-file-name))))
+             (id (concat (match-string 1 filename)
+			 (match-string 2 filename)))
+             (link (match-string 3 filename)))
         (org-link-store-props :type "att-id"
 			      :link (concat "att-id:" id ":" link)
                               :description (org-att-id-link-description (concat "att-id:" id ":" link) ""))))))
