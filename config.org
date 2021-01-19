@@ -9691,7 +9691,15 @@ instead."
   :demand t
   :straight (org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
 	      :fork (:host github :repo "yantar92/org-ql"))
-  :init (use-package org-ql-search :demand t))
+  :init (use-package org-ql-search :demand t)
+  :config
+  (org-ql-defpred keyword (&rest strings)
+    "Match a keyword in outline-path, heading, or body."
+    :body (cl-loop for string in strings
+                   thereis (or (outline-path string)
+                               (heading string)
+                               (path string)
+	                       (regexp (concat "#" string))))))
 
 (defun yant/org-ql-focused-agenda-block (&rest args)
   "Return expression, suitable for `org-agenda-custom-commands', which matches focused agenda view."
