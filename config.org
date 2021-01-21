@@ -8534,7 +8534,7 @@ If LOCAL is non-nil, check only local TAG."
   )
 
 (setq org-agenda-custom-commands
-      (quote (("a" nil
+      (quote (("s" nil
 	       agenda ""
                ((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                             (quote (and (ts-active :to today)
