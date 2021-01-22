@@ -7601,7 +7601,8 @@ Do not ask every time I try to evaluate elisp: links
 #+begin_src emacs-lisp
 (use-package org-ref
   :if init-flag
-  :straight t
+  :straight (org-ref :type git :host github :repo "jkitchin/org-ref" :local-repo "~/Git/org-ref"
+	       :fork (:host github :repo "yantar92/org-ref"))
   :demand t
   :init
   (use-package bibtex-completion :demand t)
