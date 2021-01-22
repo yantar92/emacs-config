@@ -9813,25 +9813,6 @@ into (not QUERY)."
 ;; 	 ()
 ;; 	 )))
 
-
-(add-to-list 'org-agenda-custom-commands
-	     `("D" "Focused agenda (ql version)"
-	       ((yant/org-ql-focused-agenda-block))
-	       ((org-ql-block-header "Focused agenda(ql version)"))))
-
-
-(add-to-list 'org-agenda-custom-commands
-	     `("s" "Focus daily agenda (ql-skip version)" agenda ""
-	       ((org-agenda-overriding-header "Focused daily agenda")
-		(org-agenda-skip-function  (yant/org-ql-focused-agenda-query)))))
-
-
-(add-to-list 'org-agenda-custom-commands
-	     `("I" "Inbox (ql version)"
-	       ((yant/org-ql-inbox-block))
-	       ((org-ql-block-header "Inbox"))
-               (list (f-join org-directory "inbox.org"))))
-
 #+end_src
 
 ****** TODO use it |- (=alphapapa/org-ql=: An Org query language, and experimental code for a next-generation Org Agenda) :BOOKMARK:
