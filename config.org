@@ -12806,7 +12806,6 @@ Do not use box around checkbox items
   )
 #+end_src
 
-
 **** Links
 ***** Show broken links to files
 :PROPERTIES:
@@ -13169,6 +13168,13 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   :config
   (use-package doom-themes-ext-org
     :demand t))
+#+end_src
+***** Do not fontify done headlines
+
+#+begin_src emacs-lisp
+(use-package org
+  :custom
+  (org-fontify-done-headline nil))
 #+end_src
 **** Align tags to right, even when the window size changes
 :PROPERTIES:
