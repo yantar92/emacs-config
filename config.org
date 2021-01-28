@@ -14106,6 +14106,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
                                                "^\\(-\\|\\+\\)CLOSED:"
                                                "^\\(-\\|\\+\\):DRILL_LAST_INTERVAL:"
                                                "^\\(-\\|\\+\\):DRILL_REPEATS_SINCE_FAIL:"
+                                               "^\\(-\\|\\+\\):DRILL_FAILURE_COUNT:"
                                                "^\\(-\\|\\+\\):DRILL_TOTAL_REPEATS:"
                                                "^\\(-\\|\\+\\):DRILL_AVERAGE_QUALITY:"
                                                "^\\(-\\|\\+\\):DRILL_EASE:"
