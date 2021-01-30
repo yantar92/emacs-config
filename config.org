@@ -3281,7 +3281,8 @@ And extend it with =dired+=
     :config
     (set-face-attribute 'dired-filter-group-header nil
 			:underline nil)
-    (unbind-key "<tab>" dired-filter-group-mode-map))
+    ;; (unbind-key "<tab>" dired-filter-group-mode-map)
+    )
   (use-package meta-functions
     :init
     (use-package dired-hacks-utils :straight t)
@@ -3380,7 +3381,7 @@ Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
 	  (quit-window kill window))))))
 #+end_src
 
-***** Show subtrees - org-mode-like directory folding
+***** COMMENT Show subtrees - org-mode-like directory folding
 :PROPERTIES:
 :ID:       cca7f06f-35f7-4921-9b9d-d93b6967a95a
 :END:
