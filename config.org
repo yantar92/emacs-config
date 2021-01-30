@@ -14246,6 +14246,32 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
   (org-crypt-use-before-save-magic))
 #+end_src
 
+**** Allow tangling encrypted files
+
+#+begin_src emacs-lisp
+(use-package org-crypt
+  :config
+  (use-package ob-tangle
+    :config
+    (add-hook 'org-babel-pre-tangle-hook #'org-decrypt-entries 100)))
+#+end_src
+
+**** Refresh keywords upon decryption
+
+#+begin_src emacs-lisp
+(use-package org-crypt
+  :config
+  (defun yant/org-refresh-org-buffer ()
+    "Refresh org buffer as if C-c C-c on a keyword line."
+    (let ((org-inhibit-startup-visibility-stuff t)
+          (org-startup-align-all-tables nil))
+      (when (boundp 'org-table-coordinate-overlays)
+        (mapc #'delete-overlay org-table-coordinate-overlays)
+        (setq org-table-coordinate-overlays nil))
+      (org-save-outline-visibility 'use-markers (org-mode-restart))))
+  (define-advice org-decrypt-entry (:after (&rest _) refresh-org) #'yant/org-refresh-org-buffer))
+#+end_src
+
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
