@@ -10687,7 +10687,7 @@ $0
                       :template
                       ("* %(ya-org-capture/make-snippet \"todo_capture_\")"))))))
 #+end_src
-- singular TODO item :: Normal TODO item with time bonus on done (60 minutes) - used for the items, which are unlikely to be time tracked.
+- singular TODO item :: Normal TODO item with time bonus on done (20 minutes) - used for the items, which are unlikely to be time tracked.
 #+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/todo_singular_capture :noweb tangle :comments no
 # -*- mode: snippet -*-
 # name: todo_singular_capture
@@ -10788,7 +10788,7 @@ $0
            'replace)
 #+end_src
 - Project :: A large task that needs to be studied systematically. A typical project includes the following:
-  1. Literature review to find out what is known about the topic. I only put my notes and thoughts on the literature here.
+  1. Notes on what is known about the topic (including what I got to know from experiments). I only put my notes and thoughts on the literature here.
   2. [optional] Resources I have to execute the project (i.e. samples)
   3. Research plan to plan what I need to do to fulfil the project
   4. The information I collected while executing the project (experimental data)
@@ -10821,7 +10821,7 @@ $0
 			   ":END:"
                            "# A short summary about the project."
                            "\n%?"
-                           "** TODO Literature review"
+                           "** TODO Notes \ literature info :REFILE:"
                            "# Notes about what is known about the topic\n"
                            "** TODO Action plan :NOARCHIVE:REFILE:"
                            "# Action plan to complete the project.\n"
@@ -10835,7 +10835,7 @@ $0
                            "# The raw data is analysed here to be put into human-readable form (in non-trivial ways)."
                            "# The data is organised by sample rather than by experiment to avoid dealing with experimental note mess."
                            "# Plots, important observations and thoughs are coming here.\n"
-                           "** Discussion :REFILE:"
+                           "** Discussion"
                            "# Trying to make sense of the results. If possible, comparing with similar literature.\n"
                            "** TODO Conclusion"
                            "# Takeouts of the project and possible things to be done in future."
@@ -10866,7 +10866,7 @@ $0
 			   ":END:"
                            "# A short summary about the project."
                            "\n%?"
-                           "** TODO Literature review"
+                           "** TODO Notes \ literature info :REFILE:"
                            "# Notes about what is known about the topic\n"
                            "** TODO Action plan :NOARCHIVE:REFILE:"
                            "# Action plan to complete the project.\n"
