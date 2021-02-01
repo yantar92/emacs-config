@@ -13412,16 +13412,17 @@ Optional ELLIPSIS string is shown in place of the hidden/deleted part of the str
 (defun string-display-pixel-width (string &optional mode)
   "Calculate pixel width of STRING.
 Optional MODE specifies major mode used for display."
-  (with-temp-buffer
-    (with-silent-modifications
-      (setf (buffer-string) string))
-    (when (fboundp mode)
-      (funcall mode)
-      (font-lock-fontify-buffer))
-    (if (get-buffer-window (current-buffer))
-	(car (window-text-pixel-size nil (line-beginning-position) (point)))
-      (set-window-buffer nil (current-buffer))
-      (car (window-text-pixel-size nil (line-beginning-position) (point))))))
+  (let (wrap-prefix display-line-numbers)
+    (with-temp-buffer
+      (with-silent-modifications
+        (setf (buffer-string) string))
+      (when (fboundp mode)
+        (funcall mode)
+        (font-lock-fontify-buffer))
+      (if (get-buffer-window (current-buffer))
+	  (car (window-text-pixel-size nil (line-beginning-position) (point)))
+        (set-window-buffer nil (current-buffer))
+        (car (window-text-pixel-size nil (line-beginning-position) (point)))))))
 
 (defun org-agenda-fix-tag-alignment ()
   "Use 'display :align-to instead of spaces in agenda."
