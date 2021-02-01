@@ -11335,6 +11335,7 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 (defun yant/verify-refile-target ()
   "Exclude tasks and todo keywords with a done state from refile targets."
   (and (not (member "NOREFILE" (org-get-tags (point) 'local)))
+       (not (string-match-p "rss\\.org" (buffer-file-name (buffer-base-buffer))))
        (or refile-to-tasks
 	   (or (member "REFILE" (org-get-tags (point) 'local))
 	       (not (bh/is-task-p))))
