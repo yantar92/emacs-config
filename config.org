@@ -7672,6 +7672,24 @@ It is handy to be able to find all other headlines having links to current headl
   :straight (org-super-links :type git :host github :repo "toshism/org-super-links")
   )
 #+end_src
+***** Offer link selection when =C-c C-o= on a heading
+
+By default, =org-offer-links-in-entry= does a pretty decent job offering what link to open, but I prefer to list attachment directory as well.
+
+The function is redefined in [[id:e8ee8fc7-55ec-4396-83e6-97559ab1d5bf][Use posframe to offer link selection]] (cannot redefine multiple times using =el-patch=)
+
+Also, use =org-attach-open= instead of =org-attach-reveal= in =org-open-at-point=.
+#+begin_src emacs-lisp
+(define-advice org-open-at-point (:around (oldfun &optional arg) use-org-attach-open)
+  "Use `org-attach-open' instead of `org-attach-reveal' when opening attachments."
+  (cl-letf (((symbol-function 'org-attach-reveal) #'org-attach-open)
+            ((symbol-function 'org-attach-reveal-in-emacs) #'org-attach-open-in-emacs))
+    (org-with-point-at-org-buffer
+     (funcall oldfun arg))))
+
+(define-advice org-agenda-open-link (:override (&optional arg) use-org-open-at-point) (org-open-at-point arg))
+#+end_src
+
 **** LaTeX integration
 :PROPERTIES:
 :CREATED:  [2020-05-05 Tue 23:00]
@@ -12858,6 +12876,9 @@ there is one, return it."
 	   ;; 		       (format "[[%s]]" link)))
 	   ;; 		   links)))
 	   (setq links (org-uniquify (reverse links))))
+         (el-patch-add
+           (when-let ((attach-dir (org-attach-dir)))
+             (push "[[elisp:(org-attach-open)][Open attachment]]" links)))
 	 (cond
 	  ((null links)
 	   (message "No links"))
@@ -12905,6 +12926,8 @@ there is one, return it."
 	     (unless (and (integerp nth) (>= (length links) nth))
 	       (user-error "Invalid link selection"))
 	     (setq link (nth (1- nth) links)))))
+         (when (string= link "[[elisp:(org-attach-open)][Open attachment]]")
+           (setq link nil))
 	 (cons link end))))))
 #+end_src
 **** Items
