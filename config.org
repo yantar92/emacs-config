@@ -6704,6 +6704,7 @@ The task is any item with todo keyword and no subtask.
     (interactive "nHow well did you remember the information (on a scale of 0-5)? ")
     (let ((next-days (org-drill-hypothetical-next-review-date quality)))
       (if (= next-days 0) (setq next-days 1))
+      (if (> next-days 40) (setq next-days 40)) ;; Hard limit on postponing.
       (org-drill-smart-reschedule quality next-days))))
 
 (defun org-trigger-tickler (arg)
