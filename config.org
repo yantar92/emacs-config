@@ -6728,12 +6728,21 @@ The task is any item with todo keyword and no subtask.
       (if (member (plist-get arg :to) org-done-keywords)
 	  (unless (y-or-n-p (format "Trying to mark TICKLER task as %s. Proceed? " (plist-get arg :to)))
 	    (org-todo "TICKLER"))
-        (call-interactively #'yant/org-smart-reschedule))
-      (when (and (marker-buffer org-clock-marker)
-		 (marker-position org-clock-marker)
-		 (equal (marker-position pos)
-			(org-with-point-at org-clock-marker (org-back-to-heading 't))))
-	(org-clock-out)))))
+        (call-interactively #'yant/org-smart-reschedule)
+        (add-transient-hook! 'post-command-hook
+          (let ((marker (org-with-point-at-org-buffer (org-back-to-heading t) (point-marker)))
+                (ts (org-with-point-at-org-buffer (org-entry-get (point) "SCHEDULED"))))
+            (dolist (agenda-buffer (mapcar #'get-buffer
+				           (seq-filter (apply-partially  #'s-contains-p "*Org Agenda")
+					               (mapcar #'buffer-name (buffer-list)))))
+              (when (buffer-live-p agenda-buffer)
+	        (with-current-buffer agenda-buffer
+                  (save-excursion
+                    (goto-char (point-min))
+                    (while (< (point) (point-max))
+                      (when (equal marker (org-get-at-bol 'org-hd-marker))
+                        (org-agenda-show-new-time (org-get-at-bol 'org-marker) ts " S"))
+                      (beginning-of-line 2))))))))))))
 (add-hook 'org-trigger-hook #'org-trigger-tickler)
 #+end_src    
   - SOMEDAY(s) :: This task appears to be interesting and worth doing but does not have to be done at all. The command triggers unscheduling the task if it is scheduled and clocking out.
