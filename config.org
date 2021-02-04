@@ -14400,7 +14400,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 	  (widen)
 	  (outline-get-next-sibling)
 	  (org-narrow-to-subtree)
-          (org-show-entry))))
+          (org-fold-show-children))))
     
     (meta-defun meta-down-element
       :mode org-mode
@@ -14430,7 +14430,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 	  (widen)
 	  (outline-get-last-sibling)
 	  (org-narrow-to-subtree)
-	  (org-show-entry))))
+	  (org-show-children))))
 
     (meta-defun meta-up-element
       :mode org-mode
