@@ -13223,6 +13223,15 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   :custom
   (org-fontify-done-headline nil))
 #+end_src
+**** Reveal hidden parts of links/emphasis when cursor enters them
+
+#+begin_src emacs-lisp
+(use-package org-appear
+  :if init-flag
+  :straight (org-appear :host github :repo "awth13/org-appear" :branch "feature/org-fold-support")
+  :hook (org-mode . org-appear-mode))
+#+end_src
+
 **** Align tags to right, even when the window size changes
 :PROPERTIES:
 :CREATED:  [2020-07-17 Fri 15:21]
