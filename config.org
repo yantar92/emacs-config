@@ -779,7 +779,9 @@ Resize frames automatically making sure that active window is enlarged ([[id:3e7
   :straight (golden-ratio :type git :url "https://git.sr.ht/~wklew/golden")
   :diminish golden-ratio-mode
   :custom
-  (golden-ratio-exclude-modes '(notmuch-tree-mode))
+  (golden-ratio-exclude-modes '(notmuch-tree-mode
+                                ;; This is needed to avoid resizing todo selection window.
+                                fundamental-mode))
   :config
   (golden-ratio-mode +1))
 #+end_src
