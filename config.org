@@ -6922,6 +6922,15 @@ Otherwise, there is not much point in check-boxes for me.
   :custom
   (org-enforce-todo-checkbox-dependencies t))
 #+end_src
+***** Repeating tasks
+
+By default, tasks with repeated are changed to "TODO" state. I prefer "NEXT".
+
+#+begin_src emacs-lisp
+(use-package org
+  :if init-flag
+  :custom (org-todo-repeat-to-state "NEXT"))
+#+end_src
 
 ***** Habits
 :PROPERTIES:
