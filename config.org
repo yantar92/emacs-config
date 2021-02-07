@@ -6605,7 +6605,6 @@ fun create-or
 The task is any item with todo keyword and no subtask.
 #+begin_src emacs-lisp
 (use-package org-ql
-  :demand t
   :config
   (org-ql-defpred task ()
     "Match a task without child subtasks."
@@ -6981,7 +6980,6 @@ Do not show consistency graph in agenda
 The project is an item with todo keyword and subtask.
 #+begin_src emacs-lisp
 (use-package org-ql
-  :demand t
   :config
   (org-ql-defpred project ()
     "Match a project - task with a todo subtask or :project: tag."
@@ -7031,7 +7029,6 @@ The project without parent projects.
       parent-task)))
 
 (use-package org-ql
-  :demand t
   :config
   (org-ql-defpred subtask ()
     "A subtask of a project."
@@ -7057,7 +7054,6 @@ The project without parent projects.
 The project with parent projects.
 #+begin_src emacs-lisp
 (use-package org-ql
-  :demand t
   :config
   (org-ql-defpred subproject ()
     "Match a subproject"
