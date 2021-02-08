@@ -2043,9 +2043,6 @@ I use company for completion just because it is easy to use.
   (company-selection-wrap-around t)
   (company-require-match nil)
   (company-transformers '(company-sort-by-occurrence))
-  (company-backends '(company-bbdb company-semantic company-cmake company-capf company-clang company-files
-	                           (company-dabbrev-code company-gtags company-etags company-keywords)
-	                           company-oddmuse company-dabbrev))
   :config
   (bind-key* "M-/" #'company-complete)
   :bind (:map company-active-map
