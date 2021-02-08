@@ -2635,9 +2635,7 @@ Especially useful when inserting/replacing big chunks of text.
   :straight (goggles :host github :repo "minad/goggles" :local-repo "~/Git/goggles"
                      :fork (:host github :repo "yantar92/goggles"))
   :diminish goggles-mode
-  ;; :hook ((text-mode prog-mode) . goggles-mode)
-  :custom
-  (goggles-pulse nil))
+  :hook ((text-mode prog-mode) . goggles-mode))
   #+end_src
 *** Highlight evaluated sexp
 :PROPERTIES:
