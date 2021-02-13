@@ -7330,6 +7330,37 @@ Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while
 	   ,@body))
 	 (t (display-warning :warning "Trying to call org function in non-org buffer."))))
 
+(defmacro org-with-point-at-org-buffer-drop-excursion (&rest body)
+  "If in agenda, put the point into the corresponding org buffer.
+Do not save excursion."
+  `(cond ((eq major-mode 'org-agenda-mode)
+	  (when-let ((marker (org-get-at-bol 'org-hd-marker)))
+	    (org-with-point-at-drop-excursion marker
+	      ,@body)))
+         ((eq major-mode 'org-mode)
+          (org-with-wide-buffer-drop-excursion
+	   ,@body))
+	 (t (display-warning :warning "Trying to call org function in non-org buffer."))))
+
+(defmacro org-with-point-at-drop-excursion (pom &rest body)
+  "Move to buffer and point of point-or-marker POM for the duration of BODY.
+Do not save excursion."
+  (declare (debug (form body)) (indent 1))
+  (org-with-gensyms (mpom)
+    `(let ((,mpom ,pom))
+       (when (markerp ,mpom) (set-buffer (marker-buffer ,mpom)))
+       (org-with-wide-buffer-drop-excursion
+	(goto-char (or ,mpom (point)))
+	,@body))))
+
+(defmacro org-with-wide-buffer-drop-excursion (&rest body)
+  "Execute body while temporarily widening the buffer.
+Do not save excursion."
+  (declare (debug (body)))
+  `(save-restriction
+     (widen)
+     ,@body))
+
 (setq org-link-file-path-type 'relative)
 
 (defun yant/process-att-abbrev (arg)
@@ -7708,7 +7739,7 @@ Also, use =org-attach-open= instead of =org-attach-reveal= in =org-open-at-point
   "Use `org-attach-open' instead of `org-attach-reveal' when opening attachments."
   (cl-letf (((symbol-function 'org-attach-reveal) #'org-attach-open)
             ((symbol-function 'org-attach-reveal-in-emacs) #'org-attach-open-in-emacs))
-    (org-with-point-at-org-buffer
+    (org-with-point-at-org-buffer-drop-excursion
      (funcall oldfun arg))))
 
 (define-advice org-agenda-open-link (:override (&optional arg) use-org-open-at-point) (org-open-at-point arg))
