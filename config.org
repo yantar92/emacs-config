@@ -8959,6 +8959,31 @@ Also, no contexts are prompted in Inbox agenda.
                                                   tags-exclude))
 	      (org-agenda-filter-apply org-agenda-tag-filter 'tag t))))))))
 #+end_src
+***** Filtering items in agenda views
+
+By default, filtering commands in agenda replace the currently active filter. Adding/changing the filter is done with =C-u C-u= argument. I prefer the opposite behaviour when the current filter is changed by default and replaced with =C-u C-u=.
+
+#+begin_src emacs-lisp
+(use-package org-agenda
+  :if init-flag
+  :config
+  (define-advice org-agenda-filter (:filter-args (&optional strip-or-accumulate) inverse-filter-modification)
+    "Modify filter by default."
+    (setq strip-or-accumulate
+          (pcase strip-or-accumulate
+            ('(16) nil)
+            ('(nil) '(16))
+            (other other)))
+    (list strip-or-accumulate))
+  (define-advice org-agenda-filter-by-tag (:filter-args (strip-or-accumulate &optional char exclude) inverse-filter-modification)
+    "Modify filter by default."
+    (setq strip-or-accumulate
+          (pcase strip-or-accumulate
+            ('(16) nil)
+            ('(nil) '(16))
+            (other other)))
+    (list strip-or-accumulate char exclude)))
+#+end_src
 
 ***** Focused daily agenda
 :PROPERTIES:
