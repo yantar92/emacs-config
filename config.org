@@ -8679,8 +8679,19 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-tags-match-list-sublevels nil)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down))))))
-              ("n" "NEXT and REVIEW tasks"
-	       ((tags-todo "-CANCELLED-WAITING-HOLD-SOMEDAY"
+              ("n" "Agenda, NEXT, and REVIEW tasks"
+	       ((agenda ""
+                        ((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                                     (quote (and (ts-active :to today)
+                                                                 (not (done))
+                                                                 (not (tags-inherited "HOLD"))
+                                                                 (not (tags-inherited "WAITING"))
+                                                                 (not (tags-inherited "CANCELLED"))
+                                                                 (not (tags "SOMEDAY"))
+                                                                 (not (org-agenda-skip-before-SHOWFROMDATE-property))
+					                         (not (org-agenda-skip-before-SHOWFROMTIME-property))
+					                         (not (org-agenda-skip-noshowdates))))))))
+                (tags-todo "-CANCELLED-WAITING-HOLD-SOMEDAY"
 			   ((org-agenda-overriding-header "Stuck Projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
