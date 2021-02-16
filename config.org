@@ -8985,7 +8985,6 @@ By default, filtering commands in agenda replace the currently active filter. Ad
             (other other)))
     (list strip-or-accumulate char exclude)))
 #+end_src
-
 ***** Focused daily agenda
 :PROPERTIES:
 :ID:       a6054643-449e-48d7-afff-4155465efc19
@@ -9125,11 +9124,7 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 (defun yant/org-agenda-skip-nofocus ()
   "Filter tasks for focus agenda."
   (yant/org-agenda-skip-org-ql
-   '(and (not (tags "CANCELLED"))
-         (or (not (or (tags "WAITING")
-                    (tags "HOLD")))
-             (not (todo "TICKLER")))
-         (or
+   '(and (or
           (and (ts-active :to today)
                (or (habit)
                    (priority "A")
@@ -9141,7 +9136,11 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
           (and (deadline)
                (not (scheduled :from +1))))
          (not (org-agenda-skip-before-SHOWFROMTIME-property))
-         (not (org-agenda-skip-before-SHOWFROMDATE-property))))
+         (not (org-agenda-skip-before-SHOWFROMDATE-property))
+         (not (tags "CANCELLED"))
+         (or (not (or (tags "WAITING")
+                    (tags "HOLD")))
+             (not (todo "TICKLER")))))
   ;; (and
   ;;  (or
   ;;   (zin/org-agenda-skip-tag "HOLD")
