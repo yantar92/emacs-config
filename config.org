@@ -2255,8 +2255,8 @@ Do not even need terminal to interact with Git.
   :straight t
   :after magit)
 #+end_src
+**** Activate insert state when editing commits
 
-Activate insert state when editing commits
 #+begin_src emacs-lisp
 (when init-flag
 (add-hook 'with-editor-mode-hook #'boon-set-insert-state))
@@ -2274,25 +2274,24 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
   (magit-section-initial-visibility-alist
    '((stashes . hide) (untracked . hide) (unpushed . hide))))
 #+end_src
-**** COMMENT Working with multiple repositories
-
-[2020-10-12 Mon] Apparently this package is not up-to-date with magit. Need to investigate various errors triggered in advises.
-
-Normally, =magit= only works with a single repository at a time.
-It is possible to display overview of multiple repositories using [[id:25b6e834-e8d8-4c23-b978-60e03147f9a9][luismbo/multi-magit: Multi-repo support for Magit]]
+**** Working with multiple repositories
 
 #+begin_src emacs-lisp
-(use-package multi-magit
+(use-package magit
   :if init-flag
-  :straight (multi-magit :host github :repo "luismbo/multi-magit")
-  :after magit
-  :requires boon
   :custom
-  (magit-repository-directories '(("~/Git/" . 1)
-                                  ("~/Knowledge_base/2016/Private/Get_started_with_org_mode/" . 0)
-                                  ("~/.emacs.d/straight/repos/" . 1)))
-  :config
-  (bind-key "G" #'multi-magit-status boon-x-map))
+  (magit-repository-directories '(("~/Git" . 1)
+                                  ("~/Org" . 0)))
+  (magit-repolist-columns '(("Name" 25 magit-repolist-column-ident nil)
+                            ;; ("Version" 25 magit-repolist-column-version nil)
+                            ("Branch" 25 magit-repolist-column-branch nil)
+                            ("B<U" 3 magit-repolist-column-unpulled-from-upstream
+                             ((:right-align t)
+                              (:help-echo "Upstream changes not in branch")))
+                            ("B>U" 3 magit-repolist-column-unpushed-to-upstream
+                             ((:right-align t)
+                              (:help-echo "Local changes not in upstream")))
+                            ("Path" 99 magit-repolist-column-path nil))))
 #+end_src
 
 ** Text highlight & colouring
