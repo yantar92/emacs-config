@@ -9258,7 +9258,16 @@ Agenda is excellent for short term planning, however it is not very useful if I 
 	(switch-to-buffer (cfw:cp-get-buffer cp))))
     (use-package boon
       :config
-      (bind-key "A" 'cfw:open-calendar 'boon-goto-map))
+      (defun yant/cfw:open-calendar ()
+        "Run `cfw:open-calendar' with skip function hiding non-important tasks."
+        (interactive)
+        (let ((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                          (quote (and (ts-active)
+                                                      (not (habit))
+                                                      (not (tags "SKIP"))
+                                                      (not (todo "TICKLER")))))))
+          (cfw:open-calendar)))
+      (bind-key "A" #'yant/cfw:open-calendar 'boon-goto-map))
     (custom-set-faces
      '(cfw:face-title ((t (:foreground "#f0dfaf" :weight bold :height 2.0 :inherit variable-pitch))))
      '(cfw:face-header ((t (:foreground "#d0bf8f" :weight bold))))
