@@ -2247,28 +2247,7 @@ Do not even need terminal to interact with Git.
       (meta-defun meta-down-element :mode magit-revision-mode magit-section-forward)
       (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward))))
 #+END_SRC
-
-Interaction with Github
-
-#+BEGIN_SRC emacs-lisp
-(use-package magithub
-  :if init-flag
-  :straight t
-  :after (magit magit-popup)
-  :init
-  (use-package magit-popup :straight t)
-  (require 'magit-popup)
-  :config
-  (magithub-feature-autoinject t)
-  ;; Workaround for https://github.com/vermiculus/magithub/issues/71
-  (defun magithub-issue--sort (issues)
-    "Sort ISSUES by issue number."
-    (sort issues
-          (lambda (a b) (> (plist-get a :number)
-		      (plist-get b :number))))))
-#+END_SRC
-
-Working with forges
+**** Interaction with Github
 
 #+begin_src emacs-lisp
 (use-package forge
