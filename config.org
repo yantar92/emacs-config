@@ -1689,7 +1689,8 @@ The problem is that it may mess up the cases when I want to assign special meani
 	   dired-mode image-dired-thumbnail-mode image-dired-display-image-mode
            pdf-view-mode helpful-mode magit-file-mode
 	   magit-status-mode magit-revision-mode magit-log-mode
-           magit-diff-mode timer-list-mode
+           magit-cherry-mode
+           magit-diff-mode magit-repolist-mode magit-reflog-mode timer-list-mode
            org-lint--report-mode image-mode
 	   mingus-playlist-mode mingus-browse-mode
 	   mingus-help-mode calendar-mode undo-tree-visualizer-mode
