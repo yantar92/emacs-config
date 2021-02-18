@@ -8446,7 +8446,9 @@ I use different skip functions here in agenda to filter the agenda. Some of them
       (if (and (bh/is-project-p)
 	       (not (member (org-get-todo-state) (list "SOMEDAY" "TODO")))
 	       (or (not (bh/is-subproject-p))
-		   (member (org-get-todo-state) (list "NEXT" ;; "DOING"
+		   (member (org-get-todo-state) (list "NEXT"
+                                                      "REVIEW"
+                                                      ;; "DOING"
                                                       ))))
 	  (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
 		 (has-next ))
