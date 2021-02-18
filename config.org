@@ -13481,24 +13481,26 @@ Optional MODE specifies major mode used for display."
 Optional MODE specifies major mode used for display.
 Non-nil HIDE-P means that the string should be trimmed by hiding the trailing part with text properties.
 Optional ELLIPSIS string is shown in place of the hidden/deleted part of the string."
-  (with-temp-buffer
-    (with-silent-modifications
-      (setf (buffer-string) string))
-    (when (fboundp mode)
-      (funcall mode)
-      (font-lock-fontify-buffer))
-    (when (> (current-column) num)
-      (move-to-column num)
+  (let ((char-property-alias-alist-buffer char-property-alias-alist))
+    (with-temp-buffer
+      (setq-local char-property-alias-alist char-property-alias-alist-buffer)
       (with-silent-modifications
-	(if hide-p
-	    (progn
-	      (if (stringp ellipsis)
-		  (put-text-property (point) (point-max) 'display ellipsis)
-		(put-text-property (point) (point-max) 'invisible t))
-              (put-text-property (point) (point-max) 'truncated t))
-	  (kill-line)
-          (when (stringp ellipsis) (insert ellipsis)))))
-    (buffer-string)))
+        (setf (buffer-string) string))
+      (when (fboundp mode)
+        (funcall mode)
+        (font-lock-fontify-buffer))
+      (when (> (current-column) num)
+        (move-to-column num)
+        (with-silent-modifications
+	  (if hide-p
+	      (progn
+	        (if (stringp ellipsis)
+		    (put-text-property (point) (point-max) 'display ellipsis)
+		  (put-text-property (point) (point-max) 'invisible t))
+                (put-text-property (point) (point-max) 'truncated t))
+	    (kill-line)
+            (when (stringp ellipsis) (insert ellipsis)))))
+      (buffer-string))))
 
 (defun string-display-pixel-width (string &optional mode)
   "Calculate pixel width of STRING.
