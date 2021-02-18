@@ -13879,7 +13879,7 @@ Patching the relevant function to not put that tooltip into the overlay.
 				 "The clock is running in this item")))))))))))
 #+end_src
 
-***** TODO this in not truncated properly in agenda [[id:b51c5a05-4a20-469a-b61d-fd71b1fcc32f][paper What governs ductility of ultrafine-grained metals? A microstructure based approach to necking instability]]
+***** TODO this in not truncated properly in agenda]]
 :PROPERTIES:
 :CREATED: [2020-07-13 Mon 08:27]
 :END:
