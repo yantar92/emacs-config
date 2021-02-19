@@ -13437,6 +13437,7 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 Hide some uninteresting tags
 #+begin_src emacs-lisp
 (setq org-agenda-hide-tags-regexp (rx-to-string '(or "DEFAULT"
+                                                     "flagged"
                                                      "TICKLER"
 						     "SKIP"
                                                      "NOARCHIVE"
