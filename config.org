@@ -8448,13 +8448,12 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 	       (or (not (bh/is-subproject-p))
 		   (member (org-get-todo-state) (list "NEXT"
                                                       "REVIEW"
-                                                      ;; "DOING"
-                                                      ))))
+                                                      "DOING"))))
 	  (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-		 (has-next ))
+		 (has-next))
 	    (save-excursion
 	      (forward-line 1)
-	      (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ \\(NEXT\\|DOING\\) " subtree-end t))
+	      (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ \\(NEXT\\|REVIEW\\) " subtree-end t))
 		(unless (or (member "WAITING" (org-get-tags nil))
 			    (member "CANCELLED" (org-get-tags nil))
                             (member "HOLD" (org-get-tags nil))
