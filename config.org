@@ -9809,13 +9809,18 @@ instead."
 	      :fork (:host github :repo "yantar92/org-ql"))
   :init (use-package org-ql-search :demand t)
   :config
-  (org-ql-defpred keyword (&rest strings)
+  (org-ql-defpred (keyword k) (&rest strings)
     "Match a keyword in outline-path, heading, or body."
-    :body (cl-loop for string in strings
-                   thereis (or (outline-path string)
-                               (heading string)
-                               (path string)
-	                       (regexp (concat "#" string))))))
+    :body (let ((result t))
+            (catch :nope
+              (dolist (string strings)
+                (unless (or (outline-path string)
+                            (heading string)
+                            (path string)
+	                    (regexp (concat "#" string)))
+                  (setq result nil)
+                  (throw :nope nil))))
+            result)))
 
 (defun yant/org-ql-focused-agenda-block (&rest args)
   "Return expression, suitable for `org-agenda-custom-commands', which matches focused agenda view."
