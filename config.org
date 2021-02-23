@@ -235,7 +235,18 @@ Now, I can setup =use-package= to simplify subsequent package configuration
 
 *************** TODO separate all the diminish statements into appearance
 *************** END
+**** Quick access to use-package docstring
 
+#+begin_src emacs-lisp
+(use-package helm
+  :if init-flag
+  :config
+  (use-package boon
+    :demand t
+    :config
+    (bind-key "h u" #'helm-info-use-package boon-goto-map)))
+
+#+end_src
 *** Early loading of org-mode 
 :PROPERTIES:
 :ID:       c08a1b4f-17b8-4c4e-ba94-f49e8471cc3c
