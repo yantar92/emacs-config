@@ -1591,16 +1591,6 @@ I prefer to have some minimal set of movement keys working in all the buffers (s
 It means that I need to redefine the movement commands to be able to act according to the major mode (like "n" from org-mode is bound to =org-next-line= and, hence, "j" from =org-special-map= should be also bound to =org-next-line=.
 This can be done by defining special wrapper command, which acts differently depending on the mode or buffer position, while the general result or running the command is similar (i.e. move next line in text buffer, but move next file in =dired=, or next agenda item in =org-agenda=.
 
-First, unify all the movement commands.
-In boon, it can be done by forcing global move commands in special state.
-#+BEGIN_SRC emacs-lisp
-(use-package boon
-  :if init-flag
-  :defer t
-  :config
-  (set-keymap-parent boon-special-map boon-moves-map))
-#+END_SRC
-
 *************** TODO respect interactive definitions
 *************** END
 
@@ -2795,6 +2785,21 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 	     ("e" . meta-occur)
              ("g" . meta-goto)
 	     :map boon-special-map
+	     ("j" . meta-down)
+	     ("J" . meta-down-element)
+	     ("k" . meta-up)
+	     ("K" . meta-up-element)
+	     ("o" . meta-forward)
+	     ("O" . meta-forward-element)
+	     ("i" . meta-backward)
+	     ("I" . meta-backward-element)
+	     ("l" . meta-scroll-up)
+	     ("L" . meta-scroll-down)
+	     (";" . meta-recenter-top-bottom)
+	     ;;("U" . move-beginning-of-line)
+	     ;;("P" . move-end-of-line)
+	     ("u" . boon-beginning-of-line)
+	     ("p" . meta-end-of-line)
 	     ("c" . boon-c-god)
 	     ("z" . boon-quote-character)
 	     ("e" . boon-forward-search-map)
