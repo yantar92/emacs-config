@@ -4614,26 +4614,28 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 Smarter elisp editing
 
 #+begin_src emacs-lisp
-  (use-package paredit
-    :if init-flag
-    :straight t
-    :diminish (paredit-mode . " (⤑)")
-    :demand t ;; I need it in scratch buffer
-    :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . paredit-mode)
+(use-package paredit
+  :if init-flag
+  :straight t
+  :diminish (paredit-mode . " (⤑)")
+  :demand t ;; I need it in scratch buffer
+  :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . paredit-mode)
+  :config
+  (use-package boon
+    :defer t
+    :after meta-functions
     :config
-    (use-package boon
-      :defer t
-      :after meta-functions
-      :config
-      (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
-      (meta-defun meta-move-line-right :mode lisp-interaction-mode paredit-forward-slurp-sexp)
-      (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-backward-slurp-sexp)
-      (meta-defun meta-move-line-left :mode lisp-interaction-mode paredit-backward-slurp-sexp)
-      (meta-defun meta-forward-element :mode emacs-lisp-mode paredit-forward)
-      (meta-defun meta-backward-element :mode emacs-lisp-mode paredit-backward)
-      (bind-keys :map boon-insert-map
-		 ("M-o" . meta-move-line-right)
-		 ("M-i" . meta-move-line-left))))
+    (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
+    (meta-defun meta-move-line-right :mode lisp-interaction-mode paredit-forward-slurp-sexp)
+    (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-backward-slurp-sexp)
+    (meta-defun meta-move-line-left :mode lisp-interaction-mode paredit-backward-slurp-sexp)
+    (meta-defun meta-forward-element :mode emacs-lisp-mode paredit-forward)
+    (meta-defun meta-forward-element :mode lisp-interaction-mode paredit-forward)
+    (meta-defun meta-backward-element :mode emacs-lisp-mode paredit-backward)
+    (meta-defun meta-backward-element :mode lisp-interaction-mode paredit-backward)
+    (bind-keys :map boon-insert-map
+	       ("M-o" . meta-move-line-right)
+	       ("M-i" . meta-move-line-left))))
 #+end_src
 **** Font-lock based namespace for writing modes
 :PROPERTIES:
