@@ -12982,7 +12982,8 @@ there is one, return it."
 	   (setq links (org-uniquify (reverse links))))
          (el-patch-add
            (when-let ((attach-dir (org-attach-dir)))
-             (push "[[elisp:(org-attach-open)][Open attachment]]" links)))
+             (unless (directory-empty-p attach-dir)
+               (push "[[elisp:(org-attach-open)][Open attachment]]" links))))
 	 (cond
 	  ((null links)
 	   (message "No links"))
