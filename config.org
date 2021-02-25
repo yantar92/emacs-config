@@ -13101,6 +13101,8 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
                   (?🖳 org-specific ":\\(PhD\\):" (org-mode) 1)
                   (?🏠 org-specific ":\\(COMMON\\):" (org-mode) 1)
                   (?🖂 org-specific ":\\(EMAIL\\):" (org-mode) 1)
+                  (?🔔 org-specific ":\\(FLAGGED\\|flagged\\):" (org-mode) 1)
+                  (? org-specific ":\\(WAITING\\|HOLD\\|CANCELLED\\|SOMEDAY\\):" (org-mode))
       		  (?☐ org-specific "\\(?:^*+ +\\)\\(\\<TODO\\>\\)" (org-mode) 1)
                   (?⯑ org-specific "\\(?:^*+ +\\)\\(\\<SOMEDAY\\>\\)" (org-mode) 1)
       		  (?☑ org-specific "\\(?:^*+ +\\)\\(\\<DONE\\>\\)" (org-mode) 1)
