@@ -2919,6 +2919,14 @@ Disabling it, since it is not very useful for me anyway.
     "Disable \"Mark set\" message."
     (list (car args) t (caddr args))))
 #+end_src
+
+**** Automatically select highlight face
+
+#+begin_src emacs-lisp
+(when init-flag
+  (setq hi-lock-auto-select-face t))
+#+end_src
+
 *** Links
 :PROPERTIES:
 :ID:       7908bb55-6bc0-4db2-b5d2-258ff985250d
