@@ -9993,8 +9993,8 @@ into (not QUERY)."
           (org-agenda-sticky nil))
       (org-tags-view nil "!")))
   :custom
-  (helm-org-ql-actions '(("Insert link to heading" . yant/helm-org-ql-create-link)
-                         ("Go to heading" . helm-org-ql-show-marker)
+  (helm-org-ql-actions '(("Go to heading" . helm-org-ql-show-marker)
+                         ("Insert link to heading" . yant/helm-org-ql-create-link)
                          ("Open heading source" . yant/helm-org-ql-open-url)
                          ("Insert URL of heading" . yant/helm-org-ql-insert-url)
                          ("Refile heading(s) to heading at point" . helm-org--refile-heading-here)
