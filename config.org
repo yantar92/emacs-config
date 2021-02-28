@@ -11925,6 +11925,7 @@ This function is called by `org-archive-hook'.  The option
 				     (org-attach-reveal-in-emacs))))
                    (save-window-excursion
                      (dired-pop-to-buffer dired-buf)
+                     (revert-buffer)
                      (select-window (old-selected-window))
 		     (prog1
 			 (yes-or-no-p (format "%s: Delete all attachments? "
