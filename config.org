@@ -12569,7 +12569,7 @@ The access is only restored while I am doing a task related to that domain (and 
           (setq yant/hosts-unblocked t)
           (start-process-shell-command "Send message to qutebrowser"
 				       nil
-				       (format "qutebrowser ':set content.blocking.whitelist \"%s\"'" hosts-list-string)))))))
+				       (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string)))))))
 
 (defun yant/unblock-all-hosts ()
   "Unblock all custom-blocked hosts in qutebrowser."
@@ -12584,7 +12584,7 @@ The access is only restored while I am doing a task related to that domain (and 
           (setq yant/hosts-unblocked t)
           (start-process-shell-command "Send message to qutebrowser"
 				       nil
-				       (format "qutebrowser ':set content.blocking.whitelist \"%s\"'" hosts-list-string)))))))
+				       (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string)))))))
 
 (defun yant/org-unblock-heading-source ()
   "Unblock (`yant/unblock-host') url value stored in Source property of the task at point.
@@ -12602,7 +12602,7 @@ If the heading has property DISABLE-HOST-BLOCKING set to `t', unblock everything
     (setq yant/hosts-unblocked nil)
     (start-process-shell-command "Send message to qutebrowser"
 			         nil
-			         (format "pgrep qutebrowser && qutebrowser ':set content.blocking.whitelist \"\"'"))))
+			         (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"\"'"))))
 
 (add-hook 'org-clock-in-hook #'yant/org-unblock-heading-source)
 (add-hook 'org-clock-out-hook #'yant/restore-host-blocks)
