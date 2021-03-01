@@ -11298,36 +11298,6 @@ I define two link types for capturing:
  			    :type entry
  			    :file "~/Org/inbox.org"
  			    :fetch-bibtex (lambda () (org-capture-ref-process-capture)) ; this must run first
-			    :bibtex (lambda () (org-capture-ref-get-bibtex-field :bibtex-string))
-                            :url (lambda () (org-capture-ref-get-bibtex-field :url))
-                            :type-tag (lambda () (org-capture-ref-get-bibtex-field :type))
-			    :title (lambda () (format "%s%s%s%s"
-						 (or (when (org-capture-ref-get-bibtex-field :author)
-                                                       (let* ((authors (s-split " *and *" (org-capture-ref-get-bibtex-field :author)))
-							      (author-surnames (mapcar (lambda (author)
-											 (car (last (s-split " +" author))))
-										       authors)))
-                                                         (unless (string= "article" (org-capture-ref-get-bibtex-field :type))
-                                                           (setq author-surnames authors))
-							 (if (= 1 (length author-surnames))
-                                                             (format "%s " (car author-surnames))
-                                                           (format "%s, %s " (car author-surnames) (car (last author-surnames))))))
-                                                     "")
-                                                 (or (when (org-capture-ref-get-bibtex-field :journal)
-						       (format "[%s] " (org-capture-ref-get-bibtex-field :journal)))
-                                                     (when (org-capture-ref-get-bibtex-field :school)
-						       (format "[%s] " (org-capture-ref-get-bibtex-field :school)))
-                                                     (when (org-capture-ref-get-bibtex-field :publisher)
-						       (format "[%s] " (org-capture-ref-get-bibtex-field :publisher)))
-                                                     (when (org-capture-ref-get-bibtex-field :howpublished)
-                                                       (format "[%s] " (org-capture-ref-get-bibtex-field :howpublished)))
-                                                     "")
-                                                 (or (when (org-capture-ref-get-bibtex-field :year)
-                                                       (format "(%s) " (org-capture-ref-get-bibtex-field :year)))
-                                                     "")
-                                                 (or (org-capture-ref-get-bibtex-field :title)
-                                                     "")))
-			    :id (lambda () (org-capture-ref-get-bibtex-field :key))
                             :extra (lambda () (if (org-capture-ref-get-bibtex-field :journal)
 					     (s-join "\n"
 						     '("- [ ] download and attach pdf"
@@ -11336,26 +11306,19 @@ I define two link types for capturing:
 						       "- [ ] check citing articles"
 						       "- [ ] check related articles"))
                                            ""))
+                            :org-entry (lambda () (org-capture-ref-get-org-entry))
 			    :template
-			    ("%{fetch-bibtex}* TODO %? %{title} :BOOKMARK:%{type-tag}:"
-			     ":PROPERTIES:"
-			     ":ID: %{id}"
-			     ":CREATED: %U"
-			     ":Source: [[%{url}]]"
-			     ":END:"
-                             ":BIBTEX:"
-			     "#+begin_src bibtex"
-			     "%{bibtex}"
-			     "#+end_src"
-                             ":END:"
+                            ("%{fetch-bibtex}* TODO %?%{space}%{org-entry}"
                              "%{extra}")
 			    :children (("Interactive link"
 					:keys "b"
 					:clock-in t
+                                        :space " "
 					:clock-resume t
 					)
 				       ("Silent link"
 					:keys "B"
+                                        :space ""
 					:immediate-finish t))))))
     (dolist (template templates)
       (asoc-put! org-capture-templates
