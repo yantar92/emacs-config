@@ -640,6 +640,11 @@ Do not compact font caches
 (setq inhibit-compacting-font-caches t)
 #+end_src
 
+Try to improve the typing speed. The typing lags after long Emacs session (presumably because of garbage collection, but trying this anyway)
+#+begin_src emacs-lisp
+(setq redisplay-skip-fontification-on-input t)
+#+end_src
+
 ** Appearance
 :PROPERTIES:
 :ID:       5b50a90f-4f47-4244-a6ac-e3646464539d
