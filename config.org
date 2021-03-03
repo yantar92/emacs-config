@@ -242,7 +242,6 @@ Now, I can setup =use-package= to simplify subsequent package configuration
   :if init-flag
   :config
   (use-package boon
-    :demand t
     :config
     (bind-key "h u" #'helm-info-use-package boon-goto-map)))
 
