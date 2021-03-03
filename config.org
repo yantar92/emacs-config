@@ -11319,6 +11319,7 @@ I define two link types for capturing:
  			    :type entry
  			    :file "~/Org/inbox.org"
  			    :fetch-bibtex (lambda () (org-capture-ref-process-capture)) ; this must run first
+                            :link-type (lambda () (org-capture-ref-get-bibtex-field :type))
                             :extra (lambda () (if (org-capture-ref-get-bibtex-field :journal)
 					     (s-join "\n"
 						     '("- [ ] download and attach pdf"
@@ -11330,7 +11331,8 @@ I define two link types for capturing:
                             :org-entry (lambda () (org-capture-ref-get-org-entry))
 			    :template
                             ("%{fetch-bibtex}* TODO %?%{space}%{org-entry}"
-                             "%{extra}")
+                             "%{extra}"
+                             "- Keywords: #%{link-type}")
 			    :children (("Interactive link"
 					:keys "b"
 					:clock-in t
