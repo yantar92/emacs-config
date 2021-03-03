@@ -9966,6 +9966,22 @@ into (not QUERY)."
   :after org-ql
   :after helm-org
   :init
+  (defun yant/helm-org-ql-set-preceding-task (marker)
+    "Make task at point follow other (selected) task.
+
+The current task will be marked WAITING and cannot be marked DONE
+until the other task is completed.
+Its :SUMMARY: property will contain the information about the blocker
+Completing the other (selected) task will automatically set the
+current task to NEXT and schedule it the same day."
+    (let ((uuid (org-with-point-at marker (org-id-get-create)))
+	  (cur-uuid (org-id-get-create)))
+      (unless uuid (user-error "Did not get a uuid"))
+      (org-todo "WAITING")
+      (org-set-property "BLOCKER" (format "ids(%s)" uuid))
+      (org-set-property "SUMMARY" (format "Blocked by %s" (org-with-point-at (org-id-find uuid 'marker) (org-get-heading t t t t))))
+      (org-with-point-at marker
+	(org-set-property "TRIGGER" (format "ids(%s) todo!(NEXT) scheduled!(\".\") delete-property!(\"SUMMARY\")" cur-uuid)))))
   (defun yant/helm-org-ql-create-link (marker)
     "Insert link to MARKER at point."
     (insert (org-with-point-at marker (org-store-link nil))))
@@ -10002,6 +10018,7 @@ into (not QUERY)."
                          ("Open heading source" . yant/helm-org-ql-open-url)
                          ("Insert URL of heading" . yant/helm-org-ql-insert-url)
                          ("Refile heading(s) to heading at point" . helm-org--refile-heading-here)
+                         ("Set as blocker for heading at point" . yant/helm-org-ql-set-preceding-task)
                          ("Show in agenda" . yant/helm-org-ql-show-in-agenda)))
   )
 #+end_src
