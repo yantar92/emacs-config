@@ -13300,6 +13300,26 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   :custom
   (org-fontify-done-headline nil))
 #+end_src
+***** Highlight headings with :FLAGGED: tag
+
+#+begin_src emacs-lisp
+(use-package org
+  :if init-flag
+  :hook (org-font-lock . yant/org-fontify-flagged-headings)
+  :config
+  (defun yant/org-fontify-flagged-headings (limit)
+    "Fontify the FLAGGED headings down to LIMIT."
+    (let* ((nstars (if org-odd-levels-only
+		       (1- (* 2 (or org-inlinetask-min-level 200)))
+		     (or org-inlinetask-min-level 200)))
+	   (re (concat "^\\(\\*\\)\\(\\*\\{"
+		       (format "%d" (- nstars 3))
+		       ",\\}\\)\\(\\*\\*[ \t]+\\)")))
+      (org-back-to-heading-or-point-min 'invisible-ok)
+      (while (re-search-forward "^\\*+[ \t]+\\(.+:FLAGGED:[^ \t]+[ \t]*\\)$" limit t)
+        (add-text-properties (match-beginning 1) (match-end 1) `(face yant/org-agenda-highlight-face font-lock-fontified t))))))
+#+end_src
+
 **** Reveal hidden parts of links/emphasis when cursor enters them
 
 #+begin_src emacs-lisp
