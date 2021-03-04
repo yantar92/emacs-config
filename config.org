@@ -4214,6 +4214,7 @@ Interactive fill/unfill paragraph at point.
                                search-failed
 			       file-missing
                                file-date-error
+                               "Trying to run helm within a running helm session"
                                "Already at top level of the outline"
 			       "Attempt to delete the sole visible or iconified frame"
                                "No such page"
