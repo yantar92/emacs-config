@@ -11314,6 +11314,10 @@ I define two link types for capturing:
   :load-path "~/Git/org-capture-ref/"
   :after org-capture
   :demand t
+  :init
+  (use-package ol-bibtex
+    :custom
+    (org-bibtex-key-property "ID"))
   :config
   (let ((templates (doct '( :group "Browser link"
  			    :type entry
