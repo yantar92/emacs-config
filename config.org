@@ -13470,13 +13470,13 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
                (scheduled? (string-match org-repeat-re schedule-string))
                (repeat-string (and scheduled? (match-string 1 schedule-string)))
                (repeat-string (and scheduled? (replace-regexp-in-string "[+.]+" "" repeat-string))))
-	  (format "%-11s" (format "%s%s%s" (if scheduled? (format "%s↰" repeat-string) " ") (if mult (format "%sx" mult) "")
-				  (if (and bonus (> bonus 0)) (format "+%s" bonus) "")))))
+	  (format "%s%s%s" (if scheduled? (format "%-4s" (format "%s↰" repeat-string)) "    ") (if mult (format "%+.1fx" mult) "")
+		  (if (and bonus (> bonus 0)) (format "+%-3s" bonus) "    "))))
     (error "")))
-(setq org-agenda-prefix-format '((agenda . "%-12s %-12:c [%e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-				 (search . "%s %-12:c [%e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-				 (todo . "%-12:c [%e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-                                 (tags . "%-12:c [%e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")))
+(setq org-agenda-prefix-format '((agenda . "%-12.12s %-14.14:c [%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+				 (search . "%s %-14.14:c [%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+				 (todo . "%-14.14:c [%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+                                 (tags . "%-14.14:c [%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")))
   #+end_src
 
 Hide some uninteresting tags
