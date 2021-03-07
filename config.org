@@ -668,6 +668,17 @@ Since it is not really a good idea to work in darkness regardless of the colour 
   :demand t
   :config
   (load-theme 'flatui t))
+;; (use-package modus-operandi-theme
+;;   :straight t
+;;   :if init-flag
+;;   :custom
+;;   (modus-operandi-theme-bold-constructs t)
+;;   (modus-operandi-theme-org-blocks 'rainbow)
+;;   (modus-operandi-theme-completions 'opinionated)
+;;   (modus-operandi-theme-intense-hl-line t)
+;;   (modus-operandi-theme-intense-paren-match t)
+;;   :config
+;;   (load-theme 'modus-operandi t))
 #+end_src
 
 For the font, I prefer something that works fine with mixed code and text (e.g. org files).
