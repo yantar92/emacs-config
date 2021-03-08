@@ -11504,6 +11504,7 @@ Subtrees containing ideas are marked with :TICKLER: tag. Any task refiled to suc
   (when (and (org-at-heading-p)
              (member (org-entry-get (point) "TODO") org-not-done-keywords)
              (member "TICKLER" (org-get-tags))
+             (not (member "TICKLER" (org-get-tags nil 'local)))
              (not (string= (org-entry-get (point) "TODO") "TICKLER")))
     (org-todo "TICKLER")))
 
