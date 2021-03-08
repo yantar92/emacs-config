@@ -10880,7 +10880,7 @@ $0
 # name: note_capture
 # key: note_capture_
 # --
-TODO ${1:Fleeting note on `(s-trim-right (org-capture-fill-template "%u"))`}
+TODO ${1:Fleeting note on `(s-trim-right (org-capture-fill-template "%u"))`} :note:
 :PROPERTIES:
 :CREATED: `(s-trim-right (org-capture-fill-template "%U"))`
 :END:
