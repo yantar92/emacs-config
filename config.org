@@ -12659,18 +12659,19 @@ The access is only restored while I am doing a task related to that domain (and 
 
 (defun yant/unblock-all-hosts ()
   "Unblock all custom-blocked hosts in qutebrowser."
-  (with-temp-buffer
-    (insert-file-contents "~/.config/qutebrowser/blocked-hosts")
-    (goto-char (point-min))
-    (let ((hosts))
-      (while (re-search-forward "127\\.0\\.0\\.1 \\(.+\\) *$" nil t)
-        (push (match-string 1) hosts))
-      (when hosts
-        (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
-          (setq yant/hosts-unblocked t)
-          (start-process-shell-command "Send message to qutebrowser"
-				       nil
-				       (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string)))))))
+  (when (bound-and-true-p prevent-interactive-run)
+    (with-temp-buffer
+      (insert-file-contents "~/.config/qutebrowser/blocked-hosts")
+      (goto-char (point-min))
+      (let ((hosts))
+        (while (re-search-forward "127\\.0\\.0\\.1 \\(.+\\) *$" nil t)
+          (push (match-string 1) hosts))
+        (when hosts
+          (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
+            (setq yant/hosts-unblocked t)
+            (start-process-shell-command "Send message to qutebrowser"
+				         nil
+				         (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string))))))))
 
 (defun yant/org-unblock-heading-source ()
   "Unblock (`yant/unblock-host') url value stored in Source property of the task at point.
@@ -12680,7 +12681,8 @@ If the heading has property DISABLE-HOST-BLOCKING set to `t', unblock everything
         (setq url (match-string 1 url)))
     (yant/unblock-host url))
   (when (string= (org-entry-get (point) "DISABLE-HOST-BLOCKING") "t")
-    (yant/unblock-all-hosts)))
+    (let ((prevent-interactive-run t))
+      (yant/unblock-all-hosts))))
 
 (defun yant/restore-host-blocks ()
   "Restore host blocking in qutebrowser."
