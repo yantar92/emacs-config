@@ -6302,6 +6302,17 @@ As recommended in [[https://orgmode.org/worg/org-mailing-list.html#orgf343a0f][W
 #+begin_src emacs-lisp
 (setq max-specpdl-size 5000)
 #+end_src
+**** Prevent interactive use of notmuch
+
+Part of eliminating bad habits as in [[id:9562f1fc-9b35-4573-b42e-7bb2fcef8a7a][Distraction-free browsing]].
+
+#+begin_src emacs-lisp
+(use-package notmuch
+  :config
+  (define-advice notmuch (:override () disable)
+    "Disable `notmuch' command."
+    (error "Do something better!")))
+#+end_src
 
 
 
