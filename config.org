@@ -5456,7 +5456,7 @@ Show the key strokes.
       (cl-loop for entry in entries
 	       do (elfeed-untag entry 'unread)
 	       when (elfeed-entry-link entry)
-	       do (flet ((raise-frame nil nil))
+	       do (cl-letf (((symbol-function 'raise-frame) (lambda (&rest _) nil)))
 		    (let ((yant/suppress-pop-frame t)
 			  ;; (content (elfeed-deref (elfeed-entry-content entry)))
 			  ;; (content-type (elfeed-entry-content-type entry))
