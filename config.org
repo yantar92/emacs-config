@@ -11275,6 +11275,7 @@ $0
                            "# A short summary about the proposal."
                            "# Reference proposal template: [[id:208e5431-bd03-4250-b36e-863ffbdcba6b][Prepare the project proposal]]"
                            "# I should not forget next time that I will need to fill a form and get the school stamp before submitting the proposal for initial review."
+                           " #project_proposal #grant #funding_application"
                            "\n%?"
                            "** TODO Proposal outline"
                            "*** TODO Budget"
