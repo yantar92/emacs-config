@@ -12674,9 +12674,10 @@ The access is only restored while I am doing a task related to that domain (and 
 				         (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string))))))))
 
 (defun yant/org-unblock-heading-source ()
-  "Unblock (`yant/unblock-host') url value stored in Source property of the task at point.
+  "Unblock (`yant/unblock-host') url value stored in Source or URL property of the task at point.
 If the heading has property DISABLE-HOST-BLOCKING set to `t', unblock everything."
-  (when-let ((url (org-entry-get (point) "Source")))
+  (when-let ((url (or (org-entry-get (point) "Source")
+                      (org-entry-get (point) "URL"))))
     (if (string-match ".+@\\(.+\\)" url) ; email
         (setq url (match-string 1 url)))
     (yant/unblock-host url))
