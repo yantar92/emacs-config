@@ -11299,7 +11299,7 @@ $0
                            ":REPEAT_TO_STATE: NEXT"
                            ":LOGGING: nil"
                            ":END:"
-                           "** TODO Prepare univesity intellectual property paperwork"
+                           "** TODO Prepare university intellectual property paperwork"
                            "** TODO Submit to university review"
                            "** TODO Submit the grant application"
                            "** Get accepted"))))
