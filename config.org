@@ -14316,23 +14316,23 @@ Some changes in org-files are very trivial and clutter more important changes I 
 (use-package magit
   :if init-flag
   :config
-  (defvar yant/magit-show-autocommit-regexps '("^\\(-\\|\\+\\):SHOWFROMDATE:.+\n"
-					       "^\\(\\+\\|-\\)- State .+from.+\n"
-					       "^\\(-\\|\\+\\):LAST_REPEAT: \\[.+\n"
-					       "^\\(-\\|\\+\\):ORG-TIME-BONUS:.+\n"
-					       "^\\(-\\|\\+\\)CLOCK: \\[.+\n"
-					       "^\\(-\\|\\+\\)SCHEDULED: .+\n"
-					       "^\\(-\\|\\+\\)$"
-					       "^\\(-\\|\\+\\)- Refiled on .+\n"
-                                               "^\\(-\\|\\+\\)- Refiled on .+\n"
+  (defvar yant/magit-show-autocommit-regexps '("^\\(-\\|\\+\\)[ \t]*:SHOWFROMDATE:.+\n"
+					       "^\\(\\+\\|-\\)[ \t]*- State .+from.+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:LAST_REPEAT: \\[.+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:ORG-TIME-BONUS:.+\n"
+					       "^\\(-\\|\\+\\)[ \t]*CLOCK: \\[.+\n"
+					       "^\\(-\\|\\+\\)[ \t]*SCHEDULED: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*$"
+					       "^\\(-\\|\\+\\)[ \t]*- Refiled on .+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*- Refiled on .+\n"
                                                "^\\(-\\|\\+\\)\\*+"
                                                "^\\(-\\|\\+\\)CLOSED:"
-                                               "^\\(-\\|\\+\\):DRILL_LAST_INTERVAL:"
-                                               "^\\(-\\|\\+\\):DRILL_REPEATS_SINCE_FAIL:"
-                                               "^\\(-\\|\\+\\):DRILL_FAILURE_COUNT:"
-                                               "^\\(-\\|\\+\\):DRILL_TOTAL_REPEATS:"
-                                               "^\\(-\\|\\+\\):DRILL_AVERAGE_QUALITY:"
-                                               "^\\(-\\|\\+\\):DRILL_EASE:"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_LAST_INTERVAL:"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_REPEATS_SINCE_FAIL:"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_FAILURE_COUNT:"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_TOTAL_REPEATS:"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_AVERAGE_QUALITY:"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_EASE:"
                                                "^\\+CLOSED:"
                                                "^\\-SCHEDULED:"
                                                "^[+-]DEADLINE:"
@@ -14348,7 +14348,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
     (magit-section-show-level-4-all)
     (magit-jump-to-unstaged)
     (while (< (point) (or (save-excursion
-			    (unless (nox*shut-up #'magit-jump-to-staged)
+			    (unless (let ((inhibit-message)) (magit-jump-to-staged))
 			      (point)))
                           (point-max)))
       (let ((section (magit-current-section)))
