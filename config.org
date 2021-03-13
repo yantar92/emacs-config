@@ -14170,15 +14170,16 @@ To my horror, a single =org-font-lock-add-priority-faces= takes 98% of the whole
 I was irritated by org-mode behaviour when =flycheck= is turned on. org-mode introduces additional =flycheck= hook, which is ran after movement/editing commands. This hook calls =org-element-at-point=, which is terrible on large files.
 Turning on org element cache in attempt to make it faster.
 
-[2019-08-27 Tue] Disabling cache for now due to strange errors
+[2019-08-27 Tue] Disabling cache for now due to strange errors. Most commonly "Wrong side of point"
 [2020-05-25 Mon] Trying again
 [2020-07-15 Wed] Again getting strange errors. Probably related to native-comp
 [2020-08-02 Sun] Retrying again
 [2020-08-27 Thu] Disabling because of strange hangs
 [2021-02-13 Sat] Trying again
+[2021-03-13 Sat] Disabling. It hangs Emacs when syncing cache in inbox buffer after multiple refiles (deletions) from the buffer.
 
 #+begin_src emacs-lisp
-(custom-set-variables '(org-element-use-cache t))
+(custom-set-variables '(org-element-use-cache nil))
 #+end_src
 
 *************** TODO check if it is good enough
