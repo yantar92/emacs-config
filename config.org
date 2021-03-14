@@ -236,6 +236,9 @@ Now, I can setup =use-package= to simplify subsequent package configuration
 *************** TODO separate all the diminish statements into appearance
 *************** END
 **** Quick access to use-package docstring
+:PROPERTIES:
+:ID:       0ef884bb-b330-4cc9-9512-5d1dcb386b3e
+:END:
 
 #+begin_src emacs-lisp
 (use-package helm
@@ -2265,6 +2268,9 @@ Do not even need terminal to interact with Git.
       (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward))))
 #+END_SRC
 **** Interaction with Github
+:PROPERTIES:
+:ID:       b5cd6c65-f254-42aa-a423-2001c72d6dfa
+:END:
 
 #+begin_src emacs-lisp
 (use-package forge
@@ -2273,6 +2279,9 @@ Do not even need terminal to interact with Git.
   :after magit)
 #+end_src
 **** Activate insert state when editing commits
+:PROPERTIES:
+:ID:       ee048788-0dde-409b-bc59-53bd6dec28ab
+:END:
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -2292,6 +2301,9 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
    '((stashes . hide) (untracked . hide) (unpushed . hide))))
 #+end_src
 **** Working with multiple repositories
+:PROPERTIES:
+:ID:       8cb296de-443f-4e75-8a05-6834085c54f2
+:END:
 
 #+begin_src emacs-lisp
 (use-package magit
@@ -2937,6 +2949,9 @@ Disabling it, since it is not very useful for me anyway.
 #+end_src
 
 **** Automatically select highlight face
+:PROPERTIES:
+:ID:       7d61e5bb-4b05-41a7-bf75-4cdeb36b5a8a
+:END:
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -6304,6 +6319,9 @@ As recommended in [[https://orgmode.org/worg/org-mailing-list.html#orgf343a0f][W
 (setq max-specpdl-size 5000)
 #+end_src
 **** Prevent interactive use of notmuch
+:PROPERTIES:
+:ID:       440d8f30-d281-4d45-9a1f-b16dd8b7c546
+:END:
 
 Part of eliminating bad habits as in [[id:9562f1fc-9b35-4573-b42e-7bb2fcef8a7a][Distraction-free browsing]].
 
@@ -6966,6 +6984,9 @@ Otherwise, there is not much point in check-boxes for me.
   (org-enforce-todo-checkbox-dependencies t))
 #+end_src
 ***** Repeating tasks
+:PROPERTIES:
+:ID:       77ef2ede-fbb7-481d-a836-9453d7310c02
+:END:
 
 By default, tasks with repeated are changed to "TODO" state. I prefer "NEXT".
 
@@ -7780,6 +7801,9 @@ It is handy to be able to find all other headlines having links to current headl
   )
 #+end_src
 ***** Offer link selection when =C-c C-o= on a heading
+:PROPERTIES:
+:ID:       334789bf-733a-4895-ac3e-98b3f4d0096a
+:END:
 
 By default, =org-offer-links-in-entry= does a pretty decent job offering what link to open, but I prefer to list attachment directory as well.
 
@@ -9041,6 +9065,9 @@ Also, no contexts are prompted in Inbox agenda.
 	      (org-agenda-filter-apply org-agenda-tag-filter 'tag t))))))))
 #+end_src
 ***** Filtering items in agenda views
+:PROPERTIES:
+:ID:       71bbc67e-ec2d-4c4b-b072-23479cfbf4a0
+:END:
 
 By default, filtering commands in agenda replace the currently active filter. Adding/changing the filter is done with =C-u C-u= argument. I prefer the opposite behaviour when the current filter is changed by default and replaced with =C-u C-u=.
 
@@ -11564,6 +11591,9 @@ will be refiled."
 #+end_src
 
 ***** Refiling [[id:92a0a71b-d269-4455-88ae-74e4367e5bfa][ideas]]
+:PROPERTIES:
+:ID:       735633c2-423b-4b92-b1a2-8a0989dcb205
+:END:
 
 Subtrees containing ideas are marked with :TICKLER: tag. Any task refiled to such subtrees is automatically switched to TICKLER state.
 
@@ -13384,6 +13414,9 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
     :demand t))
 #+end_src
 ***** Do not fontify done headlines
+:PROPERTIES:
+:ID:       59b7a988-381d-419b-a9ed-eb4af448d44a
+:END:
 
 #+begin_src emacs-lisp
 (use-package org
@@ -13391,6 +13424,9 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   (org-fontify-done-headline nil))
 #+end_src
 ***** Highlight headings with :FLAGGED: tag
+:PROPERTIES:
+:ID:       bbb571e9-b334-475a-82fd-ae0ade0090fa
+:END:
 
 #+begin_src emacs-lisp
 (use-package org
@@ -13411,6 +13447,9 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 #+end_src
 
 **** Reveal hidden parts of links/emphasis when cursor enters them
+:PROPERTIES:
+:ID:       0db1cf24-d4f8-41bd-89e8-b91d3f869b08
+:END:
 
 #+begin_src emacs-lisp
 (use-package org-appear
@@ -14028,6 +14067,9 @@ Use normal colour for the default agenda face
 #+end_src
 
 ***** Highlight items with =:FLAGGED:= tag
+:PROPERTIES:
+:ID:       2f6359c2-9cdd-4bcb-a7f3-e9d0d26c8aa0
+:END:
 
 #+begin_src emacs-lisp
 (defface yant/org-agenda-highlight-face '((t :weight bold :background "Lightyellow1"))
@@ -14495,6 +14537,9 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 #+end_src
 
 **** Allow tangling encrypted files
+:PROPERTIES:
+:ID:       63354f0c-93a8-4540-9737-5ea533f6a9b1
+:END:
 
 #+begin_src emacs-lisp
 (use-package org-crypt
@@ -14505,6 +14550,9 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 #+end_src
 
 **** Refresh keywords upon decryption
+:PROPERTIES:
+:ID:       f1242dcf-448a-4dc2-b3cb-5ba3c3e07cc5
+:END:
 
 #+begin_src emacs-lisp
 (use-package org-crypt
