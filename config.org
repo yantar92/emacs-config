@@ -2257,6 +2257,8 @@ Do not even need terminal to interact with Git.
 	       ("M-g" . magit-file-popup))
     (use-package meta-functions
       :config
+      (meta-defun meta-down-element :mode magit-diff-mode magit-section-forward)
+      (meta-defun meta-up-element :mode magit-diff-mode magit-section-backward)
       (meta-defun meta-down-element :mode magit-status-mode magit-section-forward)
       (meta-defun meta-up-element :mode magit-status-mode magit-section-backward)
       (meta-defun meta-down-element :mode magit-revision-mode magit-section-forward)
