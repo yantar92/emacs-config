@@ -240,6 +240,7 @@ Now, I can setup =use-package= to simplify subsequent package configuration
 #+begin_src emacs-lisp
 (use-package helm
   :if init-flag
+  :defer t
   :config
   (use-package boon
     :config
