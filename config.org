@@ -10085,8 +10085,14 @@ current task to NEXT and schedule it the same day."
           (org-agenda-skip-location-context t)
           (org-agenda-sticky nil))
       (org-tags-view nil "!")))
+  (defun yant/helm-org-ql-show-marker-in-indirect-buffer (marker)
+    "Show heading at MARKER in indirect buffer."
+    (interactive)
+    (org-with-point-at marker
+      (let ((org-indirect-buffer-display 'current-window))
+        (org-tree-to-indirect-buffer))))
   :custom
-  (helm-org-ql-actions '(("Go to heading" . helm-org-ql-show-marker)
+  (helm-org-ql-actions '(("Go to heading" . yant/helm-org-ql-show-marker-in-indirect-buffer)
                          ("Insert link to heading" . yant/helm-org-ql-create-link)
                          ("Open heading source" . yant/helm-org-ql-open-url)
                          ("Insert URL of heading" . yant/helm-org-ql-insert-url)
@@ -11542,7 +11548,7 @@ all be refiled.  If no headings are marked, the selected heading
 will be refiled."
     (let* ((victims (with-helm-buffer (helm-marked-candidates)))
            (buffer (current-buffer))
-           (filename (buffer-file-name buffer))
+           (filename (or (buffer-file-name buffer) (buffer-file-name (buffer-base-buffer buffer))))
            ;; get the heading we refile to so org doesn't
            ;; output 'Refile to "nil" in file ...'
            (heading (org-get-heading :no-tags :no-todo :no-priority :no-comment))
