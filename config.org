@@ -14744,15 +14744,6 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
     (lambda nil (progn (keyfreq-mode 1) (keyfreq-autosave-mode 1))))
   (global-keyfreq-mode))
 #+end_src
-** TODO Fixing slow org priority regexp
-:PROPERTIES:
-:ID:       d7b2907d-ac99-4d08-ac79-eee90d1381f2
-:END:
-
-#+begin_src emacs-lisp
-(setq org-priority-regexp "^\\*+.*\\(\\[#\\([A-Z0-9]+\\)\\] ?\\)")
-#+end_src
-
 * Git
 
 ** Global attributes file
@@ -15518,5 +15509,20 @@ Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm
   :init
   (setq profiler-report-cpu-line-format '((70 left)
 					  (14 right ((9 right) (5 right))))))
+#+end_src
+
+** TODO Fixing slow org priority regexp :EMACS:COMMON:HOLD:
+:PROPERTIES:
+:ID:       d7b2907d-ac99-4d08-ac79-eee90d1381f2
+:ARCHIVE_TIME: 2021-03-13 Sat 18:21
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: TODO
+:ARCHIVE_ITAGS: EMACS COMMON HOLD
+:END:
+[2021-03-13 Sat] Should be fixed on master
+#+begin_src emacs-lisp
+(setq org-priority-regexp "^\\*+.*\\(\\[#\\([A-Z0-9]+\\)\\] ?\\)")
 #+end_src
 
