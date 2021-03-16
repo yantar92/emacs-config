@@ -11298,7 +11298,7 @@ $0
      2. Research objective
      3. Details of how to solve the research objective
   5. Research plan and practicability analysis
-     1. Research plan / stage #1..#n
+     1. Research plan / stage 1..n
      2. Practicability analysis
   6. Unique features and innovation point
   7. Annual research plan and expected results (including the activity of academic exchange, international collaboration, etc.)
@@ -11326,7 +11326,7 @@ $0
                            "# A short summary about the proposal."
                            "# Reference proposal template: [[att-id:a4b82837-bc08-47b5-91fa-edd738468f1c:application2.pdf][att-id:Example of funding application to NSFC]]"
                            "# I should not forget next time that I will need to fill a form and get the school stamp before submitting the proposal for initial review."
-                           " #project_proposal #grant #funding_application"
+                           " #project_proposal #grant #funding_application #NSFC"
                            "\n%?"
                            "** TODO Proposal outline"
                            "*** TODO Budget"
@@ -11358,6 +11358,65 @@ $0
                            "** Get accepted"))))
            'replace)
 #+end_src
+
+- Research funding application (short) :: I mark this with =grant= tag. The usual funding application workflow includes:
+  1. Abstract/summary
+  2. Research goal
+  3. Research objective (content)
+  4. Details of how to solve the research objective (Research methods or technical routes to be adopted)
+  5. Research plan
+  6. Unique features and innovation point (expected progress)
+  7. Motivation of the research (Research basis/foundation)
+  8. References
+  9. Budget
+  10. University paperwork
+  11. Application paperwork
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "f"
+           (cdar  (doct '("Funding/grant application (small/postdoc)"
+			  :keys "f"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+			  :template
+			  ("* TODO #proposal %^{Project title} :%^G:NOARCHIVE:grant:project:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+                           ":ATTACH_DIR_INHERIT: t"
+			   ":END:"
+                           "# A short summary about the proposal."
+                           "# Reference proposal template: [[att-id:83877bd0-dcd1-4b4e-a704-613efba2809f:Proposal-Radchenko Ihor-010201.doc][att-id:Example of funding application for postocs]]"
+                           "# I should not forget next time that I will need to fill a form and get the school stamp before submitting the proposal for initial review."
+                           " #project_proposal #grant #funding_application #postdoc"
+                           "\n%?"
+                           "** TODO Proposal outline"
+                           "*** TODO Summary"
+                           "*** Project research plan"
+                           "**** TODO Research goal"
+                           "**** TODO Research content"
+                           "**** TODO Research methods or technical routes to be adopted"
+                           "**** TODO Research plan and expected progress"
+                           " *Research plan*"
+                           ""
+                           " *Expected progress*"
+                           "*** Research basis / motivation + References"
+                           "**** TODO Introduction / motivation"
+                           "**** TODO References"
+                           "*** TODO Budget"
+                           "** TODO Revise"
+                           ":PROPERTIES:"
+                           ":REPEAT_TO_STATE: NEXT"
+                           ":LOGGING: nil"
+                           ":END:"
+                           "** TODO Prepare university intellectual property paperwork"
+                           "** TODO Submit to university review"
+                           "** TODO Submit the grant application"
+                           "** Get accepted"))))
+           'replace)
+#+end_src
+
 - New contact :: Add a person to contact list. 
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
