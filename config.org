@@ -10115,14 +10115,16 @@ current task to NEXT and schedule it the same day."
           (org-agenda-skip-location-context t)
           (org-agenda-sticky nil))
       (org-tags-view nil "!")))
-  (defun yant/helm-org-ql-show-marker-in-indirect-buffer (marker)
-    "Show heading at MARKER in indirect buffer."
+  (defun yant/helm-org-ql-show-marker (marker)
+    "Show heading at MARKER"
     (interactive)
-    (org-with-point-at marker
-      (let ((org-indirect-buffer-display 'current-window))
-        (org-tree-to-indirect-buffer))))
+    (pop-to-buffer (marker-buffer marker))
+    (goto-char marker)
+    (org-show-set-visibility 'lineage)
+    (org-fold-heading nil t)
+    (recenter 2))
   :custom
-  (helm-org-ql-actions '(("Go to heading" . yant/helm-org-ql-show-marker-in-indirect-buffer)
+  (helm-org-ql-actions '(("Go to heading" . yant/helm-org-ql-show-marker)
                          ("Insert link to heading" . yant/helm-org-ql-create-link)
                          ("Open heading source" . yant/helm-org-ql-open-url)
                          ("Insert URL of heading" . yant/helm-org-ql-insert-url)
