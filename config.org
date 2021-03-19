@@ -10119,6 +10119,7 @@ current task to NEXT and schedule it the same day."
     "Show heading at MARKER"
     (interactive)
     (pop-to-buffer (marker-buffer marker))
+    (widen)
     (goto-char marker)
     (org-show-set-visibility 'lineage)
     (org-fold-heading nil t)
