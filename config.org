@@ -7139,10 +7139,10 @@ The project with parent projects.
 	    (setq is-subproject t))))
       (and is-a-task is-subproject)))
 #+end_src
-- if any task below is =NEXT= and the project is =TODO= then need to change to =NEXT= (it means that we need to do some task from this sub-project next)
+- if any task below is =NEXT= and the project is =WAITING= then need to change to =NEXT= (it means that we need to do some task from this sub-project next)
   #+begin_src emacs-lisp
 (defun yant/mark-todo-parent-tasks-next ()
-  "Visit each parent task and change TODO states to NEXT."
+  "Visit each parent task and change WAITING states to NEXT."
   (let ((mystate (or (and (fboundp 'org-state)
 			  state)
 		     (nth 2 (org-heading-components)))))
@@ -7150,7 +7150,7 @@ The project with parent projects.
       (save-excursion
 	(while (org-up-heading-safe)
 	  (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-	    (unless (string= (org-get-todo-state) "NEXT")
+	    (when (member (org-get-todo-state) '("WAITING"))
 	      (org-todo "NEXT"))))))
     (when (member mystate (list "TODO"))
       (save-excursion
