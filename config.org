@@ -8819,7 +8819,7 @@ If LOCAL is non-nil, check only local TAG."
 							       (bh/skip-subprojects))
 							  ;; (zin/org-agenda-skip-tag "NODEADLINE")
 							  (bh/skip-habits))))))
-		(tags-todo "-CANCELLED-HOLD-WAITING-SKIP-SOMEDAY+TODO=\"NEXT\""
+		(tags-todo "-CANCELLED-HOLD-WAITING-NODEADLINE-SOMEDAY+TODO=\"NEXT\""
 			   ((org-agenda-overriding-header (concat "Project Next Tasks"
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
@@ -8831,7 +8831,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-HOLD-WAITING+SKIP-SOMEDAY+TODO=\"NEXT\""
+		(tags-todo "-CANCELLED-HOLD-WAITING+NODEADLINE-SOMEDAY+TODO=\"NEXT\""
 			   ((org-agenda-overriding-header (concat "Extra Project Next Tasks"
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
@@ -8907,7 +8907,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-tags-match-list-sublevels nil)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down))))
-		(tags-todo "-CANCELLED-HOLD-WAITING-SKIP-SOMEDAY+TODO=\"NEXT\""
+		(tags-todo "-CANCELLED-HOLD-WAITING-NODEADLINE-SOMEDAY+TODO=\"NEXT\""
 			   ((org-agenda-overriding-header (concat "Project Next Tasks"
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
@@ -8920,7 +8920,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-HOLD-WAITING+SKIP-SOMEDAY+TODO=\"NEXT\""
+		(tags-todo "-CANCELLED-HOLD-WAITING+NODEADLINE-SOMEDAY+TODO=\"NEXT\""
 			   ((org-agenda-overriding-header (concat "Extra Project Next Tasks"
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
