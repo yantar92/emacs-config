@@ -2954,7 +2954,9 @@ Disabling it, since it is not very useful for me anyway.
 :END:
 
 #+begin_src emacs-lisp
-(when init-flag
+(use-package hi-lock
+  :if init-flag
+  :config
   (setq hi-lock-auto-select-face t))
 #+end_src
 
