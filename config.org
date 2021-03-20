@@ -13860,7 +13860,7 @@ Optional MODE specifies major mode used for display."
     (with-temp-buffer
       (org-mode)
       (insert "* " txt)
-      (font-lock-fontify-buffer)
+      (font-lock-ensure)
       (goto-char (point-min))
       (looking-at "^\\* \\(.*\\)$")
       (match-string 1))))
