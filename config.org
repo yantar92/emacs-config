@@ -5548,23 +5548,23 @@ Sort entries by Gnus-like score
 And group them by rss feed, which further helps to focus on a single topic at a time.
 
 #+begin_src emacs-lisp
-  (use-package elfeed-score
-    :config
-    (defun yant/elfeed-group-by-feed (entry1 entry2)
-      (let ((time1 (elfeed-entry-date entry1))
-	    (time2 (elfeed-entry-date entry2))
-	    (rss1 (elfeed-entry-feed-id entry1))
-	    (rss2 (elfeed-entry-feed-id entry2)))
-	(or (string> rss1 rss2)
-	    (and (string= rss1 rss2)
-		 (> time1 time2)))))
+(use-package elfeed-score
+  :config
+  (defun yant/elfeed-group-by-feed (entry1 entry2)
+    (let ((time1 (elfeed-entry-date entry1))
+	  (time2 (elfeed-entry-date entry2))
+	  (rss1 (elfeed-entry-feed-id entry1))
+	  (rss2 (elfeed-entry-feed-id entry2)))
+      (or (string> rss1 rss2)
+	  (and (string= rss1 rss2)
+	       (> time1 time2)))))
 
-    (setf elfeed-search-sort-function (lambda (a b)
-					(let ((scorea (elfeed-score--get-score-from-entry a))
-					      (scoreb (elfeed-score--get-score-from-entry b)))
-					  (or (< scorea scoreb)
-					      (and (= scorea scoreb)
-						   (yant/elfeed-group-by-feed a b)))))))
+  (setf elfeed-search-sort-function (lambda (a b)
+				      (let ((scorea (elfeed-score-scoring-get-score-from-entry a))
+					    (scoreb (elfeed-score-scoring-get-score-from-entry b)))
+					(or (< scorea scoreb)
+					    (and (= scorea scoreb)
+						 (yant/elfeed-group-by-feed a b)))))))
 #+end_src
 
 Save elfeed buffer on quit to make sure that database is more likely saved if Emacs crashes.
