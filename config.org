@@ -7024,9 +7024,10 @@ I have two ways to do it:
 
 Allow checklists to be reset in recurring tasks when =:RESET_CHECK_BOXES:= is =t=
 #+begin_src emacs-lisp
-(use-package org-checklist
-  :config
-  (add-to-list 'org-default-properties "RESET_CHECK_BOXES"))
+  (use-package org-checklist
+    :after org
+    :config
+    (add-to-list 'org-default-properties "RESET_CHECK_BOXES"))
 #+end_src
 
 Do not show consistency graph in agenda
