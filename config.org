@@ -1904,23 +1904,17 @@ behavior added."
 :ID:       c822d425-3cfa-4cb7-bf1e-9ea893fbee5c
 :END:
 #+begin_src emacs-lisp
-(use-package pyim 
-  :if init-flag
-  :straight t
-  :demand t)
-(use-package pyim-basedict
-  :if init-flag
-  :after pyim
-  :requires pyim
-  :config
-  (pyim-basedict-enable)
-  (setq default-input-method "pyim")
-  (setq-default pyim-english-input-switch-functions
-                '(pyim-probe-isearch-mode
-                  pyim-probe-program-mode
-                  pyim-probe-org-structure-template))
-  (setq pyim-page-tooltip 'tooltip)
-  (setq pyim-page-length 5))
+  (use-package pyim 
+    :if init-flag
+    :straight t
+    :demand t
+    :config
+    (setq default-input-method "pyim")
+    (setq-default pyim-english-input-switch-functions
+		  '(pyim-probe-isearch-mode
+		    pyim-probe-program-mode
+		    pyim-probe-org-structure-template))
+    (setq pyim-page-length 5))
 #+end_src
 
 *** Default major mode
