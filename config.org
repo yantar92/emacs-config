@@ -6837,10 +6837,11 @@ Unschedule when WAITING is set."
   :config
   (defun yant/org-smart-reschedule (quality)
     "Interactively call `org-drill-smart-reschedule'."
-    (interactive "nHow well did you remember the information (on a scale of 0-5)? ")
+    (interactive "nIdea: (1) what is it? (2) need to check closely (3) real use soon (4) check when free (5) maybe: ")
     (let ((next-days (org-drill-hypothetical-next-review-date quality)))
       (if (= next-days 0) (setq next-days 1))
-      (if (> next-days 40) (setq next-days 40)) ;; Hard limit on postponing.
+      (if (and (< quality 4) (> next-days 40)) (setq next-days 40)) ;; Hard limit on postponing.
+      (if (and (= quality 4) (> next-days 90)) (setq next-days 90))
       (org-drill-smart-reschedule quality next-days))))
 
 (defun org-trigger-tickler (arg)
