@@ -5145,6 +5145,41 @@ See https://lists.gnu.org/archive/html/bug-gnu-emacs/2019-11/msg01731.html for d
       (funcall-interactively #'quit-window)))
   (bind-key "q" #'yant/kill-pdf-buffer-and-quit-window pdf-view-mode-map))
 #+end_src
+*** COMMENT =EAF-pdf=
+:PROPERTIES:
+:ID:       9194264a-b022-4c1d-89f1-16eb685c06e6
+:END:
+[2021-03-20 Sat] Got strange error when eaf does not react to key bindings and switches to another emacs frame
+[[id:Github_manateelazycatmanat_emacs_applic_framew_emacs_applic_framew7b8][manateelazycat/emacs-application-framework]] provides native pdf reader with integration to Emacs. Using native non-elisp code is potentially better as it can freely use concurrency.
+
+Note: Need to install =pymupdf=, =epc=, =retrying=, and =pygetwindow= with =pip=, =dev-python/qtconsole=, and =dev-python/qrcode=. Additionally, run =npm install= in =eaf= folder.
+
+#+begin_src emacs-lisp
+(use-package eaf
+  :init
+  (use-package epc :defer t :straight t)
+  (use-package ctable :defer t :straight t)
+  (use-package deferred :defer t :straight t)
+  (use-package s :defer t :straight t)
+  :straight (eaf :host github
+                 :repo "manateelazycat/emacs-application-framework"
+                 :local-repo "~/Git/emacs-application-framework"
+                 :files ("*")
+                 :pre-build (("npm" "install")))
+  :config
+  (defun adviser-find-file (orig-fn file &rest args)
+    (let ((fn (if (commandp 'eaf-open) 'eaf-open orig-fn)))
+      (pcase (file-name-extension file)
+        ("pdf"  (apply fn file nil))
+        ("epub" (apply fn file nil))
+        (_      (apply orig-fn file args)))))
+  (advice-add #'find-file :around #'adviser-find-file)
+  (eaf-bind-key scroll_left "i" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key scroll_right "o" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key scroll_down_page "L" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key scroll_up_page "l" eaf-pdf-viewer-keybinding))
+#+end_src
+ 
 ** TODO Ebook reader
    :PROPERTIES:
    :ID:       b1733b83-8c7d-4254-b2c6-d9b38793542a
