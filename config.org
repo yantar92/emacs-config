@@ -6811,7 +6811,20 @@ Unschedule when WAITING is set."
 		 (marker-position org-clock-marker)
 		 (equal (marker-position pos)
 			(org-with-point-at org-clock-marker (org-back-to-heading 't))))
-	(org-clock-out)))))
+	(org-clock-out))
+      (let (found)
+        (while (and (org-up-heading-safe)
+                    (or (string= "NEXT" (org-get-todo-state))
+                        (not (org-get-todo-state)))
+                    (not found))
+          (save-restriction
+            (org-narrow-to-subtree)
+            (if (save-excursion
+                  (beginning-of-line 2)
+                  (re-search-forward "^\\*+ \\(TODO\\|NEXT\\)" nil t))
+                (setq found t)
+              (when (org-get-todo-state)
+                (org-todo "WAITING")))))))))
 (add-hook 'org-trigger-hook #'org-trigger-waiting)
 #+end_src
   - HOLD(h) :: I am not going to do this task for now because of lack of time/low priority. The command triggers unscheduling the task.
