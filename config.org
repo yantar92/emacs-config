@@ -7399,9 +7399,7 @@ Adjust some of the external application programs
 		      ("\\.pdf\\'" . default)
 		      ("\\.mp4\\'" . "mpv %s")
 		      ("\\.tiff?\\'" . "feh-open %s")
-		      ("\\.png?\\'" . "feh-open %s")
-		      )
-      )
+		      ("\\.png?\\'" . "feh-open %s")))
 #+end_src
 ****** =Pdf-view= links
 :PROPERTIES:
@@ -15671,4 +15669,3 @@ Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm
 #+begin_src emacs-lisp
 (setq org-priority-regexp "^\\*+.*\\(\\[#\\([A-Z0-9]+\\)\\] ?\\)")
 #+end_src
-
