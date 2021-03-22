@@ -4348,13 +4348,14 @@ Sometimes, I just need to have any random text in buffer for testing.
 :END:
 
 [2020-09-18 Fri] Profiler cache eats a lot of memory. Should only use it when I need to debug
+[2021-03-21 Sun] Enabling again. Emacs is pretty fast now, so it could be useful to narrow non-obvious bottlenecks
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (use-package explain-pause-mode
   :if init-flag
   :demand t
   :straight (explain-pause-mode :host github :repo "lastquestion/explain-pause-mode")
-  :custom (explain-pause-blocking-too-long-ms 400)
+  :custom (explain-pause-slow-too-long-ms 400)
   :config
   ;; (diminish 'explain-pause-mode " ⌚")
   (diminish 'explain-pause-mode (s-concat " "
