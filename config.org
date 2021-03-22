@@ -1112,8 +1112,7 @@ Show some text in buffer differently
   :diminish pretty-symbols-mode
   :straight t
   :after org
-  :hook ((pretty-symbols-mode . font-lock-fontify-buffer)
-	 ((prog-mode lisp-interaction-mode org-mode) . pretty-symbols-mode))
+  :hook (((prog-mode lisp-interaction-mode org-mode) . pretty-symbols-mode))
   :init
   (setq pretty-symbol-categories '(relational logical lambda org-specific nil cpp general))
 
