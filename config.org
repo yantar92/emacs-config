@@ -4218,7 +4218,7 @@ Interactive fill/unfill paragraph at point.
   (use-package boon
     :defer t
     :bind (:map boon-command-map
-		("q" . endless/fill-or-unfill))))
+		("M-q" . endless/fill-or-unfill))))
 #+end_src
 ** Debugging
 :PROPERTIES:
