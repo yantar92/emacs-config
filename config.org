@@ -7944,7 +7944,8 @@ This includes:
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
       (let* ((showfromtime (apply 'encode-time
 				  (-replace nil 0
-					    (parse-time-string (or (org-entry-get (point) "SHOWFROMTIME" 'inherit)
+					    (parse-time-string (or (get-text-property (point) 'showfromtime)
+                                                                   ;; (org-entry-get (point) "SHOWFROMTIME" 'inherit)
 								   "00:00:01")))))
              (daystart (apply 'encode-time
 			      (-replace nil 0
@@ -8030,7 +8031,9 @@ This includes:
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
-	  (entry (org-entry-get (point) "SHOWDATES" 'inherit))
+	  (entry (or (get-text-property (point) 'showdates)
+                     ;; (org-entry-get (point) "SHOWDATES" 'inherit)
+                     ))
 	  (date (diary-make-date (nth 4 (decode-time)) (nth 3 (decode-time)) (nth 5 (decode-time)))))
       (let ((result (and entry (pcase (eval (car (read-from-string entry)))
 				 ((and (pred listp) res)
@@ -10215,6 +10218,23 @@ current task to NEXT and schedule it the same day."
     :config
     (bind-key "p" #'helm-org-ql-agenda-files boon-goto-map)))
 #+end_src
+
+***** Speed up agenda generation via =org-refresh-properties=
+
+One of the bottlenecks for my agenda generation is getting inherited properties.  They can be cached using =org-refresh-properties=. In particular, I need up cache =SHOWDATES= and =SHOWFROMTIME= properties.
+
+#+begin_src emacs-lisp
+(use-package org-agenda
+  :if init-flag
+  :config
+  (define-advice org-refresh-effort-properties (:after (&rest _) refresh-custom-properties)
+    "Refresh SHOWDATES and SHOWFROMTIME properties for agenda."
+    (org-refresh-properties "SHOWDATES" 'showdates)
+    (org-refresh-properties "SHOWFROMTIME" 'showfromtime)))
+#+end_src
+
+
+
 
 **** TODO Contacts
 :PROPERTIES:
