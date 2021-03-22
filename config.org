@@ -14216,8 +14216,8 @@ Use normal colour for the default agenda face
 #+end_src
 
 Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#appearance][credit]]]
-
-#+begin_src emacs-lisp
+[2021-03-21 Sun] Disabling to reduce startup time
+#+begin_src emacs-lisp :tangle no
 (add-hook 'org-mode-hook #'org-fold-hide-block-all)
 #+end_src
 
