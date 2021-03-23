@@ -576,6 +576,7 @@ Credit: https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.
 
 #+begin_src emacs-lisp
 (use-package s
+  :demand t
   :straight t)
 #+end_src
 ** Performance
@@ -2194,9 +2195,9 @@ Save virtual buffers (kill ring, etc.)
 (use-package  persistent-scratch
   :if init-flag
   :straight t
+  :demand t
   :config
-  (persistent-scratch-autosave-mode 1)
-  )
+  (persistent-scratch-autosave-mode 1))
 #+end_src
 *** Recent files
 :PROPERTIES:
@@ -2765,6 +2766,7 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
+  :demand t
   :config
   (defun boon-unhighlight (times)
     "Run `boon-hl-remove' without prompt to remove TIMES highlights."
@@ -6941,8 +6943,12 @@ I use inline tasks to add temporary todo state (instead of notes). It should be 
 *************** TODO Implement this on inline task done
 *************** END
 #+begin_src emacs-lisp
-(use-package org-inlinetask)
-(setq org-inlinetask-default-state "TODO")
+(use-package org
+  :config
+  (use-package org-inlinetask
+    :demand t
+    :config
+    (setq org-inlinetask-default-state "TODO")))
 #+end_src
 
 It seems that inline tasks interferes with =org-outline-regexp=.
