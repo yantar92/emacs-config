@@ -8611,7 +8611,8 @@ I use different skip functions here in agenda to filter the agenda. Some of them
   ;; (bh/list-sublevels-for-projects-indented)
   (save-restriction
     (widen)
-    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
+          (area-p (member "AREA" (org-get-tags nil 'local))))
 					;      (if (bh/is-project-p)
       (if (and (bh/is-project-p)
 	       (not (member (org-get-todo-state) (list "SOMEDAY" "TODO")))
@@ -8620,17 +8621,22 @@ I use different skip functions here in agenda to filter the agenda. Some of them
                                                       "REVIEW"
                                                       "DOING"))))
 	  (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-		 (has-next))
+		 (has-next)
+                 has-todo)
 	    (save-excursion
 	      (forward-line 1)
-	      (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ \\(NEXT\\|REVIEW\\|DOING\\) " subtree-end t))
+	      (while (and (not has-next) (< (point) subtree-end) (re-search-forward org-not-done-heading-regexp subtree-end t))
 		(unless (or (member "WAITING" (org-get-tags nil))
 			    (member "CANCELLED" (org-get-tags nil))
                             (member "HOLD" (org-get-tags nil))
                             (member "SOMEDAY" (org-get-tags nil)))
-		  (setq has-next t))))
-	    (if has-next
-		next-headline
+                  (setq has-todo t)
+                  (when (member (org-get-todo-state) (list "NEXT" "REVIEW" "DOING"))
+		    (setq has-next t)))))
+	    (if (or has-next
+                    (and (not has-todo)
+                         area-p))
+	        next-headline
 	      nil)) ; a stuck project, has subtasks but no next task
 	next-headline))))
 
