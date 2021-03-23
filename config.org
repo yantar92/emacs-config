@@ -14698,6 +14698,29 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
   (define-advice org-decrypt-entry (:after (&rest _) refresh-org) #'yant/org-refresh-org-buffer))
 #+end_src
 
+**** Speed up saving files without encrypted headings
+:PROPERTIES:
+:ID:       00dba9c3-ee6a-4e77-97d1-0b8c2d2544c2
+:END:
+
+By default, org-crypt uses slow =org-scan-tags= to match headings to be encrypted before save. However, it is very too slow on large files and takes time even when those files do not even contain encrypted headings.
+
+Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tags.
+
+#+begin_src emacs-lisp
+(use-package org-crypt
+  :if init-flag
+  :config
+  (define-advice org-encrypt-entries (:around (oldfun) skip-files-without-crypt-tag)
+    "Skip processing files that do not contain `org-crypt-tag-matcher' tags."
+    (org-with-wide-buffer
+     (goto-char 1)
+     (when (save-excursion (re-search-forward (format ":%s:" org-crypt-tag-matcher) nil t))
+       (funcall oldfun)))))
+#+end_src
+
+
+
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
