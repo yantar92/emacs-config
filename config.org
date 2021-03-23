@@ -115,7 +115,7 @@ The default 10Mb is too small for many pdfs.
 
 Exit server silently without asking about unsaved buffers.
 #+begin_src emacs-lisp
-(add-hook 'kill-emacs-hook '(lambda() (save-some-buffers 'save-all-buffers)) 'append)
+(add-hook 'kill-emacs-hook (lambda() (save-some-buffers 'save-all-buffers)) 'append)
 #+end_src
 
 ** Package management & configuration
@@ -9398,7 +9398,7 @@ Since my org files are really very large, it usually takes a lot of time to rebu
 
 (define-advice org-agenda-bulk-action (:around (oldfun &optional arg) disable-org-agenda-redo)
   "Disable `org-agenda-redo' for all the bulk actions."
-  (flet ((org-agenda-redo () "" nil))
+  (cl-letf (((symbol-function 'org-agenda-redo) #'ignore))
     (funcall oldfun)))
 #+end_src
 
@@ -13004,32 +13004,32 @@ JUSTIFICATION is a symbol for 'left, 'center or 'right."
 	  (counter -1)
 	  (numberp))
 
-      (setq results (loop for (begin .  env) in
-			  (org-element-map (org-element-parse-buffer) 'latex-environment
-			    (lambda (env)
-			      (cons
-			       (org-element-property :begin env)
-			       (org-element-property :value env))))
-			  collect
-			  (cond
-			   ((and (string-match "\\\\begin{equation}" env)
-				 (not (string-match "\\\\tag{" env)))
-			    (incf counter)
-			    (cons begin counter))
-			   ((string-match "\\\\begin{align}" env)
-			    (prog2
-				(incf counter)
-				(cons begin counter)
-			      (with-temp-buffer
-				(insert env)
-				(goto-char (point-min))
-				;; \\ is used for a new line. Each one leads to a number
-				(incf counter (count-matches "\\\\$"))
-				;; unless there are nonumbers.
-				(goto-char (point-min))
-				(decf counter (count-matches "\\nonumber")))))
-			   (t
-			    (cons begin nil)))))
+      (setq results (cl-loop for (begin .  env) in
+			     (org-element-map (org-element-parse-buffer) 'latex-environment
+			       (lambda (env)
+			         (cons
+			          (org-element-property :begin env)
+			          (org-element-property :value env))))
+			     collect
+			     (cond
+			      ((and (string-match "\\\\begin{equation}" env)
+				    (not (string-match "\\\\tag{" env)))
+			       (cl-incf counter)
+			       (cons begin counter))
+			      ((string-match "\\\\begin{align}" env)
+			       (prog2
+				   (cl-incf counter)
+				   (cons begin counter)
+			         (with-temp-buffer
+				   (insert env)
+				   (goto-char (point-min))
+				   ;; \\ is used for a new line. Each one leads to a number
+				   (cl-incf counter (count-matches "\\\\$"))
+				   ;; unless there are nonumbers.
+				   (goto-char (point-min))
+				   (cl-decf counter (count-matches "\\nonumber")))))
+			      (t
+			       (cons begin nil)))))
 
       (when (setq numberp (cdr (assoc (point) results)))
 	(setf (car args)
@@ -13667,10 +13667,8 @@ Highlight current line in agenda
   :config
   (progn
     (add-hook 'org-agenda-mode-hook
-	      '(lambda () (hl-line-mode 1))
-	      'append)
-    )
-  )
+	      (lambda () (hl-line-mode 1))
+	      'append)))
   #+end_src
 
 Modify prefix for the entries to show if the entry is repeatable and the time [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time balance multiplier]].
