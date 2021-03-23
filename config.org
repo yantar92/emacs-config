@@ -10235,6 +10235,9 @@ current task to NEXT and schedule it the same day."
 #+end_src
 
 ***** Speed up agenda generation via =org-refresh-properties=
+:PROPERTIES:
+:ID:       9066c0c4-247f-49be-a613-b88a631eff6b
+:END:
 
 One of the bottlenecks for my agenda generation is getting inherited properties.  They can be cached using =org-refresh-properties=. In particular, I need up cache =SHOWDATES= and =SHOWFROMTIME= properties.
 
