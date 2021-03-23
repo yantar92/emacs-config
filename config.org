@@ -2858,15 +2858,18 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 I do not move by visual line in files. Instead, I prefer to use =avy= to move within the line.
 
 #+begin_src emacs-lisp
-  (use-package boon
-    :if init-flag
-    :defer t
-    :config
+(use-package boon
+  :if init-flag
+  :defer t
+  :config
   (use-package avy
     :straight t
-    :bind (:map boon-moves-map
-		("H" . avy-goto-char-timer)
-		("h" . avy-goto-char-in-line))
+    :bind ( :map boon-moves-map
+	    ("H" . avy-goto-char-timer)
+	    ("h" . avy-goto-char-in-line)
+            :map boon-special-map
+	    ("H" . avy-goto-char-timer)
+	    ("h" . avy-goto-char-in-line))
     :custom
     (avy-timeout-seconds 0.2 "The default is too long.")))
 #+end_src
