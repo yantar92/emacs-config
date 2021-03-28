@@ -11712,14 +11712,25 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 (use-package helm :config
   (bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks helm-map))
 
+;; (defun yant/verify-refile-target ()
+;;   "Exclude tasks and todo keywords with a done state from refile targets."
+;;   (and (not (member "NOREFILE" (org-get-tags (point) 'local)))
+;;        (not (string-match-p "rss\\.org" (buffer-file-name (buffer-base-buffer))))
+;;        (or refile-to-tasks
+;; 	   (or (member "REFILE" (org-get-tags (point) 'local))
+;; 	       (not (bh/is-task-p))))
+;;        (not (member (nth 2 (org-heading-components)) org-done-keywords))))
+
 (defun yant/verify-refile-target ()
   "Exclude tasks and todo keywords with a done state from refile targets."
-  (and (not (member "NOREFILE" (org-get-tags (point) 'local)))
-       (not (string-match-p "rss\\.org" (buffer-file-name (buffer-base-buffer))))
-       (or refile-to-tasks
-	   (or (member "REFILE" (org-get-tags (point) 'local))
-	       (not (bh/is-task-p))))
-       (not (member (nth 2 (org-heading-components)) org-done-keywords))))
+  (let ((next
+         (yant/org-agenda-skip-org-ql '(and (not (path "rss.org"))
+                                            ;; (todo)
+                                            (not (tags-local "NOREFILE"))
+                                            (or refile-to-tasks
+                                                (tags-local "REFILE")
+                                                (not (task)))))))
+    (if next (prog1 nil (goto-char next)) t)))
 
 (setq org-refile-target-verify-function 'yant/verify-refile-target)
 #+end_src
