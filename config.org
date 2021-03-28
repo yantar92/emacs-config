@@ -13197,6 +13197,15 @@ Do not use box around checkbox items
   )
 #+end_src
 
+Verbatim text font
+
+#+begin_src emacs-lisp
+(use-package org-faces
+  :if init-flag
+  :custom-face
+  (org-verbatim ((t (:height 0.95 :weight semi-light)))))
+#+end_src
+
 **** Links
 ***** Show broken links to files
 :PROPERTIES:
