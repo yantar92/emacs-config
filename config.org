@@ -1704,7 +1704,7 @@ The problem is that it may mess up the cases when I want to assign special meani
 (use-package boon
   :if init-flag
   :demand t
-  :straight (boon :type git :host github :repo "jyp/boon" ;; :local-repo "~/Git/boon"
+  :straight (boon :type git :host github :repo "jyp/boon" :local-repo "~/Git/boon"
 		  :fork (:host github
 			       :repo "yantar92/boon"))
   :diminish boon-local-mode
