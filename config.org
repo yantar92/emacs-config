@@ -2767,11 +2767,6 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
   :if init-flag
   :demand t
   :config
-  (defun boon-unhighlight (times)
-    "Run `boon-hl-remove' without prompt to remove TIMES highlights."
-    (interactive "p")
-    (dotimes (or times 1)
-      (boon-hl-remove (car boon-hl-patterns))))
   (define-key boon-x-map "n" narrow-map)
   (bind-keys ("C-M-S-j" . scroll-other-window)
 	     ("C-M-S-k" . scroll-other-window-down)
