@@ -7824,7 +7824,20 @@ Do not ask every time I try to evaluate elisp: links
     (add-to-list 'org-ref-bibtex-journal-abbreviations '("PRMHBS" "Physical Review Materials" "Phys. Rev. Mater."))
     ))
 #+end_src
+****** Disable =org-ref-setup-label-finders= for speed
 
+=org-ref-setup-label-finders= is taking most of time during Org mode loading. However, according to its docstring, it will be ran by font-lock anyway. Trying to disable =org-ref-add-labels= call from it and see if anything is broken.
+
+#+begin_src emacs-lisp
+(use-package org-ref
+  :config
+  (defun org-ref-setup-label-finders ()
+    "Set up the functions for maintaining labels in a buffer."
+    (setq-local org-ref-labels '())
+    ;; (org-ref-add-labels (point-min) (point-max))
+    (add-to-list 'jit-lock-functions 'org-ref-add-labels)
+    (add-to-list 'before-change-functions 'org-ref-delete-labels)))
+#+end_src
 ***** SOMEDAY search in article PDFs
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
