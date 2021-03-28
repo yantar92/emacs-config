@@ -61,12 +61,12 @@ One important note about this configuration is that I do not use =desktop-save-m
   "Set up org tangle if not nil.")
 #+end_src
 
-** =Init.el=
+** init.el
 :PROPERTIES:
 :ID:       0948a927-42a3-4284-aaed-1ca9dd27a538
 :CREATED:  [2017-12-23 Sat 15:16]
 :END:
-
+ 
 Init file, which loads this file.
 #+begin_src emacs-lisp :tangle "~/.emacs.d/init.el" :var org-file=(buffer-file-name) :var el-file="~/.emacs.d/config.el"
 ;;(package-initialize)
@@ -218,7 +218,7 @@ Setup local =load-path= for whatever is not handled by =straigh.el=
       (setq load-path (append '("~/.emacs.d/site-lisp/") load-path))
       (setq load-path (append (directory-files "~/.emacs.d/site-lisp/" t "^[^.]" t) load-path))))
 #+end_src
-*** =Use-package=
+*** Use-package
 :PROPERTIES:
 :ID:       156b45ac-d29b-45d1-9a6c-7cf36070c24a
 :END:
@@ -6521,7 +6521,7 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (remove-hook 'notmuch-mua-send-hook #'notmuch-mua-message-send-hook))
 #+end_src
 
-** =ERC=
+** ERC
 :PROPERTIES:
 :ID:       6211904f-0abd-46de-b56c-62bfaf76849e
 :END:
