@@ -8861,23 +8861,24 @@ If LOCAL is non-nil, check only local TAG."
 		       (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))))
               ("h" "Hanging tasks"
-               ((tags-todo "-NODEADLINE-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY-AREA+TODO=\"TODO\""
+               ((tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY-AREA+TODO=\"TODO\""
 			   ((org-agenda-overriding-header "All other active tasks")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
                             (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                                         (quote (and (todo "TODO")
-                                                                    (task)
-                                                                    (or (tags "SKIP")
-                                                                        (not (subtask)))
                                                                     (not (tags "CANCELLED"))
                                                                     (not (tags "WAITING"))
                                                                     (not (tags "HOLD"))
                                                                     (not (tags "DEFAULT"))
                                                                     (not (tags "SOMEDAY"))
-                                                                    (not (tags "NODEADLINE"))
-                                                                    (not (habit))))))))))
+                                                                    (or (tags "SKIP")
+                                                                        (not (subtask)))
+                                                                    ;; (not (tags "NODEADLINE"))
+                                                                    (not (habit))
+                                                                    (task)
+                                                                    ))))))))
               ("w" "Waiting and hold tasks"
                ((tags-todo "-CANCELLED-SOMEDAY+WAITING|-CANCELLED-SOMEDAY+HOLD"
 			   ((org-agenda-overriding-header (concat "Waiting and Hold Tasks" ""))
