@@ -8833,7 +8833,7 @@ If LOCAL is non-nil, check only local TAG."
               ("A" "Areas of interest" tags-todo "-CANCELLED+AREA"
 	       ((org-agenda-dim-blocked-tasks nil)
 		(org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-		(org-agenda-skip-function 'bh/skip-non-projects)
+		;; (org-agenda-skip-function 'bh/skip-non-projects)
 		(org-agenda-sorting-strategy
 		 '(todo-state-down effort-up category-keep))))
 	      ("d" "Focus daily agenda" agenda ""
@@ -9077,7 +9077,7 @@ If LOCAL is non-nil, check only local TAG."
 			   ((org-agenda-overriding-header "Areas of interest")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-			    (org-agenda-skip-function 'bh/skip-non-projects)
+			    ;; (org-agenda-skip-function 'bh/skip-non-projects)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
 		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"TODO\""
