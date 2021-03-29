@@ -11554,11 +11554,9 @@ $0
 (asoc-put! org-capture-templates
 	   "E"
            (cdar  (doct '("Experiment note"
-			  :keys "E"
+			  :keys "X"
 			  :type entry
 			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
 			  :template
 			  ("* TODO %u %^{Experiment title}"
 			   ":PROPERTIES:"
@@ -11638,14 +11636,9 @@ I define two link types for capturing:
 #+end_src
 - Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=.
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "e"
-           (cdar  (doct '("Email"
-			  :keys "e"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  ;; :clock-in t
-			  ;; :clock-resume t
+(let ((templates (doct '( :group "Email"
+ 			  :type entry
+                          :file "~/Org/inbox.org"
                           :immediate-finish t
 			  :template
 			  ("* TODO #email %:from %:subject :EMAIL:"
@@ -11653,8 +11646,21 @@ I define two link types for capturing:
 			   ":CREATED: %U"
                            ":EMAIL-SOURCE: %l"
                            ":Source: %:fromaddress"
-			   ":END:"))))
-           'replace)
+			   ":END:")
+			  :children (("Interactive email"
+				      :clock-in t
+				      :clock-resume t
+                                      :keys "E"
+				      )
+				     ("Silent email"
+				      :keys "e"
+                                      :space ""
+				      :immediate-finish t))))))
+  (dolist (template templates)
+    (asoc-put! org-capture-templates
+	       (car template)
+	       (cdr  template)
+	       'replace)))
 #+end_src
 
 #+begin_src emacs-lisp
