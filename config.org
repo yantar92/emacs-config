@@ -11060,8 +11060,6 @@ $0
 		      :keys "n"
                       :type entry
                       :file "~/Org/inbox.org"
-                      :clock-in t
-                      :clock-resume t
                       :template
                       ("* %(ya-org-capture/make-snippet \"todo_capture_\")"))))))
 #+end_src
@@ -11086,8 +11084,6 @@ $0
 			  :keys "t"
 			  :type entry
 			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
 			  :template
 			  ("*  %(ya-org-capture/make-snippet \"todo_singular_capture_\")"))))
            'replace)
@@ -11119,8 +11115,6 @@ $0
 		    :keys "N"
                     :type entry
                     :file "~/Org/inbox.org"
-                    :clock-in t
-                    :clock-resume t
                     :template
                     ("* %(ya-org-capture/make-snippet \"note_capture_\")"))))
            :replace)
@@ -11133,8 +11127,6 @@ $0
 			  :keys "h"
 			  :type entry
 			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
 			  :template
 			  ("* NEXT %?"
                            "SCHEDULED: <%<%Y-%m-%d %a .+1d>>" 
@@ -11157,8 +11149,6 @@ $0
 			  :keys "M"
 			  :type entry
 			  :file "~/Org/schedule.org"
-			  :clock-in t
-			  :clock-resume t
 			  :template
 			  ("* %? :%^G:"
                            "%^T"
