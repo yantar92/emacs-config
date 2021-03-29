@@ -8614,6 +8614,20 @@ Agendas is my main entry point into daily work. This is where I pickup tasks to 
 
 I use different skip functions here in agenda to filter the agenda. Some of them are used, some of them are just kept here for future if I need them.
   #+begin_src emacs-lisp
+(defun yant/skip-non-stuck-projects-and-non-next-subprojects ()
+  "Skip trees that are not stuck projects"
+  (yant/org-agenda-skip-org-ql '(and (project)
+                                     (not (todo "SOMEDAY" "TODO"))
+                                     (or (todo "NEXT" "REVIEW" "DOING")
+                                         (not (subproject)))
+                                     (not (tags "HOLD" "CANCELLED" "WAITING"))
+                                     (not (and (tags-local "AREA")
+                                             (not (descendants (todo)))))
+                                     (not (descendants
+                                         (and  (todo "NEXT" "REVIEW" "DOING")
+                                               (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+                                               ))))))
+
 (defun bh/skip-non-stuck-projects-and-non-next-subprojects ()
   "Skip trees that are not stuck projects"
   ;; (bh/list-sublevels-for-projects-indented)
@@ -8889,7 +8903,7 @@ If LOCAL is non-nil, check only local TAG."
 			   ((org-agenda-overriding-header "Stuck Projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
-			    (org-agenda-skip-function 'bh/skip-non-stuck-projects-and-non-next-subprojects)
+			    (org-agenda-skip-function 'yant/skip-non-stuck-projects-and-non-next-subprojects)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
@@ -8981,7 +8995,7 @@ If LOCAL is non-nil, check only local TAG."
 			   ((org-agenda-overriding-header "Stuck Projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
-			    (org-agenda-skip-function 'bh/skip-non-stuck-projects-and-non-next-subprojects)
+			    (org-agenda-skip-function 'yant/skip-non-stuck-projects-and-non-next-subprojects)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
