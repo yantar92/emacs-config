@@ -7729,7 +7729,7 @@ The src block should be in the same org file."
 	 (info (org-babel-lob-get-info call)))
     (if return-info
 	info
-      (flet ((org-babel-insert-result (result &optional result-params info hash lang) nil))
+      (cl-letf (((symbol-function 'org-babel-insert-result) (lambda (&rest _) nil)))
 	(org-babel-execute-src-block nil info)))))
 
 (defun org-link-babel-complete ()
@@ -8061,6 +8061,7 @@ This includes:
 
 (defun yant/daysofweek (&rest days)
   "Return 't if any of the listed weekdays (Mon, Tue, Wed, Thu, Fri, Sat, Sun) is today. Work only in the context of :SHOWDATES: property."
+  (defvar entry)
   (let ((data (list
 	       (if (member "Mon" days) '(7 7 24 2017) nil)
 	       (if (member "Tue" days) '(7 7 25 2017) nil)
@@ -9190,7 +9191,7 @@ This agenda show the items for the current day and time.
   "Skip tasks, with deadline and scheduled in future and tasks without deadline."
   (require 'org-agenda)
   (save-restriction
-    (let* ((tmp-deadline-time (flet ((org-back-to-heading (&rest args) t)) ; we should be at heading already and it consumes too much times otherwise
+    (let* ((tmp-deadline-time (cl-letf (((symbol-function 'org-back-to-heading) (lambda (&rest _) t))) ; we should be at heading already and it consumes too much times otherwise
 				(org-get-deadline-time (point))))
 	   (tmp-scheduled-time (org-get-scheduled-time (point)))
 	   (tmp-cur-deadline (time-to-days tmp-deadline-time))
@@ -10257,9 +10258,6 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
     (org-refresh-properties "SHOWDATES" 'showdates)
     (org-refresh-properties "SHOWFROMTIME" 'showfromtime)))
 #+end_src
-
-
-
 
 **** TODO Contacts
 :PROPERTIES:
