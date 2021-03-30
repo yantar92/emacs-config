@@ -8786,9 +8786,6 @@ If LOCAL is non-nil, check only local TAG."
 
 (defvar bh/hide-scheduled-and-waiting-next-tasks 't)
 (setq org-agenda-skip-function nil)
-(define-advice org-agenda-skip (:before (&rest args) make-sure-right-org-environment)
-  ""
-  )
 
 (setq org-agenda-custom-commands
       (quote (("s" nil
