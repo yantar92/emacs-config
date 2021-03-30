@@ -12009,6 +12009,21 @@ In the past I only archived the tasks, which where done before the past month, b
 (defvar prev-buffer nil)
 (defvar prev-match-cdr nil)
 
+(define-advice org-agenda (:before (&rest _) reset-skip-cache)
+  "Reset cache for `yant/org-agenda-skip-org-ql'."
+  (setq prev-query nil
+        prev-buffer nil
+        prev-match-cdr nil))
+
+(advice-add 'org-agenda-get-day-entries :before #'org-agenda@reset-skip-cache)
+(advice-add 'org-agenda-get-deadlines :before #'org-agenda@reset-skip-cache)
+(advice-add 'org-agenda-get-scheduled :before #'org-agenda@reset-skip-cache)
+(advice-add 'org-agenda-get-progress :before #'org-agenda@reset-skip-cache)
+(advice-add 'org-agenda-get-timestamps :before #'org-agenda@reset-skip-cache)
+(advice-add 'org-agenda-get-sexps :before #'org-agenda@reset-skip-cache)
+(advice-add 'org-agenda-get-blocks :before #'org-agenda@reset-skip-cache)
+(advice-add 'org-agenda-get-todos :before #'org-agenda@reset-skip-cache)
+
 (defun yant/org-agenda-skip-org-ql (query &optional force)
   "Construct skip function using org-ql QUERY.
 Do not use cache when FORCE is non-nil."
