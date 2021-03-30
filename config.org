@@ -3826,6 +3826,8 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
   :if init-flag
   :straight t
   :config
+  ;; Clashes with `org-sparse-tree' binding.
+  (unbind-key "C-c /" global-map)
   ;; (bind-key* "<tab>" #'action-key)
   ;; (bind-key* "<backtab>" #'assist-key)
   )
