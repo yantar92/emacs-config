@@ -5326,7 +5326,8 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 (use-package calc
   :if init-flag
   :bind (:map boon-goto-map
-	      ("c" . calc)))
+	      ("c" . calc)
+              ("C" . calc-dispatch)))
 #+end_src
 *** Music
 **** Mingus (=mpd=)
