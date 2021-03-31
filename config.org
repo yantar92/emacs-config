@@ -14760,7 +14760,16 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
   :config
   (use-package ob-tangle
     :config
-    (add-hook 'org-babel-pre-tangle-hook #'org-decrypt-entries 100)))
+    (use-package org-ql :demand t)
+    (defun yant/org-decrypt-for-tangle-maybe ()
+      "Decrypt entries in buffer unless they have NOTANGLE tag."
+      (require 'org-ql)
+      (org-ql-query :select #'org-decrypt-entry
+                    :from (current-buffer)
+                    :where '(and (tags-local "crypt")
+                                 (not (tags-local "NOTANGLE")))
+                    :narrow t))
+    (add-hook 'org-babel-pre-tangle-hook #'yant/org-decrypt-for-tangle-maybe 100)))
 #+end_src
 
 **** Refresh keywords upon decryption
@@ -14779,7 +14788,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
         (mapc #'delete-overlay org-table-coordinate-overlays)
         (setq org-table-coordinate-overlays nil))
       (org-save-outline-visibility 'use-markers (org-mode-restart))))
-  (define-advice org-decrypt-entry (:after (&rest _) refresh-org) #'yant/org-refresh-org-buffer))
+  (define-advice org-decrypt-entry (:after (&rest _) refresh-org) (yant/org-refresh-org-buffer)))
 #+end_src
 
 **** Speed up saving files without encrypted headings
