@@ -4640,6 +4640,16 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   (use-package boon
     :defer t
     :config
+    (defun yant/infotop-query ()
+      "Open Top of the info and query for a topic."
+      (interactive)
+      (info "(dir)Top")
+      (funcall-interactively #'Info-menu
+                             (let ((completion-ignore-case t)
+			           (Info-complete-menu-buffer (current-buffer)))
+		               (completing-read (format-prompt "Menu item" nil)
+				                #'Info-complete-menu-item nil t nil nil
+                                                nil))))
     (bind-keys :map boon-goto-map
 	       ("k" . helpful-key)
 	       ("f" . helpful-callable)
@@ -4648,6 +4658,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 	       ("s" . helpful-symbol)
 	       ("b" . helm-descbinds)
 	       ("h m" . woman)
+               ("h h" . yant/infotop-query)
 	       ("h n" . tldr)
 	       ("h i" . helm-info-elisp-and-libs)
 	       ("h o" . helm-info-org)
