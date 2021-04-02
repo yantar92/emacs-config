@@ -15063,7 +15063,9 @@ git config --global core.attributesfile ~/.gitattributes
 #+end_src
 
 #+begin_src conf :tangle ~/.gitattributes
-,*.org	diff=org
+,*.lisp  diff=lisp
+,*.el    diff=lisp
+,*.org   diff=org
 #+end_src
 
 ** Main config
@@ -15072,19 +15074,31 @@ git config --global core.attributesfile ~/.gitattributes
 :END:
 
 [2020-11-08 Sun] Added diff handler to name diff chunks by headline in org files
+[2021-04-01 Thu] Change regexp according to [[id:7512681c13307f3005696422fa21170a171f538f][Protesilaos Stavrou: Coding blog [Protesilaos] (2021) Informative diff hunks for Emacs Lisp and Org]]; add lisp regexp
 
 #+begin_src conf :tangle ~/.gitconfig
 [user]
 	email = yantar92@gmail.com
 	name = Ihor Radchenko
-	emacs = yantar92@gmail.com
         signingkey = 6470762A7DA11D8B
 [github]
 	user = yantar92
 
+[commit]
+  gpgsign = true
+  
+[merge]
+  conflictstyle = diff3
+
+[format]
+  thread = true
+
+[diff "lisp"]
+  xfuncname = "^(((;;;+ )|\\(|([ \t]+\\(((cl-|el-patch-)?def(un|var|macro|method|custom)|gb/))).*)$"
+
 [diff "org"]
-	xfuncname = "^(\\*+ [a-zA-Z0-9]+.+)$"
-        # https://orgmode.org/worg/org-hacks.html#orgc71b227
+  xfuncname = "^(\\*+ +.*)$"
+    
 [core]
 	attributesfile = /home/yantar92/.gitattributes
 #+end_src
