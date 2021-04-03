@@ -2811,6 +2811,7 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 	     ("G" . end-of-buffer)
 	     :map boon-command-map
 	     ("-" . meta-undo)
+             ("_" . undo-redo)
 	     ("~" . boon-repeat-command)
 	     ("Q" . kmacro-end-or-call-macro)
 	     ("z" . boon-quote-character)
