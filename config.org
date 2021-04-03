@@ -10294,8 +10294,13 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 (use-package org-agenda
   :if init-flag
   :config
+  (add-to-list 'org-global-properties '("SHOWDATES" . nil))
+  (add-to-list 'org-global-properties '("SHOWFROMTIME" . nil))
   (define-advice org-refresh-effort-properties (:after (&rest _) refresh-custom-properties)
     "Refresh SHOWDATES and SHOWFROMTIME properties for agenda."
+    (with-silent-modifications
+      (org-with-wide-buffer
+       (remove-text-properties (point-min) (point-max) '(showdates t showfromtime t))))
     (org-refresh-properties "SHOWDATES" 'showdates)
     (org-refresh-properties "SHOWFROMTIME" 'showfromtime)))
 #+end_src
