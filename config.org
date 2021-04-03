@@ -14836,12 +14836,14 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
 (use-package org-crypt
   :if init-flag
   :config
-  (define-advice org-encrypt-entries (:around (oldfun) skip-files-without-crypt-tag)
+  (define-advice org-encrypt-entries (:override () skip-files-without-crypt-tag)
     "Skip processing files that do not contain `org-crypt-tag-matcher' tags."
     (org-with-wide-buffer
      (goto-char 1)
-     (when (save-excursion (re-search-forward (format ":%s:" org-crypt-tag-matcher) nil t))
-       (funcall oldfun)))))
+     (while (re-search-forward (format ":%s:" org-crypt-tag-matcher) nil t)
+       (when (member org-crypt-tag-matcher (org-get-tags nil 'local))
+         (org-encrypt-entry)
+         (outline-next-heading))))))
 #+end_src
 
 
