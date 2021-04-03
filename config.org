@@ -2328,6 +2328,9 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
 #+end_src
 
 *** =Ediff=
+:PROPERTIES:
+:ID:       0a071515-0aff-4cbe-982c-374860cdc9fc
+:END:
 
 Inspired by [[id:f69a49e2e7f32a4854d049826353240659f965ff][/u/freesteph [Reddit:emacs] (2021) M-x emacs-reddit: How do you solve merge conflicts?]]
 #+begin_src emacs-lisp
@@ -7855,6 +7858,9 @@ Do not ask every time I try to evaluate elisp: links
     ))
 #+end_src
 ****** Disable =org-ref-setup-label-finders= for speed
+:PROPERTIES:
+:ID:       5c314580-e422-4c70-9eda-235e909abe3d
+:END:
 
 =org-ref-setup-label-finders= is taking most of time during Org mode loading. However, according to its docstring, it will be ran by font-lock anyway. Trying to disable =org-ref-add-labels= call from it and see if anything is broken.
 
@@ -8818,11 +8824,9 @@ If LOCAL is non-nil, check only local TAG."
       (quote (("s" nil
 	       agenda ""
                ((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                            (quote (and (ts-active :to today)
-                                                        (not (done))
-                                                        (not (tags-inherited "HOLD"))
-                                                        (not (tags-inherited "WAITING"))
-                                                        (not (tags-inherited "CANCELLED"))
+                                            (quote (and (not (done))
+                                                        (ts-active :to today)
+                                                        (not (tags-inherited "HOLD" "WAITING" "CANCELLED"))
                                                         (not (tags "SOMEDAY"))
                                                         (not (org-agenda-skip-before-SHOWFROMDATE-property))
 					                (not (org-agenda-skip-before-SHOWFROMTIME-property))
@@ -12080,6 +12084,7 @@ Do not use cache when FORCE is non-nil."
              prev-match-cdr
            (sort (org-ql-select (list (current-buffer))
                    query
+                   :narrow t
                    :action #'point)
                  #'<)))
         (cur-point (save-excursion
@@ -14023,7 +14028,7 @@ Optional MODE specifies major mode used for display."
   (org-agenda-done ((t . (:foreground "Springgreen4" :slant normal)))))
 #+end_src
 
-*****  Fontify agenda items properly
+***** Fontify agenda items properly
 :PROPERTIES:
 :ID:       f38f8c12-df7f-4946-808c-1802ee68d2f8
 :END:
@@ -14291,14 +14296,6 @@ Patching the relevant function to not put that tooltip into the overlay.
 		    (overlay-put ov 'help-echo
 				 "The clock is running in this item")))))))))))
 #+end_src
-
-***** TODO this in not truncated properly in agenda]]
-:PROPERTIES:
-:CREATED: [2020-07-13 Mon 08:27]
-:END:
-:LOGBOOK:
-- Refiled on [2020-07-13 Mon 08:35]
-:END:
 
 ***** Main face
 :PROPERTIES:
