@@ -10344,6 +10344,19 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 (defvar yant/last-note-taken ""
   "Text of the last note taken.")
 
+(define-advice org-agenda-add-note (:around (oldfun &optional arg) remove-summary-maybe)
+  "Remove SUMMARY when `org-agenda-add-note' is invoked with a prefix argument."
+  (interactive "P")
+  (unless arg (funcall oldfun arg))
+  (let* ((agenda-marker (point-marker))
+         (marker (or (org-get-at-bol 'org-marker)
+		     (org-agenda-error)))
+	 (inhibit-read-only t))
+    (when arg (org-entry-delete marker "SUMMARY"))
+    (if arg
+        (org-agenda-change-all-lines (org-with-point-at marker (org-get-heading))
+                                     (org-with-point-at marker (org-back-to-heading) (point-marker))))))
+
 (define-advice org-store-log-note (:before (&rest args) yant/org-store-last-note)
   "Store the last saved note into `yant/last-note-taken'."
   (let ((txt (buffer-string)))
