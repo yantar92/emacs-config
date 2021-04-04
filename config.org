@@ -11664,8 +11664,7 @@ I define two link types for capturing:
                             :org-entry (lambda () (org-capture-ref-get-org-entry))
 			    :template
                             ("%{fetch-bibtex}* TODO %?%{space}%{org-entry}"
-                             "%{extra}"
-                             "- Keywords: #%{link-type}")
+                             "%{extra}")
 			    :children (("Interactive link"
 					:keys "b"
 					:clock-in t
