@@ -6735,8 +6735,9 @@ The task is any item with todo keyword and no subtask.
   :config
   (org-ql-defpred task ()
     "Match a task without child subtasks."
-    :body (and (or (todo) (done))
-	       (not (project)))))
+    :normalizers ((`(,predicate-names)
+                   (rec '(and (or (todo) (done))
+	                      (not (project))))))))
 
 (defun bh/is-task-p ()
   "Any task with a todo keyword and no subtask."
@@ -7148,12 +7149,16 @@ The project is an item with todo keyword and subtask.
   :config
   (org-ql-defpred project ()
     "Match a project - task with a todo subtask or :project: tag."
-    :body (or (tags-local "project")
-	      (and
-	       (todo)
-	       (descendants `(and
-			      (or (todo) (done))
-			      (level < ,org-inlinetask-min-level)))))))
+    :normalizers ((`(,predicate-names)
+                   (rec `(or (tags-local "project")
+	                     (and
+	                      (todo)
+	                      (descendants (and
+			                    (or (todo) (done))
+                                            (not (org-inlinetask-at-task-p))
+                                            ;; TODO: report bug
+			                    ;; (level "<" ,org-inlinetask-min-level)
+                                            )))))))))
 
   (defun bh/is-project-p ()
     "Any task with a todo keyword subtask or :project: tag."
@@ -7198,8 +7203,9 @@ The project without parent projects.
   :config
   (org-ql-defpred subtask ()
     "A subtask of a project."
-    :body (and (or (todo) (done))
-	       (ancestors 'project))))
+    :normalizers ((`(,predicate-names)
+                   (rec '(and (or (todo) (done))
+	                      (ancestors (project))))))))
 
 (defun bh/is-project-subtree-p ()
   "Any task with a todo keyword that is in a project subtree.
@@ -7224,8 +7230,9 @@ The project with parent projects.
   :config
   (org-ql-defpred subproject ()
     "Match a subproject"
-    :body (and (project)
-	       (ancestors 'project))))
+    :normalizers ((`(,predicate-names)
+                   (rec '(and (project)
+	                      (ancestors (project))))))))
 
   (defun bh/is-subproject-p ()
     "Any task which is a subtask of another project"
