@@ -8786,6 +8786,12 @@ SUBTREE-END is used as end of the entry if not nil."
 	  nil
 	next-headline))))
 
+(defun yant/skip-projects-and-habits-and-single-tasks ()
+  "Skip trees that are projects, tasks that are habits, single non-project tasks"
+  (yant/org-agenda-skip-org-ql '(and (not (habit))
+                                     (subtask)
+                                     (not (project)))))
+
 (defun bh/skip-projects-and-habits-and-single-tasks ()
   "Skip trees that are projects, tasks that are habits, single non-project tasks"
   (save-restriction
@@ -8906,11 +8912,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
                             (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                                         (quote (and (todo "TODO")
-                                                                    (not (tags "CANCELLED"))
-                                                                    (not (tags "WAITING"))
-                                                                    (not (tags "HOLD"))
-                                                                    (not (tags "DEFAULT"))
-                                                                    (not (tags "SOMEDAY"))
+                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY"))
                                                                     (or (tags "SKIP")
                                                                         (not (subtask)))
                                                                     ;; (not (tags "NODEADLINE"))
@@ -8963,7 +8965,13 @@ If LOCAL is non-nil, check only local TAG."
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
-			    (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                                        (quote
+                                                         (and (todo "NEXT")
+                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY"))
+                                                              (not (habit))
+                                                              (subtask)
+                                                              (not (project))))))
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
@@ -8975,7 +8983,14 @@ If LOCAL is non-nil, check only local TAG."
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
-			    (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                                        (quote
+                                                         (and (todo "NEXT")
+                                                              (tags "NODEADLINE")
+                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY"))
+                                                              (not (habit))
+                                                              (subtask)
+                                                              (not (project))))))
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
@@ -9052,7 +9067,13 @@ If LOCAL is non-nil, check only local TAG."
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
 			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
-			    (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                                        (quote
+                                                         (and (todo "NEXT")
+                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY"))
+                                                              (not (habit))
+                                                              (subtask)
+                                                              (not (project))))))
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
@@ -9065,7 +9086,14 @@ If LOCAL is non-nil, check only local TAG."
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
 			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
-			    (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
+                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                                        (quote
+                                                         (and (todo "NEXT")
+                                                              (tags "NODEADLINE")
+                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY"))
+                                                              (not (habit))
+                                                              (subtask)
+                                                              (not (project))))))
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
@@ -9126,16 +9154,11 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
                             (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                                         (quote (and (todo "TODO")
+                                                                    (not (habit))
                                                                     (task)
                                                                     (or (tags "SKIP")
                                                                         (not (subtask)))
-                                                                    (not (tags "CANCELLED"))
-                                                                    (not (tags "WAITING"))
-                                                                    (not (tags "HOLD"))
-                                                                    (not (tags "DEFAULT"))
-                                                                    (not (tags "SOMEDAY"))
-                                                                    (not (tags "NODEADLINE"))
-                                                                    (not (habit))))))))
+                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY" "NODEADLINE"))))))))
 		(tags-todo "-NODEADLINE-CANCELLED-WAITING-HOLD-DEFAULT+TODO=\"SOMEDAY\""
 			   ((org-agenda-overriding-header "Someday tasks outside projects")
 			    (org-agenda-dim-blocked-tasks 'invisible)
@@ -9144,13 +9167,9 @@ If LOCAL is non-nil, check only local TAG."
                             (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                                         (quote (and (todo "SOMEDAY")
                                                                     (task)
-                                                                    (not (subtask))
-                                                                    (not (tags "CANCELLED"))
-                                                                    (not (tags "WAITING"))
-                                                                    (not (tags "HOLD"))
-                                                                    (not (tags "DEFAULT"))
-                                                                    (not (tags "NODEADLINE"))
                                                                     (not (habit))
+                                                                    (not (subtask))
+                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "NODEADLINE"))
                                                                     )))))))
 	       nil))))
   #+end_src
