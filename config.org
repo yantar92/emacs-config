@@ -12980,12 +12980,13 @@ The access is only restored while I am doing a task related to that domain (and 
                   (and (s-contains-p "reddit" url)
                        (s-contains-p "reddit" (match-string 1))))
           (push (match-string 1) hosts)))
-      (when hosts
-        (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
-          (setq yant/hosts-unblocked t)
-          (start-process-shell-command "Send message to qutebrowser"
-				       nil
-				       (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string)))))))
+      (if (and hosts (s-contains-p "reddit" url)) (let ((prevent-interactive-run t)) (yant/unblock-all-hosts))
+        (when hosts
+          (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
+            (setq yant/hosts-unblocked t)
+            (start-process-shell-command "Send message to qutebrowser"
+				         nil
+				         (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string))))))))
 
 (defun yant/unblock-all-hosts ()
   "Unblock all custom-blocked hosts in qutebrowser."
