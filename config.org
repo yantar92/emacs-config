@@ -10107,7 +10107,7 @@ instead."
     ((`(,predicate-names ,string)
       (if (string-match-p "^#" string)
           `(regexp ,string)
-        `(or (regexp (concat "#" ,string))
+        `(or (regexp (concat "#[^ ]*" ,string))
              (outline-path ,string))))
      (`(,predicate-names . ,strings)
       `(and ,@(mapcar (lambda (string) (org-ql--normalize-query `(keyword ,string))) strings))))))
