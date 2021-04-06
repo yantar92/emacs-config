@@ -6704,7 +6704,8 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only do it all together.
 - =NOCLOCK= :: prevent entry from being clocked in automatically (after child task clock out [[id:d1afb1ae-a3a4-45b4-8186-8e7242e0edc1][Clocking & logging]]). This is not inherited.
 - =DEFAULT= :: Do not list the task in GTD agenda
-- =REFILE= :: can be refile target even if it is not project/sub-project
+- NOFOLLOW :: Do not add link to this task [[id:e65adaed-acf4-4872-93fd-5560cde0723b][capture]]
+- REFILE :: can be refile target even if it is not project/sub-project
 - =NOREFILE= :: *cannot* be refile target
 - =TICKLER= :: The items refiled here will have their todo state changed to =TICKLER=.
 - =AREA= :: Some projects are not "real" projects, but rather areas of interest. The difference with normal projects is that areas are not expected to be ever finished. Thus, it has little point to keep them in weekly review together with projects. However, they can be stuck, as any other project.
@@ -11687,15 +11688,25 @@ I define two link types for capturing:
 						       "- [ ] [[elisp:(browse-url (url-encode-url (format \"https://www.connectedpapers.com/search?q=%s\" (org-entry-get nil \"TITLE\"))))][check related articles]]"
                                                        "- [ ] check if bibtex entry has missing fields"))
                                            ""))
+                            :followup (lambda ()
+                                        (if (not org-clock-marker)
+                                            ""
+                                          (let ((current-task (org-with-point-at org-clock-marker
+                                                                (unless (or (member "DEFAULT" (org-get-tags nil 'local))
+                                                                            (member "NOFOLLOW" (org-get-tags nil 'local)))
+                                                                  (let (org-store-link-plist org-stored-links)
+                                                                    (org-store-link nil))))))
+                                            (if current-task
+                                                (format "- Following up: %s" current-task)
+                                              ""))))
                             :org-entry (lambda () (org-capture-ref-get-org-entry))
 			    :template
                             ("%{fetch-bibtex}* TODO %?%{space}%{org-entry}"
-                             "%{extra}")
+                             "%{extra}"
+                             "%{followup}")
 			    :children (("Interactive link"
 					:keys "b"
-					:clock-in t
                                         :space " "
-					:clock-resume t
 					)
 				       ("Silent link"
 					:keys "B"
