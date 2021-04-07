@@ -6749,11 +6749,11 @@ The task is any item with todo keyword and no subtask.
   (org-ql-defpred task ()
     "Match a task without child subtasks."
     :normalizers ((`(,predicate-names)
-                   (rec '(and (or (todo) (done))
-	                      (not (project))))))
+                   (org-ql-normalize-query '(and (or (todo) (done))
+	                                         (not (project))))))
     :preambles ((`(,predicate-names)
-                 (rec '(and (or (todo) (done))
-	                    (not (project))))))))
+                 (org-ql-query-preamble '(and (or (todo) (done))
+	                                      (not (project))))))))
 
 (defun bh/is-task-p ()
   "Any task with a todo keyword and no subtask."
@@ -7166,25 +7166,25 @@ The project is an item with todo keyword and subtask.
   (org-ql-defpred project ()
     "Match a project - task with a todo subtask or :project: tag."
     :normalizers ((`(,predicate-names)
-                   (rec `(or (tags-local "project")
-	                     (and
-	                      (todo)
-	                      (descendants (and
-			                    (or (todo) (done))
-                                            (not (org-inlinetask-at-task-p))
-                                            ;; TODO: report bug
-			                    ;; (level "<" ,org-inlinetask-min-level)
-                                            )))))))
+                   (org-ql-normalize-query `(or (tags-local "project")
+	                                        (and
+	                                         (todo)
+	                                         (descendants (and
+			                                       (or (todo) (done))
+                                                               (not (org-inlinetask-at-task-p))
+                                                               ;; TODO: report bug
+			                                       ;; (level "<" ,org-inlinetask-min-level)
+                                                               )))))))
     :preambles ((`(,predicate-names)
-                 (rec `(or (tags-local "project")
-	                   (and
-	                    (todo)
-	                    (descendants (and
-			                  (or (todo) (done))
-                                          (not (org-inlinetask-at-task-p))
-                                          ;; TODO: report bug
-			                  ;; (level "<" ,org-inlinetask-min-level)
-                                          )))))))))
+                 (org-ql-query-preamble `(or (tags-local "project")
+	                                     (and
+	                                      (todo)
+	                                      (descendants (and
+			                                    (or (todo) (done))
+                                                            (not (org-inlinetask-at-task-p))
+                                                            ;; TODO: report bug
+			                                    ;; (level "<" ,org-inlinetask-min-level)
+                                                            )))))))))
 
   (defun bh/is-project-p ()
     "Any task with a todo keyword subtask or :project: tag."
@@ -7230,11 +7230,11 @@ The project without parent projects.
   (org-ql-defpred subtask ()
     "A subtask of a project."
     :normalizers ((`(,predicate-names)
-                   (rec '(and (or (todo) (done))
-	                      (ancestors (project))))))
+                   (org-ql-normalize-query '(and (or (todo) (done))
+	                                         (ancestors (project))))))
     :preambles ((`(,predicate-names)
-                 (rec '(and (or (todo) (done))
-	                    (ancestors (project))))))))
+                 (org-ql-query-preamble '(and (or (todo) (done))
+	                                      (ancestors (project))))))))
 
 (defun bh/is-project-subtree-p ()
   "Any task with a todo keyword that is in a project subtree.
@@ -7260,11 +7260,11 @@ The project with parent projects.
   (org-ql-defpred subproject ()
     "Match a subproject"
     :normalizers ((`(,predicate-names)
-                   (rec '(and (project)
-	                      (ancestors (project))))))
+                   (org-ql-normalize-query '(and (project)
+	                                         (ancestors (project))))))
     :preambles ((`(,predicate-names)
-                 (rec '(and (project)
-	                    (ancestors (project))))))))
+                 (org-ql-query-preamble '(and (project)
+	                                      (ancestors (project))))))))
 
   (defun bh/is-subproject-p ()
     "Any task which is a subtask of another project"
