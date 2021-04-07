@@ -5334,10 +5334,13 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
   (add-hook 'shell-mode-hook (lambda () (set-process-sentinel (get-buffer-process (buffer-name) ) #'jt-shell-sentinel))))
 #+end_src
 
-*** =Calc=
+*** Calc
 :PROPERTIES:
 :ID:       db607f5d-6270-4193-942a-c1f772a97ca6
 :END:
+**** Command loop
+***** Global bindings
+
 #+begin_src emacs-lisp
 (use-package calc
   :if init-flag
@@ -5345,6 +5348,15 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 	      ("c" . calc)
               ("C" . calc-dispatch)))
 #+end_src
+**** Gnuplot integration
+
+#+begin_src emacs-lisp
+(use-package calc
+  :if init-flag
+  :config
+  (setq calc-gnuplot-default-device "qt"))
+#+end_src
+
 *** Music
 **** Mingus (=mpd=)
 :PROPERTIES:
