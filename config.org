@@ -4458,6 +4458,14 @@ Similar to the problem with debugging, profiling the time spend on fontification
   :if init-flag
   :straight (font-lock-profiler :host github :repo "Lindydancer/font-lock-profiler"))
 #+end_src
+*** Debugging macros using =macrostep=
+
+#+begin_src emacs-lisp
+(use-package macrostep
+  :if init-flag
+  :straight t)
+#+end_src
+
 *** Profiler
 **** Appearance
 ** Programming & emacsing
