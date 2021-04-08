@@ -4161,6 +4161,24 @@ There is also built-in skeleton mode, but =yasnippet= also has a good user-contr
     :straight t)
   (yas-reload-all))
 #+end_src
+**** Auto-expand snippets without a need to type trigger command
+
+[[id:Github:joaotavora/yasnippet_bumbker2019issue9c8f][bumbker [Github:joaotavora/yasnippet] (2019) issue#998:]]
+
+Note that =auto= is important here as some snippets would be too aggressive.
+I also added =self-insert-command= check to avoid calling, say, on movement commands.
+
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :if init-flag
+  :config
+  (defun my-yas-try-expanding-auto-snippets ()
+    (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+      (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
+        (when (eq this-command 'self-insert-command)
+          (yas-expand)))))
+  (add-hook 'post-command-hook #'my-yas-try-expanding-auto-snippets))
+#+end_src
 
 *** Undo
 
