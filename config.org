@@ -11202,10 +11202,24 @@ TODO ${1:Title} ${2:`(s-trim-right (org-capture-fill-template "%a"))`}
 :PROPERTIES:
 :CREATED: `(s-trim-right (org-capture-fill-template "%U"))`
 :END:
-
+${3:`(yant/org-capture-followup-string)`}
 $0 
 #+end_src
+
 #+begin_src emacs-lisp
+(defun yant/org-capture-followup-string ()
+"Create reference string to currectly clocked entry."
+  (if (not org-clock-marker)
+      ""
+    (let ((current-task (org-with-point-at org-clock-marker
+                          (unless (or (member "DEFAULT" (org-get-tags nil 'local))
+                                      (member "NOFOLLOW" (org-get-tags nil 'local)))
+                            (let (org-store-link-plist org-stored-links)
+                              (org-store-link nil))))))
+      (if current-task
+          (format "- Following up: %s" current-task)
+        ""))))
+
 (use-package ya-org-capture
   :config
   (asoc-put! org-capture-templates
@@ -11768,17 +11782,7 @@ I define two link types for capturing:
 						       "- [ ] [[elisp:(browse-url (url-encode-url (format \"https://www.connectedpapers.com/search?q=%s\" (org-entry-get nil \"TITLE\"))))][check related articles]]"
                                                        "- [ ] check if bibtex entry has missing fields"))
                                            ""))
-                            :followup (lambda ()
-                                        (if (not org-clock-marker)
-                                            ""
-                                          (let ((current-task (org-with-point-at org-clock-marker
-                                                                (unless (or (member "DEFAULT" (org-get-tags nil 'local))
-                                                                            (member "NOFOLLOW" (org-get-tags nil 'local)))
-                                                                  (let (org-store-link-plist org-stored-links)
-                                                                    (org-store-link nil))))))
-                                            (if current-task
-                                                (format "- Following up: %s" current-task)
-                                              ""))))
+                            :followup (lambda () (yant/org-capture-followup-string))
                             :org-entry (lambda () (org-capture-ref-get-org-entry))
 			    :template
                             ("%{fetch-bibtex}* TODO %?%{space}%{org-entry}"
