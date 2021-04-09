@@ -14784,7 +14784,6 @@ Some changes in org-files are very trivial and clutter more important changes I 
 					       )
     "List of regexps hide in magit buffer.")
 
-
   (defun yant/magit-autocommit ()
     "Commit all the lines matching `yant/magit-show-autocommit-regexps'."
     (interactive)
@@ -14792,33 +14791,46 @@ Some changes in org-files are very trivial and clutter more important changes I 
       (user-error "Thus command should run in magit-status window."))
     (magit-section-show-level-4-all)
     (magit-jump-to-unstaged)
-    (while (< (point) (or (save-excursion
-			    (unless (let ((inhibit-message)) (magit-jump-to-staged))
+    ;; Make Emacs responsive while staging.
+    (let ((magit-buffer (current-buffer))
+          (pos (point))
+          (progress (make-progress-reporter "Autocommiting hunks..." 1 (point-max))))
+      (while (with-current-buffer magit-buffer
+               (< pos (or (save-excursion
+			    (unless (let ((inhibit-message t)) (magit-jump-to-staged))
 			      (point)))
-                          (point-max)))
-      (let ((section (magit-current-section)))
-        (if (not (eq 'hunk (oref section type)))
-            (magit-section-forward)
-          (let ((hunk-text (buffer-substring-no-properties (oref section start) (oref section end))))
-            (if (with-temp-buffer
-                  (insert hunk-text)
-                  (goto-char 1)
-                  (keep-lines "^[+-].+$")
-                  (mapc (lambda (regexp)
+                          (point-max))))
+        (with-current-buffer magit-buffer
+          (save-excursion
+            (goto-char pos)
+            (progress-reporter-update progress (+ pos (save-excursion
+			                                (unless (let ((inhibit-message t)) (magit-jump-to-staged))
+			                                  (point)))))
+            (when (re-search-forward (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps))) nil 'move)
+              (let ((section (magit-current-section)))
+                (if (not (eq 'hunk (oref section type)))
+                    (magit-section-forward)
+                  (let ((hunk-text (buffer-substring-no-properties (oref section start) (oref section end))))
+                    (if (with-temp-buffer
+                          (insert hunk-text)
                           (goto-char 1)
-                          (delete-matching-lines regexp))
-                        yant/magit-show-autocommit-regexps)
-                  (string-empty-p (buffer-string)))
-                (magit-stage)
-              (magit-section-forward))))))
-    ;; (save-excursion
-    ;;   (mapc #'yant/magit-autocommit-by-regexp yant/magit-show-autocommit-regexps))
-    (magit-jump-to-staged)
-    (funcall-interactively #'magit-commit-create)
-    (while (not (get-buffer "COMMIT_EDITMSG")) (sleep-for 1) (message "Waiting for commit buffer."))
-    (with-current-buffer "COMMIT_EDITMSG"
-      (insert (format-time-string "Autoupdate %Y-%m-%d" (current-time)))))
-  )
+                          (keep-lines "^[+-].+$")
+                          (mapc (lambda (regexp)
+                                  (goto-char 1)
+                                  (delete-matching-lines regexp))
+                                yant/magit-show-autocommit-regexps)
+                          (string-empty-p (buffer-string)))
+                        (magit-stage)
+                      (magit-section-forward))))))
+            (re-search-forward (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps))) nil 'move)
+            (setq pos (point)))))
+      (progress-reporter-done progress)
+      (with-current-buffer magit-buffer
+        (magit-jump-to-staged)
+        (funcall-interactively #'magit-commit-create))
+      (while (not (get-buffer "COMMIT_EDITMSG")) (sleep-for 1) (message "Waiting for commit buffer."))
+      (with-current-buffer "COMMIT_EDITMSG"
+        (insert (format-time-string "Autoupdate %Y-%m-%d" (current-time)))))))
 #+end_src
 
 *** Spell checking
