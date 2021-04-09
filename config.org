@@ -11222,8 +11222,8 @@ $0
 
 #+begin_src emacs-lisp
 (defun yant/org-capture-followup-string ()
-"Create reference string to currectly clocked entry."
-  (if (not org-clock-marker)
+  "Create reference string to currectly clocked entry."
+  (if (not (marker-buffer org-clock-marker))
       ""
     (let ((current-task (org-with-point-at org-clock-marker
                           (unless (or (member "DEFAULT" (org-get-tags nil 'local))
