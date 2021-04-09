@@ -10161,17 +10161,31 @@ instead."
   
   :config
   (use-package org-ql-search :demand t)
-  (setq org-ql-plain-string-predicate 'regexp)
+  (setq org-ql-plain-string-predicate 'keyword)
   (org-ql-defpred (keyword k) (&rest strings)
-    "Match a keyword in outline-path, heading, or body."
+    "Match a keyword in outline-path or inside body/heading with #.
+Negate match when start with ^."
     :normalizers
-    ((`(,predicate-names ,string)
-      (if (string-match-p "^#" string)
-          `(regexp ,string)
-        `(or (regexp (concat "#[^ ]*" ,string))
-             (outline-path ,string))))
-     (`(,predicate-names . ,strings)
-      `(and ,@(mapcar (lambda (string) (org-ql--normalize-query `(keyword ,string))) strings))))))
+    ((`(,predicate-names . ,strings)
+      `(keyword ,@strings)))
+    :body
+    (or
+     (catch :fail
+       (dolist (string strings)
+         (unless
+             (if (string-match-p "^#" string)
+                 (regexp string)
+               (or (regexp (concat "#[^ ]*" string))
+                   (outline-path string)))
+           (throw :fail nil)))
+       t)
+     (when (and (outline-next-heading)
+                (re-search-forward
+                 (regexp-opt strings)
+                 nil 'move))
+       ;; Move to next likely match.
+       (org-back-to-heading t)
+       (backward-char)))))
 
 (defun yant/org-ql-focused-agenda-block (&rest args)
   "Return expression, suitable for `org-agenda-custom-commands', which matches focused agenda view."
