@@ -11794,7 +11794,8 @@ I define two link types for capturing:
 						       "- [ ] [[elisp:org-attach-open][read paper capturing interesting references]]"
 						       "- [ ] [[elisp:(browse-url (url-encode-url (format \"https://www.semanticscholar.org/search?q=%s\" (org-entry-get nil \"TITLE\"))))][check citing articles]]"
 						       "- [ ] [[elisp:(browse-url (url-encode-url (format \"https://www.connectedpapers.com/search?q=%s\" (org-entry-get nil \"TITLE\"))))][check related articles]]"
-                                                       "- [ ] check if bibtex entry has missing fields"))
+                                                       "- [ ] check if bibtex entry has missing fields"
+                                                       "- [ ] Consider subscribing to new citations"))
                                            ""))
                             :followup (lambda () (yant/org-capture-followup-string))
                             :org-entry (lambda () (org-capture-ref-get-org-entry))
