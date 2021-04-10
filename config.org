@@ -10375,8 +10375,9 @@ current task to NEXT and schedule it the same day."
     (pop-to-buffer (marker-buffer marker))
     (widen)
     (goto-char marker)
-    (org-show-set-visibility 'lineage)
+    (org-show-set-visibility 'ancestors)
     (org-fold-heading nil t)
+    (org-fold-show-children)
     (recenter 2))
   :custom
   (helm-org-ql-actions '(("Go to heading" . yant/helm-org-ql-show-marker)
