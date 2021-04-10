@@ -4162,6 +4162,9 @@ There is also built-in skeleton mode, but =yasnippet= also has a good user-contr
   (yas-reload-all))
 #+end_src
 **** Auto-expand snippets without a need to type trigger command
+:PROPERTIES:
+:ID:       4f8271fa-7574-4846-91f9-a66660b26d2f
+:END:
 
 [[id:Github:joaotavora/yasnippet_bumbker2019issue9c8f][bumbker [Github:joaotavora/yasnippet] (2019) issue#998:]]
 
@@ -4459,6 +4462,9 @@ Similar to the problem with debugging, profiling the time spend on fontification
   :straight (font-lock-profiler :host github :repo "Lindydancer/font-lock-profiler"))
 #+end_src
 *** Debugging macros using =macrostep=
+:PROPERTIES:
+:ID:       a7e6bf1d-576f-4262-a74f-2a32f64ea3dd
+:END:
 
 #+begin_src emacs-lisp
 (use-package macrostep
@@ -5367,6 +5373,9 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 :END:
 **** Command loop
 ***** Global bindings
+:PROPERTIES:
+:ID:       f51fe21c-0d86-4afb-9d21-7095af41ba8c
+:END:
 
 #+begin_src emacs-lisp
 (use-package calc
@@ -5376,6 +5385,9 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
               ("C" . calc-dispatch)))
 #+end_src
 **** Gnuplot integration
+:PROPERTIES:
+:ID:       aacd2acd-090b-40a9-9ce5-986e4d606486
+:END:
 
 #+begin_src emacs-lisp
 (use-package calc
