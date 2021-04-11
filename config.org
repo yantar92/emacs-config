@@ -2739,7 +2739,6 @@ Enable it.
 :PROPERTIES:
 :ID:       46fb459b-7794-4b9a-9fce-85389aba1d95
 :END:
-
 *** Text
 
 **** Case fold search
@@ -2831,6 +2830,9 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 	     ("C-g" . boon-unhighlight)
 	     ("w" . meta-occur)
              ("g" . meta-goto)
+             ("r" . helm-occur)
+             ("'" . helm-surfraw)
+             ("/" . helm-do-grep-ag)
 	     :map boon-backward-search-map
 	     ("C-SPC" . isearch-backward-regexp)
 	     ("C-g" . boon-unhighlight)
