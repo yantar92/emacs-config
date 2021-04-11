@@ -3741,6 +3741,29 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
     (setq lsargs "-Al --dired"))
   (apply oldfun (list file "-al" parse no-error wildcard)))
 #+end_src
+*** Documentation
+**** TODO =helm-dash=
+
+Emacs has an excellent built-in support for Elisp and GNU system documentation.
+Moreover, it can be integrated with all other kinds of documentation using [[id:Kapeli_dash_for_macos_api_docum6c7][Dash]].
+
+#+begin_src emacs-lisp
+(use-package helm-dash
+  :if init-flag
+  :straight t
+  :demand t
+  :custom
+  (dash-docs-enable-debugging nil)
+  (helm-dash-docsets-path (no-littering-expand-var-file-name "dash-docs/docsets"))
+  (helm-dash-browser-func 'eww)
+  :config
+  (add-hook! latex-mode (setq dash-docs-docsets '("LaTeX")))
+  (add-hook! sh-mode (setq dash-docs-docsets '("Bash")))
+  (use-package helm-dash
+    :config  
+    (meta-defun meta-help :mode latex-mode (helm-dash (concat "LaTeX " (thing-at-point 'symbol))))
+    (meta-defun meta-help :mode sh-mode (helm-dash (concat "Bash " (thing-at-point 'symbol))))))
+#+end_src
 
 *** TODO Bookmarks
 :PROPERTIES:
@@ -4692,21 +4715,27 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 		               (completing-read (format-prompt "Menu item" nil)
 				                #'Info-complete-menu-item nil t nil nil
                                                 nil))))
-    (bind-keys :map boon-goto-map
-	       ("k" . helpful-key)
-	       ("f" . helpful-callable)
-	       ("v" . helpful-at-point)
-	       ("d" . helpful-variable)
-	       ("s" . helpful-symbol)
-	       ("b" . helm-descbinds)
+    (meta-defun meta-help "Get help on symbol at point." ignore)
+    (meta-defun meta-help :mode emacs-lisp-mode helpful-at-point)
+    (meta-defun meta-help :mode helpful-mode helpful-at-point)
+    (meta-defun meta-help :mode profiler-report-mode helpful-at-point)
+    (meta-defun meta-help :mode debugger-mode helpful-at-point)
+    (bind-keys ("<F1> k" . helpful-key)
+               :map boon-goto-map
+               ("k" . helpful-key)
+               ("f" . helpful-callable)
+               ("v" . meta-help)
+               ("d" . helpful-variable)
+               ("s" . helpful-symbol)
+               ("b" . helm-descbinds)
                ("h h" . yant/infotop-query)
-	       ("h m" . man)
-	       ("h n" . tldr)
-	       ("h i" . helm-info-elisp-and-libs)
-	       ("h o" . helm-info-org)
-	       ("h e" . helm-info-emacs-and-extra)
-	       ("h t" . helm-info-auctex)
-	       ("h T" . helm-info-texinfo))))
+               ("h m" . man)
+               ("h n" . tldr)
+               ("h i" . helm-info-elisp-and-libs)
+               ("h o" . helm-info-org)
+               ("h e" . helm-info-emacs-and-extra)
+               ("h t" . helm-info-auctex)
+               ("h T" . helm-info-texinfo))))
 #+end_src
 
 *** Elisp coding
