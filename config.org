@@ -2342,7 +2342,6 @@ Inspired by [[id:f69a49e2e7f32a4854d049826353240659f965ff][/u/freesteph [Reddit:
   :config
   (setq ediff-diff-options "")
   (setq ediff-custom-diff-options "-u")
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
   (setq ediff-split-window-function 'split-window-vertically))
 #+end_src
 
