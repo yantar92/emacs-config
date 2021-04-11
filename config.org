@@ -15044,12 +15044,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
   :config
   (defun yant/org-refresh-org-buffer ()
     "Refresh org buffer as if C-c C-c on a keyword line."
-    (let ((org-inhibit-startup-visibility-stuff t)
-          (org-startup-align-all-tables nil))
-      (when (boundp 'org-table-coordinate-overlays)
-        (mapc #'delete-overlay org-table-coordinate-overlays)
-        (setq org-table-coordinate-overlays nil))
-      (org-save-outline-visibility 'use-markers (org-mode-restart))))
+    (org-set-regexps-and-options))
   (define-advice org-decrypt-entry (:after (&rest _) refresh-org)
     (when (member "crypt" (org-get-tags nil 'local))
       (yant/org-refresh-org-buffer))))
