@@ -3130,13 +3130,15 @@ Instead of =delete-other-windows=, use =windower's= version, which toggles maxim
   (use-package windower
     :straight (emacs-windower :host gitlab :repo "ambrevar/emacs-windower" :local-repo "~/Git/emacs-windower"
 			      :fork (:host gitlab :repo "yantar92/emacs-windower")))
-  :bind (("M-1" . #'windower-toggle-single)
-	 ("M-2" . split-window-below)
-	 ("M-0" . delete-window)
-	 ("M-3" . split-window-right)
-	 ("M-4" . (lambda () (interactive)
-		    (split-window-right)
-                    (call-interactively #'clone-indirect-buffer-other-window)))))
+  :config
+  (bind-keys*
+   ("M-1" . windower-toggle-single)
+   ("M-2" . split-window-below)
+   ("M-0" . delete-window)
+   ("M-3" . split-window-right)
+   ("M-4" . (lambda () (interactive)
+	      (split-window-right)
+              (call-interactively #'clone-indirect-buffer-other-window)))))
 #+end_src
 
 Sometimes, there is a need to split window vertically or horizontally, but I make a mistake and split in wrong direction.
