@@ -1711,6 +1711,7 @@ The problem is that it may mess up the cases when I want to assign special meani
   :config
   (setq boon-special-mode-list
 	'( debugger-mode edebug-mode ediff-mode org-agenda-mode cfw:calendar-mode
+           eww-mode
 	   notmuch-search-mode notmuch-show-mode elfeed-search-mode
 	   notmuch-tree-mode elfeed-show-mode pomidor-mode mingus-mode
 	   notmuch-hello-mode ledger-report-mode help-mode
