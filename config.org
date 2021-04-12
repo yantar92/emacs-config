@@ -12868,7 +12868,11 @@ Library of babel function definition:
 
 Also, it make sense to show inline images, which I frequently generate via Gnuplot after the evaluation
 #+BEGIN_SRC emacs-lisp
-(add-hook! 'org-babel-after-execute-hook (unless (eq this-command 'org-babel-tangle) (org-display-inline-images)))
+(add-hook! 'org-babel-after-execute-hook
+  (unless (eq this-command 'org-babel-tangle)
+    (org-display-inline-images nil nil
+                               (save-excursion (org-back-to-heading-or-point-min t))
+                               (save-excursion (or (outline-next-heading) (point-max))))))
 #+END_SRC
 ****** TODO Gnuplot
 :PROPERTIES:
