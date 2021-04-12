@@ -10456,7 +10456,7 @@ current task to NEXT and schedule it the same day."
   (require 'helm-org-ql)
   (use-package boon
     :config
-    (bind-key "p" #'helm-org-ql-agenda-files boon-goto-map)))
+    (bind-key "h" #'helm-org-ql-agenda-files boon-forward-search-map)))
 #+end_src
 
 ***** Speed up agenda generation via =org-refresh-properties=
