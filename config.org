@@ -9536,22 +9536,21 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 (defun yant/org-agenda-skip-nofocus ()
   "Filter tasks for focus agenda."
   (yant/org-agenda-skip-org-ql
-   '(and (or
+   '(and (not (done))
+         (or
           (and (ts-active :to today)
                (or (habit)
                    (priority "A")
                    (and (ts-active :on today)
                         (not (priority "C"))))
                (not (org-agenda-skip-noshowdates))
-               (not (tags "HOLD"))
-               (not (tags "SOMEDAY")))
+               (not (tags "HOLD" "SOMEDAY" "NODEADLINE")))
           (and (deadline)
                (not (scheduled :from +1))))
          (not (org-agenda-skip-before-SHOWFROMTIME-property))
          (not (org-agenda-skip-before-SHOWFROMDATE-property))
          (not (tags "CANCELLED"))
-         (or (not (or (tags "WAITING")
-                    (tags "HOLD")))
+         (or (not (tags "WAITING" "HOLD"))
              (not (todo "TICKLER")))))
   ;; (and
   ;;  (or
