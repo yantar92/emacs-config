@@ -4214,6 +4214,20 @@ I also added =self-insert-command= check to avoid calling, say, on movement comm
           (yas-expand)))))
   (add-hook 'post-command-hook #'my-yas-try-expanding-auto-snippets))
 #+end_src
+**** Org mode snippets
+:PROPERTIES:
+:ID:       039ff2cb-c373-4c39-815e-1f65e7039458
+:END:
+
+#+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/equation :noweb tangle :comments no
+# -*- mode: snippet -*-
+# name: LaTeX equation
+# key: <eq
+# --
+\begin{equation}
+$0
+\end{equation}
+#+end_src
 
 *** Undo
 
