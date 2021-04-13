@@ -2858,11 +2858,12 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 	     ("z" . boon-quote-character)
 	     ("e" . boon-forward-search-map)
 	     ("w" . boon-backward-search-map)
-	     ("q" . nil)
+	     ("q" . boon-quote-character)
 	     ("g" . boon-goto-map)
 	     ("G" . end-of-buffer)
 	     ("D" . boon-treasure-region)
 	     ("<SPC>" . boon-drop-mark))
+  (bind-key "C-q" (lambda () (interactive) (boon-quote-character ?q)) boon-special-map)
   (unbind-key "M-l" global-map))
 #+end_src
 **** =Avy= mode - =qutebrowser= like hints to words
