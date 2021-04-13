@@ -3161,8 +3161,8 @@ Use =boon-*-search-map= to select windows and =C-M-l= to cycle current window.
 
 #+begin_src emacs-lisp
 (use-package windmove
-  :bind (("C-M-;" . other-window)
-	 :map boon-forward-search-map
+  :bind (("M-'" . other-window)
+         :map boon-forward-search-map
 	 ("j" . windmove-down)
          ("k" . windmove-up)
          ("i" . windmove-left)
