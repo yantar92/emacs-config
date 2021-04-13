@@ -3758,7 +3758,9 @@ Moreover, it can be integrated with all other kinds of documentation using [[id:
   :custom
   (dash-docs-enable-debugging nil)
   (helm-dash-docsets-path (no-littering-expand-var-file-name "dash-docs/docsets"))
+  (dash-docsets-path (no-littering-expand-var-file-name "dash-docs/docsets"))
   (helm-dash-browser-func 'eww)
+  (helm-dash-common-docsets '("Bash" "LaTeX"))
   :config
   (add-hook! latex-mode (setq dash-docs-docsets '("LaTeX")))
   (add-hook! sh-mode (setq dash-docs-docsets '("Bash")))
