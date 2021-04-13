@@ -7386,6 +7386,7 @@ The project with parent projects.
 	  (when (member (nth 2 (org-heading-components)) (list "DONE"))
 	    (org-todo "TODO")))))))
 (add-hook 'org-after-todo-state-change-hook 'yant/mark-todo-parent-tasks-next 'append)
+(add-hook 'org-after-refile-insert-hook #'yant/mark-todo-parent-tasks-next)
   #+end_src
 ****** Tracked projects (listed in GTD project list)
 :PROPERTIES:
