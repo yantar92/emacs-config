@@ -13907,7 +13907,7 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
         (add-text-properties (match-beginning 1) (match-end 1) `(face yant/org-agenda-highlight-face font-lock-fontified t))))))
 #+end_src
 
-**** Reveal hidden parts of links/emphasis when cursor enters them
+**** =org-appear=: Reveal hidden parts of links/emphasis when cursor enters them
 :PROPERTIES:
 :ID:       0db1cf24-d4f8-41bd-89e8-b91d3f869b08
 :END:
@@ -13916,6 +13916,7 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 (use-package org-appear
   :if init-flag
   :straight (org-appear :host github :repo "awth13/org-appear" :branch "feature/org-fold-support")
+  :custom (org-appear-autosubmarkers t)
   :hook (org-mode . org-appear-mode))
 #+end_src
 
