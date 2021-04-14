@@ -14823,7 +14823,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
   (use-package helm-org-ql :demand t)
   ;; (setq org-goto-max-level 8)
   ;; (setq org-goto-interface 'outline-path-completion)
-  (meta-defun meta-goto :mode org-mode helm-org-ql))
+  (meta-defun meta-goto :mode org-mode (helm-org-ql (current-buffer) :narrow t)))
 #+end_src
 *** Magit integration 
 **** Auto-commit trivial changes in org files
