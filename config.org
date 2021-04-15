@@ -4137,9 +4137,11 @@ I do not use mouse as much as possible and discourage myself to use it unnecessa
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
   :if init-flag
+  :demand t
   :config
   (use-package move-text
     :straight t
+    :demand t
     :bind (:map boon-command-map
 		("M-j" . meta-move-line-down)
 		("M-k" . meta-move-line-up)
