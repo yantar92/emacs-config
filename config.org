@@ -9033,7 +9033,7 @@ If LOCAL is non-nil, check only local TAG."
                ((tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY-AREA+TODO=\"TODO\""
 			   ((org-agenda-overriding-header "All other active tasks")
 			    (org-agenda-dim-blocked-tasks 'invisible)
-			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
                             (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                                         (quote (and (todo "TODO")
