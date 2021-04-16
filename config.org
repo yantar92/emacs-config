@@ -4351,6 +4351,7 @@ Interactive fill/unfill paragraph at point.
                                "No command bound to"
                                "Cannot outdent an item without its children"
                                "Attempt to delete minibuffer or sole ordinary window"
+                               "Bumped into unknown token"
 			       )))
 #+end_src
 **** Debugger key bindings
