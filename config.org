@@ -10242,7 +10242,7 @@ Negate match when start with ^."
          (unless
              (pcase string
                ((pred (string= "A")) (tags-local "AREA"))
-               ((pred (string= "P")) (tags-local "project"))
+               ((pred (string= "p")) (tags-local "project"))
                ((pred (string= "a")) (tags-local "article"))
                ((pred (string= "b")) (tags-local "book"))
                ((pred (string= "n")) (tags-local "note"))
@@ -10274,9 +10274,9 @@ Negate match when start with ^."
                                            (seq "#" ,str eow)))))
                (str
                 (or (path str)
-                    (regexp (rx-to-string `(or (seq "#" (1+ (not " ")) bow ,str eow)
-                                               (seq "#" ,str eow))))
-                    (outline-path (rx-to-string `(seq bow ,str eow)))
+                    (regexp (rx-to-string `(or (seq "#" (1+ (not " ")) bow ,str)
+                                               (seq "#" ,str))))
+                    (let ((case-fold-search t)) (outline-path (rx-to-string `(seq bow ,str))))
                     (tags-regexp str)
                     (tags str))))
            (throw :fail nil)))
@@ -10288,7 +10288,7 @@ Negate match when start with ^."
                            collect
                            (pcase string
                              ((pred (string= "A")) "AREA")
-                             ((pred (string= "P")) "project")
+                             ((pred (string= "p")) "project")
                              ((pred (string= "a")) "article")
                              ((pred (string= "b")) "book")
                              ((pred (string= "n")) "note")
