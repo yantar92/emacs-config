@@ -9192,11 +9192,11 @@ If LOCAL is non-nil, check only local TAG."
                                                                         (not (subproject)))
                                                                     (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
                                                                     (not (and (tags-local "AREA")
-                                                                            (not (descendants (todo)))))
+                                                                              (not (descendants (todo)))))
                                                                     (not (descendants
-                                                                        (and  (todo "NEXT" "REVIEW" "DOING")
-                                                                              (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-                                                                              )))))))
+                                                                          (and  (todo "NEXT" "REVIEW" "DOING")
+                                                                                (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+                                                                                )))))))
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
@@ -10222,10 +10222,8 @@ instead."
     (or stillyesterday? (ts>= now showfromtime))))
 
 (use-package org-ql
-  :demand t
   :straight (org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
 	      :fork (:host github :repo "yantar92/org-ql"))
-  
   :config
   (use-package org-ql-search :demand t)
   (setq org-ql-plain-string-predicate 'keyword)
@@ -11328,7 +11326,7 @@ Currently =org-capture-pop-frame= resets the line truncation state, which is rat
 :ID:       e3d02bee-a924-4808-9a2f-fe577065038d
 :END:
 
-To simplify defining the capture templates, I use =doct= package
+To simplify defining the capture templates, I use =doct= package #doct
 
 #+begin_src emacs-lisp
 (use-package doct
@@ -11336,7 +11334,7 @@ To simplify defining the capture templates, I use =doct= package
   :commands (doct))
 #+end_src
 
-Also, use yasnippet during capture
+Also, use yasnippet during capture #yasnippet
 #+begin_src emacs-lisp
 (use-package ya-org-capture
   :straight (ya-org-capture :type git :host github :repo "ag91/ya-org-capture" :local-repo "~/Git/ya-org-capture"
@@ -15394,7 +15392,6 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
   (global-keyfreq-mode))
 #+end_src
 * Git
-
 ** Global attributes file
 :PROPERTIES:
 :ID:       fa1f82af-e9a1-4902-91ee-5dbd7b6998d3
