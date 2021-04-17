@@ -7826,21 +7826,15 @@ Show parent project as top (or second top) suggestion."
 (defvar org-id-history nil
   "ID completion history for id: link type.")
 
-(defun org-id-prompt-id ()
-  "Prompt for the id during completion of att-id: link."
-  (org-id-get-with-outline-path-completion '((org-agenda-files :maxlevel . 100)))
-  ;; (let ((org-refile-history org-id-history)
-  ;; 	(org-refile-cache nil)
-  ;; 	(org-refile-target-verify-function nil))
-  ;;   (let ((prompt-ans (org-refile-get-location "Select org entry")))
-  ;;     (prog1
-  ;; 	  (or (org-id-get (seq-find #'markerp
-  ;; 				    prompt-ans)
-  ;; 			  'create)
-  ;;             (user-error "Cannot find ID of the entry: %s" prompt-ans))
-  ;; 	(setq org-id-history org-refile-history)
-  ;; 	(setq org-id-cache org-refile-cache))))
-  )
+(use-package helm-org-ql
+  :after org-ql
+  :demand t
+  :config
+  (defun org-id-prompt-id ()
+    "Prompt for the id during completion of att-id: link."
+    ;; (org-id-get-with-outline-path-completion '((org-agenda-files :maxlevel . 100)))
+    (let ((helm-org-ql-actions '(("Get id" . (lambda (mk) (org-with-point-at mk (org-id-get-create)))))))
+      (helm-org-ql (org-agenda-files) :name "Select heading"))))
 
 (defun org-id-link-complete (&optional arg)
   "Completion function for id: link."
