@@ -3875,6 +3875,7 @@ Moreover, it can be integrated with all other kinds of documentation using [[id:
 (use-package hyperbole
   :if init-flag
   :straight t
+  :defer 1
   :config
   ;; Clashes with `org-sparse-tree' binding.
   (unbind-key "C-c /" global-map)
@@ -4189,6 +4190,7 @@ There is also built-in skeleton mode, but =yasnippet= also has a good user-contr
 (use-package yasnippet
   :if init-flag
   :straight t
+  :defer 2
   :diminish (yas-minor-mode . " ⇶_")
   :hook ((org-mode latex-mode markdown-mode prog-mode lisp-interaction-mode) . yas-minor-mode)
   :config
@@ -4991,6 +4993,7 @@ This is also required for =cdlatex= to work with org-mode.
 #+begin_src emacs-lisp
 (use-package latex
   :if init-flag
+  :defer t
   :straight auctex
   :custom
   (TeX-auto-save t)
@@ -10575,6 +10578,7 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-contacts
+  :commands 'helm-org-contacts
   :init
   (setq org-contacts-files '("/home/yantar92/Org/contacts.org"))
   :config
