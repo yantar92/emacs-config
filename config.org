@@ -3006,7 +3006,6 @@ Just use external browser to open URLs.
 
 #+begin_src emacs-lisp
 (use-package browse-url
-  :bind (("C-c C-o" . browse-url))
   :init
   (defun yant/browse-url (url &optional new-window)
     "Open in mpv or eaf-browser."
@@ -3880,6 +3879,7 @@ Moreover, it can be integrated with all other kinds of documentation using [[id:
   :config
   ;; Clashes with `org-sparse-tree' binding.
   (unbind-key "C-c /" global-map)
+  (bind-key "C-c C-o" #'hkey-either global-map)
   ;; (bind-key* "<tab>" #'action-key)
   ;; (bind-key* "<backtab>" #'assist-key)
   )
