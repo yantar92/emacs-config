@@ -9110,7 +9110,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                                         (quote
                                                          (and (todo "NEXT")
-                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY"))
+                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
                                                               (not (habit))
                                                               (subtask)
                                                               (not (project))))))
@@ -9129,7 +9129,7 @@ If LOCAL is non-nil, check only local TAG."
                                                         (quote
                                                          (and (todo "NEXT")
                                                               (tags "NODEADLINE")
-                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY"))
+                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
                                                               (not (habit))
                                                               (subtask)
                                                               (not (project))))))
@@ -9223,7 +9223,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                                         (quote
                                                          (and (todo "NEXT")
-                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY"))
+                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
                                                               (not (habit))
                                                               (subtask)
                                                               (not (project))))))
@@ -9243,7 +9243,7 @@ If LOCAL is non-nil, check only local TAG."
                                                         (quote
                                                          (and (todo "NEXT")
                                                               (tags "NODEADLINE")
-                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY"))
+                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
                                                               (not (habit))
                                                               (subtask)
                                                               (not (project))))))
