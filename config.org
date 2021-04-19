@@ -7231,12 +7231,13 @@ I have two ways to do it:
   "Make task at point a habit."
   (interactive)
   (org-with-wide-buffer
-   (if (not (org-entry-is-todo-p))
-       (when (y-or-n-p (format "Current entry is not a task ("%s").\nChange todo state?" (org-get-heading 'no-tags)))
-	 (funcall-interactively #'org-todo))
-     (cl-mapc #'org-set-property
-	      '("STYLE" "REPEAT_TO_STATE" "LOGGING" "ARCHIVE")
-	      '("habit" "NEXT" "DONE(!)" "%S_archive_%y.org::* Habits")))))
+   (unless (org-entry-is-todo-p)
+     (when (y-or-n-p (format "Current entry is not a task ("%s").\nChange todo state?" (org-get-heading 'no-tags)))
+       (funcall-interactively #'org-todo)))
+   (cl-mapc #'org-set-property
+	    '("STYLE" "REPEAT_TO_STATE" "LOGGING" "ARCHIVE")
+	    '("habit" "NEXT" "DONE(!)" "%S_archive_%y.org::* Habits"))
+   (message "Task is not habit.")))
 (bind-key "C-c C-x h" #'yant/org-task-convert-to-habit org-mode-map)
 #+end_src
 
