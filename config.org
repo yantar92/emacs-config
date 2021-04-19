@@ -8969,7 +8969,7 @@ If LOCAL is non-nil, check only local TAG."
 	       agenda ""
                ((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                             (quote (and (not (done))
-                                                        (ts-active :to today)
+                                                        (ts-active)
                                                         (not (tags-inherited "HOLD" "WAITING" "CANCELLED"))
                                                         (not (tags "SOMEDAY"))
                                                         (not (org-agenda-skip-before-SHOWFROMDATE-property))
@@ -9149,7 +9149,7 @@ If LOCAL is non-nil, check only local TAG."
 	       ((agenda ""
 			((org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t")
                          (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                     (quote (and (scheduled)
+                                                     (quote (and (ts-active)
                                                                  (todo)
                                                                  (not (tags-inherited "HOLD"))
                                                                  (not (tags-inherited "WAITING"))
