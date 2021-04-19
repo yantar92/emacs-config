@@ -3675,7 +3675,7 @@ Additional fontification in =dired=
 					      ("Data"
 					       (extension "txt" "hys" "xls" "xlsx"))
 					      ("Images"
-					       (extension "png" "jpg" "jpeg" "tiff" "tif"))
+					       (extension "png" "jpg" "jpeg" "tiff" "tif" "svg"))
 					      ("Videos"
 					       (extension "avi" "mpeg" "mp4" "mkv"))
 					      )))
