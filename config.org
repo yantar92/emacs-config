@@ -9071,26 +9071,7 @@ If LOCAL is non-nil, check only local TAG."
                                                                  (not (org-agenda-skip-before-SHOWFROMDATE-property))
 					                         (not (org-agenda-skip-before-SHOWFROMTIME-property))
 					                         (not (org-agenda-skip-noshowdates))))))))
-                (tags-todo "-CANCELLED-WAITING-HOLD-SOMEDAY"
-			   ((org-agenda-overriding-header "Stuck Projects")
-			    (org-agenda-dim-blocked-tasks nil)
-			    (org-agenda-prefix-format "%-12:c\t%?-12t")
-			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (project)
-                                                                    (not (todo "SOMEDAY" "TODO"))
-                                                                    (or (todo "NEXT" "REVIEW" "DOING")
-                                                                        (not (subproject)))
-                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
-                                                                    (not (and (tags-local "AREA")
-                                                                            (not (descendants (todo)))))
-                                                                    (not (descendants
-                                                                        (and  (todo "NEXT" "REVIEW" "DOING")
-                                                                              (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-                                                                              )))))))
-			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-			    (org-agenda-sorting-strategy
-			     '(category-keep))))
-		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
+                (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
 			   ((org-agenda-overriding-header "Tasks to review")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
@@ -9139,6 +9120,25 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))
+                (tags-todo "-CANCELLED-WAITING-HOLD-SOMEDAY"
+			   ((org-agenda-overriding-header "Stuck Projects")
+			    (org-agenda-dim-blocked-tasks nil)
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                                        (quote (and (project)
+                                                                    (not (todo "SOMEDAY" "TODO"))
+                                                                    (or (todo "NEXT" "REVIEW" "DOING")
+                                                                        (not (subproject)))
+                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
+                                                                    (not (and (tags-local "AREA")
+                                                                            (not (descendants (todo)))))
+                                                                    (not (descendants
+                                                                        (and  (todo "NEXT" "REVIEW" "DOING")
+                                                                              (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+                                                                              )))))))
+			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-sorting-strategy
+			     '(category-keep))))
                 (tags-todo "-CANCELLED-HOLD-WAITING-SOMEDAY+TODO=\"DOING\""
 			   ((org-agenda-overriding-header "Tasks in progress")
 			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
