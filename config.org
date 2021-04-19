@@ -820,6 +820,7 @@ Resize frames automatically making sure that active window is enlarged ([[id:3e7
   :diminish golden-ratio-mode
   :custom
   (golden-ratio-exclude-modes '(notmuch-tree-mode
+                                calendar-mode
                                 ;; This is needed to avoid resizing todo selection window.
                                 fundamental-mode))
   :config
