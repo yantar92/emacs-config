@@ -15453,6 +15453,15 @@ git config --global core.attributesfile ~/.gitattributes
 [core]
 	attributesfile = /home/yantar92/.gitattributes
 #+end_src
+** Rebase by default for new tracking branches
+
+When doing feature development, it makes little sense to merge the feature branch to master explicitly using separate commit. It is better to use rebase instead of merge commit, as recommended in [[id:Stack_Overflow_autos_vs_autosb9a][[Stack Overflow] autosetuprebase vs autosetupmerge]].
+
+#+begin_src conf :tangle ~/.gitconfig
+[branch]
+  autosetupmerge = always
+  autosetuprebase = always
+#+end_src
 
 * Mpv
 :PROPERTIES:
