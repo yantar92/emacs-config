@@ -7832,15 +7832,13 @@ Show parent project as top (or second top) suggestion."
 (defvar org-id-history nil
   "ID completion history for id: link type.")
 
-(use-package helm-org-ql
-  :after org-ql
-  :demand t
-  :config
-  (defun org-id-prompt-id ()
-    "Prompt for the id during completion of att-id: link."
-    ;; (org-id-get-with-outline-path-completion '((org-agenda-files :maxlevel . 100)))
-    (let ((helm-org-ql-actions '(("Get id" . (lambda (mk) (org-with-point-at mk (org-id-get-create)))))))
-      (helm-org-ql (org-agenda-files) :name "Select heading"))))
+
+(defun org-id-prompt-id ()
+  "Prompt for the id during completion of att-id: link."
+  ;; (org-id-get-with-outline-path-completion '((org-agenda-files :maxlevel . 100)))
+  (require 'helm-org-ql)
+  (let ((helm-org-ql-actions '(("Get id" . (lambda (mk) (org-with-point-at mk (org-id-get-create)))))))
+    (helm-org-ql (org-agenda-files) :name "Select heading")))
 
 (defun org-id-link-complete (&optional arg)
   "Completion function for id: link."
