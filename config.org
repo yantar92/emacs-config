@@ -4354,6 +4354,7 @@ Interactive fill/unfill paragraph at point.
 			       "use-package: Unrecognized keyword"
 			       "No more buttons"
                                "No command bound to"
+                               "Decryption failed"
                                "Cannot outdent an item without its children"
                                "Attempt to delete minibuffer or sole ordinary window"
                                "Bumped into unknown token"
