@@ -10591,7 +10591,6 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-contacts
-  :commands 'helm-org-contacts
   :init
   (setq org-contacts-files '("/home/yantar92/Org/contacts.org"))
   :config
