@@ -4748,6 +4748,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
     (meta-defun meta-help :mode profiler-report-mode helpful-at-point)
     (meta-defun meta-help :mode debugger-mode helpful-at-point)
     (meta-defun meta-help :mode notmuch-message-mode helpful-at-point)
+    (meta-defun meta-help :mode Info-mode helpful-at-point)
     (bind-keys ("<F1> k" . helpful-key)
                :map boon-goto-map
                ("k" . helpful-key)
