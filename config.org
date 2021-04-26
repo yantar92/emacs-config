@@ -3721,6 +3721,16 @@ Do not hide symlink target when hiding details.
   :if init-flag
   :custom (dired-hide-details-hide-symlink-targets nil))
 #+end_src
+****** Show last commit in Git repos
+
+Credit: [[id:Reddit:planetemacs_/u/negativeoilprice2021show_hide_emacs_dired_detail_in_stylebeb][/u/negativeoilprice [Reddit:planetemacs] (2021) Show/hide Emacs dired details in style]]
+#+begin_src emacs-lisp
+(use-package dired-git-info
+  :if init-flag
+  :straight t
+  :bind (:map dired-mode-map
+              (")" . dired-git-info-mode)))
+#+end_src
 
 **** Disk usage
 :PROPERTIES:
