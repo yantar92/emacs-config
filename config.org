@@ -7715,9 +7715,10 @@ Just links to the current entry are not always sufficient. I sometimes want to l
   "Return `org-attach-dir' for the entryin att-id: link type."
   (let ((id (car (s-split ":" arg)))
         (file (cadr (s-split ":" arg))))
-    (s-concat (f-slash (let ((org-attach-dir-suppress-extra-checks t))
-			 (org-with-point-at (org-id-find id 'marker)
-			   (org-attach-dir 'CREATE))))
+    (s-concat (f-slash (let* ((org-attach-dir-suppress-extra-checks t)
+                              (pos (org-id-find id 'marker)))
+                         (org-ql--value-at pos (lambda () (org-with-point-at pos
+			                                (org-attach-dir 'CREATE))))))
 	      file)))
 
 (add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
