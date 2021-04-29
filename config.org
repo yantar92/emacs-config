@@ -6537,7 +6537,25 @@ Part of eliminating bad habits as in [[id:9562f1fc-9b35-4573-b42e-7bb2fcef8a7a][
     (error "Do something better!")))
 #+end_src
 
+**** Avoid replying to "no-reply" when replying to all
 
+#+begin_src emacs-lisp
+(setq message-dont-reply-to-names `("noreply"
+                                    ,user-mail-address))
+(use-package notmuch
+  :config
+  (defun yant/notmuch-honor-dont-reply-to-names ()
+    "Maybe remove To: header components according to `message-dont-reply-to-names'.
+This should be called as a hook ran inside `message-header-setup-hook'."
+    (save-excursion
+      (when (and (eq major-mode 'notmuch-message-mode)
+                 (message-fetch-field "To"))
+        (when-let ((new-headers (message-get-reply-headers t nil '("to" "cc"))))
+          (message-replace-header "To" (alist-get 'To new-headers))
+          (message-replace-header "CC" (alist-get 'Cc new-headers))
+          (message-sort-headers)))))
+  (add-hook 'message-setup-hook #'yant/notmuch-honor-dont-reply-to-names))
+#+end_src
 
 *** Mail host address
 :PROPERTIES:
