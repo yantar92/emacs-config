@@ -7727,14 +7727,18 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 
 #+begin_src emacs-lisp
 (defun yant/process-att-id-abbrev (arg)
-  "Return `org-attach-dir' for the entryin att-id: link type."
+  "Return `org-attach-dir' for the entry in att-id: link type."
+  (require 'org-ql)
   (let ((id (car (s-split ":" arg)))
         (file (cadr (s-split ":" arg))))
     (s-concat (f-slash (let* ((org-attach-dir-suppress-extra-checks t)
                               (pos (org-id-find id 'marker)))
-                         (org-ql--value-at pos (lambda () (org-with-point-at pos
-			                                (org-attach-dir 'CREATE))))))
-	      file)))
+                         (org-with-point-at pos
+			   (org-attach-dir 'CREATE))))
+              file)))
+;; Cache results
+(memoize #'yant/process-att-id-abbrev)
+
 
 (add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
 
