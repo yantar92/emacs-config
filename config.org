@@ -15057,7 +15057,6 @@ Some changes in org-files are very trivial and clutter more important changes I 
                             ;; miss some matches.
                             (setq pos 1))
                         (magit-section-forward))))))
-              (re-search-forward (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps))) nil 'move)
               (setq pos (point))
               (setq staged-pos (or (save-excursion
 			             (unless (let ((inhibit-message t)) (magit-jump-to-staged))
