@@ -10522,10 +10522,23 @@ current task to NEXT and schedule it the same day."
                                             cur-uuid)))))
   (defun yant/helm-org-ql-create-link (marker)
     "Insert link to MARKER at point."
-    (insert (org-with-point-at marker (org-store-link nil))))
+    (insert (org-with-point-at marker
+              (if (and (org-entry-get (point) "AUTHOR")
+                       (org-entry-get (point) "YEAR")
+                       (org-entry-get (point) "JOURNAL"))
+                  (let ((heading (org-get-heading t t t t)))
+                    (format "[[id:%s][%s]]"
+                            (org-id-get-create)
+                            (--> heading
+                              (replace-regexp-in-string ").+" "" it)
+                              (replace-regexp-in-string "\\[" "" it)
+                              (replace-regexp-in-string "\\]" "" it)
+                              (replace-regexp-in-string "(" "" it))))
+                (org-store-link nil)))))
   (defun yant/helm-org-ql-insert-url (marker)
     "Insert URL from link at point."
-    (let ((link (org-entry-get marker "Source")))
+    (let ((link (or (org-entry-get marker "Source")
+                    (org-entry-get marker "URL"))))
       (save-match-data
         (string-match "^\\(?:\\[\\[\\)?\\([^]]+\\)" link)
         (insert (match-string 1 link)))))
