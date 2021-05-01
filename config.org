@@ -3718,6 +3718,9 @@ Do not hide symlink target when hiding details.
   :custom (dired-hide-details-hide-symlink-targets nil))
 #+end_src
 ****** Show last commit in Git repos
+:PROPERTIES:
+:ID:       cb3cf7cb-c376-4ffc-9b56-a6056c44429f
+:END:
 
 Credit: [[id:Reddit:planetemacs_/u/negativeoilprice2021show_hide_emacs_dired_detail_in_stylebeb][/u/negativeoilprice [Reddit:planetemacs] (2021) Show/hide Emacs dired details in style]]
 #+begin_src emacs-lisp
@@ -3753,6 +3756,9 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 #+end_src
 *** Documentation
 **** TODO =helm-dash=
+:PROPERTIES:
+:ID:       648e38a1-8a1c-4453-ab4c-5376716b2639
+:END:
 
 Emacs has an excellent built-in support for Elisp and GNU system documentation.
 Moreover, it can be integrated with all other kinds of documentation using [[id:Kapeli_dash_for_macos_api_docum6c7][Dash]].
@@ -4363,8 +4369,7 @@ Interactive fill/unfill paragraph at point.
                                "Decryption failed"
                                "Cannot outdent an item without its children"
                                "Attempt to delete minibuffer or sole ordinary window"
-                               "Bumped into unknown token"
-			       )))
+                               "Bumped into unknown token")))
 #+end_src
 **** Debugger key bindings
 :PROPERTIES:
@@ -6535,6 +6540,9 @@ Part of eliminating bad habits as in [[id:9562f1fc-9b35-4573-b42e-7bb2fcef8a7a][
 #+end_src
 
 **** Avoid replying to "no-reply" when replying to all
+:PROPERTIES:
+:ID:       cf5f98b7-af58-431e-a922-49b49c48af1d
+:END:
 
 #+begin_src emacs-lisp
 (setq message-dont-reply-to-names `("noreply"
@@ -7296,6 +7304,7 @@ The project is an item with todo keyword and subtask.
     :normalizers ((`(,predicate-names)
                    (org-ql-normalize-query `(or (tags-local "project")
 	                                        (and
+                                                 (not (goal))
 	                                         (todo)
 	                                         (descendants (and
 			                                       (or (todo) (done))
@@ -7307,6 +7316,7 @@ The project is an item with todo keyword and subtask.
                  (org-ql-query-preamble `(or (tags-local "project")
 	                                     (and
 	                                      (todo)
+                                              (not (goal))
 	                                      (descendants (and
 			                                    (or (todo) (done))
                                                             (not (org-inlinetask-at-task-p))
@@ -7389,9 +7399,11 @@ The project with parent projects.
     "Match a subproject"
     :normalizers ((`(,predicate-names)
                    (org-ql-normalize-query '(and (project)
+                                                 (not (tags-local "project"))
 	                                         (ancestors (project))))))
     :preambles ((`(,predicate-names)
                  (org-ql-query-preamble '(and (project)
+                                              (not (tags-local "project"))
 	                                      (ancestors (project))))))))
 
   (defun bh/is-subproject-p ()
@@ -8983,59 +8995,95 @@ If LOCAL is non-nil, check only local TAG."
   #+begin_src emacs-lisp
 (set-face-attribute 'org-agenda-structure nil
 		    :height 120
-                    :foreground "firebrick")
+		    :foreground "firebrick")
 (set-face-attribute 'org-agenda-date-today nil
-                    :foreground "dark goldenrod")
+		    :foreground "dark goldenrod")
 
 
 (defvar bh/hide-scheduled-and-waiting-next-tasks 't)
 (setq org-agenda-skip-function nil)
 
+(use-package org-ql
+  :defer t
+  :config
+  (org-ql-defpred goal ()
+    "Match a goal."
+    :normalizers ((`(,predicate-names)
+		   (org-ql-normalize-query '(tags-local "goal"))))
+    :preambles ((`(,predicate-names)
+		 (org-ql-query-preamble '(tags-local "goal")))))
+  (org-ql-defpred area ()
+    "Match an area."
+    :normalizers ((`(,predicate-names)
+		   (org-ql-normalize-query '(tags-local "AREA"))))
+    :preambles ((`(,predicate-names)
+		 (org-ql-query-preamble '(tags-local "AREA"))))))
+
 (setq org-agenda-custom-commands
       (quote (("a" "Full agenda"
-               agenda ""
-               ((org-agenda-tag-filter-preset '("-TICKLER" "-CANCELLED" "-WAITING" "-HOLD" "-SOMEDAY" "-NODEADLINE"))))
-              ("s" nil
 	       agenda ""
-               ((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                            (quote (and (not (done))
-                                                        (ts-active)
-                                                        (not (tags-inherited "HOLD" "WAITING" "CANCELLED"))
-                                                        (not (tags "SOMEDAY"))
-                                                        (not (org-agenda-skip-before-SHOWFROMDATE-property))
-					                (not (org-agenda-skip-before-SHOWFROMTIME-property))
-					                (not (org-agenda-skip-noshowdates))))))))
+	       ((org-agenda-tag-filter-preset '("-TICKLER" "-CANCELLED" "-WAITING" "-HOLD" "-SOMEDAY" "-NODEADLINE"))))
+	      ("s" nil
+	       agenda ""
+	       ((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+					    (quote (and (not (done))
+							(ts-active)
+							(not (tags-inherited "HOLD" "WAITING" "CANCELLED"))
+							(not (tags "SOMEDAY"))
+							(not (org-agenda-skip-before-SHOWFROMDATE-property))
+							(not (org-agenda-skip-before-SHOWFROMTIME-property))
+							(not (org-agenda-skip-noshowdates))))))))
 	      ("p" "Projects"
-               ((tags-todo "-CANCELLED-AREA-TODO=\"TODO\"-SOMEDAY-HOLD-WAITING"
+	       ((tags-todo "/"
 			   ((org-agenda-overriding-header "Active projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-			    (org-agenda-skip-function 'bh/skip-non-projects)
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (not (tags "SOMEDAY" "HOLD" "WAITING" "CANCELLED"))
+								    (not (todo "TODO"))
+								    (not (area))
+								    (project)
+								    (not (subproject))))))
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-AREA-TODO=\"TODO\"-SOMEDAY+HOLD|-CANCELLED-AREA-TODO=\"TODO\"-SOMEDAY+WAITING"
+		(tags-todo "/"
 			   ((org-agenda-overriding-header "Waiting and Hold projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-			    (org-agenda-skip-function 'bh/skip-non-projects)
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (not (tags "CANCELLED" "SOMEDAY"))
+								    (not (area))
+								    (not (todo "TODO"))
+								    (tags "HOLD" "WAITING")
+								    (project)
+								    (not (subproject))))))
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-AREA+SOMEDAY"
+		(tags-todo "/"
 			   ((org-agenda-overriding-header "Someday projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-			    (org-agenda-skip-function 'bh/skip-non-projects)
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (tags "SOMEDAY")
+								    (not (tags "CANCELLED"))
+								    (not (area))
+								    (project)
+								    (not (subproject))))))
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-AREA+TODO=\"TODO\""
+		(tags-todo "/"
 			   ((org-agenda-overriding-header "Hanging projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-			    (org-agenda-skip-function '(or (bh/skip-non-projects)
-							   (bh/skip-subprojects)))
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (todo "TODO")
+								    (not (tags "CANCELLED"))
+								    (not (area))
+								    (project)
+								    (not (subproject))))))
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))))
-              ("A" "Areas of interest" tags-todo "-CANCELLED+AREA"
+	      ("A" "Areas of interest" tags-todo "-CANCELLED+AREA"
 	       ((org-agenda-dim-blocked-tasks nil)
 		(org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
 		;; (org-agenda-skip-function 'bh/skip-non-projects)
@@ -9047,41 +9095,41 @@ If LOCAL is non-nil, check only local TAG."
 	      ("i" "Inbox items"
 	       ((tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "Inbox\n")
-                       (org-agenda-files '("~/Org/inbox.org"))
+		       (org-agenda-files '("~/Org/inbox.org"))
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'notscheduled)))
 		       (org-agenda-prefix-format "S\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))
 		(tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "")
-                       (org-agenda-files '("~/Org/inbox.org")) 
+		       (org-agenda-files '("~/Org/inbox.org")) 
 		       (org-agenda-block-separator nil)
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'notdeadline)))
 		       (org-agenda-prefix-format "D\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))
 		(tags "+INBOX-DEFAULT"
 		      ((org-agenda-overriding-header "")
-                       (org-agenda-files '("~/Org/inbox.org")) 
+		       (org-agenda-files '("~/Org/inbox.org")) 
 		       (org-agenda-block-separator nil)
 		       (org-agenda-skip-function '(or (yant/org-agenda-inbox-items) (org-agenda-skip-entry-if 'scheduled 'deadline)))
 		       (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
 		       (org-tags-match-list-sublevels nil)))))
-              ("h" "Hanging tasks"
-               ((tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY-AREA+TODO=\"TODO\""
+	      ("h" "Hanging tasks"
+	       ((tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY-AREA+TODO=\"TODO\""
 			   ((org-agenda-overriding-header "All other active tasks")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (todo "TODO")
-                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY"))
-                                                                    (or (tags "SKIP")
-                                                                        (not (subtask)))
-                                                                    ;; (not (tags "NODEADLINE"))
-                                                                    (not (habit))
-                                                                    (task)
-                                                                    ))))))))
-              ("w" "Waiting and hold tasks"
-               ((tags-todo "-CANCELLED-SOMEDAY+WAITING-TRACK|-CANCELLED-SOMEDAY+HOLD"
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (todo "TODO")
+								    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY"))
+								    (or (tags "SKIP")
+									(not (subtask)))
+								    ;; (not (tags "NODEADLINE"))
+								    (not (habit))
+								    (task)
+								    ))))))))
+	      ("w" "Waiting and hold tasks"
+	       ((tags-todo "-CANCELLED-SOMEDAY+WAITING-TRACK|-CANCELLED-SOMEDAY+HOLD"
 			   ((org-agenda-overriding-header (concat "Waiting and Hold Tasks (excluding tracked tasks)" ""))
 			    (org-agenda-prefix-format "%-12:c\t%?-12t %(yant/format-summary-for-agenda)")
 			    (org-use-tag-inheritance nil)
@@ -9089,19 +9137,19 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-tags-match-list-sublevels nil)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down))))))
-              ("n" "Agenda, NEXT, and REVIEW tasks"
+	      ("n" "Agenda, NEXT, and REVIEW tasks"
 	       ((agenda ""
-                        ((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                     (quote (and (ts-active :to today)
-                                                                 (not (done))
-                                                                 (not (tags-inherited "HOLD"))
-                                                                 (not (tags-inherited "WAITING"))
-                                                                 (not (tags-inherited "CANCELLED"))
-                                                                 (not (tags "SOMEDAY"))
-                                                                 (not (org-agenda-skip-before-SHOWFROMDATE-property))
-					                         (not (org-agenda-skip-before-SHOWFROMTIME-property))
-					                         (not (org-agenda-skip-noshowdates))))))))
-                (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
+			((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+						     (quote (and (ts-active :to today)
+								 (not (done))
+								 (not (tags-inherited "HOLD"))
+								 (not (tags-inherited "WAITING"))
+								 (not (tags-inherited "CANCELLED"))
+								 (not (tags "SOMEDAY"))
+								 (not (org-agenda-skip-before-SHOWFROMDATE-property))
+								 (not (org-agenda-skip-before-SHOWFROMTIME-property))
+								 (not (org-agenda-skip-noshowdates))))))))
+		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
 			   ((org-agenda-overriding-header "Tasks to review")
 			    (org-agenda-dim-blocked-tasks 'invisible)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
@@ -9119,12 +9167,12 @@ If LOCAL is non-nil, check only local TAG."
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote
-                                                         (and (todo "NEXT")
-                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
-                                                              (not (habit))
-                                                              (subtask)
-                                                              (not (project))))))
+							(quote
+							 (and (todo "NEXT")
+							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
+							      (not (habit))
+							      (subtask)
+							      (not (project))))))
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
@@ -9137,39 +9185,39 @@ If LOCAL is non-nil, check only local TAG."
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote
-                                                         (and (todo "NEXT")
-                                                              (tags "NODEADLINE")
-                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
-                                                              (not (habit))
-                                                              (subtask)
-                                                              (not (project))))))
+							(quote
+							 (and (todo "NEXT")
+							      (tags "NODEADLINE")
+							      (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
+							      (not (habit))
+							      (subtask)
+							      (not (project))))))
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))
-                (tags-todo "-CANCELLED-WAITING-HOLD-SOMEDAY"
+		(tags-todo "-CANCELLED-WAITING-HOLD-SOMEDAY"
 			   ((org-agenda-overriding-header "Stuck Projects")
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (project)
-                                                                    (not (todo "SOMEDAY" "TODO"))
-                                                                    (or (todo "NEXT" "REVIEW" "DOING")
-                                                                        (not (subproject)))
-                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
-                                                                    (not (and (tags-local "AREA")
-                                                                            (not (descendants (todo)))))
-                                                                    (not (descendants
-                                                                        (and  (todo "NEXT" "REVIEW" "DOING")
-                                                                              (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-                                                                              )))))))
+							(quote (and (project)
+								    (not (todo "SOMEDAY" "TODO"))
+								    (or (todo "NEXT" "REVIEW" "DOING")
+									(not (subproject)))
+								    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
+								    (not (and (tags-local "AREA")
+									      (not (descendants (todo)))))
+								    (not (descendants
+									  (and  (todo "NEXT" "REVIEW" "DOING")
+										(not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+										)))))))
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
-                (tags-todo "-CANCELLED-HOLD-WAITING-SOMEDAY+TODO=\"DOING\""
+		(tags-todo "-CANCELLED-HOLD-WAITING-SOMEDAY+TODO=\"DOING\""
 			   ((org-agenda-overriding-header "Tasks in progress")
 			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels t)
@@ -9178,38 +9226,38 @@ If LOCAL is non-nil, check only local TAG."
 	      ("v" "GTD overview"
 	       ((agenda ""
 			((org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t")
-                         (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                     (quote (and (ts-active)
-                                                                 (todo)
-                                                                 (not (tags-inherited "HOLD"))
-                                                                 (not (tags-inherited "WAITING"))
-                                                                 (not (tags-inherited "CANCELLED"))
-                                                                 (not (tags "SOMEDAY"))))))))
+			 (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+						     (quote (and (ts-active)
+								 (todo)
+								 (not (tags-inherited "HOLD"))
+								 (not (tags-inherited "WAITING"))
+								 (not (tags-inherited "CANCELLED"))
+								 (not (tags "SOMEDAY"))))))))
 		(tags-todo "INBOX-DEFAULT"
 			   ((org-agenda-overriding-header "Inbox")
-                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (scheduled)
-                                                                    (tags "INBOX")
-                                                                    (not (tags "DEFAULT"))))))
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (scheduled)
+								    (tags "INBOX")
+								    (not (tags "DEFAULT"))))))
 			    (org-agenda-prefix-format "S\t\t%-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels nil)))
 		(tags-todo "INBOX-DEFAULT"
 			   ((org-agenda-overriding-header "")
 			    (org-agenda-block-separator nil)
-                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (deadline)
-                                                                    (tags "INBOX")
-                                                                    (not (tags "DEFAULT"))))))
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (deadline)
+								    (tags "INBOX")
+								    (not (tags "DEFAULT"))))))
 			    (org-agenda-prefix-format "D\t\t%-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels nil)))
 		(tags-todo "INBOX-DEFAULT"
 			   ((org-agenda-overriding-header "")
 			    (org-agenda-block-separator nil)
-                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (not (scheduled))
-                                                                    (not (deadline))
-                                                                    (tags "INBOX")
-                                                                    (not (tags "DEFAULT"))))))
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (not (scheduled))
+								    (not (deadline))
+								    (tags "INBOX")
+								    (not (tags "DEFAULT"))))))
 			    (org-agenda-prefix-format "\t\t%-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels nil)))
 		(tags "/"
@@ -9222,17 +9270,17 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (project)
-                                                                    (not (todo "SOMEDAY" "TODO"))
-                                                                    (or (todo "NEXT" "REVIEW" "DOING")
-                                                                        (not (subproject)))
-                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
-                                                                    (not (and (tags-local "AREA")
-                                                                              (not (descendants (todo)))))
-                                                                    (not (descendants
-                                                                          (and  (todo "NEXT" "REVIEW" "DOING")
-                                                                                (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-                                                                                )))))))
+							(quote (and (project)
+								    (not (todo "SOMEDAY" "TODO"))
+								    (or (todo "NEXT" "REVIEW" "DOING")
+									(not (subproject)))
+								    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
+								    (not (and (tags-local "AREA")
+									      (not (descendants (todo)))))
+								    (not (descendants
+									  (and  (todo "NEXT" "REVIEW" "DOING")
+										(not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+										)))))))
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
@@ -9240,7 +9288,7 @@ If LOCAL is non-nil, check only local TAG."
 			   ((org-agenda-overriding-header (concat "Waiting and Hold Tasks" ""))
 			    (org-agenda-prefix-format "%-12:c\t%?-12t %(yant/format-summary-for-agenda)")
 			    (org-agenda-skip-function  '(or (bh/skip-projects)
-                                                            (org-agenda-skip-entry-if 'scheduled)))
+							    (org-agenda-skip-entry-if 'scheduled)))
 			    (org-tags-match-list-sublevels nil)
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down))))
@@ -9251,115 +9299,86 @@ If LOCAL is non-nil, check only local TAG."
 								    " (including WAITING and SCHEDULED tasks)")))
 			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote
-                                                         (and (todo "NEXT")
-                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
-                                                              (not (habit))
-                                                              (subtask)
-                                                              (not (project))))))
-			    (org-tags-match-list-sublevels t)
-			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-			    (org-agenda-sorting-strategy
-			     '(priority-down todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-HOLD-WAITING+NODEADLINE-SOMEDAY+TODO=\"NEXT\""
-			   ((org-agenda-overriding-header (concat "Extra Project Next Tasks"
-								  (if bh/hide-scheduled-and-waiting-next-tasks
-								      ""
-								    " (including WAITING and SCHEDULED tasks)")))
-			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
-                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote
-                                                         (and (todo "NEXT")
-                                                              (tags "NODEADLINE")
-                                                              (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
-                                                              (not (habit))
-                                                              (subtask)
-                                                              (not (project))))))
-			    (org-tags-match-list-sublevels t)
-			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-			    (org-agenda-sorting-strategy
-			     '(priority-down todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
-			   ((org-agenda-overriding-header "Tasks to review")
-			    (org-agenda-dim-blocked-tasks 'invisible)
-			    (org-agenda-prefix-format "%-12:c\t%?-12t")
-			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-			    (org-agenda-skip-function '(lambda()
-							 (or
-							  (bh/skip-non-tasks)
-							  (and (not (zin/org-agenda-skip-tag "SKIP"))
-							       (bh/skip-subprojects))
-							  (bh/skip-habits))))))
-		(tags-todo "-CANCELLED-AREA-TODO=\"TODO\"-SOMEDAY-HOLD-WAITING"
-			   ((org-agenda-overriding-header "Active projects")
-			    (org-agenda-dim-blocked-tasks nil)
-			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-			    (org-agenda-skip-function 'bh/skip-non-projects)
-			    (org-agenda-sorting-strategy
-			     '(todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-AREA-TODO=\"TODO\"-SOMEDAY+HOLD|-CANCELLED-AREA-TODO=\"TODO\"-SOMEDAY+WAITING"
-			   ((org-agenda-overriding-header "Waiting and Hold projects")
-			    (org-agenda-dim-blocked-tasks nil)
-			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-			    (org-agenda-skip-function 'bh/skip-non-projects)
-			    (org-agenda-sorting-strategy
-			     '(todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-AREA+SOMEDAY"
-			   ((org-agenda-overriding-header "Someday projects")
-			    (org-agenda-dim-blocked-tasks nil)
-			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-			    (org-agenda-skip-function 'bh/skip-non-projects)
-			    (org-agenda-sorting-strategy
-			     '(todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-AREA+TODO=\"TODO\""
-			   ((org-agenda-overriding-header "Hanging projects")
-			    (org-agenda-dim-blocked-tasks nil)
-			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-			    (org-agenda-skip-function '(or (bh/skip-non-projects)
-							   (bh/skip-subprojects)))
-			    (org-agenda-sorting-strategy
-			     '(todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED+AREA"
-			   ((org-agenda-overriding-header "Areas of interest")
-			    (org-agenda-dim-blocked-tasks nil)
-			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (tags-local "AREA")
-                                                                    (not (tags-inherited "SOMEDAY"))
-                                                                    (not (descendants
-                                                                          (and (tags-local "AREA")
-                                                                               (todo "NEXT"))))))))
-			    (org-agenda-sorting-strategy
-			     '(todo-state-down effort-up category-keep))))
-		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"TODO\""
-			   ((org-agenda-overriding-header "All other active tasks")
-			    (org-agenda-dim-blocked-tasks 'invisible)
-			    (org-agenda-prefix-format "%-12:c\t%?-12t")
-			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (todo "TODO")
-                                                                    (not (habit))
-                                                                    (task)
-                                                                    (or (tags "SKIP")
-                                                                        (not (subtask)))
-                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY" "NODEADLINE"))))))))
-		(tags-todo "-NODEADLINE-CANCELLED-WAITING-HOLD-DEFAULT+TODO=\"SOMEDAY\""
-			   ((org-agenda-overriding-header "Someday tasks outside projects")
-			    (org-agenda-dim-blocked-tasks 'invisible)
-			    (org-agenda-prefix-format "%-12:c\t%?-12t")
-			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (todo "SOMEDAY")
-                                                                    (task)
-                                                                    (not (habit))
-                                                                    (not (subtask))
-                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "NODEADLINE"))
-                                                                    )))))))
-	       nil))))
+							(quote
+							 (and (todo "NEXT")
+							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
+							      (not (habit))
+							      (subtask)
+							      	  (not (project))))))
+				(org-tags-match-list-sublevels t)
+				(org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+				(org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
+				(org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
+				(org-agenda-sorting-strategy
+				 '(priority-down todo-state-down effort-up category-keep))))
+		    (tags-todo "-CANCELLED-HOLD-WAITING+NODEADLINE-SOMEDAY+TODO=\"NEXT\""
+			       ((org-agenda-overriding-header (concat "Extra Project Next Tasks"
+								      (if bh/hide-scheduled-and-waiting-next-tasks
+									  ""
+									" (including WAITING and SCHEDULED tasks)")))
+				(org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
+				(org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							    (quote
+							     (and (todo "NEXT")
+								  (tags "NODEADLINE")
+								  (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
+								  (not (habit))
+								  (subtask)
+								  (not (project))))))
+				(org-tags-match-list-sublevels t)
+				(org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+				(org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
+				(org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
+				(org-agenda-sorting-strategy
+				 '(priority-down todo-state-down effort-up category-keep))))
+		    (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
+			       ((org-agenda-overriding-header "Tasks to review")
+				(org-agenda-dim-blocked-tasks 'invisible)
+				(org-agenda-prefix-format "%-12:c\t%?-12t")
+				(org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+				(org-agenda-skip-function '(lambda()
+							     (or
+							      (bh/skip-non-tasks)
+							      (and (not (zin/org-agenda-skip-tag "SKIP"))
+								   (bh/skip-subprojects))
+							      (bh/skip-habits))))))
+		    (tags-todo "-CANCELLED+AREA"
+			       ((org-agenda-overriding-header "Areas of interest")
+				(org-agenda-dim-blocked-tasks nil)
+				(org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
+				(org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							    (quote (and (tags-local "AREA")
+									(not (tags-inherited "SOMEDAY"))
+									(not (descendants
+									    (and (tags-local "AREA")
+										 (todo "NEXT"))))))))
+				(org-agenda-sorting-strategy
+				 '(todo-state-down effort-up category-keep))))
+		    (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"TODO\""
+			       ((org-agenda-overriding-header "All other active tasks")
+				(org-agenda-dim-blocked-tasks 'invisible)
+				(org-agenda-prefix-format "%-12:c\t%?-12t")
+				(org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+				(org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							    (quote (and (todo "TODO")
+									(not (habit))
+									(task)
+									(or (tags "SKIP")
+									    (not (subtask)))
+									(not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY" "NODEADLINE"))))))))
+		    (tags-todo "-NODEADLINE-CANCELLED-WAITING-HOLD-DEFAULT+TODO=\"SOMEDAY\""
+			       ((org-agenda-overriding-header "Someday tasks outside projects")
+				(org-agenda-dim-blocked-tasks 'invisible)
+				(org-agenda-prefix-format "%-12:c\t%?-12t")
+				(org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+				(org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							    (quote (and (todo "SOMEDAY")
+									(task)
+									(not (habit))
+									(not (subtask))
+									(not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "NODEADLINE"))
+									)))))))
+		   nil))))
   #+end_src
 ***** Location contexts
 :PROPERTIES:
@@ -11417,7 +11436,6 @@ TODO ${1:Title} ${2:`(s-trim-right (org-capture-fill-template "%a"))`}
 ${3:`(yant/org-capture-followup-string)`}
 $0 
 #+end_src
-
 #+begin_src emacs-lisp
 (defun yant/org-capture-followup-string ()
   "Create reference string to currectly clocked entry."
@@ -15501,6 +15519,9 @@ git config --global core.attributesfile ~/.gitattributes
 	attributesfile = /home/yantar92/.gitattributes
 #+end_src
 ** Rebase by default for new tracking branches
+:PROPERTIES:
+:ID:       093e21ec-60dc-4363-b593-20fa0fcfddf7
+:END:
 
 When doing feature development, it makes little sense to merge the feature branch to master explicitly using separate commit. It is better to use rebase instead of merge commit, as recommended in [[id:Stack_Overflow_autos_vs_autosb9a][[Stack Overflow] autosetuprebase vs autosetupmerge]].
 
