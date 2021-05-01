@@ -4025,7 +4025,7 @@ Automatic indentation is handy to keep the code nice and readable.
   :straight t
   :diminish aggressive-indent-mode
   :config
-  (global-aggressive-indent-mode t))
+  (add-hook 'prog-mode-hook #'aggressive-indent-mode))
 #+end_src
 
 Inhibit message that indentation is completed
