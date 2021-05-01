@@ -10592,12 +10592,81 @@ current task to NEXT and schedule it the same day."
     (org-fold-heading nil t)
     (org-fold-show-children)
     (recenter 2))
+  (defun yant/helm-org-ql-refile-to (marker)
+    "Refile heading at point to selected heading at MARKER."
+    (let* ((buffer (marker-buffer marker))
+           (filename (or (buffer-file-name buffer) (buffer-file-name (buffer-base-buffer buffer))))
+           ;; get the heading we refile to so org doesn't
+           ;; output 'Refile to "nil" in file ...'
+           (heading (org-with-point-at marker (org-get-heading :no-tags :no-todo :no-priority :no-comment)))
+	   (rfloc (list heading filename nil marker)))
+      ;; Probably best to check that everything returned a value
+      (when (and buffer filename rfloc)
+        (org-with-point-at-org-buffer
+         (org-refile nil nil rfloc)))))
+  (defun yant/helm-org-ql-yank-selection ()
+    "Yank search exp matching selected heading's children."
+    (interactive)
+    ;; (with-helm-buffer
+    ;;   (setq-local helm-org-ql-filter `(ancestor (property "ID" ,(org-with-point-at (helm-get-selection) (org-id-get-create))))))
+    (with-current-buffer (marker-buffer (helm-get-selection))
+      (widen)
+      (goto-char (helm-get-selection))
+      (org-narrow-to-subtree)
+      (narrow-to-region (or (outline-next-heading) (point-min)) (point-max))
+      (let ((beg (point-min))
+            (end (point-max)))
+        (with-helm-buffer
+          (helm-attrset
+           :cleanup
+           (if-let ((cleanfunc (helm-attr :cleanup)))
+               `(lambda ()
+                  (funcall ,cleanfunc)
+                  (with-current-buffer ,(marker-buffer (helm-get-selection)) (widen)))
+             `(lambda () (with-current-buffer ,(marker-buffer (helm-get-selection)) (widen)))))
+          (setq-local helm-org-ql-buffers-files (marker-buffer (helm-get-selection)))
+          (setq-local helm-org-ql-narrow t)
+          (helm-attrset 'name (helm-get-selection nil t))
+          (setq-local helm-org-ql-filter (or helm-org-ql-filter t)))))
+    (helm-set-pattern ""))
+  (defun yant/helm-org-ql-refile ()
+    "Preset filter to refile targets."
+    (interactive)
+    (let ((helm-org-ql-actions '(("Refile heading at point to selected heading" . yant/helm-org-ql-refile-to)
+                                 ("Go to heading" . yant/helm-org-ql-show-marker))))
+      (helm-org-ql (org-agenda-files t)
+                   :filter
+                   '(and (not (path "rss.org"))
+                         ;; (todo)
+                         (not (tags-local "NOREFILE"))
+                         (or refile-to-tasks
+                             (tags-local "REFILE")
+                             (not (task)))))))
+  (defun yant/helm-org-ql-toggle-archives ()
+    "Toggle searching across archive files."
+    (interactive)
+    (with-helm-buffer
+      (cond
+       ((equal helm-org-ql-buffers-files (org-agenda-files t))
+        (helm-set-attr 'name "Org Agenda Files and Archives")
+        (setq-local helm-org-ql-buffers-files (org-agenda-files t t))
+        (helm-update))
+       ((equal helm-org-ql-buffers-files (org-agenda-files t t))
+        (helm-set-attr 'name "Org Agenda Files")
+        (setq-local helm-org-ql-buffers-files (org-agenda-files t))
+        (helm-update))
+       (t nil))))
+  :config
+  (bind-key "C-c C-y" #'yant/helm-org-ql-yank-selection helm-org-ql-map)
+  ;; (bind-key "C-c C-w" #'yant/helm-org-ql-refile org-mode-map)
+  (bind-key "C-c C-u" #'yant/helm-org-ql-toggle-archives helm-org-ql-map)
   :custom
   (helm-org-ql-actions '(("Go to heading" . yant/helm-org-ql-show-marker)
                          ("Insert link to heading" . yant/helm-org-ql-create-link)
                          ("Open heading source" . yant/helm-org-ql-open-url)
                          ("Insert URL of heading" . yant/helm-org-ql-insert-url)
                          ("Refile heading(s) to heading at point" . helm-org--refile-heading-here)
+                         ("Refile heading at point to selected heading" . yant/helm-org-ql-refile-to)
                          ("Set as blocker for heading at point" . yant/helm-org-ql-set-preceding-task)
                          ("Show in agenda" . yant/helm-org-ql-show-in-agenda)))
   )
