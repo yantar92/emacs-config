@@ -11516,7 +11516,7 @@ $0
                             (let (org-store-link-plist org-stored-links)
                               (org-store-link nil))))))
       (if current-task
-          (format "- Following up: %s" current-task)
+          (format "- Following up :: %s" current-task)
         ""))))
 
 (use-package ya-org-capture
