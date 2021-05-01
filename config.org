@@ -11613,7 +11613,7 @@ $0
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "M"
-           (cdar  (doct '("Scheduled even/meeting"
+           (cdar  (doct '("Scheduled event/meeting"
 			  :keys "M"
 			  :type entry
 			  :file "~/Org/schedule.org"
@@ -11623,22 +11623,63 @@ $0
 			   "\n"))))
            'replace)
 #+end_src
-- Project :: A large task that needs to be studied systematically. A typical project includes the following:
-  1. Notes on what is known about the topic (including what I got to know from experiments). I only put my notes and thoughts on the literature here.
-  2. [optional] Resources I have to execute the project (i.e. samples)
-  3. Research plan to plan what I need to do to fulfil the project
-  4. The information I collected while executing the project (experimental data)
-  5. Non-trivial methods I used to execute the project
-  6. Results of the executing the plan and analysis of those results
-  7. Discussion about the meaning of the results in the context of literature
-  8. Conclusion and possible future directions
-  9. Public reports and/or paperwork associated with the project
-     1. Paperwork
-     2. Conference talks/posters
-     3. Publications in public domain
-     4. Funding applications
-  10. List of resources I plan to read, related to the project. I keep this separate from literature review to avoid cluttering.
-  11. Ideas, which may be useful for the project. It is "Inbox" of the project. The items may later come to other sections.
+- Area of interest :: An area of knowledge I am interested in. Unlike project, this does not have a concrete outcome, but can be infinite depending on my interest in the topic.
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "R"
+           (cdar  (doct '("Area of interest"
+			  :keys "R"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :clock-in t
+			  :clock-resume t
+                          :category
+                          (lambda () (or (plist-get (plist-get org-capture-plist :doct-custom) :category-string)
+                                    (progn
+                                      (setf (plist-get (plist-get org-capture-plist :doct-custom)
+                                                       :category-string)
+                                            (completing-read
+                                             "Category: "
+                                             (org-ql-select (org-agenda-files t t)
+                                               '(property "CATEGORY")
+                                               :action (lambda () (substring-no-properties (org-entry-get (point) "CATEGORY"))))))
+                                      (plist-get (plist-get org-capture-plist :doct-custom)
+                                                 :category-string))))
+                          :area-title
+                          (lambda () (or (plist-get (plist-get org-capture-plist :doct-custom) :title-string)
+                                    (progn
+                                      (setf (plist-get (plist-get org-capture-plist :doct-custom)
+                                                       :title-string)
+                                            (completing-read
+                                             "Area title: "
+                                             (org-ql-select (org-agenda-files t t)
+                                               '(tags-local "AREA" "project")
+                                               :action (lambda () (substring-no-properties (org-get-heading t t t t))))))
+                                      (plist-get (plist-get org-capture-plist :doct-custom)
+                                                 :title-string))))
+			  :template
+			  ("* TODO %{area-title} :AREA:NOREFILE:"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
+                           ":CATEGORY: %{category}[T]"
+			   ":END:"
+                           "# Summary note about the area. Should be updated regularly."
+                           "\n%?"
+                           ""
+                           "** NEXT Refile relevant bookmarks/tasks to new area %{area-title}"
+                           "** TODO Notes :REFILE:"
+                           "# Notes about what I think about the topic\n"
+                           "** TODO Bookmarks \ references :REFILE:"
+                           "# Notes about what is known about the topic\n"
+                           "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
+                           ":PROPERTIES:"
+                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITiNG(!) HOLD(!) CANCELLED(!)"
+                           ":CATEGORY: %{category}[D]"
+                           ":END:"))))
+           'replace)
+#+end_src
+- Project :: A large task that needs to be studied systematically. It has to have a concrete outcome.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "P"
@@ -11649,15 +11690,18 @@ $0
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO #project %^{Project title} :%^G:project:"
+			  ("* TODO %^{Project title} :%^G:project:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
 			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
                            ":CATEGORY: %^{Category}"
 			   ":END:"
+                           " #project"
                            "# A short summary about the project."
                            "\n%?"
-                           "** TODO Notes \ literature info :REFILE:"
+                           "** TODO Notes :REFILE:"
+                           "# Notes about what I think about the topic\n"
+                           "** TODO Bookmarks \ references :REFILE:"
                            "# Notes about what is known about the topic\n"
                            "** TODO Action plan :NOARCHIVE:REFILE:"
                            "# Action plan to complete the project.\n"
@@ -11671,18 +11715,12 @@ $0
                            "# The raw data is analysed here to be put into human-readable form (in non-trivial ways)."
                            "# The data is organised by sample rather than by experiment to avoid dealing with experimental note mess."
                            "# Plots, important observations and thoughs are coming here.\n"
-                           "** Discussion"
-                           "# Trying to make sense of the results. If possible, comparing with similar literature.\n"
-                           "** TODO Conclusion"
-                           "# Takeouts of the project and possible things to be done in future."
-                           "** Reports \ Paperwork \ Legal :NOARCHIVE:NOREFILE:"
-                           "*** Paperwork :REFILE:"
-                           "*** Presentations :REFILE:"
-                           "*** Published papers :REFILE:"
-                           "*** Funding applications :REFILE:"
-                           "** NEXT Papers to read :REFILE:"
-                           "** TODO Ideas :REFILE:TICKLER:"
-			   "# Inbox for project ideas, which are not directly actionable."))))
+                           "** Paperwork :REFILE:"
+                           "** Presentations :REFILE:"
+                           "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
+                           ":PROPERTIES:"
+                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITiNG(!) HOLD(!) CANCELLED(!)"
+                           ":END:"))))
            'replace)
 
 (asoc-put! org-capture-templates
@@ -11702,36 +11740,21 @@ $0
 			   ":END:"
                            "# A short summary about the project."
                            "\n%?"
-                           "** TODO Notes \ literature info :REFILE:"
+                           "** TODO Notes :REFILE:"
+                           "# Notes about what I think about the topic\n"
+                           "** TODO Bookmarks \ references :REFILE:"
                            "# Notes about what is known about the topic\n"
                            "** TODO Action plan :NOARCHIVE:REFILE:"
                            "# Action plan to complete the project.\n"
                            "** Methods :REFILE:NOARCHIVE:"
                            "# Nontrivial methods used to execute the action plan."
-                           "** Results"
-                           "** TODO Conclusion"
-                           "# Takeouts of the project and possible things to be done in future."
-                           "** Public results :REFILE:"
-                           "** NEXT Papers to read :REFILE:"
-                           "** TODO Ideas :REFILE:TICKLER:"
-			   "# Inbox for project ideas, which are not directly actionable."))))
+                           "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
+                           ":PROPERTIES:"
+                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITiNG(!) HOLD(!) CANCELLED(!)"
+                           ":END:"))))
            'replace)
 #+end_src
-- Conference presentation/poster :: I mark this with =conference= tag. Typical workflow here is:
-  1. Write an abstract
-  2. Revise abstract (habit, since it is multiple times most likely)
-  3. Submit abstract
-  4. Get accepted
-  5. Handle finance
-     - Apply for funding
-     - Book flight
-     - Book hotel
-     - Register for conference
-  6. Make presentation/poster
-  7. Do trial + further revisions (habit)
-  8. Print poster if it is poster
-  9. Present
-  10. Reimburse money
+- Conference presentation/poster :: I mark this with =conference= tag.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "p"
@@ -11742,7 +11765,7 @@ $0
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* NEXT #%^{type|presentation|poster} %^{Title of presentation/poster} :conference:NOARCHIVE:"
+			  ("* NEXT #%^{type|presentation|poster} %^{Title of presentation/poster} :project:conference:NOARCHIVE:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":ATTACH_DIR_INHERIT: t"
@@ -11769,23 +11792,7 @@ $0
                            "** Get reimbursement"))))
            'replace)
 #+end_src
-- Research publication :: I mark this with =publication= tag. Typical workflow here is:
-  1. Write outline
-     1. Introduction
-     2. Methodology
-     3. Results
-     4. Discussion
-     5. Conclusions
-     6. Abstract
-  2. Revise (habit)
-  3. Write cover letter
-  4. Submit
-  5. Revise according to comments (habit)
-  6. Get accepted
-  7. Publish in ArXiv before journal take over the copyright
-  8. Publish in journal
-  9. Add to publication list
-  10. Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]
+- Research publication :: I mark this with =publication= tag.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "J"
@@ -11829,12 +11836,7 @@ $0
                            "** TODO Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]"))))
            'replace)
 #+end_src
-- Co-authored research publication :: I mark this with =publication= tag. Typical workflow here is:
-  1. Revise
-  2. Revise according to comments
-  3. Get accepted and published
-  4. Add to publication list
-  5. Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]
+- Co-authored research publication :: I mark this with =publication= tag.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "A"
@@ -11845,11 +11847,12 @@ $0
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* NEXT #paper #co-author %^{Aproximate title of the paper} :publication:project:NOARCHIVE:"
+			  ("* NEXT %^{Aproximate title of the paper} :publication:project:NOARCHIVE:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":ATTACH_DIR_INHERIT: t"
 			   ":END:"
+                           " #paper #co-author"
                            "\n%?"
                            "** Paper versions"
                            "** TODO Revise"
@@ -11870,25 +11873,7 @@ $0
                            "** TODO Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]"))))
            'replace)
 #+end_src
-- Research funding application :: I mark this with =grant= tag. The usual funding application workflow includes:
-  1. Budget
-  2. Abstract/summary
-  3. Introduction and motivation of the research
-  4. Research goal, objective, and content
-     1. Research goal
-     2. Research objective
-     3. Details of how to solve the research objective
-  5. Research plan and practicability analysis
-     1. Research plan / stage 1..n
-     2. Practicability analysis
-  6. Unique features and innovation point
-  7. Annual research plan and expected results (including the activity of academic exchange, international collaboration, etc.)
-  8. Background, prior work, and availability of equipment
-     1. Research background or prior work related to the proposal
-     2. Availability of equipment
-  9. References
-  10. University paperwork
-  11. Application paperwork
+- Research funding application :: I mark this with =grant= tag.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "F"
@@ -11899,7 +11884,7 @@ $0
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO #proposal %^{Project title} :%^G:NOARCHIVE:grant:project:"
+			  ("* TODO %^{Project title} :%^G:NOARCHIVE:grant:project:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":ATTACH_DIR_INHERIT: t"
@@ -11940,18 +11925,7 @@ $0
            'replace)
 #+end_src
 
-- Research funding application (short) :: I mark this with =grant= tag. The usual funding application workflow includes:
-  1. Abstract/summary
-  2. Research goal
-  3. Research objective (content)
-  4. Details of how to solve the research objective (Research methods or technical routes to be adopted)
-  5. Research plan
-  6. Unique features and innovation point (expected progress)
-  7. Motivation of the research (Research basis/foundation)
-  8. References
-  9. Budget
-  10. University paperwork
-  11. Application paperwork
+- Research funding application (short) :: I mark this with =grant= tag.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "f"
@@ -11962,7 +11936,7 @@ $0
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO #proposal %^{Project title} :%^G:NOARCHIVE:grant:project:"
+			  ("* TODO %^{Project title} :%^G:NOARCHIVE:grant:project:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":ATTACH_DIR_INHERIT: t"
