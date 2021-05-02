@@ -14373,18 +14373,18 @@ Optional MODE specifies major mode used for display."
         (set-window-buffer nil (current-buffer))
         (car (window-text-pixel-size nil (line-beginning-position) (point)))))))
 
-(defun org-agenda-fix-tag-alignment ()
-  "Use 'display :align-to instead of spaces in agenda."
-  (save-match-data
-    (goto-char (point-min))
-    (setq-local word-wrap nil) ; tags would be moved to next line if `word-wrap'` is non-nil and `truncate-lines' is nil
-    (while (re-search-forward org-tag-group-re nil 'noerror)
-      (put-text-property (match-beginning 0)
-			 (match-beginning 1)
-                         'display
-                         `(space . (:align-to (- right
-						 (,(string-display-pixel-width (match-string 1) 'org-mode))
-                                                 1)))))))
+;; (defun org-agenda-fix-tag-alignment ()
+;;   "Use 'display :align-to instead of spaces in agenda."
+;;   (save-match-data
+;;     (goto-char (point-min))
+;;     (setq-local word-wrap nil) ; tags would be moved to next line if `word-wrap'` is non-nil and `truncate-lines' is nil
+;;     (while (re-search-forward org-tag-group-re nil 'noerror)
+;;       (put-text-property (match-beginning 0)
+;; 			 (match-beginning 1)
+;;                          'display
+;;                          `(space . (:align-to (- right
+;; 						 (,(string-display-pixel-width (match-string 1) 'org-mode))
+;;                                                  1)))))))
 
 (defun org-agenda-adaptive-fill-function ()
   "Fill to the beginning of headline in agenda."
@@ -14452,7 +14452,7 @@ Optional MODE specifies major mode used for display."
 		  (insert truncated-string)))
               (end-of-line))))))))
 
-(add-hook! 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
+;; (add-hook! 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
 (add-hook! :append 'org-agenda-finalize-hook #'org-agenda-truncate-headings)
 ;; (add-hook! 'org-agenda-finalize-hook (add-hook! :local 'window-configuration-change-hook #'org-agenda-truncate-headings))
 #+END_SRC
@@ -14472,107 +14472,86 @@ Optional MODE specifies major mode used for display."
 :END:
 
 #+BEGIN_SRC emacs-lisp  
-;; (define-advice org-agenda-format-item (:filter-args (&rest args)  fontify-org)
-;;   "Force fontify ageda item. (hack)"
-;;   (cl-multiple-value-bind (extra txt level category tags dotime remove-re habitp) (car args)
-;;     (with-temp-buffer
-;;       (cl-letf (((symbol-function 'yant/process-att-abbrev) #'identity)
-;; 		((symbol-function 'yant/process-att-id-abbrev) #'identity)) ;; expanding sometimes causes errors when attempting to access ancestors
-;; 	(org-mode)
-;;         (setq txt (replace-regexp-in-string "[ \t]*:[[:alnum:]_@#%:]+:[ 	]*$" "" txt))
-;; 	(insert "* "
-;; 		txt
-;; 		"\t"
-;; 		(or (and tags (s-join ":" `(nil ,@(cl-remove-duplicates tags) nil)))
-;; 		    "")
-;; 		"\n")
-;; 	(font-lock-fontify-buffer)
-;; 	(goto-char (point-min))
-;; 	(looking-at "^\\* \\(\\([^\t]+\\)[ 	]+\\(:\\([[:alnum:]_@#%:]+\\):\\)*\\)[ 	]*$")
-;; 	(setq txt (match-string 2))
-;; 	(setq tags (and tags (s-split ":" (match-string 3) 't)))
-;;         )
-;;       (list extra txt level category tags dotime remove-re habitp)))
-;;   )
-(define-advice org-agenda-format-item (:filter-return (item) remove-double-colons)
-  "Remove ::."
-  (s-replace-regexp "::+" ":" item))
+;; (define-advice org-agenda-format-item (:filter-return (item) remove-double-colons)
+;;   "Remove ::."
+;;   (s-replace-regexp "::+" ":" item))
 
 ;; (advice-remove 'org-agenda-format-item #'org-agenda-format-item@fontify-org)
 ;; (advice-remove 'org-agenda-format-item #'org-agenda-format-item@remove-double-colons)
 
 ;; Credit: https://www.reddit.com/r/orgmode/comments/i3upt6/prettifysymbolsmode_not_working_with_orgagenda/g0r5rx8/
-(define-advice org-agenda-fix-displayed-tags (:filter-return (&rest args)  my-fix-displayed-org-tags)
-  (let ((txt (car args)))
-    (with-temp-buffer
-      (org-mode)
-      (insert "* " txt)
-      (font-lock-ensure)
-      (goto-char (point-min))
-      (looking-at "^\\* \\(.*\\)$")
-      (match-string 1))))
+;; (define-advice org-agenda-fix-displayed-tags (:filter-return (&rest args)  my-fix-displayed-org-tags)
+;;   (let ((txt (car args)))
+;;     (with-temp-buffer
+;;       (org-mode)
+;;       (insert "* " txt)
+;;       (font-lock-ensure)
+;;       (goto-char (point-min))
+;;       (looking-at "^\\* \\(.*\\)$")
+;;       (match-string 1))))
 
-(use-package org-agenda
-  :if init-flag
-  :config
-  (el-patch-feature org-agenda)
-  ;; calling `org-agenda-highlight-todo' breaks 'composition text property of todo keywords, which breaks pretty-symbols fontifications
-  ;; fixing the function to keep 'composition
-  (el-patch-defun org-agenda-highlight-todo (x)
-    (let ((org-done-keywords org-done-keywords-for-agenda)
-	  (case-fold-search nil)
-	  re
-          (el-patch-add composition-property))
-      (if (eq x 'line)
-	  (save-excursion
-	    (beginning-of-line 1)
-	    (setq re (org-get-at-bol 'org-todo-regexp))
-	    (goto-char (or (text-property-any (point-at-bol) (point-at-eol) 'org-heading t) (point)))
-	    (when (looking-at (concat "[ \t]*\\.*\\(" re "\\) +"))
-	      (add-text-properties (match-beginning 0) (match-end 1)
-				   (list 'face (org-get-todo-face 1)))
-              (el-patch-add (setq composition-property (plist-get (text-properties-at (match-beginning 1)) 'composition)))
-	      (let ((s (buffer-substring (match-beginning 1) (match-end 1))))
-		(delete-region (match-beginning 1) (1- (match-end 0)))
-		(goto-char (match-beginning 1))
-		(insert (format org-agenda-todo-keyword-format s))
-                (el-patch-add (add-text-properties (match-beginning 1) (match-end 1) (list 'composition composition-property))))))
-	(let ((pl (text-property-any 0 (length x) 'org-heading t x)))
-	  (setq re (get-text-property 0 'org-todo-regexp x))
-	  (when (and re
-		     ;; Test `pl' because if there's no heading content,
-		     ;; there's no point matching to highlight.  Note
-		     ;; that if we didn't test `pl' first, and there
-		     ;; happened to be no keyword from `org-todo-regexp'
-		     ;; on this heading line, then the `equal' comparison
-		     ;; afterwards would spuriously succeed in the case
-		     ;; where `pl' is nil -- causing an args-out-of-range
-		     ;; error when we try to add text properties to text
-		     ;; that isn't there.
-		     pl
-		     (equal (string-match (concat "\\(\\.*\\)" re "\\( +\\)")
-					  x pl)
-			    pl))
-	    (add-text-properties
-	     (or (match-end 1) (match-end 0)) (match-end 0)
-	     (list 'face (org-get-todo-face (match-string 2 x)))
-	     x)
-	    (when (match-end 1)
-	      (setq x
-		    (concat
-		     (substring x 0 (match-end 1))
-		     (format org-agenda-todo-keyword-format
-			     (match-string 2 x))
-		     ;; Remove `display' property as the icon could leak
-		     ;; on the white space.
-		     (org-add-props " " (org-plist-delete (text-properties-at 0 x)
-							  'display))
-		     (substring x (match-end 3)))))))
-	x)))
-  )
+;; (use-package org-agenda
+;;   :if init-flag
+;;   :config
+;;   (el-patch-feature org-agenda)
+;;   ;; calling `org-agenda-highlight-todo' breaks 'composition text property of todo keywords, which breaks pretty-symbols fontifications
+;;   ;; fixing the function to keep 'composition
+;;   (el-patch-defun org-agenda-highlight-todo (x)
+;;     (let ((org-done-keywords org-done-keywords-for-agenda)
+;; 	  (case-fold-search nil)
+;; 	  re
+;;           (el-patch-add composition-property))
+;;       (if (eq x 'line)
+;; 	  (save-excursion
+;; 	    (beginning-of-line 1)
+;; 	    (setq re (org-get-at-bol 'org-todo-regexp))
+;; 	    (goto-char (or (text-property-any (point-at-bol) (point-at-eol) 'org-heading t) (point)))
+;; 	    (when (looking-at (concat "[ \t]*\\.*\\(" re "\\) +"))
+;; 	      (add-text-properties (match-beginning 0) (match-end 1)
+;; 				   (list 'face (org-get-todo-face 1)))
+;;               (el-patch-add (setq composition-property (plist-get (text-properties-at (match-beginning 1)) 'composition)))
+;; 	      (let ((s (buffer-substring (match-beginning 1) (match-end 1))))
+;; 		(delete-region (match-beginning 1) (1- (match-end 0)))
+;; 		(goto-char (match-beginning 1))
+;; 		(insert (format org-agenda-todo-keyword-format s))
+;;                 (el-patch-add (add-text-properties (match-beginning 1) (match-end 1) (list 'composition composition-property))))))
+;; 	(let ((pl (text-property-any 0 (length x) 'org-heading t x)))
+;; 	  (setq re (get-text-property 0 'org-todo-regexp x))
+;; 	  (when (and re
+;; 		     ;; Test `pl' because if there's no heading content,
+;; 		     ;; there's no point matching to highlight.  Note
+;; 		     ;; that if we didn't test `pl' first, and there
+;; 		     ;; happened to be no keyword from `org-todo-regexp'
+;; 		     ;; on this heading line, then the `equal' comparison
+;; 		     ;; afterwards would spuriously succeed in the case
+;; 		     ;; where `pl' is nil -- causing an args-out-of-range
+;; 		     ;; error when we try to add text properties to text
+;; 		     ;; that isn't there.
+;; 		     pl
+;; 		     (equal (string-match (concat "\\(\\.*\\)" re "\\( +\\)")
+;; 					  x pl)
+;; 			    pl))
+;; 	    (add-text-properties
+;; 	     (or (match-end 1) (match-end 0)) (match-end 0)
+;; 	     (list 'face (org-get-todo-face (match-string 2 x)))
+;; 	     x)
+;; 	    (when (match-end 1)
+;; 	      (setq x
+;; 		    (concat
+;; 		     (substring x 0 (match-end 1))
+;; 		     (format org-agenda-todo-keyword-format
+;; 			     (match-string 2 x))
+;; 		     ;; Remove `display' property as the icon could leak
+;; 		     ;; on the white space.
+;; 		     (org-add-props " " (org-plist-delete (text-properties-at 0 x)
+;; 							  'display))
+;; 		     (substring x (match-end 3)))))))
+;; 	x)))
+;;   )
 
 
 #+end_src
+
 
 ***** Update highlight from currently clocked task in agenda even if the task was clocked in/out from outside
 :PROPERTIES:
