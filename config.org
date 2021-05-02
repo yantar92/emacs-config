@@ -14751,7 +14751,7 @@ Use normal colour for the default agenda face
 :END:
 [2020-09-04 Fri] Disabling source block fontification - it is slow on large src blocks
 #+begin_src emacs-lisp
-(setq org-src-fontify-natively nil
+(setq org-src-fontify-natively t
       org-src-tab-acts-natively nil ;; see https://lists.gnu.org/archive/html/emacs-orgmode/2019-12/msg00318.html
       org-src-preserve-indentation t
       org-hide-block-startup nil)
