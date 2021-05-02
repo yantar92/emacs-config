@@ -2284,7 +2284,9 @@ Do not even need terminal to interact with Git.
 (use-package forge
   :if init-flag
   :straight t
-  :after magit)
+  :after magit
+  :custom
+  (forge-owned-accounts '(("yantar92"))))
 #+end_src
 **** Activate insert state when editing commits
 :PROPERTIES:
