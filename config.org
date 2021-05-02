@@ -11500,7 +11500,8 @@ Also, use yasnippet during capture #yasnippet
 #+end_src
 
 All these templates generally record the creation time in =:CREATED:=
-- TODO item :: Normal TODO item.
+****** =TODO= item: Normal TODO item
+
 #+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/todo_capture :noweb tangle :comments no
 # -*- mode: snippet -*-
 # name: todo_capture
@@ -11539,7 +11540,10 @@ $0
                       :template
                       ("* %(ya-org-capture/make-snippet \"todo_capture_\")"))))))
 #+end_src
-- singular TODO item :: Normal TODO item with time bonus on done (20 minutes) - used for the items, which are unlikely to be time tracked.
+****** Singular TODO item: Normal TODO item with time bonus on done (20 minutes)
+
+Used for the items, which are unlikely to be time tracked
+
 #+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/todo_singular_capture :noweb tangle :comments no
 # -*- mode: snippet -*-
 # name: todo_singular_capture
@@ -11564,7 +11568,8 @@ $0
 			  ("*  %(ya-org-capture/make-snippet \"todo_singular_capture_\")"))))
            'replace)
 #+end_src
-- note :: A note, which is not actionable or expected to contain a lot of text
+****** note: A note, which is not actionable or expected to contain a lot of text
+
 #+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/note_capture :noweb tangle :comments no
 # -*- mode: snippet -*-
 # name: note_capture
@@ -11595,7 +11600,10 @@ $0
                     ("* %(ya-org-capture/make-snippet \"note_capture_\")"))))
            :replace)
 #+end_src
-- Habit :: Habit. I default it to no logging.
+****** Habit
+
+I default it to no logging.
+
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "h"
@@ -11617,7 +11625,8 @@ $0
 			   "\n"))))
            'replace)
 #+end_src
-- Meeting/Event :: Scheduled event. It is saved to =org-gcal= org file.
+****** Meeting/Event: Scheduled event. It is saved to =org-gcal= org file.
+
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "M"
@@ -11631,7 +11640,7 @@ $0
 			   "\n"))))
            'replace)
 #+end_src
-- Area of interest :: An area of knowledge I am interested in. Unlike project, this does not have a concrete outcome, but can be infinite depending on my interest in the topic.
+****** Area of interest :: An area of knowledge I am interested in. Unlike project, this does not have a concrete outcome, but can be infinite depending on my interest in the topic.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "R"
@@ -11684,10 +11693,12 @@ $0
                            ":PROPERTIES:"
                            ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITiNG(!) HOLD(!) CANCELLED(!)"
                            ":CATEGORY: %{category}[D]"
-                           ":END:"))))
+                           ":END:"
+                           "*** NEXT Refile relevant tasks from more generic topics into %{area-title}"
+                           ))))
            'replace)
 #+end_src
-- Project :: A large task that needs to be studied systematically. It has to have a concrete outcome.
+****** Project: A large task that needs to be studied systematically. It has to have a concrete outcome.
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "P"
@@ -11762,7 +11773,7 @@ $0
                            ":END:"))))
            'replace)
 #+end_src
-- Conference presentation/poster :: I mark this with =conference= tag.
+****** Conference presentation/poster
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "p"
@@ -11800,7 +11811,7 @@ $0
                            "** Get reimbursement"))))
            'replace)
 #+end_src
-- Research publication :: I mark this with =publication= tag.
+****** Research publication
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "J"
@@ -11844,7 +11855,7 @@ $0
                            "** TODO Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]"))))
            'replace)
 #+end_src
-- Co-authored research publication :: I mark this with =publication= tag.
+****** Co-authored research publication
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "A"
@@ -11881,7 +11892,7 @@ $0
                            "** TODO Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]"))))
            'replace)
 #+end_src
-- Research funding application :: I mark this with =grant= tag.
+****** Research funding application
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "F"
@@ -11932,8 +11943,7 @@ $0
                            "** Get accepted"))))
            'replace)
 #+end_src
-
-- Research funding application (short) :: I mark this with =grant= tag.
+****** Research funding application (short)
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "f"
@@ -11980,8 +11990,7 @@ $0
                            "** Get accepted"))))
            'replace)
 #+end_src
-
-- New contact :: Add a person to contact list. 
+****** New contact :: Add a person to contact list. 
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "C"
@@ -11997,9 +12006,10 @@ $0
 			   ":END:"))))
            'replace)
 #+end_src
+****** Experimental note 
 *************** TODO Should be captured to current project directly
 *************** END
-- Experimental note :: A new note on an experiment. 
+ 
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "E"
