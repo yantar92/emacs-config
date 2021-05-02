@@ -4599,8 +4599,6 @@ Explore loaded library files
 #+end_src
 
 
-
-
 **** Man
 :PROPERTIES:
 :ID:       45d67bee-9fa3-4c00-8f48-2b41ed03ea46
@@ -4654,7 +4652,8 @@ It provides extra functionality to the standard =help= buffers.
 #+BEGIN_SRC emacs-lisp
 (use-package helpful
   :if init-flag
-  :straight t)
+  :straight (helpful :host github :repo "Wilfred/helpful" :local-repo "~/Git/helpful"
+                     :fork (:host github :repo "yantar92/helpful")))
 #+END_SRC
 ***** Elisp demos
 :PROPERTIES:
