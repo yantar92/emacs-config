@@ -14293,6 +14293,7 @@ Hide some uninteresting tags
 #+begin_src emacs-lisp
 (setq org-agenda-hide-tags-regexp (rx-to-string '(or "DEFAULT"
                                                      "flagged"
+                                                     "NOFOLLOW"
                                                      "TICKLER"
 						     "SKIP"
                                                      "NOARCHIVE"
