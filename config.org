@@ -9312,81 +9312,81 @@ If LOCAL is non-nil, check only local TAG."
 							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
 							      (not (habit))
 							      (subtask)
-							      	  (not (project))))))
-				(org-tags-match-list-sublevels t)
-				(org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-				(org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-				(org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-				(org-agenda-sorting-strategy
-				 '(priority-down todo-state-down effort-up category-keep))))
-		    (tags-todo "-CANCELLED-HOLD-WAITING+NODEADLINE-SOMEDAY+TODO=\"NEXT\""
-			       ((org-agenda-overriding-header (concat "Extra Project Next Tasks"
-								      (if bh/hide-scheduled-and-waiting-next-tasks
-									  ""
-									" (including WAITING and SCHEDULED tasks)")))
-				(org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
-				(org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-							    (quote
-							     (and (todo "NEXT")
-								  (tags "NODEADLINE")
-								  (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
-								  (not (habit))
-								  (subtask)
-								  (not (project))))))
-				(org-tags-match-list-sublevels t)
-				(org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-				(org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-				(org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-				(org-agenda-sorting-strategy
-				 '(priority-down todo-state-down effort-up category-keep))))
-		    (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
-			       ((org-agenda-overriding-header "Tasks to review")
-				(org-agenda-dim-blocked-tasks 'invisible)
-				(org-agenda-prefix-format "%-12:c\t%?-12t")
-				(org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-				(org-agenda-skip-function '(lambda()
-							     (or
-							      (bh/skip-non-tasks)
-							      (and (not (zin/org-agenda-skip-tag "SKIP"))
-								   (bh/skip-subprojects))
-							      (bh/skip-habits))))))
-		    (tags-todo "-CANCELLED+AREA"
-			       ((org-agenda-overriding-header "Areas of interest")
-				(org-agenda-dim-blocked-tasks nil)
-				(org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
-				(org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-							    (quote (and (tags-local "AREA")
-									(not (tags-inherited "SOMEDAY"))
-									(not (descendants
-									    (and (tags-local "AREA")
-										 (todo "NEXT"))))))))
-				(org-agenda-sorting-strategy
-				 '(todo-state-down effort-up category-keep))))
-		    (tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"TODO\""
-			       ((org-agenda-overriding-header "All other active tasks")
-				(org-agenda-dim-blocked-tasks 'invisible)
-				(org-agenda-prefix-format "%-12:c\t%?-12t")
-				(org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-				(org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-							    (quote (and (todo "TODO")
-									(not (habit))
-									(task)
-									(or (tags "SKIP")
-									    (not (subtask)))
-									(not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY" "NODEADLINE"))))))))
-		    (tags-todo "-NODEADLINE-CANCELLED-WAITING-HOLD-DEFAULT+TODO=\"SOMEDAY\""
-			       ((org-agenda-overriding-header "Someday tasks outside projects")
-				(org-agenda-dim-blocked-tasks 'invisible)
-				(org-agenda-prefix-format "%-12:c\t%?-12t")
-				(org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-				(org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-							    (quote (and (todo "SOMEDAY")
-									(task)
-									(not (habit))
-									(not (subtask))
-									(not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "NODEADLINE"))
-									)))))))
-		   nil))))
+							      (not (project))))))
+			    (org-tags-match-list-sublevels t)
+			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-sorting-strategy
+			     '(priority-down todo-state-down effort-up category-keep))))
+		(tags-todo "-CANCELLED-HOLD-WAITING+NODEADLINE-SOMEDAY+TODO=\"NEXT\""
+			   ((org-agenda-overriding-header (concat "Extra Project Next Tasks"
+								  (if bh/hide-scheduled-and-waiting-next-tasks
+								      ""
+								    " (including WAITING and SCHEDULED tasks)")))
+			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote
+							 (and (todo "NEXT")
+							      (tags "NODEADLINE")
+							      (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
+							      (not (habit))
+							      (subtask)
+							      (not (project))))))
+			    (org-tags-match-list-sublevels t)
+			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-sorting-strategy
+			     '(priority-down todo-state-down effort-up category-keep))))
+		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"REVIEW\""
+			   ((org-agenda-overriding-header "Tasks to review")
+			    (org-agenda-dim-blocked-tasks 'invisible)
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-skip-function '(lambda()
+							 (or
+							  (bh/skip-non-tasks)
+							  (and (not (zin/org-agenda-skip-tag "SKIP"))
+							       (bh/skip-subprojects))
+							  (bh/skip-habits))))))
+		(tags-todo "-CANCELLED+AREA"
+			   ((org-agenda-overriding-header "Areas of interest")
+			    (org-agenda-dim-blocked-tasks nil)
+			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (tags-local "AREA")
+								    (not (tags-inherited "SOMEDAY"))
+								    (not (descendants
+									  (and (tags-local "AREA")
+									       (todo "NEXT"))))))))
+			    (org-agenda-sorting-strategy
+			     '(todo-state-down effort-up category-keep))))
+		(tags-todo "-CANCELLED-WAITING-HOLD-DEFAULT-SOMEDAY+TODO=\"TODO\""
+			   ((org-agenda-overriding-header "All other active tasks")
+			    (org-agenda-dim-blocked-tasks 'invisible)
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (todo "TODO")
+								    (not (habit))
+								    (task)
+								    (or (tags "SKIP")
+									(not (subtask)))
+								    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY" "NODEADLINE"))))))))
+		(tags-todo "-NODEADLINE-CANCELLED-WAITING-HOLD-DEFAULT+TODO=\"SOMEDAY\""
+			   ((org-agenda-overriding-header "Someday tasks outside projects")
+			    (org-agenda-dim-blocked-tasks 'invisible)
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+							(quote (and (todo "SOMEDAY")
+								    (task)
+								    (not (habit))
+								    (not (subtask))
+								    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "NODEADLINE"))
+								    )))))))
+	       nil))))
   #+end_src
 ***** Location contexts
 :PROPERTIES:
