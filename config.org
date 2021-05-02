@@ -5480,6 +5480,33 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
   :config
   (setq calc-gnuplot-default-device "qt"))
 #+end_src
+**** Appearance
+***** Render symbolic math in LaTeX using =calctex-mode=
+:PROPERTIES:
+:ID:       7db6ac6c-002f-4830-b642-0e30c100639f
+:END:
+
+#+begin_src emacs-lisp
+(use-package calctex
+  :if init-flag
+  :straight (calctex :host github :repo "johnbcoughlin/calctex"
+                     :files ("*.el" "calctex/*.el" "vendor/*"))
+  :commands calctex-mode
+  :init
+  (add-hook 'calc-mode-hook #'calctex-mode)
+  :config
+  ;; Credit: https://tecosaur.github.io/emacs-config/config.html#calc-calctex
+  ;; Fix hardcoded dvichop path (whyyyyyyy)
+  (let ((vendor-folder (concat (file-truename user-emacs-directory)
+                               "straight/repos"
+                               "/calctex/vendor/")))
+    (setq calctex-dvichop-sty (concat vendor-folder "texd/dvichop")
+          calctex-dvichop-bin (concat vendor-folder "texd/dvichop")))
+  (unless (file-exists-p calctex-dvichop-bin)
+    (message "CalcTeX: Building dvichop binary")
+    (let ((default-directory (file-name-directory calctex-dvichop-bin)))
+      (call-process "make" nil nil nil))))
+#+end_src
 
 *** Music
 **** Mingus (=mpd=)
