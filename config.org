@@ -2596,7 +2596,7 @@ Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's notes: Trying
   :straight t
   :diminish highlight-parentheses-mode
   :config
-  (add-hook 'prog-mode-hook #'highlight-parentheses-mode))
+  (add-hook! (prog-mode helpful-mode) #'highlight-parentheses-mode))
 
 (use-package rainbow-delimiters
   :if init-flag
