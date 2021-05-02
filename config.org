@@ -13921,7 +13921,7 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
       		  ((yant/str-to-glyph "◴S") org-specific "\\<SCHEDULED:" (org-mode))))))
   #+end_src
 Prefer to replace default =...= by something more distinct if item is folded
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (setq org-ellipsis "  ")
 (set-face-underline 'org-ellipsis nil)
   #+END_SRC
