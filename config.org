@@ -5460,6 +5460,15 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 	      ("c" . calc)
               ("C" . calc-dispatch)))
 #+end_src
+**** Do not evaluate expressions as much as possible (symbolic mode)
+:PROPERTIES:
+:ID:       6a8477ce-56a7-44fb-bf7e-ea6a9d17cef7
+:END:
+
+#+begin_src emacs-lisp
+(setq calc-symbolic-mode t)
+#+end_src
+
 **** Gnuplot integration
 :PROPERTIES:
 :ID:       aacd2acd-090b-40a9-9ce5-986e4d606486
