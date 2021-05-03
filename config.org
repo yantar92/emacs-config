@@ -4761,8 +4761,11 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 				                #'Info-complete-menu-item nil t nil nil
                                                 nil))))
     (meta-defun meta-help "Get help on symbol at point." ignore)
+    (meta-defun meta-help :mode org-mode :cond (org-in-src-block-p) helpful-at-point)
     (meta-defun meta-help :mode emacs-lisp-mode helpful-at-point)
+    (meta-defun meta-help :mode lisp-interaction-mode helpful-at-point)
     (meta-defun meta-help :mode helpful-mode helpful-at-point)
+    (meta-defun meta-help :mode help-mode helpful-at-point)
     (meta-defun meta-help :mode profiler-report-mode helpful-at-point)
     (meta-defun meta-help :mode debugger-mode helpful-at-point)
     (meta-defun meta-help :mode notmuch-message-mode helpful-at-point)
