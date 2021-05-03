@@ -553,6 +553,12 @@ Credit: https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.
 (defun nox*shut-up (orig-fn &rest args)
   "Generic advisor for silencing noisy functions."
   (quiet! (apply orig-fn args)))
+
+(defmacro yant/advice-shut-up (func)
+  "Advise FUNC symbol suppressing all the messages."
+  `(define-advice ,func (:around (oldfun &rest args) shut-up)
+     "Silence messages."
+     (apply #'nox*shut-up oldfun args)))
 #+end_src
 
 *** Hash table library
