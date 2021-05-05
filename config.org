@@ -10773,6 +10773,18 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
     (org-refresh-properties "SHOWDATES" 'showdates)
     (org-refresh-properties "SHOWFROMTIME" 'showfromtime)))
 #+end_src
+***** Speed up agenda by caching some built-in functions
+
+#+begin_src emacs-lisp
+(memoize-by-buffer-contents #'org-get-buffer-tags)
+(memoize-by-buffer-contents #'org-refresh-category-properties)
+(memoize-by-buffer-contents #'org-refresh-effort-properties)
+#+end_src
+***** Speed up agenda by disabling cookies fontification
+
+#+begin_src emacs-lisp
+(setq org-agenda-fontify-priorities nil)
+#+end_src
 
 **** TODO Contacts
 :PROPERTIES:
@@ -14325,8 +14337,8 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
   "Format :ORG-TIME-BALANCE-MULTIPLIER: into agenda."
   (condition-case nil
       (save-match-data
-	(let* ((mult (org-get-time-balance-multiplier-at-point))
-	       (bonus (org-get-org-time-bonus-on-done-at-point))
+	(let* ((mult (org-ql--value-at (point) #'org-get-time-balance-multiplier-at-point))
+	       (bonus (org-ql--value-at (point) #'org-get-org-time-bonus-on-done-at-point))
                (schedule-string (or (org-entry-get (point) "SCHEDULED") ""))
                (scheduled? (string-match org-repeat-re schedule-string))
                (repeat-string (and scheduled? (match-string 1 schedule-string)))
