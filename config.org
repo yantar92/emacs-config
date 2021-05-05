@@ -4803,6 +4803,13 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 #+begin_src emacs-lisp
 (add-hook! emacs-lisp-mode (setq indent-tabs-mode nil))
 #+end_src
+**** Indicate fill column
+
+#+begin_src emacs-lisp
+(when init-flag
+  (setq fill-column 80)
+  (add-hook! (emacs-lisp-mode lisp-interaction-mode) #'display-fill-column-indicator-mode))
+#+end_src
 
 **** =Paredit=
 :PROPERTIES:
