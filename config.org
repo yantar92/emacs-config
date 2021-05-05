@@ -10647,8 +10647,9 @@ current task to NEXT and schedule it the same day."
     (widen)
     (goto-char marker)
     (org-show-set-visibility 'ancestors)
-    (org-fold-heading nil t)
-    (org-fold-show-children)
+    ;; (org-fold-heading nil t)
+    (org-show-subtree)
+    ;; (org-fold-show-children)
     (recenter 2))
   (defun yant/helm-org-ql-refile-to (marker)
     "Refile heading at point to selected heading at MARKER."
