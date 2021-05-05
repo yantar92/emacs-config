@@ -1083,7 +1083,7 @@ Prefer UTF
 This looks nicer.
 [[http://ergoemacs.org/emacs/emacs_toggle_line_spacing.html][credit: Xah Lee]]
 #+begin_src emacs-lisp
-(setq-default line-spacing 3)
+(setq-default line-spacing 0.15)
 #+end_src
 
 **** Visual text transformation
