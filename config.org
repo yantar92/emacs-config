@@ -262,8 +262,10 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
 (straight-use-package '(org
 			:type git :repo "https://code.orgmode.org/bzg/org-mode.git"
 			:local-repo "~/Git/org-mode"
-                        :fork (:host github :repo "yantar92/org" :branch "feature/org-fold-universal-core")
-			:files (:defaults "contrib/lisp/*.el")))
+                        :fork (:host github :repo "yantar92/org" :branch "feature/org-fold-universal-core")))
+(straight-use-package '(org-contrib
+			:type git :repo "https://git.sr.ht/~bzg/org-contrib"
+			:local-repo "~/Git/org-contrib"))
 #+end_src
 
 *** Working with =straight.el=
