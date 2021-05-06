@@ -1243,6 +1243,17 @@ Surprisingly, it looks quite nice
 (when init-flag
   (setq x-underline-at-descent-line t))
 #+end_src
+**** Info buffers
+
+Add extra fontification
+
+#+begin_src emacs-lisp
+(use-package info-colors
+  :if init-flag
+  :straight t
+  :init
+  (add-hook 'Info-selection-hook 'info-colors-fontify-node))
+#+end_src
 
 *** Header line
 :PROPERTIES:
