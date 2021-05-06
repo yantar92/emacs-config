@@ -820,8 +820,9 @@ Setting resizing to be exact instead.
 (when init-flag
   (setq frame-resize-pixelwise t))
 #+end_src
+**** COMMENT Resize windows with =golden-ratio= mode
 
-Resize frames automatically making sure that active window is enlarged ([[id:3e7e8b3a9f65a4f6d7bfa710a7ec7a5c62a19619][[Git.Sr] ~wklew/golden - sourcehut git]])
+Resize windows automatically making sure that active window is enlarged ([[id:3e7e8b3a9f65a4f6d7bfa710a7ec7a5c62a19619][[Git.Sr] ~wklew/golden - sourcehut git]])
 #+begin_src emacs-lisp
 (use-package golden-ratio
   :straight (golden-ratio :type git :url "https://git.sr.ht/~wklew/golden")
