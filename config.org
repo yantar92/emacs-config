@@ -2367,6 +2367,16 @@ Inspired by [[id:f69a49e2e7f32a4854d049826353240659f965ff][/u/freesteph [Reddit:
   (setq ediff-custom-diff-options "-u")
   (setq ediff-split-window-function 'split-window-vertically))
 #+end_src
+**** COMMENT Disable =golden-ratio= during e-diffing
+:PROPERTIES:
+:ID:       cefa8487-df1a-4916-9f09-395c297916c4
+:END:
+
+#+begin_src emacs-lisp
+(use-package golden-ratio
+  :config
+  (add-hook! 'ediff-mode-hook (golden-ratio-mode -1)))
+#+end_src
 
 ** Text highlight & colouring
 :PROPERTIES:
