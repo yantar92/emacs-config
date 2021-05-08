@@ -11880,6 +11880,8 @@ An area of knowledge I am interested in. Unlike project, this does not have a co
                            ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITiNG(!) HOLD(!) CANCELLED(!)"
                            ":CATEGORY: %{category}[D]"
                            ":END:"
+                           "** Projects :REFILE:"
+                           "# Projects associated with the area."
                            "*** NEXT Refile relevant tasks from more generic topics into %{area-title}"
                            ))))
            'replace)
@@ -12107,7 +12109,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO %^{Project title} :%^G:NOARCHIVE:grant:project:"
+			  ("* TODO %^{Project title} :%^G:NOARCHIVE:grant:proposal:project:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":ATTACH_DIR_INHERIT: t"
@@ -12161,7 +12163,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
 			  :clock-in t
 			  :clock-resume t
 			  :template
-			  ("* TODO %^{Project title} :%^G:NOARCHIVE:grant:project:"
+			  ("* TODO %^{Project title} :%^G:NOARCHIVE:grant:proposal:project:"
 			   ":PROPERTIES:"
 			   ":CREATED: %U"
                            ":ATTACH_DIR_INHERIT: t"
