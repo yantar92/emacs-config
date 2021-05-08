@@ -3909,6 +3909,16 @@ Moreover, it can be integrated with all other kinds of documentation using [[id:
               )
   )
 #+END_SRC
+
+*** Do not fontify bookmarks. It does not look nice on bookmarks automatically created by org-capture
+
+#+begin_src emacs-lisp
+(use-package bookmark
+  :if init-flag
+  :custom
+  (bookmark-fontify nil))
+#+end_src
+
 *** TODO COMMENT Hyperbole
 :PROPERTIES:
 :CREATED:  [2019-03-21 Thu 13:52]
