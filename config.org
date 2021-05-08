@@ -1244,6 +1244,9 @@ Surprisingly, it looks quite nice
   (setq x-underline-at-descent-line t))
 #+end_src
 **** Info buffers
+:PROPERTIES:
+:ID:       00f5f951-a002-4c0d-922d-e8e5fbc19df4
+:END:
 
 Add extra fontification
 
@@ -4841,6 +4844,9 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 (add-hook! emacs-lisp-mode (setq indent-tabs-mode nil))
 #+end_src
 **** Indicate fill column
+:PROPERTIES:
+:ID:       ac20a5b1-8475-4bf7-985d-a82c804eae6a
+:END:
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -5563,6 +5569,9 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
       (call-process "make" nil nil nil))))
 #+end_src
 ****** Extra customisation from [[id:de714e334e29b6ebfe88071cade9ecf618cfe342][tecosaur [Tecosaur.Github] (2021) Doom Emacs Configuration]]
+:PROPERTIES:
+:ID:       1042348d-0023-483b-b3cf-be8f71d93089
+:END:
 
 #+begin_src emacs-lisp
 (use-package calctex
@@ -5585,6 +5594,9 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
                 "\n\\let\\evalto\\Rightarrow")))
 #+end_src
 ****** Silence the =calctex='s real-time LaTeX interpreter
+:PROPERTIES:
+:ID:       b26a49e7-73e7-4cfc-b550-a2b8aa2be364
+:END:
 
 Credit: [[id:de714e334e29b6ebfe88071cade9ecf618cfe342][tecosaur [Tecosaur.Github] (2021) Doom Emacs Configuration]]
 
@@ -10814,6 +10826,9 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
     (org-refresh-properties "SHOWFROMTIME" 'showfromtime)))
 #+end_src
 ***** Speed up agenda by caching some built-in functions
+:PROPERTIES:
+:ID:       c180f2bc-c331-4804-9f53-f502032ee91b
+:END:
 
 #+begin_src emacs-lisp
 (memoize-by-buffer-contents #'org-get-buffer-tags)
@@ -10821,6 +10836,9 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 (memoize-by-buffer-contents #'org-refresh-effort-properties)
 #+end_src
 ***** Speed up agenda by disabling cookies fontification
+:PROPERTIES:
+:ID:       a98c4333-4712-4c43-8da8-08a67e8352f0
+:END:
 
 #+begin_src emacs-lisp
 (setq org-agenda-fontify-priorities nil)
@@ -11603,7 +11621,10 @@ Also, use yasnippet during capture #yasnippet
 #+end_src
 
 All these templates generally record the creation time in =:CREATED:=
-****** =TODO= item: Normal TODO item
+****** =TODO= item
+:PROPERTIES:
+:ID:       8ff37d1b-6668-4ff3-8fe5-bd588c3ada7e
+:END:
 
 #+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/todo_capture :noweb tangle :comments no
 # -*- mode: snippet -*-
@@ -11643,8 +11664,12 @@ $0
                       :template
                       ("* %(ya-org-capture/make-snippet \"todo_capture_\")"))))))
 #+end_src
-****** Singular TODO item: Normal TODO item with time bonus on done (20 minutes)
+****** Singular TODO item
+:PROPERTIES:
+:ID:       c9fe3690-f004-4cc2-b072-4fcc034c04df
+:END:
 
+Normal TODO item with time bonus on done (20 minutes)
 Used for the items, which are unlikely to be time tracked
 
 #+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/todo_singular_capture :noweb tangle :comments no
@@ -11671,7 +11696,12 @@ $0
 			  ("*  %(ya-org-capture/make-snippet \"todo_singular_capture_\")"))))
            'replace)
 #+end_src
-****** note: A note, which is not actionable or expected to contain a lot of text
+****** Note
+:PROPERTIES:
+:ID:       47ef2d31-7f74-4d74-b769-c648fcbedc64
+:END:
+
+A note, which is not actionable or expected to contain a lot of text
 
 #+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/note_capture :noweb tangle :comments no
 # -*- mode: snippet -*-
@@ -11704,6 +11734,9 @@ $0
            :replace)
 #+end_src
 ****** Habit
+:PROPERTIES:
+:ID:       990bbabb-4f5b-408c-b504-69b314af0836
+:END:
 
 I default it to no logging.
 
@@ -11728,7 +11761,12 @@ I default it to no logging.
 			   "\n"))))
            'replace)
 #+end_src
-****** Meeting/Event: Scheduled event. It is saved to =org-gcal= org file.
+****** Meeting/Event
+:PROPERTIES:
+:ID:       61edc830-42ed-4f3c-bb63-b80cca0ad996
+:END:
+
+Scheduled event. It is saved to =org-gcal= org file.
 
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
@@ -11743,7 +11781,13 @@ I default it to no logging.
 			   "\n"))))
            'replace)
 #+end_src
-****** Area of interest :: An area of knowledge I am interested in. Unlike project, this does not have a concrete outcome, but can be infinite depending on my interest in the topic.
+****** Area of interest
+:PROPERTIES:
+:ID:       1e74b3c9-9611-42a3-8b1e-9a2d129491fb
+:END:
+
+An area of knowledge I am interested in. Unlike project, this does not have a concrete outcome, but can be infinite depending on my interest in the topic.
+
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "R"
@@ -11801,7 +11845,13 @@ I default it to no logging.
                            ))))
            'replace)
 #+end_src
-****** Project: A large task that needs to be studied systematically. It has to have a concrete outcome.
+****** Project
+:PROPERTIES:
+:ID:       ebe12c18-7a12-4483-80a4-1f2b8d317b0c
+:END:
+
+A large task that needs to be studied systematically. It has to have a concrete outcome
+
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "P"
@@ -11877,6 +11927,9 @@ I default it to no logging.
            'replace)
 #+end_src
 ****** Conference presentation/poster
+:PROPERTIES:
+:ID:       7e2d24f4-ae20-409a-ac3b-53bd34a42cd6
+:END:
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "p"
@@ -11915,6 +11968,9 @@ I default it to no logging.
            'replace)
 #+end_src
 ****** Research publication
+:PROPERTIES:
+:ID:       dddf6e0e-ddb4-4290-a661-76e289ccf632
+:END:
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "J"
@@ -11959,6 +12015,9 @@ I default it to no logging.
            'replace)
 #+end_src
 ****** Co-authored research publication
+:PROPERTIES:
+:ID:       478ccd86-bfdf-4bc1-902a-e0c5d7bb9413
+:END:
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "A"
@@ -11996,6 +12055,9 @@ I default it to no logging.
            'replace)
 #+end_src
 ****** Research funding application
+:PROPERTIES:
+:ID:       956894a1-f365-416b-ab93-93c1f42c9f3f
+:END:
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "F"
@@ -12047,6 +12109,9 @@ I default it to no logging.
            'replace)
 #+end_src
 ****** Research funding application (short)
+:PROPERTIES:
+:ID:       dd64eea8-74b6-472a-9ebc-ae4bf0a02657
+:END:
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "f"
@@ -12093,7 +12158,10 @@ I default it to no logging.
                            "** Get accepted"))))
            'replace)
 #+end_src
-****** New contact :: Add a person to contact list. 
+****** New contact 
+:PROPERTIES:
+:ID:       a87ca6dc-eb7a-45ff-bd7a-0ae81aaaaf55
+:END:
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
 	   "C"
@@ -12110,6 +12178,9 @@ I default it to no logging.
            'replace)
 #+end_src
 ****** Experimental note 
+:PROPERTIES:
+:ID:       03521b68-b564-4923-8681-7dbed09e9c17
+:END:
 *************** TODO Should be captured to current project directly
 *************** END
  
