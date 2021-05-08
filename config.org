@@ -14345,7 +14345,7 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 		       ",\\}\\)\\(\\*\\*[ \t]+\\)")))
       (org-back-to-heading-or-point-min 'invisible-ok)
       (while (re-search-forward "^\\*+[ \t]+\\(.+:FLAGGED:[^ \t]+[ \t]*\\)$" limit t)
-        (add-text-properties (match-beginning 1) (match-end 1) `(face yant/org-agenda-highlight-face font-lock-fontified t))))))
+        (add-text-properties (match-beginning 1) (1- (match-end 1)) `(face yant/org-agenda-highlight-face font-lock-fontified t))))))
 #+end_src
 
 **** =org-appear=: Reveal hidden parts of links/emphasis when cursor enters them
@@ -14945,7 +14945,7 @@ Use normal colour for the default agenda face
 :END:
 
 #+begin_src emacs-lisp
-(defface yant/org-agenda-highlight-face '((t :weight bold :background "Lightyellow1"))
+(defface yant/org-agenda-highlight-face `((t :weight semibold :background ,(face-background 'macrostep-expansion-highlight-face)))
   "Face used to highlight flagged entries in agenda view.")
 (defun yant/org-agenda-highlight-flagged ()
   "Highlight flagged items in agenda."
@@ -14953,7 +14953,7 @@ Use normal colour for the default agenda face
     (save-excursion
       (goto-char (point-min))
       (while (re-search-forward ":FLAGGED:" nil t)
-        (font-lock-prepend-text-property (line-beginning-position) (line-end-position) 'face 'yant/org-agenda-highlight-face)))))
+        (font-lock-append-text-property (line-beginning-position) (line-end-position) 'face 'yant/org-agenda-highlight-face)))))
 (add-hook 'org-agenda-finalize-hook
 	  #'yant/org-agenda-highlight-flagged)
 
