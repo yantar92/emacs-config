@@ -13577,7 +13577,6 @@ Realising the described problem for myself, I follow the above recommendations a
 | ficbook.net             |
 | channelnewsasia.com     |
 | www.channelnewsasia.com |
-| github.com              |
 
 #+name: format-blocked-hosts
 #+begin_src emacs-lisp :tangle no :var hosts=blocked-hosts :results raw silent
