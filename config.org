@@ -14144,7 +14144,7 @@ blanks in items
 ;;turn off blanks in a new entries
 (setq org-blank-before-new-entry (quote ((heading . nil)
 					 (plain-list-item . nil))))
-(setq org-cycle-separator-lines 2)
+(setq org-cycle-separator-lines 0)
   #+end_src
 hide emphasis markers
   #+begin_src emacs-lisp
