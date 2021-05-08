@@ -4414,6 +4414,7 @@ Interactive fill/unfill paragraph at point.
                                "Decryption failed"
                                "Cannot outdent an item without its children"
                                "Attempt to delete minibuffer or sole ordinary window"
+                               "profiler is already running"
                                "Bumped into unknown token")))
 #+end_src
 **** Debugger key bindings
