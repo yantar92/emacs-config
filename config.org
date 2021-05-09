@@ -10756,7 +10756,7 @@ current task to NEXT and schedule it the same day."
       (setq yant/helm-org-ql--refile-history
             (seq-filter
              (lambda (el) (and (buffer-live-p (marker-buffer el))
-                               (org-with-point-at el (org-at-heading-p))))
+                          (org-with-point-at el (org-at-heading-p))))
              yant/helm-org-ql--refile-history))
       (let ((helm-org-ql-actions (pcase arg
                                    ('(4) '(("Go to heading" . yant/helm-org-ql-show-marker)
