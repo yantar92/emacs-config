@@ -10720,9 +10720,9 @@ current task to NEXT and schedule it the same day."
       ;; Probably best to check that everything returned a value
       (when (and buffer filename rfloc)
         (org-with-point-at-org-buffer
-         (org-refile nil nil rfloc)
          (when-let ((org-agenda-buffer-name (and (boundp 'agenda-buffer) agenda-buffer)))
 	   (org-remove-subtree-entries-from-agenda))
+         (org-refile nil nil rfloc)
          (push marker yant/helm-org-ql--refile-history)))))
   (defun yant/helm-org-ql-yank-selection ()
     "Yank search exp matching selected heading's children."
