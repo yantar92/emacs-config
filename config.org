@@ -4792,16 +4792,8 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   (use-package boon
     :defer t
     :config
-    (defun yant/infotop-query ()
-      "Open Top of the info and query for a topic."
-      (interactive)
-      (info "(dir)Top")
-      (funcall-interactively #'Info-menu
-                             (let ((completion-ignore-case t)
-			           (Info-complete-menu-buffer (current-buffer)))
-		               (completing-read (format-prompt "Menu item" nil)
-				                #'Info-complete-menu-item nil t nil nil
-                                                nil))))
+    ;; Update the info file list.
+    (custom-reevaluate-setting 'helm-default-info-index-list)
     (meta-defun meta-help "Get help on symbol at point." ignore)
     (meta-defun meta-help :mode org-mode :cond (org-in-src-block-p) helpful-at-point)
     (meta-defun meta-help :mode emacs-lisp-mode helpful-at-point)
@@ -4821,7 +4813,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
                ("d" . helpful-variable)
                ("s" . helpful-symbol)
                ("b" . helm-descbinds)
-               ("h h" . yant/infotop-query)
+               ("h h" . helm-info)
                ("h m" . man)
                ("h n" . tldr)
                ("h i" . helm-info-elisp-and-libs)
