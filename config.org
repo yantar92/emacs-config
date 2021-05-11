@@ -10757,7 +10757,7 @@ current task to NEXT and schedule it the same day."
           (setq-local helm-org-ql-filter (or helm-org-ql-filter t)))))
     (helm-set-pattern ""))
   (defun yant/helm-org-ql-refile (arg)
-    "Preset filter to refile targets."
+    "Helmified version of `org-refile' using `helm-org-ql'."
     (interactive "P")
     (catch 'exit
       (setq yant/helm-org-ql--refile-history
