@@ -2517,11 +2517,11 @@ abort completely with `C-g'."
                    ;; Word was corrected or used quit.
                    (if (ispell-word nil 'quiet)
                        nil ; End the loop.
-                     ;; Also end if we reach `bob'.
-                     (not (bobp)))
+                     ;; Also end if we reach `bol'.
+                     (not (bolp)))
 		 ;; If there's no word at point, keep looking
-		 ;; until `bob'.
-		 (not (bobp)))
+		 ;; until `bol'.
+		 (not (bolp)))
           (backward-word)
           (backward-char))
 	(setq aft (endless/simple-get-word)))
