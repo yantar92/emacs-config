@@ -10730,11 +10730,11 @@ current task to NEXT and schedule it the same day."
 	   (rfloc (list heading filename nil marker)))
       ;; Probably best to check that everything returned a value
       (when (and buffer filename rfloc)
+        (push marker yant/helm-org-ql--refile-history)
         (org-with-point-at-org-buffer
          (when-let ((org-agenda-buffer-name (and (boundp 'agenda-buffer) agenda-buffer)))
 	   (org-remove-subtree-entries-from-agenda))
-         (org-refile nil nil rfloc)
-         (push marker yant/helm-org-ql--refile-history)))))
+         (org-refile nil nil rfloc)))))
   (defun yant/helm-org-ql-yank-selection ()
     "Yank search exp matching selected heading's children."
     (interactive)
@@ -10779,6 +10779,11 @@ current task to NEXT and schedule it the same day."
                                     (when (org-clock-is-active)
                                       (yant/helm-org-ql-refile-to org-clock-marker)
                                       (throw 'exit t)))
+                                   (`bulk-agenda-command
+                                    ;; Return marker to serve as argument for `org-agenda-bulk-custom-functions'.
+                                    ;; The return argument will be applied using
+                                    ;; (apply #'yant/helm-org-ql-refile-to return)
+                                    '(("Refile bulk agenda selection to selected heading" . list)))
                                    (_ '(("Refile heading at point to selected heading" . yant/helm-org-ql-refile-to)
                                         ("Go to heading" . yant/helm-org-ql-show-marker)))))
             (org-refile-keep (and arg (equal arg 3)))
@@ -10812,6 +10817,7 @@ current task to NEXT and schedule it the same day."
   (bind-key "C-c C-w" #'yant/helm-org-ql-refile org-mode-map)
   (bind-key "C-c C-w" #'yant/helm-org-ql-refile org-agenda-mode-map)
   (bind-key "C-c C-u" #'yant/helm-org-ql-toggle-archives helm-org-ql-map)
+  (add-to-list 'org-agenda-bulk-custom-functions `(?R yant/helm-org-ql-refile-to ,(apply-partially #'yant/helm-org-ql-refile 'bulk-agenda-command)))
   :custom
   (helm-org-ql-actions '(("Go to heading" . yant/helm-org-ql-show-marker)
                          ("Open heading source" . yant/helm-org-ql-open-url)
