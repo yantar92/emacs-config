@@ -3914,6 +3914,9 @@ Moreover, it can be integrated with all other kinds of documentation using [[id:
 #+END_SRC
 
 *** Do not fontify bookmarks. It does not look nice on bookmarks automatically created by org-capture
+:PROPERTIES:
+:ID:       71a4e801-dcb4-4978-a80c-0e95918f3cbf
+:END:
 
 #+begin_src emacs-lisp
 (use-package bookmark
@@ -9317,11 +9320,11 @@ If LOCAL is non-nil, check only local TAG."
 									(not (subproject)))
 								    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 								    (not (and (tags-local "AREA")
-									      (not (descendants (todo)))))
+									    (not (descendants (todo)))))
 								    (not (descendants
-									  (and  (todo "NEXT" "REVIEW" "DOING")
-										(not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-										)))))))
+									(and  (todo "NEXT" "REVIEW" "DOING")
+									      (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+									      )))))))
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
@@ -10718,6 +10721,7 @@ current task to NEXT and schedule it the same day."
   (defvar yant/helm-org-ql--refile-history nil)
   (defun yant/helm-org-ql-refile-to (marker)
     "Refile heading at point to selected heading at MARKER."
+    (require 'org-macs)
     (let* ((buffer (marker-buffer marker))
            (filename (or (buffer-file-name buffer) (buffer-file-name (buffer-base-buffer buffer))))
            ;; get the heading we refile to so org doesn't
@@ -10763,7 +10767,7 @@ current task to NEXT and schedule it the same day."
       (setq yant/helm-org-ql--refile-history
             (seq-filter
              (lambda (el) (and (buffer-live-p (marker-buffer el))
-                          (org-with-point-at el (org-at-heading-p))))
+                               (org-with-point-at el (org-at-heading-p))))
              yant/helm-org-ql--refile-history))
       (let ((helm-org-ql-actions (pcase arg
                                    ('(4) '(("Go to heading" . yant/helm-org-ql-show-marker)
