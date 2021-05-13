@@ -9282,6 +9282,8 @@ If LOCAL is non-nil, check only local TAG."
 							 (and (todo "NEXT")
 							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
 							      (not (habit))
+                                                              (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
+		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
 							      (subtask)
 							      (not (project))))))
 			    (org-tags-match-list-sublevels t)
@@ -9301,6 +9303,8 @@ If LOCAL is non-nil, check only local TAG."
 							      (tags "NODEADLINE")
 							      (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
 							      (not (habit))
+                                                              (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
+		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
 							      (subtask)
 							      (not (project))))))
 			    (org-tags-match-list-sublevels t)
@@ -9390,11 +9394,11 @@ If LOCAL is non-nil, check only local TAG."
 									(not (subproject)))
 								    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 								    (not (and (tags-local "AREA")
-									      (not (descendants (todo)))))
+									    (not (descendants (todo)))))
 								    (not (descendants
-									  (and  (todo "NEXT" "REVIEW" "DOING")
-										(not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-										)))))))
+									(and  (todo "NEXT" "REVIEW" "DOING")
+									      (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+									      )))))))
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
@@ -9417,6 +9421,8 @@ If LOCAL is non-nil, check only local TAG."
 							 (and (todo "NEXT")
 							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
 							      (not (habit))
+                                                              (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
+		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
 							      (subtask)
 							      (not (project))))))
 			    (org-tags-match-list-sublevels t)
@@ -9437,6 +9443,8 @@ If LOCAL is non-nil, check only local TAG."
 							      (tags "NODEADLINE")
 							      (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
 							      (not (habit))
+                                                              (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
+		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
 							      (subtask)
 							      (not (project))))))
 			    (org-tags-match-list-sublevels t)
