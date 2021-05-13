@@ -10739,6 +10739,7 @@ current task to NEXT and schedule it the same day."
       ;; Probably best to check that everything returned a value
       (when (and buffer filename rfloc)
         (push marker yant/helm-org-ql--refile-history)
+        (setq yant/helm-org-ql--refile-history (delete-dups yant/helm-org-ql--refile-history))
         (org-with-point-at-org-buffer
          (when-let ((org-agenda-buffer-name (and (boundp 'agenda-buffer) agenda-buffer)))
 	   (org-remove-subtree-entries-from-agenda))
