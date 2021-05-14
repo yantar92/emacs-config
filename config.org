@@ -4499,7 +4499,7 @@ Sometimes, I just need to have any random text in buffer for testing.
   :if init-flag
   :straight t)
 #+end_src
-*** COMMENT Hunt for the commands causing hangs
+*** COMMENT Hunt for the commands causing hangs =explain-pause-mode=
 :PROPERTIES:
 :CREATED:  [2020-05-25 Mon 18:45]
 :ID:       e55d91e3-562c-465b-a564-82729edad44d
