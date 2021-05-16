@@ -9489,7 +9489,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-							(quote (and (todo "TODO")
+							(quote (and (todo)
 								    (not (habit))
 								    (task)
 								    (or (tags "SKIP")
