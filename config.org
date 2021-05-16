@@ -7,7 +7,7 @@
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
 #+ARCHIVE: ::* Archived
 
-* HOLD Emacs configuration :project:EMACS:COMMON:HOLD:
+* SOMEDAY Emacs configuration :project:EMACS:COMMON:SOMEDAY:
 :PROPERTIES:
 :ID:       a27092a6-25a6-417f-818f-7f83325b58b3
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
@@ -15,6 +15,7 @@
 :SUMMARY:  No active work before org-mode clears
 :END:
 :LOGBOOK:
+- State "SOMEDAY"    from "HOLD"          [2021-05-15 Sat 14:13]
 - State "HOLD"       from "NEXT"          [2020-12-11 Fri 16:43] \\
   No active work before org-mode clears
 CLOCK: [2020-04-09 Thu 17:43]--[2020-04-09 Thu 17:44] =>  0:01
@@ -9331,11 +9332,11 @@ If LOCAL is non-nil, check only local TAG."
 									(not (subproject)))
 								    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 								    (not (and (tags-local "AREA")
-									    (not (descendants (todo)))))
+									      (not (descendants (todo)))))
 								    (not (descendants
-									(and  (todo "NEXT" "REVIEW" "DOING")
-									      (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-									      )))))))
+									  (and  (todo "NEXT" "REVIEW" "DOING")
+									        (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+									        )))))))
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
