@@ -84,8 +84,8 @@ Init file, which loads this file.
 As many others, I run emacs in server mode. Actually, it is an nobrainer considering how long my huge org files are being opened.
 
 Setup environment variables
-*************** TODO load .profile instead of manual setting here
-*************** END
+****************** TODO load .profile instead of manual setting here
+****************** END
 
 #+begin_src emacs-lisp
   (setenv "PATH" (concat (getenv "PATH") ":/home/yantar92/.local/bin/"))
@@ -131,8 +131,8 @@ Instead of the default emacs package manager, I use =straigt.el=.
 My initial motivation was mostly the ability to get packages from github directly.
 In addition, it would be useful to keep track modify the packages in some better way than advising.
 
-*************** TODO Use =el-patch= and take a look at fork+master handling by =package.el=
-*************** END
+****************** TODO Use =el-patch= and take a look at fork+master handling by =package.el=
+****************** END
 
 =Straight.el= can use =watchexec= to watch changes in the packages, which is much faster in comparison with default =find=.
 Install =watchexec=
@@ -140,8 +140,8 @@ Install =watchexec=
 layman -a chaoslab
 emerge -v watchexec
 #+end_src
-*************** TODO Actually, this snippet might be useless on a fresh system. Need to add some check to indicate that missing package is a problem
-*************** END
+****************** TODO Actually, this snippet might be useless on a fresh system. Need to add some check to indicate that missing package is a problem
+****************** END
 
 First, make sure that =straight.el= can fetch remote URLs from everywhere.
 Set up the =askpass= and cache ssh password.
@@ -209,8 +209,8 @@ Prefer loading fresh versions of lisp files
 
 Setup local =load-path= for whatever is not handled by =straigh.el=
 
-*************** TODO This may better be done individually using :load-path option of use-package
-*************** END
+****************** TODO This may better be done individually using :load-path option of use-package
+****************** END
 
 #+begin_src emacs-lisp
   (eval-and-compile
@@ -224,8 +224,8 @@ Setup local =load-path= for whatever is not handled by =straigh.el=
 :END:
 
 Now, I can setup =use-package= to simplify subsequent package configuration
-*************** TODO make always defer work
-*************** END
+****************** TODO make always defer work
+****************** END
   #+begin_src emacs-lisp
 (eval-and-compile (straight-use-package 'use-package))
 ;;(setq use-package-always-defer t)
@@ -233,8 +233,8 @@ Now, I can setup =use-package= to simplify subsequent package configuration
 (use-package bind-key)
   #+end_src
 
-*************** TODO separate all the diminish statements into appearance
-*************** END
+****************** TODO separate all the diminish statements into appearance
+****************** END
 **** Quick access to use-package docstring
 :PROPERTIES:
 :ID:       0ef884bb-b330-4cc9-9512-5d1dcb386b3e
@@ -281,10 +281,10 @@ https://github.com/raxod502/straight.el/issues/354
 #+end_src
 
 Quick hydra menu for =straight.el=
-*************** TODO rewrite using nicer hydras
-*************** END
-*************** TODO move elsewhere, but leave the link
-*************** END
+****************** TODO rewrite using nicer hydras
+****************** END
+****************** TODO move elsewhere, but leave the link
+****************** END
 #+BEGIN_SRC emacs-lisp
 (eval-after-load 'use-package
   (use-package hydra
@@ -334,8 +334,8 @@ By default, there is no convention about file names and placement in =.emacs.d=.
 :END:
 
 Keep customisation away from =init.el= in a separate file.
-*************** TODO use :custom use-package keyword for setting customisation
-*************** END
+****************** TODO use :custom use-package keyword for setting customisation
+****************** END
   #+begin_src emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
 ;; (load custom-file)
@@ -363,8 +363,8 @@ Keep customisation away from =init.el= in a separate file.
 :PROPERTIES:
 :ID:       3967e7cf-4152-4807-bedb-7f6df1312b73
 :END:
-*************** TODO study functions
-*************** END
+****************** TODO study functions
+****************** END
 #+begin_src emacs-lisp
   (use-package asoc
     :demand t
@@ -761,8 +761,8 @@ The colour I use is below
 #+END_SRC
 
 For =all-the-icons= it is important to install the fonts via [[elisp:all-the-icons-install-fonts]]
-*************** TODO check if hangs disappear
-*************** END
+****************** TODO check if hangs disappear
+****************** END
 #+begin_src emacs-lisp
 (use-package all-the-icons
   :if init-flag
@@ -813,8 +813,8 @@ Using =window-divider-mode= to emphasise it more.
 By default, emacs frame height can only be a multiple of line height.
 This is a little annoying when emacs frame is in maximised state, but yet have a small gap on the bottom.
 Setting resizing to be exact instead.
-*************** TODO Not setting it now because of weird bug when capture frame does not render
-*************** END
+****************** TODO Not setting it now because of weird bug when capture frame does not render
+****************** END
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -855,8 +855,8 @@ The most bizarre case was when a debug buffer popped-up in a non-active frame on
 The frame was in different WM workspace and I was totally confused about what is going on. 
 
 =shackle= package allows setting rules for pop-up windows.
-*************** TODO this is an example when I want mirror text work
-*************** END
+****************** TODO this is an example when I want mirror text work
+****************** END
 
 #+begin_src emacs-lisp
 (use-package shackle
@@ -870,8 +870,8 @@ The frame was in different WM workspace and I was totally confused about what is
 #+END_SRC
 
 Make help, info, and back-trace pop-up in separate frame
-*************** TODO back-trace buffer with the config below pops-up a new frame every time a step into execution
-*************** END
+****************** TODO back-trace buffer with the config below pops-up a new frame every time a step into execution
+****************** END
 
 #+BEGIN_SRC emacs-lisp  
 ;; ("*Help*" :select t :frame t)
@@ -1114,8 +1114,8 @@ Show some text in buffer differently
 - State "TODO"       from              [2018-03-12 Mon 14:26]
 - State "HOLD"       from              [2018-03-04 Sun 17:57]
 :END:
-*************** TODO Split config to =prog-modes=. Add more commentary
-*************** END
+****************** TODO Split config to =prog-modes=. Add more commentary
+****************** END
 
 #+begin_src emacs-lisp
 (use-package pretty-symbols
@@ -1180,8 +1180,8 @@ Show some text in buffer differently
 :PROPERTIES:
 :ID:       bdf24c4b-681c-4286-86cd-e81f63b94ec0
 :END:
-*************** TODO Move to latex
-*************** END
+****************** TODO Move to latex
+****************** END
 
 #+begin_src emacs-lisp
 (use-package latex-pretty-symbols
@@ -1648,16 +1648,16 @@ I prefer to have some minimal set of movement keys working in all the buffers (s
 It means that I need to redefine the movement commands to be able to act according to the major mode (like "n" from org-mode is bound to =org-next-line= and, hence, "j" from =org-special-map= should be also bound to =org-next-line=.
 This can be done by defining special wrapper command, which acts differently depending on the mode or buffer position, while the general result or running the command is similar (i.e. move next line in text buffer, but move next file in =dired=, or next agenda item in =org-agenda=.
 
-*************** TODO respect interactive definitions
-*************** END
+****************** TODO respect interactive definitions
+****************** END
 
-*************** TODO Provide a way to prepend condition
-*************** END 
-*************** TODO check when trying to bind non-existing function? maybe link to function symbol instead
-*************** END
+****************** TODO Provide a way to prepend condition
+****************** END 
+****************** TODO check when trying to bind non-existing function? maybe link to function symbol instead
+****************** END
 
-*************** TODO make sure that defining default function after conditional does not mess up anything
-*************** END
+****************** TODO make sure that defining default function after conditional does not mess up anything
+****************** END
 
 
 Second, implement the wrapper command <<meta-functions>>.
@@ -1674,8 +1674,8 @@ And use the wrapper command in interactive mode.
 Define the most basic movement commands:
  - occur :: interactive search in buffer
 
-*************** TODO Move the editing meta-commands to editing section
-*************** END
+****************** TODO Move the editing meta-commands to editing section
+****************** END
 
  - goto :: interactive go to a place in buffer
 
@@ -1986,8 +1986,8 @@ Completion is what makes working in Emacs look like magic.
 :ID:       d388e4f5-214e-4697-a53a-be6fb6c24411
 :END:
 
-*************** TODO The update is delayed terribly sometimes. Not sure why. Sometimes, the helm buffer does not get updated at all, especially on short input (1-2 chars)
-*************** END
+****************** TODO The update is delayed terribly sometimes. Not sure why. Sometimes, the helm buffer does not get updated at all, especially on short input (1-2 chars)
+****************** END
 
 Unlike default completion, =helm= lets you see all the possible completions dynamically updated as you type. 
 No need to press TAB like crazy.
@@ -2422,10 +2422,10 @@ Highlighting typos is crucial.
 :ID:       b79658d1-8d62-4c47-be3b-cc399a0a8c59
 :END:
 
-*************** TODO fly =ispell= only with idle timer?
-*************** END
-*************** TODO enable in org-mode
-*************** END
+****************** TODO fly =ispell= only with idle timer?
+****************** END
+****************** TODO enable in org-mode
+****************** END
 
 #+begin_src emacs-lisp
 (use-package flyspell
@@ -3352,8 +3352,8 @@ Run =dired= from =boon-*-search-map=
 
 And extend it with =dired+= 
 
-*************** TODO review possibilities in dired+
-*************** END
+****************** TODO review possibilities in dired+
+****************** END
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired+
@@ -3361,8 +3361,8 @@ And extend it with =dired+=
   :straight t)
 #+END_SRC
 
-*************** TODO re-check performance
-*************** END
+****************** TODO re-check performance
+****************** END
  do not use =dired+= mode-line. Too much performance degradation
 #+begin_src emacs-lisp
 ;; (when init-flag
@@ -3420,8 +3420,8 @@ And extend it with =dired+=
 :CREATED:  [2019-05-07 Tue 21:26]
 :ID:       c095c061-ffdc-4adb-a889-bb4e54b6a514
 :END:
-*************** TODO review capabilities of image-dired
-*************** END
+****************** TODO review capabilities of image-dired
+****************** END
 
 #+begin_src emacs-lisp
 (use-package image-dired
@@ -3522,8 +3522,8 @@ Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
 :ID:       0513c7b0-f723-40f7-85bc-ee3c4b35b823
 :END:
 
-*************** TODO suggest to add to emacs?
-*************** END
+****************** TODO suggest to add to emacs?
+****************** END
 
 Unselect all the files after showing thumbnails. Useful to mark files from the =image-dired= buffer. 
 #+begin_src emacs-lisp
@@ -3668,8 +3668,8 @@ Disabling it
 :ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
 :END:
 
-*************** TODO Investigate how to avoid hangs on large folders
-*************** END
+****************** TODO Investigate how to avoid hangs on large folders
+****************** END
 
 #+begin_src emacs-lisp
 (use-package all-the-icons-dired
@@ -4166,8 +4166,8 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 :PROPERTIES:
 :ID:       ce7df944-6c64-4a7d-8e11-136237250e3c
 :END:
-*************** TODO adjust keybindings to avoid interference with WM
-*************** END
+****************** TODO adjust keybindings to avoid interference with WM
+****************** END
 
 Meta-versions of return/return-dwim commands.
 Mostly intended to use with org.
@@ -4253,8 +4253,8 @@ I do not use mouse as much as possible and discourage myself to use it unnecessa
 =Yasnippet= is a very handy way to use templates as you type.
 There is also built-in skeleton mode, but =yasnippet= also has a good user-contributed snippet database.
  
-*************** TODO study the snippets
-*************** END
+****************** TODO study the snippets
+****************** END
 
 #+begin_src emacs-lisp
 (use-package yasnippet
@@ -4952,8 +4952,8 @@ The result is useful to avoid mess in the global variables, but also makes the v
 Sometimes, advises and hooks are simply not enough to alter existing functions.
 The only resort then is redefining the whole function.
 However, it can break updated packages if something changes in the original function implementation.
-*************** TODO Actually, same can sometimes happen with advises. Is there a way to deal with it?
-*************** END
+****************** TODO Actually, same can sometimes happen with advises. Is there a way to deal with it?
+****************** END
 =El-patch= allow changing the whole function definition without a risk to break anything. 
 It warns me if the original definition changes from what I expect.
 
@@ -5018,7 +5018,7 @@ It warns me if the original definition changes from what I expect.
 :ID:       2fb97bdf-d310-4e5a-8266-d68a1ae10298
 :END:
 
-*************** SOMEDAY [#A] revise config from here :SOMEDAY:
+****************** SOMEDAY [#A] revise config from here :SOMEDAY:
 :PROPERTIES:
 :SHOWFROMDATE: 2020-05-13 18:00
 :SUMMARY:  Later, when I do not have more important emacs things to do
@@ -5056,7 +5056,7 @@ CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
 CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
 CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
 :END:
-*************** END
+****************** END
 
 Nowadays, I do not really write pure LaTeX, but rather use org-mode export.
 The below configuration is here just in case if I need to open and edit tex files for some reason.
@@ -6080,8 +6080,8 @@ the notmuch-tree buffer if it appears after closing the message."
 (add-hook 'message-send-hook #'yant/mml-secure-message-sign-pgpmime-maybe)
   #+end_src
 - async mail sending
-*************** TODO Make it work
-*************** END
+****************** TODO Make it work
+****************** END
 
 #+BEGIN_SRC emacs-lisp
 ;; (use-package async
@@ -6713,8 +6713,8 @@ Not sure why I need to set it, but I don't like "i-did-not-set--mail-host-addres
 :PROPERTIES:
 :ID:       c8a86cda-7c72-432f-8118-b4b1236db7b8
 :END:
-*************** TODO Make it async
-*************** END
+****************** TODO Make it async
+****************** END
 
 I read some articles in Chinese even though I do not really know how to read. Automatic translation is a bless.
 However, the available translation (in WeChat) do not offer translating article headlines in the new article list - I have to open every individual article and translate the whole thing one by one. It is time-consuming, especially since most of the articles are not really interesting. It would be sufficient to quickly look through the title to recognise that. So, I need some way to quickly get a *translated* list of recent article titles from WeChat (or any other source).
@@ -6890,11 +6890,11 @@ Emacs application framework provides its own implementation of keyboard-driven b
 :ID:       58045c39-ffd5-4ccc-bc9d-49048c437f42
 :END:
 This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's config]].
-*************** TODO Describe the workflow
+****************** TODO Describe the workflow
 :PROPERTIES:
 :ID:       2b1456f8-c2fe-41ef-8d3d-99aa4adf362e
 :END:
-*************** END
+****************** END
 
 #+begin_src emacs-lisp
 (use-package org
@@ -6920,15 +6920,15 @@ Research projects generally contain several typical components:
 3. Ideas, which are not immediately useful, but might become handy as the project progresses
 4. Reporting/paperwork related to project
 
-*************** TODO add discussion about project management from the email
-*************** END
+****************** TODO add discussion about project management from the email
+****************** END
 
-*************** Handling ideas
+****************** Handling ideas
 :PROPERTIES:
 :ID:       92a0a71b-d269-4455-88ae-74e4367e5bfa
 :END:
 [2021-01-15 Fri] The ideas part turned out to be quite tricky. In the past, I kept all the ideas in separate headline. However, practice showed that I tend to forget checking that long list of the ideas. This might be solved by reviewing the idea list regularly, but it is also not very practical since the idea lists tend to grow a lot and require very long time to go through. Instead or reviewing all the ideas together, it would be better to make sure that ideas are reminded to me from time to time without a need for me to think when is the next time I want to be reminded. This is similar to tickler list in GTD [[id:1f151305-2d61-42b9-9438-503c9b538352][Allen David [2015] Getting things done : the art of stress-free productivity]] managed using org-drill, so that spaced repetition method is used to find out when to remind about the idea next time.
-*************** END
+****************** END
 
 
 ***** Tags
@@ -6966,15 +6966,15 @@ Research projects generally contain several typical components:
 - =PhD= :: Related to work/PhD
 - =INBOX= :: Need to be processed (for new captured tasks)
 - =TRACK= :: The link from this task/item should be monitored for changes in the internet
-*************** TODO Need to add automatic handling of this
+****************** TODO Need to add automatic handling of this
 :PROPERTIES:
 :ID:       27eb85b6-114f-437f-9424-b28d400f6aa9
 :END:
-*************** END
+****************** END
 - =BOOKMARK= :: Contains a link
 - =ORG= :: if the task is not finished - include the org file linked during agenda creation if todo keyword is =NEXT=.The purpose of this tag is reduce the file size: I had a large database of books, which I've read/will read. The file with all the authors included was more than =2Mb=, which took forever to open and, more importantly, made my agenda view build/update time *few minutes*. So, I created separate project for different authors and kept the links to that projects with =ORG= tag assigned, so that I can add the author book list to file/agenda view if the project is =NEXT=.
-*************** TODO add link management system
-*************** TODO need to implement this (ORG tag)
+****************** TODO add link management system
+****************** TODO need to implement this (ORG tag)
 :PROPERTIES:
 :ID:       648e5339-0732-4464-80de-90a8f5f72467
 :END:
@@ -6982,7 +6982,7 @@ Research projects generally contain several typical components:
 - State "TODO"       from "NEXT"       [2018-09-20 Thu 22:32]
 :END:
 Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-hooks=
-*************** END
+****************** END
 - =NOEXPORT= :: Do not export an item
 - =NODEADLINE= :: Do not show these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view
 - =SKIP= :: Some projects/sub-projects contains tasks, which can be done independently to each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belong to have =NEXT= tasks.
@@ -7066,14 +7066,14 @@ The task is any item with todo keyword and no subtask.
 #+end_src
   - TODO(t) :: task which needs to be reviewed and marked with one of the following keywords. TODO tasks are generally tasks I may consider doing, but do not know any details about what they are and how to proceed with doing them.
   - NEXT(n) :: Task which needs to be done next
-*************** #todo_keyword #DOING
+****************** #todo_keyword #DOING
 :PROPERTIES:
 :ID:       66396995-13e9-4dfa-854e-476c71a4faa9
 :END:
   - DOING(o) :: A task I am working on, but do not expect to finish quickly (e.g. reading book). Marking this task =DOING =-> =DOING=, reschedules it to tomorrow. Marking a task DOING if it had other keyword and not scheduled, schedules it for today and asks for effort estimate. 
-*************** END
-*************** TODO make it reschedule according to repeater instead
-*************** END
+****************** END
+****************** TODO make it reschedule according to repeater instead
+****************** END
   #+begin_src emacs-lisp
 (defun org-trigger-doing (arg)
   "Restore DOING keyword after DOING->DONE or DOING->DOING change and handle setting DOING.
@@ -7245,8 +7245,8 @@ Unschedule when SOMEDAY is set."
           (funcall-interactively #'org-insert-link))))))
 (add-hook 'org-trigger-hook #'org-trigger-merged)
   #+end_src
-*************** TODO Prompt for the link to new task, default is clocked in task. Use helm search. Store link in property
-*************** END
+****************** TODO Prompt for the link to new task, default is clocked in task. Use helm search. Store link in property
+****************** END
 
 In some cases, I do not want to have logging on CANCELLED/FAILED/HOLD/WAITING.
 For example, a task to listen music with outcome of FAILED mostly have the same meaning - I do not like the music.
@@ -7258,15 +7258,16 @@ So, I define =:LOGGING:= property in some subtrees to avoid logging.
 :ID:       54ee8e08-0cb5-4104-94c2-948be5830c4e
 :END:
 I use inline tasks to add temporary todo state (instead of notes). It should be removed once done and placed into notes when archiving.
-*************** TODO Implement this on inline task done
-*************** END
+****************** TODO Implement this on inline task done
+****************** END
 #+begin_src emacs-lisp
 (use-package org
   :config
   (use-package org-inlinetask
     :demand t
     :config
-    (setq org-inlinetask-default-state "TODO")))
+    (setq org-inlinetask-default-state "TODO")
+    (setq org-inlinetask-min-level 18)))
 #+end_src
 
 It seems that inline tasks interferes with =org-outline-regexp=.
@@ -7293,11 +7294,11 @@ The maximum number of levels is controlled by `org-inlinetask-min-level'."
 By default, org-mode does not allow storing links to inline headings.
 It is really strange. 
 I force org-mode to store link to inline headings by adding inline heading store link function.
-*************** TODO report to org-mode 
+****************** TODO report to org-mode 
 :PROPERTIES:
 :ID:       8764bf9c-51f1-439e-88aa-8650b8e0f83a
 :END:
-*************** END
+****************** END
 
 #+begin_src emacs-lisp
 (defun org-inlinetask-store-link (oldfun &rest args)
@@ -7328,8 +7329,8 @@ I use [[http://www.nongnu.org/org-edna-el/][org-edna]] for managing dependencies
   (org-edna-mode))
 #+END_SRC
 
-*************** TODO rewrite using org-depend, as suggested in https://www.reddit.com/r/orgmode/comments/hljpl3/any_one_uses_org_edna/fwzhldp/
-*************** END
+****************** TODO rewrite using org-depend, as suggested in https://www.reddit.com/r/orgmode/comments/hljpl3/any_one_uses_org_edna/fwzhldp/
+****************** END
 
 This can be useful, for example, when watching a series.
 I may add multiple TODOs for different series, but it usually make sense to watch them in sequence.
@@ -7782,8 +7783,8 @@ Hence, it is better to avoid =file= links to the attached files.
 Therefore, I define a new link type to the attached files of the current entry.
 Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while selecting an image link - it will show the preview of images in separate buffer (idea from [[https://www.reddit.com/r/emacs/comments/9dh45j/preview_images_while_helmfindfiles/][reddit]]).
 
-*************** TODO need to use caching for =org-attach-dir-symlink=. slowing down flycheck too much
-*************** END
+****************** TODO need to use caching for =org-attach-dir-symlink=. slowing down flycheck too much
+****************** END
 
 #+BEGIN_SRC emacs-lisp
 (defmacro org-with-point-at-org-buffer (&rest body)
@@ -8200,8 +8201,8 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 It is handy to be able to find all other headlines having links to current headline.
 =org-super-links= package does exactly this. 
 
-*************** TODO this package does not support actual org-insert-link interface
-*************** END
+****************** TODO this package does not support actual org-insert-link interface
+****************** END
 
 
 #+begin_src emacs-lisp :tangle no
@@ -8311,8 +8312,8 @@ This includes:
      #+end_src
 - =:SHOWFROMDATE:= :: The purpose of this is to be able to postpone the scheduled tasks for future if I cannot do it. The property is formatted as an org date.
      This property is especially useful if there is something more pressing, so that there is a temptation to reschedule less pressing event to another day. If the more pressing task is done earlier than expected, the postponed tasks can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
-*************** TODO maybe move showing overlay in agenda to appearance
-*************** END
+****************** TODO maybe move showing overlay in agenda to appearance
+****************** END
      #+begin_src emacs-lisp
 (require 'org-agenda)
 (add-to-list 'org-default-properties "SHOWFROMDATE")
@@ -8495,8 +8496,8 @@ So, it makes sense to copy the link to added attachment into link ring.
 - State "TODO"       from "NEXT"          [2018-01-01 Mon 13:17]
 :END:
 
-*************** TODO view attachments in dired just by hitting inter on .org file - simulate symlink folders / virtual filesystem
-*************** END
+****************** TODO view attachments in dired just by hitting inter on .org file - simulate symlink folders / virtual filesystem
+****************** END
 
 I usually have a huge numbers of files, related to my projects. I would like to use attach to associate the files with the proper entry, but searching them later in my Dropbox is a pain because of the way Org saves the attachments.
 It makes more sense for me to make attachments follow the org tree structure in the project by default (unless I change the attach folder to something else).
@@ -8504,9 +8505,9 @@ It makes more sense for me to make attachments follow the org tree structure in 
 This can be done if we make attachment by creating a symbolic link to the attach folder in the place, according to the headline path.
 This way allows to keep all the file attached to the project accessible with relative paths.
 
-*************** TODO I do not handle the situation when the entry uid is being changed..
+****************** TODO I do not handle the situation when the entry uid is being changed..
 Try to look in symlinks?
-*************** END
+****************** END
 
 For the implementation, the idea is keeping all the actual attachments in a common folder for all the org files according to their uuid. As a result, I can safely refile tasks between different org files without worrying about moving the attachments around (assuming that there is not change in the task ids).
 
@@ -8723,14 +8724,14 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 
 Now, when I have the mirror attach folder structure, it make sense to open this structure on =org-attach-reveal= instead of opening the actual attach dirs.
 
-*************** HOLD [#A] because of org-attach API change, need to rewrite :HOLD:
+****************** HOLD [#A] because of org-attach API change, need to rewrite :HOLD:
 :PROPERTIES:
 :SHOWFROMDATE: 2020-05-23
 :END:
 :LOGBOOK:
 - State "HOLD"       from "NEXT"          [2020-05-30 Sat 14:24]
 :END:
-*************** END
+****************** END
 
 
 #+BEGIN_SRC emacs-lisp
@@ -8786,8 +8787,8 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
 #+END_SRC
 Files, out of the folder structure, will appear in my agenda to attach them to the relevant project (unless explicitly specified in special variable).
 
-*************** TODO implement this
-*************** END
+****************** TODO implement this
+****************** END
 
 #+begin_src emacs-lisp
 
@@ -8872,8 +8873,8 @@ CLOCK: [2019-04-24 Wed 15:23]--[2019-04-24 Wed 15:43] =>  0:20
 
 With =org-webtools=, I can download and attach web pages to an entry or even insert them converted into org format.
 
-*************** TODO make the web-pages open on C-c C-o
-*************** END
+****************** TODO make the web-pages open on C-c C-o
+****************** END
 
 
 #+begin_src emacs-lisp
@@ -9667,7 +9668,7 @@ This agenda show the items for the current day and time.
 	  (point))))))
   #+end_src
   
-*************** SOMEDAY [#A] debug =org-agenda-skip-nonurgent-fast= :SOMEDAY:
+****************** SOMEDAY [#A] debug =org-agenda-skip-nonurgent-fast= :SOMEDAY:
 :PROPERTIES:
 :SHOWFROMDATE: 2019-08-06
 :END:
@@ -9676,7 +9677,7 @@ CLOCK: [2019-05-06 Mon 12:49]--[2019-05-06 Mon 14:14] =>  1:25
 CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 - State "NEXT"       from "TODO"       [2019-05-05 Sun 18:42]
 :END:
-*************** END
+****************** END
 - none of [#C] priority items
 #+BEGIN_SRC emacs-lisp
 (defun org-agenda-skip-lowpriority ()
@@ -9713,13 +9714,13 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
 - all items scheduled in the past or today with DOING todo keyword, respecting =:SHOWFROMTIME:= and =:SHOWDATES:=
 - items from diary/with timestamps (shown by default in org)
 - habits
-*************** TODO can I do it with standard org capabilities? (at least, partially)
+****************** TODO can I do it with standard org capabilities? (at least, partially)
 #+begin_src emacs-lisp :tangle no
 (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
  (setq org-agenda-skip-scheduled-if-done t)
  (setq org-agenda-skip-timestamp-if-done t)
 #+end_src
-*************** END
+****************** END
 
   #+begin_src emacs-lisp
 (defun yant/org-agenda-skip-nofocus ()
@@ -9978,7 +9979,7 @@ it by defining time stamp like =<YYYY-MM-DD HH:MM #TIMEZONE#>=, where
 It is implemented by wrapping the hook to correct the time around
 =org-parse-time-string=, which seems to be enough to correct org mode
 behavior. The stamps without time are not parsed (how?).
-*************** NEXT [#A] Make sure it works
+****************** NEXT [#A] Make sure it works
 SCHEDULED: <2017-12-23 Sat>
 :LOGBOOK:
 CLOCK: [2017-12-24 Sun 15:55]--[2017-12-24 Sun 17:52] =>  1:57
@@ -9991,7 +9992,7 @@ CLOCK: [2017-12-24 Sun 08:01]--[2017-12-24 Sun 08:09] =>  0:08
 :END:
 - agenda does not use =org-parse-time-string= to find displayed string
   in timeline, even though task will be shown/not shown respecting time zone
-*************** END
+****************** END
 #+begin_src emacs-lisp :tangle no
 ;; force matching of time zone formatted time stamps
 (setf org-scheduled-time-hour-regexp (concat "\\<" org-scheduled-string
@@ -10266,8 +10267,8 @@ By default, marking a task does not result in updated agenda follow buffer, so I
 ;; (advice-add 'org-agenda-bulk-unmark :after #'org-agenda-bulk-mark@update-follow-mode)
 #+end_src
 
-*************** TODO send to mail list
-*************** END
+****************** TODO send to mail list
+****************** END
 
 Further, I use =tags-todo= search to find all unscheduled tasks, which are also not marked as =NEXT=, and decide what to do with them.
 Typically, I simply scatter them over a week or other period of time.
@@ -10311,8 +10312,8 @@ Later, I just forget that I started reading and do not even check the task body.
 The solution is to show the task contents of every task at point in agenda.
 Also, hide the contents once task is clocked out.
 
-*************** TODO auto-show the contents. make it minor-mode
-*************** END
+****************** TODO auto-show the contents. make it minor-mode
+****************** END
 
 #+begin_src emacs-lisp
 (setq org-agenda-start-with-entry-text-mode nil)
@@ -10383,8 +10384,8 @@ instead."
 :CREATED:  [2019-12-22 Sun 17:16]
 :ID:       43d227d2-2032-4c56-b715-5065b31f1b0c
 :END:
-*************** TODO I do not really use =SHOWDATES=? think about it
-*************** END
+****************** TODO I do not really use =SHOWDATES=? think about it
+****************** END
 
 #+begin_src emacs-lisp
 (add-to-list 'org-default-properties "SHOWDATES")
@@ -10922,8 +10923,8 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
     :straight (helm-org-contacts :host github :repo "tmalsburg/helm-org-contacts")))
 #+END_SRC
 
-*************** TODO make proper contacts link type
-*************** END
+****************** TODO make proper contacts link type
+****************** END
 
 **** TODO Column mode
 :PROPERTIES:
@@ -10936,8 +10937,8 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 Sometimes, I forget what was happening with a task when I did it last time. Notes are useful in such a case.
 However, I do not find it comfortable to look into notes (which are stored in drawer) every time I come back to the task. Instead, I use column mode to show the last stored note.
 
-*************** TODO Put summary on top instead, use org-agenda-show-entry-text to see it then
-*************** END
+****************** TODO Put summary on top instead, use org-agenda-show-entry-text to see it then
+****************** END
 
 #+begin_src emacs-lisp
 ;; Set default column view headings: Task Effort Clock_Summary
@@ -11012,10 +11013,10 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
 - Organisation :: related to work, general
 - Check =TORead= ... :: related to home, browsing, reading fiction, etc I start the activity from clocking in one of these tasks. Later, I clock in the task, which I am doing at the moment. Once it's done, clocking automatically comes back to higher level task (unless it is marked =:NOCLOCK=, see [[id:adc6f5ae-183f-4c5f-97e8-7bfe18f028d2][General org mode tags]]) or to one of the tasks above when I clocked out top level project.
      Captures are also clocked, but once done, clocking comes back to previously active task, if any, or to default task otherwise.
-*************** TODO The default task is not being saved if I restart emacs
-*************** END
-*************** TODO Clock out from subtask from home is wrongly activating home task
-*************** END
+****************** TODO The default task is not being saved if I restart emacs
+****************** END
+****************** TODO Clock out from subtask from home is wrongly activating home task
+****************** END
 #+begin_src emacs-lisp
 (use-package org-clock
   :after org
@@ -11207,8 +11208,8 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
 (add-hook 'org-clock-out-hook 'yant/save-clocked 'append)
 (add-hook 'org-clock-cancel-hook 'yant/save-clocked 'append)
 #+end_src
-*************** TODO Do not need async-start-process here
-*************** END
+****************** TODO Do not need async-start-process here
+****************** END
 ***** Efforts
 :PROPERTIES:
 :CREATED:  [2020-05-04 Mon 17:57]
@@ -11236,8 +11237,8 @@ I would like to highlight that this second use-case is extremely important to av
 
 [2020-05-03 Sun] Mode-line display is also linked to notification when the clocked-in time exceeds effort estimate. Hence, I still display the task in mode-line for the sole purpose of enabling notification.
 
-*************** TODO report in mail-list about mode-line display dependence of effort notification
-*************** END
+****************** TODO report in mail-list about mode-line display dependence of effort notification
+****************** END
 
 #+begin_src emacs-lisp
 (use-package org-clock
@@ -11349,8 +11350,8 @@ Similar idea is used by John Wiegley in [[id:4dda6631-cace-441d-bc4c-a3d778a09d3
 He tracks his clocking time daily to have an idea how long he worked relative to his daily goal (8 hours).
 This idea is not applicable for my work though. Research is often not regularly structured - I can work during weekdays, weekends, at night time when I suddenly get some idea, etc. In such a way, it is important for me to maintain some average work/leisure balance rather than work certain number of hours every workday.
 
-*************** TODO the bonus cannot be correctly handled when we need to update the time after certain point
-*************** END
+****************** TODO the bonus cannot be correctly handled when we need to update the time after certain point
+****************** END
 
 
 
@@ -11598,12 +11599,12 @@ There is also one more use case when I prefer to use capture - creating a new bi
 #+begin_src emacs-lisp
 (use-package org-protocol)
 #+end_src
-*************** TODO Include system scripts here
+****************** TODO Include system scripts here
 CLOSED: [2018-09-23 Sun 17:36]
 :LOGBOOK:
 - State "DONE"       from              [2018-09-23 Sun 17:36]
 :END:
-*************** END
+****************** END
 New frame for capturing. The frame should only have capture buffer in it.
 #+begin_src emacs-lisp
 (use-package org-capture-pop-frame
@@ -11620,8 +11621,8 @@ New frame for capturing. The frame should only have capture buffer in it.
 	(delete-frame))))
 #+end_src
 
-*************** TODO report bug
-*************** END
+****************** TODO report bug
+****************** END
 
 Currently =org-capture-pop-frame= resets the line truncation state, which is rather annoying. Denying it:
 #+begin_src emacs-lisp
@@ -12248,8 +12249,8 @@ A large task that needs to be studied systematically. It has to have a concrete 
 :PROPERTIES:
 :ID:       03521b68-b564-4923-8681-7dbed09e9c17
 :END:
-*************** TODO Should be captured to current project directly
-*************** END
+****************** TODO Should be captured to current project directly
+****************** END
  
 #+begin_src emacs-lisp
 (asoc-put! org-capture-templates
@@ -12403,8 +12404,8 @@ The most time consuming part of refiling is selecting the right subtree. Yes, I 
 
 Occasionally, I need to add subtask to the existing task, which is not a project.
 
-*************** TODO Change global binding in =helm-map=, it does not make sense in place, other than org mode completion
-*************** END
+****************** TODO Change global binding in =helm-map=, it does not make sense in place, other than org mode completion
+****************** END
 
 #+begin_src emacs-lisp
 (defvar refile-to-tasks nil
@@ -12445,8 +12446,8 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 (setq org-refile-target-verify-function 'yant/verify-refile-target)
 #+end_src
 
-*************** TODO Integrate with helm refile
-*************** END
+****************** TODO Integrate with helm refile
+****************** END
 
 ***** Refile to here
       :PROPERTIES:
@@ -12899,18 +12900,18 @@ Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override stand
 Sometimes, I have a small projects, where I do not want to decide whether I want to archive every single subtask or not. I tag them =:ARCHIVEALL:=.
 
 Thanks God, I do not need to open my archive file frequently - my =TODO.org_archive= is =>3Mb= and takes forever to open. I am not sure if I need to do something with it.
-*************** TODO Speed up opening large org files
+****************** TODO Speed up opening large org files
 :LOGBOOK:
 - State "TODO"       from "HOLD"       [2019-05-16 Thu 11:30]
 - State "HOLD"       from "TODO"          [2017-12-22 Fri 22:01] \\
   Consider it if it becomes annoying
 :END:
-*************** END
+****************** END
 
 If a task being archived contains attachments, it is better to delete them.
 Otherwise, I'd rather keep the task in place to avoid hanging files.
-*************** TODO also show the attachment list when asking
-*************** END
+****************** TODO also show the attachment list when asking
+****************** END
 
 #+begin_src emacs-lisp
 (setq org-attach-archive-delete 'query)
@@ -12996,8 +12997,8 @@ Unarchive when UNARCHIVE is non-nil."
 
 Archive logbook
 Credit: https://www.reddit.com/r/orgmode/comments/dg43hs/can_i_archive_a_property_drawer/f3frk2n/
-*************** TODO automate this
-*************** END
+****************** TODO automate this
+****************** END
 
 #+begin_src emacs-lisp
 (defun my/org-archive-delete-logbook ()
@@ -13279,8 +13280,8 @@ Leaving the code below for reference.
 I hate when org is cluttering org file directory with generated files (=:file=). It is better to save everything inside hidden entry's attachment folder instead. I just redefine =default-directory= before
 =org-babel-execute-src-block=, so that =:dir= or =:output-dir= can be still set if needed.
 
-*************** TODO we cannot do it using default-directory because expand-file-name is going recursive if org-babel-execute-src-block calls expand-file-name inside
-*************** END
+****************** TODO we cannot do it using default-directory because expand-file-name is going recursive if org-babel-execute-src-block calls expand-file-name inside
+****************** END
 
 #+BEGIN_SRC emacs-lisp
 (define-advice org-babel-execute-src-block (:filter-args (&optional args) set-detault-dir-to-org-attach-path)
@@ -13330,8 +13331,8 @@ Library of babel function definition:
 (org-expand-link link)
 #+end_src
 
-*************** TODO it should better be supported natively
-*************** END
+****************** TODO it should better be supported natively
+****************** END
 
 Also, it make sense to show inline images, which I frequently generate via Gnuplot after the evaluation
 #+BEGIN_SRC emacs-lisp
@@ -13443,8 +13444,8 @@ I had to modify =org-babel-expand-body:gnuplot= to make it respect =:dir= proper
 I have a lot of small scripts and programs written at some point for some purpose I do not remember anymore. Hence, I prefer to use org files instead of all kinds of script files in the system. There are few things, which I need to make it work comfortably:
 - make sure that the script are tangled when I save org file, because it is easy to forget tangling of some files after editing.
 
-*************** TODO rewrite using threads
-*************** END
+****************** TODO rewrite using threads
+****************** END
 
 ****** Asynchronous tangling
 :PROPERTIES:
@@ -13539,8 +13540,8 @@ Frequently, I run heavy analytical code as a part of my project. I it totally in
 
 https://kdr2.com/tech/emacs/1805-approach-org-ref-code-to-text.html
 In addition to lisp code in =init.el=, it is also possible to define globally available babel functions defined, for example. in this file
-*************** TODO this creates some strange error
-*************** END
+****************** TODO this creates some strange error
+****************** END
 #+begin_src emacs-lisp
 (use-package org
   :hook (org-load . yant/org-babel-ingest-my-files)
@@ -13563,8 +13564,8 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
     (format "\"%s\"" (replace-regexp-in-string "\\\"" "\\\\\"" result))) ;; escape quote
 #+end_src
 
-*************** TODO make auto-completion possible for babel blocks from inside editing org-src
-*************** END
+****************** TODO make auto-completion possible for babel blocks from inside editing org-src
+****************** END
 
 **** COMMENT Alerts - system notifications
 :PROPERTIES:
@@ -13572,8 +13573,8 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 :END:
 
 Alert for upcoming scheduled or agenda entries or agenda entries containing deadline.
-*************** TODO this does not work because of my agenda prefix customisation
-*************** END
+****************** TODO this does not work because of my agenda prefix customisation
+****************** END
 
 #+begin_src emacs-lisp
 (use-package org-alert
@@ -14334,8 +14335,8 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 \\usepackage{arevmath}")
 #+end_src
 
-*************** TODO rewrite into smaller chunks
-*************** END
+****************** TODO rewrite into smaller chunks
+****************** END
 
 #+begin_src emacs-lisp
 (use-package doom-themes
@@ -14397,11 +14398,11 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 :ID:       d5a3c2c8-c6b1-4f21-a548-f6bb8bf85949
 :END:
 
-*************** TODO not reliable, acts on  first space in  empty headline as well
-*************** END
+****************** TODO not reliable, acts on  first space in  empty headline as well
+****************** END
 
-*************** TODO it seems that org-align-tags intereferes with helm completion in bizarre way when tag string appears inside the completion
-*************** END
+****************** TODO it seems that org-align-tags intereferes with helm completion in bizarre way when tag string appears inside the completion
+****************** END
 
 #+begin_src emacs-lisp
 (use-package org
@@ -14452,8 +14453,8 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 :END:
 
 [2020-04-10 Fri] Strange bug causing infinite loop in org-agenda-dim-blocked-tasks when I clock in a dimmed task.
-*************** SOMEDAY investigate this
-*************** END
+****************** SOMEDAY investigate this
+****************** END
 #+begin_src emacs-lisp
 (use-package org-agenda
   :custom (org-agenda-dim-blocked-tasks nil))
@@ -14553,16 +14554,16 @@ Hide some uninteresting tags
 
 Shorten too long headlines in agenda. 
 In order to make the remainder consistent, the multi-byte characters are considered to be [[39a84dde-88d1-46e8-86d0-28fb8f72f30c][double width]] and all headlines containing multi-byte characters are shortened to less chars accordingly.
-*************** TODO the current implementation wrongly cuts links
-*************** END
+****************** TODO the current implementation wrongly cuts links
+****************** END
 
-*************** TODO the idea about multi-byte is not good for Russian text having same width as English...
-*************** END
+****************** TODO the idea about multi-byte is not good for Russian text having same width as English...
+****************** END
 
 In addition use =:align-to= ='display= spec to align tags to right border of the window.
 
-*************** TODO maybe patch org-string-width 
-*************** END
+****************** TODO maybe patch org-string-width 
+****************** END
 
 #+begin_src emacs-lisp
 (defun string-display-width (string &optional mode)
@@ -15029,8 +15030,8 @@ Smaller font for property drawers
 Hide property drawers if they are empty or contain only invisible =org-custom-properties=.
 Also hide the logbooks containing only state changes and clocking.
 
-*************** TODO Find a faster way to hide empty drawers - maybe use font lock
-*************** END
+****************** TODO Find a faster way to hide empty drawers - maybe use font lock
+****************** END
 
 #+begin_src emacs-lisp :tangle no
 (use-package org
@@ -15158,8 +15159,8 @@ Turning on org element cache in attempt to make it faster.
 (custom-set-variables '(org-element-use-cache t))
 #+end_src
 
-*************** TODO check if it is good enough
-*************** END
+****************** TODO check if it is good enough
+****************** END
 
 **** COMMENT =M-RET= should not split lines inside folded entry
 :PROPERTIES:
@@ -16013,8 +16014,8 @@ q ignore
 :CREATED:  [2019-12-15 Sun 02:52]
 :ID:       f8737f19-a0ac-4785-a62c-2504313910ec
 :END:
-*************** SOMEDAY save repo separately :SOMEDAY:
-*************** END
+****************** SOMEDAY save repo separately :SOMEDAY:
+****************** END
 :PROPERTIES:
 :ID: 81ccc50f-f0a4-4a92-b587-ae82f3dc4f0e
 :END:
@@ -16144,8 +16145,8 @@ Profiling showed that they take too much CPU time.
       #+end_src
 
 By default, the position in buffer =mode-line-position= is shown in %. However, I only need this in pdf-view, where I want to see the page number. Since the pdf-view changes this value anyway, I just let the buffer position be blank most of time, unless something (pdf-view) changes it to more useful value.
-*************** TODO move it close to the definition
-*************** END
+****************** TODO move it close to the definition
+****************** END
 
 Show boon state
   #+begin_src emacs-lisp
