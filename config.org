@@ -10997,7 +10997,7 @@ However, I do not find it comfortable to look into notes (which are stored in dr
   :straight (org-autosort :local-repo "~/Git/org-autosort")
   :config
   (add-hook 'org-mode-hook #'org-autosort-sort-entries-in-file-maybe)
-  (setq org-autosort-todo-cmp-order '("WAITING" "REVIEW" "DOING" "NEXT" "HOLD" "TODO" "SOMEDAY" "MERGED" "FAILED" "DONE" "CANCELLED"))
+  (setq org-autosort-todo-cmp-order '("WAITING" "REVIEW" "DOING" "NEXT" "HOLD" "TODO" "SOMEDAY" "TICKLER" "MERGED" "FAILED" "DONE" "CANCELLED"))
   (bind-key "C-c C-S-s" 'org-autosort-sort-entries-at-point org-mode-map)
   (add-to-list 'org-default-properties "SORT"))
 #+end_src
