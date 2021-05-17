@@ -7,7 +7,7 @@
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
 #+ARCHIVE: ::* Archived
 
-* SOMEDAY Emacs configuration :project:EMACS:COMMON:SOMEDAY:
+* SOMEDAY Emacs configuration :AREA:EMACS:COMMON:SOMEDAY:
 :PROPERTIES:
 :ID:       a27092a6-25a6-417f-818f-7f83325b58b3
 :ORG-TIME-BALANCE-MULTIPLIER: -0.5
