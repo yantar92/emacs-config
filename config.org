@@ -1721,6 +1721,7 @@ Define the most basic movement commands:
      (meta-backward-sexp "Move backward sexp." backward-sexp)
      (meta-forward-element "Move forward one element." forward-word)
      (meta-backward-element "Move backward one element." backward-word)
+     (meta-split "Split element at point." split-line)
      (meta-recenter-top-bottom "Recenter text on scree." recenter-top-bottom)
      (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
      (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore)
@@ -4881,8 +4882,10 @@ Smarter elisp editing
     :config
     (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
     (meta-defun meta-move-line-right :mode lisp-interaction-mode paredit-forward-slurp-sexp)
-    (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-backward-slurp-sexp)
-    (meta-defun meta-move-line-left :mode lisp-interaction-mode paredit-backward-slurp-sexp)
+    (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-convolute-sexp)
+    (meta-defun meta-move-line-left :mode lisp-interaction-mode paredit-convolute-sexp)
+    (meta-defun meta-split :mode emacs-lisp-mode paredit-split-sexp)
+    (meta-defun meta-split :mode lisp-interaction-mode paredit-split-sexp)
     (meta-defun meta-forward-element :mode emacs-lisp-mode paredit-forward)
     (meta-defun meta-forward-element :mode lisp-interaction-mode paredit-forward)
     (meta-defun meta-backward-element :mode emacs-lisp-mode paredit-backward)
@@ -13075,8 +13078,9 @@ It can be done using =org-tempo=.
 
 #+begin_src emacs-lisp
 (when init-flag
+  (meta-defun meta-split :mode org-mode :cond (org-in-src-block-p) scimax-split-src-block)
   (bind-keys :map boon-command-map
-	     ("S" . scimax-split-src-block)
+	     ("S" . meta-split)
              ("Z" . scimax-insert-src-block)))
 
 ;; from https://github.com/jkitchin/scimax/blob/master/scimax-ob.el
