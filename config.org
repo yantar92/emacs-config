@@ -13580,6 +13580,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 **** COMMENT Alerts - system notifications
 :PROPERTIES:
 :CREATED:  [2020-04-28 Tue 23:25]
+:ID:       367dc473-1a68-48b0-a462-8d77f2894689
 :END:
 
 Alert for upcoming scheduled or agenda entries or agenda entries containing deadline.
