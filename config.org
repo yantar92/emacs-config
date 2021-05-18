@@ -9245,6 +9245,7 @@ If LOCAL is non-nil, check only local TAG."
 							(quote (and (todo "TODO")
 								    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY"))
 								    (or (tags "SKIP")
+                                                                        (tags "NODEADLINE")
 									(not (subtask)))
 								    ;; (not (tags "NODEADLINE"))
 								    (not (habit))
@@ -9409,11 +9410,11 @@ If LOCAL is non-nil, check only local TAG."
 									(not (subproject)))
 								    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 								    (not (and (tags-local "AREA")
-									    (not (descendants (todo)))))
+									      (not (descendants (todo)))))
 								    (not (descendants
-									(and  (todo "NEXT" "REVIEW" "DOING")
-									      (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-									      )))))))
+									  (and  (todo "NEXT" "REVIEW" "DOING")
+									        (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+									        )))))))
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
