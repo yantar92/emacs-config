@@ -3055,7 +3055,9 @@ Just use external browser to open URLs.
 	     (not (string-match-p "/channel" url)))
 	(browse-url-generic url new-window)
       (browse-url-generic url new-window)
-      ;; (eaf-open-browser url new-window)
+      ;; (if (string-match-p "author\\.today" url)
+      ;;     (browse-url-generic url new-window)
+      ;;   (eaf-open-browser url new-window))
       ))
   :custom
   (browse-url-browser-function 'yant/browse-url)
@@ -5351,7 +5353,7 @@ See https://lists.gnu.org/archive/html/bug-gnu-emacs/2019-11/msg01731.html for d
       (funcall-interactively #'quit-window)))
   (bind-key "q" #'yant/kill-pdf-buffer-and-quit-window pdf-view-mode-map))
 #+end_src
-*** COMMENT =EAF-pdf=
+*** =EAF-pdf=
 :PROPERTIES:
 :ID:       9194264a-b022-4c1d-89f1-16eb685c06e6
 :END:
@@ -6855,7 +6857,7 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
     (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
 #+end_src
 
-** COMMENT Browser
+** Browser
    :PROPERTIES:
    :ID:       ef9c93cd-e760-407c-82cf-2aeffa7a11ad
    :END:
@@ -6873,10 +6875,12 @@ Emacs application framework provides its own implementation of keyboard-driven b
 #+begin_src emacs-lisp
 (use-package eaf
   :if init-flag
-  :load-path "~/Dist/emacs-application-framework"
+  ;; :load-path "~/Git/emacs-application-framework"
   :custom
   (eaf-find-alternate-file-in-dired t)
   :config
+  ;; [[id:8deee691-8b52-451b-8d23-cd6f81b213be][#email Andy Stewart <notifications@github.com> Re: [manateelazycat/emacs-application-framework] No key bindings are working. Everything is perfect. (#657)]]
+  (add-to-list 'eaf-wm-focus-fix-wms "awesome")
   (eaf-bind-key insert_or_open_link_new_buffer "H" eaf-browser-keybinding)
   (eaf-bind-key insert_or_open_link "h" eaf-browser-keybinding)
   (eaf-bind-key insert_or_close_buffer "C-x q" eaf-browser-keybinding)
