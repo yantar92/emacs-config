@@ -6968,7 +6968,7 @@ Research projects generally contain several typical components:
                             ("@work" . ?w))))
 (setq org-tags-exclude-from-inheritance '("ATTACH" "NOCLOCK"
                                           "REFILE" "AREA"
-                                          "project"))
+                                          "project" "goal"))
 #+end_src
 - =COMMON= :: General task
 - =PhD= :: Related to work/PhD
