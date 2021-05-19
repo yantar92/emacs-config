@@ -2626,7 +2626,7 @@ Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's notes: Trying
                  :map boon-backward-search-map
                  ("c" . flycheck-tip-cycle-reverse)))))
 #+end_src
-*** Highlight parentheses everywhere
+*** Highlight parentheses in code
 :PROPERTIES:
 :ID:       767805ca-1482-4299-8a1c-3e3b1a73f94a
 :END:
@@ -2639,7 +2639,8 @@ Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's notes: Trying
   :config
   (add-hook! (prog-mode
               helpful-mode
-              debugger-mode)
+              debugger-mode
+              lisp-interaction-mode)
     #'highlight-parentheses-mode))
 
 (use-package rainbow-delimiters
