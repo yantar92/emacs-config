@@ -1743,7 +1743,7 @@ The problem is that it may mess up the cases when I want to assign special meani
   :config
   (setq boon-special-mode-list
 	'( debugger-mode edebug-mode ediff-mode org-agenda-mode cfw:calendar-mode
-           eww-mode
+           eww-mode bm-show-mode
 	   notmuch-search-mode notmuch-show-mode elfeed-search-mode
 	   notmuch-tree-mode elfeed-show-mode pomidor-mode mingus-mode
 	   notmuch-hello-mode ledger-report-mode help-mode
@@ -1771,8 +1771,8 @@ The problem is that it may mess up the cases when I want to assign special meani
     (add-hook 'org-log-buffer-setup-hook (boon-set-state 'boon-insert-state)))
   (add-hook 'boon-local-mode-hook
 	    (lambda() (when (and boon-local-mode
-			    (member major-mode boon-insert-state-major-mode-list))
-		   (boon-set-state 'boon-insert-state)))
+			         (member major-mode boon-insert-state-major-mode-list))
+		        (boon-set-state 'boon-insert-state)))
 	    'append)
   (defun boon-set-insert-state ()
     "Switch to insert state."
