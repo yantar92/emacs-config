@@ -13297,7 +13297,8 @@ I hate when org is cluttering org file directory with generated files (=:file=).
 #+BEGIN_SRC emacs-lisp
 (define-advice org-babel-execute-src-block (:filter-args (&optional args) set-detault-dir-to-org-attach-path)
   "Set working directory to the current entry's attach directory."
-  (if (eq major-mode 'org-mode)
+  (if (and (eq major-mode 'org-mode)
+           (buffer-file-name))
       (let* ((directory (file-name-as-directory (org-attach-dir 'create-if-none)))
 	     (arg (car args))
              (info (cadr args))
@@ -13306,11 +13307,11 @@ I hate when org is cluttering org file directory with generated files (=:file=).
         (unless (and dir-param (or (equal (f-full default-directory) (f-full dir-param))
 				   (f-absolute-p dir-param)))
           (setf (alist-get :dir params)
-		(if dir-param
+	        (if dir-param
                     (f-join directory (alist-get :dir params))
                   directory)))
-	(list arg info params))
-    (list arg info params)))
+        (list arg info params))
+    args))
 
 ;; (advice-remove 'org-babel-execute-src-block #'org-babel-execute-src-block@set-detault-dir-to-org-attach-path)
 #+END_SRC
