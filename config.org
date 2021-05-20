@@ -15186,7 +15186,6 @@ From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bul
 #+begin_src emacs-lisp
 (setq org-M-RET-may-split-line '((default . nil)))
 #+end_src
-
 **** Org mode editing
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 18:45]
