@@ -7761,7 +7761,7 @@ Store links to pages in pdf
 
 (setq org-file-apps  (delete '("\\.pdf\\'" . (lambda (file link) (org-pdfview-open link))) org-file-apps ))
 #+end_src
-****** TODO Inkscape links
+****** TODO Inkscape (svg) links
 :PROPERTIES:
 :CREATED:  [2018-10-21 Sun 14:05]
 :ID:       824be892-df30-4c07-bf02-93a234fb7885
