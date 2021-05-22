@@ -12181,7 +12181,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
                            ":LOGGING: nil"
                            ":END:"
                            "** TODO Prepare university intellectual property paperwork"
-                           "** TODO Submit to university review"
+                           "** TODO Submit proposal to university review"
                            "** TODO Submit the grant application"
                            "** Get accepted"))))
            'replace)
@@ -12231,7 +12231,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
                            ":LOGGING: nil"
                            ":END:"
                            "** TODO Prepare university intellectual property paperwork"
-                           "** TODO Submit to university review"
+                           "** TODO Submit proposal to university review"
                            "** TODO Submit the grant application"
                            "** Get accepted"))))
            'replace)
