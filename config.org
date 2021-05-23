@@ -11915,8 +11915,6 @@ An area of knowledge I am interested in. Unlike project, this does not have a co
                            ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITiNG(!) HOLD(!) CANCELLED(!)"
                            ":CATEGORY: %{category}[D]"
                            ":END:"
-                           "** Projects :REFILE:"
-                           "# Projects associated with the area."
                            "*** NEXT Refile relevant tasks from more generic topics into %{area-title}"
                            ))))
            'replace)
