@@ -10822,7 +10822,7 @@ current task to NEXT and schedule it the same day."
                      '(and (not (path "rss.org" "schedule.org"))
                            ;; (todo)
                            (not (tags-local "NOREFILE"))
-                           (tags-local "REFILE")
+                           (tags-local "REFILE" "goal")
                            )))))
   (defun yant/helm-org-ql-toggle-archives ()
     "Toggle searching across archive files."
