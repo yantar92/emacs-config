@@ -5354,7 +5354,7 @@ See https://lists.gnu.org/archive/html/bug-gnu-emacs/2019-11/msg01731.html for d
       (funcall-interactively #'quit-window)))
   (bind-key "q" #'yant/kill-pdf-buffer-and-quit-window pdf-view-mode-map))
 #+end_src
-*** =EAF-pdf=
+*** COMMENT =EAF-pdf=
 :PROPERTIES:
 :ID:       9194264a-b022-4c1d-89f1-16eb685c06e6
 :END:
@@ -6858,7 +6858,7 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
     (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
 #+end_src
 
-** Browser
+** COMMENT Browser
    :PROPERTIES:
    :ID:       ef9c93cd-e760-407c-82cf-2aeffa7a11ad
    :END:
