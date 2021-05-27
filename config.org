@@ -1786,7 +1786,6 @@ Also, I do not like default implementation of =boon-special-mode-p=, which force
 #+BEGIN_SRC emacs-lisp
 (use-package boon
   :if init-flag
-  :defer t
   :config
   (define-advice boon-special-mode-p (:around (oldfun) force-special-mode-list-only)
     "Force setting boon-special-mode when mode is in `boon-special-mode-list' and only in it. No exceptions."
@@ -2754,6 +2753,8 @@ I only use it occasionally though.
 :ID:       6ea2a9f7-7b73-4289-976f-b53adcae8f38
 :END:
 
+[2021-05-26 Wed] =outline-minor-mode= is better than hideshow for buffer cycle (aka =org-shifttab=), but unfortunately does not support cycling sexps inside functions.  So, I am using =hideshow= for sexp cycling and [[id:00d3a491-4e46-4140-b713-6a70fd7470da][outline-minor-mode]] for comment/defun cycling.
+
 It is useful to explore large source code files with hidden details of implementation.
 I often use it to search interesting things in Emacs packages.
 
@@ -2761,14 +2762,55 @@ I often use it to search interesting things in Emacs packages.
 (use-package hideshow
   :if init-flag
   :straight t
+  :after outline
+  :after meta-functions
   :diminish hs-minor-mode
+  :init
+  (meta-defun meta-tab "Cycle thing at point." ignore)
+  (meta-defun meta-tab
+    :mode emacs-lisp-mode
+    :cond
+    (save-excursion
+      (goto-char (line-beginning-position))
+      (looking-at-p outline-regexp))
+    (outline-cycle))
+  (meta-defun meta-tab
+    :mode emacs-lisp-mode
+    (hs-toggle-hiding))
+  (meta-defun meta-tab
+    :mode lisp-interaction-mode
+    :cond
+    (save-excursion
+      (goto-char (line-beginning-position))
+      (looking-at-p outline-regexp))
+    (outline-cycle))
+  (meta-defun meta-tab
+    :mode lisp-interaction-mode
+    (hs-toggle-hiding))
   :bind (:map hs-minor-mode-map
 	      :filter boon-command-state
-	      ("<tab>" . hs-toggle-hiding)
-	      ("<backtab>" . hs-hide-all)
-	      ("M-S-<iso-lefttab>" . hs-show-all))
+	      ("<tab>" . meta-tab))
   :hook ((c-mode-common emacs-lisp-mode sh-mode) . hs-minor-mode))
 #+end_src
+*** =outline-minor-mode=
+:PROPERTIES:
+:ID:       00d3a491-4e46-4140-b713-6a70fd7470da
+:END:
+
+It is useful to explore large source code files with hidden details of implementation.
+I often use it to search interesting things in Emacs packages.
+
+#+begin_src emacs-lisp
+(use-package outline
+  :if init-flag
+  :diminish outline-minor-mode
+  :bind (:map outline-minor-mode-map
+	      :filter boon-command-state
+	      ("<tab>" . meta-tab)
+              ("<backtab>" . outline-cycle-buffer))
+  :hook ((c-mode-common emacs-lisp-mode sh-mode) . outline-minor-mode))
+#+end_src
+
 *** Turn on narrow
 :PROPERTIES:
 :ID:       9b629716-48c5-41c7-b34e-5e458922368b
