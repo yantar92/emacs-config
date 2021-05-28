@@ -230,6 +230,7 @@ Now, I can setup =use-package= to simplify subsequent package configuration
   #+begin_src emacs-lisp
 (eval-and-compile (straight-use-package 'use-package))
 ;;(setq use-package-always-defer t)
+(setq use-package-verbose t)
 (use-package diminish :straight t)
 (use-package bind-key)
   #+end_src
@@ -984,6 +985,7 @@ This works instead of default fringe indicators and hence I need to disable frin
                         (string-to-vector " …"))
 ;; Org buffers would use empty table by default
 (use-package org
+  :defer t
   :init
   (setq org-display-table (make-display-table))
   (set-display-table-slot org-display-table 'truncation
@@ -1767,12 +1769,13 @@ The problem is that it may mess up the cases when I want to assign special meani
                                              term-mode vterm-mode
                                              magit-popup-mode))
   (use-package org
+    :defer t
     :config
     (add-hook 'org-log-buffer-setup-hook (boon-set-state 'boon-insert-state)))
   (add-hook 'boon-local-mode-hook
 	    (lambda() (when (and boon-local-mode
-			         (member major-mode boon-insert-state-major-mode-list))
-		        (boon-set-state 'boon-insert-state)))
+			    (member major-mode boon-insert-state-major-mode-list))
+		   (boon-set-state 'boon-insert-state)))
 	    'append)
   (defun boon-set-insert-state ()
     "Switch to insert state."
@@ -2010,6 +2013,7 @@ The basic idea is to prefix movement commands with meta.
 		  :fork (:host github
 			       :repo "yantar92/helm"))
   :diminish helm-mode
+  :requires boon
   :after boon
   :init
   ;; Re-define obsolete variables removed in latest Emacs
@@ -2050,13 +2054,7 @@ The basic idea is to prefix movement commands with meta.
     (pcase helm--prompt
       ((pred (string-match-p "Refile\\|\\(Link to attachment from\\)")) (funcall-interactively #'helm-yank-selection arg))
       (_ (funcall-interactively #'helm-execute-persistent-action))))
-  (use-package helm-config)
-  (use-package helm-files)
-  (use-package helm-command)
-  (define-global-minor-mode helm-global-mode helm-mode
-    (lambda()
-      (helm-mode 1)))
-  (helm-global-mode))
+  (helm-mode 1))
 #+end_src
 
 **** Adaptive sorting of candidates
@@ -2288,22 +2286,21 @@ Do not even need terminal to interact with Git.
 (use-package magit
   :straight t
   :if init-flag
-  :init
-  (use-package transient :straight t)
+  :after boon
+  :requires boon
+  :bind (:map boon-x-map
+              ("g" . magit-status)
+	      ("G" . magit-dispatch-popup)
+	      ("M-g" . magit-file-popup))
   :config
-  (use-package boon :config
-    (bind-keys :map boon-x-map
-	       ("g" . magit-status)
-	       ("G" . magit-dispatch-popup)
-	       ("M-g" . magit-file-popup))
-    (use-package meta-functions
-      :config
-      (meta-defun meta-down-element :mode magit-diff-mode magit-section-forward)
-      (meta-defun meta-up-element :mode magit-diff-mode magit-section-backward)
-      (meta-defun meta-down-element :mode magit-status-mode magit-section-forward)
-      (meta-defun meta-up-element :mode magit-status-mode magit-section-backward)
-      (meta-defun meta-down-element :mode magit-revision-mode magit-section-forward)
-      (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward))))
+  (use-package meta-functions
+    :config
+    (meta-defun meta-down-element :mode magit-diff-mode magit-section-forward)
+    (meta-defun meta-up-element :mode magit-diff-mode magit-section-backward)
+    (meta-defun meta-down-element :mode magit-status-mode magit-section-forward)
+    (meta-defun meta-up-element :mode magit-status-mode magit-section-backward)
+    (meta-defun meta-down-element :mode magit-revision-mode magit-section-forward)
+    (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward)))
 #+END_SRC
 **** Interaction with Github
 :PROPERTIES:
@@ -2336,6 +2333,7 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
 
 #+begin_src emacs-lisp
 (use-package magit
+  :after magit
   :custom
   (magit-section-initial-visibility-alist
    '((stashes . hide) (untracked . hide) (unpushed . hide))))
@@ -2348,6 +2346,7 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
 #+begin_src emacs-lisp
 (use-package magit
   :if init-flag
+  :after magit
   :custom
   (magit-repository-directories '(("~/Git" . 1)
                                   ("~/Org" . 0)))
@@ -3405,7 +3404,8 @@ And extend it with =dired+=
 #+BEGIN_SRC emacs-lisp
 (use-package dired+
   :if init-flag
-  :straight t)
+  :straight t
+  :after dired)
 #+END_SRC
 
 ****************** TODO re-check performance
@@ -4066,7 +4066,9 @@ So, I define a meta-function to make open-line work as correctly regardless of t
   :if init-flag
   :config
   (meta-defun meta-open-line "Create an empty line above point." boon-open-line)
-  (use-package org :config 
+  (use-package org
+    :defer t
+    :config
     (meta-defun meta-open-line :mode org-mode org-open-line))
   (bind-key "C-o" 'meta-open-line boon-command-map))
 #+END_SRC
@@ -4307,7 +4309,6 @@ There is also built-in skeleton mode, but =yasnippet= also has a good user-contr
 (use-package yasnippet
   :if init-flag
   :straight t
-  :defer 2
   :diminish (yas-minor-mode . " ⇶_")
   :hook ((org-mode latex-mode markdown-mode prog-mode lisp-interaction-mode) . yas-minor-mode)
   :config
@@ -4328,6 +4329,7 @@ I also added =self-insert-command= check to avoid calling, say, on movement comm
 #+begin_src emacs-lisp
 (use-package yasnippet
   :if init-flag
+  :after yasnippet
   :config
   (defun my-yas-try-expanding-auto-snippets ()
     (when (and (boundp 'yas-minor-mode) yas-minor-mode)
@@ -5249,6 +5251,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 #+begin_src emacs-lisp
 (use-package pdf-tools
   :if init-flag
+  :defer t
   :straight (pdf-tools :type git :host github :repo "politza/pdf-tools" :local-repo "~/Git/pdf-tools"
 		       :fork (:host github
 				    :repo "yantar92/pdf-tools"))
@@ -5267,14 +5270,6 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
     "Go up document in pdf-view."
     (interactive)
     (pdf-view-previous-line-or-previous-page 5))
-  (use-package pdf-annot)
-  (use-package pdf-occur)
-  (use-package pdf-history)
-  (use-package pdf-links)
-  (use-package pdf-outline)
-  (use-package pdf-sync)
-  (use-package pdf-isearch)
-  (use-package pdf-cache)
   :config
   (pdf-tools-install)
   (add-hook 'pdf-view-mode-hook #'pdf-view-fit-width-to-window 'APPEND)
@@ -5313,8 +5308,8 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 #+begin_src emacs-lisp
 (use-package pdf-tools
   :if init-flag
+  :defer t
   :init
-  (use-package pdf-view :demand t)
   (defun pdf-view--rotate (&optional counterclockwise-p page-p)
     "Rotate PDF 90 degrees.  Requires pdftk to work.\n
        Clockwise rotation is the default; set COUNTERCLOCKWISE-P to
@@ -5371,6 +5366,7 @@ It's magic
   :defer t
   :init
   (use-package pdf-view
+    :defer t
     :config
     (setq pdf-cache-prefetch-delay 8)))
 #+end_src
@@ -5803,7 +5799,6 @@ Show the key strokes.
 (use-package elfeed
   :if init-flag
   :straight t
-  :demand t
   :bind (:map elfeed-search-mode-map
 	      ("q" . delete-frame)
 	      ("r" . elfeed-search-update--force)
@@ -5902,7 +5897,8 @@ Show the key strokes.
   (use-package elfeed-org
     :straight t
     ;; I do not want my rss list to be in .emacs.d/var directory
-    :after no-littering
+    :requires no-littering
+    :after elfeed
     :config
     (elfeed-org)
     (setq rmh-elfeed-org-files (list "~/Org/rss.org"))))
@@ -5944,6 +5940,7 @@ And group them by rss feed, which further helps to focus on a single topic at a 
 
 #+begin_src emacs-lisp
 (use-package elfeed-score
+  :after elfeed-score
   :config
   (defun yant/elfeed-group-by-feed (entry1 entry2)
     (let ((time1 (elfeed-entry-date entry1))
@@ -5967,6 +5964,7 @@ Save elfeed buffer on quit to make sure that database is more likely saved if Em
 #+begin_src emacs-lisp :tangle no
 (use-package elfeed
   :if init-flag
+  :after elfeed
   :config
   (defun yant/elfeed-save-and-quit ()
     "Save elfeed database and quit."
@@ -5988,6 +5986,7 @@ Can be still occasionally useful to navigate the complicated threads though.
 #+begin_src emacs-lisp
 (use-package notmuch
   :straight t
+  :commands (notmuch notmuch-search)
   :config
   (use-package boon
     :if init-flag
@@ -6073,8 +6072,8 @@ the notmuch-tree buffer if it appears after closing the message."
 	       ("C-c C-S-d" . notmuch-show-delete)
                :map notmuch-tree-mode-map
                ("v" . (lambda () (interactive) (if (window-live-p notmuch-tree-message-window)
-					      (with-selected-window notmuch-tree-message-window
-						(yant/notmuch-show-view-html-part)))))
+					           (with-selected-window notmuch-tree-message-window
+						     (yant/notmuch-show-view-html-part)))))
                ("q" . notmuch-tree-close-and-quit)
                ("C-c C-u" . notmuch-tree-unread)
 	       ("C-c C-d" . notmuch-tree-done)
@@ -6151,6 +6150,7 @@ the notmuch-tree buffer if it appears after closing the message."
   :defer t
   :config
   (use-package helm-notmuch
+    :after notmuch
     :straight t))
 #+end_src
 **** Tagging of sent messages
@@ -6179,6 +6179,7 @@ the notmuch-tree buffer if it appears after closing the message."
 #+begin_src emacs-lisp
 (use-package notmuch
   :if init-flag
+  :after notmuch
   :config
   (defun notmuch-show-delete ()
     (interactive)
@@ -6289,8 +6290,8 @@ I am using w3m as rendered. It should also be [[id:66a5989e-9d17-40af-b680-494ef
 
   #+begin_src emacs-lisp
 (use-package w3m
-  :demand t
-  :straight t)
+  :straight t
+  :commands w3m)
 (when init-flag
   (custom-set-variables
    '(mm-external-terminal-program "kitty")
@@ -6607,6 +6608,7 @@ Some email clients add unreadable symbols like =&nbsp;= into text version of the
 #+begin_src emacs-lisp
 (use-package notmuch
   :if init-flag
+  :defer t
   :config
 
   (defvar yant/notmuch-show-repl-regexps '(("&nbsp; ?" . "")
@@ -6650,6 +6652,7 @@ in message body.")
 #+begin_src emacs-lisp
 (use-package notmuch
   :if init-flag
+  :defer t
   :config
   (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check))
 #+end_src
@@ -6664,6 +6667,7 @@ Making sure to conform to Bastein's [[notmuch:id:87o8lwhek2.fsf@gnu.org][request
 #+begin_src emacs-lisp
 (use-package notmuch
   :if init-flag
+  :defer t
   :config
   (defun yant/notmuch-mua-woof-check-maybe ()
     "Remind to use Woof headers when sending email to org-mode maillist."
@@ -6689,6 +6693,7 @@ As recommended in [[https://orgmode.org/worg/org-mailing-list.html#orgf343a0f][W
 #+begin_src emacs-lisp
 (use-package notmuch
   :if init-flag
+  :defer t
   :config
   (defun yant/notmuch-mua-too-long-cite-reminder ()
     "Remind to cut unnecessary thread citation when replying to orgmode."
@@ -6719,6 +6724,7 @@ Part of eliminating bad habits as in [[id:9562f1fc-9b35-4573-b42e-7bb2fcef8a7a][
 
 #+begin_src emacs-lisp
 (use-package notmuch
+  :defer t
   :config
   (define-advice notmuch (:override () disable)
     "Disable `notmuch' command."
@@ -6734,6 +6740,7 @@ Part of eliminating bad habits as in [[id:9562f1fc-9b35-4573-b42e-7bb2fcef8a7a][
 (setq message-dont-reply-to-names `("noreply"
                                     ,user-mail-address))
 (use-package notmuch
+  :defer t
   :config
   (defun yant/notmuch-honor-dont-reply-to-names ()
     "Maybe remove To: header components according to `message-dont-reply-to-names'.
@@ -6853,6 +6860,7 @@ print(detect(text))
 #+begin_src emacs-lisp 
 (use-package org-msg
   :straight t
+  :after notmuch
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:Ihor Radchenko email:nil \\n:t"
 	org-msg-startup "hidestars inlineimages"
@@ -6883,6 +6891,7 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
 #+begin_src emacs-lisp
 (use-package org-msg
   :if init-flag
+  :after notmuch
   :config
   (remove-hook 'notmuch-mua-send-hook #'notmuch-mua-message-send-hook))
 #+end_src
@@ -6950,7 +6959,7 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 #+begin_src emacs-lisp
 (use-package org
   :if (or init-flag org-export-flag org-tangle-flag)
-  :demand t)
+  :defer t)
 #+end_src
 
 *** Workflow
@@ -7203,7 +7212,7 @@ Unschedule when WAITING is set."
   - TICKLER(l) :: This task should appear in agenda from time to time, so that I do not forget about it. When the task state is changed TICKLER->TICKLER, it is rescheduled using spaced repetition method.
 #+begin_src emacs-lisp
 (use-package org-drill
-  :demand t
+  :after org
   :straight t
   :config
   (defun yant/org-smart-reschedule (quality)
@@ -7313,6 +7322,7 @@ I use inline tasks to add temporary todo state (instead of notes). It should be 
 ****************** END
 #+begin_src emacs-lisp
 (use-package org
+  :defer t
   :config
   (use-package org-inlinetask
     :demand t
@@ -7375,6 +7385,7 @@ I use [[http://www.nongnu.org/org-edna-el/][org-edna]] for managing dependencies
 #+BEGIN_SRC emacs-lisp
 (use-package org-edna
   :straight t
+  :after org
   :diminish org-edna-mode
   :config
   (org-edna-mode))
@@ -7388,6 +7399,7 @@ I may add multiple TODOs for different series, but it usually make sense to watc
 I can do it using =org-edna=
 #+begin_src emacs-lisp
 (use-package org-edna
+  :after org
   :bind (:map org-mode-map
 	      ("C-c C-x M-p" . yant/org-set-preceding-task))
   :config
@@ -7418,6 +7430,7 @@ In addition, I force all the check-boxes to be checked before a task can be mark
 Otherwise, there is not much point in check-boxes for me.
 #+begin_src emacs-lisp
 (use-package org
+  :defer t  
   :custom
   (org-enforce-todo-checkbox-dependencies t))
 #+end_src
@@ -7431,6 +7444,7 @@ By default, tasks with repeated are changed to "TODO" state. I prefer "NEXT".
 #+begin_src emacs-lisp
 (use-package org
   :if init-flag
+  :defer t
   :custom (org-todo-repeat-to-state "NEXT"))
 #+end_src
 
@@ -7441,8 +7455,10 @@ By default, tasks with repeated are changed to "TODO" state. I prefer "NEXT".
 
 Habits are regular tasks which are treated specially in agenda to show if I missed it.
 #+begin_src emacs-lisp
-(use-package org-habit)
-(setq org-habit-graph-column 120)
+(use-package org-habit
+  :after org
+  :config
+  (setq org-habit-graph-column 120))
 #+end_src
 
 Any tasks can be made a habit by adding an appropriate properties.
@@ -7795,7 +7811,6 @@ Store links to pages in pdf
 (use-package org-pdftools
   :straight t
   :after org
-  :demand t
   :config
   (org-pdftools-setup-link))
 
@@ -8033,7 +8048,8 @@ Show parent project as top (or second top) suggestion."
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-id)
+(use-package org-id
+  :after org)
 (setq org-id-method (quote uuidgen))
 (setq org-id-link-to-org-use-id 't)
 #+end_src
@@ -8160,6 +8176,7 @@ Do not ask every time I try to evaluate elisp: links
 #+begin_src emacs-lisp
 (use-package org
   :if init-flag
+  :defer t
   :config
   (setq org-link-elisp-confirm-function nil))
 #+end_src
@@ -8176,8 +8193,8 @@ Do not ask every time I try to evaluate elisp: links
 (use-package org-ref
   :if init-flag
   :straight (org-ref :type git :host github :repo "jkitchin/org-ref" :local-repo "~/Git/org-ref"
-	       :fork (:host github :repo "yantar92/org-ref"))
-  :demand t
+	             :fork (:host github :repo "yantar92/org-ref"))
+  :after org
   :init
   (use-package bibtex-completion :demand t)
   (use-package lv :straight t)
@@ -8198,6 +8215,7 @@ Do not ask every time I try to evaluate elisp: links
 	     ("C-c [" . org-ref-helm-insert-ref-link))
   (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
   (use-package org-ref
+    :after org
     :config
     (add-to-list 'org-ref-bibtex-journal-abbreviations '("PMAG" "Philosophical Magazine" "Philos. Mag."))
     (add-to-list 'org-ref-bibtex-journal-abbreviations '("MRSBEA" "MRS Bulletin" "MRS Bull."))
@@ -8214,6 +8232,7 @@ Do not ask every time I try to evaluate elisp: links
 
 #+begin_src emacs-lisp
 (use-package org-ref
+  :after org
   :config
   (defun org-ref-setup-label-finders ()
     "Set up the functions for maintaining labels in a buffer."
@@ -8258,6 +8277,7 @@ It is handy to be able to find all other headlines having links to current headl
 
 #+begin_src emacs-lisp :tangle no
 (use-package org-super-links
+  :after org
   :straight (org-super-links :type git :host github :repo "toshism/org-super-links")
   )
 #+end_src
@@ -8303,6 +8323,7 @@ This includes:
 #+begin_src emacs-lisp
 (use-package org
   :if init-flag
+  :defer t
   :init
   (use-package cdlatex
     :straight t
@@ -8428,6 +8449,7 @@ This includes:
 (add-to-list 'org-default-properties "SHOWDATES")
 (defun org-agenda-skip-noshowdates()
   "Skip agenda item if :SHOWDATES: property sexp is not matching today"
+  (require 'diary-lib)
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
@@ -8475,7 +8497,7 @@ CLOCK: [2019-04-24 Wed 15:43]--[2019-04-24 Wed 15:46] =>  0:03
 :END:
 #+begin_src emacs-lisp
 (use-package org-attach
-  :demand t
+  :after org
   :config
 #+end_src
 ***** Default attachment directory + multi-selection for attach
@@ -8931,13 +8953,14 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 #+begin_src emacs-lisp
 (use-package org-web-tools
   :if init-flag
+  :after org
   :straight (org-web-tools :host github :repo "alphapapa/org-web-tools" :local-repo "~/Git/org-web-tools"
 			   :fork (:host github :repo "yantar92/org-web-tools"))
   :bind (:map org-mode-map
 	      ("C-c C-S-u a" . org-web-tools-archive-attach)
 	      ("C-c C-S-u o" . org-web-tools-archive-view)
 	      ("C-c C-S-u i" . org-web-tools-insert-web-page-as-entry))
-  :init (use-package org-web-tools-archive)
+  ;; :init (use-package org-web-tools-archive)
   :config
   ;; (setq org-web-tools-archive-fn #'org-web-tools-archive--wget-tar)
   (setq org-web-tools-archive-wget-options
@@ -9621,6 +9644,7 @@ By default, filtering commands in agenda replace the currently active filter. Ad
 #+begin_src emacs-lisp
 (use-package org-agenda
   :if init-flag
+  :after org
   :config
   (define-advice org-agenda-filter (:filter-args (&optional strip-or-accumulate) inverse-filter-modification)
     "Modify filter by default."
@@ -9921,6 +9945,7 @@ Agenda is excellent for short term planning, however it is not very useful if I 
   :config
   (use-package calfw-org
     :straight t
+    :after org
     :config
     (setq calendar-week-start-day 1)
     (defun cfw:open-calendar (arg)
@@ -9988,6 +10013,7 @@ Agenda is excellent for short term planning, however it is not very useful if I 
 (use-package org-gcal
   :if init-flag
   :straight t
+  :after org
   :config
   (setq org-gcal-down-days 360)
   (setq org-gcal-sync-idle-secs (* 60 20)) ; 20 min
@@ -10370,9 +10396,11 @@ Also, hide the contents once task is clocked out.
 #+begin_src emacs-lisp
 (setq org-agenda-start-with-entry-text-mode nil)
 (use-package quick-peek
+  :defer t
   :straight t)
 (use-package org-quick-peek
   :if init-flag
+  :after org
   :straight (org-quick-peek :type git :host github :repo "alphapapa/org-quick-peek" :local-repo "~/Git/org-quick-peek"
 			    :fork (:host github :repo "yantar92/org-quick-peek"))
   :requires quick-peek
@@ -10415,6 +10443,7 @@ Bug report: [[id:75b22f226a98806ce13c1834e115450e0aa3c01a][yantar92 [Github] iss
 #+begin_src emacs-lisp
 (use-package org-quick-peek
   :if init-flag
+  :after org
   :config
   (defun quick-peek-overlay-ensure-at (pos)
     "Find or create a quick-peek overlay for the line at POS.
@@ -10465,6 +10494,7 @@ instead."
 (use-package org-ql
   :straight (org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
 	      :fork (:host github :repo "yantar92/org-ql"))
+  :after org
   :config
   (use-package org-ql-search :demand t)
   (setq org-ql-plain-string-predicate 'keyword)
@@ -10908,11 +10938,10 @@ current task to NEXT and schedule it the same day."
 (use-package helm-org-ql
   :straight (helm-org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
 			 :fork (:host github :repo "yantar92/org-ql"))
+  :after org-ql
   :custom
   (helm-org-ql-reverse-paths t)
   (helm-org-ql-show-paths nil)
-  :init
-  (use-package helm-org :straight t :demand t) ;; required by helm-org-ql
   :config
   (require 'helm-org-ql)
   (use-package boon
@@ -10930,6 +10959,7 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 #+begin_src emacs-lisp
 (use-package org-agenda
   :if init-flag
+  :after org
   :config
   (add-to-list 'org-global-properties '("SHOWDATES" . nil))
   (add-to-list 'org-global-properties '("SHOWFROMTIME" . nil))
@@ -10968,6 +10998,7 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-contacts
+  :after org
   :init
   (setq org-contacts-files '("/home/yantar92/Org/contacts.org"))
   :config
@@ -11046,6 +11077,7 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 :END:
 #+begin_src emacs-lisp
 (use-package org-autosort
+  :after org
   :straight (org-autosort :local-repo "~/Git/org-autosort")
   :config
   (add-hook 'org-mode-hook #'org-autosort-sort-entries-in-file-maybe)
@@ -11294,6 +11326,7 @@ I would like to highlight that this second use-case is extremely important to av
 
 #+begin_src emacs-lisp
 (use-package org-clock
+  :after org
   :if init-flag
   :config
   (use-package pomidor
@@ -11331,6 +11364,7 @@ Sometimes I need to jump to some urgent task. After it is done, I hate searching
   (use-package helm-org
     ;; :bind (:map boon-goto-map
     ;; 		("p" . helm-org-agenda-files-headings))
+    :after org
     :config
     (defun dfeich/helm-org-clock-in (marker)
       "Clock into the item at MARKER"
@@ -11359,6 +11393,7 @@ So, let Emacs automatically clock out the current task when Emacs is idle for a 
 #+begin_src emacs-lisp :tangle no
 (use-package org-clock
   :if init-flag
+  :after org
   :custom
   (org-clock-auto-clockout-timer (* 60 60 2)) ; 2 hours
   :config
@@ -11618,7 +11653,9 @@ ignoring the previously saved values."
 [[id:4bdd5519-84bc-472c-8a44-f000054f3bcc][rksm/clj-org-analyzer: Fun with org data]] is a java program that parses org files for clocking data and provide a nice web interface to visualise the data. The clock summary can be limited to certain tags to heading text search.
 
 #+begin_src emacs-lisp
-(use-package org-analyzer :straight t)
+(use-package org-analyzer
+  :commands org-analyzer-start
+  :straight t)
 #+end_src
 
 ***** =__epilogue=
@@ -11635,6 +11672,7 @@ ignoring the previously saved values."
 #+begin_src emacs-lisp
   (when init-flag
   (use-package org-capture
+    :after org
     :config
 #+end_src
 Capturing is an important part of my workflow. It allows me to quickly note down the task or thought for future consideration and continue the current task.
@@ -11649,7 +11687,8 @@ There is also one more use case when I prefer to use capture - creating a new bi
 :ID:       0702c999-0ee5-494c-a1d7-1bb4024c43f7
 :END:
 #+begin_src emacs-lisp
-(use-package org-protocol)
+(use-package org-protocol
+  :after org)
 #+end_src
 ****************** TODO Include system scripts here
 CLOSED: [2018-09-23 Sun 17:36]
@@ -11660,6 +11699,7 @@ CLOSED: [2018-09-23 Sun 17:36]
 New frame for capturing. The frame should only have capture buffer in it.
 #+begin_src emacs-lisp
 (use-package org-capture-pop-frame
+  :after org
   :straight t
   :config
   (setq ocpf-frame-parameters '((name . "org-capture-pop-frame")))
@@ -11732,6 +11772,7 @@ Also, use yasnippet during capture #yasnippet
 (use-package ya-org-capture
   :straight (ya-org-capture :type git :host github :repo "ag91/ya-org-capture" :local-repo "~/Git/ya-org-capture"
 			    :fork (:host github :repo "yantar92/ya-org-capture"))
+  :after org
   :config
   (ya-org-capture/setup))
 #+end_src
@@ -11769,6 +11810,7 @@ $0
         ""))))
 
 (use-package ya-org-capture
+  :defer t
   :config
   (asoc-put! org-capture-templates
 	     "n"
@@ -12508,6 +12550,7 @@ Use =helm-org= to refile searched heading to point.
 
 #+begin_src emacs-lisp
 (use-package helm-org
+  :after org
   :if init-flag
   :straight t
   :demand t
@@ -12859,6 +12902,7 @@ Modifying =org-archive--compute-location= to accept =%y= keyword for archive yea
 In addition, =%s= and =%S= in =org-archive-location= now mean file name with extension and file without last extension.
 #+begin_src emacs-lisp
 (use-package org-archive
+  :after org
   :config
   (setq org-archive-mark-done nil)
   (setq org-archive-location "%S_archive_%y.org::datetree/* Archived Tasks")
@@ -12893,6 +12937,7 @@ Since the archives are not always contained in a single file, org id and text se
 
 #+begin_src emacs-lisp
 (use-package org-id
+  :after org
   :custom
   (org-id-extra-files 'org-agenda-text-search-extra-files)
   :config
@@ -13111,10 +13156,11 @@ I can just type =<el<TAB>= to enter elisp code block.
 It can be done using =org-tempo=.
 
 #+begin_src emacs-lisp
-  (use-package org-tempo
-    :if init-flag
-    :init
-    (push (cons "el" "src emacs-lisp") org-structure-template-alist))
+(use-package org-tempo
+  :after org
+  :if init-flag
+  :init
+  (push (cons "el" "src emacs-lisp") org-structure-template-alist))
 #+end_src
 
 ***** Source block editing functions from scimax
@@ -13597,6 +13643,7 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 ****************** END
 #+begin_src emacs-lisp
 (use-package org
+  :defer t
   :hook (org-load . yant/org-babel-ingest-my-files)
   :config
   (defun yant/org-babel-ingest-my-files ()
@@ -13633,6 +13680,7 @@ Alert for upcoming scheduled or agenda entries or agenda entries containing dead
 #+begin_src emacs-lisp
 (use-package org-alert
   :straight t
+  :after org
   :config
   (setq alert-default-style 'libnotify)
   (org-alert-enable))
@@ -13761,6 +13809,7 @@ Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current
 
 #+begin_src emacs-lisp
 (use-package org
+  :defer t
   :config
   (defun org-toggle-inline-images-at-point ()
     (when-let* ((link-region (org-in-regexp org-link-bracket-re 1)))
@@ -15254,10 +15303,12 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 
 #+begin_src emacs-lisp
 (use-package ol-notmuch
+  :after org
   :custom
   (org-notmuch-open-function #'notmuch-tree))
 (use-package helm-notmuch
   :straight t
+  :after (notmuch helm)
   :config
   (let ((helm-source-notmuch-action (alist-get 'action helm-source-notmuch)))
     (setf (alist-get 'action helm-source-notmuch)
@@ -15331,10 +15382,8 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 ;; (setq org-imenu-depth 8)
 (use-package meta-functions
   :if init-flag
+  :after helm-org-ql
   :config
-  (use-package helm-org-ql :demand t)
-  ;; (setq org-goto-max-level 8)
-  ;; (setq org-goto-interface 'outline-path-completion)
   (meta-defun meta-goto :mode org-mode (helm-org-ql (current-buffer) :narrow t)))
 #+end_src
 *** Magit integration 
@@ -15349,6 +15398,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
 #+begin_src emacs-lisp
 (use-package magit
   :if init-flag
+  :after magit
   :config
   (defvar yant/magit-show-autocommit-regexps '("^\\(-\\|\\+\\)[ \t]*:SHOWFROMDATE:.+\n"
 					       "^\\(\\+\\|-\\)[ \t]*- State .+from.+\n"
@@ -15555,8 +15605,8 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 (use-package org-crypt
   :config
   (use-package ob-tangle
+    :after org-ql
     :config
-    (use-package org-ql :demand t)
     (defun yant/org-decrypt-for-tangle-maybe ()
       "Decrypt entries in buffer when they have TANGLE tag."
       (require 'org-ql)
@@ -15779,6 +15829,7 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
 :END:
 #+BEGIN_SRC emacs-lisp
 (use-package w3m
+  :after w3m
   :config
   (setq w3m-image-no-idle-timer t))
 #+END_SRC
