@@ -11269,12 +11269,13 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
   (when (fboundp 'org-mode)
     (save-mark-and-excursion
       (save-restriction
-	(org-back-to-heading)
-	(mapconcat #'identity (org-get-outline-path 'with-self 'cache) "||")))))
+	(org-back-to-heading t)
+        (format "{%s} %s" (org-get-category) (org-link-display-format (org-get-heading t t t t)))
+	;; (org-format-outline-path (org-get-outline-path 'with-self 'cache) 110 nil "→")
+        ))))
 
 (defun yant/clocked-fulltitle ()
   "Construct string, describing currently clocked entry time and full path to this entry."
-  (use-package org-clock)
   (if org-capture-mode
       (concat "Capturing " (plist-get org-capture-plist :description) "...")
     (yant/task-fulltitle)))
