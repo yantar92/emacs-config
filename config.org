@@ -2768,24 +2768,34 @@ I often use it to search interesting things in Emacs packages.
   (meta-defun meta-tab "Cycle thing at point." ignore)
   (meta-defun meta-tab
     :mode emacs-lisp-mode
-    :cond
-    (save-excursion
-      (goto-char (line-beginning-position))
-      (looking-at-p outline-regexp))
-    (outline-cycle))
+    (hs-toggle-hiding))
   (meta-defun meta-tab
     :mode emacs-lisp-mode
+    :cond
+    (save-excursion
+      (or (save-excursion
+            (goto-char (line-beginning-position))
+            (looking-at-p outline-regexp))
+          (and (bounds-of-thing-at-point 'list)
+               (goto-char (car (bounds-of-thing-at-point 'list)))
+               (looking-at-p "^")
+               (looking-at-p outline-regexp))))
+    (outline-cycle))
+  (meta-defun meta-tab
+    :mode lisp-interaction-mode
     (hs-toggle-hiding))
   (meta-defun meta-tab
     :mode lisp-interaction-mode
     :cond
     (save-excursion
-      (goto-char (line-beginning-position))
-      (looking-at-p outline-regexp))
+      (or (save-excursion
+            (goto-char (line-beginning-position))
+            (looking-at-p outline-regexp))
+          (and (bounds-of-thing-at-point 'list)
+               (goto-char (car (bounds-of-thing-at-point 'list)))
+               (looking-at-p "^")
+               (looking-at-p outline-regexp))))
     (outline-cycle))
-  (meta-defun meta-tab
-    :mode lisp-interaction-mode
-    (hs-toggle-hiding))
   :bind (:map hs-minor-mode-map
 	      :filter boon-command-state
 	      ("<tab>" . meta-tab))
