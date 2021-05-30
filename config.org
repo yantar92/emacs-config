@@ -15295,7 +15295,7 @@ Turning on org element cache in attempt to make it faster.
 [2021-05-05 Wed] Trying again
 
 #+begin_src emacs-lisp
-(custom-set-variables '(org-element-use-cache t))
+(custom-set-variables '(org-element-use-cache nil))
 #+end_src
 
 ****************** TODO check if it is good enough
