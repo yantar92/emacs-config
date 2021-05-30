@@ -6915,6 +6915,28 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
 
 #+begin_src emacs-lisp
 (use-package erc
+  :requires erc-hl-nicks
+  :init
+  (use-package erc-hl-nicks
+    :straight t
+    :defer t)
+  :custom
+  (erc-default-server "irc.libera.chat")
+  (erc-nick "yantar92")
+  (erc-prompt-for-nickserv-password nil)
+  (erc-interpret-mirc-color t)
+  (erc-rename-buffers t)
+  (erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+  (erc-track-exclude-types '("JOIN" "NICK" "QUIT" "MODE"))
+  (erc-track-enable-keybindings nil)
+  (erc-fill-column 100)
+  (erc-fill-function #'erc-fill-static)
+  (erc-fill-static-center 20)
+  (erc-autojoin-channels-alist '(("irc.libera.chat" "#emacs" "#org-mode")))
+  (erc-modules '( autoaway autojoin button completion fill
+                  irccontrols keep-place list match menu
+                  move-to-prompt netsplit networks noncommands
+                  readonly ring stamp track smiley spelling hl-nicks))
   :config
   (use-package meta-functions
     :config
