@@ -10431,11 +10431,10 @@ Also, hide the contents once task is clocked out.
   :straight t)
 (use-package org-quick-peek
   :if init-flag
+  :after org
   :straight (org-quick-peek :type git :host github :repo "alphapapa/org-quick-peek" :local-repo "~/Git/org-quick-peek"
 			    :fork (:host github :repo "yantar92/org-quick-peek"))
   :requires quick-peek
-  :bind (:map org-agenda-mode-map
-	      ("<tab>" . org-quick-peek-agenda-current-item))
   :custom
   (org-quick-peek-show-lines 20)
   (org-quick-peek-show-drawers nil)
@@ -10445,6 +10444,7 @@ Also, hide the contents once task is clocked out.
 					 #'s-trim
                                          (apply-partially #'s-replace-regexp "\n+" "\n")))
   :config
+  (bind-key "<tab>" #'org-quick-peek-agenda-current-item 'org-agenda-mode-map)
   (define-advice org-agenda-clock-in (:after (&rest args) quick-peek-maybe)
     "Show contents of the org-entry at point when there is any."
     (org-agenda-redo@org-quick-peek--hide-all)
@@ -15989,7 +15989,6 @@ When doing feature development, it makes little sense to merge the feature branc
 :ID:       2c9568b7-4081-470c-b066-2beb126dbbed
 :header-args+: :tangle no
 :END:
-
 ** Main config
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 03:08]
