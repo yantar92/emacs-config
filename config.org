@@ -1617,6 +1617,15 @@ This section contains customisation relevant to actions associated with running 
   #+begin_src emacs-lisp
 (setq use-dialog-box nil)
   #+end_src
+*** Minibuffer
+**** Do not transfer minibuffer between frames
+:PROPERTIES:
+:ID:       cde20f58-0458-49cc-af89-62b376ca0eef
+:END:
+
+#+begin_src emacs-lisp
+(setq minibuffer-follows-selected-frame nil)
+#+end_src
 
 *** Tooltips
 :PROPERTIES:
