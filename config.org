@@ -10443,7 +10443,7 @@ Also, hide the contents once task is clocked out.
   :after org
   :straight (org-quick-peek :type git :host github :repo "alphapapa/org-quick-peek" :local-repo "~/Git/org-quick-peek"
 			    :fork (:host github :repo "yantar92/org-quick-peek"))
-  :requires quick-peek
+  :init (use-package quick-peek :demant t)
   :custom
   (org-quick-peek-show-lines 20)
   (org-quick-peek-show-drawers nil)
