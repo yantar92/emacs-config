@@ -9441,11 +9441,12 @@ If LOCAL is non-nil, check only local TAG."
 							                (not (subproject)))
 							            (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 							            (not (and (tags-local "AREA")
-								              (not (descendants (todo)))))
+								            (or (not (descendants (todo)))
+                                                                                (descendants (todo "TODO")))))
 							            (not (descendants
-							                  (and  (todo "NEXT" "REVIEW" "DOING")
-								                (not (tags "WAITING" "CANCELLEDc" "HOLD" "SOMEDAY"))
-								                )))))))
+							                (and  (todo "NEXT" "REVIEW" "DOING")
+								              (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+								              )))))))
 		            (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 		            (org-agenda-sorting-strategy
 		             '(category-keep))))
@@ -9511,7 +9512,8 @@ If LOCAL is non-nil, check only local TAG."
 									(not (subproject)))
 								    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 								    (not (and (tags-local "AREA")
-									    (not (descendants (todo)))))
+									    (or (not (descendants (todo)))
+                                                                                (descendants (todo "TODO")))))
 								    (not (descendants
 									(and  (todo "NEXT" "REVIEW" "DOING")
 									      (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
@@ -9594,8 +9596,8 @@ If LOCAL is non-nil, check only local TAG."
 							(quote (and (tags-local "AREA")
 								    (not (tags-inherited "SOMEDAY"))
 								    (not (descendants
-									  (and (tags-local "AREA")
-									       (todo "NEXT"))))))))
+									(and (tags-local "AREA")
+									     (todo "NEXT"))))))))
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
 		(tags-todo "/"
