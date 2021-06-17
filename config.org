@@ -7462,7 +7462,9 @@ NEXT and schedule it the same day."
       (org-set-property "BLOCKER" (format "ids(%s)" uuid))
       (org-set-property "SUMMARY" (format "Blocked by %s" (org-with-point-at (org-id-find uuid 'marker) (org-get-heading t t t t))))
       (org-with-point-at (org-id-find uuid 'marker)
-	(org-set-property "TRIGGER" (format "ids(\"%s\") todo!(NEXT) scheduled!(\".\") delete-property!(\"SUMMARY\")" cur-uuid))))))
+        (let ((old (org-entry-get (point) "TRIGGER")))
+          (unless old (setq old ""))
+	  (org-set-property "TRIGGER" (format "%s ids(\"%s\") todo!(NEXT) scheduled!(\".\") delete-property!(\"SUMMARY\")" old cur-uuid)))))))
 #+end_src
 
 Also, the projects require all the children to be done by default.
