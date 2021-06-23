@@ -697,12 +697,12 @@ Since it is not really a good idea to work in darkness regardless of the colour 
 ;;   (setq modus-themes-operandi-color-overrides '((bg-region . nil)))
 ;;   :custom-face
 ;;   (org-block-begin-line ((t :inhert org-block :background ,(face-background 'default))))
-;;   (org-verbatim ((t :background nil :foreground ,(face-foreground 'modus-themes-special-calm))))
-;;   (region ((t :background ,(face-background 'modus-themes-special-warm))))
+;;   ;; (org-verbatim ((t :background nil :foreground ,(face-foreground 'modus-themes-special-calm))))
+;;   ;; (region ((t :background ,(face-background 'modus-themes-special-warm))))
 ;;   :init
 ;;   (modus-themes-load-themes)
 ;;   :config
-;;   (modus-themes-load-operandi))
+;;   (modus-themes-load-vivendi))
 #+end_src
 
 For the font, I prefer something that works fine with mixed code and text (e.g. org files).
