@@ -9399,12 +9399,14 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
 							(quote
 							 (and (todo "NEXT")
-							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
+							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA" "DEFAULT"))
 							      (not (habit))
                                                               (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
 		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
 							      (not (project))
-                                                              (subtask)
+                                                              (not (goal))
+                                                              (not (area))
+                                                              ;; (subtask)
                                                               (not (ancestors (todo "TODO")))))))
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
@@ -9421,12 +9423,14 @@ If LOCAL is non-nil, check only local TAG."
 							(quote
 							 (and (todo "NEXT")
 							      (tags "NODEADLINE")
-							      (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
+							      (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA" "DEFAULT"))
 							      (not (habit))
                                                               (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
 		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
 							      (not (project))
-                                                              (subtask)
+                                                              (not (goal))
+                                                              (not (area))
+                                                              ;; (subtask)
                                                               (not (ancestors (todo "TODO")))))))
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
@@ -9445,13 +9449,13 @@ If LOCAL is non-nil, check only local TAG."
 							                (not (subproject)))
 							            (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 							            (not (and (area)
-								            (or (not (descendants (todo)))
-                                                                                (descendants (todo "TODO")))))
+								              (or (not (descendants (todo)))
+                                                                                  (descendants (todo "TODO")))))
                                                                     (not (goal))
 							            (not (descendants
-							                (and  (todo "NEXT" "REVIEW" "DOING")
-								              (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-								              )))))))
+							                  (and  (todo "NEXT" "REVIEW" "DOING")
+								                (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+								                )))))))
 		            (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 		            (org-agenda-sorting-strategy
 		             '(category-keep))))
@@ -9517,13 +9521,13 @@ If LOCAL is non-nil, check only local TAG."
 									(not (subproject)))
 								    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 								    (not (and (area)
-									    (or (not (descendants (todo)))
-                                                                                (descendants (todo "TODO")))))
+									      (or (not (descendants (todo)))
+                                                                                  (descendants (todo "TODO")))))
                                                                     (not (goal))
 								    (not (descendants
-									(and  (todo "NEXT" "REVIEW" "DOING")
-									      (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-									      )))))))
+									  (and  (todo "NEXT" "REVIEW" "DOING")
+									        (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+									        )))))))
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
@@ -9602,8 +9606,8 @@ If LOCAL is non-nil, check only local TAG."
 							(quote (and (tags-local "AREA")
 								    (not (tags-inherited "SOMEDAY"))
 								    (not (descendants
-									(and (tags-local "AREA")
-									     (todo "NEXT"))))))))
+									  (and (tags-local "AREA")
+									       (todo "NEXT"))))))))
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
 		(tags-todo "/"
