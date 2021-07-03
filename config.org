@@ -9285,11 +9285,14 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
 							(quote (and (not (tags "CANCELLED" "SOMEDAY"))
+                                                                    (not (and (tags-local "WAITING")
+                                                                            (tags-local "TRACK")))
 								    (not (area))
 								    (not (todo "TODO"))
-								    (tags "HOLD" "WAITING")
+								    (tags-local "HOLD" "WAITING")
 								    (project)
-								    (not (subproject))))))
+								    ;; (not (subproject))
+                                                                    ))))
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
 		(tags-todo "/"
@@ -9297,11 +9300,12 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-							(quote (and (tags "SOMEDAY")
+							(quote (and (tags-local "SOMEDAY")
 								    (not (tags "CANCELLED"))
 								    (not (area))
 								    (project)
-								    (not (subproject))))))
+								    ;; (not (subproject))
+                                                                    ))))
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
 		(tags-todo "/"
