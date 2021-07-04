@@ -5273,7 +5273,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 (use-package pdf-tools
   :if init-flag
   :defer t
-  :straight (pdf-tools :type git :host github :repo "politza/pdf-tools" :local-repo "~/Git/pdf-tools"
+  :straight (pdf-tools :type git :host github :repo "vedang/pdf-tools" :local-repo "~/Git/pdf-tools"
 		       :fork (:host github
 				    :repo "yantar92/pdf-tools"))
   :custom
