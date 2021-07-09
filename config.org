@@ -9419,7 +9419,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))
 		(tags-todo "/"
-			   ((org-agenda-overriding-header (concat "Extra Project Next Tasks"
+			   ((org-agenda-overriding-header (concat "Extra Next Tasks"
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
@@ -9573,7 +9573,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))
 		(tags-todo "/"
-			   ((org-agenda-overriding-header (concat "Extra Project Next Tasks"
+			   ((org-agenda-overriding-header (concat "Extra Next Tasks"
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
