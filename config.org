@@ -9286,7 +9286,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
 							(quote (and (not (tags "CANCELLED" "SOMEDAY"))
                                                                     (not (and (tags-local "WAITING")
-                                                                            (tags-local "TRACK")))
+                                                                              (tags-local "TRACK")))
 								    (not (area))
 								    (not (todo "TODO"))
 								    (tags-local "HOLD" "WAITING")
@@ -9557,15 +9557,18 @@ If LOCAL is non-nil, check only local TAG."
 								      ""
 								    " (including WAITING and SCHEDULED tasks)")))
 			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
-			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
 							(quote
 							 (and (todo "NEXT")
-							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA"))
+							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA" "DEFAULT"))
 							      (not (habit))
                                                               (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
 		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
-							      (subtask)
-							      (not (project))))))
+							      (not (project))
+                                                              (not (goal))
+                                                              (not (area))
+                                                              ;; (subtask)
+                                                              (not (ancestors (todo "TODO")))))))
 			    (org-tags-match-list-sublevels t)
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
