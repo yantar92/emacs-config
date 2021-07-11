@@ -7459,7 +7459,7 @@ NEXT and schedule it the same day."
 	  (cur-uuid (org-id-get-create)))
       (unless uuid (user-error "Did not get a uuid"))
       (org-todo "WAITING")
-      (org-set-property "BLOCKER" (format "ids(%s)" uuid))
+      (org-set-property "BLOCKER" (format "ids(\"%s\")" uuid))
       (org-set-property "SUMMARY" (format "Blocked by %s" (org-with-point-at (org-id-find uuid 'marker) (org-get-heading t t t t))))
       (org-with-point-at (org-id-find uuid 'marker)
         (let ((old (org-entry-get (point) "TRIGGER")))
