@@ -6695,7 +6695,7 @@ Making sure to conform to Bastein's [[notmuch:id:87o8lwhek2.fsf@gnu.org][request
     (let ((case-fold-search t))
       (save-excursion
 	(goto-char (point-min))
-	(when (re-search-forward "^\\(To:\\|CC:\\).+emacs-orgmode@gnu\\.org" nil t)
+	(when (re-search-forward "^\\(To:\\|Cc:\\).+emacs-orgmode@gnu\\.org" nil t)
           (goto-char (point-min))
           (unless (re-search-forward "^X-Woof-\\(Bug\\|Help\\|Change\\|Release\\|Patch\\):" nil t)
             (unless (yes-or-no-p "No Woof-(Bug|Help|Patch): t/nil headers found in message being sent to emacs-orgmode@gnu.org. Send anyway? ")
@@ -6721,7 +6721,7 @@ As recommended in [[https://orgmode.org/worg/org-mailing-list.html#orgf343a0f][W
     (let ((case-fold-search t))
       (save-excursion
 	(goto-char (point-min))
-	(when (re-search-forward "^\\(To:\\|CC:\\).+emacs-orgmode@gnu\\.org" nil t)
+	(when (re-search-forward "^\\(To:\\|Cc:\\).+emacs-orgmode@gnu\\.org" nil t)
 	  (message-goto-body)
           (when (> (- (point-max) (point)) 5000) ; Message too long.
             (unless (yes-or-no-p "Message is too long. May need to cutoff excess citation lines. Send anyway? ")
@@ -6771,7 +6771,7 @@ This should be called as a hook ran inside `message-header-setup-hook'."
                  (message-fetch-field "To"))
         (when-let ((new-headers (message-get-reply-headers t nil '("to" "cc"))))
           (message-replace-header "To" (alist-get 'To new-headers))
-          (message-replace-header "CC" (alist-get 'Cc new-headers))
+          (message-replace-header "Cc" (alist-get 'Cc new-headers))
           (message-sort-headers)))))
   (add-hook 'message-setup-hook #'yant/notmuch-honor-dont-reply-to-names))
 #+end_src
