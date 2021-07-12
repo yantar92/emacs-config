@@ -1034,6 +1034,7 @@ General buffer appearance.
 :LOGBOOK:
 - State "TODO"       from              [2018-03-12 Mon 14:24]
 :END:
+ #adaptive_wrap 
 
 Long lines do not look good in text buffers and people often turn on line wrapping.
 However, long lines are pretty common in special buffers like in =elfeed=, =notmuch=, =agenda=, etc
@@ -14262,6 +14263,7 @@ I do not want bigger items font because I tend to use items a lot
  )
   #+end_src
 Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much faster than overlay-based =org-bullets=.
+ #pretty_symbols
   #+begin_src emacs-lisp
 (use-package pretty-symbols
   :config
