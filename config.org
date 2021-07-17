@@ -8060,7 +8060,7 @@ Show parent project as top (or second top) suggestion."
 	       (string-match (regexp-quote (f-expand org-attach-id-dir))
 			     (f-expand default-directory))
                (string-match (s-concat (regexp-quote (f-expand org-attach-id-dir))
-				       "\\([0-9a-z][0-9a-z]\\)/\\([0-9a-z]+-[0-9a-z-]+\\)/\\(.+\\)$")
+				       "\\([0-9a-z][0-9a-z]\\)/\\([0-9a-z-_]+\\)/\\(.+\\)$")
                              (pcase major-mode
                                ('dired-mode (dired-get-filename))
                                ('image-mode (buffer-file-name)))))
