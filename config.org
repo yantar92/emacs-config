@@ -12461,6 +12461,12 @@ I define two link types for capturing:
   (use-package ol-bibtex
     :custom
     (org-bibtex-key-property "ID"))
+  (use-package bibtex
+    :custom
+    (bibtex-autokey-titleword-separator "-")
+    (bibtex-autokey-year-title-separator "-")
+    (bibtex-autokey-titleword-length 'inf)
+    (bibtex-autokey-titlewords 3))
   :config
   (let ((templates (doct '( :group "Browser link"
  			    :type entry
