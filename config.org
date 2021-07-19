@@ -9917,6 +9917,44 @@ This is a standard org mode agenda showing deadlines, schedules, diary items and
 (setq org-agenda-skip-deadline-if-done t)
 (setq org-agenda-include-inactive-timestamps nil)
 #+end_src
+***** SOMEDAY Automatically switching agenda views when current agenda is empty :SOMEDAY:
+
+[2021-07-18 Sun] This is too slow for now. May reconsider when I manage to speed up agenda further.
+
+My usual daily workflow starts from Focused daily agenda -> Normal daily agenda -> List of NEXT tasks.  I move from one agenda to another as previous agenda empties.  Let's to it automatically.
+
+#+begin_src emacs-lisp
+(defvar yant/agenda-sequence '("d" "s" "n"))
+
+(defun org-agenda-empty-p ()
+  "Return non-nil when current agenda buffer is empty."
+  (when (eq major-mode 'org-agenda-mode))
+  (let ((empty t))
+    (catch :found
+      (save-excursion
+	(save-restriction
+	  (goto-char (point-min))
+	  (while (< (point) (point-max))
+            (when (get-text-property (line-beginning-position) 'org-hd-marker)
+              (setq empty nil)
+              (throw :found t))
+            (ignore-errors (next-line))))))
+    empty))
+
+(defun yant/org-agenda (arg)
+  "Daily agenda moving from focused to normal to next tasks."
+  (interactive "P")
+  (catch :exit
+    (dolist (type yant/agenda-sequence)
+      (funcall-interactively #'org-agenda arg type)
+      (when (and (org-agenda-empty-p)
+                 org-agenda-sticky)
+        (org-agenda-Quit)
+        (funcall-interactively #'org-agenda arg type))
+      (unless (org-agenda-empty-p)
+        (throw :exit t)))))
+#+end_src
+
 ***** GTD self-check
 :PROPERTIES:
 :ID:       d110dae9-f563-48bb-8293-a10b1afbe772
