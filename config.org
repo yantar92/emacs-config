@@ -5912,7 +5912,7 @@ Show the key strokes.
       (unless (use-region-p) (forward-line))))
   
   (setq elfeed-sort-order 'ascending)
-  (setq elfeed-search-title-max-width 100)
+  (setq elfeed-search-title-max-width 150)
   (setq elfeed-search-date-format '("%d %b, %a, %H:%M" 20 :left))
   (unless (boundp 'elfeed-search-mode-hook) (setq elfeed-search-mode-hook nil))
   ;; (add-hook 'elfeed-search-mode-hook (lambda () (toggle-truncate-lines +1)))
@@ -5995,6 +5995,82 @@ Save elfeed buffer on quit to make sure that database is more likely saved if Em
     (elfeed-db-save-safe)
     (delete-frame))
   (bind-key "q" #'yant/elfeed-save-and-quit elfeed-search-mode-map))
+#+end_src
+**** Custom title formatting
+
+Default =elfeed= format function does not remove things like =\mathrm= (or similar) from titles. I am doing it in the following function.
+
+In addition, I highlight some noteworthy phrases to simplify scanning through the feeds.
+
+#+begin_src emacs-lisp
+(use-package elfeed
+  :init
+  (defvar yant/elfeed-title-transforms `(("\\\\mathrm{\\([^}]+\\)}" "\\1")
+                                         ("\\$\\([^$]+\\)\\$" "\\1")
+                                         ("<em>\\(.+?\\)</em>" "\\1")
+                                         ("&#60;" "<")
+                                         ("_\\([^{]\\)" "\\1" (display ,(car org-script-display)))
+                                         ("_{\\([^}]+\\)}" "\\1" (display ,(car org-script-display)))
+                                         ("<sub>\\(.+?\\)</sub>" "\\1" (display ,(car org-script-display)))
+                                         ("\\^\\([^{]\\)" "\\1" (display ,(cadr org-script-display)))
+                                         ("\\^{\\([^}]+\\)}" "\\1" (display ,(cadr org-script-display)))
+                                         ("<sup>\\(.+?\\)</sup>" "\\1" (display ,(cadr org-script-display)))
+                                         ("<i>\\(.+?\\)</i>" "\\1"  (face (:slant italic)))
+                                         ("{\\([^}]+\\)}" "\\1")
+                                         ("[Aa]nisotro[^ ]+" "\\&" (face (:foreground "red")))
+                                         ("[^ ]*laminate[^ ]*" "\\&" (face (:foreground "red")))
+                                         ("[Oo]ligo[^ ]*" "\\&" (face (:foreground "red")))
+                                         ("[Bb]oundar[^ ]*" "\\&" (face (:foreground "red")))
+                                         ("[Ss]ynchrotron" "\\&" (face (:foreground "red")))
+                                         ("[Ii]nterfac[^ ]+" "\\&" (face (:foreground "red")))
+                                         ("[Ll]ayer[^ ]+" "\\&" (face (:foreground "red")))
+                                         ("[Mm]icro-cantilever[^ ]*" "\\&" (face (:foreground "red")))
+                                         ("[Cc]rack[^ ]*" "\\&" (face (:foreground "red"))))
+    "Replacements to be performed in the elfeed entry titles.")
+  (defun yant/elfeed-search-print-entry (entry)
+    "Print ENTRY to the buffer."
+    (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
+           (title (or (elfeed-meta entry :title) (elfeed-entry-title entry) ""))
+           (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
+           (title (with-temp-buffer
+                    (insert title)
+                    (cl-loop for (re repl display)
+                             in yant/elfeed-title-transforms
+                             do
+                             (goto-char (point-min))
+                             (while (re-search-forward re nil t)
+                               (replace-match repl)
+                               (when display
+                                 (with-silent-modifications
+                                   (apply #'put-text-property
+                                          (match-beginning 0)
+                                          (match-end 0)
+                                          display)))))
+                    (add-face-text-property (point-min) (point-max) title-faces 'append)
+                    (buffer-string)))
+           (feed (elfeed-entry-feed entry))
+           (feed-title
+            (when feed
+              (or (elfeed-meta feed :title) (elfeed-feed-title feed))))
+           (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
+           (tags-str (mapconcat
+                      (lambda (s) (propertize s 'face 'elfeed-search-tag-face))
+                      tags ","))
+           (title-width (- (window-width) 10 elfeed-search-trailing-width))
+           (title-column (elfeed-format-column
+                          title (elfeed-clamp
+                                 elfeed-search-title-min-width
+                                 title-width
+                                 elfeed-search-title-max-width)
+                          :left)))
+      (insert (propertize date 'face 'elfeed-search-date-face) " ")
+      (insert (propertize title-column 'kbd-help title) " ")
+      (when feed-title
+        (insert (propertize feed-title 'face 'elfeed-search-feed-face) " "))
+      (when tags
+        (insert "(" tags-str ")"))))
+  (setq elfeed-search-print-entry-function #'yant/elfeed-search-print-entry))
+
 #+end_src
 
 *** =Notmuch=
