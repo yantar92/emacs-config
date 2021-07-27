@@ -5997,6 +5997,9 @@ Save elfeed buffer on quit to make sure that database is more likely saved if Em
   (bind-key "q" #'yant/elfeed-save-and-quit elfeed-search-mode-map))
 #+end_src
 **** Custom title formatting
+:PROPERTIES:
+:ID:       0e3c7484-a453-44f8-b826-6f83e893455d
+:END:
 
 Default =elfeed= format function does not remove things like =\mathrm= (or similar) from titles. I am doing it in the following function.
 
@@ -6025,6 +6028,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                          ("[Ii]nterfac[^ ]+" "\\&" (face (:foreground "red")))
                                          ("[Ll]ayer[^ ]+" "\\&" (face (:foreground "red")))
                                          ("[Mm]icro-cantilever[^ ]*" "\\&" (face (:foreground "red")))
+                                         ("[Ii]n.situ" "\\&" (face (:foreground "red")))
                                          ("[Cc]rack[^ ]*" "\\&" (face (:foreground "red"))))
     "Replacements to be performed in the elfeed entry titles.")
   (defun yant/elfeed-search-print-entry (entry)
