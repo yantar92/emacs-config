@@ -12587,6 +12587,7 @@ I define two link types for capturing:
     (bibtex-autokey-titleword-length 'inf)
     (bibtex-autokey-titlewords 3))
   :config
+  (org-capture-ref-set-capture-template)
   (let ((templates (doct '( :group "Browser link"
  			    :type entry
  			    :file "~/Org/inbox.org"
