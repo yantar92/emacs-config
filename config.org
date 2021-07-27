@@ -6868,12 +6868,14 @@ Not sure why I need to set it, but I don't like "i-did-not-set--mail-host-addres
 (setq mail-host-address "localhost")
 #+end_src
 
-*** Automatically translate non-English and non-Russian/Ukrainian titles.
+*** TODO Automatically translate non-English and non-Russian/Ukrainian titles.
 :PROPERTIES:
 :ID:       c8a86cda-7c72-432f-8118-b4b1236db7b8
 :END:
 ****************** TODO Make it async
 ****************** END
+
+[2021-07-26 Mon] Merge this with [[id:0e3c7484-a453-44f8-b826-6f83e893455d][Custom title formatting]]
 
 I read some articles in Chinese even though I do not really know how to read. Automatic translation is a bless.
 However, the available translation (in WeChat) do not offer translating article headlines in the new article list - I have to open every individual article and translate the whole thing one by one. It is time-consuming, especially since most of the articles are not really interesting. It would be sufficient to quickly look through the title to recognise that. So, I need some way to quickly get a *translated* list of recent article titles from WeChat (or any other source).
@@ -9998,6 +10000,9 @@ This is a standard org mode agenda showing deadlines, schedules, diary items and
 (setq org-agenda-include-inactive-timestamps nil)
 #+end_src
 ***** SOMEDAY Automatically switching agenda views when current agenda is empty :SOMEDAY:
+:PROPERTIES:
+:ID:       29a0077e-bb73-4f56-8de1-a2326481aa9b
+:END:
 
 [2021-07-18 Sun] This is too slow for now. May reconsider when I manage to speed up agenda further.
 
