@@ -11093,7 +11093,7 @@ current task to NEXT and schedule it the same day."
         (helm-update))
        (t nil))))
   :config
-  (bind-key "C-c C-y" #'yant/helm-org-ql-yank-selection helm-org-ql-map)
+  (bind-key "C-M-l" #'yant/helm-org-ql-yank-selection helm-org-ql-map)
   (bind-key "C-c C-w" #'yant/helm-org-ql-refile org-mode-map)
   (bind-key "C-c C-w" #'yant/helm-org-ql-refile org-agenda-mode-map)
   (bind-key "C-c C-u" #'yant/helm-org-ql-toggle-archives helm-org-ql-map)
