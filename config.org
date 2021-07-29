@@ -13223,25 +13223,26 @@ Otherwise, I'd rather keep the task in place to avoid hanging files.
 This function is called by `org-archive-hook'.  The option
 `org-attach-archive-delete' controls its behavior."
   (org-with-point-at-org-buffer
-   (when (and (org-at-heading-p)
-	      (member org-attach-auto-tag (org-get-tags nil t));; do not ask if no attachments
-	      )
-     (let ((heading (org-get-heading nil nil 'norpiority 'nocomment)))
-       (when (if (eq org-attach-archive-delete 'query)
-		 (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
-									 (interactive)
-									 (dired-noselect dir nil) )))
-				     (org-attach-reveal-in-emacs))))
-                   (save-window-excursion
-                     (dired-pop-to-buffer dired-buf)
-                     (revert-buffer)
-                     (select-window (old-selected-window))
-		     (prog1
-			 (yes-or-no-p (format "%s: Delete all attachments? "
-					      heading))
-                       (kill-buffer dired-buf))))
-	       org-attach-archive-delete)
-	 (org-attach-delete-all t))))))
+   (when (org-at-heading-p)
+     (let ((limit (save-excursion (org-end-of-subtree))))
+       (while (re-search-forward org-attach-auto-tag limit t)
+         (when (and (org-at-heading-p) (member org-attach-auto-tag (org-get-tags nil t)));; do not ask if no attachments
+           (let ((heading (org-get-heading nil nil 'norpiority 'nocomment)))
+             (when (if (eq org-attach-archive-delete 'query)
+		       (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
+									       (interactive)
+									       (dired-noselect dir nil) )))
+				           (org-attach-reveal-in-emacs))))
+                         (save-window-excursion
+                           (dired-pop-to-buffer dired-buf)
+                           (revert-buffer)
+                           (select-window (old-selected-window))
+		           (prog1
+			       (yes-or-no-p (format "%s: Delete all attachments? "
+					            heading))
+                             (kill-buffer dired-buf))))
+	             org-attach-archive-delete)
+	       (org-attach-delete-all t)))))))))
 #+end_src
 
 If the archiving is done just with =ARCHIVE= tag, suggest to move the attachments to archive instead.
@@ -13252,44 +13253,50 @@ If the archiving is done just with =ARCHIVE= tag, suggest to move the attachment
   "Maybe move subtree attachments to Archive folder when archiving.
 Unarchive when UNARCHIVE is non-nil."
   (org-with-point-at-org-buffer
-   (when (and (org-at-heading-p)
-	      (member org-attach-auto-tag (org-get-tags nil t));; do not ask if no attachments
-	      )
-     (let ((heading (org-get-heading nil nil 'norpiority 'nocomment)))
-       (when (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
-								     (interactive)
-								     (dired-noselect dir nil) )))
-			         (org-attach-reveal-in-emacs))))
-               (save-window-excursion
-                 (dired-pop-to-buffer dired-buf)
-                 (select-window (old-selected-window))
-	         (prog1
-		     (yes-or-no-p (format "%s: %s all attachments? "
-					  heading
-                                          (if unarchive
-                                              "Unarchive"
-                                            "Archive")))
-                   (kill-buffer dired-buf))))
-	 (while (not (file-exists-p yant/org-archive-archive-path))
-           (unless (yes-or-no-p (format "Archive location %s does not exist. Try again? " yant/org-archive-archive-path))
-             (user-error "Archive location not present.")))
-         (debug)
-         (when-let ((old-dir (org-attach-dir))
-                    (new-dir (if (not unarchive)
-                                 (let ((org-attach-id-dir yant/org-archive-archive-path))
-                                   (org-attach-dir 'create))
-                               (org-delete-property "DIR")
-                               (org-attach-dir t))))
-           (let ((attachments (directory-files old-dir 'full "^[^.]+")))
-             (mapc (lambda (file)
-                     (copy-file file (format "%s/%s" new-dir (file-name-nondirectory file)) nil t t t))
-                   attachments)
-             ;; Delete after successfully copy only for safety.
-             (mapc #'delete-file attachments)
-             (delete-directory old-dir)
-             (if (not unarchive)
-                 (org-set-property "DIR" new-dir)
-               (org-delete-property "DIR")))))))))
+   (when (org-at-heading-p)
+     (let ((limit (save-excursion (org-end-of-subtree)))
+           (parent-dir ""))
+       (while (re-search-forward org-attach-auto-tag limit t)
+         (when (and (org-at-heading-p) (member org-attach-auto-tag (org-get-tags nil t))) ;; do not ask if no attachments
+           ;; If archive dir is not in `yant/org-archive-archive-path', we did not really archive anything.
+           (unless (and unarchive (not (string-prefix-p yant/org-archive-archive-path (org-attach-dir))))
+             ;; Do not try to un/archive multiple times for inherited dirs.
+             (unless (string= parent-dir (org-attach-dir))
+               (setq parent-dir (org-attach-dir))
+               (let ((heading (org-get-heading nil nil 'norpiority 'nocomment)))
+                 (when (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
+								               (interactive)
+								               (dired-noselect dir nil) )))
+			                   (org-attach-reveal-in-emacs))))
+                         (save-window-excursion
+                           (dired-pop-to-buffer dired-buf)
+                           (select-window (old-selected-window))
+	                   (prog1
+		               (yes-or-no-p (format "%s: %s all attachments? "
+					            heading
+                                                    (if unarchive
+                                                        "Unarchive"
+                                                      "Archive")))
+                             (kill-buffer dired-buf))))
+	           (while (not (file-exists-p yant/org-archive-archive-path))
+                     (unless (yes-or-no-p (format "Archive location %s does not exist. Try again? " yant/org-archive-archive-path))
+                       (user-error "Archive location not present.")))
+                   (when-let ((old-dir (org-attach-dir))
+                              (new-dir (if (not unarchive)
+                                           (let ((org-attach-id-dir yant/org-archive-archive-path))
+                                             (org-attach-dir 'create))
+                                         (org-delete-property "DIR")
+                                         (org-attach-dir t))))
+                     (let ((attachments (directory-files old-dir 'full "^[^.]+")))
+                       (mapc (lambda (file)
+                               (copy-file file (format "%s/%s" new-dir (file-name-nondirectory file)) nil t t t))
+                             attachments)
+                       ;; Delete after successfully copy only for safety.
+                       (mapc #'delete-file attachments)
+                       (delete-directory old-dir)
+                       (if (not unarchive)
+                           (org-set-property "DIR" new-dir)
+                         (org-delete-property "DIR"))))))))))))))
 
 (define-advice org-toggle-archive-tag (:before (&rest _) archive-attachments)
   "Move attachments to/from archive directory."
