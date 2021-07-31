@@ -4868,6 +4868,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 #+begin_src emacs-lisp
 (use-package helm
   :if init-flag
+  :demand t
   :config
   ;; Update the info file list.
   (custom-reevaluate-setting 'helm-default-info-index-list)
