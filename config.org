@@ -6630,8 +6630,8 @@ Here are some workarounds
     (org-store-link nil)
     (org-capture nil "e")
     )
-  (bind-key "t" 'capture-mail notmuch-show-mode-map)
-  (bind-key "t" 'capture-mail notmuch-tree-mode-map))
+  (bind-key "t" 'org-capture-ref-capture-at-point notmuch-show-mode-map)
+  (bind-key "t" 'org-capture-ref-capture-at-point notmuch-tree-mode-map))
 #+end_src
 ***** TODO Org mode functionality when writing messages
 :PROPERTIES:
@@ -15570,7 +15570,10 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
   (let ((mystate (or (and (fboundp 'org-state)
 			  state)
 		     (nth 2 (org-heading-components))))
-	(email-link (org-entry-get nil "EMAIL-SOURCE"))
+	(email-link (or (org-entry-get nil "EMAIL-SOURCE")
+                        (and (org-entry-get nil "LINK")
+                             (string-match-p "^notmuch" (org-entry-get nil "LINK"))
+                             (org-entry-get nil "LINK"))))
 	(done-keywords org-done-keywords))
     (when (not (or (not email-link)
 		 (eq email-link "")))
