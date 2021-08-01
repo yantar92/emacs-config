@@ -4869,6 +4869,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 (use-package helm
   :if init-flag
   :demand t
+  :requires 'helm-dash
   :config
   ;; Update the info file list.
   (custom-reevaluate-setting 'helm-default-info-index-list)
