@@ -10951,10 +10951,10 @@ current task to NEXT and schedule it the same day."
                     (format "[[id:%s][%s]]"
                             (org-id-get-create)
                             (--> heading
-                              (replace-regexp-in-string ").+" "" it)
-                              (replace-regexp-in-string "\\[" "" it)
-                              (replace-regexp-in-string "\\]" "" it)
-                              (replace-regexp-in-string "(" "" it))))
+                                 (replace-regexp-in-string ").+" "" it)
+                                 (replace-regexp-in-string "\\[" "" it)
+                                 (replace-regexp-in-string "\\]" "" it)
+                                 (replace-regexp-in-string "(" "" it))))
                 (org-store-link nil)))))
   (defun yant/helm-org-ql-insert-url (marker)
     "Insert URL from link at point."
