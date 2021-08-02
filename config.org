@@ -10942,6 +10942,7 @@ current task to NEXT and schedule it the same day."
       (org-todo "WAITING")
       (org-set-property "BLOCKER" (format "ids(%s)" uuid))
       (org-set-property "SUMMARY" (format "Blocked by %s" (org-with-point-at (org-id-find uuid 'marker) (org-get-heading t t t t))))
+      (org-set-tags (cl-adjoin "TRACK" (org-get-tags nil 'local)))
       (org-with-point-at marker
 	(org-set-property "TRIGGER" (format "%s ids(\"%s\") todo!(NEXT) scheduled!(\".\") delete-property!(\"SUMMARY\")"
                                             (or (org-entry-get nil "TRIGGER") "")
