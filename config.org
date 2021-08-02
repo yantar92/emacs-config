@@ -6625,12 +6625,6 @@ Here are some workarounds
   :if init-flag
   :defer t
   :config
-  (defun capture-mail()
-    "Capture mail to org mode."
-    (interactive)
-    (org-store-link nil)
-    (org-capture nil "e")
-    )
   (bind-key "t" 'org-capture-ref-capture-at-point notmuch-show-mode-map)
   (bind-key "t" 'org-capture-ref-capture-at-point notmuch-tree-mode-map))
 #+end_src
