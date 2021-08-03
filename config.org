@@ -10994,17 +10994,18 @@ current task to NEXT and schedule it the same day."
   (defun yant/helm-org-ql-show-marker (marker)
     "Show heading at MARKER"
     (interactive)
-    (if helm-full-frame
-        (switch-to-buffer (marker-buffer marker))
-      (pop-to-buffer (marker-buffer marker)))
-    (widen)
-    (goto-char marker)
-    (org-show-set-visibility 'ancestors)
-    ;; (org-fold-heading nil t)
-    (org-show-subtree)
-    (org-cycle-hide-drawers 'children)
-    ;; (org-fold-show-children)
-    (recenter 2))
+    (when marker
+      (if helm-full-frame
+          (switch-to-buffer (marker-buffer marker))
+        (pop-to-buffer (marker-buffer marker)))
+      (widen)
+      (goto-char marker)
+      (org-show-set-visibility 'ancestors)
+      ;; (org-fold-heading nil t)
+      (org-fold-show-children)
+      (org-cycle-hide-drawers 'children)
+      ;; (org-fold-show-children)
+      (recenter 2)))
   (defvar yant/helm-org-ql--refile-history nil)
   (defun yant/helm-org-ql-refile-to (marker)
     "Refile heading at point to selected heading at MARKER."
