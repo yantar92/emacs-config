@@ -13245,8 +13245,8 @@ This function is called by `org-archive-hook'.  The option
 `org-attach-archive-delete' controls its behavior."
   (org-with-point-at-org-buffer
    (when (org-at-heading-p)
-     (org-back-to-heading)
-     (let ((limit (save-excursion (org-end-of-subtree))))
+     (org-back-to-heading t)
+     (let ((limit (save-excursion (org-end-of-subtree t) (point))))
        (while (re-search-forward org-attach-auto-tag limit t)
          (when (and (org-at-heading-p) (member org-attach-auto-tag (org-get-tags nil t)));; do not ask if no attachments
            (let ((heading (org-get-heading nil nil 'norpiority 'nocomment)))
