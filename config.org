@@ -11457,6 +11457,18 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
 (setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
 (add-hook 'org-clock-in-hook #'yant/schedule-maybe)
   #+end_src
+***** Force all custom notes to be outside drawer
+
+Unlike automatically recorded notes about clocking or state changes, I prefer to see manually taken notes outside the LOGBOOK drawer
+
+#+begin_src emacs-lisp
+(define-advice org-log-into-drawer (:filter-return (result) force-notes-outside-drawer)
+  "Force manual notes outside drawer."
+  (if (eq org-log-note-purpose 'note)
+      nil
+    result))
+#+end_src
+
 ***** Display clocked in entry
 :PROPERTIES:
 :ID:       13012cf7-322e-4433-a22c-e81b7c5feda1
