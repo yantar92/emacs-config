@@ -12098,7 +12098,7 @@ A note, which is not actionable or expected to contain a lot of text
 # name: note_capture
 # key: note_capture_
 # --
-TODO ${1:`(or (and (boundp 'helm-org-ql-default-title) helm-org-ql-default-title) (concat "Fleeting note on " (s-trim-right (org-capture-fill-template "%u"))))`} :note:
+TODO ${1:`(or (and (boundp 'helm-org-ql-default-title) (not (string-empty-p helm-org-ql-default-title)) helm-org-ql-default-title) (concat "Fleeting note on " (s-trim-right (org-capture-fill-template "%u"))))`} :note:
 :PROPERTIES:
 :CREATED: `(s-trim-right (org-capture-fill-template "%U"))`
 :END:
