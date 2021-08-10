@@ -14769,11 +14769,18 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   (defun org-adaptive-fill-function ()
     "Fill headlines to the beginning of headline in org."
     (save-excursion
-      (when (org-at-heading-p)
+      (cond
+       ((org-at-heading-p)
 	(beginning-of-line)
         (looking-at org-complex-heading-regexp)
         (goto-char (or (match-beginning 4) (match-end 0))) ;; at headline
-        (make-string (current-column) ?\ ))))
+        (make-string (current-column) ?\ ))
+       ((org-at-item-p)
+        (beginning-of-line)
+        (looking-at org-list-full-item-re)
+        (goto-char (or (match-beginning 4) (match-end 3) (match-end 2) (match-end 1)))
+        (skip-chars-forward " \t")
+        (make-string (current-column) ?\ )))))
   (add-hook! 'org-mode-hook (setq-local adaptive-fill-function #'org-adaptive-fill-function))
   (defun yant/org-align-tags (limit &optional force)
     "Align all the tags in org buffer."
