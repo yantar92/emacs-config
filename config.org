@@ -2308,6 +2308,9 @@ Do not even need terminal to interact with Git.
 	      ("M-g" . magit-file-popup))
   :config
   (unpackaged/magit-log-date-headers-mode +1)
+  ;; Remove added hook
+  (ignore-errors
+    (setq magit-diff-visit-file (-remove-last magit-diff-visit-file)))
   (use-package meta-functions
     :config
     (meta-defun meta-down-element :mode magit-diff-mode magit-section-forward)
@@ -4874,13 +4877,11 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 (use-package helm
   :if init-flag
   :demand t
-  :requires 'helm-dash
   :config
   ;; Update the info file list.
   (custom-reevaluate-setting 'helm-default-info-index-list)
   :init
   (use-package boon
-    :defer t
     :config
     (meta-defun meta-help "Get help on symbol at point." ignore)
     (meta-defun meta-help :mode org-mode :cond (org-in-src-block-p) helpful-at-point)
@@ -11458,6 +11459,9 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
 (add-hook 'org-clock-in-hook #'yant/schedule-maybe)
   #+end_src
 ***** Force all custom notes to be outside drawer
+:PROPERTIES:
+:ID:       09c3cc32-2843-473b-9d83-e86fcbacf351
+:END:
 
 Unlike automatically recorded notes about clocking or state changes, I prefer to see manually taken notes outside the LOGBOOK drawer
 
