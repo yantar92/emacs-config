@@ -6914,7 +6914,7 @@ print(detect(text))
     (defun yant/translate-string (string)
       "Automatically translate STRING using trans shell command."
       (unless (executable-find "trans") (user-error "Command trans is not in PATH"))
-      (s-trim (shell-command-to-string (format "trans -no-warn -b \"%s\"" title))))
+      (s-trim (shell-command-to-string (format "trans -no-warn -b \"%s\"" string))))
     (memoize #'yant/translate-string)
     (memoize #'yant/guess-language-string))
 
