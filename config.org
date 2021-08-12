@@ -11080,7 +11080,17 @@ current task to NEXT and schedule it the same day."
                                    (_ '(("Refile heading at point to selected heading" . yant/helm-org-ql-refile-to)
                                         ("Go to heading" . yant/helm-org-ql-show-marker)))))
             (org-refile-keep (and arg (equal arg 3)))
-            (helm-org-ql-show-paths t)
+            (helm-org-ql-show-paths
+             (lambda (width)
+               (let ((full-path (org-get-outline-path t t)))
+                 (save-excursion
+                   (save-restriction
+                     (while (and (not (member "project" (org-get-tags nil t)))
+                                 (org-up-heading-or-point-min)))
+                     (when (and (org-at-heading-p)
+                                (member "project" (org-get-tags nil t)))
+                       (setq full-path (-difference full-path (org-get-outline-path nil t))))
+                     (org-format-outline-path full-path width nil "\\"))))))
             (helm-org-ql-reverse-paths nil))
         (helm-org-ql (org-agenda-files t)
                      :name "Refile to"
