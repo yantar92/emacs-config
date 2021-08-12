@@ -4021,28 +4021,6 @@ Moreover, it can be integrated with all other kinds of documentation using [[id:
   (bookmark-fontify nil))
 #+end_src
 
-*** TODO COMMENT Hyperbole
-:PROPERTIES:
-:CREATED:  [2019-03-21 Thu 13:52]
-:ID:       40c2aac3-517c-45cd-bfe4-aa5465e4c3e6
-:END:
-:LOGBOOK:
-- State "NEXT"       from "TODO"       [2019-03-21 Thu 13:52]
-:END:
-
-#+begin_src emacs-lisp
-(use-package hyperbole
-  :if init-flag
-  :straight t
-  :defer 1
-  :config
-  ;; Clashes with `org-sparse-tree' binding.
-  (unbind-key "C-c /" global-map)
-  (bind-key "C-c C-o" #'hkey-either global-map)
-  ;; (bind-key* "<tab>" #'action-key)
-  ;; (bind-key* "<backtab>" #'assist-key)
-  )
-#+end_src
 ** Editing
 :PROPERTIES:
 :ID:       6d0859b5-5d38-42a6-a676-aebec0867681
@@ -16972,3 +16950,36 @@ Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm
 #+begin_src emacs-lisp
 (setq org-priority-regexp "^\\*+.*\\(\\[#\\([A-Z0-9]+\\)\\] ?\\)")
 #+end_src
+
+** TODO COMMENT Hyperbole :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2019-03-21 Thu 13:52]
+:ID:       40c2aac3-517c-45cd-bfe4-aa5465e4c3e6
+:SUMMARY:  Does not play well with Org mode and helm
+:ARCHIVE_TIME: 2021-08-11 Wed 22:25
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: TODO
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+:LOGBOOK:
+- State "NEXT"       from "TODO"       [2019-03-21 Thu 13:52]
+:END:
+
+- Note taken on [2021-08-11 Wed 22:24] \\
+  Does not play well with Org mode and helm
+#+begin_src emacs-lisp
+(use-package hyperbole
+  :if init-flag
+  :straight t
+  :defer 1
+  :config
+  ;; Clashes with `org-sparse-tree' binding.
+  (unbind-key "C-c /" global-map)
+  (bind-key "C-c C-o" #'hkey-either global-map)
+  (bind-key* "<tab>" #'action-key)
+  (bind-key* "<backtab>" #'assist-key)
+  )
+#+end_src
+
