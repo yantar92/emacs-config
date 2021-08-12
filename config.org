@@ -2380,6 +2380,18 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
                               (:help-echo "Local changes not in upstream")))
                             ("Path" 99 magit-repolist-column-path nil))))
 #+end_src
+**** Use [[id:Github-dandavison-dandavison-delta-viewer-c9d][dandavison [Github] dandavison/delta: A viewer for git and diff output]] to show diffs
+
+[[id:Github-dandavison-github-dandavison-magit-213][dandavison [Github] dandavison/magit-delta: Use delta (https://github.com/dandavison/delta) when viewing diffs in Magit]]
+
+Gentoo: =dev-util/git-delta=
+
+#+begin_src emacs-lisp
+(use-package magit-delta
+  :straight t
+  :after magit
+  :hook (magit-mode . magit-delta-mode))
+#+end_src
 
 *** =Ediff=
 :PROPERTIES:
