@@ -2423,7 +2423,7 @@ User-defined temporary highlighting.
   :if init-flag
   :diminish hi-lock-mode)
 #+end_src
-*** TODO Spell checking
+*** TODO Spell\grammar checking
 :PROPERTIES:
 :ID:       117c5718-7a46-4a7a-ab0d-b5b347444080
 :END:
@@ -2612,6 +2612,66 @@ Mostly we check word delimiters."
 	       (sit-for flyspell-delay (el-patch-add 'nodisplay))))
 	 (t t)))
        (t t)))))
+#+end_src
+**** Language tool
+:PROPERTIES:
+:ID:       955d0dd9-29d4-4bde-a9a3-46129580ba6f
+:END:
+
+#+begin_src emacs-lisp
+(use-package lsp-ltex
+  ;; Too slow.  Too many false positives (especially in code blocks)
+  :disabled t
+  :straight t
+  :init
+  (setq flycheck-checker-error-threshold 20000)
+  (set-face-background 'flycheck-info (color-saturate-name (face-background 'default) 150))
+  (push '(org-mode . "org") lsp-language-id-configuration)
+  :custom
+  (lsp-ltex-check-frequency "manual")
+  (lsp-ltex-clear-diagnostics-when-closing-file nil)
+  (lsp-ltex-version "13.0.0")
+  (lsp-ltex-language "en-GB")
+  (lsp-ltex-mother-tongue "uk-UA")
+  (lsp-log-io nil)
+  :hook (text-mode . (lambda ()
+                       (require 'lsp-ltex)
+                       (lsp-deferred))))
+(use-package langtool
+  :straight t
+  :init
+  (setq langtool-bin "languagetool")
+  (setq langtool-default-language "en-GB")
+  (setq langtool-mother-tongue "uk-UA")
+  (setq langtool-user-arguments "-c UTF8 -b")
+  (setq langtool-disabled-rules
+        '(
+          "DASH_RULE"
+          ;; "WHITESPACE_RULE"
+          ;; "PUNCTUATION_PARAGRAPH_END"
+          "EN_QUOTES"
+          ))
+  (defhydra help/hydra/both/langtool (:color blue :hint nil)
+    "
+ Langtool:^         ^|^                   ^|^
+-------------------^^+^-------------------^+^----------------------
+ _h_: check buffer   | _j_: next error     | _i_: brief message
+ _y_: correct buffer | _k_: previous error | _o_: detailed message
+ _n_: finished       | _q_: quit           |
+ "
+    ("h" langtool-check :exit nil)
+    ("y" langtool-correct-buffer :exit nil)
+    ("n" langtool-check-done)
+
+    ("j" langtool-goto-next-error :exit nil)
+    ("k" langtool-goto-previous-error :exit nil)
+
+    ("i" langtool-show-brief-message-at-point :exit nil)
+    ("o" langtool-show-message-at-point :exit nil)
+
+    ("q" nil))
+  (bind-key "M-s" #'help/hydra/both/langtool/body boon-forward-search-map))
+
 #+end_src
 
 *** Code checking
