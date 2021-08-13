@@ -2380,19 +2380,6 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
                               (:help-echo "Local changes not in upstream")))
                             ("Path" 99 magit-repolist-column-path nil))))
 #+end_src
-**** Use [[id:Github-dandavison-dandavison-delta-viewer-c9d][dandavison [Github] dandavison/delta: A viewer for git and diff output]] to show diffs
-
-[[id:Github-dandavison-github-dandavison-magit-213][dandavison [Github] dandavison/magit-delta: Use delta (https://github.com/dandavison/delta) when viewing diffs in Magit]]
-
-Gentoo: =dev-util/git-delta=
-
-#+begin_src emacs-lisp
-(use-package magit-delta
-  :straight t
-  :after magit
-  :hook (magit-mode . magit-delta-mode))
-#+end_src
-
 *** =Ediff=
 :PROPERTIES:
 :ID:       0a071515-0aff-4cbe-982c-374860cdc9fc
@@ -16994,5 +16981,29 @@ Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm
   (bind-key* "<tab>" #'action-key)
   (bind-key* "<backtab>" #'assist-key)
   )
+#+end_src
+
+** Use [[id:Github-dandavison-dandavison-delta-viewer-c9d][dandavison [Github] dandavison/delta: A viewer for git and diff output]] to show diffs :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ID:       ccf5be93-81a8-4566-a30c-b11b29df9c64
+:SUMMARY:  Performance is too low on large diffs (like in Org files)
+:ARCHIVE_TIME: 2021-08-13 Fri 15:09
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/History & version control/=Magit=
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+- Note taken on [2021-08-13 Fri 15:09] \\
+  Performance is too low on large diffs (like in Org files)
+[[id:Github-dandavison-github-dandavison-magit-213][dandavison [Github] dandavison/magit-delta: Use delta (https://github.com/dandavison/delta) when viewing diffs in Magit]]
+
+Gentoo: =dev-util/git-delta=
+
+#+begin_src emacs-lisp
+(use-package magit-delta
+  :straight t
+  :after magit
+  :hook (magit-mode . magit-delta-mode))
 #+end_src
 
