@@ -2300,7 +2300,7 @@ Do not even need terminal to interact with Git.
   :requires boon
   :init
   (use-package unpackaged
-    :init (require 'ts)
+    :init (use-package ts :straight t)
     :straight (unpackaged :host github :repo "alphapapa/unpackaged.el")
     :demand t)
   :bind (:map boon-x-map
