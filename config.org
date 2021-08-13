@@ -43,9 +43,9 @@ This is me
 (setq user-mail-address "yantar92@gmail.com")
 #+end_src
 
-I am not really doing much programming, but rather use Emacs as knowledge base management tool.  Most of time, I do not even edit or type things directly, but read through the files.  Therefore, the main focus of this setup is =org-mode= and not as much programming, navigating through text and not as much editing.
+I am not really doing much programming, but rather use Emacs as knowledge base management tool.  Most time, I do not even edit or type things directly, but read through the files.  Therefore, the main focus of this setup is =org-mode= and not as much programming, navigating through text and not as much editing.
 
-The usage of =org-mode= unfortunately means that the overall performance of Emacs is generally not very good.  To improve things a little bit, I am trying to run things that "freeze" Emacs most terribly either asynchronously or in separate Emacs process.  Running in separate process would be terribly slow if I just load my main =init.el= over and over again as if I open a new instance of emacs interactively.  Hence, I design my =init.el= in the way that it can load faster in batch mode.
+The usage of =org-mode= unfortunately means that the overall performance of Emacs is generally not very good.  To improve things a little, I am trying to run things that "freeze" Emacs most terribly either asynchronously or in separate Emacs process.  Running in separate process would be terribly slow if I just load my main =init.el= over and over again as if I open a new instance of emacs interactively.  Hence, I design my =init.el= in the way that it can load faster in batch mode.
 
 This Emacs configuration allows loading Emacs in both interactive and batch modes.  It is controlled by special variables, identifying startup mode:
 - =init-flag= :: normal startup, load all the visual packages and options
