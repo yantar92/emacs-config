@@ -12302,7 +12302,7 @@ An area of knowledge I am interested in. Unlike project, this does not have a co
                            "# Notes about what is known about the topic\n"
                            "** No deadline :NODEADLINE:SKIP:REFILE:"
                            ":PROPERTIES:"
-                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITiNG(!) HOLD(!) CANCELLED(!)"
+                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
                            ":CATEGORY: %{category}[D]"
                            ":END:"
                            "*** NEXT Refile relevant tasks from more generic topics into %{area-title}"
@@ -12356,7 +12356,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
                            "** Presentations :REFILE:"
                            "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
                            ":PROPERTIES:"
-                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITiNG(!) HOLD(!) CANCELLED(!)"
+                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
                            ":END:"))))
            'replace)
 
@@ -12388,7 +12388,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
                            "# Nontrivial methods used to execute the action plan."
                            "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
                            ":PROPERTIES:"
-                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITiNG(!) HOLD(!) CANCELLED(!)"
+                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
                            ":END:"))))
            'replace)
 #+end_src
