@@ -9551,6 +9551,7 @@ If LOCAL is non-nil, check only local TAG."
 							(quote
 							 (and (todo "NEXT")
 							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA" "DEFAULT"))
+                                                              (not (tags-local "SKIP"))
 							      (not (habit))
                                                               (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
 		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
@@ -9574,6 +9575,7 @@ If LOCAL is non-nil, check only local TAG."
 							(quote
 							 (and (todo "NEXT")
 							      (tags "NODEADLINE")
+                                                              (not (tags-local "SKIP"))
 							      (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA" "DEFAULT"))
 							      (not (habit))
                                                               (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
@@ -9708,6 +9710,7 @@ If LOCAL is non-nil, check only local TAG."
 							(quote
 							 (and (todo "NEXT")
 							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA" "DEFAULT"))
+                                                              (not (tags-local "SKIP"))
 							      (not (habit))
                                                               (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
 		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
@@ -9732,6 +9735,7 @@ If LOCAL is non-nil, check only local TAG."
 							(quote
 							 (and (todo "NEXT")
 							      (tags "NODEADLINE")
+                                                              (not (tags-local "SKIP"))
 							      (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY" "AREA"))
 							      (not (habit))
                                                               (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
