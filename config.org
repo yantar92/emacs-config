@@ -8416,6 +8416,21 @@ Do not ask every time I try to evaluate elisp: links
     (add-to-list 'jit-lock-functions 'org-ref-add-labels)
     (add-to-list 'before-change-functions 'org-ref-delete-labels)))
 #+end_src
+***** Org-ref-cite
+:PROPERTIES:
+:ID:       4936ea38-3a1e-4db2-89e0-07e48d78a30d
+:END:
+
+My fork of =org-ref-cire= providing bibliographies stored in org headings.
+
+#+begin_src emacs-lisp
+(use-package org-ref-cite
+  :after org
+  :disabled t
+  :straight (org-ref-cite :host github :repo "jkitchin/org-ref-cite"
+                          :fork (:host github :repo "yantar92/org-ref-cite")))
+#+end_src
+
 ***** SOMEDAY search in article PDFs
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
