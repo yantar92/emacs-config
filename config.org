@@ -2619,6 +2619,8 @@ Mostly we check word delimiters."
 :ID:       955d0dd9-29d4-4bde-a9a3-46129580ba6f
 :END:
 
+[[id:dc748ee50c332dec74bd79083898359f7214692f][languagetool-org [Github] languagetool: Style and Grammar Checker for 25+ Languages]]
+***** COMMENT LSP server for =languegetool=
 #+begin_src emacs-lisp
 (use-package lsp-ltex
   ;; Too slow.  Too many false positives (especially in code blocks)
@@ -2638,6 +2640,10 @@ Mostly we check word delimiters."
   :hook (text-mode . (lambda ()
                        (require 'lsp-ltex)
                        (lsp-deferred))))
+#+END_SRC
+***** Run =languagetool= on region
+
+#+BEGIN_SRC emacs-lisp  
 (use-package langtool
   :straight t
   :init
