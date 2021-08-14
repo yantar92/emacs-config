@@ -2366,6 +2366,7 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
 (use-package magit
   :if init-flag
   :after magit
+  :commands magit-list-repositories
   :custom
   (magit-repository-directories '(("~/Git" . 1)
                                   ("~/Org" . 0)))
