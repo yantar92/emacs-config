@@ -2680,6 +2680,22 @@ Mostly we check word delimiters."
   (bind-key "M-s" #'help/hydra/both/langtool/body boon-forward-search-map))
 
 #+end_src
+***** Check grammar in emails before sending
+
+#+begin_src emacs-lisp
+(use-package langtool
+  :if init-flag
+  :after notmuch
+  :config
+  (defun langtool-check-buffer-ensure ()
+    "Force full check of current buffer.  Block Emacs until check is done."
+    (interactive)
+    (langtool-check-buffer)
+    (while langtool-buffer-process
+      (sleep-for 0.1))
+    (langtool-correct-buffer))
+  (add-hook! 'notmuch-mua-send-hook #'langtool-check-buffer-ensure))
+#+end_src
 
 *** Code checking
 :PROPERTIES:
