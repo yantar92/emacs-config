@@ -11244,9 +11244,14 @@ current task to NEXT and schedule it the same day."
     (cl-defun yant/helm-org-ql-agenda-files (arg)
       "Like `helm-org-ql-agenda-files', but also allow creating a new heading."
       (interactive "P")
-      (let ((files (if arg (org-agenda-files t t) (org-agenda-files t))))
+      (let ((files (if arg (org-agenda-files t t) (org-agenda-files t)))
+            (search-archives-p arg))
         (helm :prompt (format "Query (boolean and): ")
-              :sources (list (helm-org-ql-source files :name "Org Agenda Files")
+              :sources (list (helm-org-ql-source files
+                                                 :name "Org Agenda Files"
+                                                 :filter (unless search-archives-p
+                                                           '(not (and (not (tags-local "ARCHIVE"))
+                                                                    (tags "ARCHIVE")))))
                              (helm-build-sync-source "Create new"
                                :candidates
                                (lambda ()
