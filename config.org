@@ -6106,6 +6106,8 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                          ("[Ii]nterfac[^ ]+" "\\&" (face (:foreground "red")))
                                          ("[Ll]ayer[^ ]+" "\\&" (face (:foreground "red")))
                                          ("[Mm]icro-cantilever[^ ]*" "\\&" (face (:foreground "red")))
+                                         ("[Pp]illar" "\\&" (face (:foreground "red")))
+                                         ("[Cc]antilever" "\\&" (face (:foreground "red")))
                                          ("[Ii]n.situ" "\\&" (face (:foreground "red")))
                                          ("M[m]g[0-9]*[-/]*[Aa]l[0-9]*" "\\&" (face (:foreground "red")))
                                          ("[Cc]rack[^ ]*" "\\&" (face (:foreground "red"))))
