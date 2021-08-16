@@ -11606,6 +11606,7 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
   "Schedule task at point for today, unless it is already scheduled."
   (unless (or (and (boundp 'org-capture-mode) org-capture-mode)
 	      (member "DEFAULT" (org-get-tags-at (point) 'local))
+              (member "project" (org-get-tags-at (point) 'local))
               (not (org-get-todo-state))
 	      (org-get-scheduled-time (point)))
     (org-schedule nil ".")))
