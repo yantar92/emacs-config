@@ -15678,9 +15678,10 @@ Turning on org element cache in attempt to make it faster.
 [2021-02-13 Sat] Trying again
 [2021-03-13 Sat] Disabling. It hangs Emacs when syncing cache in inbox buffer after multiple refiles (deletions) from the buffer.
 [2021-05-05 Wed] Trying again
+[2021-08-15 Sun] Trying again
 
 #+begin_src emacs-lisp
-(custom-set-variables '(org-element-use-cache nil))
+(custom-set-variables '(org-element-use-cache t))
 #+end_src
 
 ****************** TODO check if it is good enough
