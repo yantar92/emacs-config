@@ -4565,6 +4565,7 @@ Interactive fill/unfill paragraph at point.
 			       "No more buttons"
                                "No command bound to"
                                "Decryption failed"
+                               "No such action"
                                "Cannot outdent an item without its children"
                                "Attempt to delete minibuffer or sole ordinary window"
                                "profiler is already running"
