@@ -17180,3 +17180,36 @@ Gentoo: =dev-util/git-delta=
   :hook (magit-mode . magit-delta-mode))
 #+end_src
 
+** Archive logbook :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-08-17 Tue 15:13
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Archiving
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+Credit: https://www.reddit.com/r/orgmode/comments/dg43hs/can_i_archive_a_property_drawer/f3frk2n/
+****************** TODO automate this
+****************** END
+
+#+begin_src emacs-lisp
+(defun my/org-archive-delete-logbook ()
+  (save-excursion
+   (org-end-of-meta-data)
+   (let ((elm (org-element-at-point)))
+     (when (and
+            (equal (org-element-type elm) 'drawer)
+            (equal (org-element-property :drawer-name elm) "LOGBOOK"))
+       (delete-region (org-element-property :begin elm)
+                      (org-element-property :end elm))))))
+
+(defun my/org-archive-without-delete ()
+  (cl-letf (((symbol-function 'org-cut-subtree) (lambda () nil)))
+    (org-archive-subtree)))
+
+(defun my/org-archive-logbook ()
+  (interactive)
+  (my/org-archive-without-delete)
+  (my/org-archive-delete-logbook))
+#+end_src
+
