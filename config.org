@@ -2680,8 +2680,13 @@ Mostly we check word delimiters."
   (bind-key "M-s" #'help/hydra/both/langtool/body boon-forward-search-map))
 
 #+end_src
-***** Check grammar in emails before sending
+***** TODO Check grammar in emails before sending
+:PROPERTIES:
+:SUMMARY:  Somehow it puts wrong overlays in many messages
+:END:
 
+- Note taken on [2021-08-17 Tue 17:58] \\
+  Somehow it puts wrong overlays in many messages
 #+begin_src emacs-lisp
 (use-package langtool
   :if init-flag
@@ -2784,7 +2789,7 @@ Highlight text matching =isearch=.
 (setf search-highlight t)
 (setf query-replace-highlight t))
 #+end_src
-*** NEXT Highlight recent changes\actions :@home:
+*** NEXT #goggles Highlight recent changes\actions :@home:
 SCHEDULED: <2020-12-11 Fri>
 :PROPERTIES:
 :ID:       02c8a98c-a38a-4054-a0a2-400f6757693b
@@ -2800,7 +2805,7 @@ CLOCK: [2020-12-10 Thu 21:45]--[2020-12-10 Thu 21:47] =>  0:02
 Highlight recently changed text. 
 Especially useful when inserting/replacing big chunks of text.
 
-[2020-12-08 Tue] Replacing =volatile-highlights= with [[id:19b9e85375d14376f40911b62bba8876a6de0d56][googles]], as the former is not maintained.
+[2020-12-08 Tue] Replacing =volatile-highlights= with [[id:19b9e85375d14376f40911b62bba8876a6de0d56][goggles]], as the former is not maintained.
 
   #+begin_src emacs-lisp
 (use-package goggles
@@ -2812,6 +2817,7 @@ Especially useful when inserting/replacing big chunks of text.
   :config
   (goggles-define replace expand-abbrev))
   #+end_src
+
 *** Highlight evaluated sexp
 :PROPERTIES:
 :CREATED:  [2020-04-16 Thu 15:15]
@@ -13305,6 +13311,8 @@ Do not use cache when FORCE is non-nil."
 	  next-item)))))
 #+end_src
 
+***** Per-year archive files
+
 The default archiving only allow all the task from a single org file to be archived into another single file.
 However, after several years, the archive files grew over 10Mb and every time I need to open them for archiving, Emacs hangs for a long time. 
 Modifying =org-archive--compute-location= to accept =%y= keyword for archive year [ [[https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#archiving][credit]] ]
@@ -13368,7 +13376,7 @@ Since the archives are not always contained in a single file, org id and text se
   )
 #+end_src
  
-
+***** Archive inline tasks
 
 Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override standard archiving function to make it possible to archive them (into separate location =org-inlinetask-archive-location=)
 #+BEGIN_SRC emacs-lisp
@@ -13413,6 +13421,8 @@ Thanks God, I do not need to open my archive file frequently - my =TODO.org_arch
 :END:
 ****************** END
 
+***** Trash attachments of archived tasks
+
 If a task being archived contains attachments, it is better to delete them.
 Otherwise, I'd rather keep the task in place to avoid hanging files.
 ****************** TODO also show the attachment list when asking
@@ -13449,6 +13459,8 @@ This function is called by `org-archive-hook'.  The option
 	             org-attach-archive-delete)
 	       (org-attach-delete-all t)))))))))
 #+end_src
+
+***** Move attachments of tasks with =ARCHIVE= tag to backup folder
 
 If the archiving is done just with =ARCHIVE= tag, suggest to move the attachments to archive instead.
 #+begin_src emacs-lisp
@@ -13507,31 +13519,26 @@ Unarchive when UNARCHIVE is non-nil."
   "Move attachments to/from archive directory."
   (org-archive-move-maybe (member org-archive-tag (org-get-tags))))
 #+end_src
-
-Archive logbook
-Credit: https://www.reddit.com/r/orgmode/comments/dg43hs/can_i_archive_a_property_drawer/f3frk2n/
-****************** TODO automate this
-****************** END
+***** Warn when archiving subtree with children
 
 #+begin_src emacs-lisp
-(defun my/org-archive-delete-logbook ()
-  (save-excursion
-   (org-end-of-meta-data)
-   (let ((elm (org-element-at-point)))
-     (when (and
-            (equal (org-element-type elm) 'drawer)
-            (equal (org-element-property :drawer-name elm) "LOGBOOK"))
-       (delete-region (org-element-property :begin elm)
-                      (org-element-property :end elm))))))
-
-(defun my/org-archive-without-delete ()
-  (cl-letf (((symbol-function 'org-cut-subtree) (lambda () nil)))
-    (org-archive-subtree)))
-
-(defun my/org-archive-logbook ()
-  (interactive)
-  (my/org-archive-without-delete)
-  (my/org-archive-delete-logbook))
+(use-package org-archive
+  :if init-flag
+  :after org
+  :config
+  (define-advice org-archive-subtree (:around (oldfun &optional find-done) query-subtree-with-children)
+    "Ask about archiving subtrees with children"
+    (interactive "P")
+    (let ((has-children (and (org-at-heading-p)
+                             (save-excursion
+                               (let ((end-of-subtree (save-excursion (and (org-end-of-subtree t) (point)))))
+                                 (beginning-of-line 2)
+                                 (org-with-limited-levels
+                                  (re-search-forward org-outline-regexp-bol end-of-subtree t))))))
+          (headline (org-get-heading)))
+      (when (or (not has-children)
+                (yes-or-no-p (format "%s: There are child headings. Really archive?" headline)))
+        (funcall-interactively oldfun find-done)))))
 #+end_src
 
 **** Babel
