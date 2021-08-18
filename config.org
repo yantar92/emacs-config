@@ -4554,6 +4554,7 @@ Interactive fill/unfill paragraph at point.
 			       file-missing
                                file-date-error
                                "Too few elements on stack"
+                               "Abort"
                                "Trying to run helm within a running helm session"
                                "Already at top level of the outline"
 			       "Attempt to delete the sole visible or iconified frame"
