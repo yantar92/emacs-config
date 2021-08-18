@@ -11360,7 +11360,7 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 #+begin_src emacs-lisp
 (memoize-by-buffer-contents #'org-get-buffer-tags)
 (memoize-by-buffer-contents #'org-refresh-category-properties)
-(memoize-by-buffer-contents #'org-refresh-effort-properties)
+;; (memoize-by-buffer-contents #'org-refresh-effort-properties)
 #+end_src
 ***** Speed up agenda by disabling cookies fontification
 :PROPERTIES:
