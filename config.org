@@ -15689,7 +15689,7 @@ Turning on org element cache in attempt to make it faster.
 [2021-08-16 Mon] Disabling until I fix tests and issue with incorrectly found IDs during tangle
 
 #+begin_src emacs-lisp
-(custom-set-variables '(org-element-use-cache nil))
+(custom-set-variables '(org-element-use-cache t))
 #+end_src
 
 ****************** TODO check if it is good enough
