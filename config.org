@@ -4560,6 +4560,7 @@ Interactive fill/unfill paragraph at point.
                                search-failed
 			       file-missing
                                file-date-error
+                               "epdfinfo: Unable to create synctex scanner"
                                "Too few elements on stack"
                                "Abort"
                                "Trying to run helm within a running helm session"
