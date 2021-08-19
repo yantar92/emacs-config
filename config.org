@@ -6978,7 +6978,8 @@ Semantic scholar and Google scholar alerts
     "Fontify interesting keywords according to `yant/elfeed-title-transforms'."
     (when (and (eq major-mode 'notmuch-show-mode)
 	       (string-match-p (regexp-opt '("Semantic Scholar <do-not-reply@semanticscholar.org>"
-					     "Google Scholar Alerts <scholaralerts-noreply@google.com>"))
+					     "Google Scholar Alerts <scholaralerts-noreply@google.com>"
+                                             "ScienceDirect Message Center <sciencedirect@notification.elsevier.com>"))
 			       (notmuch-show-get-from)))
       (let ((inhibit-read-only t))
         (save-excursion
