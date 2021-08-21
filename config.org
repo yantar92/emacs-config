@@ -16044,7 +16044,8 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 :PROPERTIES:
 :ID:       63354f0c-93a8-4540-9737-5ea533f6a9b1
 :END:
-
+ #tangle #crypt
+- Alternative implementation: [[id:56e0107a731598b9f203e3af0b71349f00985f63][/u/negativeoilprice [Reddit:planetemacs] (2020) Andrea: Org crypt and tangling source blocks]]
 #+begin_src emacs-lisp
 (use-package org-crypt
   :config
