@@ -14517,6 +14517,7 @@ Verbatim text font
 :CREATED:  [2020-03-28 Sat 18:51]
 :ID:       e8ee8fc7-55ec-4396-83e6-97559ab1d5bf
 :END:
+ #org_open_at_point
 [2020-10-14 Wed] Add smarted duplicate removal: =link= means the same as =[[link]]=
 #+begin_src emacs-lisp
 (use-package posframe
