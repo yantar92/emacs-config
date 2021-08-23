@@ -2357,6 +2357,24 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
   (magit-section-initial-visibility-alist
    '((stashes . hide) (untracked . hide) (unpushed . hide))))
 #+end_src
+**** More detailed highlight of current chunk
+
+Magit is able to provide word-level diff refinement.  It is disabled by default though.  Enabling.
+
+#+begin_src emacs-lisp
+(use-package magit
+  :requires diff-mode
+  :custom
+  (magit-diff-refine-hunk t)
+  :custom-face
+  (diff-refine-removed ((t
+                         :inherit diff-refine-changed
+                         :background "Palevioletred1")))
+  (diff-refine-added ((t
+                       :inherit diff-refine-changed
+                       :background "LightGreen"))))
+#+end_src
+
 **** Working with multiple repositories
 :PROPERTIES:
 :ID:       8cb296de-443f-4e75-8a05-6834085c54f2
