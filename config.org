@@ -15944,7 +15944,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
         (with-current-buffer magit-buffer
           (unless (magit-jump-to-staged) ;; returns nil on success.
             (funcall-interactively #'magit-commit-create)
-            (while (not (get-buffer "COMMIT_EDITMSG")) (sleep-for 1) (message "Waiting for commit buffer."))
+            (while (not (get-buffer "COMMIT_EDITMSG")) (sleep-for 3) (message "Waiting for commit buffer..."))
             (with-current-buffer "COMMIT_EDITMSG"
               (insert (format-time-string "Autoupdate %Y-%m-%d" (current-time))))))))))
 #+end_src
