@@ -5001,7 +5001,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 :PROPERTIES:
 :ID:       ac20a5b1-8475-4bf7-985d-a82c804eae6a
 :END:
-
+ #display-fill-column-indicator-mode
 #+begin_src emacs-lisp
 (when init-flag
   (setq fill-column 80)
