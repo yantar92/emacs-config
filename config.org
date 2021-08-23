@@ -6192,6 +6192,14 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
   (setq elfeed-search-print-entry-function #'yant/elfeed-search-print-entry))
 
 #+end_src
+**** Highlight FLAGGED feed entries
+
+#+begin_src emacs-lisp
+(use-package elfeed
+  :config
+  (setf (alist-get 'flagged elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10))))
+  (setf (alist-get 'FLAGGED elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10)))))
+#+end_src
 
 *** =Notmuch=
 :PROPERTIES:
