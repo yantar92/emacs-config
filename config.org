@@ -7073,8 +7073,13 @@ print(detect(text))
   (defun yant/guess-language-string (string)
     "Guess language in the specified STRING."
     (unless (executable-find "detect-language") (user-error "Command detect-language is not in PATH"))
-    (s-trim-right 
-     (shell-command-to-string (s-concat "detect-language \"" string "\""))))
+    (let (result)
+      (setq result
+            (s-trim-right
+             (shell-command-to-string (s-concat "detect-language \"" string "\""))))
+      (if (string-match-p "Traceback" result)
+          (error "Failed to run detect-language script: %S" result)
+        result)))
 
   (use-package memoize
     :straight t
