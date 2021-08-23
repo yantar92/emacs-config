@@ -17225,3 +17225,23 @@ Credit: https://www.reddit.com/r/orgmode/comments/dg43hs/can_i_archive_a_propert
   (my/org-archive-delete-logbook))
 #+end_src
 
+** FAILED Use git for backups: =helm-backup= :EMACS:COMMON:SOMEDAY:
+CLOSED: [2021-08-22 Sun 16:38]
+:PROPERTIES:
+:SUMMARY:  I do not like that it is using ediff
+:ARCHIVE_TIME: 2021-08-22 Sun 16:49
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/History & version control
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: FAILED
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+- Note taken on [2021-08-22 Sun 16:38] \\
+  I do not like that it is using ediff
+#+begin_src emacs-lisp
+(use-package helm-backup
+  :straight t
+  :hook (after-save-hook . helm-backup-versioning))
+#+end_src
+
