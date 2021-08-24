@@ -11171,23 +11171,24 @@ current task to NEXT and schedule it the same day."
       ;; (org-fold-show-children)
       (recenter 2)))
   (defvar yant/helm-org-ql--refile-history nil)
-  (defun yant/helm-org-ql-refile-to (marker)
+  (defun yant/helm-org-ql-refile-to (&optional marker)
     "Refile heading at point to selected heading at MARKER."
     (require 'org-macs)
-    (let* ((buffer (marker-buffer marker))
-           (filename (or (buffer-file-name buffer) (buffer-file-name (buffer-base-buffer buffer))))
-           ;; get the heading we refile to so org doesn't
-           ;; output 'Refile to "nil" in file ...'
-           (heading (org-with-point-at marker (org-get-heading :no-tags :no-todo :no-priority :no-comment)))
-	   (rfloc (list heading filename nil marker)))
-      ;; Probably best to check that everything returned a value
-      (when (and buffer filename rfloc)
-        (push marker yant/helm-org-ql--refile-history)
-        (setq yant/helm-org-ql--refile-history (delete-dups yant/helm-org-ql--refile-history))
-        (org-with-point-at-org-buffer
-         (when-let ((org-agenda-buffer-name (and (boundp 'agenda-buffer) agenda-buffer)))
-	   (org-remove-subtree-entries-from-agenda))
-         (org-refile nil nil rfloc)))))
+    (when marker
+      (let* ((buffer (marker-buffer marker))
+             (filename (or (buffer-file-name buffer) (buffer-file-name (buffer-base-buffer buffer))))
+             ;; get the heading we refile to so org doesn't
+             ;; output 'Refile to "nil" in file ...'
+             (heading (org-with-point-at marker (org-get-heading :no-tags :no-todo :no-priority :no-comment)))
+	     (rfloc (list heading filename nil marker)))
+        ;; Probably best to check that everything returned a value
+        (when (and buffer filename rfloc)
+          (push marker yant/helm-org-ql--refile-history)
+          (setq yant/helm-org-ql--refile-history (delete-dups yant/helm-org-ql--refile-history))
+          (org-with-point-at-org-buffer
+           (when-let ((org-agenda-buffer-name (and (boundp 'agenda-buffer) agenda-buffer)))
+	     (org-remove-subtree-entries-from-agenda))
+           (org-refile nil nil rfloc))))))
   (defun yant/helm-org-ql-yank-selection ()
     "Yank search exp matching selected heading's children."
     (interactive)
@@ -11315,7 +11316,8 @@ current task to NEXT and schedule it the same day."
       "Like `helm-org-ql-agenda-files', but also allow creating a new heading."
       (interactive "P")
       (let ((files (if arg (org-agenda-files t t) (org-agenda-files t)))
-            (search-archives-p arg))
+            (search-archives-p t ;; arg
+                               ))
         (helm :prompt (format "Query (boolean and): ")
               :sources (list (helm-org-ql-source files
                                                  :name "Org Agenda Files"
