@@ -14537,7 +14537,7 @@ Verbatim text font
   :straight t
   :after el-patch
   :config
-  (el-patch-feature 'org)
+  (el-patch-feature org)
   (el-patch-defun org-offer-links-in-entry (buffer marker &optional nth zero)
     "Offer links in the current entry and return the selected link.
 If there is only one link, return it.
@@ -15491,7 +15491,7 @@ Patching the relevant function to not put that tooltip into the overlay.
 #+begin_src emacs-lisp
 (use-package org-agenda
   :config
-  (el-patch-feature 'org-agenda)
+  (el-patch-feature org-agenda)
   (el-patch-defun org-agenda-mark-clocking-task ()
     "Mark the current clock entry in the agenda if it is present."
     ;; We need to widen when `org-agenda-finalize' is called from
