@@ -3859,14 +3859,11 @@ Disabling it
 #+end_src
 
 ***** Appearance
-****** COMMENT File icons
+****** File icons
 :PROPERTIES:
 :CREATED:  [2019-08-27 Tue 17:18]
 :ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
 :END:
-
-****************** TODO Investigate how to avoid hangs on large folders
-****************** END
 
 #+begin_src emacs-lisp
 (use-package all-the-icons-dired
