@@ -2084,6 +2084,18 @@ Credit: [[id:b9619989-5416-463c-a5e9-42d35364cbf2][emacs-tv-config/init-helm.el 
   (setq helm-adaptive-history-file nil)
   (helm-adaptive-mode 1))
 #+end_src
+**** Icons =helm-icons=
+
+#+begin_src emacs-lisp
+(use-package helm-icons
+  :straight t
+  :if init-flag
+  :after helm
+  :custom
+  (helm-icons-provider 'all-the-icons)
+  :config
+  (helm-icons-enable))
+#+end_src
 
 *** Company
 :PROPERTIES:
