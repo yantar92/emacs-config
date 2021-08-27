@@ -2093,6 +2093,8 @@ Credit: [[id:b9619989-5416-463c-a5e9-42d35364cbf2][emacs-tv-config/init-helm.el 
   :after helm
   :custom
   (helm-icons-provider 'all-the-icons)
+  (helm-icons-mode->icon
+   '((dired-mode . "file-directory")))
   :config
   (helm-icons-enable))
 #+end_src
