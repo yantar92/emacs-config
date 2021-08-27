@@ -9254,8 +9254,8 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
 	      ("C-c C-S-u a" . org-web-tools-archive-attach)
 	      ("C-c C-S-u o" . org-web-tools-archive-view)
 	      ("C-c C-S-u i" . org-web-tools-insert-web-page-as-entry))
-  ;; :init (use-package org-web-tools-archive)
   :config
+  (use-package org-web-tools-archive)
   ;; (setq org-web-tools-archive-fn #'org-web-tools-archive--wget-tar)
   (setq org-web-tools-archive-wget-options
 	(append (-remove-item  "--execute robots=off" org-web-tools-archive-wget-options) (list "--max-redirect=100")))
