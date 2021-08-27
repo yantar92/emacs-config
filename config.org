@@ -15860,6 +15860,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
   :after magit
   :config
   (defvar yant/magit-show-autocommit-regexps '("^\\(-\\|\\+\\)[ \t]*:SHOWFROMDATE:.+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:Effort:.+\n"
 					       "^\\(\\+\\|-\\)[ \t]*- State .+from.+\n"
 					       "^\\(-\\|\\+\\)[ \t]*:LAST_REPEAT: \\[.+\n"
 					       "^\\(-\\|\\+\\)[ \t]*:ORG-TIME-BONUS:.+\n"
