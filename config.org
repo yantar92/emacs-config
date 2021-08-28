@@ -17275,3 +17275,30 @@ CLOSED: [2021-08-22 Sun 16:38]
   :hook (after-save-hook . helm-backup-versioning))
 #+end_src
 
+** FAILED Sorting with =dired-quick-sort= :EMACS:COMMON:SOMEDAY:
+CLOSED: [2021-08-27 Fri 21:48]
+:PROPERTIES:
+:SUMMARY:  Does not play well with dired hide dotfiles
+:ARCHIVE_TIME: 2021-08-27 Fri 21:48
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired=
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: FAILED
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+:LOGBOOK:
+- State "FAILED"     from              [2021-08-27 Fri 21:48] \\
+  Does not play well with dired hide dotfiles
+:END:
+
+#+begin_src emacs-lisp
+(use-package dired-quick-sort
+  :if init-flag
+  :straight t
+  :after diredp
+  :init
+  (setq dired-quick-sort-suppress-setup-warning nil)
+  :config
+  (dired-quick-sort-setup))
+#+end_src
+
