@@ -16262,7 +16262,22 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
     ;; (meta-defun meta-down :mode org-agenda-mode org-agenda-next-item)
     (meta-defun meta-up :mode org-agenda-mode org-agenda-previous-line)
     (meta-defun meta-down :mode org-agenda-mode org-agenda-next-line)
-    ))
+    (meta-defun meta-down :mode org-mode
+      :cond (and (org-at-heading-p)
+                 (not (org-inlinetask-end-p))
+                 (not (org-fold-folded-p (line-end-position))))
+      (let ((hl (org-element-at-point)))
+        (let ((pos (or (org-element-property :contents-begin hl)
+                       (org-element-property :end hl))))
+          (setq pos
+                (cl-loop for el = (org-element-at-point pos)
+                         until (org-fold-folded-p pos)
+                         if (memq (org-element-type el) '(drawer property-drawer planning))
+                         do (setq pos (org-element-property :end el))
+                         else return pos))
+          (if pos
+              (goto-char pos)
+            (next-logical-line)))))))
 #+end_src
 
 **** Boon integration
