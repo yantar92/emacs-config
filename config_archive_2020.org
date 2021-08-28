@@ -1,0 +1,1045 @@
+
+Archived entries from file /home/yantar92/Git/emacs-config/config.org
+* 2020
+** 2020-03 March
+*** 2020-03-11 Wednesday
+**** Archived inline tasks
+***** DONE adjust the width for various symbols 
+CLOSED: [2020-03-11 Wed 23:44]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-03-28 Sat 15:00
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Appearance/Theme
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-03-11 Wed 23:44]
+:END:
+***** DONE this thing should be smarter and consider that multibyte characters can have different width. I will try to keep 2-byte double width. Then the string should be trimmed to certain number of bytes, but not certain character number
+CLOSED: [2020-03-11 Wed 23:17]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-03-28 Sat 15:00
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Appearance/Agenda
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-03-11 Wed 23:17]
+:END:
+*** 2020-03-30 Monday
+**** Archived Tasks
+***** FAILED Make it work everywhere
+CLOSED: [2020-03-30 Mon 22:51]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-03-30 Mon 22:51
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Command loop/Key bindings/Make key bindings work in Ukrainian/Russian =keymap=
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: FAILED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "FAILED"     from "TODO"          [2020-03-30 Mon 22:51]
+:END:
+- +This does not work with things like =C-c 'symbol= for now.+
+- +This does not work with boon =command mode= and =special mode=.+
+- this does not work with key chords (again read-event)
+- this does not work with region specifiers on boon (it uses read-event!)
+**** Archived inline tasks
+***** DONE ask in org mail-list about save-window-config in emacs src execution
+CLOSED: [2020-03-30 Mon 22:00]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-03-31 Tue 22:53
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Links/Internal/=Src= block links
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-03-30 Mon 22:00]
+:END:
+***** DONE ask mail-list about what "internal link means" in org-agenda-open-link. Condition look strange. Why just non-bracket link?
+CLOSED: [2020-03-30 Mon 22:00]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-03-31 Tue 22:53
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Links/Internal/=Src= block links
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-03-30 Mon 22:00]
+:END:
+***** DONE my changes broke some C-c C-o behaviour. reverted for now, but need to investigate
+CLOSED: [2020-03-30 Mon 22:00]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-03-31 Tue 22:53
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Links/Internal/=Src= block links
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-03-30 Mon 22:00]
+:END:
+** 2020-04 April
+*** 2020-04-02 Thursday
+**** Archived Tasks
+*** 2020-04-08 Wednesday
+**** Archived inline tasks
+***** CANCELLED do not show changes if the old todo was actually the same                       :CANCELLED:
+CLOSED: [2020-04-08 Wed 12:39]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-04-08 Wed 12:40
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Appearance/Agenda
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-04-08 Wed 12:39]
+:END:
+***** DONE I solved the issue with losing fontification of todo keywords when keyword actually does not change, but if it changes, still have problem 
+CLOSED: [2020-04-08 Wed 12:39]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-04-08 Wed 12:40
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Appearance/Agenda
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-04-08 Wed 12:39]
+:END:
+***** CANCELLED maybe only show done?                                                           :CANCELLED:
+CLOSED: [2020-04-08 Wed 12:39]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-04-08 Wed 12:40
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Appearance/Agenda
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-04-08 Wed 12:39]
+:END:
+*** 2020-04-09 Thursday
+**** Archived Tasks
+*** 2020-04-14 Tuesday
+**** Archived Tasks
+*** 2020-04-20 Monday
+**** Archived inline tasks
+***** CANCELLED Use boon selection here to call org-cut-subtree conditionally                   :CANCELLED:
+CLOSED: [2020-04-20 Mon 21:01]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-04-20 Mon 21:01
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Misc/Org mode editing
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-04-20 Mon 21:01]
+:END:
+**** Archived Tasks
+***** Comment/uncomment
+:PROPERTIES:
+:ID:       957cd651-ad7a-467d-b6d5-ac8bf92d839d
+:ARCHIVE_TIME: 2020-04-20 Mon 21:09
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Editing
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+#+begin_src emacs-lisp
+(use-package comment-dwim-2
+  :if init-flag
+  :straight t
+  :bind (:map prog-mode-map
+	      ("M-;" . comment-dwim-2)))
+#+end_src
+*** 2020-04-23 Thursday
+**** Archived Tasks
+***** =((((((= auto close parentheses =)))))))=
+:PROPERTIES:
+:CREATED:  [2019-12-23 Mon 19:36]
+:ID:       a8a2499f-32fc-43ee-b9a0-0176bf9f2ee0
+:ARCHIVE_TIME: 2020-04-23 Thu 14:42
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Programming & emacsing
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+
+#+begin_src emacs-lisp
+(use-package elec-pair
+  :if init-flag
+  :hook (emacs-lisp-mode . electric-pair-local-mode))
+#+end_src
+***** Show current value in separate buffer
+:PROPERTIES:
+:CREATED:  [2019-08-11 Sun 15:21]
+:ID:       77bcfa1d-8a0f-47fb-a41b-a41111d5b189
+:ARCHIVE_TIME: 2020-04-23 Thu 14:48
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Debugging/Appearance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+
+#+begin_src emacs-lisp
+;; From https://www.reddit.com/r/emacs/comments/7htdzk/show_reddit_prettyprint_debugger_frames/
+
+(use-package debug
+  :if init-flag
+  :config
+  (defun gk-debugger-pp-frame ()
+    (interactive)
+    (let ((inhibit-read-only t)
+          (frame (backtrace-frame (debugger-frame-number))))
+      (set-buffer (pop-to-buffer "*BT: Frame*"))
+      (destructuring-bind (special fn &rest args) frame
+	(erase-buffer)
+	(progn
+          (insert "(" (pp-to-string fn))
+          (dolist (arg args)
+            (insert "\n" (pp-to-string arg)))
+          (insert ")"))
+	(goto-char (point-min))
+	(indent-pp-sexp))))
+  (define-key debugger-mode-map "r" 'gk-debugger-pp-frame))
+#+end_src
+*** 2020-04-27 Monday
+**** Archived Inline Tasks
+***** DONE Move elisp-demos and helpful to here
+CLOSED: [2020-04-27 Mon 15:20]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-04-29 Wed 00:07
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Programming & emacsing/Emacs help/Symbol&info lookup
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-04-27 Mon 15:20]
+:END:
+***** DONE Implement this (current month summary)
+CLOSED: [2020-04-27 Mon 13:04]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-04-29 Wed 00:07
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Clocking & logging
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-04-27 Mon 13:04]
+:END:
+*** 2020-04-28 Tuesday
+**** Archived Inline Tasks
+***** DONE there is =insert-before-markers=. not sure if it inherits properties
+CLOSED: [2020-04-28 Tue 12:06]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-04-29 Wed 00:07
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-04-28 Tue 12:06]
+:END:
+** 2020-05 May
+*** 2020-05-05 Tuesday
+**** Archived Tasks
+***** DONE [#A] get a reply #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
+CLOSED: [2020-05-05 Tue 13:34] SCHEDULED: <2020-04-30 Thu>
+:PROPERTIES:
+:CREATED: [2020-04-26 Sun 23:59]
+:EMAIL-SOURCE: [[notmuch:id:87y2qi8c8w.fsf@localhost]]
+:SHOWFROMDATE: 2020-05-05
+:ARCHIVE_TIME: 2020-05-06 Wed 00:16
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-05-05 Tue 13:34]
+- Refiled on [2020-04-26 Sun 23:59]
+:END:
+*** 2020-05-09 Saturday
+**** Archived Inline Tasks
+***** CANCELLED maybe report incorrect search-invisible description to emacs                    :CANCELLED:
+CLOSED: [2020-05-09 Sat 22:13]
+:PROPERTIES:
+:SUMMARY:  Description is actually fine
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-05-09 Sat 22:13] \\
+  Description is actually fine
+:END:
+***** DONE find out what is the deal with restoring invisible state
+CLOSED: [2020-05-09 Sat 22:14]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:14]
+:END:
+***** DONE I may try setting isearch-filter-predicate instead of advice
+CLOSED: [2020-05-09 Sat 22:14]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:14]
+:END:
+***** DONE check why newly added properties are not hidden
+CLOSED: [2020-05-09 Sat 22:15]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:15]
+:END:
+***** DONE investigate why drawers are not hidden. org-autosort? 
+CLOSED: [2020-05-09 Sat 22:15]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-05-09 Sat 22:15]
+:END:
+**** Archived Tasks
+***** DONE org-entities become hidden because of sticky invisible property
+CLOSED: [2020-05-09 Sat 22:16]
+:PROPERTIES:
+:CREATED:  [2020-04-27 Mon 13:35]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-05-09 Sat 22:16]
+:END:
+***** FAILED invisible text property seems to interfere with links visibility - some parts are shown when they should not
+CLOSED: [2020-05-09 Sat 22:20]
+:PROPERTIES:
+:CREATED: [2020-04-27 Mon 16:20]
+:SUMMARY:  Can't reproduce
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: FAILED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "FAILED"     from "TODO"          [2020-05-09 Sat 22:20] \\
+  Can't reproduce
+- Refiled on [2020-04-27 Mon 21:40]
+CLOCK: [2020-04-27 Mon 16:20]--[2020-04-27 Mon 16:21] =>  0:01
+:END:
+***** DONE notmuch-id links are not hidden in drawers
+CLOSED: [2020-05-09 Sat 22:21]
+:PROPERTIES:
+:CREATED:  [2020-04-28 Tue 22:37]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:21]
+:END:
+***** DONE helm does not reveal the hidden text
+CLOSED: [2020-05-09 Sat 22:41]
+:PROPERTIES:
+:CREATED:  [2020-04-29 Wed 01:56]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:41]
+:END:
+***** DONE links inside drawers may not be rendered correctly because their invisibility spec can only be set once 
+CLOSED: [2020-05-09 Sat 22:21]
+:PROPERTIES:
+:CREATED: [2020-04-29 Wed 23:59]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:21]
+- Refiled on [2020-04-30 Thu 13:01]
+:END:
+***** DONE check org-show-context-detail for isearch + properties
+CLOSED: [2020-05-09 Sat 22:22]
+:PROPERTIES:
+:CREATED: [2020-05-08 Fri 11:32]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:22]
+- Refiled on [2020-05-08 Fri 12:41]
+:END:
+***** CANCELLED cursor-sensor-mode actually works even if inhibit-point-motion-hooks is set to non-nil, though there is a chance things will break later... :CANCELLED:
+CLOSED: [2020-05-09 Sat 23:20]
+:PROPERTIES:
+:CREATED: [2020-05-09 Sat 13:25]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-05-09 Sat 23:20]
+- Refiled on [2020-05-09 Sat 22:13]
+CLOCK: [2020-05-09 Sat 13:25]--[2020-05-09 Sat 13:27] =>  0:02
+:END:
+***** DONE org actually uses outline-isearch-open-invisible-function taking into account org-show-context-detail variable
+CLOSED: [2020-05-09 Sat 22:41]
+:PROPERTIES:
+:CREATED: [2020-05-09 Sat 13:30]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:41]
+- Refiled on [2020-05-09 Sat 22:13]
+CLOCK: [2020-05-09 Sat 13:30]--[2020-05-09 Sat 13:31] =>  0:01
+:END:
+
+I am confused how it works.
+There is outline-flag-region setting 'isearch-open-invisible property to outline-isearch-open-invisible-function, which is customised by org.
+
+On the other hand, there is org-flag-region setting 'isearch-open-invisible to #'delete-overlay. ???
+***** DONE helm calls org-reveal to show matches, it calls org-show-set-visibility, which directly operates on overlays!!
+CLOSED: [2020-05-09 Sat 22:39]
+:PROPERTIES:
+:CREATED: [2020-05-09 Sat 13:50]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-09 Sat 22:39]
+- Refiled on [2020-05-09 Sat 22:13]
+:END:
+***** FAILED there is isearch-open-invisible-temporary. does it make sense to set it to something for property overlays only? by default, org just leaves everything shown
+CLOSED: [2020-05-09 Sat 22:40]
+:PROPERTIES:
+:CREATED: [2020-05-09 Sat 17:26]
+:SUMMARY:  Org does not leave everything shown
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: FAILED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "FAILED"     from "TODO"          [2020-05-09 Sat 22:40] \\
+  Org does not leave everything shown
+- Refiled on [2020-05-09 Sat 22:13]
+CLOCK: [2020-05-09 Sat 17:26]--[2020-05-09 Sat 17:27] =>  0:01
+:END:
+*** 2020-05-10 Sunday
+**** Archived Inline Tasks
+***** DONE The bonus is not calculated correctly for the habits now. Fix it.
+CLOSED: [2020-05-10 Sun 21:40]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-05-13 Wed 01:18
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Clocking & logging/Bonus/penalty based time management
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-05-10 Sun 21:40]
+:END:
+
+*** 2020-05-13 Wednesday
+**** Archived Inline Tasks
+***** CANCELLED try the remove-overlays idea on master #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:CANCELLED:
+:PROPERTIES:
+:CREATED: [2020-05-10 Sun 23:59]
+:EMAIL-SOURCE: [[notmuch:id:87lflz4v7l.fsf@localhost]]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-11 Mon 10:23]
+- State "CANCELLED"  from "TODO"          [2020-05-11 Mon 10:23]
+:END:
+**** Archived Tasks
+***** DONE get a reply #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
+:PROPERTIES:
+:CREATED: [2020-05-10 Sun 23:59]
+:EMAIL-SOURCE: [[notmuch:id:87imh34usq.fsf@localhost]]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-11 Mon 10:23]
+- Refiled on [2020-05-11 Mon 10:22]
+- State "DONE"       from "TODO"          [2020-05-11 Mon 10:22]
+:END:
+***** TODO can try to get rid of 'outline overlays by changing some outline-* function calls (calling outline-flag-region) in org
+:PROPERTIES:
+:CREATED: [2020-05-10 Sun 23:59]
+:ARCHIVE_TIME: 2020-05-13 Wed 00:45
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: TODO
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-11 Mon 10:23]
+CLOCK: [2020-05-11 Mon 02:45]--[2020-05-11 Mon 02:46] =>  0:01
+:END:
+*** 2020-05-17 Sunday
+**** Archived Inline Tasks
+***** CANCELLED there are potentially many places in org using insert. need to investigate      :CANCELLED:
+CLOSED: [2020-05-17 Sun 22:14]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-05-19 Tue 01:12
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-05-17 Sun 22:14]
+:END:
+***** CANCELLED the need to use =insert-and-inherit= may confuse user-written code, which commonly uses simple =insert=. Not sure what can be done about this :CANCELLED:
+CLOSED: [2020-05-17 Sun 22:14]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-05-19 Tue 01:12
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-05-17 Sun 22:14] \\
+  used after/before change
+:END:
+***** DONE [#A] finish the email
+CLOSED: [2020-05-17 Sun 23:06] SCHEDULED: <2020-05-17 Sun>
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-05-19 Tue 01:12
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-05-17 Sun 23:06]
+- State "DONE"       from "NEXT"          [2020-05-17 Sun 22:49]
+:END:
+**** Archived Tasks
+***** DONE [#A] reply about ways to handle insert into hidden text #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
+CLOSED: [2020-05-17 Sun 23:02] SCHEDULED: <2020-05-11 Mon>
+:PROPERTIES:
+:CREATED: [2020-05-11 Mon 10:21]
+:EMAIL-SOURCE: [[notmuch:id:87pnbby49m.fsf@nicolasgoaziou.fr]]
+:SHOWFROMDATE: 2020-05-16
+:ARCHIVE_TIME: 2020-05-19 Tue 01:12
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-05-17 Sun 23:02]
+CLOCK: [2020-05-17 Sun 22:47]--[2020-05-17 Sun 23:02] =>  0:15
+CLOCK: [2020-05-17 Sun 20:33]--[2020-05-17 Sun 22:47] =>  2:14
+CLOCK: [2020-05-17 Sun 20:18]--[2020-05-17 Sun 20:33] =>  0:15
+CLOCK: [2020-05-17 Sun 19:47]--[2020-05-17 Sun 20:18] =>  0:31
+CLOCK: [2020-05-16 Sat 23:06]--[2020-05-17 Sun 02:17] =>  3:11
+- Refiled on [2020-05-11 Mon 10:22]
+:END:
+*** 2020-05-28 Thursday
+**** Archived Tasks
+***** COMMENT Gentoo config
+:PROPERTIES:
+:CREATED:  [2019-12-15 Sun 14:44]
+:header-args+: :tangle no
+:ARCHIVE_TIME: 2020-05-28 Thu 12:59
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_CATEGORY: config
+:END:
+
+[2020-05-28 Thu] Planning to switch to guix. No point working on this anymore.
+
+****** Portage
+:PROPERTIES:
+:CREATED:  [2019-12-15 Sun 14:45]
+:SUMMARY:  Plan
+:ID:       087faac8-81ad-41b8-a011-9a7054547ff4
+:END:
+
+
+******* =make.conf=
+:PROPERTIES:
+:CREATED:  [2019-12-15 Sun 14:45]
+:header-args+: :tangle "/sudo::/etc/portage/make.conf"
+:ID:       831ba397-89f0-4f97-af26-39d3a0e48c05
+:END:
+
+Use compilation cache
+
+*************** TODO make sure it works
+*************** END
+
+#+begin_src bash :tangle no
+emerge ccache
+#+end_src
+
+#+begin_src conf
+FEATURES="ccache"
+CCACHE_SIZE="2G"
+#+end_src
+
+*************** TODO use it
+*************** END
+
+Speed up application startup by pre-linking shared libraries
+https://wiki.gentoo.org/wiki/Prelink
+
+#+begin_src bash :tangle no
+emerge prelink
+#+end_src
+
+
+*************** TODO split into sections
+*************** END
+
+
+#+begin_src conf
+EMERGE_DEFAULT_OPTS="--complete-graph"
+
+ACCEPT_KEYWORDS="amd64"
+ABI_X86="64 32"
+
+CFLAGS="-march=broadwell --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=3072 -O3 -pipe"
+CXXFLAGS="${CFLAGS}"
+
+# WARNING: Changing your CHOST is not something that should be done lightly.
+# Please consult http://www.gentoo.org/doc/en/change-chost.xml before changing.
+CHOST="x86_64-pc-linux-gnu"
+
+# These are the USE flags that were used in addition to what is provided by the
+# profile used for building.
+CPU_FLAGS_X86="aes mabm mcx16 mlzcnt msahf popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3 mmxext mmx"
+USE="$USE multilib truetype bash-completion unicode icu acpi emacs fontconfig gnuplot latex libnotify syslog udev pulseaudio"
+USE="$USE qt5 -qt4 -qt3support"
+USE="$USE tk -doc"
+USE="$USE -dvd -dvdr -firefox"
+
+#use glamor in for drivers is default gtom xorg-drivers-1.19
+USE="$USE glamor"
+
+INPUT_DEVICES="synaptics evdev"
+VIDEO_CARDS="intel i965 v4l"
+
+MAKEOPTS="-j5"
+
+PORTDIR="/usr/portage"
+DISTDIR="${PORTDIR}/distfiles"
+PKGDIR="${PORTDIR}/packages"
+
+#GENTOO_MIRRORS="http://gentoo.kiev.ua/ftp/ ftp://gentoo.kiev.ua/ rsync://gentoo.kiev.ua/gentoo-distfiles http://gentoo.iteam.net.ua/"
+
+LINGUAS="uk ru en"
+PLOCALES="uk ru en"
+L10N="$L10N $LINGUAS"
+
+source /var/lib/layman/make.conf
+
+#+end_src
+** 2020-06 June
+*** 2020-06-13 Saturday
+**** Archived Inline Tasks
+***** DONE actually, we can simply reveal the hidden text before/after the changed text (unless the inserted text is hidden)
+CLOSED: [2020-06-13 Sat 16:09]
+:PROPERTIES:
+:CREATED: [2020-05-10 Sun 23:59]
+:ARCHIVE_TIME: 2020-06-14 Sun 19:30
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-06-13 Sat 16:09]
+- Refiled on [2020-05-11 Mon 10:24]
+CLOCK: [2020-05-11 Mon 02:43]--[2020-05-11 Mon 02:45] =>  0:02
+:END:
+**** Archived Tasks
+***** DONE there is still a visual glitch with two collapsed ellipsis shown at the same time for some reason
+CLOSED: [2020-06-13 Sat 16:09]
+:PROPERTIES:
+:CREATED: [2020-05-04 Mon 23:59]
+:ARCHIVE_TIME: 2020-06-14 Sun 19:30
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-06-13 Sat 16:09]
+- Refiled on [2020-05-04 Mon 23:59]
+:END:
+***** DONE hidden tables are messed sometimes (when realigning?) because of properties
+CLOSED: [2020-06-13 Sat 16:09]
+:PROPERTIES:
+:CREATED: [2020-05-08 Fri 11:50]
+:ARCHIVE_TIME: 2020-06-14 Sun 19:30
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-06-13 Sat 16:09]
+- Refiled on [2020-05-08 Fri 12:41]
+:END:
+***** DONE after finishing =isearch= the drawers are not closed back. (actually, they are closed, but reopened again by hi-lock) no idea why
+CLOSED: [2020-06-13 Sat 16:09]
+:PROPERTIES:
+:CREATED: [2020-05-09 Sat 22:11]
+:ARCHIVE_TIME: 2020-06-14 Sun 19:30
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-06-13 Sat 16:09]
+- Refiled on [2020-05-09 Sat 22:13]
+CLOCK: [2020-05-09 Sat 22:11]--[2020-05-09 Sat 22:12] =>  0:01
+:END:
+***** DONE notes added on CANCEL are not hidden for some reason
+CLOSED: [2020-06-13 Sat 16:09]
+:PROPERTIES:
+:CREATED:  [2020-05-17 Sun 23:08]
+:ARCHIVE_TIME: 2020-06-14 Sun 19:30
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-06-13 Sat 16:09]
+:END:
+
+
+*** 2020-06-14 Sunday
+**** Archived Tasks
+***** TODO goto-line preview does not reveal hidden text in org
+:PROPERTIES:
+:CREATED: [2020-05-13 Wed 15:23]
+:ARCHIVE_TIME: 2020-06-14 Sun 19:30
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: TODO
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- Refiled on [2020-05-13 Wed 15:23]
+:END:
+*** 2020-06-23 Tuesday
+**** Archived Tasks
+***** DONE [#A] get a reply #email -> $:from Re: [patch suggestion] Mitigating the poor Emacs performance on huge org files: Do not use overlays for PROPERTY and LOGBOOK drawers :EMAIL:
+CLOSED: [2020-06-23 Tue 08:20] SCHEDULED: <2020-06-23 Tue>
+:PROPERTIES:
+:CREATED: [2020-06-21 Sun 18:18]
+:EMAIL-SOURCE: [[notmuch:id:87pn9s7nku.fsf@localhost]]
+:ARCHIVE_TIME: 2020-06-23 Tue 23:52
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Speed up huge org files
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-06-23 Tue 08:20]
+- Refiled on [2020-06-21 Sun 19:09]
+:END:
+** 2020-07 July
+*** 2020-07-23 Thursday
+**** Archived Inline Tasks
+***** DONE add explanation about special behaviour for different websites
+CLOSED: [2020-07-23 Thu 13:45]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-07-26 Sun 10:49
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Capture/Capturing references (websites, journal papers, files, etc)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-07-23 Thu 13:45]
+:END:
+*** 2020-07-27 Monday
+**** Archived Tasks
+***** FAILED check this for my capture [[file:~/.emacs.d/straight/repos/org/lisp/ol-bibtex.el::;;]]
+CLOSED: [2020-07-27 Mon 09:51] SCHEDULED: <2020-07-27 Mon>
+:PROPERTIES:
+:CREATED: [2020-07-25 Sat 14:15]
+:SHOWFROMDATE: 2020-07-27
+:SUMMARY:  Too much interactivity
+:ARCHIVE_TIME: 2020-08-01 Sat 16:07
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Capture/Capturing references (websites, journal papers, files, etc)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: FAILED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "FAILED"     from "DONE"          [2020-07-27 Mon 09:51] \\
+  Too much interactivity
+- State "DONE"       from "NEXT"          [2020-07-27 Mon 09:51]
+CLOCK: [2020-07-27 Mon 09:39]--[2020-07-27 Mon 09:51] =>  0:12
+- Refiled on [2020-07-25 Sat 15:23]
+CLOCK: [2020-07-25 Sat 14:15]--[2020-07-25 Sat 14:59] =>  0:44
+:END:
+*** 2020-07-30 Thursday
+**** Archived Tasks
+***** DONE key generation on very long titles gives the same keys (part 1,2,3...)
+CLOSED: [2020-07-30 Thu 13:46] SCHEDULED: <2020-07-27 Mon>
+:PROPERTIES:
+:CREATED: [2020-07-27 Mon 08:39]
+:SHOWFROMDATE: 2020-07-30
+:ARCHIVE_TIME: 2020-08-01 Sat 16:07
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Capture/Capturing references (websites, journal papers, files, etc)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-07-30 Thu 13:46]
+- Refiled on [2020-07-27 Mon 08:55]
+CLOCK: [2020-07-27 Mon 08:39]--[2020-07-27 Mon 08:40] =>  0:01
+:END:
+** 2020-08 August
+*** 2020-08-18 Tuesday
+**** Archived Inline Tasks
+***** DONE make separate parser for RSS feeds - maybe just allow setting some fields in advance
+CLOSED: [2020-08-18 Tue 14:35]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-08-25 Tue 10:28
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Capture/Capturing references (websites, journal papers, files, etc)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-08-18 Tue 14:35]
+:END:
+***** CANCELLED show state if ID exists in silent                                                                                                 :CANCELLED:
+CLOSED: [2020-08-18 Tue 14:36]
+:PROPERTIES:
+:ID:       b65810df-f6d7-421a-b8d5-34ba94bd0d0f
+:ARCHIVE_TIME: 2020-08-25 Tue 10:28
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Capture/Capturing references (websites, journal papers, files, etc)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-08-18 Tue 14:36]
+:END:
+***** CANCELLED make force argument work                                                                                                          :CANCELLED:
+CLOSED: [2020-08-18 Tue 14:36]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-08-25 Tue 10:28
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Capture/Capturing references (websites, journal papers, files, etc)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2020-08-18 Tue 14:36]
+:END:
+** 2020-09 September
+*** 2020-09-05 Saturday
+**** Archived Inline Tasks
+***** CANCELLED rewrite to use lexical binding                                                                                  :CANCELLED:
+CLOSED: [2020-09-05 Sat 14:27]
+:PROPERTIES:
+:SUMMARY: Need to be completely rewritten from scratch
+:ARCHIVE_TIME: 2020-09-05 Sat 14:36
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Attach/Store files in folder structure, following my org tree structure
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: EMACS COMMON HOLD
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "NEXT"          [2020-09-05 Sat 14:27] \\
+  Need to be completely rewritten from scratch
+:END:
+*** 2020-09-07 Monday
+**** Archived Inline Tasks
+***** DONE [#A] check if facep is still slow
+CLOSED: [2020-09-07 Mon 17:57] SCHEDULED: <2020-09-07 Mon>
+:PROPERTIES:
+:SHOWFROMDATE: 2020-09-07 17:00
+:ARCHIVE_TIME: 2020-09-13 Sun 15:48
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Performance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"       [2020-09-07 Mon 17:57]
+:END:
+
+*** 2020-09-24 Thursday
+**** Archived Inline Tasks
+***** DONE This slows down emacs. Investigate
+CLOSED: [2020-09-24 Thu 18:15]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-09-24 Thu 18:15
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/History & version control/Auto save/=auto-save-buffers-enhanced=
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-09-24 Thu 18:15]
+:END:
+
+*** 2020-09-26 Saturday
+**** Archived Inline Tasks
+***** DONE make this work
+CLOSED: [2020-09-26 Sat 13:21]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-09-26 Sat 17:47
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Archiving
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-09-26 Sat 13:21]
+:END:
+
+** 2020-12 December
+
+*** 2020-12-17 Thursday
+**** Archived Inline Tasks
+***** DONE update the fix once my bug report for org-contacts is resolved
+CLOSED: [2020-12-17 Thu 15:14]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-12-17 Thu 15:14
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Contacts
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: EMACS COMMON HOLD
+:END:
+:LOGBOOK:
+- State "DONE"       from "WAITING"         [2020-12-17 Thu 15:14]
+- State "WAITING"    from "TODO"          [2020-12-17 Thu 11:39]
+:END:
