@@ -10933,7 +10933,7 @@ Negate match when start with ^."
                                            (seq "#" ,str (or eow "_"))))))
                (str
                 (or (path str)
-                    (regexp (rx-to-string `(or (seq "#" (1+ (not " ")) "_" ,str)
+                    (regexp (rx-to-string `(or (seq "#" (1+ (not " ")) (any ?- "_/") ,str)
                                                (seq "#" ,str))))
                     (let ((case-fold-search t)) (outline-path (rx-to-string `(seq bow ,str))))
                     (let ((case-fold-search t)) (regexp (rx-to-string `(seq bol ":" (or "AUTHOR" "JOURNAL" "YEAR") ": " (0+ any) ,str))))
