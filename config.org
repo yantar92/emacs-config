@@ -7240,6 +7240,16 @@ Emacs application framework provides its own implementation of keyboard-driven b
   (setq eaf-browser-continue-where-left-off t)
   (setq eaf-browser-default-search-engine 'duckduckgo))
 #+end_src
+** Typing speed
+*** =speed-type=
+
+[[id:Github-hagleitn-hagleitn-speed-type-48c][hagleitn [Github] hagleitn/speed-type: Practice touch/speed typing in emacs]]
+
+#+begin_src emacs-lisp
+(use-package speed-type
+  :if init-flag
+  :straight t)
+#+end_src
 
 ** Org mode
 :PROPERTIES:
