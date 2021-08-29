@@ -10938,7 +10938,12 @@ Negate match when start with ^."
                     (let ((case-fold-search t)) (outline-path (rx-to-string `(seq bow ,str))))
                     (let ((case-fold-search t)) (regexp (rx-to-string `(seq bol ":" (or "AUTHOR" "JOURNAL" "YEAR") ": " (0+ any) ,str))))
                     (tags-regexp str)
-                    (tags str))))
+                    (tags str)
+                    (ancestors (org-ql--query-predicate
+                                (org-ql--normalize-query `(or (path ,str)
+                                                              (regexp (rx-to-string '(or (seq "#" (1+ (not " ")) (any ?- "_/") ,str)
+                                                                                         (seq "#" ,str))))
+                                                              (let ((case-fold-search t)) (regexp (rx-to-string '(seq bol ":" (or "AUTHOR" "JOURNAL" "YEAR") ": " (0+ any) ,str)))))))))))
            (throw :fail nil)))
        t)
      (when (and (outline-next-heading)
