@@ -5566,7 +5566,16 @@ Note: Need to install =pymupdf=, =epc=, =retrying=, and =pygetwindow= with =pip=
   (eaf-bind-key scroll_down_page "L" eaf-pdf-viewer-keybinding)
   (eaf-bind-key scroll_up_page "l" eaf-pdf-viewer-keybinding))
 #+end_src
- 
+*** =diffpdf=
+
+Requires [[id:61837011-1bce-41d6-8aa5-27bc4335466d][app-text/diffpdf]].
+
+#+begin_src emacs-lisp
+(use-package diffpdf
+  :if init-flag
+  :straight t)
+#+end_src
+
 ** TODO Ebook reader
    :PROPERTIES:
    :ID:       b1733b83-8c7d-4254-b2c6-d9b38793542a
