@@ -16155,8 +16155,7 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
          (org-encrypt-entry)
          (outline-next-heading))))))
 #+end_src
-
-
+*** SOMEDAY Knowledge graph view :SOMEDAY:
 
 *** TODO Key combinations
 :PROPERTIES:
@@ -17338,5 +17337,25 @@ CLOSED: [2021-08-27 Fri 21:48]
   (setq dired-quick-sort-suppress-setup-warning nil)
   :config
   (dired-quick-sort-setup))
+#+end_src
+
+** =org-graph-view= :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:SUMMARY:  Looks cool, but too messy on large complex files
+:ARCHIVE_TIME: 2021-08-28 Sat 14:06
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Knowledge graph view
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+- Note taken on [2021-08-28 Sat 14:06] \\
+  Looks cool, but too messy on large complex files
+Requires [[id:069366f4-0eac-4d23-b186-7020185e1bcb][=media-gfx/graphviz=: LaTeX for diagrams]]
+
+#+begin_src emacs-lisp
+(use-package org-graph-view
+  :if init-flag
+  :straight (org-graph-view :host github :repo "alphapapa/org-graph-view"))
 #+end_src
 
