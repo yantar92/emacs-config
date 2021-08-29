@@ -16309,6 +16309,7 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
           (setq pos
                 (cl-loop for el = (org-element-at-point pos)
                          until (org-fold-folded-p pos)
+                         until (= pos (point-max))
                          if (memq (org-element-type el) '(drawer property-drawer planning))
                          do (setq pos (org-element-property :end el))
                          else return pos))
