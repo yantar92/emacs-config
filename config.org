@@ -1179,6 +1179,26 @@ Show some text in buffer differently
 				    (?∅ nil "\\<nil\\>" (,@lisps))
 				    ))))
 #+end_src
+***** COMMENT SVG symbols
+:PROPERTIES:
+:SUMMARY:  Not usable now - text is shifted by different offsets
+:END:
+
+- Note taken on [2021-08-29 Sun 14:56] \\
+  Not usable now - text is shifted by different offsets
+ #svg-tag-mode
+
+[[id:Github-rougier-github-rougier-svg-981][rougier [Github] GitHub - rougier/svg-tag-mode: A minor mode for Emacs that replace keywords with nice SVG labels]]
+
+#+begin_src emacs-lisp
+(use-package svg-tag-mode
+  :if init-flag
+  :straight t
+  :custom
+  (svg-tag-default-radius 0)
+  (svg-tag-vertical-offset 0)
+  (svg-tag-horizontal-offset 0))
+#+end_src
 
 ***** Latex pretty symbols
 :PROPERTIES:
