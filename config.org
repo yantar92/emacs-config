@@ -13579,7 +13579,7 @@ Unarchive when UNARCHIVE is non-nil."
                        (mapc (lambda (file)
                                (copy-file file (format "%s/%s" new-dir (file-name-nondirectory file)) nil t t t))
                              attachments)
-                       ;; Delete after successfully copy only for safety.
+                       ;; Delete after successful copy only for safety.
                        (mapc #'delete-file attachments)
                        (delete-directory old-dir)
                        (if (not unarchive)
@@ -16186,6 +16186,7 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
 :EMAIL-SOURCE: [[notmuch:id:0100015f833663f9-95881448-4653-4709-a5bb-bfa94f3f0bff-000000@email.amazonses.com][Email from Amazon com: Leave Packaging Feedback for y]]
 :END:
+
 #+begin_src emacs-lisp
 (when init-flag
   (use-package meta-functions
@@ -16219,7 +16220,6 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
              :map narrow-map
              ("s" . org-narrow-to-subtree)
              )
-
   (use-package meta-functions
     :config
     (meta-defun meta-move-line-up :mode org-mode org-metaup)
