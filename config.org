@@ -16336,6 +16336,8 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
                          until (= pos (point-max))
                          if (memq (org-element-type el) '(drawer property-drawer planning))
                          do (setq pos (org-element-property :end el))
+                         else if (org-element-property :post-blank el)
+                         return (1+ (- pos (org-element-property :post-blank el)))
                          else return pos))
           (if pos
               (goto-char pos)
