@@ -8613,15 +8613,19 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
 It is handy to be able to find all other headlines having links to current headline.
 =org-super-links= package does exactly this. 
 
-****************** TODO this package does not support actual org-insert-link interface
-****************** END
+[[id:32b8103b-81f5-44cc-91d1-77ff7ef9be23][toshism [Github] toshism/org-super-links: Package to create links with auto backlinks]]
 
-
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (use-package org-super-links
   :after org
   :straight (org-super-links :type git :host github :repo "toshism/org-super-links")
-  )
+  :bind
+  (("C-c s s" . org-super-links-link)
+   ("C-c s l" . org-super-links-store-link)
+   ("C-c s C-l" . org-super-links-insert-link)
+   ("C-c s d" . org-super-links-quick-insert-drawer-link)
+   ("C-c s i" . org-super-links-quick-insert-inline-link)
+   ("C-c s C-d" . org-super-links-delete-link)))
 #+end_src
 ***** Offer link selection when =C-c C-o= on a heading
 :PROPERTIES:
