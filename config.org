@@ -9666,7 +9666,6 @@ If LOCAL is non-nil, check only local TAG."
 								    (or (tags "SKIP")
                                                                         (tags "NODEADLINE")
 									(not (subtask)))
-								    ;; (not (tags "NODEADLINE"))
 								    (not (habit))
 								    (task)
 								    ))))))))
