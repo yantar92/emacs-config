@@ -7836,6 +7836,7 @@ The project is an item with todo keyword and subtask.
     (or (tags-local "project")
 	(and
 	 (todo)
+         (not (goal))
 	 (descendants (and
 		       (or (todo) (done))
                        (not (org-inlinetask-at-task-p))
