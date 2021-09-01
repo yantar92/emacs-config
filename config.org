@@ -3314,8 +3314,7 @@ Just use external browser to open URLs.
 :PROPERTIES:
 :ID:       b69737e2-daa5-4b12-bb10-9ce37831edd4
 :END:
-
-I use =helm-mini= to switch buffers
+***** Use =helm-mini= to switch buffers
 
 #+begin_src emacs-lisp
 (use-package helm
@@ -3326,6 +3325,80 @@ I use =helm-mini= to switch buffers
 	      ("b" . helm-mini))
   :after boon)
 #+end_src
+***** Skip some uninteresting buffers when switching to next/previous buffer
+
+Credit: [[id:4ebf4428-3ed3-42cd-9d6c-ddc2d949dd53][nv-elisp comments on Weekly tips/trick/etc/ thread]]
+
+#+begin_src emacs-lisp
+(use-package skip-buffers-mode
+  :if init-flag
+  :load-path "~/Org/skip-buffers-mode/"
+  :config
+  (setq skip-buffers-patterns
+        '("*helm.**"))
+  (use-package meta-functions
+    :config
+    (meta-defun meta-next-buffer "Go forward in buffer." skip-buffers-next-buffer)
+    (meta-defun meta-previous-buffer "Go backward in buffer." skip-buffers-previous-buffer)))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/Git/skip-buffers-mode/skip-buffers-mode.el :mkdirp yes
+(defvar skip-buffers-patterns
+  '("*helm.**")
+  "List of patterns that match buffers to ignore in next/previous-buffer")
+
+(defun skip-buffers--change-buffer (change-buffer)
+  "Call CHANGE-BUFFER until current buffer is not in `skip-buffers-patterns'"
+  (let ((initial (current-buffer)))
+    (funcall change-buffer)
+    (let ((first-change (current-buffer)))
+      (catch 'loop
+        (while (cl-some (lambda (pattern) (string-match-p pattern (buffer-name)))
+                        skip-buffers-patterns)
+          (funcall change-buffer)
+          (when (eq (current-buffer) first-change)
+            (switch-to-buffer initial)
+            (throw 'loop t)))))))
+
+(defun skip-buffers-next-buffer ()
+  "Variant of `next-buffer' that skips buffers matching `skip-buffers-patterns'"
+  (interactive)
+  (skip-buffers--change-buffer 'next-buffer))
+
+(defun skip-buffers-previous-buffer ()
+  "Variant of `previous-buffer' that skips buffers matching `skip-buffers-patterns'"
+  (interactive)
+  (skip-buffers--change-buffer 'previous-buffer))
+
+;;;###autoload
+(define-minor-mode skip-buffers-mode
+  "Skip buffers you don't want to see."
+  :global t
+  :lighter " skp"
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map [remap next-buffer] 'skip-buffers-next-buffer)
+            (define-key map [remap previous-buffer] 'skip-buffers-previous-buffer)
+            map))
+
+(provide 'skip-buffers-mode)
+#+end_src
+
+***** Key bindings
+:PROPERTIES:
+:CREATED:  [2020-04-09 Thu 17:30]
+:ID:       6e8fd921-88ca-411d-9045-6141121e9afa
+:END:
+
+Sometimes, I want to switch to previous/next buffer in current window.
+The definition of previous/next buffer may depend on the major mode though. 
+ 
+#+begin_src emacs-lisp
+(use-package boon
+  :bind (:map boon-goto-map
+	      ("o" . meta-next-buffer)
+	      ("i" . meta-previous-buffer)))
+#+end_src
+
 **** Go to scratch key binding
 :PROPERTIES:
 :ID:       53b113ca-e2be-4f79-a575-aedbd0f0f7ad
@@ -3359,27 +3432,6 @@ The default function to kill buffer bound to =C-x k= always ask for a buffer to 
     (kill-buffer (current-buffer)))
   (bind-key "C-x q" #'yant/kill-this-buffer))
 #+end_src
-**** Buffer manipulation
-:PROPERTIES:
-:CREATED:  [2020-04-09 Thu 17:30]
-:ID:       6e8fd921-88ca-411d-9045-6141121e9afa
-:END:
-
-Sometimes, I want to switch to previous/next buffer in current window.
-The definition of previous/next buffer may depend on the major mode though. 
- 
-#+begin_src emacs-lisp
-(use-package boon
-  :bind (:map boon-goto-map
-	      ("o" . meta-next-buffer)
-	      ("i" . meta-previous-buffer))
-  :init
-  (use-package meta-functions
-    :config
-    (meta-defun meta-next-buffer "Go forward in buffer." next-buffer)
-    (meta-defun meta-previous-buffer "Go backward in buffer." previous-buffer)))
-#+end_src
-
 *** Windows
 **** Window layout management
 :PROPERTIES:
