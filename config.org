@@ -6244,12 +6244,17 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
   (defun yant/elfeed-search-print-entry (entry)
     "Print ENTRY to the buffer."
     (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
-           (title (or (elfeed-meta entry :title) (elfeed-entry-title entry) ""))
+           (title (if (elfeed-tagged-p 'content_is_title entry)
+                      (elfeed-deref (or (elfeed-meta entry :content) (elfeed-entry-content entry) ""))
+                    (or (elfeed-meta entry :title) (elfeed-entry-title entry) "")))
            (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
            (title (if (and (elfeed-tagged-p 'chinese entry)
 			   (member (yant/guess-language-string title) '("zh-cn" "ko")))
                       (progn (message "Translating...")
-                             (yant/translate-string title))
+                             (with-temp-buffer
+                               (insert (yant/translate-string title))
+                               (add-face-text-property (point-min) (point-max) title-faces 'append)
+                               (buffer-string)))
                     (with-temp-buffer
                       (insert title)
                       (cl-loop for (re repl display)
