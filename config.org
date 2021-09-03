@@ -2433,6 +2433,16 @@ Magit is able to provide word-level diff refinement.  It is disabled by default 
                               (:help-echo "Local changes not in upstream")))
                             ("Path" 99 magit-repolist-column-path nil))))
 #+end_src
+**** Opening repository file in remote =browse-at-remote=
+
+#+begin_src emacs-lisp
+(use-package browse-at-remote
+  :if init-flag
+  :straight t
+  :config
+  (bind-key "C-c g g" #'browse-at-remote))
+#+end_src
+
 *** =Ediff=
 :PROPERTIES:
 :ID:       0a071515-0aff-4cbe-982c-374860cdc9fc
