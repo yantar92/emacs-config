@@ -3661,15 +3661,11 @@ And extend it with =dired+=
 ;;   (remove-hook 'dired-after-readin-hook #'diredp-nb-marked-in-mode-name))
 #+end_src
 
-***** Command loop
+***** Key bindings
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:18]
 :END:
-****** Key bindings
-:PROPERTIES:
-:CREATED:  [2020-04-14 Tue 14:18]
-:END:
-******* Dired bindings
+****** Dired bindings
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:38]
 :ID:       e5aa5b80-b4dd-41b2-9c43-3dde7ba7d2f7
@@ -3707,7 +3703,7 @@ And extend it with =dired+=
     ))
 #+end_src
 
-******* =Image-dired= bindings
+****** =Image-dired= bindings
 :PROPERTIES:
 :CREATED:  [2019-05-07 Tue 21:26]
 :ID:       c095c061-ffdc-4adb-a889-bb4e54b6a514
@@ -3739,7 +3735,20 @@ And extend it with =dired+=
     (meta-defun meta-down :mode image-dired-thumbnail-mode image-dired-next-line)
     (meta-defun meta-up :mode image-dired-thumbnail-mode image-dired-previous-line)))
 #+end_src
-****** =DWIM= target on copy/rename
+***** Narrowing \ live filter =dired-narrow=
+
+Credit: [[id:ee0f2275-09e0-443d-b2de-50bd0311d3c1][Dynamically filter directory listing with dired-narrow | Pragmatic Emacs]]
+Repo: [[id:Github-fuco1-fuco1-dired-hacks-707][Fuco1 [Github] Fuco1/dired-hacks: Collection of useful dired additions]]
+
+#+begin_src emacs-lisp
+(use-package dired-narrow
+  :if init-flag
+  :straight t
+  :bind (:map dired-mode-map
+              ("/" . dired-narrow)))
+#+end_src
+
+***** =DWIM= target on copy/rename
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:18]
 :ID:       80db1c22-bc50-451f-950c-d8e4d9f373c9
@@ -3750,7 +3759,7 @@ And extend it with =dired+=
   :custom (dired-dwim-target t))
 #+end_src
 
-****** Automatically kill =dired= buffers pointing to deleted directories
+***** Automatically kill =dired= buffers pointing to deleted directories
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:25]
 :ID:       9367d902-8069-4507-becb-3a7688885feb
@@ -3763,7 +3772,7 @@ And extend it with =dired+=
   (dired-clean-confirm-killing-deleted-buffers nil))
 #+end_src
 
-****** Kill all the previous =dired= buffers when quitting 
+***** Kill all the previous =dired= buffers when quitting 
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:27]
 :ID:       3a1bc711-2264-4893-9939-d533de84e91b
