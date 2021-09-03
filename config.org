@@ -3343,12 +3343,13 @@ Just use external browser to open URLs.
 Credit: [[id:4ebf4428-3ed3-42cd-9d6c-ddc2d949dd53][nv-elisp comments on Weekly tips/trick/etc/ thread]]
 
 #+begin_src emacs-lisp
+(load-file "~/Git/skip-buffers-mode/skip-buffers-mode.el")
 (use-package skip-buffers-mode
   :if init-flag
   :load-path "~/Org/skip-buffers-mode/"
   :config
   (setq skip-buffers-patterns
-        '("*helm.**"))
+        '("*helm.**" "Warnings"))
   (use-package meta-functions
     :config
     (meta-defun meta-next-buffer "Go forward in buffer." skip-buffers-next-buffer)
