@@ -3279,6 +3279,7 @@ Just use external browser to open URLs.
 	(browse-url-generic url new-window)
       (if (or (string-match-p "author\\.today" url)
               (string-match-p "semanticscholar\\.org" url)
+              (string-match-p "sciencedirect\\.com" url)
               (string-match-p "connectedpapers\\.com" url)
               (string-match-p "reddit\\.com" url)
               (string-match-p "doi\\.org" url)
