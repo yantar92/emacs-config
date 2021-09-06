@@ -3287,6 +3287,8 @@ Just use external browser to open URLs.
               (string-match-p "doi\\.org" url)
               (string-match-p "weibo\\.com" url)
               (string-match-p "china\\.mfa\\.gov\\.ua" url)
+              (string-match-p "archive\\.org" url)
+              (string-match-p "github\\.com" url)
               )
           (browse-url-generic url new-window)
         (eww url))))
