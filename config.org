@@ -9644,7 +9644,8 @@ If LOCAL is non-nil, check only local TAG."
 (setq org-agenda-custom-commands
       (quote (("a" "Full agenda"
 	       agenda ""
-	       ((org-agenda-tag-filter-preset '("-TICKLER" "-CANCELLED" "-WAITING" "-HOLD" "-SOMEDAY" "-NODEADLINE"))))
+	       ((org-agenda-tag-filter-preset '("-TICKLER" "-CANCELLED" "-WAITING" "-HOLD" "-SOMEDAY" "-NODEADLINE"))
+                (org-agenda-regexp-filter-preset '("-TICKLER"))))
 	      ("s" nil
 	       agenda ""
 	       ((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
