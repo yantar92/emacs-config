@@ -17422,8 +17422,6 @@ Gentoo: =dev-util/git-delta=
 :ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
 :END:
 Credit: https://www.reddit.com/r/orgmode/comments/dg43hs/can_i_archive_a_property_drawer/f3frk2n/
-****************** TODO automate this
-****************** END
 
 #+begin_src emacs-lisp
 (defun my/org-archive-delete-logbook ()
