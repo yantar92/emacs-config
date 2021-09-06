@@ -16011,6 +16011,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
   :config
   (defvar yant/magit-show-autocommit-regexps '("^\\(-\\|\\+\\)[ \t]*:SHOWFROMDATE:.+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:Effort:.+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:SUMMARY:.+\n"
 					       "^\\(\\+\\|-\\)[ \t]*- State .+from.+\n"
 					       "^\\(-\\|\\+\\)[ \t]*:LAST_REPEAT: \\[.+\n"
 					       "^\\(-\\|\\+\\)[ \t]*:ORG-TIME-BONUS:.+\n"
@@ -16018,19 +16019,57 @@ Some changes in org-files are very trivial and clutter more important changes I 
 					       "^\\(-\\|\\+\\)[ \t]*SCHEDULED: .+\n"
 					       "^\\(-\\|\\+\\)[ \t]*$"
 					       "^[ \t]*\\(-\\|\\+\\)[ \t]*- Refiled on .+\n"
-                                               "^\\(-\\|\\+\\)\\*+"
-                                               "^\\(-\\|\\+\\)CLOSED:"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_LAST_INTERVAL:"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_REPEATS_SINCE_FAIL:"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_FAILURE_COUNT:"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_TOTAL_REPEATS:"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_AVERAGE_QUALITY:"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_EASE:"
-                                               "^\\+CLOSED:"
-                                               "^\\-SCHEDULED:"
-                                               "^[+-]DEADLINE:"
+                                               "^\\(-\\|\\+\\)[ \t]*:PROPERTIES:[ \t]*\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:LOGBOOK:[ \t]*\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:END:[ \t]*\n"
+					       "^\\(-\\|\\+\\)[ \t]*:TITLE: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:BTYPE: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:TYPEALT: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:MERGED-WITH: .+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:KEYWORDS: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:AUTHOR: .+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:PUBLISHER: .+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:EMAIL-SOURCE: .+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:Source: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:CREATED: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:HOWPUBLISHED: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:NOTE: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:URL: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:LINK: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:YEAR: .+\n"
+					       "^\\(-\\|\\+\\)[ \t]*:ID: .+\n"
+                                               "^\\(-\\|\\+\\)CLOSED:.+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_LAST_INTERVAL:.+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_REPEATS_SINCE_FAIL:.+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_FAILURE_COUNT:.+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_TOTAL_REPEATS:.+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_AVERAGE_QUALITY:.+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_EASE:.+\n"
+                                               "^\\+CLOSED:.+\n"
+                                               "^\\-SCHEDULED:.+\n"
+                                               "^[+-]DEADLINE:.+\n"
 					       )
     "List of regexps hide in magit buffer.")
+
+  (defun yant/magit-org-hide-boring ()
+    "Hide `yant/magit-show-autocommit-regexps' from all the chunks."
+    (interactive)
+    (unless (eq major-mode 'magit-status-mode)
+      (user-error "Thus command should run in magit-status window."))
+    (magit-section-show-level-4-all)
+    (save-excursion
+      (magit-jump-to-unstaged)
+      (let ((staged-pos (or (save-excursion
+			      (unless (let ((inhibit-message t)) (magit-jump-to-staged))
+			        (point)))
+                            (point-max)))
+            (re (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps)))))
+        (while (< (point) staged-pos)
+          (when (and (re-search-forward re nil 'move)
+                     (< (point) staged-pos))
+            (with-silent-modifications
+              (put-text-property (match-beginning 0) (match-end 0) 'invisible t)))))))
+  (add-hook 'magit-status-sections-hook #'yant/magit-org-hide-boring 100)
 
   (defun thread-yield-safe (&rest _)
     "Call `thread-yield' preserving buffer and point."
