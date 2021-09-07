@@ -3274,6 +3274,7 @@ Just use external browser to open URLs.
   :init
   (defun yant/browse-url (url &optional new-window)
     "Open in mpv or eaf-browser."
+    (setq url (replace-regexp-in-string ".*scholar\\.google\\.com[^/]*/scholar_url\\?url=\\([^&]+\\).+" "\\1" url))
     (if (and (string-match-p "youtube\\.com" url)
 	     (not (string-match-p "/channel" url)))
 	(browse-url-generic url new-window)
