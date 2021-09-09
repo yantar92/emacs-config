@@ -4701,6 +4701,7 @@ Interactive fill/unfill paragraph at point.
                                search-failed
 			       file-missing
                                file-date-error
+                               "notmuch search process already running"
                                "epdfinfo: Unable to create synctex scanner"
                                "Too few elements on stack"
                                "Abort"
