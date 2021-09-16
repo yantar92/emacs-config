@@ -1308,30 +1308,53 @@ Light face for header line.
 		      ;; :background ,(face-background 'default)
 		      :background (face-background 'default)
 		      )
-  (set-face-attribute 'mode-line nil
-		      :box nil
-                      :underline  (face-foreground 'default)
-                      :background (face-background 'default)
-                      )
   (set-face-attribute 'mode-line-inactive nil
-		      :box nil
-                      :underline  (face-foreground 'default)
+		      :weight 'normal
+		      ;; :box ,(face-background 'boon-modeline-spc)
+		      ;; :box `(:color ,(color-darken-name (face-background 'default) 10) :line-width 5)
+                      :box `(:color ,(face-background 'default) :line-width 5)
+		      ;; :box nil
+		      :foreground (color-darken-name (face-foreground 'mode-line) 20)
+		      :underline (face-foreground 'default)
+		      ;; :background ,(face-background 'default)
 		      :background (face-background 'default)
-                      ))
+		      )
+  (set-face-attribute 'mode-line nil
+		      :weight 'normal
+		      ;; :box ,(face-background 'boon-modeline-spc)
+		      ;; :box `(:color ,(color-darken-name (face-background 'default) 10) :line-width 5)
+                      :box `(:color ,(face-background 'default) :line-width 5)
+		      ;; :box nil
+		      :foreground (color-darken-name (face-foreground 'mode-line) 20)
+		      :underline (face-foreground 'default)
+		      ;; :background ,(face-background 'default)
+		      :background (face-background 'default)
+		      )
+  ;; (set-face-attribute 'mode-line nil
+  ;;       	      :box nil
+  ;;                     :underline  (face-foreground 'default)
+  ;;                     :background (face-background 'default)
+  ;;                     )
+  ;; (set-face-attribute 'mode-line-inactive nil
+  ;;       	      :box nil
+  ;;                     :underline  (face-foreground 'default)
+  ;;       	      :background (face-background 'default)
+  ;;                     )
+  )
 #+end_src
 
 Use header line from [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
 However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64e-4090454da22a][Olivetti mode]] is turned on.
 #+begin_src emacs-lisp
-  (when init-flag
-    (defun yant/vc-git-current-branch ()
-      "Get current GIT branch."
-      (and vc-mode
-	   (cadr (s-match "Git.\\([^ ]+\\)" vc-mode))))
-    (use-package memoize
-      :straight t
-      :demand t
-      :config
+(when init-flag
+  (defun yant/vc-git-current-branch ()
+    "Get current GIT branch."
+    (and vc-mode
+	 (cadr (s-match "Git.\\([^ ]+\\)" vc-mode))))
+  (use-package memoize
+    :straight t
+    :demand t
+    :config
     (defmemoize mode-line-render (left right)
       (let* ((right-width (length right))
 	     (left-width (length left)))
@@ -1362,89 +1385,89 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 			 (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
 					(if (> span 0) span 0))
 				      ?\ ))))))))
-    (setq-default header-line-format
-		  '((:eval
-		     (mode-line-render
-		      ;; Left.
-		      (concat (format-mode-line (all-the-icons-icon-for-mode major-mode :v-adjust 0.04 :height 0.8 :face `((:foreground ,(face-foreground 'default)))))
-			      (when (buffer-narrowed-p) (concat " " (propertize (all-the-icons-faicon "filter" :v-adjust 0.04)
-										'face `((
-											 :family "file-icons"
-											 :foreground ,(face-background 'region))))))
-			      ;; Buffer size.
-			      " "
-			      (format-mode-line "%I")
-			      " "
-			      (case major-mode
-				('org-agenda-mode (format-mode-line (list " " mode-name " ")))
-				('notmuch-show-mode (format-mode-line (list " " header-line-name " ")))
-				('elfeed-search-mode (format-mode-line (list " " (elfeed-search--header) " ")))
-				(t
-				 (or
-				  (and org-src-mode
-				       (format " %s "
+  (setq-default mode-line-format
+		'((:eval
+		   (mode-line-render
+		    ;; Left.
+		    (concat (format-mode-line (all-the-icons-icon-for-mode major-mode :v-adjust 0.04 :height 0.8 :face `((:foreground ,(face-foreground 'default)))))
+			    (when (buffer-narrowed-p) (concat " " (propertize (all-the-icons-faicon "filter" :v-adjust 0.04)
+									      'face `((
+										       :family "file-icons"
+										       :foreground ,(face-background 'region))))))
+			    ;; Buffer size.
+			    " "
+			    (format-mode-line "%I")
+			    " "
+			    (case major-mode
+			      ('org-agenda-mode (format-mode-line (list " " mode-name " ")))
+			      ('notmuch-show-mode (format-mode-line (list " " header-line-name " ")))
+			      ('elfeed-search-mode (format-mode-line (list " " (elfeed-search--header) " ")))
+			      (t
+			       (or
+				(and org-src-mode
+				     (format " %s "
 
-					       (substitute-command-keys
-						(if org-src--allow-write-back
-						    "Edit, then exit with `\\[org-edit-src-exit]' or abort with \
+					     (substitute-command-keys
+					      (if org-src--allow-write-back
+						  "Edit, then exit with `\\[org-edit-src-exit]' or abort with \
       `\\[org-edit-src-abort]'"
-						  "Exit with `\\[org-edit-src-exit]' or abort with \
+						"Exit with `\\[org-edit-src-exit]' or abort with \
       `\\[org-edit-src-abort]'"))))
-				  (format-mode-line (list " %b "
-							  (if (and buffer-file-name (buffer-modified-p))
-							      (propertize "(modified)" 'face `(:inherit header-line))))))))
-			      (if truncate-lines
-				  (propertize (all-the-icons-faicon "arrow-right" :v-adjust 0.04)
-					      'face `((
-						       :family "file-icons"
-						       :foreground ,(face-background 'region)
-						       :height 0.6)))
-				(propertize (all-the-icons-faicon "level-down" :v-adjust 0.04)
+				(format-mode-line (list " %b "
+							(if (and buffer-file-name (buffer-modified-p))
+							    (propertize "(modified)" 'face `(:inherit header-line))))))))
+			    (if truncate-lines
+				(propertize (all-the-icons-faicon "arrow-right" :v-adjust 0.04)
 					    'face `((
-						     :family "Material Icons"
+						     :family "file-icons"
 						     :foreground ,(face-background 'region)
-						     :height 0.8)))))
-		      ;;Right
-		      (concat
-		       (let ((branch (yant/vc-git-current-branch)))
-			 (if (not branch)
-			     ""
-			   (concat (all-the-icons-faicon "angle-left" :v-adjust 0.00)
-				   " "
-				   (all-the-icons-alltheicon "git" :v-adjust 0.04 :height 0.8)
-				   " "
-				   branch
-				   " "
-				   (all-the-icons-faicon "angle-right" :v-adjust 0.00)
-				   " ")))
-		       (all-the-icons-faicon "angle-left" :v-adjust 0.00)
-		       (format-mode-line minor-mode-alist)
-		       " "
-		       (all-the-icons-faicon "angle-right" :v-adjust 0.00)
-		       " "
-		       (let ((position-string (format-mode-line mode-line-position)))
-			 ;; (when (string-match " *L[0-9]+ *" position-string)
-			 ;; 	 (setq position-string
-			 ;; 	       (replace-match "" nil nil position-string)))
-			 (setq position-string (s-trim position-string))
-			 (setq position-string (replace-regexp-in-string "%" "%%" position-string))
-			 (concat " "
-				 (all-the-icons-faicon "angle-left" :v-adjust 0.00)
+						     :height 0.6)))
+			      (propertize (all-the-icons-faicon "level-down" :v-adjust 0.04)
+					  'face `((
+						   :family "Material Icons"
+						   :foreground ,(face-background 'region)
+						   :height 0.8)))))
+		    ;;Right
+		    (concat
+		     (let ((branch (yant/vc-git-current-branch)))
+		       (if (not branch)
+			   ""
+			 (concat (all-the-icons-faicon "angle-left" :v-adjust 0.00)
 				 " "
-				 position-string
+				 (all-the-icons-alltheicon "git" :v-adjust 0.04 :height 0.8)
 				 " "
-				 (all-the-icons-faicon "angle-right" :v-adjust 0.00)))
-		       "    ")))))
+				 branch
+				 " "
+				 (all-the-icons-faicon "angle-right" :v-adjust 0.00)
+				 " ")))
+		     (all-the-icons-faicon "angle-left" :v-adjust 0.00)
+		     (format-mode-line minor-mode-alist)
+		     " "
+		     (all-the-icons-faicon "angle-right" :v-adjust 0.00)
+		     " "
+		     (let ((position-string (format-mode-line mode-line-position)))
+		       ;; (when (string-match " *L[0-9]+ *" position-string)
+		       ;; 	 (setq position-string
+		       ;; 	       (replace-match "" nil nil position-string)))
+		       (setq position-string (s-trim position-string))
+		       (setq position-string (replace-regexp-in-string "%" "%%" position-string))
+		       (concat " "
+			       (all-the-icons-faicon "angle-left" :v-adjust 0.00)
+			       " "
+			       position-string
+			       " "
+			       (all-the-icons-faicon "angle-right" :v-adjust 0.00)))
+		     "    ")))))
 
-    (defun yant/force-header-line-format ()
-      "Set `header-line-format' to its default value."
-      (setq header-line-name (format-mode-line header-line-format))
-      (setq header-line-format
-	    (default-value 'header-line-format)))
-    (add-hook! (org-src-mode org-capture-mode notmuch-show elfeed-search-mode) #'yant/force-header-line-format)
+  ;; (defun yant/force-header-line-format ()
+  ;;   "Set `header-line-format' to its default value."
+  ;;   (setq header-line-name (format-mode-line header-line-format))
+  ;;   (setq header-line-format
+  ;;         (default-value 'header-line-format)))
+  ;; (add-hook! (org-src-mode org-capture-mode notmuch-show elfeed-search-mode) #'yant/force-header-line-format)
 
-    (setq-default mode-line-format '(""))
-    )
+  (setq-default header-line-format '(""))
+  )
 #+end_src
 
 **** Mode icons
