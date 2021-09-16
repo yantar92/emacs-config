@@ -7344,6 +7344,11 @@ Emacs application framework provides its own implementation of keyboard-driven b
   :config
   ;; [[id:8deee691-8b52-451b-8d23-cd6f81b213be][#email Andy Stewart <notifications@github.com> Re: [manateelazycat/emacs-application-framework] No key bindings are working. Everything is perfect. (#657)]]
   (add-to-list 'eaf-wm-focus-fix-wms "awesome")
+  (eaf-set 'eaf-browser-default-zoom "1.5")
+  (eaf-bind-key nil "e" eaf-browser-keybinding)
+  (eaf-bind-key nil "x" eaf-browser-keybinding)
+  (eaf-bind-key  insert_or_close_buffer "q" eaf-browser-keybinding)
+  (eaf-bind-key org-capture-ref-capture-at-point "C-," eaf-browser-keybinding)
   (eaf-bind-key insert_or_open_link_new_buffer "H" eaf-browser-keybinding)
   (eaf-bind-key insert_or_open_link "h" eaf-browser-keybinding)
   (eaf-bind-key insert_or_close_buffer "C-x q" eaf-browser-keybinding)
@@ -7353,7 +7358,7 @@ Emacs application framework provides its own implementation of keyboard-driven b
   (setq eaf-browser-keybinding (delete '("v" . "insert_or_view_source") eaf-browser-keybinding))
   (setq eaf-browser-search-engines '(("duckduckgo" . "https://duckduckgo.com/?q=%s")))
   (setq eaf-browser-continue-where-left-off t)
-  (setq eaf-browser-default-search-engine 'duckduckgo))
+  (setq eaf-browser-default-search-engine "duckduckgo"))
 #+end_src
 ** Typing speed
 *** =speed-type=
