@@ -10294,6 +10294,9 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
   "Filter tasks for focus agenda."
   (yant/org-agenda-skip-org-ql
    '(and (not (done))
+         (not (tags "CANCELLED"))
+         (or (not (tags "WAITING" "HOLD"))
+             (not (todo "TICKLER")))
          (or
           (and (ts-active :to today)
                (or (habit)
@@ -10307,10 +10310,7 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
           (and (deadline)
                (not (scheduled :from +1))))
          (not (org-agenda-skip-before-SHOWFROMTIME-property))
-         (not (org-agenda-skip-before-SHOWFROMDATE-property))
-         (not (tags "CANCELLED"))
-         (or (not (tags "WAITING" "HOLD"))
-             (not (todo "TICKLER")))))
+         (not (org-agenda-skip-before-SHOWFROMDATE-property))))
   ;; (and
   ;;  (or
   ;;   (zin/org-agenda-skip-tag "HOLD")
