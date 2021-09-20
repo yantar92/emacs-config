@@ -13729,8 +13729,9 @@ Unarchive when UNARCHIVE is non-nil."
                              (save-excursion
                                (let ((end-of-subtree (save-excursion (and (org-end-of-subtree t) (point)))))
                                  (beginning-of-line 2)
-                                 (org-with-limited-levels
-                                  (re-search-forward org-outline-regexp-bol end-of-subtree t))))))
+                                 (unless (> (point) end-of-subtree)
+                                   (org-with-limited-levels
+                                    (re-search-forward org-outline-regexp-bol end-of-subtree t)))))))
           (headline (org-get-heading)))
       (when (or (not has-children)
                 (yes-or-no-p (format "%s: There are child headings. Really archive?" headline)))
