@@ -14307,7 +14307,7 @@ Alert for upcoming scheduled or agenda entries or agenda entries containing dead
   (org-alert-enable))
 #+end_src
 
-**** Distraction-free browsing
+**** COMMENT Distraction-free browsing
 :PROPERTIES:
 :ID:       9562f1fc-9b35-4573-b42e-7bb2fcef8a7a
 :END:
