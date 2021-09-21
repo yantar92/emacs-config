@@ -15729,20 +15729,20 @@ Use normal colour for the default agenda face
 :END:
 
 #+begin_src emacs-lisp
-  (use-package org
-    :requires macrostep
-    :config
-    (defface yant/org-agenda-highlight-face `((t :weight semibold :background ,(face-background 'macrostep-expansion-highlight-face)))
-      "Face used to highlight flagged entries in agenda view.")
-    (defun yant/org-agenda-highlight-flagged ()
-      "Highlight flagged items in agenda."
-      (let ((inhibit-read-only t))
-	(save-excursion
-	  (goto-char (point-min))
-	  (while (re-search-forward ":FLAGGED:" nil t)
-	    (font-lock-append-text-property (line-beginning-position) (line-end-position) 'face 'yant/org-agenda-highlight-face)))))
-    (add-hook 'org-agenda-finalize-hook
-	      #'yant/org-agenda-highlight-flagged))
+(use-package org
+  :requires macrostep
+  :config
+  (defface yant/org-agenda-highlight-face `((t :inherit modus-themes-nuanced-yellow))
+    "Face used to highlight flagged entries in agenda view.")
+  (defun yant/org-agenda-highlight-flagged ()
+    "Highlight flagged items in agenda."
+    (let ((inhibit-read-only t))
+      (save-excursion
+	(goto-char (point-min))
+	(while (re-search-forward ":FLAGGED:" nil t)
+	  (font-lock-append-text-property (line-beginning-position) (line-end-position) 'face 'yant/org-agenda-highlight-face)))))
+  (add-hook 'org-agenda-finalize-hook
+	    #'yant/org-agenda-highlight-flagged))
   
 #+end_src
 
