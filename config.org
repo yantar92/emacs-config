@@ -3325,7 +3325,8 @@ Just use external browser to open URLs.
               )
           ;; (eaf-open-browser url)
           (browse-url-generic url new-window)
-        (eww url))))
+        (browse-url-generic url new-window);; (eww url)
+        )))
   (defun yant/browse-url-orgmode-ml (url &optional _)
     "Open an orgmode list url using notmuch."
     (let ((id (and (string-match "https://orgmode.org/list/\\([^/]+\\)" url)
