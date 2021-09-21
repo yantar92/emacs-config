@@ -675,34 +675,35 @@ Later, I found light themes easier for my eyes when it is not dark outside.
 Since it is not really a good idea to work in darkness regardless of the colour scheme, I ended up using a light theme I prefer.
 
 #+begin_src emacs-lisp
-(use-package flatui-theme
-  :if init-flag
-  :straight t
-  :demand t
-  :config
-  (load-theme 'flatui t))
-;; (use-package modus-themes
-;;   :straight (modus-themes
-;;              :host gitlab
-;;              :repo "protesilaos/modus-themes")
+;; (use-package flatui-theme
 ;;   :if init-flag
-;;   :init
-;;   (setq modus-themes-bold-constructs nil
-;;         modus-themes-headings '((t . rainbow-line-no-bold))
-;;         modus-themes-org-blocks 'greyscale
-;;         modus-themes-completions nil
-;;         modus-themes-intense-hl-line t
-;;         modus-themes-intense-paren-match t
-;;         modus-themes-prompts 'subtle-accented)
-;;   (setq modus-themes-operandi-color-overrides '((bg-region . nil)))
-;;   :custom-face
-;;   (org-block-begin-line ((t :inhert org-block :background ,(face-background 'default))))
-;;   ;; (org-verbatim ((t :background nil :foreground ,(face-foreground 'modus-themes-special-calm))))
-;;   ;; (region ((t :background ,(face-background 'modus-themes-special-warm))))
-;;   :init
-;;   (modus-themes-load-themes)
+;;   :straight t
+;;   :demand t
 ;;   :config
-;;   (modus-themes-load-vivendi))
+;;   (load-theme 'flatui t))
+(use-package modus-themes
+  :straight (modus-themes
+             :host gitlab
+             :repo "protesilaos/modus-themes")
+  :if init-flag
+  :init
+  (setq modus-themes-bold-constructs nil
+        modus-themes-region 'accent
+        modus-themes-headings '((t . rainbow-line-no-bold))
+        modus-themes-org-blocks 'greyscale
+        modus-themes-completions nil
+        modus-themes-intense-hl-line t
+        modus-themes-intense-paren-match t
+        modus-themes-prompts 'subtle-accented)
+  (setq modus-themes-operandi-color-overrides '((bg-region . nil)))
+  ;; :custom-face
+  ;; (org-block-begin-line ((t :inhert org-block :background ,(face-background 'default))))
+  ;; (org-verbatim ((t :background nil :foreground ,(face-foreground 'modus-themes-special-calm))))
+  ;; (region ((t :background ,(face-background 'modus-themes-special-warm))))
+  :init
+  (modus-themes-load-themes)
+  :config
+  (modus-themes-load-operandi))
 #+end_src
 
 For the font, I prefer something that works fine with mixed code and text (e.g. org files).
@@ -2826,6 +2827,11 @@ Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's notes: Trying
   :if init-flag
   :straight t
   :diminish highlight-parentheses-mode
+  :custom
+  (highlight-parentheses-background-colors `(,(face-background 'modus-themes-refine-blue)
+                                             ,(face-background 'modus-themes-subtle-blue)
+                                             ,(face-background 'modus-themes-intense-magenta)
+                                             ))
   :config
   (add-hook! 'minibuffer-setup-hook #'highlight-parentheses-minibuffer-setup)
   (add-hook! (prog-mode
