@@ -669,7 +669,7 @@ The major mode-specific configuration is configured later on per-mode basis.
 :PROPERTIES:
 :ID:       335a0a70-61ef-4691-bf1f-90351bd7c3bd
 :END:
-
+ #modus
 For a while, I have been using various dark themes for emacs.
 Later, I found light themes easier for my eyes when it is not dark outside.
 Since it is not really a good idea to work in darkness regardless of the colour scheme, I ended up using a light theme I prefer.
@@ -690,7 +690,7 @@ Since it is not really a good idea to work in darkness regardless of the colour 
   (setq modus-themes-bold-constructs nil
         modus-themes-region 'accent
         modus-themes-headings '((t . rainbow-line-no-bold))
-        modus-themes-org-blocks 'greyscale
+        modus-themes-org-blocks nil
         modus-themes-completions nil
         modus-themes-intense-hl-line t
         modus-themes-intense-paren-match t
@@ -703,7 +703,10 @@ Since it is not really a good idea to work in darkness regardless of the colour 
   :init
   (modus-themes-load-themes)
   :config
-  (modus-themes-load-operandi))
+  (modus-themes-load-operandi)
+  (set-face-background 'org-block-begin-line (face-background 'default))
+  (set-face-background 'org-block-end-line (face-background 'default))
+  )
 #+end_src
 
 For the font, I prefer something that works fine with mixed code and text (e.g. org files).
