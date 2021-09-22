@@ -6543,19 +6543,6 @@ the notmuch-tree buffer if it appears after closing the message."
 ;;     :config
 ;;     (setq message-send-mail-function 'message-send-mail-with-sendmail)))
 #+END_SRC
-**** Search via helm
-:PROPERTIES:
-:ID:       9d973bbc-f8ce-4c35-87e5-67c6a3bebe49
-:END:
-#+begin_src emacs-lisp
-(use-package helm
-  :if init-flag
-  :defer t
-  :config
-  (use-package helm-notmuch
-    :after notmuch
-    :straight t))
-#+end_src
 **** Tagging of sent messages
 :PROPERTIES:
 :ID:       42f1433a-3c25-47d4-b81a-76579130a611
@@ -16918,6 +16905,29 @@ quality_strings=[ {"4320p" : "bestvideo[height<=?4320p]+bestaudio/best"}, {"2160
 :PROPERTIES:
 :header-args: :tangle no
 :END:
+
+
+** Search via helm :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ID:       9d973bbc-f8ce-4c35-87e5-67c6a3bebe49
+:SUMMARY:  I am not really using it
+:ARCHIVE_TIME: 2021-09-21 Tue 20:21
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/News & email/=Notmuch=
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+- Note taken on [2021-09-21 Tue 20:21] \\
+  I am not really using it
+#+begin_src emacs-lisp
+(use-package helm
+  :if init-flag
+  :defer t
+  :config
+  (use-package helm-notmuch
+    :after notmuch
+    :straight t))
+#+end_src
 
 ** TODO COMMENT Mode line :EMACS:COMMON:
 :PROPERTIES:
