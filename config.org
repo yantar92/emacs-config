@@ -262,7 +262,7 @@ The main org-mode config is provided [[id:58045c39-ffd5-4ccc-bc9d-49048c437f42][
 Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to make sure that =org-plus-contrib= is used any time another packages requires =org=.
 #+begin_src emacs-lisp
 (straight-use-package '(org
-			:type git :repo "https://code.orgmode.org/bzg/org-mode.git"
+			:type git :repo "yantar92@git.savannah.gnu.org:/srv/git/emacs/org-mode.git"
 			:local-repo "~/Git/org-mode"
                         :fork (:host github :repo "yantar92/org" :branch "feature/org-fold-universal-core")))
 (straight-use-package '(org-contrib
