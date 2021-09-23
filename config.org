@@ -5222,6 +5222,23 @@ Smarter elisp editing
 	       ("M-o" . meta-move-line-right)
 	       ("M-i" . meta-move-line-left))))
 #+end_src
+***** Use =paredit= in =M-:= minibuffer
+
+Inspired by https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
+
+#+begin_src emacs-lisp
+(use-package paredit
+  :if init-flag
+  :init
+  (defun yant/paredit-enable-maybe-minibuffer ()
+    "Enable paredit in minibuffer when running `eval-expression'."
+    (when (eq this-command 'eval-expression)
+      (paredit-mode +1)))
+  (bind-keys :map minibuffer-mode-map
+             ("M-o" . paredit-forward-slurp-sexp)
+             ("M-i" . paredit-convolute-sexp))
+  (add-hook 'minibuffer-setup-hook #'yant/paredit-enable-maybe-minibuffer))
+#+end_src
 **** Font-lock based namespace for writing modes
 :PROPERTIES:
 :ID:       5b5c84f0-e363-4e5c-b373-69ddf019f9e3
