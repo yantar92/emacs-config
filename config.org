@@ -6931,6 +6931,8 @@ Capture using [[id:ddea3223-515c-4af1-bfc6-49174ce8bd27][yantar92 [Github] yanta
   :defer t
   :config
   (use-package org-capture-ref
+    :load-path "~/Git/org-capture-ref/"
+    :after org-ref
     :init
     (bind-key "t" 'org-capture-ref-capture-at-point notmuch-show-mode-map)
     (bind-key "t" 'org-capture-ref-capture-at-point notmuch-search-mode-map)
@@ -6941,7 +6943,8 @@ Capture using [[id:ddea3223-515c-4af1-bfc6-49174ce8bd27][yantar92 [Github] yanta
 #+begin_src emacs-lisp
 (use-package org-capture-ref
   :if init-flag
-  :after notmuch
+  :load-path "~/Git/org-capture-ref/"
+  :after (notmuch org-ref)
   :config
   (defun yant/org-remove-heading-email-from-inbox ()
     "Remove email or thread associated with heading at point from notmuch inbox."
@@ -13027,7 +13030,7 @@ I define two link types for capturing:
 (use-package org-capture-ref
   :if init-flag
   :load-path "~/Git/org-capture-ref/"
-  :after org-capture
+  :after (org-capture org-ref)
   :demand t
   :init
   (use-package ol-bibtex
