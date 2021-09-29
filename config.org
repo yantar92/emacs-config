@@ -6095,6 +6095,14 @@ Show the key strokes.
   (setq keycast-insert-after "")
   (setq mode-line-keycast-format "%k%c%r"))
 #+end_src
+*** QR code generation via =qrencode-el=
+
+#+begin_src emacs-lisp
+(use-package qrencode
+  :if init-flag
+  :commands (qrencode-region qrencode-url-at-point)
+  :straight (qrencode-el :host github :repo "ruediger/qrencode-el"))
+#+end_src
 
 ** News & email
 :PROPERTIES:
