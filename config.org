@@ -2866,6 +2866,8 @@ Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's notes: Trying
 Emacs regex escaping in string is often confusing. 
 =easy-escape= helps to avoid mistakes.
 
+[[id:Github-cpitclaudel-cpitclaudel-easy-escape-331][cpitclaudel [Github] cpitclaudel/easy-escape: Improve readability of escape characters in ELisp regular expressions]]
+
 #+begin_src emacs-lisp
 (use-package easy-escape
   :if init-flag
