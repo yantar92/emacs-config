@@ -11558,7 +11558,8 @@ current task to NEXT and schedule it the same day."
       (interactive "P")
       (let ((files (if arg (org-agenda-files t t) (org-agenda-files t)))
             (search-archives-p t ;; arg
-                               ))
+                               )
+            (helm-full-frame t))
         (helm :prompt (format "Query (boolean and): ")
               :sources (list (helm-org-ql-source files
                                                  :name "Org Agenda Files"
