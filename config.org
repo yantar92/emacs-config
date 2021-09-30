@@ -8778,7 +8778,7 @@ CLOCK: [2018-10-10 Wed 12:30]--[2018-10-10 Wed 12:40] =>  0:10
   (helm-recoll-create-source "docs" "~/.recoll")
   (bind-key* "C-c }" 'helm-recoll-docs))
 #+END_SRC
-***** TODO Backlinks
+***** TODO COMMENT Backlinks
 :PROPERTIES:
 :CREATED:  [2020-04-21 Tue 14:50]
 :ID:       248307ef-49c4-4fa9-a812-ab9acb643be4
