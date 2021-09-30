@@ -6962,7 +6962,8 @@ Capture using [[id:ddea3223-515c-4af1-bfc6-49174ce8bd27][yantar92 [Github] yanta
                 (link (save-match-data
                         (and (string-match "notmuch:\\(.+\\)" link)
                              (match-string-no-properties 1 link)))))
-      (call-process notmuch-command nil nil nil "tag" "+track" "-todo" "-inbox" "-listinbox" "--" link)))
+      (let ((track? (string-match-p "notmuch:thread" link)))
+        (call-process notmuch-command nil nil nil "tag" (if track? "+track" "") "-todo" "-inbox" "-listinbox" "--" link))))
   (add-hook 'org-capture-before-finalize-hook #'yant/org-remove-heading-email-from-inbox))
 #+end_src
 
