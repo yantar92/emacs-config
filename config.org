@@ -16046,33 +16046,26 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 	    :truncate-lines t))
     (yant/add-email-to-task '4)))
 
-;; (defun yant/mark-linked-email-after-todo-state-change ()
-;;   "Remove inbox tag from a linked email :EMAIL-SOURCE: after the task is marked as finished."
-;;   (let ((mystate (or (and (fboundp 'org-state)
-;; 			  state)
-;; 		     (nth 2 (org-heading-components))))
-;; 	(email-link (or (org-entry-get nil "EMAIL-SOURCE")
-;;                         (and (org-entry-get nil "LINK")
-;;                              (string-match-p "^notmuch" (org-entry-get nil "LINK"))
-;;                              (org-entry-get nil "LINK"))))
-;; 	(done-keywords org-done-keywords))
-;;     (when (not (or (not email-link)
-;; 		 (eq email-link "")))
-;;       (save-current-buffer
-;; 	(interactive)
-;;         (let ((org-notmuch-open-function #'org-notmuch-follow-link))
-;; 	  (org-open-link-from-string email-link))
-;; 	(with-current-buffer (first (buffer-list))
-;; 	  (if (member mystate done-keywords)
-;; 	      (notmuch-show-tag-message "-inbox" "-todo" "-listinbox")
-;; 	    (if mystate
-;; 		(notmuch-show-tag-message "-listinbox" "+inbox" "-todo")
-;; 	      (if (member "inbox" (notmuch-show-get-tags))
-;; 		  (notmuch-show-tag-message "-listinbox" "+inbox" "+todo"))))
-;; 	  (notmuch-bury-or-kill-this-buffer))))))
+(defun yant/mark-linked-email-after-todo-state-change ()
+  "Remove track tag from a linked email :EMAIL-SOURCE: after the task is marked as finished."
+  (let ((mystate (or (and (fboundp 'org-state) state)
+ 		     (nth 2 (org-heading-components))))
+        (email-link (or (org-entry-get nil "EMAIL-SOURCE")
+                        (and (org-entry-get nil "LINK")
+                             (string-match-p "^notmuch" (org-entry-get nil "LINK"))
+                             (org-entry-get nil "LINK"))))
+	(done-keywords org-done-keywords))
+    (when (and email-link
+               (not (string-empty-p email-link)))
+      (save-match-data
+        (string-match "^notmuch:\\(.+\\)" email-link)
+        (setq email-link (match-string 1 email-link)))
+      (if (member mystate done-keywords)
+          (call-process notmuch-command nil nil nil "tag" "-track" "--" email-link)
+        (call-process notmuch-command nil nil nil "tag" "-todo" "--" email-link)))))
 
-;; (add-hook 'org-after-todo-state-change-hook 'yant/mark-linked-email-after-todo-state-change 'append)
-;; (add-hook 'org-capture-before-finalize-hook 'yant/mark-linked-email-after-todo-state-change 'append)
+(add-hook 'org-after-todo-state-change-hook 'yant/mark-linked-email-after-todo-state-change 'append)
+(add-hook 'org-capture-before-finalize-hook 'yant/mark-linked-email-after-todo-state-change 'append)
 #+end_src
 *** Imenu integration
 :PROPERTIES:
