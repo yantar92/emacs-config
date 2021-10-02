@@ -3794,6 +3794,19 @@ Repo: [[id:Github-fuco1-fuco1-dired-hacks-707][Fuco1 [Github] Fuco1/dired-hacks:
   :bind (:map dired-mode-map
               ("/" . dired-narrow)))
 #+end_src
+***** Browse archives with =dired-avfs=
+:PROPERTIES:
+:ID:       f14a4a86-b866-4d20-96c5-93d174a0ae6a
+:END:
+
+#+begin_src emacs-lisp
+(use-package dired-avfs
+  :if init-flag
+  :straight t
+  :after dired
+  :init
+  (start-process "mountavfs" nil "mountavfs"))
+#+end_src
 
 ***** =DWIM= target on copy/rename
 :PROPERTIES:
