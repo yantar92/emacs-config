@@ -17652,3 +17652,25 @@ Requires [[id:069366f4-0eac-4d23-b186-7020185e1bcb][=media-gfx/graphviz=: LaTeX 
   :straight (org-graph-view :host github :repo "alphapapa/org-graph-view"))
 #+end_src
 
+** Integrate =languagetool= with flycheck :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:SUMMARY:  This is checking whole buffer - inefficient on large buffers
+:ARCHIVE_TIME: 2021-10-04 Mon 16:56
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Text highlight & colouring/Spell\grammar checking/Language tool
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+- Note taken on [2021-10-04 Mon 16:56] \\
+  This is checking whole buffer - inefficient on large buffers
+#+begin_src emacs-lisp
+(use-package flycheck-languagetool
+  :if init-flag
+  :straight t
+  :custom
+  (flycheck-languagetool-server-jar nil))
+#+end_src
+
+
+
