@@ -15902,6 +15902,16 @@ If a property drawer conatins only these properties, hide the drawer as well."
 
   )
 #+end_src
+***** COMMENT Do not hide drawers on startup, but hide on every unfold - reducing startup time
+
+#+begin_src emacs-lisp
+(use-package org
+  :init
+  (define-advice org-cycle-hide-drawers (:around (oldfun state) prevent-initial-hiding)
+    "Do not hide proprety drawers on startup"
+    (unless (eq state 'all) (funcall oldfun state)))
+  (add-hook 'org-cycle-hook #'org-cycle-hide-drawers))
+#+end_src
 
 **** Symbols
 :PROPERTIES:
