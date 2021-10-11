@@ -15835,14 +15835,16 @@ Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/c
 :ID:       8f502b25-1797-4c2d-b12e-32b1f6c6a236
 :END:
 
-Smaller font for property drawers
+***** Smaller font for property drawers
+
 #+begin_src emacs-lisp
 (use-package org
   :custom-face
   (org-drawer ((t (:foreground "Blue1" :height 0.8)))))
 #+end_src
 
-Hide property drawers if they are empty or contain only invisible =org-custom-properties=.
+***** Hide property drawers if they are empty or contain only invisible =org-custom-properties=.
+
 Also hide the logbooks containing only state changes and clocking.
 
 ****************** TODO Find a faster way to hide empty drawers - maybe use font lock
