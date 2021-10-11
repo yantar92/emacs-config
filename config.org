@@ -2468,7 +2468,7 @@ Magit is able to provide word-level diff refinement.  It is disabled by default 
   :if init-flag
   :straight t
   :config
-  (bind-key "C-c g g" #'browse-at-remote))
+  (bind-key "C-c M-o" #'browse-at-remote))
 #+end_src
 
 *** =Ediff=
