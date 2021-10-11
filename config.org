@@ -11562,6 +11562,7 @@ current task to NEXT and schedule it the same day."
   :custom
   (helm-org-ql-reverse-paths t)
   (helm-org-ql-show-paths nil)
+  (helm-org-ql-input-idle-delay 0.1)
   :config
   (require 'helm-org-ql)
   (use-package boon
