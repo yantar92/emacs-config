@@ -704,7 +704,8 @@ Since it is not really a good idea to work in darkness regardless of the colour 
   (modus-themes-load-themes)
   :config
   (modus-themes-load-operandi)
-  (set-face-background 'org-block-begin-line (face-background 'default))
+  (use-package org :config
+    (set-face-background 'org-block-begin-line (face-background 'default)))
   (set-face-background 'org-block-end-line (face-background 'default))
   )
 #+end_src
