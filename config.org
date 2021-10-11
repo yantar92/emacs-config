@@ -13511,7 +13511,10 @@ Do not use cache when FORCE is non-nil."
            (sort (org-ql-select (list (current-buffer))
                    query
                    :narrow t
-                   :action #'point)
+                   :action (lambda (&optional el)
+                             (if el
+                                 (org-element-property :begin (org-element-lineage el '(headline) t))
+                               (org-element-property :begin (org-element-lineage (org-element-at-point) '(headline) t)))))
                  #'<)))
         (cur-point (save-excursion
                      (org-back-to-heading t)
