@@ -13513,8 +13513,8 @@ Do not use cache when FORCE is non-nil."
                    :narrow t
                    :action (lambda (&optional el)
                              (if el
-                                 (org-element-property :begin (org-element-lineage el '(headline) t))
-                               (org-element-property :begin (org-element-lineage (org-element-at-point) '(headline) t)))))
+                                 (org-element-property :begin (org-element-lineage el '(headline inlinetask) t))
+                               (org-element-property :begin (org-element-lineage (org-element-at-point) '(headline inlinetask) t)))))
                  #'<)))
         (cur-point (save-excursion
                      (org-back-to-heading t)
