@@ -11579,7 +11579,8 @@ current task to NEXT and schedule it the same day."
                                                  :name "Org Agenda Files"
                                                  :filter (unless search-archives-p
                                                            '(not (and (not (tags-local "ARCHIVE"))
-                                                                    (tags "ARCHIVE")))))
+                                                                    (tags "ARCHIVE"))))
+                                                 :limit-count 100)
                              (helm-build-sync-source "Create new"
                                :candidates
                                (lambda ()
