@@ -340,7 +340,7 @@ Keep customisation away from =init.el= in a separate file.
 ****************** END
   #+begin_src emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
-;; (load custom-file)
+(load custom-file)
   #+end_src
 
 **** Community effort to solve the problem: =no-littering=
