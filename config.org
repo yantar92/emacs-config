@@ -8892,30 +8892,14 @@ This includes:
 (setq org-extend-today-until 4)
 (setq org-use-effective-time t) ; respect `org-extend-today-until' when setting time-stamps
 
-(add-to-list 'org-default-properties "SHOWFROMTIME")
+;; (add-to-list 'org-default-properties "SHOWFROMTIME")
 (defun org-agenda-skip-before-SHOWFROMTIME-property ()
   "Skip agenda item if :SHOWFROMTIME: property is set and time of day is before it"
-  (save-restriction
-    (widen)
-    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-      (let* ((showfromtime (apply 'encode-time
-				  (-replace nil 0
-					    (parse-time-string (or (get-text-property (point) 'showfromtime)
-                                                                   (org-entry-get (point) "SHOWFROMTIME" 'inherit)
-								   "00:00:01")))))
-             (daystart (apply 'encode-time
-			      (-replace nil 0
-					(parse-time-string (or (and org-extend-today-until (format "%s:00:01" org-extend-today-until))
-							       ("00:00:01"))))))
-	     (currenttime (apply 'encode-time
-				 (-replace nil 0
-					   (parse-time-string (format-time-string "%T"))))))
-	(when (and (time-less-p currenttime showfromtime)
-		   (time-less-p currenttime daystart))
-          (setq currenttime (apply 'encode-time (-replace nil 0
-							  (parse-time-string (format-time-string "23:59:59"))))))
-	(when (time-less-p currenttime showfromtime)
-	  next-headline)))))
+  (when-let ((showfromtime (org-entry-get-with-inheritance
+                            "SHOWFROMTIME" nil
+                            (when (boundp 'org-ql--current-element)
+                              org-ql--current-element))))
+    (not (yant/now-after-showfromtime? showfromtime))))
      #+end_src
 - =:SHOWFROMDATE:= :: The purpose of this is to be able to postpone the scheduled tasks for future if I cannot do it. The property is formatted as an org date.
      This property is especially useful if there is something more pressing, so that there is a temptation to reschedule less pressing event to another day. If the more pressing task is done earlier than expected, the postponed tasks can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
@@ -8982,20 +8966,18 @@ This includes:
 (defun org-agenda-skip-noshowdates()
   "Skip agenda item if :SHOWDATES: property sexp is not matching today"
   (require 'diary-lib)
-  (save-restriction
-    (widen)
-    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
-	  (entry (or (get-text-property (point) 'showdates)
-                     (org-entry-get (point) "SHOWDATES" 'inherit)
-                     ))
-	  (date (diary-make-date (nth 4 (decode-time)) (nth 3 (decode-time)) (nth 5 (decode-time)))))
-      (let ((result (and entry (pcase (eval (car (read-from-string entry)))
-				 ((and (pred listp) res)
-				  (cdr res))
-				 (res res)))))
-	(if (and entry (not result))
-	    next-headline
-	  nil)))))
+  (let* ((entry
+          (org-entry-get-with-inheritance
+           "SHOWDATES" nil
+           (when (boundp 'org-ql--current-element)
+             org-ql--current-element)))
+         (date (diary-make-date (nth 4 (decode-time)) (nth 3 (decode-time)) (nth 5 (decode-time))))
+         (result (and entry (pcase (eval (car (read-from-string entry)))
+			      ((and (pred listp) res)
+			       (cdr res))
+			      (res res)))))
+    ;; Not actual skip function, but used in org-ql-skip
+    (and entry (not result))))
 
 (defun yant/daysofweek (&rest days)
   "Return 't if any of the listed weekdays (Mon, Tue, Wed, Thu, Fri, Sat, Sun) is today. Work only in the context of :SHOWDATES: property."
