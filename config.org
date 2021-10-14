@@ -2832,9 +2832,9 @@ Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's notes: Trying
   :straight t
   :diminish highlight-parentheses-mode
   :custom
-  (highlight-parentheses-background-colors `(,(face-background 'modus-themes-refine-blue)
-                                             ,(face-background 'modus-themes-subtle-blue)
+  (highlight-parentheses-background-colors `(,(face-background 'modus-themes-intense-red)
                                              ,(face-background 'modus-themes-intense-magenta)
+                                             ,(face-background 'modus-themes-refine-blue)
                                              ))
   :config
   (add-hook! 'minibuffer-setup-hook #'highlight-parentheses-minibuffer-setup)
