@@ -737,10 +737,10 @@ Also, automatically detecting and setting any missing fonts (this comes before m
   #+begin_src emacs-lisp
 (when init-flag
   (set-face-attribute 'default nil
-		      :height 150
+		      :height 130
 		      :family "Source Code Pro")
-  (set-fontset-font "fontset-default" 'chinese-gbk (font-spec :size 17.0 :family "Sarasa Mono hc"))
-  (set-fontset-font "fontset-default" 'cyrillic-iso8859-5 (font-spec :size 20 :family "source code pro"))
+  (set-fontset-font "fontset-default" 'chinese-gbk (font-spec :size 15.0 :family "Sarasa Mono hc"))
+  (set-fontset-font "fontset-default" 'cyrillic-iso8859-5 (font-spec :size 18 :family "source code pro"))
   ;; (mapc (lambda (char)
   ;; 	  (set-fontset-font "fontset-default" char (font-spec :size 12.0 :family "Source Code Pro")))
   ;;       '(?λ))
