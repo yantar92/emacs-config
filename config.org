@@ -16858,11 +16858,12 @@ audio-file-auto=fuzzy                   # external audio doesn't have to match t
 :ID:       5752739c-70b7-4bf3-9cc6-49610cd47d05
 :END:
 
-=Youtubedl= 
+=yt-dlp=
 
 #+begin_src conf
+script-opts=ytdl_hook-ytdl_path=/usr/bin/yt-dlp
 ytdl-raw-options=format="[protocol!=http_dash_segments][protocol!=rtmp]",all-subs=,mark-watched=,no-check-certificate=
-ytdl-format=bestvideo[height<=720][vcodec=vp9][fps>=60]+bestaudio/bestvideo[height<=720][vcodec=vp9]+bestaudio/bestvideo[height<=720]+bestaudio/best[height<=720]/best
+ytdl-format=bestvideo[height<=1080][vcodec=vp9][fps>=60]+bestaudio/bestvideo[height<=1080][vcodec=vp9]+bestaudio/bestvideo[height<=1080]+bestaudio/best[height<=1080]/best
 
 [360p]
 ytdl-format=bestvideo[height<=360][vcodec=vp9]+bestaudio/bestvideo[height<=360]+bestaudio/best[height<=360]/best
