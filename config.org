@@ -6358,6 +6358,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
   (defun yant/elfeed-search-print-entry (entry)
     "Print ENTRY to the buffer."
     (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
+           (score (elfeed-meta entry :elfeed-score/score))
            (title (if (elfeed-tagged-p 'content_is_entry entry)
                       (elfeed-deref (or (elfeed-meta entry :content) (elfeed-entry-content entry) ""))
                     (or (elfeed-meta entry :title) (elfeed-entry-title entry) "")))
@@ -6400,7 +6401,8 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                  title-width
                                  elfeed-search-title-max-width)
                           :left)))
-      (insert (propertize date 'face 'elfeed-search-date-face) " ")
+      ;; (insert (propertize date 'face 'elfeed-search-date-face) " ")
+      (insert (propertize (format "%-3d" score) 'face 'elfeed-search-date-face) " ")
       (insert (propertize title-column 'kbd-help title) " ")
       (when feed-title
         (insert (propertize feed-title 'face 'elfeed-search-feed-face) " "))
