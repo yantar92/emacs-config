@@ -15980,7 +15980,7 @@ Turning on org element cache in attempt to make it faster.
 
 #+begin_src emacs-lisp
 (custom-set-variables '(org-element-use-cache t))
-(custom-set-variables '(org-element--cache-self-verify 'backtrace))
+(custom-set-variables '(org-element--cache-self-verify nil))
 (custom-set-variables '(org-element--cache-self-verify-frequency 0.05))
 #+end_src
 
