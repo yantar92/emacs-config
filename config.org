@@ -295,7 +295,7 @@ Quick hydra menu for =straight.el=
     :after boon
     :init (use-package straight-x :demand t)
     :bind (:map boon-x-map
-		("p" . hydra-straight-helper/body))
+		("M-p" . hydra-straight-helper/body))
     :config
     (defhydra hydra-straight-helper (:hint nil)
       "
