@@ -13071,6 +13071,9 @@ I define two link types for capturing:
  			    :file "~/Org/inbox.org"
  			    :fetch-bibtex (lambda () (org-capture-ref-process-capture)) ; this must run first
                             :link-type (lambda () (org-capture-ref-get-bibtex-field :type))
+                            :before-finalize (lambda ()
+                                               (when (string= "video" (org-capture-ref-get-bibtex-field :typealt))
+                                                 (org-set-tags (seq-union (org-get-tags nil t) (list "@home")))))
                             :extra (lambda () (if (org-capture-ref-get-bibtex-field :journal)
 					     (s-join "\n"
 						     '("- [ ] download and attach pdf"
@@ -13100,6 +13103,7 @@ I define two link types for capturing:
 		 (cdr  template)
 		 'replace))))
 #+end_src
+
 - Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=.
 #+begin_src emacs-lisp
 (let ((templates (doct '( :group "Email"
@@ -13142,7 +13146,6 @@ I define two link types for capturing:
 For some time, I was trying to scrape the website text in addition to the title. However, it turned out to mess the ease of full-text search across org-mode files. Text written by other people tends to use different keywords in comparison with my own notes. As a result, my org-mode text searches often yield irrelevant matches - a big problem considering the amount of notes I have in my org files.
 
 For now, I avoid capturing website text directly into org. Instead, I write my own notes about the most important ideas from that website/article. This is also recommended (with providing relevant scientific proofs) in [[id:4ceda166-b266-4746-93cb-b1c181ec25cd][Ahrens (2017) How to Take Smart Notes]]
-
 **** Refile
 :PROPERTIES:
 :ID:       c048269c-57b9-434a-a19b-6da8d70e5e0f
