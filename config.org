@@ -4186,6 +4186,14 @@ Moreover, it can be integrated with all other kinds of documentation using [[id:
     (meta-defun meta-help :mode sh-mode (helm-dash (concat "Bash " (thing-at-point 'symbol))))
     (meta-defun meta-help :mode python-mode (helm-dash (concat "Python 3 " (thing-at-point 'symbol))))))
 #+end_src
+**** latex2e info documentation
+
+See [[id:a92c0e31-556b-47d5-a58e-468ab0c99a59][TeX \ LaTeX (texlive)]]
+
+#+begin_src emacs-lisp
+(add-to-list 'Info-additional-directory-list "/usr/share/texmf-dist/doc/info/")
+#+end_src
+
 
 *** TODO Bookmarks
 :PROPERTIES:
