@@ -8320,6 +8320,7 @@ Return DESK if :desk is not set."
 Adjust some of the external application programs
 #+begin_src emacs-lisp
 (setq org-file-apps '((directory . emacs)
+                      ("\\.bib\\'" . emacs)
 		      ("\\.mm\\'" . default)
 		      ("\\.x?html?\\'" . default)
 		      ("\\.pdf\\'" . emacs)
