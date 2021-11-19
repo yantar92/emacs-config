@@ -2082,7 +2082,7 @@ The basic idea is to prefix movement commands with meta.
 	 ("M-y" . helm-show-kill-ring)
 	 ("<f1> a" . helm-apropos)
          ("<f1> b" . helm-descbindings)
-         ("C-x 8 <RET>" . helm-ucs)
+         ;; ("C-x 8 <RET>" . helm-ucs)
 	 ("C-x c" . nil)
 	 :map helm-map
 	 ("M-j" . helm-next-line)
