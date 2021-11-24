@@ -16625,7 +16625,8 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
 :ID:       83801f6a-daf5-4738-a15e-2d20c2b4551c
 :END:
 #+begin_src emacs-lisp
-(org-babel-load-file "~/PersonalDocuments/emacs-personal.org")
+;; (org-babel-load-file "~/PersonalDocuments/emacs-personal.org")
+(load "~/PersonalDocuments/emacs-personal.el")
 #+end_src
 ** Magic - I have no clue why it works
 :PROPERTIES:
