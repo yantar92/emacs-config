@@ -9852,6 +9852,7 @@ If LOCAL is non-nil, check only local TAG."
                                                                         (tags "NODEADLINE")
 									(not (subtask)))
 								    (not (habit))
+                                                                    (not (goal))
 								    (task)
 								    ))))))))
 	      ("w" "Waiting and hold tasks"
@@ -10117,6 +10118,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
 							(quote (and (todo)
 								    (not (habit))
+                                                                    (not (goal))
 								    (task)
 								    (or (tags "SKIP")
 									(not (subtask)))
