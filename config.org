@@ -16184,6 +16184,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
                                                "^\\(-\\|\\+\\)[ \t]*:DRILL_TOTAL_REPEATS:.+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:DRILL_AVERAGE_QUALITY:.+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:DRILL_EASE:.+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:ARCHIVE_[^:]+:.+\n"
                                                "^\\+CLOSED:.+\n"
                                                "^\\-SCHEDULED:.+\n"
                                                "^[+-]DEADLINE:.+\n"
