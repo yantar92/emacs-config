@@ -7889,7 +7889,7 @@ I force org-mode to store link to inline headings by adding inline heading store
   "Store link to inlinetask at point."
   (if (and (derived-mode-p 'org-mode)
 	   (org-inlinetask-in-task-p))
-      (let ((org-inlinetask-min-level 1000))
+      (let ((org-inlinetask-min-level (1+ org-inlinetask-max-level)))
 	(apply oldfun args))
     (apply oldfun args)))
 
