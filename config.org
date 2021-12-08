@@ -1303,6 +1303,7 @@ Light face for header line.
   (use-package color :demand t)
   :config
   (set-face-attribute 'header-line nil
+                      :inherit 'fixed-pitch
 		      :weight 'normal
 		      ;; :box ,(face-background 'boon-modeline-spc)
 		      ;; :box `(:color ,(color-darken-name (face-background 'default) 10) :line-width 5)
@@ -1314,6 +1315,7 @@ Light face for header line.
 		      :background (face-background 'default)
 		      )
   (set-face-attribute 'mode-line-inactive nil
+                      :inherit 'fixed-pitch
 		      :weight 'normal
 		      ;; :box ,(face-background 'boon-modeline-spc)
 		      ;; :box `(:color ,(color-darken-name (face-background 'default) 10) :line-width 5)
@@ -1325,6 +1327,7 @@ Light face for header line.
 		      :background (face-background 'default)
 		      )
   (set-face-attribute 'mode-line nil
+                      :inherit 'fixed-pitch
 		      :weight 'normal
 		      ;; :box ,(face-background 'boon-modeline-spc)
 		      ;; :box `(:color ,(color-darken-name (face-background 'default) 10) :line-width 5)
