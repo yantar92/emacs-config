@@ -6451,7 +6451,6 @@ Can be still occasionally useful to navigate the complicated threads though.
 
 #+begin_src emacs-lisp
 (use-package notmuch
-  :straight t
   :commands (notmuch notmuch-search)
   :config
   (use-package boon
