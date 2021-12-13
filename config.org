@@ -6311,6 +6311,29 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
 #+begin_src emacs-lisp
 (use-package elfeed
   :init
+  (defvar yant/elfeed-title-boring-words '("and" "a" "an" "the"
+                                           "from" "this" "associated"
+                                           "fabricated" "using"
+                                           "investigation" "by"
+                                           "state" "of" "into"
+                                           "materials" "material" "via"
+                                           "with" "superior" "on"
+                                           "acoustic" "strategy" "in"
+                                           "without" "induced" "dual"
+                                           "for" "tailored" "stabilizing"
+                                           "element" "properties"
+                                           "base" "alloy" "alloys" "at"
+                                           "novel" "study" "as" "enhanced"
+                                           "origin" "origins" "subjected"
+                                           "to" "identifying" "hybrid"
+                                           "how" "do" "when" "that"
+                                           "it" "is" "get" "which"
+                                           "there" "there's" "some"
+                                           "I've" "Hi" "please" "help"
+                                           "по" "Как" "в" "от" "и"
+                                           "его" "подробный" "лучшего"
+                                           "для" "от" "до" "за"
+                                           "на" "с" "Почему" "[recovery mode]"))
   (defvar yant/elfeed-title-transforms `(("\\\\mathrm{\\([^}]+\\)}" "\\1")
                                          ("\\$\\([^$]+\\)\\$" "\\1")
                                          ("<em>\\(.+?\\)</em>" "\\1")
@@ -6331,6 +6354,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                          ("<i>\\(.+?\\)</i>" "\\1"  (face (:slant italic)))
                                          ("<mi>\\(.+?\\)</mi>" "\\1"  (face (:slant italic)))
                                          ("{\\([^}]+\\)}" "\\1")
+                                         (,(concat "\\<" (regexp-opt yant/elfeed-title-boring-words) "\\>") "\\&" (face (:foreground "Gainsboro")))
                                          ("[Aa]nisotro[^ ]+" "\\&" (face (:foreground "red")))
                                          ("[^ ]*laminate[^ ]*" "\\&" (face (:foreground "red")))
                                          ("[Oo]ligo[^ ]*" "\\&" (face (:foreground "red")))
