@@ -614,11 +614,10 @@ Though I don't want it in batch mode because it is optimised for interactive use
 [2020-05-29 Fri] [[notmuch:id:note_351562434@gitlab.com][Email from Koral: Re: gcmh | Commands invoking garbage-collect directly can hang emacs when non-idle (#6)]]
 Reducing help:gcmh-cons-threshold to avoid hangs on undo.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (when init-flag
   (use-package gcmh
-    :straight (gcmh :type git :host gitlab :repo "koral/gcmh" :local-repo "~/Git/gcmh"
-		    :fork (:host gitlab :repo "yantar92/gcmh"))
+    :straight (gcmh :type git :host gitlab :repo "koral/gcmh")
     :demand t
     :diminish gcmh-mode
     :hook (after-init . gcmh-mode)))
@@ -631,19 +630,6 @@ In batch mode, increase the threshold to make things faster.
     (setq gc-cons-threshold (* 200 1000 1000))
   (setq gc-cons-threshold (* 1 1000 1000 1000)))
 #+end_src
-
-200Mb: [[elisp:(progn (forward-line) (insert (message "%d" (* 1000 (/ gc-elapsed gcs-done)))))]]
-47ms
-
-400Mb: [[elisp:(progn (forward-line) (insert (message "%d" (* 1000 (/ gc-elapsed gcs-done)))))]]
-68ms
-
-800Mb: [[elisp:(progn (forward-line) (insert (message "%d" (* 1000 (/ gc-elapsed gcs-done)))))]]
-228ms
-
-1600Mb: [[elisp:(progn (forward-line) (insert (message "%d" (* 1000 (/ gc-elapsed gcs-done)))))]]
-188ms
-
 
 Do not compact font caches
 
