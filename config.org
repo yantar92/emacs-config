@@ -16262,6 +16262,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
     (with-async-calls '(magit-insert-heading magit-section-ident-value)
       (let ((magit-buffer (current-buffer))
             (pos (point))
+            (previous-pos (point))
             (progress (make-progress-reporter "Autocommiting hunks..." 1 (point-max)))
             (staged-pos (or (save-excursion
 			      (unless (let ((inhibit-message t)) (magit-jump-to-staged))
@@ -16293,7 +16294,8 @@ Some changes in org-files are very trivial and clutter more important changes I 
                             ;; Stage will rebuild status buffer from
                             ;; scratch, so we have to restart or can
                             ;; miss some matches.
-                            (setq pos 1))
+                            (setq pos previous-pos))
+                        (setq previous-pos pos)
                         (magit-section-forward))))))
               (setq pos (point))
               (setq staged-pos (or (save-excursion
