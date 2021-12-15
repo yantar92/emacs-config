@@ -6312,6 +6312,8 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
 (use-package elfeed
   :init
   (defvar yant/elfeed-title-boring-words '("and" "a" "an" "the"
+                                           "improved" "effect" "its"
+                                           "their"
                                            "from" "this" "associated"
                                            "fabricated" "using"
                                            "investigation" "by"
