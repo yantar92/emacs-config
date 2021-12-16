@@ -6314,7 +6314,11 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
   :init
   (defvar yant/elfeed-title-boring-words '("and" "a" "an" "the"
                                            "improved" "effect" "its"
-                                           "their"
+                                           "their" "due" "can" "upon"
+                                           "suggest" "recent" "meanwhile"
+                                           "new" "prepared" "mainly"
+                                           "has" "have" "we" "reveal"
+                                           "been" "among" "was"
                                            "from" "this" "associated"
                                            "fabricated" "using"
                                            "investigation" "by"
@@ -6358,6 +6362,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                          ("<mi>\\(.+?\\)</mi>" "\\1"  (face (:slant italic)))
                                          ("{\\([^}]+\\)}" "\\1")
                                          (,(concat "\\<" (regexp-opt yant/elfeed-title-boring-words) "\\>") "\\&" (face (:foreground "Gainsboro")))
+                                         ("slid[^ ]+" "\\&" (face (:foreground "red")))
                                          ("[Aa]nisotro[^ ]+" "\\&" (face (:foreground "red")))
                                          ("[^ ]*laminate[^ ]*" "\\&" (face (:foreground "red")))
                                          ("[Oo]ligo[^ ]*" "\\&" (face (:foreground "red")))
