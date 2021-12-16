@@ -4757,6 +4757,7 @@ Interactive fill/unfill paragraph at point.
                                "Already at top level of the outline"
 			       "Attempt to delete the sole visible or iconified frame"
                                "No such page"
+                               "Unknown selector"
                                "use-package: :[a-z]+ wants"
                                "The mark is not set now, so there is no region"
                                "Search string not set"
