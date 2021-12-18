@@ -6339,7 +6339,8 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                            "I've" "Hi" "please" "help"
                                            "по" "Как" "в" "от" "и"
                                            "его" "подробный" "лучшего"
-                                           "для" "от" "до" "за"
+                                           "для" "от" "до" "за" "у"
+                                           "это" "при" "или"
                                            "на" "с" "Почему" "[recovery mode]"))
   (defvar yant/elfeed-title-transforms `(("\\\\mathrm{\\([^}]+\\)}" "\\1")
                                          ("\\$\\([^$]+\\)\\$" "\\1")
