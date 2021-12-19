@@ -8150,7 +8150,7 @@ The project with parent projects.
     "Match a subproject."
     (and (project)
          (not (tags-local "project"))
-	 (ancestors (project)))))
+	 (ancestors (and (not (area)) (project))))))
 
 (defun bh/is-subproject-p ()
   "Any task which is a subtask of another project"
