@@ -5143,7 +5143,10 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   :after helm-dash
   :config
   ;; Update the info file list.
-  (custom-reevaluate-setting 'helm-default-info-index-list)
+  (add-hook
+   'after-init-hook
+   (lambda ()
+     (custom-reevaluate-setting 'helm-default-info-index-list)))
   :init
   (use-package boon
     :config
