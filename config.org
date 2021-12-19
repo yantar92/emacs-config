@@ -5534,6 +5534,19 @@ This is also required for =cdlatex= to work with org-mode.
   :straight t
   )
 #+END_SRC
+** Jupyter
+
+Use scimax version
+
+#+begin_src emacs-lisp
+(use-package scimax-ob
+  :straight (scimax-ob :host github :files ("scimax-ob.el") :repo "jkitchin/scimax"))
+(use-package jupyter :straight t)
+(use-package pretty-hydra :straight t)
+(use-package scimax-jupyter
+  :straight (scimax-jupyter :host github :files ("scimax-jupyter.el") :repo "jkitchin/scimax"))
+#+end_src
+
 ** Pdf
 *** Compressing too large pdfs
 :PROPERTIES:
