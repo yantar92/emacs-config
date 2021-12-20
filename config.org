@@ -3356,7 +3356,16 @@ Just use external browser to open URLs.
   (use-package helm
     :config  
     (use-package meta-functions :config  
-      (meta-defun meta-goto "Goto place in document." helm-imenu))))
+      (meta-defun meta-goto "Goto place in document." helm-imenu)
+      (use-package elisp-def
+        :defer t
+        :config
+        (meta-defun meta-goto :mode emacs-lisp-mode
+          :cond (let ((state (syntax-ppss)))
+                  (and (not (nth 3 state))
+                       (not (nth 4 state))))
+          :cond (thing-at-point 'symbol)
+          :cond (let ((pos (point-marker))) (elisp-def) (not (eq pos (point)))))))))
 #+end_src
 
 *** Buffers
@@ -5327,6 +5336,16 @@ It warns me if the original definition changes from what I expect.
 (use-package el-patch
   :straight t
   :demand t)
+#+end_src
+**** Find emacs lisp definitions (=elisp-def=)
+
+#+begin_src emacs-lisp
+(use-package elisp-def
+  :straight t
+  :if init-flag
+  :init
+  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+    (add-hook hook #'elisp-def-mode)))
 #+end_src
 
 *** Scripts
