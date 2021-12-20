@@ -5187,6 +5187,29 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
                ("h t" . helm-info-auctex)
                ("h T" . helm-info-texinfo))))
 #+end_src
+*** Python
+**** Jedi
+
+#+begin_src emacs-lisp
+(use-package jedi
+  :straight t
+  :if init-flag
+  :init
+  (add-hook 'python-mode-hook #'jedi-mode))
+#+end_src
+
+Use company backend instead of main jedi that uses auto-completion
+
+#+begin_src emacs-lisp
+(use-package company-jedi
+  :straight t
+  :if init-flag
+  :after company
+  :init
+  (defun yant/python-mode-hook ()
+    (add-to-list 'company-backends 'company-jedi))
+  (add-hook 'python-mode-hook #'yant/python-mode-hook))
+#+end_src
 
 *** Elisp coding
 :PROPERTIES:
