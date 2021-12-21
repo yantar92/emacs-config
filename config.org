@@ -10026,8 +10026,8 @@ If LOCAL is non-nil, check only local TAG."
 							                (not (subproject)))
 							            (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 							            (not (and (area)
-								              (or (not (descendants (todo)))
-                                                                                  (descendants (todo "TODO")))))
+								            (or (not (descendants (and (todo) (not (todo "TICKLER")))))
+                                                                                (descendants (todo "TODO")))))
                                                                     (not (goal))
 							            (not (descendants
 							                  (and  (todo "NEXT" "REVIEW" "DOING")
@@ -10098,8 +10098,9 @@ If LOCAL is non-nil, check only local TAG."
 									(not (subproject)))
 								    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 								    (not (and (area)
-									      (or (not (descendants (todo)))
-                                                                                  (descendants (todo "TODO")))))
+									    (not (and (area)
+								                    (or (not (descendants (and (todo) (not (todo "TICKLER")))))
+                                                                                        (descendants (todo "TODO")))))))
                                                                     (not (goal))
 								    (not (descendants
 									  (and  (todo "NEXT" "REVIEW" "DOING")
