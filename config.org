@@ -5188,6 +5188,14 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
                ("h T" . helm-info-texinfo))))
 #+end_src
 *** Python
+**** Pydoc
+
+#+begin_src emacs-lisp
+(use-package pydoc
+ :if init-flag
+ :straight t)
+#+end_src
+
 **** Jedi
 
 #+begin_src emacs-lisp
