@@ -13951,7 +13951,8 @@ It can be done using =org-tempo=.
   :if init-flag
   :init
   (push (cons "el" "src emacs-lisp") org-structure-template-alist)
-  (push (cons "p" "src python :results output") org-structure-template-alist))
+  (push (cons "p" "src python :results output") org-structure-template-alist)
+  (push (cons "jp" "src jupyter-python") org-structure-template-alist))
 #+end_src
 
 ***** Source block editing functions from scimax
