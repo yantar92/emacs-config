@@ -9849,7 +9849,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-							(quote (and (not (tags "SOMEDAY" "HOLD" "WAITING" "CANCELLED"))
+							(quote (and (not (tags "SOMEDAY" "HOLD" "WAITING" "CANCELLED" "NODEADLINE"))
 								    (not (todo "TODO"))
 								    (not (area))
                                                                     (not (goal))
