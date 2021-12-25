@@ -6782,7 +6782,7 @@ the notmuch-tree buffer if it appears after closing the message."
 
   (defun notmuch-search-nolist()
     (interactive)
-    (notmuch-search-tag '("+inbox" "-listinbox" "+nolist"))))
+    (notmuch-search-tag '("+inbox" "-listinbox" "+nolist" "+todo"))))
 #+end_src
 **** Quit frame instead of bury buffer
 :PROPERTIES:
