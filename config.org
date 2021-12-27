@@ -5188,12 +5188,19 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
                ("h T" . helm-info-texinfo))))
 #+end_src
 *** Python
-**** Pydoc
+**** =Elpy= python development environment
 
 #+begin_src emacs-lisp
-(use-package pydoc
- :if init-flag
- :straight t)
+(use-package elpy
+  :if init-flag
+  :straight t
+  :init
+  (elpy-enable)
+  :custom
+  (elpy-rpc-backend "jedi")
+  :config
+  (meta-defun meta-down-element :mode python-mode elpy-nav-forward-block)
+  (meta-defun meta-up-element :mode python-mode elpy-nav-backward-block))
 #+end_src
 
 **** Jedi
@@ -5218,7 +5225,6 @@ Use company backend instead of main jedi that uses auto-completion
     (add-to-list 'company-backends 'company-jedi))
   (add-hook 'python-mode-hook #'yant/python-mode-hook))
 #+end_src
-
 *** Elisp coding
 :PROPERTIES:
 :CREATED:  [2019-07-08 Mon 20:50]
@@ -17797,5 +17803,42 @@ Requires [[id:069366f4-0eac-4d23-b186-7020185e1bcb][=media-gfx/graphviz=: LaTeX 
   (flycheck-languagetool-server-jar nil))
 #+end_src
 
+** COMMENT Pydoc :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:SUMMARY:  replaced by elpy
+:ARCHIVE_TIME: 2021-12-26 Sun 20:59
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Programming & emacsing/Python
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
 
+- Note taken on [2021-12-26 Sun 20:58] \\
+  replaced by elpy
+#+begin_src emacs-lisp
+(use-package pydoc
+ :if init-flag
+ :straight t)
+#+end_src
+
+** Inline documentation in tooltip :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:SUMMARY:  too large for my screen
+:ARCHIVE_TIME: 2021-12-26 Sun 21:01
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Programming & emacsing/Python
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+- Note taken on [2021-12-26 Sun 21:01] \\
+  too large for my screen
+#+begin_src emacs-lisp
+(use-package company-quickhelp
+  :straight t
+  :if init-flag
+  :after company
+  :config
+  (company-quickhelp-mode +1))
+#+end_src
 
