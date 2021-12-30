@@ -13449,80 +13449,47 @@ The subheadings below such a headlines are promoted up *1 level*.
 :ID:       1bf4b848-2cac-4d11-a23d-a9b7cf4bcacb
 :END:
 #+BEGIN_SRC emacs-lisp
-(setq org-format-latex-header
-      "
-        \\documentclass{article}
-        \\usepackage[usenames]{color}
-        [PACKAGES]
-        [DEFAULT-PACKAGES]
-        \\pagestyle{empty}             % do not remove
-        % The settings below are copied from fullpage.sty
-        \\setlength{\\textwidth}{\\paperwidth}
-        \\addtolength{\\textwidth}{-3cm}
-        \\setlength{\\oddsidemargin}{1.5cm}
-        \\addtolength{\\oddsidemargin}{-2.54cm}
-        \\setlength{\\evensidemargin}{\\oddsidemargin}
-        \\setlength{\\textheight}{\\paperheight}
-        \\addtolength{\\textheight}{-\\headheight}
-        \\addtolength{\\textheight}{-\\headsep}
-        \\addtolength{\\textheight}{-\\footskip}
-        \\addtolength{\\textheight}{-3cm}
-        \\setlength{\\topmargin}{1.5cm}
-        \\addtolength{\\topmargin}{-2.54cm}
-        ")
-(setq org-latex-classes
-      (quote
-       (("beamer" "\\documentclass[presentation]{beamer}"
-	 ("\\section{%s}" . "\\section*{%s}")
-	 ("\\subsection{%s}" . "\\subsection*{%s}")
-	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-	("article" "\\documentclass[11pt]{article}"
-	 ("\\section{%s}" . "\\section*{%s}")
-	 ("\\subsection{%s}" . "\\subsection*{%s}")
-	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-	 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-	 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-	("report" "\\documentclass[11pt]{report}"
-	 ("\\part{%s}" . "\\part*{%s}")
-	 ("\\chapter{%s}" . "\\chapter*{%s}")
-	 ("\\section{%s}" . "\\section*{%s}")
-	 ("\\subsection{%s}" . "\\subsection*{%s}")
-	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-	("book" "\\documentclass[11pt]{book}"
-	 ("\\part{%s}" . "\\part*{%s}")
-	 ("\\chapter{%s}" . "\\chapter*{%s}")
-	 ("\\section{%s}" . "\\section*{%s}")
-	 ("\\subsection{%s}" . "\\subsection*{%s}")
-	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))))
-(setq org-latex-default-packages-alist
-      (quote
-       (("utf8" "inputenc" t)
-        ("a4paper, total={6in, 8in}" "geometry" t)
-	("" "longtable" nil)
-	("" "float" nil)
-	("" "wrapfig" nil)
-	("" "rotating" nil)
-	("normalem" "ulem" t)
-	("" "amsmath" t)
-	("" "textcomp" t)
-	("" "marvosym" t)
-	("" "wasysym" t)
-	("" "amssymb" t)
-	("" "hyperref" nil)
-	("" "graphicx" t)
-	("" "underscore" t)
-	("russian" "babel" t)
-        ;; ("UTF8" "ctex" t)
-	;; ("" "epstopdf" t)
-	("extendedchars" "grffile" t)
-	"
-      	 % \\epstopdfDeclareGraphicsRule{.tif}{png}{.png}{convert #1 `dirname #1`/`basename #1`.tif`-tif-converted-to.png}
-      	 % \\AppendGraphicsExtensions{.tif}
-      	 \\usepackage[inline]{enumitem}
-      	 \\setlistdepth{10}
-      	 "
-	"\\tolerance=1000"
-	)))
+(add-to-list 'org-latex-classes
+             '("Acta paper"
+               "\\documentclass[5p]{elsarticle}
+%% Include references from supplementary into file.
+\\journal{Acta Materiallia}
+\\bibliographystyle{model1-num-names}
+\\biboptions{sort&compress,numbers}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+;; (setq org-latex-default-packages-alist
+;;       (quote
+;;        (("utf8" "inputenc" t)
+;;         ("a4paper, total={6in, 8in}" "geometry" t)
+;; 	("" "longtable" nil)
+;; 	("" "float" nil)
+;; 	("" "wrapfig" nil)
+;; 	("" "rotating" nil)
+;; 	("normalem" "ulem" t)
+;; 	("" "amsmath" t)
+;; 	("" "textcomp" t)
+;; 	("" "marvosym" t)
+;; 	("" "wasysym" t)
+;; 	("" "amssymb" t)
+;; 	("" "hyperref" nil)
+;; 	("" "graphicx" t)
+;; 	("" "underscore" t)
+;; 	("russian" "babel" t)
+;;         ;; ("UTF8" "ctex" t)
+;; 	;; ("" "epstopdf" t)
+;; 	("extendedchars" "grffile" t)
+;; 	"
+;;       	 % \\epstopdfDeclareGraphicsRule{.tif}{png}{.png}{convert #1 `dirname #1`/`basename #1`.tif`-tif-converted-to.png}
+;;       	 % \\AppendGraphicsExtensions{.tif}
+;;       	 \\usepackage[inline]{enumitem}
+;;       	 \\setlistdepth{10}
+;;       	 "
+;; 	"\\tolerance=1000"
+;; 	)))
 
 #+END_SRC
 ***** Beamer
