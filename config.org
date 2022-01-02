@@ -8878,7 +8878,7 @@ My fork of =org-ref-cire= providing bibliographies stored in org headings.
                           :fork (:host github :repo "yantar92/org-ref-cite")))
 #+end_src
 
-***** SOMEDAY search in article PDFs
+***** SOMEDAY COMMENT search in article PDFs
 :PROPERTIES:
 :CREATED:  [2018-10-10 Wed 11:37]
 :SHOWFROMDATE: 2018-10-11 18:00
