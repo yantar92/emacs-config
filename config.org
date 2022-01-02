@@ -12924,6 +12924,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
                            "*** TODO Results"
                            "*** TODO Discussion"
                            "*** TODO Conclusions"
+                           "** TODO Email manuscript to co-authors"
                            "** TODO Revise"
                            ":PROPERTIES:"
                            ":REPEAT_TO_STATE: NEXT"
