@@ -13471,6 +13471,17 @@ The subheadings below such a headlines are promoted up *1 level*.
                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                ("\\paragraph{%s}" . "\\paragraph*{%s}")
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+(use-package ox-latex
+  :config
+  (add-to-list 'org-latex-packages-alist '("" "listings"))
+  (add-to-list 'org-latex-packages-alist '("" "color"))
+  (setq org-latex-listings-options '(("basicstyle" "\\small")
+                                     ("numbers" "left")
+                                     ("breaklines" "true")
+                                     ("frame" "tl")))
+  )
+
 ;; (setq org-latex-default-packages-alist
 ;;       (quote
 ;;        (("utf8" "inputenc" t)
@@ -13502,6 +13513,15 @@ The subheadings below such a headlines are promoted up *1 level*.
 ;; 	)))
 
 #+END_SRC
+****** Highlight code
+
+#+begin_src emacs-lisp
+(use-package org
+  :config
+  (setq org-latex-listings t))
+#+end_src
+
+
 ***** Beamer
 :PROPERTIES:
 :CREATED:  [2020-05-11 Mon 16:56]
