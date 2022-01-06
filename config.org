@@ -13445,6 +13445,14 @@ The subheadings below such a headlines are promoted up *1 level*.
 (setq org-export-with-timestamps nil)
 (setq org-export-in-background nil)
 #+end_src
+****** Default image width
+
+#+begin_src emacs-lisp
+(use-package ox-latex
+  :config
+  (setq org-latex-image-default-width "\\linewidth"))
+#+end_src
+
 ****** Default settings
 :PROPERTIES:
 :CREATED:  [2018-03-27 Tue 15:16]
