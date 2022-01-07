@@ -1290,16 +1290,16 @@ Light face for header line.
   :config
   (set-face-attribute 'header-line nil
                       :inherit 'fixed-pitch
-		      :weight 'normal
-		      ;; :box ,(face-background 'boon-modeline-spc)
-		      ;; :box `(:color ,(color-darken-name (face-background 'default) 10) :line-width 5)
+        	      :weight 'normal
+        	      ;; :box ,(face-background 'boon-modeline-spc)
+        	      ;; :box `(:color ,(color-darken-name (face-background 'default) 10) :line-width 5)
                       :box `(:color ,(face-background 'default) :line-width 5)
-		      ;; :box nil
-		      :foreground (color-darken-name (face-foreground 'mode-line) 20)
-		      :underline (face-foreground 'default)
-		      ;; :background ,(face-background 'default)
-		      :background (face-background 'default)
-		      )
+        	      ;; :box nil
+        	      :foreground (color-darken-name (face-foreground 'mode-line) 20)
+        	      :underline (face-foreground 'default)
+        	      ;; :background ,(face-background 'default)
+        	      :background (face-background 'default)
+        	      )
   (set-face-attribute 'mode-line-inactive nil
                       :inherit 'fixed-pitch
 		      :weight 'normal
@@ -1323,18 +1323,7 @@ Light face for header line.
 		      :underline (face-foreground 'default)
 		      ;; :background ,(face-background 'default)
 		      :background (face-background 'default)
-		      )
-  ;; (set-face-attribute 'mode-line nil
-  ;;       	      :box nil
-  ;;                     :underline  (face-foreground 'default)
-  ;;                     :background (face-background 'default)
-  ;;                     )
-  ;; (set-face-attribute 'mode-line-inactive nil
-  ;;       	      :box nil
-  ;;                     :underline  (face-foreground 'default)
-  ;;       	      :background (face-background 'default)
-  ;;                     )
-  )
+		      ))
 #+end_src
 
 Use header line from [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
@@ -1393,9 +1382,6 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 			    (format-mode-line "%I")
 			    " "
 			    (case major-mode
-			      ('org-agenda-mode (format-mode-line (list " " mode-name " ")))
-			      ('notmuch-show-mode (format-mode-line (list " " header-line-name " ")))
-			      ('elfeed-search-mode (format-mode-line (list " " (elfeed-search--header) " ")))
 			      (t
 			       (or
 				(and org-src-mode
@@ -1409,7 +1395,7 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
       `\\[org-edit-src-abort]'"))))
 				(format-mode-line (list " %b "
 							(if (and buffer-file-name (buffer-modified-p))
-							    (propertize "(modified)" 'face `(:inherit header-line))))))))
+							    (propertize "(modified)" 'face `(:inherit mode-line))))))))
 			    (if truncate-lines
 				(propertize (all-the-icons-faicon "arrow-right" :v-adjust 0.04)
 					    'face `((
@@ -1451,17 +1437,7 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 			       position-string
 			       " "
 			       (all-the-icons-faicon "angle-right" :v-adjust 0.00)))
-		     "    ")))))
-
-  ;; (defun yant/force-header-line-format ()
-  ;;   "Set `header-line-format' to its default value."
-  ;;   (setq header-line-name (format-mode-line header-line-format))
-  ;;   (setq header-line-format
-  ;;         (default-value 'header-line-format)))
-  ;; (add-hook! (org-src-mode org-capture-mode notmuch-show elfeed-search-mode) #'yant/force-header-line-format)
-
-  (setq-default header-line-format '(""))
-  )
+		     "    "))))))
 #+end_src
 
 **** Mode icons
