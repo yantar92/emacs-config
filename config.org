@@ -13798,7 +13798,7 @@ This function is called by `org-archive-hook'.  The option
    (when (org-at-heading-p)
      (org-back-to-heading t)
      (let ((limit (save-excursion (org-end-of-subtree t) (point))))
-       (while (re-search-forward org-attach-auto-tag limit t)
+       (while (and (< (point) limit) (re-search-forward org-attach-auto-tag limit t))
          (when (and (org-at-heading-p) (member org-attach-auto-tag (org-get-tags nil t)));; do not ask if no attachments
            (let ((heading (org-get-heading nil nil 'norpiority 'nocomment)))
              (when (if (eq org-attach-archive-delete 'query)
