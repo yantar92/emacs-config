@@ -13448,6 +13448,18 @@ The subheadings below such a headlines are promoted up *1 level*.
                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                ("\\paragraph{%s}" . "\\paragraph*{%s}")
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+(add-to-list 'org-latex-classes
+             '("Acta supplementary"
+               "\\documentclass[1p]{elsarticle}
+%% Include references from supplementary into file.
+\\journal{Acta Materiallia}
+\\bibliographystyle{model1-num-names}
+\\biboptions{sort&compress,numbers}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
 (use-package ox-latex
   :config
