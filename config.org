@@ -231,6 +231,7 @@ Now, I can setup =use-package= to simplify subsequent package configuration
 (eval-and-compile (straight-use-package 'use-package))
 ;;(setq use-package-always-defer t)
 (setq use-package-verbose t)
+(setq use-package-compute-statistics t)
 (use-package diminish :straight t)
 (use-package bind-key)
   #+end_src
@@ -565,7 +566,7 @@ Credit: https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.
      (apply #'nox*shut-up oldfun args)))
 #+end_src
 
-*** Hash table library
+*** COMMENT Hash table library
 :PROPERTIES:
 :CREATED:  [2019-08-25 Sun 19:32]
 :ID:       c2f4a307-171c-4eee-aef0-e1ee27dd2e47
@@ -686,8 +687,8 @@ Since it is not really a good idea to work in darkness regardless of the colour 
   (org-block-begin-line ((t :inhert org-block :background ,(face-background 'default))))
   ;; (org-verbatim ((t :background nil :foreground ,(face-foreground 'modus-themes-special-calm))))
   ;; (region ((t :background ,(face-background 'modus-themes-special-warm))))
-  :init
-  (modus-themes-load-themes)
+  ;; :init
+  ;; (modus-themes-load-themes)
   :config
   (modus-themes-load-operandi)
   (use-package org :config
@@ -5037,6 +5038,7 @@ It provides extra functionality to the standard =help= buffers.
 #+BEGIN_SRC emacs-lisp
 (use-package helpful
   :if init-flag
+  :defer t
   :straight (helpful :host github :repo "Wilfred/helpful" :local-repo "~/Git/helpful"
                      :fork (:host github :repo "yantar92/helpful")))
 #+END_SRC
@@ -5171,11 +5173,12 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 (use-package elpy
   :if init-flag
   :straight t
+  :defer 10
   :init
-  (elpy-enable)
   :custom
   (elpy-rpc-backend "jedi")
   :config
+  (elpy-enable)
   (meta-defun meta-down-element :mode python-mode elpy-nav-forward-block)
   (meta-defun meta-up-element :mode python-mode elpy-nav-backward-block))
 #+end_src
@@ -5408,6 +5411,7 @@ It warns me if the original definition changes from what I expect.
 
 #+begin_src emacs-lisp
 (use-package ebuild-mode
+  :defer t
   :if init-flag
   :straight t)
 #+end_src
@@ -5574,9 +5578,11 @@ Use scimax version
 #+begin_src emacs-lisp
 (use-package scimax-ob
   :straight (scimax-ob :host github :files ("scimax-ob.el") :repo "jkitchin/scimax"))
-(use-package jupyter :straight t)
-(use-package pretty-hydra :straight t)
+(use-package jupyter :straight t :defer t)
+(use-package pretty-hydra :straight t :defer t)
 (use-package scimax-jupyter
+  :if init-flag
+  :defer t
   :straight (scimax-jupyter :host github :files ("scimax-jupyter.el") :repo "jkitchin/scimax"))
 #+end_src
 
@@ -5797,7 +5803,7 @@ Requires [[id:61837011-1bce-41d6-8aa5-27bc4335466d][app-text/diffpdf]].
   :straight t)
 #+end_src
 
-** TODO Ebook reader
+** TODO COMMENT Ebook reader
    :PROPERTIES:
    :ID:       b1733b83-8c7d-4254-b2c6-d9b38793542a
    :END:
@@ -5933,6 +5939,7 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 #+begin_src emacs-lisp
 (use-package calc
   :if init-flag
+  :defer t
   :bind (:map boon-goto-map
 	      ("c" . calc)
               ("C" . calc-dispatch)))
@@ -5954,6 +5961,7 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 #+begin_src emacs-lisp
 (use-package calc
   :if init-flag
+  :defer t
   :config
   (setq calc-gnuplot-default-device "qt"))
 #+end_src
@@ -6177,8 +6185,8 @@ Show the key strokes.
 (use-package elfeed
   :if init-flag
   :straight t
+  :commands elfeed
   :bind (:map elfeed-search-mode-map
-	      ("q" . delete-frame)
 	      ("r" . elfeed-search-update--force)
 	      ("R" . elfeed-search-fetch)
 	      ("t" . elfeed-search-untag-all-unread)
@@ -6317,6 +6325,7 @@ And group them by rss feed, which further helps to focus on a single topic at a 
 
 #+begin_src emacs-lisp
 (use-package elfeed-score
+  :defer t
   :config
   (defun yant/elfeed-group-by-feed (entry1 entry2)
     (let ((time1 (elfeed-entry-date entry1))
@@ -6340,8 +6349,10 @@ Save elfeed buffer on quit to make sure that database is more likely saved if Em
 #+begin_src emacs-lisp :tangle no
 (use-package elfeed
   :if init-flag
-  :after elfeed
+  :defer t
   :config
+  (remove-hook #'kill-emacs-hook #'elfeed-db-save-safe)
+  (remove-hook #'kill-emacs-hook #'elfeed-db-gc-safe)
   (defun yant/elfeed-save-and-quit ()
     "Save elfeed database and quit."
     (interactive)
@@ -6360,6 +6371,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
 
 #+begin_src emacs-lisp
 (use-package elfeed
+  :defer t
   :init
   (defvar yant/elfeed-title-boring-words '("and" "a" "an" "the"
                                            "improved" "effect" "its"
@@ -6494,6 +6506,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
 
 #+begin_src emacs-lisp
 (use-package elfeed
+  :defer t
   :config
   (setf (alist-get 'flagged elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10))))
   (setf (alist-get 'FLAGGED elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10)))))
@@ -6690,7 +6703,7 @@ the notmuch-tree buffer if it appears after closing the message."
 #+begin_src emacs-lisp
 (use-package notmuch
   :if init-flag
-  :after notmuch
+  :defer t
   :config
   (defun notmuch-show-delete ()
     (interactive)
@@ -7294,6 +7307,7 @@ Semantic scholar and Google scholar alerts
 
 #+begin_src emacs-lisp
 (use-package notmuch
+  :defer t
   :config
   (defun yant/notmuch-show-fontify-semanticscholar-email ()
     "Fontify text part of semantic scholar New Citations email."
@@ -8801,7 +8815,7 @@ Do not ask every time I try to evaluate elisp: links
     :config
     (setq org-latex-prefer-user-labels t)
     (setq org-ref-show-broken-links nil) ;; it makes typing very slow if 't
-    (use-package org-ref-pdf)
+    ;; (use-package org-ref-pdf)
     (use-package org-ref-url-utils)
     (setq org-ref-bibliography-notes "~/Git/Books/articles/articles.org"
 	  bibtex-completion-notes-path "~/Git/Books/articles/articles.org"
@@ -11160,8 +11174,9 @@ instead."
     (or stillyesterday? (ts>= now showfromtime))))
 
 (use-package org-ql
+  :defer t
   :straight (org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
-	      :fork (:host github :repo "yantar92/org-ql"))
+	            :fork (:host github :repo "yantar92/org-ql"))
   :after org
   :config
   (use-package org-ql-search :demand t)
@@ -11720,7 +11735,7 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 (setq org-agenda-fontify-priorities nil)
 #+end_src
 
-**** TODO Contacts
+**** TODO COMMENT Contacts
 :PROPERTIES:
 :CREATED:  [2018-09-05 Wed 06:39]
 :ID:       8074623d-bc14-43c7-908c-28213b2b6149
@@ -16129,6 +16144,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 #+begin_src emacs-lisp
 (use-package ol-notmuch
   :after org
+  :after notmuch
   :init (require 'notmuch)
   :custom
   (org-notmuch-open-function (lambda (link) (if (string-match-p "thread:" link)
