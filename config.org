@@ -6363,7 +6363,9 @@ Save elfeed buffer on quit to make sure that database is more likely saved if Em
   (defun yant/elfeed-save-and-quit ()
     "Save elfeed database and quit."
     (interactive)
+    (message "Saving elfeed database...")
     (elfeed-db-save-safe)
+    (message "Saving elfeed database... done")
     (delete-frame))
   (bind-key "q" #'yant/elfeed-save-and-quit elfeed-search-mode-map))
 #+end_src
