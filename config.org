@@ -10237,6 +10237,23 @@ If LOCAL is non-nil, check only local TAG."
 								    )))))))
 	       nil))))
   #+end_src
+***** Extra files to search
+
+#+begin_src emacs-lisp
+(use-package org
+  :defer t
+  :init
+  (setq org-agenda-text-search-extra-files
+        '("~/Org/nodeadline_archive_2019.org"
+          "~/Org/nodeadline_archive_2020.org"
+          "~/Org/nodeadline_archive_2021.org"
+          "~/Org/References_archive_2020.org"
+          "~/Org/References_archive_2021.org"
+          "~/Org/schedule-work.org"
+          "~/Org/schedule-work_archive_2017.org"
+          "~/Org/schedule-work_archive_2018.org")))
+#+end_src
+
 ***** Location contexts
 :PROPERTIES:
 :CREATED:  [2020-07-14 Tue 17:16]
