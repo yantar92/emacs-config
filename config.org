@@ -5046,7 +5046,6 @@ It provides extra functionality to the standard =help= buffers.
 #+BEGIN_SRC emacs-lisp
 (use-package helpful
   :if init-flag
-  :defer t
   :straight (helpful :host github :repo "Wilfred/helpful" :local-repo "~/Git/helpful"
                      :fork (:host github :repo "yantar92/helpful")))
 #+END_SRC
@@ -5181,12 +5180,11 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 (use-package elpy
   :if init-flag
   :straight t
-  :defer 10
   :init
+  (elpy-enable)
   :custom
   (elpy-rpc-backend "jedi")
   :config
-  (elpy-enable)
   (meta-defun meta-down-element :mode python-mode elpy-nav-forward-block)
   (meta-defun meta-up-element :mode python-mode elpy-nav-backward-block))
 #+end_src
@@ -5419,7 +5417,6 @@ It warns me if the original definition changes from what I expect.
 
 #+begin_src emacs-lisp
 (use-package ebuild-mode
-  :defer t
   :if init-flag
   :straight t)
 #+end_src
@@ -5586,11 +5583,9 @@ Use scimax version
 #+begin_src emacs-lisp
 (use-package scimax-ob
   :straight (scimax-ob :host github :files ("scimax-ob.el") :repo "jkitchin/scimax"))
-(use-package jupyter :straight t :defer t)
-(use-package pretty-hydra :straight t :defer t)
+(use-package jupyter :straight t)
+(use-package pretty-hydra :straight t)
 (use-package scimax-jupyter
-  :if init-flag
-  :defer t
   :straight (scimax-jupyter :host github :files ("scimax-jupyter.el") :repo "jkitchin/scimax"))
 #+end_src
 
@@ -5947,7 +5942,6 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 #+begin_src emacs-lisp
 (use-package calc
   :if init-flag
-  :defer t
   :bind (:map boon-goto-map
 	      ("c" . calc)
               ("C" . calc-dispatch)))
@@ -5969,7 +5963,6 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 #+begin_src emacs-lisp
 (use-package calc
   :if init-flag
-  :defer t
   :config
   (setq calc-gnuplot-default-device "qt"))
 #+end_src
@@ -6193,7 +6186,6 @@ Show the key strokes.
 (use-package elfeed
   :if init-flag
   :straight t
-  :commands elfeed
   :bind (:map elfeed-search-mode-map
 	      ("r" . elfeed-search-update--force)
 	      ("R" . elfeed-search-fetch)
@@ -6333,7 +6325,6 @@ And group them by rss feed, which further helps to focus on a single topic at a 
 
 #+begin_src emacs-lisp
 (use-package elfeed-score
-  :defer t
   :config
   (defun yant/elfeed-group-by-feed (entry1 entry2)
     (let ((time1 (elfeed-entry-date entry1))
@@ -6381,7 +6372,6 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
 
 #+begin_src emacs-lisp
 (use-package elfeed
-  :defer t
   :init
   (defvar yant/elfeed-title-boring-words '("and" "a" "an" "the"
                                            "improved" "effect" "its"
@@ -6516,7 +6506,6 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
 
 #+begin_src emacs-lisp
 (use-package elfeed
-  :defer t
   :config
   (setf (alist-get 'flagged elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10))))
   (setf (alist-get 'FLAGGED elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10)))))
@@ -7320,7 +7309,6 @@ Semantic scholar and Google scholar alerts
 
 #+begin_src emacs-lisp
 (use-package notmuch
-  :defer t
   :config
   (defun yant/notmuch-show-fontify-semanticscholar-email ()
     "Fontify text part of semantic scholar New Citations email."
@@ -11204,9 +11192,8 @@ instead."
     (or stillyesterday? (ts>= now showfromtime))))
 
 (use-package org-ql
-  :defer t
   :straight (org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
-	            :fork (:host github :repo "yantar92/org-ql"))
+	      :fork (:host github :repo "yantar92/org-ql"))
   :after org
   :config
   (use-package org-ql-search :demand t)
@@ -16174,7 +16161,6 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 #+begin_src emacs-lisp
 (use-package ol-notmuch
   :after org
-  :after notmuch
   :init (require 'notmuch)
   :custom
   (org-notmuch-open-function (lambda (link) (if (string-match-p "thread:" link)
