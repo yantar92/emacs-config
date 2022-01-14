@@ -6322,6 +6322,7 @@ Sort entries by Gnus-like score
 #+begin_src emacs-lisp
 (use-package elfeed-score
   :if init-flag
+  :straight t
   :after elfeed
   :config
   (elfeed-score-enable nil)
@@ -6332,7 +6333,7 @@ And group them by rss feed, which further helps to focus on a single topic at a 
 
 #+begin_src emacs-lisp
 (use-package elfeed-score
-  :after elfeed
+  :defer t
   :config
   (defun yant/elfeed-group-by-feed (entry1 entry2)
     (let ((time1 (elfeed-entry-date entry1))
