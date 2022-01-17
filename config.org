@@ -13415,6 +13415,12 @@ Subtrees containing ideas are marked with :TICKLER: tag. Any task refiled to suc
 (setq org-export-use-babel t)
 (setf (alist-get :eval org-babel-default-header-args) "never-export")
   #+end_src
+***** =Orgdiff=: Produce diffs from version-controlled exports
+
+#+begin_src emacs-lisp
+(use-package orgdiff :straight (orgdiff :host github :repo "tecosaur/orgdiff"))
+#+end_src
+
 ***** Ignore some headlines in a sense that it will not be exported as =\section=.
 :PROPERTIES:
 :CREATED:  [2018-03-27 Tue 15:17]
