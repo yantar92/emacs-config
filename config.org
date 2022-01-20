@@ -13418,7 +13418,10 @@ Subtrees containing ideas are marked with :TICKLER: tag. Any task refiled to suc
 ***** =Orgdiff=: Produce diffs from version-controlled exports
 
 #+begin_src emacs-lisp
-(use-package orgdiff :straight (orgdiff :host github :repo "tecosaur/orgdiff"))
+(use-package orgdiff
+  :if init-flag
+  :after org
+  :straight (orgdiff :host github :repo "tecosaur/orgdiff"))
 #+end_src
 
 ***** Ignore some headlines in a sense that it will not be exported as =\section=.
