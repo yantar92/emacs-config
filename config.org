@@ -13428,7 +13428,8 @@ Subtrees containing ideas are marked with :TICKLER: tag. Any task refiled to suc
 (use-package orgdiff
   :if init-flag
   :after org
-  :straight (orgdiff :host github :repo "tecosaur/orgdiff"))
+  :straight (orgdiff :host github :repo "tecosaur/orgdiff" :local-repo "~/Git/orgdiff"
+                     :fork (:host github :repo "yantar92/orgdiff")))
 #+end_src
 
 ***** Ignore some headlines in a sense that it will not be exported as =\section=.
