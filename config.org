@@ -2336,17 +2336,11 @@ Do not even need terminal to interact with Git.
   :if init-flag
   :after boon
   :requires boon
-  :init
-  (use-package unpackaged
-    :init (use-package ts :straight t)
-    :straight (unpackaged :host github :repo "alphapapa/unpackaged.el")
-    :demand t)
   :bind (:map boon-x-map
-              ("g" . unpackaged/magit-status)
+              ("g" . magit-status)
 	      ("G" . magit-dispatch-popup)
 	      ("M-g" . magit-file-popup))
   :config
-  (unpackaged/magit-log-date-headers-mode +1)
   ;; Remove added hook
   (ignore-errors
     (setq magit-diff-visit-file (-remove-last magit-diff-visit-file)))
