@@ -6152,14 +6152,27 @@ Need to install =gifsicle= and =scrot=
 #+END_SRC
 
 Show the key strokes.
+[2022-01-22 Sat] Disabling =keycast= because it is not working with my heavily customized mode line.
 #+BEGIN_SRC emacs-lisp  
-(use-package keycast
+(use-package tb-keycast
   :if init-flag
-  :straight t
+  :straight (tb-keycast :host github :repo "ir33k/tb-keycast"
+                        :fork (:host github :repo "yantar92/tb-keycast")
+                        :local-repo "~/Git/tb-keycast")
   :config
-  ;; This is because I do not use mode line (it is set to "")
-  (setq keycast-insert-after "")
-  (setq mode-line-keycast-format "%k%c%r"))
+  (setq-default tab-bar-format nil)
+  (set-face-attribute 'tab-bar nil
+                      :inherit 'default
+                      :underline (color-lighten-name (face-foreground 'default) 80)
+                      :height 1.0))
+
+;; (use-package keycast
+;;   :if init-flag
+;;   :straight t
+;;   :config
+;;   ;; This is because I do not use mode line (it is set to "")
+;;   (setq keycast-insert-after "")
+;;   (setq mode-line-keycast-format "%k%c%r"))
 #+end_src
 *** QR code generation via =qrencode-el=
 
