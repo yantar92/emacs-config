@@ -13159,6 +13159,46 @@ Reverse the order of template to make them appear as I put them in the list abov
 #+begin_src emacs-lisp
 (setq org-capture-templates (nreverse org-capture-templates))
 #+end_src
+****** Travel
+#+begin_src emacs-lisp
+(asoc-put! org-capture-templates
+	   "T"
+           (cdar  (doct '("Travel"
+			  :keys "T"
+			  :type entry
+			  :file "~/Org/inbox.org"
+			  :template
+			  ("* TODO Travel to %^{Destination}"
+			   ":PROPERTIES:"
+			   ":CREATED: %U"
+                           ":ATTACH_DIR_INHERIT: t"
+			   ":END:"
+                           "# A short note about destination and why I want to go."
+                           "%?"
+                           "** TODO Check visa and other legal requirements"
+                           "** TODO Mark interesting places to visit on the map"
+                           "** Notes and photos"
+                           "** TODO Check people I want to visit"
+                           "** TODO Check hotels near interesting places"
+                           "** TODO Estimate transportation routes"
+                           "** TODO Estimate rough itenerary to get time frames"
+                           "** TODO Allocate vacation"
+                           "** TODO Get visa / plan how to get it"
+                           "** TODO Get tickets"
+                           "** TODO Pack"
+                           "- [ ] shoe brush and cloth brush (small)"
+                           "- [ ] toothbrush (but no liquid)"
+                           "- [ ] nailcut"
+                           "- [ ] chargers: mobile, watches"
+                           "- [ ] power bank"
+                           "- [ ] power adaptor"
+                           "- [ ] deodorant, shampoo"
+                           "- [ ] tissue (not all plces are that good)"
+                           "- [ ] dental floss"
+                           "- [ ] headache pills"
+                           "- [ ] clothes according to the plan and timing"))))
+           'replace)
+#+end_src
 
 ***** Capturing references (websites, journal papers, files, etc)
 :PROPERTIES:
