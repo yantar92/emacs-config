@@ -9836,7 +9836,7 @@ If LOCAL is non-nil, check only local TAG."
     (tags-local "AREA")))
 
 (setq org-agenda-custom-commands
-      (quote (("a" "Full agenda"
+      (quote (("q" "Full agenda"
 	       agenda ""
 	       ((org-agenda-tag-filter-preset '("-TICKLER" "-CANCELLED" "-WAITING" "-HOLD" "-SOMEDAY" "-NODEADLINE"))
                 (org-agenda-regexp-filter-preset '("-TICKLER"))))
