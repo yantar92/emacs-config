@@ -14496,9 +14496,12 @@ The list is saved between Emacs sessions.")
   "Tangle current buffer asynchronously."
   (when (and (eq major-mode 'org-mode)
 	     (member (buffer-file-name) yant/auto-tangle-list))
-    (make-thread (lambda () (yant/org-babel-tangle-async (buffer-file-name))) "Async tangling")))
+    (org-babel-tangle)
+    ;; (make-thread (lambda () (yant/org-babel-tangle-async (buffer-file-name))) "Async tangling")
+    ))
 
 (add-hook 'after-save-hook #'yant/org-babel-tangle-current-buffer-async)
+(remove-hook 'after-save-hook #'org-babel-tangle)
 #+end_src
 
 ***** Export
