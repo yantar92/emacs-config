@@ -4048,7 +4048,7 @@ Additional fontification in =dired=
 					      ("Archives"
 					       (extension "zip" "rar" "gz" "bz2" "tar"))
 					      ("Documents"
-					       (extension "org" "cfm" "pdf" "tex" "bib" "mobi" "fb2" "doc" "docx" "ps"))
+					       (extension "org" "cfm" "pdf" "tex" "bib" "mobi" "fb2" "doc" "docx" "ps" "odt"))
 					      ("Scripts"
 					       (extension "gnuplot" "sh"))
 					      ("Data"
