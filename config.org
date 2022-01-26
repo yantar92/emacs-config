@@ -15371,7 +15371,7 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 	  (add-text-properties (match-beginning 1) (1- (match-end 1)) `(face yant/org-agenda-highlight-face font-lock-fontified t))))))
 #+end_src
 
-**** =org-appear=: Reveal hidden parts of links/emphasis when cursor enters them
+**** COMMENT =org-appear=: Reveal hidden parts of links/emphasis when cursor enters them
 :PROPERTIES:
 :ID:       0db1cf24-d4f8-41bd-89e8-b91d3f869b08
 :END:
