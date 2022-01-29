@@ -16178,7 +16178,7 @@ Turning on org element cache in attempt to make it faster.
 (custom-set-variables '(org-element-use-cache t))
 (custom-set-variables '(org-element--cache-self-verify 'backtrace))
 (setq org-element--cache-diagnostics-ring-size 200000)
-(custom-set-variables '(org-element--cache-self-verify-frequency 0.1))
+(custom-set-variables '(org-element--cache-self-verify-frequency 0.05))
 #+end_src
 
 ****************** TODO check if it is good enough
