@@ -6172,6 +6172,7 @@ Show the key strokes.
                         :local-repo "~/Git/tb-keycast")
   :config
   (setq-default tab-bar-format nil)
+  (setq tb-keycast-align-right-p t)
   (set-face-attribute 'tab-bar nil
                       :inherit 'default
                       :underline (color-lighten-name (face-foreground 'default) 80)
