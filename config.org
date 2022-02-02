@@ -4632,6 +4632,17 @@ $0
 \end{equation}
 #+end_src
 
+**** Software licence snippets
+
+#+begin_src emacs-lisp
+(use-package license-snippets
+  :if init-flag
+  :after yasnippet
+  :straight (license-snippets :host github :repo "sei40kr/license-snippets")
+  :config
+  (license-snippets-init))
+#+end_src
+
 *** Undo
 
 **** COMMENT Undo-tree 
