@@ -2366,6 +2366,20 @@ Do not even need terminal to interact with Git.
   :custom
   (forge-owned-accounts '(("yantar92"))))
 #+end_src
+***** Code review: support comments to code from Github
+[[id:Github-wandersoncferreira-wandersoncferreira-code-review-10c][wandersoncferreira [Github] wandersoncferreira/code-review: Code Reviews with Emacs]]
+#+begin_src emacs-lisp
+(use-package code-review
+  :if init-flag
+  :after forge
+  :straight t
+  :config
+  (define-advice forge-visit-pullreq (:override () use-code-review)
+    "Call `code-review-forge-pr-at-point'."
+    (interactive)
+    (funcall-interactively #'code-review-forge-pr-at-point)))
+#+end_src
+
 **** Activate insert state when editing commits
 :PROPERTIES:
 :ID:       ee048788-0dde-409b-bc59-53bd6dec28ab
