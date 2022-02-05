@@ -16368,6 +16368,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
 					       "^\\(-\\|\\+\\)[ \t]*:AUTHOR: .+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:JOURNAL: .+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:VOLUME: .+\n"
+                                               "^\\(-\\|\\+\\)[ \t]*:RSS: .+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:PAGES: .+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:NUMBER: .+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:DOI: .+\n"
