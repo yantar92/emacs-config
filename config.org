@@ -10021,6 +10021,7 @@ If LOCAL is non-nil, check only local TAG."
                                                               (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
 		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
 							      (not (project))
+                                                              (not (subproject))
                                                               (not (goal))
                                                               (not (area))
                                                               ;; (subtask)
@@ -10181,6 +10182,7 @@ If LOCAL is non-nil, check only local TAG."
                                                               (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
 		                                                  (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
 							      (not (project))
+                                                              (not (subproject))
                                                               (not (goal))
                                                               (not (area))
                                                               ;; (subtask)
