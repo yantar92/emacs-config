@@ -272,7 +272,7 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
 #+begin_src emacs-lisp
 (straight-use-package '(org
 			:type git :repo "yantar92@git.savannah.gnu.org:/srv/git/emacs/org-mode.git"
-			:local-repo "~/Git/org-mode"
+			:local-repo "~/Git/org-mode" :pre-build nil
                         :fork (:host github :repo "yantar92/org" :branch "feature/org-fold-universal-core")))
 (straight-use-package '(org-contrib
 			:type git :repo "https://git.sr.ht/~bzg/org-contrib"
