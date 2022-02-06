@@ -685,13 +685,13 @@ Since it is not really a good idea to work in darkness regardless of the colour 
   :if init-flag
   :init
   (setq modus-themes-bold-constructs nil
-        modus-themes-region 'accent
-        modus-themes-headings '((t . rainbow-line-no-bold))
+        modus-themes-region '(accented)
+        modus-themes-headings '((t . (rainbow regular)))
         modus-themes-org-blocks nil
         modus-themes-completions nil
         modus-themes-intense-hl-line t
         modus-themes-intense-paren-match t
-        modus-themes-prompts 'subtle-accented)
+        modus-themes-prompts nil)
   (setq modus-themes-operandi-color-overrides '((bg-region . nil)))
   :custom-face
   (org-block-begin-line ((t :inhert org-block :background ,(face-background 'default))))
