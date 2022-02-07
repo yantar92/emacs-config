@@ -4,7 +4,7 @@
 #+SETUPFILE: ~/Org/common.setup
 #+AUTHOR: Ihor Radchenko
 #+EMAIL: yantar92@gmail.com
-#+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments link
+#+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments no
 #+ARCHIVE: ::* Archived
 
 * SOMEDAY Emacs configuration :AREA:EMACS:COMMON:SOMEDAY:
