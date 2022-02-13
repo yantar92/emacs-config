@@ -6484,7 +6484,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
   (defun yant/elfeed-search-print-entry (entry)
     "Print ENTRY to the buffer."
     (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
-           (score (elfeed-meta entry :elfeed-score/score))
+           (score (or (elfeed-meta entry :elfeed-score/score) elfeed-score-scoring-default-score))
            (title (if (elfeed-tagged-p 'content_is_entry entry)
                       (elfeed-deref (or (elfeed-meta entry :content) (elfeed-entry-content entry) ""))
                     (or (elfeed-meta entry :title) (elfeed-entry-title entry) "")))
