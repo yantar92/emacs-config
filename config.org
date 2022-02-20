@@ -4960,6 +4960,18 @@ Similar to the problem with debugging, profiling the time spend on fontification
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
 :END:
+*** Language server protocol
+:PROPERTIES:
+:ID:       7104c9e6-55f0-4c32-8376-b8868fea856e
+:END:
+
+#+begin_src emacs-lisp
+(use-package lsp-ui
+  :defer t
+  :straight t
+  :if init-flag)
+#+end_src
+
 *** Emacs help
 
 There are various ways Emacs can assist on getting documentation.
