@@ -2353,11 +2353,11 @@ Do not even need terminal to interact with Git.
     (meta-defun meta-down-element :mode magit-revision-mode magit-section-forward)
     (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward)))
 #+END_SRC
-**** Interaction with Github
+**** Interaction with Github \ other forges
 :PROPERTIES:
 :ID:       b5cd6c65-f254-42aa-a423-2001c72d6dfa
 :END:
-
+***** =forge= package
 #+begin_src emacs-lisp
 (use-package forge
   :if init-flag
@@ -2409,7 +2409,6 @@ Magit is able to provide word-level diff refinement.  It is disabled by default 
 
 #+begin_src emacs-lisp
 (use-package magit
-  :requires diff-mode
   :custom
   (magit-diff-refine-hunk t)
   :custom-face
@@ -2777,6 +2776,7 @@ Mostly we check word delimiters."
   )
 #+end_src
 
+**** Dictionary
 *** Code checking
 :PROPERTIES:
 :ID:       3a550aad-f2a2-4636-a92c-539cdf230aeb
