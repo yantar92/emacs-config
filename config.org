@@ -5676,6 +5676,31 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
     (meta-defun meta-down :mode pdf-annot-list-mode tablist-next-line)
     (meta-defun meta-up :mode pdf-annot-list-mode tablist-previous-line)))
 #+end_src
+**** TODO Highlight =DONE= in annotation list
+
+This is handy when working with review comments.
+
+#+begin_src emacs-lisp
+(use-package pdf-annot
+  :defer t
+  :init
+  (font-lock-add-keywords
+   'pdf-annot-list-mode
+   '(("DONE" . modus-themes-grue-background-active))))
+#+end_src
+
+**** Display annotation text in annotation list
+
+#+begin_src emacs-lisp
+(use-package pdf-annot
+  :defer t
+  :init
+  (setq pdf-annot-list-format '((page . 3)
+                                (type . 10)
+                                (label . 24)
+                                (date . 24)
+                                (contents . 24))))
+#+end_src
 
 **** Restore the last position in pdf
 :PROPERTIES:
