@@ -13858,7 +13858,7 @@ Since the archives are not always contained in a single file, org id and text se
 
 Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override standard archiving function to make it possible to archive them (into separate location =org-inlinetask-archive-location=)
 #+BEGIN_SRC emacs-lisp
-(defvar org-inlinetask-archive-location "%S_archive_%y.org::datetree/* Archived Inline Tasks"
+(defvar org-inlinetask-archive-location "%s_archive_%y.org::datetree/* Archived Inline Tasks"
   "Where to archive inline tasks.")
 (defvar org-inlinetask-max-level 100
   "Maximum level for inline task to be archived.")
