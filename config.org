@@ -8878,31 +8878,31 @@ Do not ask every time I try to evaluate elisp: links
 #+begin_src emacs-lisp
   ;; Fix error on startup.
   (defvar browse-url-galeon-program)
-  (use-package org-ref-bibtex
+  (use-package org-ref
     :if init-flag
     :straight (org-ref :type git :host github :repo "jkitchin/org-ref" :local-repo "~/Git/org-ref"
 		       :fork (:host github :repo "yantar92/org-ref"))
     :after org
-    ;; :init
-    ;; (use-package bibtex-completion :demand t)
-    ;; (use-package lv :straight t)
-    ;; (setq org-ref-show-citation-on-enter nil) ;; this slows down org mode a lot otherwise
+    :init
+    (use-package bibtex-completion :demand t)
+    (use-package lv :straight t)
+    (setq org-ref-show-citation-on-enter nil) ;; this slows down org mode a lot otherwise
     :config
-    ;; (setq org-latex-prefer-user-labels t)
-    ;; (setq org-ref-show-broken-links nil) ;; it makes typing very slow if 't
-    ;; ;; (use-package org-ref-pdf)
+    (setq org-latex-prefer-user-labels t)
+    (setq org-ref-show-broken-links nil) ;; it makes typing very slow if 't
+    ;; (use-package org-ref-pdf)
     (use-package org-ref-url-utils)
-    ;; (setq org-ref-bibliography-notes "~/Git/Books/articles/articles.org"
-    ;;       bibtex-completion-notes-path "~/Git/Books/articles/articles.org"
-    ;;       org-ref-default-bibliography '("~/Git/Books/References.bib")
-    ;;       org-ref-pdf-directory "~/Git/Books/articles/_symlinks/"
-    ;;       bibtex-completion-library-path org-ref-pdf-directory)
-    ;; (setq reftex-default-bibliography (quote ("~/Books/References.bib")))
-    ;; (bind-key* "C-c ]" #'org-ref-helm-insert-cite-link)
-    ;; (bind-keys :map org-mode-map
-    ;;            ("C-c [" . org-ref-helm-insert-ref-link))
-    ;; (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
-    (use-package org-ref-bibtex
+    (setq org-ref-bibliography-notes "~/Git/Books/articles/articles.org"
+	  bibtex-completion-notes-path "~/Git/Books/articles/articles.org"
+	  org-ref-default-bibliography '("~/Git/Books/References.bib")
+	  org-ref-pdf-directory "~/Git/Books/articles/_symlinks/"
+	  bibtex-completion-library-path org-ref-pdf-directory)
+    (setq reftex-default-bibliography (quote ("~/Books/References.bib")))
+    (bind-key* "C-c ]" #'org-ref-helm-insert-cite-link)
+    (bind-keys :map org-mode-map
+	       ("C-c [" . org-ref-helm-insert-ref-link))
+    (bind-keys :map bibtex-mode-map ("C-c [" . helm-bibtex))
+    (use-package org-ref
       :after org
       :config
       (add-to-list 'org-ref-bibtex-journal-abbreviations '("PMAG" "Philosophical Magazine" "Philos. Mag."))
@@ -8911,7 +8911,7 @@ Do not ask every time I try to evaluate elisp: links
       (add-to-list 'org-ref-bibtex-journal-abbreviations '("PRMHBS" "Physical Review Materials" "Phys. Rev. Mater."))
       ))
 #+end_src
-****** COMMENT Disable =org-ref-setup-label-finders= for speed
+****** Disable =org-ref-setup-label-finders= for speed
 :PROPERTIES:
 :ID:       5c314580-e422-4c70-9eda-235e909abe3d
 :END:
@@ -8929,12 +8929,12 @@ Do not ask every time I try to evaluate elisp: links
     (add-to-list 'jit-lock-functions 'org-ref-add-labels)
     (add-to-list 'before-change-functions 'org-ref-delete-labels)))
 #+end_src
-***** COMMENT Org-ref-cite
+***** Org-ref-cite
 :PROPERTIES:
 :ID:       4936ea38-3a1e-4db2-89e0-07e48d78a30d
 :END:
 
-My fork of =org-ref-cite= providing bibliographies stored in org headings.
+My fork of =org-ref-cire= providing bibliographies stored in org headings.
 
 #+begin_src emacs-lisp
 (use-package org-ref-cite
