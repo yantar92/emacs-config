@@ -2112,19 +2112,12 @@ Credit: [[id:b9619989-5416-463c-a5e9-42d35364cbf2][emacs-tv-config/init-helm.el 
   (setq helm-adaptive-history-file nil)
   (helm-adaptive-mode 1))
 #+end_src
-**** Icons =helm-icons=
+**** Helm icons
 
 #+begin_src emacs-lisp
-(use-package helm-icons
-  :straight t
-  :if init-flag
-  :after helm
-  :custom
-  (helm-icons-provider 'all-the-icons)
-  (helm-icons-mode->icon
-   '((dired-mode . "file-directory")))
+(use-package helm
   :config
-  (helm-icons-enable))
+  (helm-ff-icon-mode +1))
 #+end_src
 
 *** Company
@@ -18019,3 +18012,29 @@ Requires [[id:069366f4-0eac-4d23-b186-7020185e1bcb][=media-gfx/graphviz=: LaTeX 
   :config
   (bind-key ";" #'define-word-at-point boon-goto-map))
 #+end_src
+
+** Icons =helm-icons= :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:SUMMARY:  There is now built-in helm-ff-icon-mode
+:ARCHIVE_TIME: 2022-03-18 Fri 22:41
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Completion/Helm
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+- Note taken on [2022-03-18 Fri 22:40] \\
+  There is now built-in helm-ff-icon-mode
+#+begin_src emacs-lisp
+(use-package helm-icons
+  :straight t
+  :if init-flag
+  :after helm
+  :custom
+  (helm-icons-provider 'all-the-icons)
+  (helm-icons-mode->icon
+   '((dired-mode . "file-directory")))
+  :config
+  (helm-icons-enable))
+#+end_src
+
