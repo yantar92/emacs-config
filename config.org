@@ -11564,6 +11564,8 @@ current task to NEXT and schedule it the same day."
         (insert (match-string 1 link)))))
   (defun yant/helm-org-ql-open-url (marker)
     "Open URL from link"
+    ;; Indicate that we do not need to stay in current frame.
+    (setq helm-exit-status 1)
     (org-with-point-at marker
       (if (and (org-attach-dir) (org-attach-file-list (org-attach-dir)))
           (org-attach-open)
@@ -11756,14 +11758,36 @@ current task to NEXT and schedule it the same day."
       (let ((files (if arg (org-agenda-files t t) (org-agenda-files t)))
             (search-archives-p t ;; arg
                                )
-            (helm-full-frame t))
+            (helm-full-frame t)
+            (helm-buffer-max-length 80))
         (helm :prompt (format "Query (boolean and): ")
-              :sources (list (helm-org-ql-source files
+              :sources (list (helm-make-source "Buffers" 'helm-source-buffers)
+                             (helm-make-source "Recentf" 'helm-recentf-source
+                               :fuzzy-match helm-recentf-fuzzy-match)
+                             (helm-org-ql-source files
                                                  :name "Org Agenda Files"
                                                  :filter (unless search-archives-p
                                                            '(not (and (not (tags-local "ARCHIVE"))
                                                                     (tags "ARCHIVE"))))
                                                  :limit-count 100)
+                             (helm-make-source "External Commands" 'helm-external-commands
+                               :data (helm-external-commands-list-1 'sort)
+                               :candidate-number-limit 15
+                               :action
+                               ;; Modify default action to set
+                               ;; `helm-exit-status' to 1, making
+                               ;; system runner exit immediately.
+                               (helm-make-actions
+                                "Run program"
+                                (lambda (candidate)
+                                  (helm-run-external-command-action candidate)
+                                  (setq helm-exit-status 1))
+                                (lambda ()
+                                  (unless (memq system-type '(windows-nt ms-dos))
+                                    "Run program detached"))
+                                (lambda (candidate)
+                                  (helm-run-external-command-action candidate 'detached)
+                                  (setq helm-exit-status 1))))
                              (helm-build-sync-source "Create new"
                                :candidates
                                (lambda ()
@@ -11776,7 +11800,11 @@ current task to NEXT and schedule it the same day."
 			       :action
                                '(("New note" . (lambda (_)
                                                  (let ((helm-org-ql-default-title helm-pattern))
-                                                   (org-capture  nil "N")))))))))))
+                                                   (org-capture  nil "N"))))))))
+        ;; Remove from history no more valid executables. 
+        (setq helm-external-command-history
+              (cl-loop for i in helm-external-command-history
+                       when (executable-find i) collect i)))))
   (bind-key "h" #'yant/helm-org-ql-agenda-files boon-forward-search-map))
 #+end_src
 
