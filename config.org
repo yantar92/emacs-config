@@ -11750,6 +11750,7 @@ current task to NEXT and schedule it the same day."
   (helm-org-ql-reverse-paths t)
   (helm-org-ql-show-paths nil)
   (helm-org-ql-input-idle-delay 0.1)
+  (helm-candidate-number-limit 150)
   :config
   (require 'helm-org-ql)
   (use-package boon
@@ -11771,7 +11772,7 @@ current task to NEXT and schedule it the same day."
                                                  :filter (unless search-archives-p
                                                            '(not (and (not (tags-local "ARCHIVE"))
                                                                     (tags "ARCHIVE"))))
-                                                 :limit-count 100)
+                                                 :limit-count 150)
                              (helm-make-source "External Commands" 'helm-external-commands
                                :data (helm-external-commands-list-1 'sort)
                                :candidate-number-limit 15
