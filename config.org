@@ -5814,6 +5814,7 @@ See https://lists.gnu.org/archive/html/bug-gnu-emacs/2019-11/msg01731.html for d
     (if (eq major-mode 'pdf-view-mode)
 	(progn
 	  (quit-window 'kill)
+          (delete-frame (selected-frame))
           (clear-image-cache t))
       (funcall-interactively #'quit-window)))
   (bind-key "q" #'yant/kill-pdf-buffer-and-quit-window pdf-view-mode-map))
@@ -11566,7 +11567,7 @@ current task to NEXT and schedule it the same day."
   (defun yant/helm-org-ql-open-url (marker)
     "Open URL from link"
     ;; Indicate that we do not need to stay in current frame.
-    (setq helm-exit-status 1)
+    ;; (setq helm-exit-status 1)
     (org-with-point-at marker
       (if (and (org-attach-dir) (org-attach-file-list (org-attach-dir)))
           (org-attach-open)
