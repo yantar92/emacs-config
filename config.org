@@ -15149,6 +15149,7 @@ there is one, return it."
 					  :poshandler 'posframe-poshandler-frame-center
                                           :foreground-color (face-foreground 'mode-line)
                                           :background-color (face-background 'highlight)
+                                          :internal-border-color (face-background 'highlight)
                                           :internal-border-width 20
 					  ))
 			 (message "Select link to open, RET to open all:")
@@ -16081,8 +16082,10 @@ Use normal colour for the default agenda face
 (use-package org
   :requires macrostep
   :config
-  (defface yant/org-agenda-highlight-face `((t :inherit modus-themes-nuanced-yellow))
+  (defface yant/org-agenda-highlight-face `((t :inherit modus-themes-nuanced-yellow :extend t))
     "Face used to highlight flagged entries in agenda view.")
+  (set-face-background 'org-agenda-clocking (face-background 'modus-themes-diff-added))
+  (set-face-attribute 'org-agenda-clocking nil :extend t)
   (defun yant/org-agenda-highlight-flagged ()
     "Highlight flagged items in agenda."
     (let ((inhibit-read-only t))
