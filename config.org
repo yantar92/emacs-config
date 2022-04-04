@@ -2041,15 +2041,15 @@ Hence, I had to define special versions of =boon=-like bindings for helm.
 The basic idea is to prefix movement commands with meta. 
 
 #+begin_src emacs-lisp
+;; Working around https://github.com/emacs-helm/helm/issues/2481
+(straight-use-package '(helm-core :type git :host github :repo "emacs-helm/helm" :local-repo "~/Git/helm"
+		                  :fork (:host github
+			                       :repo "yantar92/helm")))
 (use-package helm
   :if init-flag
   :straight (helm :type git :host github :repo "emacs-helm/helm" :local-repo "~/Git/helm"
 		  :fork (:host github
 			       :repo "yantar92/helm"))
-  ;; Working around https://github.com/emacs-helm/helm/issues/2481
-  :init (straight-use-package '(helm-core :type git :host github :repo "emacs-helm/helm" :local-repo "~/Git/helm"
-		                          :fork (:host github
-			                               :repo "yantar92/helm")))
   :diminish helm-mode
   :requires boon
   :after boon
