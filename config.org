@@ -6370,7 +6370,7 @@ Similar idea: [[id:36ba1ec888a75c0461e9eeb1cf2fe8c7747ed7bd][Álvaro Ramírez [X
 (use-package elfeed-search
   :after elfeed
   :config
-  (defvar elfeed-search-default-filter "+unread -hide @2month -video -general_science -science -course -chinese -emacs +jobs"
+  (defvar elfeed-search-default-filter "+unread -hide @2month -war -video -general_science -science -course -chinese -emacs +jobs"
     "Default filter in elfeed search window.")
   (setq elfeed-search-filter elfeed-search-default-filter)
   (define-advice elfeed-search-live-filter (:around (oldfun &optional arg) default-filter-maybe)
