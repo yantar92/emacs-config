@@ -2522,7 +2522,7 @@ Highlighting typos is crucial.
   :straight t
   :after org
   :diminish (flyspell-mode . " ✓")
-  :hook ((notmuch-message-mode org-mode) . flyspell-mode)
+  :hook ((notmuch-message-mode org-mode prog-mode text-mode) . flyspell-mode)
   :bind (("<f8>" . ispell-word)
 	 ("M-<f8>" . ispell-buffer)
          :map boon-forward-search-map
