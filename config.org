@@ -7575,6 +7575,41 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
     :config
     (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
 #+end_src
+** Matrix client =ement.el=
+[[id:Github-alphapapa-alphapapa-ement-el-9d2][alphapapa [Github] alphapapa/ement.el: Matrix client for Emacs]]
+
+#+begin_src emacs-lisp
+(when init-flag
+  (use-package plz :straight (plz :host github :repo "alphapapa/plz.el"))
+  (use-package ement
+    :straight (ement :host github :repo "alphapapa/ement.el")
+    :custom
+    (ement-room-send-message-filter #'ement-room-send-org-filter)
+    :config
+    (defun yant/ement-room-image-scale ()
+      "Run `ement-room-image-scale-mouse' without mouse."
+      (interactive)
+      (let ((window (selected-window))
+            (pos (point)))
+        (with-selected-window window
+          (pcase-let* ((image (get-text-property pos 'display))
+                       (window-width (window-body-width nil t))
+                       (window-height (window-body-height nil t))
+                       (new-height (if (= window-height (image-property image :max-height))
+                                       (/ window-height 10)
+                                     window-height)))
+            (when (fboundp 'imagemagick-types)
+              ;; Only do this when ImageMagick is supported.
+              ;; FIXME: When requiring Emacs 27+, remove this (I guess?).
+              (setf (image-property image :type) 'imagemagick))
+            (setf (image-property image :max-width) window-width
+                  (image-property image :max-height) new-height)))))
+    (bind-key "TAB" #'yant/ement-room-image-scale ement-room-mode-map)
+    (meta-defun meta-up-element :mode ement-room-mode (ement-room-goto-prev))
+    (meta-defun meta-down-element :mode ement-room-mode (ement-room-goto-next))
+    (meta-defun meta-new-line :mode ement-room-mode (funcall-interactively #'ement-room-send-message))
+    (bind-key "M-g M-l" #'ement-list-rooms global-map)))
+#+end_src
 
 ** COMMENT Browser
    :PROPERTIES:
