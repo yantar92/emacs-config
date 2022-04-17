@@ -7378,8 +7378,9 @@ This should be called as a hook ran inside `message-header-setup-hook'."
 :PROPERTIES:
 :ID:       5e03a78b-9cb9-47b6-a7d1-370c3fea63ef
 :END:
+ #fontification #fontify #mail
 
-Semantic scholar and Google scholar alerts
+***** Semantic scholar and Google scholar alerts
 
 #+begin_src emacs-lisp
 (use-package notmuch
