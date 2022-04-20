@@ -14841,10 +14841,11 @@ Preview images and latex formulas.
 #+begin_src emacs-lisp
 (setq org-image-actual-width '(600))
 (setq org-latex-create-formula-image-program 'imagemagick)
+(setq org-preview-latex-default-process 'dvisvgm)
 (setq org-format-latex-options
       (quote
-       (:foreground default :background default :scale 2.0 :justify center :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-		    ("begin" "$1" "$" "$$" "\\(" "\\["))));; 2x height of formulas
+       (:foreground default :background "Transparent" :scale 1.5 :justify center :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+		    ("begin" "$1" "$" "$$" "\\(" "\\["))));; 1.5x height of formulas
 (setq org-latex-inline-image-rules
       (quote
        (("file" . "\\.\\(jpeg\\|jpg\\|png\\|eps\\|tikz\\|pgf\\|svg\\|bmp\\|tif\\)\\'"))))
