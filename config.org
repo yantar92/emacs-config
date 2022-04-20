@@ -2039,13 +2039,15 @@ The basic idea is to prefix movement commands with meta.
 #+begin_src emacs-lisp
 ;; Working around https://github.com/emacs-helm/helm/issues/2481
 (straight-use-package '(helm-core :type git :host github :repo "emacs-helm/helm" :local-repo "~/Git/helm"
-		                  :fork (:host github
-			                       :repo "yantar92/helm")))
+		                  ;; :fork (:host github
+			          ;;              :repo "yantar92/helm")
+                                  ))
 (use-package helm
   :if init-flag
   :straight (helm :type git :host github :repo "emacs-helm/helm" :local-repo "~/Git/helm"
-		  :fork (:host github
-			       :repo "yantar92/helm"))
+		  ;; :fork (:host github
+		  ;;              :repo "yantar92/helm")
+                  )
   :diminish helm-mode
   :requires boon
   :after boon
@@ -5650,8 +5652,9 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
   :if init-flag
   :defer t
   :straight (pdf-tools :type git :host github :repo "vedang/pdf-tools" :local-repo "~/Git/pdf-tools"
-		       :fork (:host github
-				    :repo "yantar92/pdf-tools"))
+		       ;; :fork (:host github
+		       ;;  	    :repo "yantar92/pdf-tools")
+                       )
   :custom
   (pdf-view-colors 'default)
   :magic ("%PDF" . pdf-view-mode)
@@ -8920,7 +8923,8 @@ Do not ask every time I try to evaluate elisp: links
   (use-package org-ref
     :if init-flag
     :straight (org-ref :type git :host github :repo "jkitchin/org-ref" :local-repo "~/Git/org-ref"
-		       :fork (:host github :repo "yantar92/org-ref"))
+		       ;; :fork (:host github :repo "yantar92/org-ref")
+                       )
     :after org
     :init
     (use-package bibtex-completion :demand t)
