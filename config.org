@@ -606,18 +606,15 @@ Credit: https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.
 
 Elisp is not the fastest language in the world.
 There are various options, which can improve the performance.
-
-Bidirectional text is not something I use frequently (never used up until writing this)
+*** Bidirectional text is not something I use frequently (never used up until writing this)
 #+BEGIN_SRC emacs-lisp
 (setq bidi-display-reordering nil)
 #+END_SRC
-
-Speed up line movement [[https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746][source]]
+*** Speed up line movement [[https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746][source]]
 #+begin_src emacs-lisp
 (setq auto-window-vscroll nil)
 #+end_src
-
-Smart garbage collect. 
+*** COMMENT Smart garbage collect. 
 Though I don't want it in batch mode because it is optimised for interactive use.
 
 [2020-05-29 Fri] [[notmuch:id:note_351562434@gitlab.com][Email from Koral: Re: gcmh | Commands invoking garbage-collect directly can hang emacs when non-idle (#6)]]
@@ -633,6 +630,7 @@ Reducing help:gcmh-cons-threshold to avoid hangs on undo.
     :custom
     (gcmh-verbose t)))
 #+end_src
+*** Increase GC threshold
 
 And increase GC threshold on top of that (I found emacs spend >25% of time doing GC when just moving around the buffer). 
 In batch mode, increase the threshold to make things faster.
@@ -641,19 +639,17 @@ In batch mode, increase the threshold to make things faster.
     (setq gc-cons-threshold (* 200 1000 1000))
   (setq gc-cons-threshold (* 1 1000 1000 1000)))
 #+end_src
-
-Do not compact font caches
+*** Do not compact font caches
 
  
 #+begin_src emacs-lisp
 (setq inhibit-compacting-font-caches t)
 #+end_src
-
+*** Try to improve typing speed
 Try to improve the typing speed. The typing lags after long Emacs session (presumably because of garbage collection, but trying this anyway)
 #+begin_src emacs-lisp
 (setq redisplay-skip-fontification-on-input t)
 #+end_src
-
 ** Appearance
 :PROPERTIES:
 :ID:       5b50a90f-4f47-4244-a6ac-e3646464539d
