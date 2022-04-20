@@ -6252,6 +6252,24 @@ Show the key strokes.
 :PROPERTIES:
 :ID:       b53c6b66-4a7c-4eae-ab26-e010fdeb3534
 :END:
+*** Youtube via =ytel=
+[[id:Github_grastellograst_ytel_youtub_front_end_for_emacs7fe][gRastello [Github] gRastello/ytel: Youtube "front-end" for Emacs.]]
+#+begin_src emacs-lisp
+(use-package ytel
+  :if init-flag
+  :straight t
+  :custom (ytel-invidious-api-url "https://inv.riverside.rocks"))
+#+end_src
+**** And show video pages via =ytel-show=
+[[id:Github_xfa25exfa25_ytel_show_brows_youtub_in_emacs1d3][xFA25E [Github] xFA25E/ytel-show: Browse youtube in emacs.]]
+#+begin_src emacs-lisp
+(use-package ytel-show
+  :if init-flag
+  :straight (ytel-show :host github :repo "xFA25E/ytel-show")
+  :after ytel
+  :bind (:map ytel-mode-map ("RET" . ytel-show)))
+#+end_src
+
 *** =Elfeed=
 :PROPERTIES:
 :ID:       9bc385e2-0ed2-460b-875e-be9ad19144a3
