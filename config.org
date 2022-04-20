@@ -2332,7 +2332,7 @@ Do not even need terminal to interact with Git.
   :after boon
   :requires boon
   :bind (:map boon-x-map
-              ("g" . magit-status)
+              ("g" . meta-magit-status)
 	      ("G" . magit-dispatch-popup)
 	      ("M-g" . magit-file-dispatch))
   :config
@@ -2341,6 +2341,9 @@ Do not even need terminal to interact with Git.
     (setq magit-diff-visit-file (-remove-last magit-diff-visit-file)))
   (use-package meta-functions
     :config
+    (meta-defun meta-magit-status "Open magit status buffer" magit-status)
+    (use-package piem :defer t :config
+      (meta-defun meta-magit-status :mode notmuch-show-mode piem-am))
     (meta-defun meta-down-element :mode magit-diff-mode magit-section-forward)
     (meta-defun meta-up-element :mode magit-diff-mode magit-section-backward)
     (meta-defun meta-down-element :mode magit-status-mode magit-section-forward)
@@ -16951,6 +16954,65 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
 :END:
 #+begin_src emacs-lisp
 (add-hook 'org-capture-mode-hook 'boon-insert 'append)
+#+end_src
+** GNU development
+*** Working with public inboxes
+**** =piem=: Apply patches from emails in Emacs
+[[id:Git-Kyleam-piem-emacs-tools-211][[Git.Kyleam] piem - Emacs tools and glue for working with public-inbox archives]]
+
+#+begin_src emacs-lisp
+(use-package piem
+  :if init-flag
+  :straight t)
+#+end_src
+***** Repos config
+
+#+begin_src emacs-lisp
+(use-package piem
+  :custom
+  (piem-inboxes
+   '(( "Org mode"
+       :coderepo "~/Git/org-mode/"
+       :address "emacs-orgmode@gnu.org"
+       :listid "emacs-orgmode.gnu.org"
+       :url "https://orgmode.org/list/"
+       :maildir "~/Mail/Orgmode-maillist/orgmode/"))))
+#+end_src
+***** Integration with =notmuch=
+
+#+begin_src emacs-lisp
+(use-package piem
+  :after notmuch
+  :config (piem-notmuch-mode +1))
+#+end_src
+**** =git-email=: Send patches as email from Emacs
+
+#+begin_src emacs-lisp
+(use-package git-email
+  :if init-flag
+  :straight
+  (git-email
+   :type git
+   :repo "https://git.sr.ht/~yoctocell/git-email/"
+   ;; I do not have mu4e installed and compilation failed unless I
+   ;; exclude this file.
+   :files (:defaults (:exclude "git-email-mu4e.el"))))
+#+end_src
+***** Integration with =piem=
+
+#+begin_src emacs-lisp
+(use-package git-email
+  :after piem
+  :config
+  (git-email-piem-mode +1))
+#+end_src
+***** Integration with =notmuch=
+
+#+begin_src emacs-lisp
+(use-package git-email
+  :after notmuch
+  :config
+  (git-email-notmuch-mode +1))
 #+end_src
 ** Sensitive info :NOEXPORT:
 :PROPERTIES:
