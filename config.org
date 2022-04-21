@@ -5211,11 +5211,11 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 (use-package elpy
   :if init-flag
   :straight t
-  :init
-  (elpy-enable)
+  :defer 10
   :custom
   (elpy-rpc-backend "jedi")
   :config
+  (elpy-enable)
   (meta-defun meta-down-element :mode python-mode elpy-nav-forward-block)
   (meta-defun meta-up-element :mode python-mode elpy-nav-backward-block))
 #+end_src
@@ -5617,6 +5617,8 @@ Use scimax version
 (use-package jupyter :straight t)
 (use-package pretty-hydra :straight t)
 (use-package scimax-jupyter
+  :after org
+  :defer 10
   :straight (scimax-jupyter :host github :files ("scimax-jupyter.el") :repo "jkitchin/scimax"))
 #+end_src
 
