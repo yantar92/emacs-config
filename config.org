@@ -2351,6 +2351,7 @@ Do not even need terminal to interact with Git.
     (meta-defun meta-down-element :mode magit-revision-mode magit-section-forward)
     (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward)))
 #+END_SRC
+
 **** Interaction with Github \ other forges
 :PROPERTIES:
 :ID:       b5cd6c65-f254-42aa-a423-2001c72d6dfa
@@ -2934,7 +2935,6 @@ I only use it occasionally though.
 :PROPERTIES:
 :ID:       7f5795bc-6bc1-4095-b31c-ed724bbc942c
 :END:
-
 *** =Hideshow= mode
 :PROPERTIES:
 :ID:       6ea2a9f7-7b73-4289-976f-b53adcae8f38
@@ -3025,7 +3025,6 @@ Enable it.
 :ID:       46fb459b-7794-4b9a-9fce-85389aba1d95
 :END:
 *** Text
-
 **** Case fold search
 :PROPERTIES:
 :CREATED:  [2020-05-03 Sun 22:32]
@@ -3273,7 +3272,6 @@ Disabling it, since it is not very useful for me anyway.
   :config
   (setq hi-lock-auto-select-face t))
 #+end_src
-
 *** Links
 :PROPERTIES:
 :ID:       7908bb55-6bc0-4db2-b5d2-258ff985250d
@@ -6605,7 +6603,6 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
   (setf (alist-get 'flagged elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10))))
   (setf (alist-get 'FLAGGED elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10)))))
 #+end_src
-
 *** =Notmuch=
 :PROPERTIES:
 :ID:       f6ca2367-45c4-45bc-acec-49837cadc5ac
