@@ -18256,3 +18256,29 @@ Requires [[id:069366f4-0eac-4d23-b186-7020185e1bcb][=media-gfx/graphviz=: LaTeX 
   (helm-icons-enable))
 #+end_src
 
+** Record point movement history beyond mark-ring =gumshoe= :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-04-19 Tue 21:20
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+[[id:Github-overdr0ne-overdr0ne-gumshoe-0c9][Overdr0ne [Github] Overdr0ne/gumshoe]]
+
+#+begin_src emacs-lisp
+(use-package gumshoe
+  :if init-flag
+  :straight t
+  :diminish 'global-gumshoe-mode
+  :init
+  (global-gumshoe-mode +1)
+  :config
+  (bind-key "n" #'gumshoe-buf-backtrack-back boon-command-map)
+  (bind-key "m" #'gumshoe-buf-backtrack-forward boon-command-map)
+  (bind-key "M-n" #'gumshoe-backtrack-back)
+  (bind-key "M-m" #'gumshoe-backtrack-forward)
+  (bind-key "m" #'gumshoe-peruse-globally boon-goto-map))
+#+end_src
+
