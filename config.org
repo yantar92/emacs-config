@@ -9074,6 +9074,17 @@ Also, use =org-attach-open= instead of =org-attach-reveal= in =org-open-at-point
 (define-advice org-agenda-open-link (:override (&optional arg) use-org-open-at-point) (org-open-at-point arg))
 #+end_src
 
+**** Citations
+***** Set default processor
+
+#+begin_src emacs-lisp
+(use-package org
+  :custom
+  (org-cite-export-processors
+   '((latex bibtex)
+     (t basic))))
+#+end_src
+
 **** LaTeX integration
 :PROPERTIES:
 :CREATED:  [2020-05-05 Tue 23:00]
