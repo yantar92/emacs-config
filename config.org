@@ -16570,7 +16570,9 @@ Some changes in org-files are very trivial and clutter more important changes I 
     (save-excursion
       (magit-jump-to-unstaged)
       (let ((staged-pos (or (save-excursion
-			      (unless (let ((inhibit-message t)) (magit-jump-to-staged))
+			      (unless (let ((inhibit-message t))
+                                        (member (magit-jump-to-staged)
+                                                '(nil "Section \"Staged changes\" wasn’t found")))
 			        (point)))
                             (point-max)))
             (re (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps)))))
@@ -16603,7 +16605,9 @@ Some changes in org-files are very trivial and clutter more important changes I 
   (defun yant/magit-autocommit ()
     "Asynchronously commit all the lines matching `yant/magit-show-autocommit-regexps'."
     (interactive)
-    (make-thread #'yant/magit--autocommit "Magit autocommit"))
+    ;; (yant/magit--autocommit)
+    (make-thread #'yant/magit--autocommit "Magit autocommit")
+    )
 
   (defun yant/magit--autocommit ()
     "Commit all the lines matching `yant/magit-show-autocommit-regexps'."
@@ -16617,52 +16621,60 @@ Some changes in org-files are very trivial and clutter more important changes I 
       (let ((magit-buffer (current-buffer))
             (pos (point))
             (previous-pos (point))
-            (progress (make-progress-reporter "Autocommiting hunks..." 1 (point-max)))
-            (staged-pos (or (save-excursion
-			      (unless (let ((inhibit-message t)) (magit-jump-to-staged))
-			        (point)))
-                            (point-max))))
-        (while (with-current-buffer magit-buffer
-                 (< pos staged-pos))
-          (with-current-buffer magit-buffer
-            (save-excursion
-              (goto-char pos)
-              (progress-reporter-update progress (+ pos (- (point-max) staged-pos)))
-              (when (and (re-search-forward (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps))) nil 'move)
-                         (< (point) staged-pos))
-                (let ((section (magit-current-section)))
-                  (if (not (eq 'hunk (oref section type)))
-                      (magit-section-forward)
-                    (let ((hunk-text (buffer-substring-no-properties (oref section start) (oref section end))))
-                      (if (with-temp-buffer
-                            (insert hunk-text)
-                            (goto-char 1)
-                            (keep-lines "^[+-].+$")
-                            (mapc (lambda (regexp)
-                                    (goto-char 1)
-                                    (delete-matching-lines regexp))
-                                  yant/magit-show-autocommit-regexps)
-                            (string-empty-p (buffer-string)))
-                          (progn
-                            (magit-stage)
-                            ;; Stage will rebuild status buffer from
-                            ;; scratch, so we have to restart or can
-                            ;; miss some matches.
-                            (setq pos previous-pos))
-                        (setq previous-pos pos)
-                        (magit-section-forward))))))
-              (setq pos (point))
-              (setq staged-pos (or (save-excursion
-			             (unless (let ((inhibit-message t)) (magit-jump-to-staged))
-			               (point)))
-                                   (point-max))))))
+            (progress (make-progress-reporter "Autocommiting hunks..." 1 (point-max))))
+        (catch :last-section
+          (let (
+                ;; Make magit refresh faster.
+                (magit-section-cache-visibility nil)
+                ;; Simplify magit-status-sections-hook.
+                (magit-status-sections-hook '(magit-insert-unstaged-changes))
+                ;; disable some hooks
+                (magit-section-set-visibility-hook nil))
+            (magit-refresh)
+            (while (with-current-buffer magit-buffer
+                     (< pos (point-max)))
+              (with-current-buffer magit-buffer
+                (save-excursion
+                  (goto-char pos)
+                  (progress-reporter-update progress pos)
+                  (when (and (re-search-forward (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps))) nil 'move)
+                             (< (point) (point-max)))
+                    (let ((section (magit-current-section)))
+                      (if (not (eq 'hunk (oref section type)))
+                          (condition-case err
+                              (magit-section-forward)
+                            (user-error
+                             (setq pos (point))
+                             (throw :last-section t)))
+                        (let ((hunk-text (buffer-substring-no-properties (oref section start) (oref section end))))
+                          (when (with-temp-buffer
+                                  (insert hunk-text)
+                                  (goto-char 1)
+                                  (keep-lines "^[+-].+$")
+                                  (mapc (lambda (regexp)
+                                          (goto-char 1)
+                                          (delete-matching-lines regexp))
+                                        yant/magit-show-autocommit-regexps)
+                                  (string-empty-p (buffer-string)))
+                            (progn
+                              ;; Do not refresh buffer.
+                              (let ((magit-inhibit-refresh t))
+                                (magit-stage))))
+                          (setq previous-pos pos)
+                          (condition-case err
+                              (magit-section-forward)
+                            (user-error
+                             (setq pos (point))
+                             (throw :last-section t)))))))
+                  (setq pos (point)))))))
+        (magit-refresh)
         (progress-reporter-done progress)
         (with-current-buffer magit-buffer
           (unless (magit-jump-to-staged) ;; returns nil on success.
-            (funcall-interactively #'magit-commit-create)
-            (while (not (get-buffer "COMMIT_EDITMSG")) (sleep-for 3) (message "Waiting for commit buffer..."))
-            (with-current-buffer "COMMIT_EDITMSG"
-              (insert (format-time-string "Autoupdate %Y-%m-%d" (current-time))))))))))
+            (funcall-interactively
+             #'magit-commit-create
+             `("-m"
+               ,(format-time-string "Autoupdate %Y-%m-%d" (current-time))))))))))
 #+end_src
 
 *** Spell checking
