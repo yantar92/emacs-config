@@ -17049,6 +17049,24 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
    ;; exclude this file.
    :files (:defaults (:exclude "git-email-mu4e.el"))))
 #+end_src
+***** Send patches as attachments
+#+begin_src emacs-lisp
+(use-package git-email
+  :custom
+  (git-email-format-patch-default-args "--attach"))
+#+end_src
+***** TODO Work around changed project.el format in Emacs 29
+
+#+begin_src emacs-lisp
+(use-package git-email
+  :config
+  (defun yant/git-email-get-project-current ()
+    "Get current activae peoject.el project, if any."
+    (and (bound-and-true-p project-list-file)
+         (nth 2 (project-current))))
+  (add-hook 'git-email-get-current-project-functions #'yant/git-email-get-project-current))
+#+end_src
+
 ***** Integration with =piem=
 
 #+begin_src emacs-lisp
@@ -17065,6 +17083,15 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
   :config
   (git-email-notmuch-mode +1))
 #+end_src
+***** Integration with =magit=
+
+#+begin_src emacs-lisp
+(use-package git-email
+  :after magit
+  :config
+  (require 'git-email-magit))
+#+end_src
+
 ** Sensitive info :NOEXPORT:
 :PROPERTIES:
 :ID:       83801f6a-daf5-4738-a15e-2d20c2b4551c
