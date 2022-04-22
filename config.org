@@ -13117,6 +13117,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
                            "** NEXT Outline"
                            "DEADLINE: %^t"
                            "*** TODO Abstract"
+                           "*** TODO Graphical abstract"
                            "*** NEXT Introduction"
                            "*** TODO Methods"
                            "*** TODO Results"
@@ -13128,7 +13129,9 @@ A large task that needs to be studied systematically. It has to have a concrete 
                            ":REPEAT_TO_STATE: NEXT"
                            ":LOGGING: nil"
                            ":END:"
-                           "** TODO Cover letter"
+                           "** TODO Cover letter to coordinating editor"
+                           "** TODO Upload data to zenodo"
+                           "** TODO Suggest reviewers"
                            "** TODO Submit"
                            "** TODO Revise"
                            ":PROPERTIES:"
@@ -13710,6 +13713,30 @@ The subheadings below such a headlines are promoted up *1 level*.
 (add-to-list 'org-latex-classes
              '("Acta paper"
                "\\documentclass[5p]{elsarticle}
+%% Include references from supplementary into file.
+\\journal{Acta Materiallia}
+\\bibliographystyle{model1-num-names}
+\\biboptions{sort&compress,numbers}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+(add-to-list 'org-latex-classes
+             '("Acta paper preprint"
+               "\\documentclass[preprint]{elsarticle}
+%% Include references from supplementary into file.
+\\journal{Acta Materiallia}
+\\bibliographystyle{model1-num-names}
+\\biboptions{sort&compress,numbers}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+(add-to-list 'org-latex-classes
+             '("Acta paper review"
+               "\\documentclass[review]{elsarticle}
 %% Include references from supplementary into file.
 \\journal{Acta Materiallia}
 \\bibliographystyle{model1-num-names}
