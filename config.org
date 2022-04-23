@@ -7596,6 +7596,17 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
     :config
     (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
 #+end_src
+** File sharing via =0x0=
+[[id:GitLab-willvaughn-willvaughn-emacs-0x0-d03][willvaughn [GitLab] willvaughn/emacs-0x0: Integration with https://0x0.st from emacs. Intended for use in ERC to share images, files, and blocks of code.]]
+#+begin_src emacs-lisp
+(use-package 0x0
+  :if init-flag
+  :straight (0x0 :host gitlab :repo "willvaughn/emacs-0x0")
+  :config
+  (defalias 'yant/share-file #'0x0-upload-file)
+  (defalias 'yant/share-region #'0x0-upload-text)
+  (defalias 'yant/share-new-buffer #'0x0-popup))
+#+end_src
 ** Matrix client =ement.el=
 [[id:Github-alphapapa-alphapapa-ement-el-9d2][alphapapa [Github] alphapapa/ement.el: Matrix client for Emacs]]
 [2022-04-15 Fri] Setting ~print-circle~ to t in order to fix memory leakage error.
