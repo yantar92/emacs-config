@@ -13141,6 +13141,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
                            ":LOGGING: nil"
                            ":END:"
                            "** TODO Cover letter to coordinating editor"
+                           "# Why should this manuscript be published in *the* journal."
                            "** TODO Upload data to zenodo"
                            "** TODO Suggest reviewers"
                            "** TODO Submit"
