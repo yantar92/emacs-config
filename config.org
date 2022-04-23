@@ -13651,6 +13651,7 @@ Subtrees containing ideas are marked with :TICKLER: tag. Any task refiled to suc
 - Do not run babel blocks during export
   #+begin_src emacs-lisp
 (setq org-export-default-inline-image-rule '(("file" . "\\.\\(gif\\|jp\\(?:e?g\\)\\|p\\(?:bm\\|gm\\|ng\\|pm\\)\\|tiff?\\|x\\(?:[bp]m\\)\\)\\'")))
+(setq org-export-allow-bind-keywords t)
   #+end_src
   #+begin_src emacs-lisp
 (setq org-export-use-babel t)
