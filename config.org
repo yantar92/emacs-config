@@ -13730,6 +13730,21 @@ The subheadings below such a headlines are promoted up *1 level*.
 :END:
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-classes
+             '("Cover letter"
+               "\\documentclass\[%
+   DIV=14,
+   fontsize=12pt,
+   parskip=half,
+   subject=titled,
+   backaddress=false,
+   fromalign=left,
+   fromemail=false,
+   fromname=false,
+   fromphone=true\]\{scrlttr2\}
+   \[DEFAULT-PACKAGES]
+   \[PACKAGES]
+   \[EXTRA]"))
+(add-to-list 'org-latex-classes
              '("Acta paper"
                "\\documentclass[5p]{elsarticle}
 %% Include references from supplementary into file.
