@@ -5694,12 +5694,18 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 This is handy when working with review comments.
 
 #+begin_src emacs-lisp
-(use-package pdf-annot
-  :defer t
-  :init
-  (font-lock-add-keywords
-   'pdf-annot-list-mode
-   '(("DONE" . modus-themes-grue-background-active))))
+(when init-flag
+  (add-hook
+   'pdf-annot-list-mode-hook
+   (lambda ()
+     (font-lock-add-keywords
+      'pdf-annot-list-mode
+      '(("DONE" (0 'modus-themes-grue-background-active t))))
+     (font-lock-mode -1)
+     (font-lock-mode +1)
+     ;; (font-lock-update)
+     )))
+
 #+end_src
 
 **** Display annotation text in annotation list
