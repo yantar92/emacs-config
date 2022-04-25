@@ -3351,15 +3351,14 @@ Just use external browser to open URLs.
     :config  
     (use-package meta-functions :config  
       (meta-defun meta-goto "Goto place in document." helm-imenu)
-      (use-package elisp-def
-        :defer t
-        :config
-        (meta-defun meta-goto :mode emacs-lisp-mode
-          :cond (let ((state (syntax-ppss)))
-                  (and (not (nth 3 state))
-                       (not (nth 4 state))))
-          :cond (thing-at-point 'symbol)
-          :cond (let ((pos (point-marker))) (elisp-def) (not (eq pos (point)))))))))
+      (meta-defun meta-goto :mode emacs-lisp-mode
+        :cond (let ((state (syntax-ppss)))
+                (and (not (nth 3 state))
+                     (not (nth 4 state))))
+        :cond (thing-at-point 'symbol)
+        (let ((pos (point-marker)))
+          (xref-find-definitions (thing-at-point 'symbol))
+          (not (eq pos (point))))))))
 #+end_src
 
 *** Buffers
@@ -5391,17 +5390,6 @@ It warns me if the original definition changes from what I expect.
   :straight t
   :demand t)
 #+end_src
-**** Find emacs lisp definitions (=elisp-def=)
-
-#+begin_src emacs-lisp
-(use-package elisp-def
-  :straight t
-  :if init-flag
-  :init
-  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-    (add-hook hook #'elisp-def-mode)))
-#+end_src
-
 *** Scripts
 :PROPERTIES:
 :CREATED:  [2020-05-14 Thu 14:39]
@@ -18340,5 +18328,23 @@ Requires [[id:069366f4-0eac-4d23-b186-7020185e1bcb][=media-gfx/graphviz=: LaTeX 
   (bind-key "M-n" #'gumshoe-backtrack-back)
   (bind-key "M-m" #'gumshoe-backtrack-forward)
   (bind-key "m" #'gumshoe-peruse-globally boon-goto-map))
+#+end_src
+
+** Find emacs lisp definitions (=elisp-def=) :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ARCHIVE_TIME: 2022-04-24 Sun 16:01
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Programming & emacsing/Elisp coding
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+#+begin_src emacs-lisp
+(use-package elisp-def
+  :straight t
+  :if init-flag
+  :init
+  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+    (add-hook hook #'elisp-def-mode)))
 #+end_src
 
