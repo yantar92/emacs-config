@@ -275,7 +275,7 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
 			:local-repo "~/Git/org-mode" :pre-build nil
                         :fork (:host github :repo "yantar92/org" :branch "feature/org-fold-universal-core")))
 (straight-use-package '(org-contrib
-			:type git :repo "https://git.sr.ht/~bzg/org-contrib"
+			:type git :repo "git@git.sr.ht:~bzg/org-contrib"
 			:local-repo "~/Git/org-contrib"))
 #+end_src
 
