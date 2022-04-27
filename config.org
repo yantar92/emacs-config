@@ -5602,7 +5602,10 @@ Use scimax version
 
 #+begin_src emacs-lisp
 (use-package scimax-ob
-  :straight (scimax-ob :host github :files ("scimax-ob.el") :repo "jkitchin/scimax"))
+  :straight (scimax-ob :host github :files ("scimax-ob.el") :repo "jkitchin/scimax")
+  :init
+  ;; Otherwise, it overwrites C-<RET>
+  (setq scimax-ob-src-key-bindings nil))
 (use-package jupyter :straight t)
 (use-package pretty-hydra :straight t)
 (use-package scimax-jupyter
