@@ -2774,6 +2774,16 @@ Mostly we check word delimiters."
   ;; (add-hook! 'notmuch-mua-send-hook #'langtool-check-buffer-ensure)
   )
 #+end_src
+**** Style
+***** =smog= (using GNU diction)
+
+#+begin_src emacs-lisp
+(use-package smog
+  :if init-flag
+  :straight t
+  :config
+  (setq smog-command "style -L en -l 30 -N"))
+#+end_src
 
 **** Dictionary
 *** Code checking
