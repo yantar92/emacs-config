@@ -9135,6 +9135,9 @@ This includes:
     (require 'texmathp))
   :hook (org-mode . org-cdlatex-mode)
   :config
+  ;; I do not like this behaviour.
+  (unbind-key "_" org-cdlatex-mode-map)
+  (unbind-key "^" org-cdlatex-mode-map)
   (diminish 'org-cdlatex-mode (s-concat
 			       " "
 			       (propertize "CD"
