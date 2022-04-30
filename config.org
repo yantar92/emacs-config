@@ -364,7 +364,7 @@ Keep customisation away from =init.el= in a separate file.
 			  :local-repo "~/Git/no-littering"))
 #+end_src
 
-** TODO Elisp libraries to be used further
+** SOMEDAY Elisp libraries to be used further :SOMEDAY:
 :PROPERTIES:
 :CREATED:  [2020-04-22 Wed 16:39]
 :ID:       7b9a8c35-f3f9-4390-8e5e-fb863abd3f8b
@@ -2499,7 +2499,7 @@ User-defined temporary highlighting.
   :if init-flag
   :diminish hi-lock-mode)
 #+end_src
-*** TODO Spell\grammar checking
+*** SOMEDAY Spell\grammar checking :SOMEDAY:
 :PROPERTIES:
 :ID:       117c5718-7a46-4a7a-ab0d-b5b347444080
 :END:
@@ -5651,7 +5651,7 @@ OUTPUT=${OUTPUT:-${INPUT%.*}.pdf}
 gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$OUTPUT" "$INPUT"
 #+end_src
 
-*** TODO Pdf view
+*** SOMEDAY Pdf view :SOMEDAY:
 :PROPERTIES:
 :ID:       201475d1-64b3-4e1d-8e78-d850c6067761
 :END:
@@ -7138,7 +7138,7 @@ Here are some workarounds
 (setq-default notmuch-show-indent-content nil)
 #+end_src
 
-**** TODO Interaction with org
+**** SOMEDAY Interaction with org :SOMEDAY:
 ***** Capture mail to org task
 :PROPERTIES:
 :ID:       2d9b8481-b46c-47a9-9d19-6408c6a1e82d
@@ -7825,16 +7825,23 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =TICKLER= :: The items refiled here will have their todo state changed to =TICKLER=.
 - =AREA= :: Some projects are not "real" projects, but rather areas of interest. The difference with normal projects is that areas are not expected to be ever finished. Thus, it has little point to keep them in weekly review together with projects. However, they can be stuck, as any other project.
 ****** TODO Tags for everything
-****** TODO try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
+****** TICKLER try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
+SCHEDULED: <2022-05-03 Tue>
 :PROPERTIES:
 :CREATED:  [2018-02-12 Mon 00:51]
 :Source:   https://www.gnu.org/software/emacs/manual/html_node/elisp/Special-Properties.html#Special-Properties
+:DRILL_LAST_INTERVAL: 4.14
+:DRILL_REPEATS_SINCE_FAIL: 2
+:DRILL_TOTAL_REPEATS: 1
+:DRILL_FAILURE_COUNT: 0
+:DRILL_AVERAGE_QUALITY: 5.0
+:DRILL_EASE: 2.6
 :END:
 :LOGBOOK:
 CLOCK: [2018-02-12 Mon 00:51]--[2018-02-12 Mon 00:52] =>  0:01
 :END:
 modified b
-******* TODO may be useful |- (multifiles.el/multifiles.el at master · magnars/multifiles.el) :BOOKMARK:
+******* may be useful |- (multifiles.el/multifiles.el at master · magnars/multifiles.el) :BOOKMARK:
 :PROPERTIES:
 :CREATED:  [2018-02-12 Mon 00:56]
 :Source:   https://github.com/magnars/multifiles.el/blob/master/multifiles.el
@@ -14489,7 +14496,7 @@ Leaving the code below for reference.
       '((:prologue . "exec 2>&1") (:epilogue . ":"))
       )
 #+END_SRC
-***** TODO Evaluation
+***** SOMEDAY Evaluation :SOMEDAY:
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 18:03]
 :ID:       49900f8e-cde9-4e41-944a-904852ad92b9
