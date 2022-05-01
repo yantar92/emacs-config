@@ -73,6 +73,7 @@ Init file, which loads this file.
 ;;(package-initialize)
 (setq init-flag t)
 (setq comp-deferred-compilation-deny-list '("pdf-cache" "org-protocol"))
+(setq comp-num-cpus 8)
 ;; (setq comp-deferred-compilation 't) ;; enable automatic native-compilation
 (load el-file)
 #+end_src
