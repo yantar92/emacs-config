@@ -6549,6 +6549,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                          ("[Nn]ano-?layer" "\\&" (face (:foreground "red")))
                                          ("[Hh]igh[ -][Ee]ntropy"  "\\&" (face (:foreground "red")))
                                          ("[Mm]edium[ -][Ee]ntropy"  "\\&" (face (:foreground "red")))
+                                         ("[Bb]ayesian"  "\\&" (face (:foreground "red")))
                                          ("[Mm]agnesium"  "\\&" (face (:foreground "red")))
                                          ("[Mm]g"  "\\&" (face (:foreground "red")))
                                          ("[Cc]rack[^ ]*" "\\&" (face (:foreground "red"))))
