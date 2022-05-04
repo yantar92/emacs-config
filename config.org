@@ -4942,6 +4942,15 @@ The same author also wrote font-lock profiler: [[id:github_lindydancer_lindy_fon
   :if init-flag
   :straight (font-lock-profiler :type git :host github :repo "Lindydancer/font-lock-profiler"))
 #+end_src
+
+Finally, he also has a useful interactive tool to display refontification process
+[[id:Github-lindydancer-lindydancer-highlight-refontification-ac8][Lindydancer [Github] Lindydancer/highlight-refontification: Visualize how font-lock refontifies a buffer]]
+#+begin_src emacs-lisp
+(use-package highlight-refontification
+  :if init-flag
+  :straight (highlight-refontification :type git :host github :repo "Lindydancer/highlight-refontification"))
+#+end_src
+
 *** Profiling font-lock
 :PROPERTIES:
 :ID:       fa7120dc-5089-46c8-a0e7-091cf597288e
