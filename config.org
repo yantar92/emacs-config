@@ -5667,13 +5667,19 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 :END:
 
 #+begin_src emacs-lisp
+(use-package image-roll :straight (image-roll :host github :repo "dalanicolai/image-roll.el"))
 (use-package pdf-tools
   :if init-flag
   :defer t
-  :straight (pdf-tools :type git :host github :repo "vedang/pdf-tools" :local-repo "~/Git/pdf-tools"
-		       ;; :fork (:host github
-		       ;;  	    :repo "yantar92/pdf-tools")
-                       )
+  :straight ;; (pdf-tools :type git :host github :repo "vedang/pdf-tools" :local-repo "~/Git/pdf-tools"
+  ;;            ;; :fork (:host github
+  ;;            ;;  	    :repo "yantar92/pdf-tools")
+  ;;            )
+  (:host github :repo "dalanicolai/pdf-tools" :branch "pdf-roll"
+         :files ("lisp/*.el" "README"
+                 ("build" "Makefile") ("build" "server")
+                 (:exclude "lisp/tablist.el" "lisp/tablist-filter.el")))
+  :hook (pdf-view-mode . pdf-view-roll-minor-mode)
   :custom
   (pdf-view-colors 'default)
   :magic ("%PDF" . pdf-view-mode)
@@ -5681,14 +5687,16 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 	      ("v w" . pdf-view-fit-width-to-window)
 	      ("v h" . pdf-view-fit-height-to-window))
   :init
-  (defun yant/pdf-view-down nil
+  (defun yant/pdf-view-down (&optional n)
     "Go down document in pdf-view."
     (interactive)
-    (pdf-view-next-line-or-next-page 5))
-  (defun yant/pdf-view-up nil
+    (let ((image-roll-step-size (or n 50)))
+      (pdf-view-next-line-or-next-page (or n 5))))
+  (defun yant/pdf-view-up (&optional n)
     "Go up document in pdf-view."
     (interactive)
-    (pdf-view-previous-line-or-previous-page 5))
+    (let ((image-roll-step-size (or n 50)))
+      (pdf-view-previous-line-or-previous-page (or n 5))))
   :config
   (pdf-tools-install)
   (add-hook 'pdf-view-mode-hook #'pdf-view-fit-width-to-window 'APPEND)
@@ -5699,8 +5707,10 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
     (meta-defun meta-up :mode pdf-view-mode yant/pdf-view-up)
     (meta-defun meta-forward :mode pdf-view-mode (image-forward-hscroll 5))
     (meta-defun meta-backward :mode pdf-view-mode (image-backward-hscroll 5))
-    (meta-defun meta-scroll-down :mode pdf-view-mode pdf-view-scroll-down-or-previous-page)
-    (meta-defun meta-scroll-up :mode pdf-view-mode pdf-view-scroll-up-or-next-page)
+    (meta-defun meta-scroll-up :mode pdf-view-mode (yant/pdf-view-down 200))
+    (meta-defun meta-scroll-down :mode pdf-view-mode (yant/pdf-view-up 200))
+    ;; (meta-defun meta-scroll-down :mode pdf-view-mode pdf-view-scroll-down-or-previous-page)
+    ;; (meta-defun meta-scroll-up :mode pdf-view-mode pdf-view-scroll-up-or-next-page)
     (meta-defun meta-down :mode pdf-annot-list-mode tablist-next-line)
     (meta-defun meta-up :mode pdf-annot-list-mode tablist-previous-line)))
 #+end_src
