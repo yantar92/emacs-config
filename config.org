@@ -13747,7 +13747,7 @@ The subheadings below such a headlines are promoted up *1 level*.
       (quote
        ;; ("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
        ;; ("latexmk -xelatex -shell-escape -bibtex -f -output-directory=%o %f" "pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
-       ("latexmk -f -pdf -%latex -shell-escape -interaction=nonstopmode -output-directory=%o %f"  "pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
+       ("latexmk -pdf -%latex -shell-escape -interaction=nonstopmode -output-directory=%o %f"  "pdf-compress.sh %b.pdf %b-compressed.pdf && mv -f %b-compressed.pdf %b.pdf")
        ))
 (setq org-export-with-timestamps nil)
 (setq org-export-in-background nil)
