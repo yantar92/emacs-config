@@ -5690,13 +5690,13 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
   (defun yant/pdf-view-down (&optional n)
     "Go down document in pdf-view."
     (interactive)
-    (let ((image-roll-step-size (or n 100)))
-      (pdf-view-next-line-or-next-page (or n 5))))
+    (let ((image-roll-step-size (or n 10)))
+      (pdf-view-next-line-or-next-page (or n 10))))
   (defun yant/pdf-view-up (&optional n)
     "Go up document in pdf-view."
     (interactive)
-    (let ((image-roll-step-size (or n 100)))
-      (pdf-view-previous-line-or-previous-page (or n 5))))
+    (let ((image-roll-step-size (or n 10)))
+      (pdf-view-previous-line-or-previous-page (or n 10))))
   :config
   (pdf-tools-install)
   (add-hook 'pdf-view-mode-hook #'pdf-view-fit-width-to-window 'APPEND)
@@ -5707,8 +5707,8 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
     (meta-defun meta-up :mode pdf-view-mode yant/pdf-view-up)
     (meta-defun meta-forward :mode pdf-view-mode (image-forward-hscroll 5))
     (meta-defun meta-backward :mode pdf-view-mode (image-backward-hscroll 5))
-    (meta-defun meta-scroll-up :mode pdf-view-mode (yant/pdf-view-down 400))
-    (meta-defun meta-scroll-down :mode pdf-view-mode (yant/pdf-view-up 400))
+    (meta-defun meta-scroll-up :mode pdf-view-mode (yant/pdf-view-down 20))
+    (meta-defun meta-scroll-down :mode pdf-view-mode (yant/pdf-view-up 20))
     ;; (meta-defun meta-scroll-down :mode pdf-view-mode pdf-view-scroll-down-or-previous-page)
     ;; (meta-defun meta-scroll-up :mode pdf-view-mode pdf-view-scroll-up-or-next-page)
     (meta-defun meta-down :mode pdf-annot-list-mode tablist-next-line)
