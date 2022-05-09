@@ -17111,7 +17111,7 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
 #+begin_src emacs-lisp
 (use-package piem
   :if init-flag
-  :straight t)
+  :straight (piem :repo "https://git.kyleam.com/piem"))
 #+end_src
 ***** Repos config
 
@@ -17120,19 +17120,11 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
   :custom
   (piem-inboxes
    '(( "Org mode"
-       :coderepo "~/Git/org-mode/"
+       :coderepo ("~/Git/org-mode/" "~/Git/worg/" "~/Git/orgweb/")
        :address "emacs-orgmode@gnu.org"
        :listid "emacs-orgmode.gnu.org"
        :url "https://orgmode.org/list/"
-       :maildir "~/Mail/Orgmode-maillist/orgmode/")
-     ;; FIXME: Same lists for multiple repos are not supported yet.
-     ;; ( "Org contrib"
-     ;;   :coderepo "~/Git/org-contrib/"
-     ;;   :address "emacs-orgmode@gnu.org"
-     ;;   :listid "emacs-orgmode.gnu.org"
-     ;;   :url "https://orgmode.org/list/"
-     ;;   :maildir "~/Mail/Orgmode-maillist/orgmode/")
-     )))
+       :maildir "~/Mail/Orgmode-maillist/orgmode/"))))
 #+end_src
 ***** Integration with =notmuch=
 
