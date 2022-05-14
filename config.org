@@ -13876,7 +13876,10 @@ The subheadings below such a headlines are promoted up *1 level*.
 #+begin_src emacs-lisp
 (use-package org
   :config
-  (setq org-latex-listings t))
+  (use-package engrave-faces
+    :straight (engrave-faces :host github :repo "tecosaur/engrave-faces"))
+  (add-to-list 'org-latex-engraved-options '("breakanywhere" . "true"))
+  (setq org-latex-listings 'engraved))
 #+end_src
 
 
