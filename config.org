@@ -17140,7 +17140,7 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
 #+begin_src emacs-lisp
 (use-package piem
   :if init-flag
-  :straight (piem :repo "https://git.kyleam.com/piem"))
+  :straight (piem :host nil :repo "https://git.kyleam.com/piem"))
 #+end_src
 ***** Repos config
 
