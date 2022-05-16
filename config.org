@@ -5669,7 +5669,10 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 :END:
 
 #+begin_src emacs-lisp
-(use-package image-roll :straight (image-roll :host github :repo "dalanicolai/image-roll.el"))
+(use-package image-roll
+  :straight (image-roll
+             :host github :repo "dalanicolai/image-roll.el"
+             :local-repo "~/Git/image-roll.el"))
 (use-package pdf-tools
   :if init-flag
   :defer t
@@ -5678,6 +5681,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
   ;;            ;;  	    :repo "yantar92/pdf-tools")
   ;;            )
   (:host github :repo "dalanicolai/pdf-tools" :branch "pdf-roll"
+         :local-repo "~/Git/pdf-tools-fork"
          :files ("lisp/*.el" "README"
                  ("build" "Makefile") ("build" "server")
                  (:exclude "lisp/tablist.el" "lisp/tablist-filter.el")))
