@@ -45,13 +45,13 @@ This is me
 
 I am not really doing much programming, but rather use Emacs as knowledge base management tool.  Most time, I do not even edit or type things directly, but read through the files.  Therefore, the main focus of this setup is =org-mode= and not as much programming, navigating through text and not as much editing.
 
-The usage of =org-mode= unfortunately means that the overall performance of Emacs is generally not very good.  To improve things a little, I am trying to run things that "freeze" Emacs most terribly either asynchronously or in separate Emacs process.  Running in separate process would be terribly slow if I just load my main =init.el= over and over again as if I open a new instance of emacs interactively.  Hence, I design my =init.el= in the way that it can load faster in batch mode.
+The usage of =org-mode= unfortunately means that the overall performance of Emacs is generally not very good.  To improve things a little, I am trying to run things that "freeze" Emacs most terribly either asynchronously or in separate Emacs process. Running in separate process would be terribly slow if I just load my main =init.el= over and over again as if I open a new instance of emacs interactively. Hence, I design my =init.el= in the way that it can load faster in batch mode.
 
-This Emacs configuration allows loading Emacs in both interactive and batch modes.  It is controlled by special variables, identifying startup mode:
+This Emacs configuration allows loading Emacs in both interactive and batch modes. It is controlled by special variables, identifying startup mode:
 - =init-flag= :: normal startup, load all the visual packages and options
 - =org-export-flag= :: load necessary options for org-export
 - =org-tangle-flag= :: load necessary options for org-tangle
-One important note about this configuration is that I do not use =desktop-save-mode=.  Everything I intend to do is kept in my org files, which are automatically loaded by org agenda command.
+One important note about this configuration is that I do not use =desktop-save-mode=. Everything I intend to do is kept in my org files, which are automatically loaded by org agenda command.
 
 #+begin_src emacs-lisp
 (defvar init-flag nil
@@ -2790,7 +2790,7 @@ Mostly we check word delimiters."
 #+end_src
 
 **** Dictionary
-*** Code checking
+*** Code and prose checking
 :PROPERTIES:
 :ID:       3a550aad-f2a2-4636-a92c-539cdf230aeb
 :END:
@@ -4167,6 +4167,8 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 :PROPERTIES:
 :ID:       648e38a1-8a1c-4453-ab4c-5376716b2639
 :END:
+
+An alternative is [[id:Github-astoff-astoff-devdocs-el-636][astoff [Github] astoff/devdocs.el: Emacs viewer for DevDocs]], but it does not ([2022-05-14 Sat]) have helm support.
 
 Emacs has an excellent built-in support for Elisp and GNU system documentation.
 Moreover, it can be integrated with all other kinds of documentation using [[id:Kapeli_dash_for_macos_api_docum6c7][Dash]].
