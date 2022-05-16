@@ -3516,8 +3516,7 @@ Instead of =delete-other-windows=, use =windower's= version, which toggles maxim
   :if init-flag
   :init
   (use-package windower
-    :straight (emacs-windower :host gitlab :repo "ambrevar/emacs-windower" :local-repo "~/Git/emacs-windower"
-			      :fork (:host gitlab :repo "yantar92/emacs-windower")))
+    :straight (emacs-windower :host gitlab :repo "ambrevar/emacs-windower" :local-repo "~/Git/emacs-windower"))
   :config
   (bind-keys*
    ("M-1" . windower-toggle-single)
