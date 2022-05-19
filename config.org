@@ -8454,20 +8454,26 @@ The project with parent projects.
   #+begin_src emacs-lisp
 (defun yant/mark-todo-parent-tasks-next ()
   "Visit each parent task and change WAITING states to NEXT."
-  (let ((mystate (or (and (fboundp 'org-state)
-			  state)
-		     (nth 2 (org-heading-components)))))
-    (when (member mystate (list "NEXT"))
-      (save-excursion
-	(while (org-up-heading-safe)
-	  (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-	    (when (member (org-get-todo-state) '("WAITING"))
-	      (org-todo "NEXT"))))))
-    (when (member mystate (list "TODO"))
-      (save-excursion
-	(while (org-up-heading-safe)
-	  (when (member (nth 2 (org-heading-components)) (list "DONE"))
-	    (org-todo "TODO")))))))
+  (let* ((element (org-element-lineage
+                   (org-element-at-point)
+                   '(headline inlinetask)
+                   t))
+         (mystate (or (and (fboundp 'org-state)
+			   state)
+                      (org-element-property :todo-keyword element))))
+    (when (member mystate '("NEXT" "TODO"))
+      (org-with-wide-buffer
+       (setq element (org-element-property :parent element))
+       (while (and element (not (eq 'org-data (org-element-type element))))
+	 (when (or
+                (eq (org-element-property :todo-type element) 'done)
+                (and (eq (org-element-property :todo-type element) 'todo)
+                     (string= (org-element-property :todo-keyword element) "WAITING")))
+	   (org-with-point-at (org-element-property :begin element)
+             (org-todo "NEXT"))
+           ;; `org-todo' will call us recursively.
+           (setq element nil))
+         (setq element (org-element-property :parent element)))))))
 (add-hook 'org-after-todo-state-change-hook 'yant/mark-todo-parent-tasks-next 'append)
 (add-hook 'org-after-refile-insert-hook #'yant/mark-todo-parent-tasks-next)
   #+end_src
