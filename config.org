@@ -5221,7 +5221,12 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   (use-package boon
     :config
     (meta-defun meta-help "Get help on symbol at point." ignore)
-    (meta-defun meta-help :mode org-mode :cond (org-in-src-block-p) helpful-at-point)
+    (meta-defun meta-help
+      :mode org-mode
+      :cond
+      (or (org-in-src-block-p)
+          (eq 'code (org-element-type (org-element-context))))
+      helpful-at-point)
     (meta-defun meta-help :mode emacs-lisp-mode helpful-at-point)
     (meta-defun meta-help :mode lisp-interaction-mode helpful-at-point)
     (meta-defun meta-help :mode helpful-mode helpful-at-point)
