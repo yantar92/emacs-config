@@ -2790,7 +2790,26 @@ Mostly we check word delimiters."
 #+end_src
 
 **** Dictionary
-*** Code and prose checking
+***** =wordnut=
+[[id:Github-gromnitsky-gromnitsky-wordnut-emacs-0d0][gromnitsky [Github] gromnitsky/wordnut: Emacs major mode interface to WordNet lexical database]]
+Requires installed [[id:0ce5f9c5-7c71-46dc-94ef-3cf7ed51fba4][=app-dicts/wordnet= package]]
+
+#+begin_src emacs-lisp
+(use-package wordnut
+  :straight t
+  :demand t
+  :config
+  (meta-defun meta-help
+    :mode org-mode
+    :cond
+    (progn
+      (and
+       (not (memq (org-element-type (org-element-at-point)) '(src-block)))
+       (not (memq (org-element-type (org-element-context)) '(code)))))
+    (wordnut-search (word-at-point))))
+#+end_src
+
+*** Code and prose checking (=flycheck=)
 :PROPERTIES:
 :ID:       3a550aad-f2a2-4636-a92c-539cdf230aeb
 :END:
