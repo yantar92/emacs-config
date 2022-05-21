@@ -17546,7 +17546,7 @@ loop-file=yes
 
 ** Key bindings
 :PROPERTIES:
-:header-args+: :header-args+: :tangle ~/.config/mpv/input.conf
+:header-args+: :tangle ~/.config/mpv/input.conf
 :ID:       e7397414-188d-47eb-9388-c06bcb4dffd2
 :END:
 
