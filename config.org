@@ -2824,7 +2824,8 @@ Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's notes: Trying
   :if init-flag
   :straight t
   :diminish (flycheck-mode . " λ✓")
-  :hook ((prog-mode lisp-interaction-mode) . flycheck-mode)
+  :init
+  (global-flycheck-mode +1)
   :config
   (use-package flycheck-tip
     :straight t
