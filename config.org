@@ -5255,6 +5255,15 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
                ("h T" . helm-info-texinfo))))
 #+end_src
 *** Python
+**** Do not inform me every time Python guesses indentation offset
+
+#+begin_src emacs-lisp
+(use-package python
+  :if init-flag
+  :custom
+  (python-indent-guess-indent-offset-verbose nil))
+#+end_src
+
 **** =Elpy= python development environment
 
 #+begin_src emacs-lisp
