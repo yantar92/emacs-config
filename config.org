@@ -2537,8 +2537,8 @@ Highlighting typos is crucial.
   :init
   (use-package boon)
   :config
-  (setq ispell-program-name "/usr/bin/ispell-aspell")
-  (setq ispell-dictionary "british")
+  (setq ispell-program-name "/usr/bin/hunspell")
+  (setq ispell-dictionary "american")
   (use-package no-littering
     :demand t
     :config
