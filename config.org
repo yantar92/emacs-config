@@ -2823,11 +2823,21 @@ Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's notes: Trying
 #+begin_src emacs-lisp
 (use-package flycheck
   :if init-flag
+  :demand t
   :straight t
-  :diminish (flycheck-mode . " λ✓")
   :init
   (global-flycheck-mode +1)
+  (setq flycheck-mode-line-prefix "λ✓")
+  (setq flycheck-global-modes '(not lisp-interaction-mode))
+  (add-hook 'org-mode-hook #'yant/flycheck-disable-for-large-files)
   :config
+  (defvar yant/flycheck-file-size-threshold (* 1000 500)
+    "Maximum file size in bytes where `flycheck-mode' is allowed.")
+  (defun yant/flycheck-disable-for-large-files ()
+    "Disable flycheck in large files.
+The maximum file size is `yant/flycheck-file-size-threshold'."
+    (when (> (buffer-size) yant/flycheck-file-size-threshold)
+      (flycheck-mode -1)))
   (use-package flycheck-tip
     :straight t
     :config
