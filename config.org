@@ -15924,10 +15924,7 @@ In order to make the remainder consistent, the multi-byte characters are conside
 ****************** END
 
 In addition use =:align-to= ='display= spec to align tags to right border of the window.
-
-****************** TODO maybe patch org-string-width 
-****************** END
-
+ #align #agenda
 #+begin_src emacs-lisp
 (defun string-display-width (string &optional mode)
   "Calculate diplayed column width of STRING.
@@ -16041,23 +16038,23 @@ Optional MODE specifies major mode used for display."
 	    (let* ((tag-width (when (re-search-forward org-tag-group-re (point-at-eol) 'noerror)
 				(string-display-width (match-string 1))))
 		   (beg (point-at-bol))
-		   (end (if tag-width (match-beginning 0) (point-at-eol)))
-		   (tag-width (or tag-width 0)))
-	      (setf (buffer-substring beg end)
-		    (string-display-truncate (buffer-substring beg end)
-					     (- window-width
-						tag-width
-						(string-display-width (s-concat ellipsis gap)))
-                                             nil 'hide ellipsis))
-	      (goto-char (next-single-char-property-change (point-at-bol) 'truncated nil (point-at-eol)))
-	      (let ((truncated-string (buffer-substring (point) (next-single-char-property-change (point) 'truncated nil (point-at-eol)))))
-		(unless (seq-empty-p truncated-string)
-		  (remove-text-properties 0 (length truncated-string) '(truncated nil invisible nil display nil) truncated-string)
-		  (add-text-properties 0 (length truncated-string) '(org-agenda-afterline t) truncated-string)
-		  (end-of-line)
-		  (insert (apply #'propertize ellipsis
-				 (text-properties-at 0 truncated-string)))
-		  (insert truncated-string)))
+		   (end (if tag-width (match-beginning 0) (point-at-eol))))
+              (when tag-width
+	        (setf (buffer-substring beg end)
+		      (string-display-truncate (buffer-substring beg end)
+					       (- window-width
+						  tag-width
+						  (string-display-width (s-concat ellipsis gap)))
+                                               nil 'hide ellipsis))
+	        (goto-char (next-single-char-property-change (point-at-bol) 'truncated nil (point-at-eol)))
+	        (let ((truncated-string (buffer-substring (point) (next-single-char-property-change (point) 'truncated nil (point-at-eol)))))
+		  (unless (seq-empty-p truncated-string)
+		    (remove-text-properties 0 (length truncated-string) '(truncated nil invisible nil display nil) truncated-string)
+		    (add-text-properties 0 (length truncated-string) '(org-agenda-afterline t) truncated-string)
+		    (end-of-line)
+		    (insert (apply #'propertize ellipsis
+				   (text-properties-at 0 truncated-string)))
+		    (insert truncated-string))))
               (end-of-line))))))))
 
 ;; (add-hook! 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
