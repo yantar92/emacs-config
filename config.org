@@ -2779,6 +2779,38 @@ Mostly we check word delimiters."
   ;; (add-hook! 'notmuch-mua-send-hook #'langtool-check-buffer-ensure)
   )
 #+end_src
+**** =Writegood=: Highlight common problematic words, including custom words
+
+[[id:Github-bnbeckwith-bnbeckwith-writegood-mode-453][bnbeckwith [Github] bnbeckwith/writegood-mode: Minor mode for Emacs to improve English writing]]
+
+This mode is generally less powerful than [[id:955d0dd9-29d4-4bde-a9a3-46129580ba6f][Language tool]], but it allows easy customization of things to highlight - useful to define my personal words to pay attention to.
+
+Note that I write a lot of scientific staff and hence passive voice is hard to avoid. I just disable the passive voice highlights.
+
+#+begin_src emacs-lisp
+(use-package writegood-mode
+  :straight t
+  :hook (org-mode . yant/writegood-mode)
+  :config
+  (defun yant/writegood-mode (&optional arg)
+    "Turn on `writegood-mode', but disable passive voice checks."
+    (writegood-mode +1)
+    (writegood-passive-voice-turn-off)))
+#+end_src
+
+[[id:English-Language-Usage-Stack-Exchange-expressing-opinion-to-903][[English Language \& Usage Stack Exchange] Expressing an opinion: to me or for me?]]
+#+begin_src emacs-lisp
+(use-package writegood-mode
+  :config
+  (defun writegood-weasels-font-lock-keywords ()
+    `((,(writegood-weasels-font-lock-keywords-regexp)
+       0 '(face writegood-weasels-face help-echo ,writegood-weasel-words-tooltip) prepend)
+      ("For me,"
+       0 '(face writegood-weasels-face help-echo "Use \"To me\" instead") prepend)
+      ("Schmidt"
+       0 '(face writegood-weasels-face help-echo "Use \"Schmid\" instead") prepend))))
+#+end_src
+
 **** Style
 ***** =smog= (using GNU diction)
 
