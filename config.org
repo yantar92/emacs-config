@@ -17516,6 +17516,7 @@ I prefer huge cache to preload online videos if possible. Connection is not alwa
 #+begin_src conf
 cache=yes
 cache-secs=1800                           # how many seconds of audio/video to prefetch if the cache is active
+prefetch-playlist=yes
 #+end_src
 
 *** Subtitles
