@@ -11810,8 +11810,14 @@ current task to NEXT and schedule it the same day."
              (string= "ML:Org mode" (org-entry-get marker "HOWPUBLISHED")))
         (setq link (org-entry-get marker "LINK"))
         (save-match-data
-          (when (string-match "^notmuch:id:\\(.+\\)" link)
-            (insert (format "https://orgmode.org/list/%s" (match-string 1 link)))))))))
+          (cond
+           ((string-match "^notmuch:id:\\(.+\\)" link)
+            (insert (format "https://orgmode.org/list/%s" (match-string 1 link))))
+           ((string-match "^notmuch:thread:\\(.+\\)" link)
+            (let ((msgid (symbol-name (notmuch-call-notmuch-sexp "search" "--output=messages" (match-string 1 link)))))
+              (string-match "^id:\\(.+\\)" msgid)
+              (insert (format "https://orgmode.org/list/%s" (match-string 1 msgid)))))
+           ))))))
   (defun yant/helm-org-ql-open-url (marker)
     "Open URL from link"
     ;; Indicate that we do not need to stay in current frame.
