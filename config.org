@@ -11995,11 +11995,19 @@ current task to NEXT and schedule it the same day."
 :ID:       1bc88aed-5729-4a0e-b52c-65e5d46f635b
 :END:
 
+This was first inspired by [[id:Github-org-roam-org-roam-org-3b7][org-roam [Github] org-roam/org-roam: Rudimentary Roam replica with Org-mode]] and then extended using ideas from [[id:Writings.Stephenwolfram-seeking-productive-life-a14][[Writings.Stephenwolfram] Seeking the Productive Life: Some Details of My Personal Infrastructure—Stephen Wolfram Writings]].
+
+With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through everything I got digitally. Be it bookmarks, personal notes, emails, files, buffers, etc.
+
+****************** TODO In future, I might all add searching across the filesystem and over internet (via semanticscholar)
+****************** END
+
 #+begin_src emacs-lisp
 (use-package helm-org-ql
   :straight (helm-org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
 			 :fork (:host github :repo "yantar92/org-ql"))
   :after org-ql
+  :after helm-notmuch
   :custom
   (helm-org-ql-reverse-paths t)
   (helm-org-ql-show-paths nil)
@@ -12007,6 +12015,7 @@ current task to NEXT and schedule it the same day."
   (helm-candidate-number-limit 150)
   :config
   (require 'helm-org-ql)
+  (require 'helm-notmuch)
   (use-package boon
     :config
     (cl-defun yant/helm-org-ql-agenda-files (arg)
@@ -12018,6 +12027,7 @@ current task to NEXT and schedule it the same day."
             (helm-full-frame t)
             (helm-buffer-max-length 80))
         (helm :prompt (format "Query (boolean and): ")
+              :truncate-lines t
               :sources (list (helm-make-source "Buffers" 'helm-source-buffers)
                              (helm-make-source "Recentf" 'helm-recentf-source
                                :fuzzy-match helm-recentf-fuzzy-match)
@@ -12027,6 +12037,7 @@ current task to NEXT and schedule it the same day."
                                                            '(not (and (not (tags-local "ARCHIVE"))
                                                                     (tags "ARCHIVE"))))
                                                  :limit-count 150)
+                             helm-source-notmuch
                              (helm-make-source "External Commands" 'helm-external-commands
                                :data (helm-external-commands-list-1 'sort)
                                :candidate-number-limit 15
