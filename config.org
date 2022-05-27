@@ -18529,3 +18529,37 @@ Requires [[id:069366f4-0eac-4d23-b186-7020185e1bcb][=media-gfx/graphviz=: LaTeX 
     (add-hook hook #'elisp-def-mode)))
 #+end_src
 
+** Remind me about adding Woof headers when sending messages to org-mode maillist :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ID:       5b1ce8da-875f-4e49-9d8d-8b0a4814c3c9
+:SUMMARY:  Woof will not support X-Woof-* headers in future releases. No need in this
+:ARCHIVE_TIME: 2022-05-26 Thu 20:21
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/News & email/=Notmuch=/Message verification before sending
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+- Note taken on [2022-05-26 Thu 20:21] \\
+  Woof will not support X-Woof-* headers in future releases. No need in this
+Making sure to conform to Bastein's [[notmuch:id:87o8lwhek2.fsf@gnu.org][request]] asking to use Woof conventions when sending emails. [[id:74d229fc782c20a7f32a04f07863af51598994b5][[Github] woof: Watch Over Our Folders]]
+
+#+begin_src emacs-lisp
+(use-package notmuch
+  :if init-flag
+  :defer t
+  :config
+  (defun yant/notmuch-mua-woof-check-maybe ()
+    "Remind to use Woof headers when sending email to org-mode maillist."
+    (let ((case-fold-search t))
+      (save-excursion
+	(goto-char (point-min))
+	(when (re-search-forward "^\\(To:\\|Cc:\\).+emacs-orgmode@gnu\\.org" nil t)
+          (goto-char (point-min))
+          (unless (re-search-forward "^X-Woof-\\(Bug\\|Help\\|Change\\|Release\\|Patch\\):" nil t)
+            (unless (yes-or-no-p "No Woof-(Bug|Help|Patch): t/nil headers found in message being sent to emacs-orgmode@gnu.org. Send anyway? ")
+	      (error "Forgot Woof headers")))))))
+  (add-hook 'notmuch-mua-send-hook #'yant/notmuch-mua-woof-check-maybe))
+#+end_src
+
+
