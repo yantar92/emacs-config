@@ -8356,7 +8356,7 @@ I have two ways to do it:
    (cl-mapc #'org-set-property
 	    '("STYLE" "REPEAT_TO_STATE" "LOGGING" "ARCHIVE")
 	    '("habit" "NEXT" "DONE(!)" "%S_archive_%y.org::* Habits"))
-   (message "Task is not habit.")))
+   (message "Task is now habit.")))
 (bind-key "C-c C-x h" #'yant/org-task-convert-to-habit org-mode-map)
 #+end_src
 
