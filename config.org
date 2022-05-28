@@ -5255,18 +5255,12 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 :END:
 
 #+begin_src emacs-lisp
-(use-package helm
-  :if init-flag
-  :demand t
-  :after helm-dash
+(use-package helm-info
+  :after helm
   :config
-  ;; Update the info file list.
-  (add-hook
-   'after-init-hook
-   (lambda ()
-     (custom-reevaluate-setting 'helm-default-info-index-list)))
-  :init
   (use-package boon
+    :if init-flag
+    :after dash
     :config
     (meta-defun meta-help "Get help on symbol at point." ignore)
     (meta-defun meta-help
