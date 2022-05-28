@@ -1869,12 +1869,14 @@ I currently do not use hydras often.
 
 Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_thread/ehcg919/
 #+begin_src emacs-lisp
-(when init-flag
-;; free up blocked keys (GUI only)
-;; add to your init.el
-(define-key input-decode-map [?\C-m] [C-m])
-(define-key input-decode-map [?\C-i] [C-i])
-(define-key input-decode-map (kbd "C-[") [C-\[]))
+  (when init-flag
+  ;; free up blocked keys (GUI only)
+  ;; add to your init.el
+  (define-key input-decode-map [?\C-m] [C-m])
+  (define-key input-decode-map [?\C-i] [C-i])
+  ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=55672
+  ;; (define-key input-decode-map (kbd "C-[") [C-\[])
+)
 #+end_src
 
 **** Disable some keybinding, which interfere with my setup (easy to press by mistake)
