@@ -2720,7 +2720,7 @@ Mostly we check word delimiters."
                        (require 'lsp-ltex)
                        (lsp-deferred))))
 #+END_SRC
-***** Run =languagetool= on region
+***** COMMENT Run =languagetool= on region
 
 #+BEGIN_SRC emacs-lisp  
 (use-package langtool
@@ -2759,7 +2759,36 @@ Mostly we check word delimiters."
   (bind-key "M-s" #'help/hydra/both/langtool/body boon-forward-search-map))
 
 #+end_src
-***** TODO Check grammar in emails before sending
+***** COMMENT =languagetool= via [[id:3a550aad-f2a2-4636-a92c-539cdf230aeb][Flycheck]]
+
+#+begin_src emacs-lisp
+(use-package flycheck-languagetool
+  :straight (flycheck-languagetool :host github :repo "emacs-languagetool/flycheck-languagetool")
+  :init
+  (define-advice flycheck-languagetool--start-server (:around (oldfun) start-cmd)
+    "Start languagetool server via cmd."
+    (if (string-suffix-p "jar" flycheck-languagetool-server-jar)
+        (funcall oldfun)
+      (unless (process-live-p (get-process "languagetool-server"))
+        (let ((process
+               (apply #'start-process
+                      "languagetool-server"
+                      " *LanguageTool server*"
+                      flycheck-languagetool-server-jar
+                      "--port" (format "%s" flycheck-languagetool-server-port)
+                      flycheck-languagetool-server-args)))
+          (set-process-query-on-exit-flag process nil)
+          (while
+              (with-current-buffer (process-buffer process)
+                (goto-char (point-min))
+                (unless (re-search-forward " Server started$" nil t)
+                  (accept-process-output process 1)
+                  (process-live-p process))))))))
+  (setq flycheck-languagetool-server-jar "/usr/bin/languagetool-server"
+        flycheck-languagetool-url nil))
+#+end_src
+
+***** TODO COMMENT Check grammar in emails before sending
 :PROPERTIES:
 :SUMMARY:  Somehow it puts wrong overlays in many messages
 :END:
