@@ -279,7 +279,6 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
 			:type git :repo "git@git.sr.ht:~bzg/org-contrib"
 			:local-repo "~/Git/org-contrib"))
 #+end_src
-
 *** Working with =straight.el=
 :PROPERTIES:
 :ID:       074753f0-ef60-49af-a6a5-70db021e8f52
@@ -17802,13 +17801,10 @@ q ignore
 **** Change quality :ATTACH:
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 02:52]
-:ID:       f8737f19-a0ac-4785-a62c-2504313910ec
+:ID:       d745535d-faf9-4ab2-b39c-89b8c6087c44
 :END:
 ****************** SOMEDAY save repo separately :SOMEDAY:
 ****************** END
-:PROPERTIES:
-:ID: 81ccc50f-f0a4-4a92-b587-ae82f3dc4f0e
-:END:
 
 =C-f= to call menu.
 
