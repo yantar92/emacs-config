@@ -15548,7 +15548,13 @@ Verbatim text font
   :custom-face
   (org-verbatim ((t (:height 0.95 :weight semi-light)))))
 #+end_src
-
+***** Render latex fragments
+#+begin_src emacs-lisp
+(use-package org
+  :if init-flag
+  :init
+  (setq org-highlight-latex-and-related '(native latex 'script)))
+#+end_src
 **** Links
 ***** Show broken links to files
 :PROPERTIES:
