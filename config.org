@@ -12315,16 +12315,6 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 ;;     (org-refresh-properties "SHOWDATES" 'showdates)
 ;;     (org-refresh-properties "SHOWFROMTIME" 'showfromtime)))
 #+end_src
-***** Speed up agenda by caching some built-in functions
-:PROPERTIES:
-:ID:       c180f2bc-c331-4804-9f53-f502032ee91b
-:END:
-
-#+begin_src emacs-lisp
-(memoize-by-buffer-contents #'org-get-buffer-tags)
-;; (memoize-by-buffer-contents #'org-refresh-category-properties)
-;; (memoize-by-buffer-contents #'org-refresh-effort-properties)
-#+end_src
 ***** Speed up agenda by disabling cookies fontification
 :PROPERTIES:
 :ID:       a98c4333-4712-4c43-8da8-08a67e8352f0
@@ -18777,4 +18767,21 @@ Making sure to conform to Bastein's [[notmuch:id:87o8lwhek2.fsf@gnu.org][request
   (add-hook 'notmuch-mua-send-hook #'yant/notmuch-mua-woof-check-maybe))
 #+end_src
 
+** Speed up agenda by caching some built-in functions :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ID:       c180f2bc-c331-4804-9f53-f502032ee91b
+:SUMMARY:  These functions are now fast enough using org-element-cache. Calculating buffer hash is actually slowing things down.
+:ARCHIVE_TIME: 2022-06-08 Wed 12:19
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Agenda & scheduling
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
 
+- Note taken on [2022-06-08 Wed 12:18] \\
+  These functions are now fast enough using org-element-cache. Calculating buffer hash is actually slowing things down.
+#+begin_src emacs-lisp
+(memoize-by-buffer-contents #'org-get-buffer-tags)
+;; (memoize-by-buffer-contents #'org-refresh-category-properties)
+;; (memoize-by-buffer-contents #'org-refresh-effort-properties)
+#+end_src
