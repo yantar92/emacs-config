@@ -15952,7 +15952,7 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
 ****************** TODO rewrite into smaller chunks
 ****************** END
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package doom-themes
   :if init-flag
   :straight t
