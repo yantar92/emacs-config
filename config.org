@@ -2511,30 +2511,36 @@ User-defined temporary highlighting.
 
 Typos are inevitable. 
 Highlighting typos is crucial.
-
 **** =Flyspell=
 :PROPERTIES:
 :CREATED:  [2018-10-12 Fri 14:07]
 :ID:       b79658d1-8d62-4c47-be3b-cc399a0a8c59
 :END:
+***** Run =flyspell= on idle
 
-****************** TODO fly =ispell= only with idle timer?
-****************** END
-****************** TODO enable in org-mode
-****************** END
+[[id:Github-rolandwalker-rolandwalker-flyspell-lazy-fe7][rolandwalker [Github] rolandwalker/flyspell-lazy: Improve Emacs flyspell responsiveness using idle timers]]
 
 #+begin_src emacs-lisp
+(use-package flyspell-lazy
+  :if init-flag
+  :straight t)
 (use-package flyspell
   :if init-flag
-  :straight t
-  :after org
+  :straight t 
   :diminish (flyspell-mode . " ✓")
+  :init (flyspell-lazy-mode +1)
   :hook ((notmuch-message-mode org-mode text-mode) . flyspell-mode)
   :hook ((prog-mode) . flyspell-prog-mode)
   :bind (("<f8>" . ispell-word)
 	 ("M-<f8>" . ispell-buffer)
          :map boon-forward-search-map
-         ("s" . flyspell-goto-next-error))
+         ("s" . flyspell-goto-next-error)))
+#+end_src
+***** Use hunspell and American dictionary
+
+#+begin_src emacs-lisp
+(use-package flyspell
+  :if init-flag
   :init
   (use-package boon)
   :config
@@ -5054,7 +5060,6 @@ Too long is defined by `yant/profiler-max-time'."
   :if init-flag
   :straight t)
 #+end_src
-
 *** Debugging of font-lock
 :PROPERTIES:
 :CREATED:  [2020-07-28 Tue 17:46]
