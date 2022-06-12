@@ -798,7 +798,7 @@ No tool bar, no scroll bar, no menu bar.
   (menu-bar-mode -1))
 #+END_SRC
 
-Because of the [[id:404c54f5-26eb-4ada-8a0f-c27efc714238][color scheme]] I use, the border between windows is not easy to distinguish.
+Because of the [[id:335a0a70-61ef-4691-bf1f-90351bd7c3bd][color scheme]] I use, the border between windows is not easy to distinguish.
 Using =window-divider-mode= to emphasise it more.
 
 #+BEGIN_SRC emacs-lisp
