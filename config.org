@@ -638,6 +638,7 @@ In batch mode, increase the threshold to make things faster.
 (if init-flag
     (setq gc-cons-threshold (* 200 1000 1000))
   (setq gc-cons-threshold (* 1 1000 1000 1000)))
+(setq garbage-collection-messages t)
 #+end_src
 *** Do not compact font caches
 
