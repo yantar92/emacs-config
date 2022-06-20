@@ -635,8 +635,9 @@ Reducing help:gcmh-cons-threshold to avoid hangs on undo.
 And increase GC threshold on top of that (I found emacs spend >25% of time doing GC when just moving around the buffer). 
 In batch mode, increase the threshold to make things faster.
 #+begin_src emacs-lisp
+(setq gc-cons-percentage 0.0001)
 (if init-flag
-    (setq gc-cons-threshold (* 200 1000 1000))
+    (setq gc-cons-threshold (* 250 1000 1000))
   (setq gc-cons-threshold (* 1 1000 1000 1000)))
 (setq garbage-collection-messages t)
 #+end_src
