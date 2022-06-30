@@ -639,7 +639,7 @@ In batch mode, increase the threshold to make things faster.
 (if init-flag
     (setq gc-cons-threshold (* 250 1000 1000))
   (setq gc-cons-threshold (* 1 1000 1000 1000)))
-(setq garbage-collection-messages t)
+;; (setq garbage-collection-messages nil)
 #+end_src
 *** Do not compact font caches
 
@@ -16804,6 +16804,7 @@ Turning on org element cache in attempt to make it faster.
 #+begin_src emacs-lisp
 (custom-set-variables '(org-element-use-cache t))
 (custom-set-variables '(org-element--cache-self-verify nil))
+;; (setq org-element--cache-diagnostics-level 3)
 (setq org-element--cache-diagnostics-ring-size 200000)
 (custom-set-variables '(org-element--cache-self-verify-frequency 0.05))
 #+end_src
