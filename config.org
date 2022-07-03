@@ -4772,6 +4772,16 @@ $0
 #+end_src
 
 *** Undo
+**** Save undo history between Emacs sessions
+
+[[id:Github-emacsorphanage-emacsorphanage-undohist-persistent-37b][emacsorphanage [Github] emacsorphanage/undohist: Persistent Undo History for GNU Emacs]]
+
+#+begin_src emacs-lisp
+(use-package undohist
+  :straight t
+  :config
+  (undohist-initialize))
+#+end_src
 
 **** COMMENT Undo-tree 
 :PROPERTIES:
