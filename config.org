@@ -2844,13 +2844,11 @@ Mostly we check word delimiters."
         flycheck-languagetool-url nil))
 #+end_src
 
-***** TODO COMMENT Check grammar in emails before sending
+***** Check grammar in emails before sending
 :PROPERTIES:
 :SUMMARY:  Somehow it puts wrong overlays in many messages
 :END:
 
-- Note taken on [2021-08-17 Tue 17:58] \\
-  Somehow it puts wrong overlays in many messages
 #+begin_src emacs-lisp
 (use-package langtool
   :if init-flag
@@ -2859,12 +2857,15 @@ Mostly we check word delimiters."
   (defun langtool-check-buffer-ensure ()
     "Force full check of current buffer.  Block Emacs until check is done."
     (interactive)
-    (langtool-check-buffer)
+    (save-excursion
+      (message-goto-body)
+      (push-mark (point) 'silent 'activate)
+      (goto-char (point-max))
+      (langtool-check-buffer))
     (while langtool-buffer-process
       (sleep-for 0.1))
     (langtool-correct-buffer))
-  ;; (add-hook! 'notmuch-mua-send-hook #'langtool-check-buffer-ensure)
-  )
+  (add-hook! 'notmuch-mua-send-hook #'langtool-check-buffer-ensure))
 #+end_src
 **** =Writegood=: Highlight common problematic words, including custom words
 
