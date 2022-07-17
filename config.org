@@ -2761,6 +2761,60 @@ Mostly we check word delimiters."
   (bind-key "M-s" #'help/hydra/both/langtool/body boon-forward-search-map))
 
 #+end_src
+***** Ignore markup
+[[id:Github-cjl8zf-cjl8zf-langtool-ignore-c3a][cjl8zf [Github] cjl8zf/langtool-ignore-fonts: Force Emacs Langtool to ignore certain fonts. For example, this can be used to prevent langtool from highlighting LaTeX in math-mode.]]
+
+#+begin_src emacs-lisp
+(use-package langtool-ignore-fonts
+  :straight t
+  :if init-flag
+  :after langtool
+  :config
+  (add-hook!
+    (latex-mode
+    ;; Too slow on large buffers.
+     ;; org-mode 
+     markdown-mode notmuch-message-mode)
+    'langtool-ignore-fonts-minor-mode)
+  (langtool-ignore-fonts-add
+   'latex-mode  '(font-lock-comment-face
+		  font-latex-math-face font-latex-string-face))
+  (langtool-ignore-fonts-add 'markdown-mode '(markdown-code-face))
+  (langtool-ignore-fonts-add
+   'org-mode  '(org-property-value org-block org-link))
+  (langtool-ignore-fonts-add
+   'notmuch-message-mode
+   '( message-cited-text-1 message-cited-text-2
+      message-cited-text-3 message-cited-text-4)))
+#+end_src
+***** Auto-check current paragraph
+
+#+begin_src emacs-lisp
+(use-package langtool
+  :if init-flag
+  :config
+  (defvar yant/langtool-check-last-run-time (current-time)
+    "Last time `yant/langtool-check-current-paragraph' was executed.")
+  (defvar yant/langtool-check-timeout 10
+    "Timeout in seconds between Langtool checks.")
+  (defun yant/langtool-check-current-paragraph ()
+    "Check current paragraph in Org-mode."
+    (when (and (eq major-mode 'org-mode)
+               (> (float-time
+                   (time-since yant/langtool-check-last-run-time))
+                  yant/langtool-check-timeout)
+               (not langtool-buffer-process))
+      (let ((element (org-element-at-point)))
+        (when (memq (org-element-type element) '(paragraph))
+          (org-with-wide-buffer
+           (push-mark (org-element-property :begin element) 'silent 'activate)
+           (goto-char (org-element-property :end element))
+           (setq yant/langtool-check-last-run-time (current-time))
+           (funcall-interactively #'langtool-check))))))
+  (add-hook! org-mode
+    (add-hook! :local 'post-self-insert-hook #'yant/langtool-check-current-paragraph)))
+#+end_src
+
 ***** COMMENT =languagetool= via [[id:3a550aad-f2a2-4636-a92c-539cdf230aeb][Flycheck]]
 
 #+begin_src emacs-lisp
