@@ -15658,7 +15658,7 @@ Verbatim text font
 (use-package org
   :if init-flag
   :init
-  (setq org-highlight-latex-and-related '(native latex 'script)))
+  (setq org-highlight-latex-and-related '(native latex script)))
 #+end_src
 **** Links
 ***** Show broken links to files
