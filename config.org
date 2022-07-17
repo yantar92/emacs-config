@@ -2721,11 +2721,12 @@ Mostly we check word delimiters."
                        (require 'lsp-ltex)
                        (lsp-deferred))))
 #+END_SRC
-***** COMMENT Run =languagetool= on region
+***** Run =languagetool= on region
 
 #+BEGIN_SRC emacs-lisp  
 (use-package langtool
   :straight t
+  :if init-flag
   :init
   (setq langtool-bin "languagetool")
   (setq langtool-default-language "en-GB")
