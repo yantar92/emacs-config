@@ -5834,8 +5834,13 @@ This is also required for =cdlatex= to work with org-mode.
   :straight t
   )
 #+END_SRC
-** Jupyter
+** COMMENT Jupyter
+:PROPERTIES:
+:SUMMARY:  emacs crushes because of emacs-zmq.so
+:END:
 
+- Note taken on [2022-07-17 Sun 15:20] \\
+  emacs crushes because of emacs-zmq.so
 Use scimax version
 
 #+begin_src emacs-lisp
