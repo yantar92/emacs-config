@@ -16922,11 +16922,12 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 #+begin_src emacs-lisp
 (use-package ol-notmuch
   :after org
+  :straight t
   :init (require 'notmuch)
   :custom
   (org-notmuch-open-function (lambda (link) (if (string-match-p "thread:" link)
-                                           (org-notmuch-tree-follow-link link)
-                                         (org-notmuch-tree-follow-link link)))))
+                                           (org-notmuch-follow-link link)
+                                         (org-notmuch-follow-link link)))))
 (use-package helm-notmuch
   :straight t
   :after (notmuch helm)
