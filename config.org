@@ -2807,10 +2807,17 @@ Mostly we check word delimiters."
       (let ((element (org-element-at-point)))
         (when (memq (org-element-type element) '(paragraph))
           (org-with-wide-buffer
-           (push-mark (org-element-property :begin element) 'silent 'activate)
+           (push-mark (org-element-property :post-affiliated element) 'silent 'activate)
            (goto-char (org-element-property :end element))
-           (setq yant/langtool-check-last-run-time (current-time))
-           (funcall-interactively #'langtool-check))))))
+           ;; Move to the last complete sentence.
+           (if (search-backward
+                "\\. "
+                (org-element-property :post-affiliated element)
+                t)
+               (progn
+                 (setq yant/langtool-check-last-run-time (current-time))
+                 (funcall-interactively #'langtool-check))
+             (deactivate-mark)))))))
   (add-hook! org-mode
     (add-hook! :local 'post-self-insert-hook #'yant/langtool-check-current-paragraph)))
 #+end_src
