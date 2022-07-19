@@ -12408,7 +12408,7 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 (setq org-agenda-fontify-priorities nil)
 #+end_src
 
-**** TODO COMMENT Contacts
+**** TODO Contacts
 :PROPERTIES:
 :CREATED:  [2018-09-05 Wed 06:39]
 :ID:       8074623d-bc14-43c7-908c-28213b2b6149
