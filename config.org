@@ -2872,7 +2872,7 @@ Mostly we check word delimiters."
     (while langtool-buffer-process
       (sleep-for 0.1))
     (langtool-correct-buffer))
-  (add-hook! 'notmuch-mua-send-hook #'langtool-check-buffer-ensure))
+  (add-hook! 'message-send-hook #'langtool-check-buffer-ensure))
 #+end_src
 **** =Writegood=: Highlight common problematic words, including custom words
 
