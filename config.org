@@ -7989,9 +7989,10 @@ I automated the check by examining WORG repository directly and checking the ~gi
                      (goto-char (point-min))
                      (org-with-wide-buffer
                       (replace-regexp-in-string
-                       "(.+" ""
+                       " *(.+" ""
                        (buffer-substring (line-beginning-position 0) (line-end-position 0)))))))
           first-mention email-count)
+      (setq sender (string-trim sender))
       (setq first-mention
             (plist-get
              (car (read
