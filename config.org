@@ -7920,7 +7920,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
         (setq sender (alist-get sender yant/org-devel-committer-aliases sender nil #'equal)))
       (if (not email)
           (propertize
-           "Contributor status unknown"
+           "Contributor status unknown\n"
            'face 'modus-themes-refine-red)
         (when (or (not all-committers)
 	          (not yant/org-devel-committers-cache-update-time)
@@ -7978,7 +7978,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
                (concat "Tiny change contributor; " (gethash email yant/org-devel-committers-stats))
                'face 'modus-themes-refine-yellow)))
           (propertize
-           "Contributor status unknown"
+           "Contributor status unknown\n"
            'face 'modus-themes-refine-red)))))
 
   (defun yant/org-devel-get-notmuch-sender-ML-status ()
@@ -8015,19 +8015,20 @@ I automated the check by examining WORG repository directly and checking the ~gi
     "Indicate contributor status for Org ML.
 This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
     (goto-char (point-min))
-    (while (looking-at "^[A-Za-z][-A-Za-z0-9]*:")
-      (forward-line))
-    (when (save-excursion (search-backward "emacs-orgmode@gnu.org" nil t))
-      (put-text-property
-       (1- (point)) (point)
-       'display
-       (concat "\t" (yant/org-devel-get-notmuch-sender-FSF-status) "\n"))
-      (while (looking-at "^[A-Za-z][-A-Za-z0-9]*:")
+    (let ((indentation
+           (progn
+             (looking-at "^ *")
+             (match-string 0))))
+      (while (looking-at "^ *[A-Za-z][-A-Za-z0-9]*:")
         (forward-line))
-      (put-text-property
-       (line-end-position -1) (1+ (line-end-position -1))
-       'display
-       (concat "\t" (yant/org-devel-get-notmuch-sender-ML-status) "\n"))))
+      (when (save-excursion (search-backward "emacs-orgmode@gnu.org" nil t))
+        (put-text-property
+         (1- (point)) (point)
+         'display
+         (concat
+          "\n"
+          indentation (yant/org-devel-get-notmuch-sender-FSF-status)
+          indentation (yant/org-devel-get-notmuch-sender-ML-status) "\n")))))
 
   (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contribution-status))
 #+end_src
