@@ -7879,6 +7879,157 @@ This should be called as a hook ran inside `message-header-setup-hook'."
   (add-hook! 'notmuch-show-hook #'yant/notmuch-show-fontify-semanticscholar-email)
   (add-hook! 'notmuch-show-hook #'yant/notmuch-show-fontify-keywords))
 #+end_src
+**** Detect FSF contribution status of sender for Org ML
+
+We usually check contribution status in https://orgmode.org/worg/contributors.html
+However, this is manual and get annoying quickly.
+I automated the check by examining WORG repository directly and checking the ~git log~ in Org repo.
+
+#+begin_src emacs-lisp
+(when init-flag
+  (defvar yant/org-devel-committers-cache nil
+    "String holding all the committers.")
+  (defvar yant/org-devel-committers-stats nil
+    "Hash table holding committer stats.")
+  (defvar yant/org-devel-committers-cache-update-time nil
+    "Last time `yant/org-devel-committers-cache' was refreshed.")
+  (defvar yant/org-devel-committers-cache-update-interval (* 60 60 24)
+    "Frequency of updating `yant/org-devel-committers-cache'.")
+  (defcustom yant/org-devel-committer-aliases
+    '(("Max Nikulin" . "Maxim Nikulin")
+      ("orgmode@tec.tecosaur.net" . "tec@tecosaur.com"))
+    "Alist storing aliases for known contributor names.")
+  (defun yant/org-devel-get-notmuch-sender-FSF-status ()
+    "Retrieve FSF assignment status of the sender."
+    (let ((sender (condition-case nil
+		      (notmuch-show-get-from)
+                    (error
+                     (goto-char (point-min))
+                     (org-with-wide-buffer
+                      (buffer-substring (line-beginning-position 0) (line-end-position 0))))))
+          email end-of-FSF-assign committer-stats
+          (all-committers yant/org-devel-committers-cache)
+          (case-fold-search t))
+      (when (string-match " *\\(.+?\\) *<\\([^@>]+@[^>]+\\)>" sender)
+        (setq email (match-string 2 sender))
+        (setq sender (match-string 1 sender))
+        ;; Avoid too short names.
+        (unless sender (setq sender email))
+        (when (length< sender 5) (setq sender email))
+        (setq email (alist-get email yant/org-devel-committer-aliases email nil #'equal))
+        (setq sender (alist-get sender yant/org-devel-committer-aliases sender nil #'equal)))
+      (if (not email)
+          (propertize
+           "Contributor status unknown"
+           'face 'modus-themes-refine-red)
+        (when (or (not all-committers)
+	          (not yant/org-devel-committers-cache-update-time)
+                  (> (float-time
+		      (time-since
+                       yant/org-devel-committers-cache-update-time))
+                     yant/org-devel-committers-cache-update-interval))
+          (setq yant/org-devel-committers-cache
+	        (shell-command-to-string
+	         "cd ~/Git/org-mode/; PAGER=\"cat\"; git log --format='%aN %aE' | uniq")
+                all-committers yant/org-devel-committers-cache
+                yant/org-devel-committers-stats (make-hash-table :test #'equal)
+                yant/org-devel-committers-cache-update-time (current-time)))
+        (when (or (string-match-p email all-committers)
+                  (string-match-p sender all-committers))
+          (unless (gethash email yant/org-devel-committers-stats)
+            (puthash
+             email
+             (concat
+              (shell-command-to-string
+               (format "cd ~/Git/org-mode/; git log --author=\"%s\" --pretty=tformat: --numstat main | gawk '{ add += $1; subs += $2; loc += $1 - $2 } END { printf \"+l: %%s -l: %%s total: %%s\", add, subs, loc }' -"
+                       (if (string-match-p email all-committers)
+                           email sender)))
+              "; commits: "
+              (shell-command-to-string
+               (format "cd ~/Git/org-mode/; git log --author=\"%s\" --pretty=oneline main | wc -l"
+                       (if (string-match-p email all-committers)
+                           email sender))))
+             yant/org-devel-committers-stats)))
+        (catch :exit
+          (with-temp-buffer
+	    (insert-file-contents "~/Git/worg/contributors.org")
+	    (search-forward "Current contributors with FSF assignement")
+	    (save-excursion
+	      (search-forward "Processing")
+	      (setq end-of-FSF-assign (point)))
+	    (when (search-forward sender end-of-FSF-assign t)
+	      (throw
+               :exit
+               (propertize
+                (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats))
+                'face 'modus-themes-refine-green)))
+	    (save-excursion
+	      (search-forward "Current contributors with tiny changes")
+	      (setq end-of-FSF-assign (point)))
+	    (when (search-forward sender end-of-FSF-assign t)
+	      (throw
+               :exit
+               (propertize
+                (concat "FSF assignment pending; " (gethash email yant/org-devel-committers-stats))
+                'face 'modus-themes-refine-red)))
+            (when (or (string-match-p sender all-committers)
+		      (string-match-p sender email))
+              (propertize
+               (concat "Tiny change contributor; " (gethash email yant/org-devel-committers-stats))
+               'face 'modus-themes-refine-yellow)))
+          (propertize
+           "Contributor status unknown"
+           'face 'modus-themes-refine-red)))))
+
+  (defun yant/org-devel-get-notmuch-sender-ML-status ()
+    "Retrieve Org mailing list participation status of the sender."
+    (let ((sender (condition-case nil
+		      (notmuch-show-get-from)
+                    (error
+                     (goto-char (point-min))
+                     (org-with-wide-buffer
+                      (replace-regexp-in-string
+                       "(.+" ""
+                       (buffer-substring (line-beginning-position 0) (line-end-position 0)))))))
+          first-mention email-count)
+      (setq first-mention
+            (plist-get
+             (car (read
+                   (shell-command-to-string
+                    (format
+                     "notmuch search --format=sexp --sort=oldest-first --limit 1 date:2000.. and \\(tag:deleted or not tag:deleted\\) and tag:emacs-orgmode.gnu.org and from:\"%s\""
+                     sender))))
+             :date_relative))
+      (setq email-count
+            (string-trim-right
+             (shell-command-to-string
+              (format
+               "notmuch count date:2000.. and \\(tag:deleted or not tag:deleted\\) and tag:emacs-orgmode.gnu.org and from:\"%s\""
+               sender))))
+      (propertize
+       (format "In Org ML since %s (%s messages)" first-mention email-count)
+       'face 'mpd-first-field-face)))
+
+  (defun yant/notmuch-show-highlight-contribution-status ()
+    "Indicate contributor status for Org ML.
+This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
+    (goto-char (point-min))
+    (while (looking-at "^[A-Za-z][-A-Za-z0-9]*:")
+      (forward-line))
+    (when (save-excursion (search-backward "emacs-orgmode@gnu.org" nil t))
+      (put-text-property
+       (1- (point)) (point)
+       'display
+       (concat "\t" (yant/org-devel-get-notmuch-sender-FSF-status) "\n"))
+      (while (looking-at "^[A-Za-z][-A-Za-z0-9]*:")
+        (forward-line))
+      (put-text-property
+       (line-end-position -1) (1+ (line-end-position -1))
+       'display
+       (concat "\t" (yant/org-devel-get-notmuch-sender-ML-status) "\n"))))
+
+  (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contribution-status))
+#+end_src
 
 *** Mail host address
 :PROPERTIES:
