@@ -4955,6 +4955,7 @@ Interactive fill/unfill paragraph at point.
                                search-failed
 			       file-missing
                                file-date-error
+                               "Viewing span is already"
                                "No links on this page"
                                "pdf-info-epdfinfo-program is not executable"
                                "notmuch search process already running"
