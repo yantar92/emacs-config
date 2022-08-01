@@ -4838,8 +4838,13 @@ $0
 #+end_src
 
 *** Undo
-**** Save undo history between Emacs sessions
+**** COMMENT Save undo history between Emacs sessions
+:PROPERTIES:
+:SUMMARY:  gives ~read~ error
+:END:
 
+- Note taken on [2022-07-29 Fri 14:43] \\
+  gives ~read~ error
 [[id:Github-emacsorphanage-emacsorphanage-undohist-persistent-37b][emacsorphanage [Github] emacsorphanage/undohist: Persistent Undo History for GNU Emacs]]
 
 #+begin_src emacs-lisp
