@@ -7903,20 +7903,22 @@ I automated the check by examining WORG repository directly and checking the ~gi
     "Frequency of updating `yant/org-devel-committers-cache'.")
   (defcustom yant/org-devel-committer-aliases
     '(("Max Nikulin" . "Maxim Nikulin")
-      ("orgmode@tec.tecosaur.net" . "tec@tecosaur.com"))
+      ("orgmode@tec.tecosaur.net" . "tec@tecosaur.com")
+      ("Juan Manuel Macías" . "Juan Manuel Macias")
+      ("András Simonyi" . "Andras Simonyi")
+      ("emacs@vergauwen.me" . "Bob Vergauwen"))
     "Alist storing aliases for known contributor names.")
-  (defun yant/org-devel-get-notmuch-sender-FSF-status ()
-    "Retrieve FSF assignment status of the sender."
-    (let ((sender (condition-case nil
-		      (notmuch-show-get-from)
-                    (error
-                     (goto-char (point-min))
-                     (org-with-wide-buffer
-                      (buffer-substring (line-beginning-position 0) (line-end-position 0))))))
-          email end-of-FSF-assign committer-stats
+  (defun yant/org-devel-get-notmuch-sender-FSF-status (sender)
+    "Retrieve FSF assignment status of SENDER."
+    (let (email
+          end-of-FSF-assign
+          committer-stats
           (all-committers yant/org-devel-committers-cache)
           (case-fold-search t))
-      (when (string-match " *\\(.+?\\) *<\\([^@>]+@[^>]+\\)>" sender)
+      (if (not (string-match " *\\(.+?\\) *<\\([^@>]+@[^>]+\\)>" sender))
+          (progn
+            (setq email sender)
+            (setq sender (alist-get sender yant/org-devel-committer-aliases sender nil #'equal)))
         (setq email (match-string 2 sender))
         (setq sender (match-string 1 sender))
         ;; Avoid too short names.
@@ -7926,7 +7928,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
         (setq sender (alist-get sender yant/org-devel-committer-aliases sender nil #'equal)))
       (if (not email)
           (propertize
-           "Contributor status unknown\n"
+           "Contributor status unknown"
            'face 'modus-themes-refine-red)
         (when (or (not all-committers)
 	          (not yant/org-devel-committers-cache-update-time)
@@ -7957,8 +7959,10 @@ I automated the check by examining WORG repository directly and checking the ~gi
                            email sender))))
              yant/org-devel-committers-stats)))
         (catch :exit
-          (with-temp-buffer
-	    (insert-file-contents "~/Git/worg/contributors.org")
+          (with-current-buffer (get-buffer-create " *Org FSF data*")
+            (when (= 0 (buffer-size))
+	      (insert-file-contents "~/Git/worg/contributors.org"))
+            (goto-char (point-min))
 	    (search-forward "Current contributors with FSF assignement")
 	    (save-excursion
 	      (search-forward "Processing")
@@ -7967,7 +7971,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
 	      (throw
                :exit
                (propertize
-                (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats))
+                (string-trim (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats)))
                 'face 'modus-themes-refine-green)))
 	    (save-excursion
 	      (search-forward "Current contributors with tiny changes")
@@ -7976,7 +7980,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
 	      (throw
                :exit
                (propertize
-                (concat "FSF assignment pending; " (gethash email yant/org-devel-committers-stats))
+                (string-trim (concat "FSF assignment pending; " (gethash email yant/org-devel-committers-stats)))
                 'face 'modus-themes-refine-red)))
             (when (or (string-match-p sender all-committers)
 		      (string-match-p sender email))
@@ -7984,35 +7988,44 @@ I automated the check by examining WORG repository directly and checking the ~gi
                (concat "Tiny change contributor; " (gethash email yant/org-devel-committers-stats))
                'face 'modus-themes-refine-yellow)))
           (propertize
-           "Contributor status unknown\n"
+           "Contributor status unknown"
            'face 'modus-themes-refine-red)))))
 
-  (defun yant/org-devel-get-notmuch-sender-ML-status ()
-    "Retrieve Org mailing list participation status of the sender."
-    (let ((sender (condition-case nil
-		      (notmuch-show-get-from)
-                    (error
-                     (goto-char (point-min))
-                     (org-with-wide-buffer
-                      (replace-regexp-in-string
-                       " *(.+" ""
-                       (buffer-substring (line-beginning-position 0) (line-end-position 0)))))))
-          first-mention email-count)
+  (defvar yant/org-devel-ml-stats nil
+    "Hash table holding Org mailing list participant stats.")
+  (defun yant/org-devel-get-notmuch-sender-ML-status (sender)
+    "Retrieve Org mailing list participation status of SENDER."
+    (let (first-mention email-count email)
       (setq sender (string-trim sender))
-      (setq first-mention
-            (plist-get
-             (car (read
-                   (shell-command-to-string
-                    (format
-                     "notmuch search --format=sexp --sort=oldest-first --limit 1 date:2000.. and \\(tag:deleted or not tag:deleted\\) and tag:emacs-orgmode.gnu.org and from:\"%s\""
-                     sender))))
-             :date_relative))
-      (setq email-count
-            (string-trim-right
-             (shell-command-to-string
-              (format
-               "notmuch count date:2000.. and \\(tag:deleted or not tag:deleted\\) and tag:emacs-orgmode.gnu.org and from:\"%s\""
-               sender))))
+      (setq email sender)
+      (when (string-match " *\\(.+?\\) *<\\([^@>]+@[^>]+\\)>" sender)
+        (setq email (match-string 2 sender))
+        ;; Avoid too short names.
+        (unless (length< sender 5)
+          (setq sender (match-string 1 sender))))
+      (if (and (hash-table-p yant/org-devel-ml-stats)
+               (gethash sender yant/org-devel-ml-stats)
+               (< (float-time (time-since (nth 0 (gethash sender yant/org-devel-ml-stats))))
+                  yant/org-devel-committers-cache-update-interval))
+          (setq first-mention (nth 1 (gethash sender yant/org-devel-ml-stats))
+                email-count (nth 2 (gethash sender yant/org-devel-ml-stats)))
+        (unless (hash-table-p yant/org-devel-ml-stats)
+          (setq yant/org-devel-ml-stats (make-hash-table :test #'equal)))
+        (setq first-mention
+              (plist-get
+               (car (read
+                     (shell-command-to-string
+                      (format
+                       "notmuch search --format=sexp --sort=oldest-first --limit 1 date:2000.. and \\(tag:deleted or not tag:deleted\\) and tag:emacs-orgmode.gnu.org and \\(from:\"%s\" or from \"%s\"\\)"
+                       sender email))))
+               :date_relative))
+        (setq email-count
+              (string-trim-right
+               (shell-command-to-string
+                (format
+                 "notmuch count date:2000.. and \\(tag:deleted or not tag:deleted\\) and tag:emacs-orgmode.gnu.org and \\(from:\"%s\" or from \"%s\"\\)"
+                 sender email))))
+        (puthash sender (list (current-time) first-mention email-count) yant/org-devel-ml-stats))
       (propertize
        (format "In Org ML since %s (%s messages)" first-mention email-count)
        'face 'mpd-first-field-face)))
@@ -8024,7 +8037,17 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
     (let ((indentation
            (progn
              (looking-at "^ *")
-             (match-string 0))))
+             (match-string 0)))
+          (sender (condition-case nil
+		      (notmuch-show-get-from)
+                    (error
+                     (goto-char (point-min))
+                     (org-with-wide-buffer
+                      (replace-regexp-in-string
+                       " *(.+" ""
+                       (buffer-substring
+                        (line-beginning-position 0)
+                        (line-end-position 0))))))))
       (while (looking-at "^ *[A-Za-z][-A-Za-z0-9]*:")
         (forward-line))
       (when (save-excursion (search-backward "emacs-orgmode@gnu.org" nil t))
@@ -8033,8 +8056,8 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
          'display
          (concat
           "\n"
-          indentation (yant/org-devel-get-notmuch-sender-FSF-status)
-          indentation (yant/org-devel-get-notmuch-sender-ML-status) "\n")))))
+          indentation (yant/org-devel-get-notmuch-sender-FSF-status sender) "\n"
+          indentation (yant/org-devel-get-notmuch-sender-ML-status sender) "\n")))))
 
   (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contribution-status))
 #+end_src
