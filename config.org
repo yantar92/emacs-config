@@ -7683,6 +7683,38 @@ Using [[id:github_aperezdc_aperez_notmuc_addrl_c_addres][aperezdc [Github] Apere
   (use-package notmuch-calendar-x
     :straight (notmuch-calendar-x :local-repo "~/Git/notmuch-calendar-x")))
 #+end_src
+**** Email signature
+
+Use different signatures depending on the sent address.
+
+#+begin_src emacs-lisp
+(when init-flag
+  (defvar yant/message-signature-alist `(("@gnu.org$" . "Ihor Radchenko,
+Org mode contributor,
+Learn more about Org mode at https://orgmode.org/.
+Support Org development at https://liberapay.com/org-mode,
+or support my work at https://liberapay.com/yantar92
+")
+                                         (".*" . "Ihor Radchenko,
+PhD,
+Center for Advancing Materials Performance from the Nanoscale (CAMP-nano)
+State Key Laboratory for Mechanical Behavior of Materials, Xi'an Jiaotong University, Xi'an, China
+Email: yantar92@gmail.com, ihor_radchenko@alumni.sutd.edu.sg
+")))
+  (defun yant/message-signature ()
+    "Insert signature depending on the addressee."
+    (save-excursion
+      (save-restriction
+        (widen)
+        (message-goto-body)
+        (narrow-to-region (point-min) (point))
+        (catch :done
+          (dolist (pair yant/message-signature-alist)
+            (goto-char (point-min))
+            (when (re-search-forward (car pair) nil t)
+              (throw :done (cdr pair))))))))
+  (setq message-signature '(yant/message-signature)))
+#+end_src
 
 **** Removing unreadable symbols from messages 
 :PROPERTIES:
