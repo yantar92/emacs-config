@@ -6947,6 +6947,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                          ("<math xmlns:mml=\"http://www\\.w3\\.org/1998/Math/MathML\" altimg=\"si[0-9]+\\.svg\" class=\"math\">\\(.+?\\)</math>" "\\1")
                                          ("<mover accent=\"true\">\\(.+?\\)</mover>" "\\1")
                                          ("<mrow>\\(.*?\\)</mrow>" "\\1")
+                                         ("<mtext>\\(.*?\\)</mtext>" "\\1")
                                          ("<mn>\\(.*?\\)</mn>" "\\1")
                                          ("<mo>\\(.*?\\)</mo>" "\\1")
                                          ("<strong>\\(.*?\\)</strong>" "\\1")
