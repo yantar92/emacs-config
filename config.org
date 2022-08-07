@@ -7689,7 +7689,7 @@ Use different signatures depending on the sent address.
 
 #+begin_src emacs-lisp
 (when init-flag
-  (defvar yant/message-signature-alist `(("@gnu.org$" . "Ihor Radchenko,
+  (defvar yant/message-signature-alist `(("@gnu.org" . "Ihor Radchenko,
 Org mode contributor,
 Learn more about Org mode at https://orgmode.org/.
 Support Org development at https://liberapay.com/org-mode,
