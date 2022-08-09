@@ -5802,6 +5802,7 @@ This is also required for =cdlatex= to work with org-mode.
 	'(("bal" "ledger --pedantic -f %(ledger-file) bal not Equity")
 	  ("balsg" "ledger --pedantic -f %(ledger-file) bal not Equity -X S$")
           ("balusd" "ledger --pedantic -f %(ledger-file) bal not Equity -X $")
+          ("baleur" "ledger --pedantic -f %(ledger-file) bal not Equity -X EUR")
 	  ("balcny" "ledger --pedantic -f %(ledger-file) bal not Equity -X CNY")
 	  ("balall" "ledger --pedantic -f %(ledger-file) bal not Equity:Opening")
 	  ("reg" "ledger --pedantic --pending -f %(ledger-file) reg not Equity")
