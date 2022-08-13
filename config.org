@@ -547,7 +547,7 @@ compilation. This will no-op on features that have been disabled by the user."
 :ID:       5ed810ca-4028-4f48-93d9-fd086ba8e340
 :END:
 
-Credit: https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#shut-things-up
+Credit: https://github.com/weirdNox/dotfiles/blob/master/config/.config/emacs/config.org#shut-things-up
 #+begin_src emacs-lisp
 (defmacro quiet! (&rest forms)
   "Run FORMS without making any output."
