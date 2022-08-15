@@ -7942,7 +7942,8 @@ I automated the check by examining WORG repository directly and checking the ~gi
       ("orgmode@tec.tecosaur.net" . "tec@tecosaur.com")
       ("Juan Manuel Macías" . "Juan Manuel Macias")
       ("András Simonyi" . "Andras Simonyi")
-      ("emacs@vergauwen.me" . "Bob Vergauwen"))
+      ("emacs@vergauwen.me" . "Bob Vergauwen")
+      ("Fraga, Eric" . "Eric S.\\nbsp{}Fraga"))
     "Alist storing aliases for known contributor names.")
   (defun yant/org-devel-get-notmuch-sender-FSF-status (sender)
     "Retrieve FSF assignment status of SENDER."
