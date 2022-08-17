@@ -6966,6 +6966,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                          ("{\\([^}]+\\)}" "\\1")
                                          (,(concat "\\<" (regexp-opt yant/elfeed-title-boring-words) "\\>") "\\&" (face (:foreground "Gainsboro")))
                                          ("slid[^ ]+" "\\&" (face (:foreground "red")))
+                                         ("geolog[^ ]+" "\\&" (face (:foreground "red")))
                                          ("[Rr]eview" "\\&" (face (:foreground "red" :background "yellow")))
                                          ("[Aa]nisotro[^ ]+" "\\&" (face (:foreground "red")))
                                          ("[^ ]*laminate[^ ]*" "\\&" (face (:foreground "red")))
