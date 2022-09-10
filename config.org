@@ -7940,6 +7940,10 @@ I automated the check by examining WORG repository directly and checking the ~gi
     "Frequency of updating `yant/org-devel-committers-cache'.")
   (defcustom yant/org-devel-committer-aliases
     '(("Max Nikulin" . "Maxim Nikulin")
+      ("Mikhail Skorzhinskiy" . "Mikhail Skorzhinskii")
+      ;; typo
+      ("Mikhail Skorzhisnkii" . "Mikhail Skorzhinskii")
+      ("mskorzhinskiy@eml.cc" . "mskorzhinskii@eml.cc")
       ("orgmode@tec.tecosaur.net" . "tec@tecosaur.com")
       ("Juan Manuel Macías" . "Juan Manuel Macias")
       ("András Simonyi" . "Andras Simonyi")
