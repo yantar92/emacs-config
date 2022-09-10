@@ -8022,9 +8022,11 @@ I automated the check by examining WORG repository directly and checking the ~gi
                 'face 'modus-themes-refine-red)))
             (when (or (string-match-p sender all-committers)
 		      (string-match-p sender email))
-              (propertize
-               (concat "Tiny change contributor; " (gethash email yant/org-devel-committers-stats))
-               'face 'modus-themes-refine-yellow)))
+              (throw
+               :exit
+               (propertize
+                (concat "Tiny change contributor; " (gethash email yant/org-devel-committers-stats))
+                'face 'modus-themes-refine-yellow))))
           (propertize
            "Contributor status unknown"
            'face 'modus-themes-refine-red)))))
