@@ -8076,6 +8076,45 @@ I automated the check by examining WORG repository directly and checking the ~gi
        (format "In Org ML since %s (%s messages)" first-mention email-count)
        'face 'mpd-first-field-face)))
 
+  (defvar yant/org-devel-maintainer-stats nil
+    "Hash table holding Org maintainer stats.")
+  (defun yant/org-devel-get-maintainer-status (sender)
+    "Retrieve Org maintainer status of SENDER."
+    (let (email maintained-files)
+      (setq sender (string-trim sender))
+      (setq email sender)
+      (when (string-match " *\\(.+?\\) *<\\([^@>]+@[^>]+\\)>" sender)
+        (setq email (match-string 2 sender))
+        ;; Avoid too short names.
+        (unless (length< sender 5)
+          (setq sender (match-string 1 sender))))
+      (if (and (hash-table-p yant/org-devel-maintainer-stats)
+               (gethash sender yant/org-devel-maintainer-stats)
+               (< (float-time (time-since (nth 0 (gethash sender yant/org-devel-maintainer-stats))))
+                  yant/org-devel-committers-cache-update-interval))
+          (setq maintained-files (cdr (gethash sender yant/org-devel-maintainer-stats)))
+        (unless (hash-table-p yant/org-devel-maintainer-stats)
+          (setq yant/org-devel-maintainer-stats (make-hash-table :test #'equal)))
+        (setq maintained-files nil)
+        (with-current-buffer (get-buffer-create " *Org maintainer data*")
+          (when (= 0 (buffer-size))
+            (let ((default-directory "~/Git/org-mode/"))
+              (shell-command
+               "ag Maintainer:"
+               (current-buffer))))
+          (goto-char (point-min))
+          (while (or (search-forward sender nil t)
+                     (search-forward email nil t))
+            (beginning-of-line 1)
+            (when (looking-at "^\\(.+\\):[0-9]+:;;")
+              (push (match-string 1) maintained-files))
+            (beginning-of-line 2)))
+        (puthash sender (cons (current-time) maintained-files) yant/org-devel-maintainer-stats))
+      (when maintained-files
+        (propertize
+         (format "Maintaining: %s" maintained-files)
+         'face 'modus-themes-grue-background-intense))))
+
   (defun yant/notmuch-show-highlight-contribution-status ()
     "Indicate contributor status for Org ML.
 This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
@@ -8103,7 +8142,8 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
          (concat
           "\n"
           indentation (yant/org-devel-get-notmuch-sender-FSF-status sender) "\n"
-          indentation (yant/org-devel-get-notmuch-sender-ML-status sender) "\n")))))
+          indentation (yant/org-devel-get-notmuch-sender-ML-status sender) "\n"
+          indentation (yant/org-devel-get-maintainer-status sender) "\n")))))
 
   (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contribution-status))
 #+end_src
