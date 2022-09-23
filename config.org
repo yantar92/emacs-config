@@ -8282,6 +8282,7 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (erc-interpret-mirc-color t)
   (erc-rename-buffers t)
   (erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+  (erc-hide-list '("JOIN" "QUIT"))
   (erc-track-exclude-types '("JOIN" "NICK" "QUIT" "MODE"))
   (erc-track-enable-keybindings nil)
   (erc-fill-column 100)
