@@ -8343,7 +8343,7 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
     (bind-key "TAB" #'yant/ement-room-image-scale ement-room-mode-map)
     (meta-defun meta-up-element :mode ement-room-mode (ement-room-goto-prev))
     (meta-defun meta-down-element :mode ement-room-mode (ement-room-goto-next))
-    (meta-defun meta-new-line :mode ement-room-mode (funcall-interactively #'ement-room-send-message))
+    (meta-defun meta-new-line :mode ement-room-mode (call-interactively #'ement-room-send-message))
     (bind-key "M-g M-l" #'ement-list-rooms global-map)))
 #+end_src
 
