@@ -7943,6 +7943,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
   (defcustom yant/org-devel-committer-aliases
     '(("Max Nikulin" . "Maxim Nikulin")
       ("Mikhail Skorzhinskiy" . "Mikhail Skorzhinskii")
+      ("David Lukeš" . "David Lukes")
       ;; typo
       ("Mikhail Skorzhisnkii" . "Mikhail Skorzhinskii")
       ("mskorzhinskiy@eml.cc" . "mskorzhinskii@eml.cc")
