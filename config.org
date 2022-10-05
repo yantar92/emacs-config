@@ -7693,17 +7693,12 @@ Use different signatures depending on the sent address.
 
 #+begin_src emacs-lisp
 (when init-flag
-  (defvar yant/message-signature-alist `(("@\\(debbugs\\.\\)?gnu.org\\|@github.com" . "Ihor Radchenko,
+  ;; "@\\(debbugs\\.\\)?gnu.org\\|@github.com"
+  (defvar yant/message-signature-alist `((".*" . "Ihor Radchenko // yantar92,
 Org mode contributor,
-Learn more about Org mode at https://orgmode.org/.
-Support Org development at https://liberapay.com/org-mode,
-or support my work at https://liberapay.com/yantar92
-")
-                                         (".*" . "Ihor Radchenko,
-PhD,
-Center for Advancing Materials Performance from the Nanoscale (CAMP-nano)
-State Key Laboratory for Mechanical Behavior of Materials, Xi'an Jiaotong University, Xi'an, China
-Email: yantar92@gmail.com, ihor_radchenko@alumni.sutd.edu.sg
+Learn more about Org mode at <https://orgmode.org/>.
+Support Org development at <https://liberapay.com/org-mode>,
+or support my work at <https://liberapay.com/yantar92>
 ")))
   (defun yant/message-signature ()
     "Insert signature depending on the addressee."
