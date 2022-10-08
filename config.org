@@ -15158,6 +15158,7 @@ Leaving the code below for reference.
 #+begin_src emacs-lisp
 (setq org-ditaa-jar-path "~/.emacs.d/site-lisp/ditaa.jar")
 (use-package ob-mathematica
+  :straight t
   :init
   (setq org-babel-mathematica-command "wolfram -script"))
 
