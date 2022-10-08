@@ -261,6 +261,8 @@ Now, I can setup =use-package= to simplify subsequent package configuration
 Latest version may not be compatible with system version of notmuch executable
 
 #+begin_src emacs-lisp
+;; Just for local Emacs version.
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/notmuch")
 (straight-use-package '(notmuch :type built-in))
 #+end_src
 
