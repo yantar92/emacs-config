@@ -11159,8 +11159,10 @@ Also, no contexts are prompted in Inbox agenda.
 	    tags
 	    tag-filter)
 	(let ((completion-ignore-case t))
-	  (setq tags (helm-comp-read
-		      "Tags: " location-tags :must-match t :name "Select location context")))
+	  (setq tags (condition-case _
+                         (helm-comp-read
+		          "Tags: " location-tags :must-match t :name "Select location context")
+                       (quit nil))))
 	(when tags
 	  (unless (listp tags) (setq tags (list tags)))
 	  (let ((tags-exclude (seq-difference location-tags tags)))
