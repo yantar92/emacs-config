@@ -3,7 +3,7 @@
 :END:
 #+SETUPFILE: ~/Org/common.setup
 #+AUTHOR: Ihor Radchenko
-#+EMAIL: yantar92@gmail.com
+#+EMAIL: yantar92@posteo.net
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments no
 #+ARCHIVE: ::* Archived
 
@@ -40,7 +40,7 @@ This is me
 ;; Setting this is not only fancy, but actually used
 ;; for example, by yasnippet when filling elisp file header
 (setq user-full-name "Ihor Radchenko")
-(setq user-mail-address "yantar92@gmail.com")
+(setq user-mail-address "yantar92@posteo.net")
 #+end_src
 
 I am not really doing much programming, but rather use Emacs as knowledge base management tool.  Most time, I do not even edit or type things directly, but read through the files.  Therefore, the main focus of this setup is =org-mode= and not as much programming, navigating through text and not as much editing.
@@ -7179,6 +7179,7 @@ the notmuch-tree buffer if it appears after closing the message."
 		       (message-fetch-field "from")))
 	       (account (cond
 			 ;; I use email address as account label in ~/.msmtprc
+                         ((string-match "yantar92@posteo.net" from) "yantar92@posteo.net")
 			 ((string-match "yantar92@gmail.com" from) "yantar92@gmail.com")
 			 ((string-match "ihor_radchenko@alumni.sutd.edu.sg" from) "ihor_radchenko@alumni.sutd.edu.sg"))))
 	  (setq message-sendmail-extra-arguments (list '"-a" account)))))) ; the original form of this script did not have the ' before "a" which causes a very difficult to track bug --frozencemetery
@@ -7188,7 +7189,8 @@ the notmuch-tree buffer if it appears after closing the message."
 (setq mail-envelope-from 'header)
 (setq message-make-forward-subject-function 'message-forward-subject-fwd)
 (setq notmuch-fcc-dirs '(("ihor_radchenko@alumni.sutd.edu.sg" . "Office365/Sent +sent -unread")
-			 ("yantar92@gmail.com" . "Gmail/Sent +sent -unread")))
+			 ("yantar92@gmail.com" . "Gmail/Sent +sent -unread")
+                         ("yantar92@posteo.net" . "Posteo/Sent +sent -unread")))
   #+end_src
 - automatic email signing
   I have to skip signing for some email accounts, because the server appends some text to messages. Even though the resulting message is correct, but some email clients are not able to open these messages properly. They show the appended text and unreadable attachment.
@@ -7196,7 +7198,7 @@ the notmuch-tree buffer if it appears after closing the message."
 (setq mml-default-sign-method "pgp")
 (setq notmuch-crypto-process-mime t)
 
-(defvar yant/mml-do-not-sign-accounts-list '("ihor_radchenko@alumni.sutd.edu.sg" "yantar92@gmail.com")
+(defvar yant/mml-do-not-sign-accounts-list '("ihor_radchenko@alumni.sutd.edu.sg" "yantar92@gmail.com" "yantar92@posteo.net")
   "List of accounts, where the messaged should not be signed.")
 
 (defun yant/mml-secure-message-sign-pgpmime-maybe ()
@@ -17975,7 +17977,7 @@ git config --global core.attributesfile ~/.gitattributes
 
 #+begin_src conf :tangle ~/.gitconfig
 [user]
-	email = yantar92@gmail.com
+	email = yantar92@posteo.net
 	name = Ihor Radchenko
         signingkey = 6470762A7DA11D8B
 [github]
