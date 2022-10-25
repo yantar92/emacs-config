@@ -2934,18 +2934,17 @@ Requires installed [[id:0ce5f9c5-7c71-46dc-94ef-3cf7ed51fba4][=app-dicts/wordnet
 #+begin_src emacs-lisp
 (use-package wordnut
   :straight t
-  :demand t
   :config
-  (use-package meta-functions
-    :config
-    (meta-defun meta-help
-      :mode org-mode
-      :cond
-      (progn
-        (and
-         (not (memq (org-element-type (org-element-at-point)) '(src-block)))
-         (not (memq (org-element-type (org-element-context)) '(code)))))
-      (wordnut-search (word-at-point)))))
+  (require 'meta-functions)
+  (meta-defun meta-help "Get help on symbol at point." ignore)
+  (meta-defun meta-help
+    :mode org-mode
+    :cond
+    (progn
+      (and
+       (not (memq (org-element-type (org-element-at-point)) '(src-block)))
+       (not (memq (org-element-type (org-element-context)) '(code)))))
+    (wordnut-search (word-at-point))))
 #+end_src
 
 *** Code and prose checking (=flycheck=)
@@ -5422,7 +5421,6 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
     :if init-flag
     :after dash
     :config
-    (meta-defun meta-help "Get help on symbol at point." ignore)
     (meta-defun meta-help
       :mode org-mode
       :cond
