@@ -6346,7 +6346,9 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
   :straight t
   :demand t
   ;;:straight (vterm :host github :repo "akermu/emacs-libvterm")
-  :commands (vterm vterm-other-window))
+  :commands (vterm vterm-other-window)
+  :custom
+  (vterm-timer-delay 0.01))
 
 ;; ;; directory tracking
 ;; (defun vterm--rename-buffer-as-title (title)
