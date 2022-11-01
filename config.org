@@ -6333,7 +6333,7 @@ Requires [[id:61837011-1bce-41d6-8aa5-27bc4335466d][app-text/diffpdf]].
 :ID:       460ee9e2-32f5-4ad2-a535-69121b201bcf
 :END:
 *** TODO Shell
-**** Eterm
+**** Vterm
 :PROPERTIES:
 :CREATED:  [2019-11-25 Mon 20:31]
 :ID:       e5c58182-de92-45b5-98d1-1a42db7c0886
