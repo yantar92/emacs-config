@@ -12675,7 +12675,7 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
             ,repo
             :branch ,branch
             :grep (split-string (string-clean-whitespace helm-pattern))
-            :limit helm-candidate-number-limit))
+            :limit (min 50 helm-candidate-number-limit)))
         :action yant/helm-git-actions
         :match #'identity
         :fuzzy-match nil
