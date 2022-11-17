@@ -12664,6 +12664,11 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
              (format "https://github.com/%s/commit/%s"
                      (match-string 1 origin)
                      hash)))
+           ((string-match "sr\\.ht:\\(.+\\)" origin)
+            (insert
+             (format "https://git.sr.ht/%s/commit/%s"
+                     (match-string 1 origin)
+                     hash)))
            (t nil)))))
 
 
