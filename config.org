@@ -7860,6 +7860,7 @@ Part of eliminating bad habits as in [[id:9562f1fc-9b35-4573-b42e-7bb2fcef8a7a][
 
 #+begin_src emacs-lisp
 (setq message-dont-reply-to-names `("noreply"
+                                    "builds@sr.ht"
                                     ,user-mail-address))
 (use-package notmuch
   :defer t
