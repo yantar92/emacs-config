@@ -8243,7 +8243,7 @@ print(detect(text))
 PhD,
 Center for Advancing Materials Performance from the Nanoscale (CAMP-nano)
 State Key Laboratory for Mechanical Behavior of Materials, Xi'an Jiaotong University, Xi'an, China
-Email: yantar92@gmail.com, ihor_radchenko@alumni.sutd.edu.sg")
+Email: yantar92@posteo.net, ihor_radchenko@alumni.sutd.edu.sg")
   (org-msg-mode))
 #+end_src
 
