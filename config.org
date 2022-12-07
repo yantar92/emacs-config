@@ -6950,6 +6950,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                          ("<em>\\(.+?\\)</em>" "\\1")
                                          ("&#60;" "<")
                                          ("&nbsp;" " ")
+                                         ("&#39;" "'")
                                          ("<math xmlns:mml=\"http://www\\.w3\\.org/1998/Math/MathML\" altimg=\"si[0-9]+\\.svg\" class=\"math\">\\(.+?\\)</math>" "\\1")
                                          ("<mover accent=\"true\">\\(.+?\\)</mover>" "\\1")
                                          ("<mrow>\\(.*?\\)</mrow>" "\\1")
