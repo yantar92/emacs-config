@@ -15007,7 +15007,7 @@ This function is called by `org-archive-hook'.  The option
 									       (dired-noselect dir nil) )))
 				           (org-attach-reveal-in-emacs))))
                          (save-window-excursion
-                           (dired-pop-to-buffer dired-buf)
+                           (pop-to-buffer dired-buf)
                            (revert-buffer)
                            (select-window (old-selected-window))
 		           (prog1
@@ -15044,7 +15044,7 @@ Unarchive when UNARCHIVE is non-nil."
 								               (dired-noselect dir nil) )))
 			                   (org-attach-reveal-in-emacs))))
                          (save-window-excursion
-                           (dired-pop-to-buffer dired-buf)
+                           (pop-to-buffer dired-buf)
                            (select-window (old-selected-window))
 	                   (prog1
 		               (yes-or-no-p (format "%s: %s all attachments? "
