@@ -18937,10 +18937,15 @@ Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm
 
 - Note taken on [2021-08-11 Wed 22:24] \\
   Does not play well with Org mode and helm
+
+[2022-12-10 Sat] [[id:Debbugs-<rswgnu@gmailcom>2022-re-bug59903-bug-68e][Robert Weiner [Debbugs] (2022) Re: bug#59903: [BUG] Unable to load hyperbole]] suggested to set ~hyperbole~ to a custom binding to avoid issues with loading when =C-h= is locally re-bound from the default.
+
 #+begin_src emacs-lisp
 (use-package hyperbole
   :if init-flag
-  :straight t
+  :init
+  (bind-key* "C-c h" #'hyperbole)
+  :straight (hyperbole :type git :host nil :repo "yantar92@git.savannah.gnu.org:/srv/git/hyperbole.git")
   :defer 1
   :config
   ;; Clashes with `org-sparse-tree' binding.
