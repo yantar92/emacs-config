@@ -17948,7 +17948,7 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
   :custom
   (piem-inboxes
    '(( "Org mode"
-       :coderepo ("~/Git/org-mode/" "~/Git/worg/" "~/Git/orgweb/")
+       :coderepo ("~/Git/org-mode/" "~/Git/worg/" "~/Git/orgweb/" "~/Git/org-contrib/")
        :address "emacs-orgmode@gnu.org"
        :listid "emacs-orgmode.gnu.org"
        :url "https://orgmode.org/list/"
