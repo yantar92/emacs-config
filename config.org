@@ -1034,6 +1034,12 @@ Match default face background
 		    :background (face-background 'default))
 #+end_src
 
+**** Scrolling
+
+#+begin_src emacs-lisp
+(when init-flag
+  (pixel-scroll-precision-mode +1))
+#+end_src
 *** Buffer
 
 General buffer appearance.
