@@ -8361,6 +8361,32 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
     (bind-key "M-g M-l" #'ement-list-rooms global-map)))
 #+end_src
 
+** Mastodon client =mastodon.el=
+
+#+begin_src emacs-lisp
+(use-package mastodon
+  :if init-flag
+  :straight t
+  :custom
+  (mastodon-instance-url "https://emacs.ch")
+  (mastodon-active-user "yantar92")
+  :config
+  (meta-defun meta-down-element :mode mastodon-mode mastodon-tl--goto-next-toot)
+  (meta-defun meta-up-element :mode mastodon-mode mastodon-tl--goto-prev-toot))
+#+end_src
+*** Use =mastodon.el= to open Mastodon links
+
+#+begin_src emacs-lisp
+(use-package mastodon
+  :if init-flag
+  :config
+  (defun yant/mastodon-url-lookup (url &rest args)
+    "Wrapper for `mastodon-url-lookup' appropriate for URL handlers."
+    (mastodon-url-lookup url))
+  (add-to-list 'browse-url-handlers
+               '(mastodon--masto-url-p
+                 . yant/mastodon-url-lookup)))
+#+end_src
 ** COMMENT Browser
    :PROPERTIES:
    :ID:       ef9c93cd-e760-407c-82cf-2aeffa7a11ad
