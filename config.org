@@ -3513,12 +3513,16 @@ Just use external browser to open URLs.
       (when id
         (notmuch-show (format "id:%s" id)))))
   :custom
-  (browse-url-handlers '(("^https?://orgmode\\.org/list/\\([^/]+\\)" . yant/browse-url-orgmode-ml)
-                         ("^https?://list\\.orgmode\\.org/\\(?:orgmode/\\)?\\([^/]+\\)" . yant/browse-url-orgmode-ml)))
   (browse-url-browser-function 'yant/browse-url)
   ;; (browse-url-browser-function 'browse-url-generic)
   (browse-url-generic-program "qutebrowser-call.sh")
   :config
+  (add-to-list 'browse-url-handlers
+               '("^https?://orgmode\\.org/list/\\([^/]+\\)"
+                 . yant/browse-url-orgmode-ml))
+  (add-to-list 'browse-url-handlers
+               '("^https?://list\\.orgmode\\.org/\\(?:orgmode/\\)?\\([^/]+\\)"
+                 . yant/browse-url-orgmode-ml))
   (use-package notmuch
     :defer t
     :config
