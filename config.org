@@ -5556,6 +5556,7 @@ Smarter elisp editing
     :defer t
     :after meta-functions
     :config
+    (unbind-key "<RET>" paredit-mode-map)
     (meta-defun meta-move-line-right :mode emacs-lisp-mode paredit-forward-slurp-sexp)
     (meta-defun meta-move-line-right :mode lisp-interaction-mode paredit-forward-slurp-sexp)
     (meta-defun meta-move-line-left :mode emacs-lisp-mode paredit-convolute-sexp)
