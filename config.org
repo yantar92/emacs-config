@@ -5588,11 +5588,15 @@ Inspired by https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
              ("M-i" . paredit-convolute-sexp))
   (add-hook 'minibuffer-setup-hook #'yant/paredit-enable-maybe-minibuffer))
 #+end_src
-**** Font-lock based namespace for writing modes
+**** COMMENT Font-lock based namespace for writing modes
 :PROPERTIES:
 :ID:       5b5c84f0-e363-4e5c-b373-69ddf019f9e3
+:SUMMARY:  Disabled because it tends to mess up indentation upstream
 :END:
 
+
+- Note taken on [2022-12-26 Mon 12:21] \\
+  Disabled because it tends to mess up indentation upstream
 
 The convention for writing Emacs packages is using the package name as prefix for every dynamically scoped variable in the package. 
 The result is useful to avoid mess in the global variables, but also makes the variable and function names too long. 
