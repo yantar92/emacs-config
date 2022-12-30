@@ -8285,7 +8285,21 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   :config
   (remove-hook 'notmuch-mua-send-hook #'notmuch-mua-message-send-hook))
 #+end_src
-
+** Telegram
+#+begin_src emacs-lisp
+(use-package telega
+  :straight t
+  :custom
+  (telega-server-libs-prefix "/home/yantar92/.local")
+  :config
+  (define-key global-map (kbd "C-c t") telega-prefix-map)
+  (unbind-key "l" telega-msg-button-map)
+  (unbind-key "L" telega-msg-button-map)
+  (meta-defun meta-down :mode telega-root-mode telega-button-forward)
+  (meta-defun meta-up :mode telega-root-mode telega-button-backward)
+  (meta-defun meta-down-element :mode telega-chat-mode telega-button-forward)
+  (meta-defun meta-up-element :mode telega-chat-mode telega-button-backward))
+#+end_src
 ** ERC
 :PROPERTIES:
 :ID:       6211904f-0abd-46de-b56c-62bfaf76849e
