@@ -5809,7 +5809,7 @@ This is also required for =cdlatex= to work with org-mode.
   (defun open-finance()
     "Open ledger file."
     (interactive)
-    (find-file "~/Finance/Singapore-PhD/Ledger.dat"))
+    (find-file yant/ledger-file))
   (defun ledger-add-transaction-and-boonedit ()
     "Switch to boon insert state when adding transaction."
     (interactive)
