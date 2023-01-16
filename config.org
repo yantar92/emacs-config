@@ -8018,13 +8018,13 @@ I automated the check by examining WORG repository directly and checking the ~gi
              (concat
               (shell-command-to-string
                (format "cd ~/Git/org-mode/; git log --author=\"%s\" --pretty=tformat: --numstat main | gawk '{ add += $1; subs += $2; loc += $1 - $2 } END { printf \"+l: %%s -l: %%s total: %%s\", add, subs, loc }' -"
-                       (if (string-match-p email all-committers)
-                           email sender)))
+                       (downcase (if (string-match-p email all-committers)
+                                     email sender))))
               "; commits: "
               (shell-command-to-string
                (format "cd ~/Git/org-mode/; git log --author=\"%s\" --pretty=oneline main | wc -l"
-                       (if (string-match-p email all-committers)
-                           email sender))))
+                       (downcase (if (string-match-p email all-committers)
+                                     email sender)))))
              yant/org-devel-committers-stats)))
         (catch :exit
           (with-current-buffer (get-buffer-create " *Org FSF data*")
