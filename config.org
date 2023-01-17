@@ -8395,20 +8395,33 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (mastodon-active-user "yantar92")
   :config
   (meta-defun meta-down-element :mode mastodon-mode mastodon-tl--goto-next-toot)
-  (meta-defun meta-up-element :mode mastodon-mode mastodon-tl--goto-prev-toot))
+  (meta-defun meta-up-element :mode mastodon-mode mastodon-tl--goto-prev-toot)
+  (meta-defun meta-new-line :mode mastodon-mode mastodon-tl--do-link-action-at-point))
 #+end_src
 *** Use =mastodon.el= to open Mastodon links
+:PROPERTIES:
+:SUMMARY:  their heuristics is not ideal
+:END:
 
+- Note taken on [2023-01-16 Mon 11:45] \\
+  their heuristics is not ideal
 #+begin_src emacs-lisp
 (use-package mastodon
   :if init-flag
   :config
-  (defun yant/mastodon-url-lookup (url &rest args)
+  (defvar yant/mastodon-hosts
+    '("emacs.ch" "mastodon.social"
+      "writeout.ink" "social.tchncs.de"
+      "framapiaf.org/@debacle")
+    "List of known Mastodon hosts.")
+  (defun yant/mastodon-url-p (url)
     "Wrapper for `mastodon-url-lookup' appropriate for URL handlers."
-    (mastodon-url-lookup url))
+    (cl-loop for host in yant/mastodon-hosts
+             when (string-match-p (regexp-quote host) url)
+             return t))
   (add-to-list 'browse-url-handlers
-               '(mastodon--masto-url-p
-                 . yant/mastodon-url-lookup)))
+               '(yant/mastodon-url-p
+                 . (lambda (url &rest args) (mastodon-url-lookup url)))))
 #+end_src
 ** COMMENT Browser
    :PROPERTIES:
