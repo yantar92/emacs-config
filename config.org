@@ -8412,7 +8412,7 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (defvar yant/mastodon-hosts
     '("emacs.ch" "mastodon.social"
       "writeout.ink" "social.tchncs.de"
-      "framapiaf.org/@debacle")
+      "framapiaf.org" "social.lol")
     "List of known Mastodon hosts.")
   (defun yant/mastodon-url-p (url)
     "Wrapper for `mastodon-url-lookup' appropriate for URL handlers."
