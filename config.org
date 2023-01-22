@@ -4975,6 +4975,7 @@ Interactive fill/unfill paragraph at point.
                                search-failed
 			       file-missing
                                file-date-error
+                               "Ement: Not connected.  Use ‘ement-connect’ to connect"
                                "Viewing span is already"
                                "No links on this page"
                                "pdf-info-epdfinfo-program is not executable"
