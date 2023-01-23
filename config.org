@@ -8355,9 +8355,9 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (use-package plz :straight (plz :host github :repo "alphapapa/plz.el"))
   (use-package ement
     :straight (ement :host github :repo "alphapapa/ement.el")
-    :init (setq print-circle t)
+    ;; :init (setq print-circle t)
     :custom
-    (ement-room-send-message-filter #'ement-room-send-org-filter)
+    ;; (ement-room-send-message-filter #'ement-room-send-org-filter)
     (ement-save-sessions t)
     :config
     (defun yant/ement-room-image-scale ()
@@ -8383,6 +8383,46 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
     (meta-defun meta-down-element :mode ement-room-mode (ement-room-goto-next))
     (meta-defun meta-new-line :mode ement-room-mode (call-interactively #'ement-room-send-message))
     (bind-key "M-g M-l" #'ement-list-rooms global-map)))
+#+end_src
+*** Command loop in room list buffer
+**** Move between rooms only
+#+begin_src emacs-lisp
+(use-package ement-room
+  :config
+  (defun yant/ement-room-forward (&optional backward)
+    "Go to next room in Room list.
+Go backward with prefix argument BACKWARD."
+    (interactive "P")
+    ;; Ement room lines have `magit-section' type for some reason.
+    (let ((start-at-boundary (eq (point) (if backward (point-max) (point-min)))))
+      (beginning-of-line (if backward 0 2))
+      (while (and (not (eq 'magit-section (oref (magit-current-section) type)))
+		  (not (if backward (bobp) (eobp))))
+        (beginning-of-line (if backward 0 2)))
+      (when (eq 'magit-section (oref (magit-current-section) type))
+        ;; Move to clickable part of the room line.
+        (unless (get-text-property (point) 'button)
+	  (goto-char (next-single-property-change (point) 'button))))
+      (unless (or start-at-boundary
+		  (eq 'magit-section (oref (magit-current-section) type)))
+        (goto-char (if backward (point-max) (point-min)))
+        (yant/ement-room-forward backward))))
+
+  (defun yant/ement-room-backward ()
+    "Go to previous room in Room list."
+    (interactive)
+    (funcall-interactively #'yant/ement-room-forward t))
+
+  (meta-defun meta-down :mode ement-room-list-mode yant/ement-room-forward)
+  (meta-defun meta-up :mode ement-room-list-mode yant/ement-room-backward))
+#+end_src
+
+*** Notifications in ement
+
+#+begin_src emacs-lisp
+(use-package ement-notify
+  :custom
+  (ement-notify-sound "message-new-instant"))
 #+end_src
 
 ** Mastodon client =mastodon.el=
