@@ -8453,7 +8453,8 @@ Go backward with prefix argument BACKWARD."
   (defvar yant/mastodon-hosts
     '("emacs.ch" "mastodon.social"
       "writeout.ink" "social.tchncs.de"
-      "framapiaf.org" "social.lol")
+      "framapiaf.org" "social.lol"
+      "functional.cafe" "social.roger.family")
     "List of known Mastodon hosts.")
   (defun yant/mastodon-url-p (url)
     "Wrapper for `mastodon-url-lookup' appropriate for URL handlers."
