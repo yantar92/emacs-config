@@ -1,0 +1,37 @@
+
+Archived entries from file /home/yantar92/Org/system-config.org
+
+* 2020
+
+** 2020-12 December
+
+*** 2020-12-10 Thursday
+**** Archived Inline Tasks
+***** DONE now I am explicitly calling /home/yantar92/bin .. need to remove it when I make my scripts into packages
+CLOSED: [2020-12-10 Thu 18:04]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-12-11 Fri 15:43
+:ARCHIVE_FILE: ~/Org/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux/GUI/Window manager: Awesome WM/Configuration/Widgets/Battery
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_TODO: DONE
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2020-12-10 Thu 18:04]
+:END:
+
+*** 2020-12-12 Saturday
+**** Archived Inline Tasks
+***** DONE Insert the link
+CLOSED: [2020-12-12 Sat 18:03]
+:PROPERTIES:
+:ARCHIVE_TIME: 2020-12-13 Sun 17:58
+:ARCHIVE_FILE: ~/Org/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux/Basic toolchain/System setup
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: HOLD
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2020-12-12 Sat 18:03]
+:END:

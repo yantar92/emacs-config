@@ -1,0 +1,67 @@
+
+Archived entries from file /home/yantar92/Org/system-config.org
+
+* 2021
+
+** 2021-01 January
+
+*** 2021-01-31 Sunday
+**** Archived Inline Tasks
+***** DONE we can do it using babel in org-mode though. rewrite
+CLOSED: [2021-01-31 Sun 20:32] SCHEDULED: <2021-01-31 Sun>
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-01-31 Sun 20:32
+:ARCHIVE_FILE: ~/Org/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux/Basic toolchain/Portage/=make.conf=/Compiler flags
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: COMMON
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"          [2021-01-31 Sun 20:32]
+CLOCK: [2021-01-31 Sun 20:22]--[2021-01-31 Sun 20:32] =>  0:10
+:END:
+***** CANCELLED change the theme on startup :CANCELLED:
+CLOSED: [2021-01-31 Sun 23:07]
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-02-05 Fri 18:58
+:ARCHIVE_FILE: ~/Org/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux/Basic toolchain/System setup
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_ITAGS: COMMON HOLD
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"          [2021-01-31 Sun 23:07]
+:END:
+
+** 2021-02 February
+
+*** 2021-02-01 Monday
+**** Archived Tasks
+***** dev-perl/File-MimeInfo (mimeopen)
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-02-01 Mon 10:57
+:ARCHIVE_FILE: ~/Org/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux/Mime info tools
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_ITAGS: COMMON HOLD
+:END:
+
+[2021-02-01 Mon] Not reliable on UTF-8 filenames. Using xdg-open instead.
+mimeopen turned out to be more reliable in comparison with xdg-open for me.
+
+**** Archived Inline Tasks
+***** DONE maybe do not use mimeopen at all?
+CLOSED: [2021-02-01 Mon 10:57]
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-02-05 Fri 18:58
+:ARCHIVE_FILE: ~/Org/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux/Mime info tools/xdg-utils
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_ITAGS: COMMON HOLD
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"          [2021-02-01 Mon 10:57]
+:END:
