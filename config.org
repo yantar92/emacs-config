@@ -18449,6 +18449,9 @@ q ignore
 :END:
 ****************** SOMEDAY save repo separately :SOMEDAY:
 ****************** END
+:PROPERTIES:
+:ID: edfcf73c-fdec-4173-bf83-dc0fa2e07810
+:END:
 
 =C-f= to call menu.
 
@@ -19065,7 +19068,6 @@ Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm
 (use-package hyperbole
   :if init-flag
   :init
-  (bind-key* "C-c h" #'hyperbole)
   :straight (hyperbole :type git :host nil :repo "yantar92@git.savannah.gnu.org:/srv/git/hyperbole.git")
   :defer 1
   :config
@@ -19073,8 +19075,7 @@ Credit: [[id:955b94c1-776d-4e1f-8ca0-fe0a3923192b][#email -> Alan Mackenzie <acm
   (unbind-key "C-c /" global-map)
   (bind-key "C-c C-o" #'hkey-either global-map)
   (bind-key* "<tab>" #'action-key)
-  (bind-key* "<backtab>" #'assist-key)
-  )
+  (bind-key* "<backtab>" #'assist-key))
 #+end_src
 
 ** Use [[id:Github-dandavison-dandavison-delta-viewer-c9d][dandavison [Github] dandavison/delta: A viewer for git and diff output]] to show diffs :EMACS:COMMON:SOMEDAY:
