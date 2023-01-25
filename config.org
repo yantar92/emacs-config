@@ -182,7 +182,8 @@ For now, I use develop branch of =straight.el=
 
 And use default git protocol for git repositories in =straight.el= 
 #+begin_src emacs-lisp
-(setq straight-vc-git-default-protocol 'ssh)
+;; FIXME: Broken for Gitlab.
+;; (setq straight-vc-git-default-protocol 'ssh)
 #+end_src
 
 First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as from straight.el readme]])
