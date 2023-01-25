@@ -5214,9 +5214,19 @@ Similar to the problem with debugging, profiling the time spend on fontification
   :if init-flag
   :straight t)
 #+end_src
-
 *** Profiler
 **** Appearance
+*** TODO Inspecting objects inside profiler
+#+begin_src emacs-lisp
+(use-package tree-inspector
+  :if init-flag
+  :straight (tree-inspector :host github :repo "mmontone/emacs-inspector"))
+
+(use-package inspector
+  :if init-flag
+  :straight (inspector :host github :repo "mmontone/emacs-inspector"))
+#+end_src
+
 ** Programming & emacsing
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
