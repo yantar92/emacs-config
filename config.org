@@ -5579,6 +5579,7 @@ Smarter elisp editing
     (meta-defun meta-forward-element :mode lisp-interaction-mode paredit-forward)
     (meta-defun meta-backward-element :mode emacs-lisp-mode paredit-backward)
     (meta-defun meta-backward-element :mode lisp-interaction-mode paredit-backward)
+    (meta-defun meta-cut-element :cond paredit-mode paredit-kill)
     (bind-keys :map boon-insert-map
 	       ("M-o" . meta-move-line-right)
 	       ("M-i" . meta-move-line-left))))
