@@ -6575,7 +6575,7 @@ Credit: [[id:de714e334e29b6ebfe88071cade9ecf618cfe342][tecosaur [Tecosaur.Github
 #+end_src
 
 *** Music
-**** Mingus (=mpd=)
+**** COMMENT Mingus (=mpd=)
 :PROPERTIES:
 :ID:       dad9e1d1-308f-4706-900e-3ec546e6eb58
 :END:
