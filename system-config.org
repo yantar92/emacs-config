@@ -6059,7 +6059,7 @@ NOTIFICATION="$MESSAGES_NOTIFICATION"
 # PID="$(pgrep awesome | head -n1)"
 # [[ -z "$PID" && -d "/proc/$PID" ]] && export DBUS_SESSION_BUS_ADDRESS="$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ | tr '\0' '\n' | cut -d= -f2-)"
 touch ~/.log/projecting
-[[ "$1" == "--silent" || "$(cat ~/.log/projecting)" == "true" ]] ||  echo "naughty.notify({ title = \"New mail\", text ='$NOTIFICATION', timeout = 0, preset = naughty.config.presets.critical})" | awesome-client
+[[ "$1" == "--silent" || "$(cat ~/.log/projecting)" == "true" ]] ||  echo "naughty.notify({ title = \"New mail\", text =\"$NOTIFICATION\", timeout = 0, preset = naughty.config.presets.critical})" | awesome-client
 #+end_src
 
 #+name: email-whitelist
