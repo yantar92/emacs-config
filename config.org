@@ -61,6 +61,10 @@ One important note about this configuration is that I do not use =desktop-save-m
 (defvar org-tangle-flag nil
   "Set up org tangle if not nil.")
 #+end_src
+** External dependencies
+
+The config is integrated with my OS setup. (Or rather my OS setup is integrated with this config 😂).
+You can find the public parts of OS setup in [[file:system-config.org]].
 
 ** init.el
 :PROPERTIES:
