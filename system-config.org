@@ -41,11 +41,11 @@ but also mixing it with some parts of Sakaki guide.
 :END:
 
 #+begin_src conf :tangle /sudo::/etc/fstab
-UUID=ea7aa879-3483-45c2-81cd-ecf40b49fb15		/				btrfs		defaults,noatime,discard			0 1
-UUID=46237a3e-f0de-4118-9071-4b2df1981729		none				swap		defaults,noatime,discard			0 0
-UUID=b7353bdc-e104-44df-b618-73dd349b11ac		/home				btrfs		defaults,noatime,discard			0 2
-efivarfs						/sys/firmware/efi/efivars	efivarfs	rw,nosuid,nodev,noexec,relatime			0 0
-UUID=3244-9D07						/boot				vfat		noauto,noatime					1 2
+  UUID=ea7aa879-3483-45c2-81cd-ecf40b49fb15		/				btrfs		defaults,noatime,discard			0 1
+  UUID=46237a3e-f0de-4118-9071-4b2df1981729		none				swap		defaults,noatime,discard			0 0
+  UUID=f78c1b6c-53f3-4d56-97b0-bd972090a257		/home				ext4		defaults,noatime,discard			0 2
+  efivarfs						/sys/firmware/efi/efivars	efivarfs	rw,nosuid,nodev,noexec,relatime			0 0
+  UUID=3244-9D07						/boot				vfat		noauto,noatime					1 2
 #+end_src
 
 *** Portage
