@@ -5836,7 +5836,7 @@ This is also required for =cdlatex= to work with org-mode.
     (boon-set-insert-like-state))
   (setq ledger-reports
 	'(("bal" "ledger --pedantic -f %(ledger-file) bal not Equity")
-	  ("balsg" "ledger --pedantic -f %(ledger-file) bal not Equity -X S$")
+	  ("balsg" "ledger --pedantic -f %(ledger-file) bal not Equity -X SGD")
           ("balusd" "ledger --pedantic -f %(ledger-file) bal not Equity -X $")
           ("baleur" "ledger --pedantic -f %(ledger-file) bal not Equity -X EUR")
 	  ("balcny" "ledger --pedantic -f %(ledger-file) bal not Equity -X CNY")
