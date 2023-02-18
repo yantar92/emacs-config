@@ -5341,9 +5341,27 @@ media-fonts/source-code-pro
 :ID:       8cd6a8c4-08bc-47aa-ab04-7ad76a181747
 :END:
 
-Manually installed from https://dn-works.com/ufas/
-****************** TODO make ebuild?
-****************** END
+# Manually installed from https://dn-works.com/ufas/
+
+#+begin_src bash :tangle no :dir /sudo::/ :results output
+eselect repository enable guru
+#+end_src
+
+#+RESULTS:
+: Adding guru to /etc/portage/repos.conf/eselect-repo.conf ...
+: 1 repositories enabled
+
+Do not enable any other packages from the overlay
+#+begin_src conf :tangle /sudo::/etc/portage/package.mask/guru-repo
+,*/*::guru
+#+end_src
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/sarasa-mono
+media-fonts/symbola::guru
+#+end_src
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+media-fonts/symbola
+#+end_src
 
 **** FontAwesome
 :PROPERTIES:
@@ -5373,8 +5391,31 @@ media-fonts/noto-emoji
 #+end_src
 
 **** Sarasa Gothic (for Russian monospaced text)
+:PROPERTIES:
+:ID:       27b7db4d-bb47-4aa0-8782-244a27d378a2
+:END:
 
 [[id:21f06900e232809e79ecdd07e0d84647f30e8975][be5invis [Github] Sarasa-Gothic: Sarasa Gothic / 更纱黑体 / 更紗黑體 / 更紗ゴシック / 사라사 고딕]]
+
+#+begin_src bash :tangle no :dir /sudo::/ :results output
+eselect repository enable gentoo-zh
+#+end_src
+
+#+RESULTS:
+: Adding gentoo-zh to /etc/portage/repos.conf/eselect-repo.conf ...
+: 1 repositories enabled
+
+Do not enable any other packages from the overlay
+#+begin_src conf :tangle /sudo::/etc/portage/package.mask/gentoo-zh-repo
+,*/*::gentoo-zh
+#+end_src
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/sarasa-mono
+media-fonts/sarasa-gothic::gentoo-zh
+#+end_src
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+media-fonts/sarasa-gothic
+#+end_src
 
 **** =all-the-icons=
 
