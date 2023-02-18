@@ -4967,44 +4967,46 @@ Interactive fill/unfill paragraph at point.
 (when init-flag
   (setq debug-on-error t)
   (setq debug-on-quit nil)
-  (setq debug-ignored-errors '(beginning-of-line
-			       beginning-of-buffer
-			       end-of-line
-			       end-of-buffer
-			       end-of-file
-			       buffer-read-only
-			       quit
-			       file-supersession
-			       mark-inactive
-			       user-error
-                               search-failed
-			       file-missing
-                               file-date-error
-                               "Ement: Not connected.  Use ‘ement-connect’ to connect"
-                               "Viewing span is already"
-                               "No links on this page"
-                               "pdf-info-epdfinfo-program is not executable"
-                               "notmuch search process already running"
-                               "epdfinfo: Unable to create synctex scanner"
-                               "Too few elements on stack"
-                               "Abort"
-                               "Trying to run helm within a running helm session"
-                               "Already at top level of the outline"
-			       "Attempt to delete the sole visible or iconified frame"
-                               "No such page"
-                               "Unknown selector"
-                               "use-package: :[a-z]+ wants"
-                               "The mark is not set now, so there is no region"
-                               "Search string not set"
-			       "use-package: Unrecognized keyword"
-			       "No more buttons"
-                               "No command bound to"
-                               "Decryption failed"
-                               "No such action"
-                               "Cannot outdent an item without its children"
-                               "Attempt to delete minibuffer or sole ordinary window"
-                               "profiler is already running"
-                               "Bumped into unknown token")))
+  (setq debug-ignored-errors
+        '(beginning-of-line
+	  beginning-of-buffer
+	  end-of-line
+	  end-of-buffer
+	  end-of-file
+	  buffer-read-only
+	  quit
+	  file-supersession
+	  mark-inactive
+	  user-error
+          search-failed
+	  file-missing
+          file-date-error
+          "No action defined for this context; try another location"
+          "Ement: Not connected.  Use ‘ement-connect’ to connect"
+          "Viewing span is already"
+          "No links on this page"
+          "pdf-info-epdfinfo-program is not executable"
+          "notmuch search process already running"
+          "epdfinfo: Unable to create synctex scanner"
+          "Too few elements on stack"
+          "Abort"
+          "Trying to run helm within a running helm session"
+          "Already at top level of the outline"
+	  "Attempt to delete the sole visible or iconified frame"
+          "No such page"
+          "Unknown selector"
+          "use-package: :[a-z]+ wants"
+          "The mark is not set now, so there is no region"
+          "Search string not set"
+	  "use-package: Unrecognized keyword"
+	  "No more buttons"
+          "No command bound to"
+          "Decryption failed"
+          "No such action"
+          "Cannot outdent an item without its children"
+          "Attempt to delete minibuffer or sole ordinary window"
+          "profiler is already running"
+          "Bumped into unknown token")))
 #+end_src
 **** Debugger key bindings
 :PROPERTIES:
