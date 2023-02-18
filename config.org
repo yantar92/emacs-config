@@ -5230,7 +5230,15 @@ Similar to the problem with debugging, profiling the time spend on fontification
 
 (use-package inspector
   :if init-flag
-  :straight (inspector :host github :repo "mmontone/emacs-inspector"))
+  :straight (inspector :host github :repo "mmontone/emacs-inspector")
+  :config
+  (defun yant/eval-or-display (oldfun arg)
+    "Run OLDFUN or display result.
+With `\\[universal-argument]', run `inspector-inspect-last-sexp'."
+    (interactive "P")
+    (pcase arg
+      ('(4) (inspector-inspect-last-sexp))
+      (_ (call-interactively oldfun)))))
 #+end_src
 
 ** Programming & emacsing
@@ -5642,7 +5650,11 @@ The result is useful to avoid mess in the global variables, but also makes the v
 (use-package eros
   :if init-flag
   :straight t
-  :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . eros-mode))
+  :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . eros-mode)
+  :config
+  (use-package inspector
+    :config
+    (advice-add 'eros-eval-last-sexp :around #'yant/eval-or-display)))
 #+end_src
 
 **** COMMENT Improved interactive evaluation of elisp code
