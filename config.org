@@ -16396,7 +16396,7 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
       		  (?✘ org-specific "\\(?:^*+ +\\)\\(\\<FAILED\\>\\)" (org-mode) 1)
       		  (?✘ org-specific "\\(?:^*+ +\\)\\(\\<CANCELLED\\>\\)" (org-mode) 1)
       		  (?▶ org-specific "\\(?:^*+ +\\)\\(\\<NEXT\\>\\)" (org-mode) 1)
-      		  (?🧠 org-specific "\\(?:^*+ +\\)\\(\\<TICKLER\\>\\)" (org-mode) 1)
+      		  (?👁 org-specific "\\(?:^*+ +\\)\\(\\<TICKLER\\>\\)" (org-mode) 1)
                   (?🔁 org-specific "\\(?:^*+ +\\)\\(\\<MERGED\\>\\)" (org-mode) 1)
       		  (?⌛ org-specific "\\(?:^*+ +\\)\\(\\<WAITING\\>\\)" (org-mode) 1)
                   (?⏩ org-specific "\\(?:^*+ +\\)\\(\\<DOING\\>\\)" (org-mode) 1)
