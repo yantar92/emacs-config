@@ -4269,7 +4269,7 @@ SELECTED_TEXT="$REPLY"
 emacsclient "org-protocol://capture?template=s&url=$URL&title=$TITLE&body=$SELECTED_TEXT" && echo "message-info \"Selection saved to TODO.org/Inbox\"" >> "$QUTE_FIFO" || echo "message-error \"Selection not saved!\"" >> "$QUTE_FIFO"
 #+end_src
 
-**** Redirect from tracking websites (youtube, reddit, twitter, etc) to open-source alternatives
+**** COMMENT Redirect from tracking websites (youtube, reddit, twitter, etc) to open-source alternatives
 :PROPERTIES:
 :ID:       e9b2c5c0-e8b2-4f50-80f3-ce712b99730d
 :END:
