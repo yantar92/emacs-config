@@ -1042,8 +1042,10 @@ Match default face background
 **** Scrolling
 
 #+begin_src emacs-lisp
-(when init-flag
-  (pixel-scroll-precision-mode +1))
+(use-package pixel-scroll
+  :if init-flag
+  :hook
+  (after-init . pixel-scroll-precision-mode))
 #+end_src
 *** Buffer
 
@@ -1760,9 +1762,9 @@ Define the most basic movement commands:
     :config
     (meta-defun meta-new-line "Insert new line." boon-newline-dwim))
   (meta-defun meta-undo "Undo." undo)
-  
-  (meta-defun meta-scroll-up "Scroll up." scroll-up)
-  (meta-defun meta-scroll-down "Scroll down." scroll-down)
+  (setq pixel-scroll-precision-interpolate-page t)
+  (meta-defun meta-scroll-down "Scroll down." pixel-scroll-interpolate-up)
+  (meta-defun meta-scroll-up "Scroll up." pixel-scroll-interpolate-down)
   (meta-defun-mapc
    '((meta-down "Move down." next-logical-line)
      (meta-up "Move up." previous-logical-line)
