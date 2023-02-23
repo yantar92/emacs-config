@@ -3346,6 +3346,22 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 	     ("<SPC>" . boon-drop-mark))
   (unbind-key "M-l" global-map))
 #+end_src
+***** Do not set natural state on frame switch
+
+By default, =boon= tries to be smart and does not preserve state set in
+a buffer upon switching from it. The side effect is that switching to
+other WM frame triggers return to "natural" (usually, command) state
+even if I am in the process of editing something and want to look into
+a web page, switching from Emacs temporarily.
+
+Disable this feature.
+
+#+begin_src emacs-lisp
+(use-package boon
+  :config
+  (remove-hook 'window-selection-change-functions #'boon-reset-state-for-switchw))
+#+end_src
+
 **** =Avy= mode - =qutebrowser= like hints to words
 :PROPERTIES:
 :ID:       f645973b-fcd8-466a-9fec-7e8ebcbb0be1
