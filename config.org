@@ -3271,6 +3271,7 @@ The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especiall
 	     ("e" . eval-last-sexp)
 	     ("c" . delete-frame)
 	     :map boon-moves-map
+             ("v" . (lambda () (interactive) (boon-set-state 'boon-insert-state)))
 	     ("j" . meta-down)
 	     ("J" . meta-down-element)
 	     ("k" . meta-up)
