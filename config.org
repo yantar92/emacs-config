@@ -1762,6 +1762,7 @@ Define the most basic movement commands:
     :config
     (meta-defun meta-new-line "Insert new line." boon-newline-dwim))
   (meta-defun meta-undo "Undo." undo)
+  (require 'pixel-scroll)
   (setq pixel-scroll-precision-interpolate-page t
         pixel-scroll-precision-interpolation-total-time 0.07)
   (meta-defun meta-scroll-down "Scroll down." pixel-scroll-interpolate-up)
