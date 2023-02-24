@@ -16239,7 +16239,12 @@ Verbatim text font
   :custom-face
   (org-verbatim ((t (:height 0.95 :weight semi-light)))))
 #+end_src
-***** Render latex fragments
+***** COMMENT Render latex fragments
+:PROPERTIES:
+:SUMMARY:  slow on main
+:END:
+- Note taken on [2023-02-22 Wed 16:42] \\
+  slow on main
 #+begin_src emacs-lisp
 (use-package org
   :if init-flag
