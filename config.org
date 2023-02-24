@@ -2894,7 +2894,7 @@ Mostly we check word delimiters."
       (goto-char (point-max))
       (langtool-check-buffer))
     (while langtool-buffer-process
-      (sleep-for 0.1))
+      (sit-for 0.1))
     (langtool-correct-buffer))
   (add-hook! 'message-send-hook #'langtool-check-buffer-ensure))
 #+end_src
@@ -7205,7 +7205,7 @@ the notmuch-tree buffer if it appears after closing the message."
       (other-window 1)
       ;; Open full message in single-message thread.
       (sit-for 0.1)
-      (while (not (save-excursion (goto-char 1) (re-search-forward "^End of search results.$" nil t))) (sleep-for 0.1))
+      (while (not (save-excursion (goto-char 1) (re-search-forward "^End of search results.$" nil t))) (sit-for 0.1))
       (when (= 2 (count-lines (point-min) (point-max)))
 	(notmuch-tree-show-message-out)))
     
