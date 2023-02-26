@@ -1831,14 +1831,8 @@ The problem is that it may mess up the cases when I want to assign special meani
     :defer t
     :config
     (add-hook! 'org-log-buffer-setup-hook (boon-set-state 'boon-insert-state)))
-  (add-hook 'boon-local-mode-hook
-	    (lambda() (when (and boon-local-mode
-			    (member major-mode boon-insert-state-major-mode-list))
-		   (boon-set-state 'boon-insert-state)))
-	    'append)
-  (defun boon-set-insert-state ()
-    "Switch to insert state."
-    (boon-set-state 'boon-insert-state))
+  (add-to-list 'boon-insert-conditions
+               '(member major-mode boon-insert-state-major-mode-list))
   (use-package boon-qwerty)
   (boon-mode))
 #+end_src
