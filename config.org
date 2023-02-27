@@ -5237,7 +5237,7 @@ Similar to the problem with debugging, profiling the time spend on fontification
 #+end_src
 *** Profiler
 **** Appearance
-*** TODO Inspecting objects inside profiler
+*** TODO Inspecting objects (inside profiler or evaluation results)
 #+begin_src emacs-lisp
 (use-package tree-inspector
   :if init-flag
@@ -5255,7 +5255,20 @@ With `\\[universal-argument]', run `inspector-inspect-last-sexp'."
       ('(4) (inspector-inspect-last-sexp))
       (_ (call-interactively oldfun)))))
 #+end_src
-
+**** Inspect when =C-u M-:=
+#+begin_src emacs-lisp
+(use-package inspector
+  :if init-flag
+  :config
+  (defun yant/eval-expression-or-display (oldfun arg)
+    "Run OLDFUN or display result.
+With `\\[universal-argument]', run `inspector-inspect-expression'."
+    (interactive "P")
+    (pcase arg
+      ('(4) (call-interactively #'inspector-inspect-expression))
+      (_ (call-interactively oldfun))))
+  (advice-add 'eval-expression :around #'yant/eval-expression-or-display))
+#+end_src
 ** Programming & emacsing
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
