@@ -8367,7 +8367,7 @@ app-office/libreoffice-bin
 www-client/firefox-bin
 #+end_src
 
-** pantalaimon: end-to-end encryption server for matrix
+** COMMENT pantalaimon: end-to-end encryption server for matrix
 :PROPERTIES:
 :ID:       871f0af1-da9b-4fc0-8275-24f59dd6318e
 :END:
