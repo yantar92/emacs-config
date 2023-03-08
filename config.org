@@ -5294,7 +5294,7 @@ Similar to the problem with debugging, profiling the time spend on fontification
 #+end_src
 *** Profiler
 **** Appearance
-*** TODO Inspecting objects (inside profiler or evaluation results)
+*** Inspecting objects (inside profiler or evaluation results)
 #+begin_src emacs-lisp
 (use-package tree-inspector
   :if init-flag
@@ -5326,6 +5326,26 @@ With `\\[universal-argument]', run `inspector-inspect-expression'."
       (_ (call-interactively oldfun))))
   (advice-add 'eval-expression :around #'yant/eval-expression-or-display))
 #+end_src
+**** Inspect inside debugger
+
+#+begin_src emacs-lisp
+(use-package backtrace
+  :if init-flag
+  :config
+  (use-package inspector
+    :config
+    (defun yant/backtrace-toggle-locals-dwim (&optional all)
+      "Toggle locals or inspect return value."
+      (interactive "P")
+      (cond
+       ((save-excursion
+          (beginning-of-line)
+          (looking-at-p "Debugger entered--returning value:"))
+        (inspector-inspect-debugger-return-value))
+       (t (funcall-interactively #'backtrace-toggle-locals all))))
+    (bind-key "v" #'yant/backtrace-toggle-locals-dwim debugger-mode-map)))
+#+end_src
+
 ** Programming & emacsing
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
