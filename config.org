@@ -15676,7 +15676,7 @@ Also, it make sense to show inline images, which I frequently generate via Gnupl
 (add-hook! 'org-babel-after-execute-hook
   (unless (eq this-command 'org-babel-tangle)
     (org-display-inline-images nil nil
-                               (save-excursion (org-back-to-heading-or-point-min t))
+                               (save-excursion (org-back-to-heading-or-point-min t) (point))
                                (save-excursion (or (outline-next-heading) (point-max))))))
 #+END_SRC
 ****** TODO Gnuplot
