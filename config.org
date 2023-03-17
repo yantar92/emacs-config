@@ -5354,6 +5354,13 @@ With `\\[universal-argument]', run `inspector-inspect-expression'."
        (t (funcall-interactively #'backtrace-toggle-locals all))))
     (bind-key "v" #'yant/backtrace-toggle-locals-dwim debugger-mode-map)))
 #+end_src
+**** Key bindings inside inspector buffers
+#+begin_src emacs-lisp
+(use-package inspector
+  :if init-flag
+  :config
+  (meta-defun meta-up-element :mode inspector-mode inspector-pop))
+#+end_src
 
 ** Programming & emacsing
 :PROPERTIES:
