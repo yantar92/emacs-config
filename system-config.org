@@ -5646,7 +5646,7 @@ yant/ledger-file
 :END:
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-food-status.sh :shebang #!/bin/bash
-ledger -f <<ledger-file()>>  reg --budget -X <<ledger-main-currency()>> Food  -U -p 'until tomorrow'
+ledger --no-pager -f <<ledger-file()>>  reg --budget -X <<ledger-main-currency()>> Food  -U -p 'until tomorrow'
 #+end_src
 
 *** Continuous monitoring of budget
