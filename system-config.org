@@ -7565,6 +7565,13 @@ net-im/zoom all-rights-reserved
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 net-im/zoom
 #+end_src
+** GNU Screen (for Org mode ob-screen testing)
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+app-misc/screen
+#+end_src
+
+
 ** Music editing
 
 *** Split =flac= file according to =cue= playlist
