@@ -1016,6 +1016,11 @@ sed -i -e 's|location="quay.io/libpod"|location="docker.io/library"|' /etc/conta
 #+end_src
 
 #+RESULTS:
+**** Rake - automation for [[id:Email-<bzg@gnuorg>2022-re-using-sr-17d][https://git.sr.ht/~bzg/org-mode-tests Bastien <bzg@gnu.org> [Email] (2022) Re: Using sr.ht CI for Org tests]]
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-ruby/rake
+#+end_src
 
 *** 7z (p7zip)
 :PROPERTIES:
