@@ -7561,6 +7561,10 @@ I don't like it, but it is what I have to use
 #+begin_src conf :tangle /sudo::/etc/portage/package.license/zoom :mkdirp yes
 net-im/zoom all-rights-reserved
 #+end_src
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+net-im/zoom
+#+end_src
 ** Music editing
 
 *** Split =flac= file according to =cue= playlist
