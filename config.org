@@ -15786,11 +15786,14 @@ I had to modify =org-babel-expand-body:gnuplot= to make it respect =:dir= proper
     body))
 #+END_SRC
 
-****** Async evaluation
+****** COMMENT Async evaluation
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 21:10]
 :ID:       11a37f26-ef17-43ec-bb9b-43155f9fc9ec
+:SUMMARY:  not compatible with native async support
 :END:
+- Note taken on [2023-03-24 Fri 10:13] \\
+  not compatible with native async support
 #+begin_src emacs-lisp
 (use-package ob-async
   :straight t
