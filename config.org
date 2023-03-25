@@ -15265,7 +15265,8 @@ This function is called by `org-archive-hook'.  The option
      (let ((limit (save-excursion (org-end-of-subtree t) (point))))
        (while (and (< (point) limit) (re-search-forward org-attach-auto-tag limit t))
          (when (and (org-at-heading-p) (member org-attach-auto-tag (org-get-tags nil t)));; do not ask if no attachments
-           (let ((heading (org-get-heading nil nil 'norpiority 'nocomment)))
+           (let ((heading (org-get-heading nil nil 'norpiority 'nocomment))
+                 (source (org-entry-get (point) "URL")))
              (when (if (eq org-attach-archive-delete 'query)
 		       (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
 									       (interactive)
@@ -15276,8 +15277,12 @@ This function is called by `org-archive-hook'.  The option
                            (revert-buffer)
                            (select-window (old-selected-window))
 		           (prog1
-			       (yes-or-no-p (format "%s: Delete all attachments? "
-					            heading))
+                               (or (and source
+                                        (or (string-match-p "reddit\\.com" source)
+                                            (string-match-p "youtube\\.com" source))
+                                        (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html"))))
+			           (yes-or-no-p (format "%s: Delete all attachments? "
+					                heading)))
                              (kill-buffer dired-buf))))
 	             org-attach-archive-delete)
 	       (org-attach-delete-all t)))))))))
