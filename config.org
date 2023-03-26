@@ -754,7 +754,7 @@ Also, automatically detecting and setting any missing fonts (this comes before m
 		      :family "Source Code Pro")
   (set-fontset-font "fontset-default" 'chinese-gbk (font-spec :family "Sarasa Mono hc"))
   ;; Credit for the suggestion about `face-font-rescale-alist': @viz:okash.it (Matrix)
-  (push `("Sarasa Mono hc" . ,(/ 15.0 13.0)) face-font-rescale-alist)
+  (push `("Sarasa Mono hc" . ,(/ 16.0 13.0)) face-font-rescale-alist)
   (set-fontset-font "fontset-default" 'cyrillic-iso8859-5 (font-spec :family "source code pro"))
   (mapc (lambda (char)
 	  (set-fontset-font "fontset-default" char (font-spec :family "Symbola")))
