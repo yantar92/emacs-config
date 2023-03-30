@@ -2544,6 +2544,16 @@ Magit is able to provide word-level diff refinement.  It is disabled by default 
   (bind-key "C-c M-o" #'browse-at-remote))
 #+end_src
 
+**** Store Org links to Magit buffers
+#+begin_src emacs-lisp
+(use-package magit
+  :if init-flag
+  :config
+  (use-package orgit
+    :straight t
+    :custom
+    (orgit-store-reference t)))
+#+end_src
 *** =Ediff=
 :PROPERTIES:
 :ID:       0a071515-0aff-4cbe-982c-374860cdc9fc
