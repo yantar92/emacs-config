@@ -13136,7 +13136,7 @@ However, I do not find it comfortable to look into notes (which are stored in dr
     (when (string-match "\\s-+\\'" txt)
       (setq txt (replace-match " " t t txt)))
     (when (string-match "\n" txt)
-      (setq txt (replace-match " " t t txt)))
+      (setq txt (replace-regexp-in-string "\n.+" "" txt)))
     (if (not (seq-empty-p txt))
 	(setq yant/last-note-taken txt))))
 
