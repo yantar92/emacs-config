@@ -5644,6 +5644,19 @@ yant/ledger-file
 --effective
 --exchange <<ledger-main-currency()>>
 #+end_src
+*** Weekly expenses script
+
+#+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses.sh :shebang #!/bin/bash
+ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Expenses and not Work and not Gifts and not Medical -W -n -A
+#+end_src
+
+#+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses-USD.sh :shebang #!/bin/bash
+ledger --no-pager -f <<ledger-file()>>  reg -X USD Expenses and not Work and not Gifts and not Medical -W -n -A
+#+end_src
+
+#+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses-EUR.sh :shebang #!/bin/bash
+ledger --no-pager -f <<ledger-file()>>  reg -X EUR Expenses and not Work and not Gifts and not Medical -W -n -A
+#+end_src
 
 *** Food status script
 :PROPERTIES:
