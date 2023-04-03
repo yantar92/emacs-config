@@ -5671,14 +5671,6 @@ Use company backend instead of main jedi that uses auto-completion
 :PROPERTIES:
 :CREATED:  [2019-07-08 Mon 20:50]
 :END:
-**** Use spaces for indenting
-:PROPERTIES:
-:ID:       d1802888-2458-4d3c-9891-5c91fd11af6e
-:END:
-
-#+begin_src emacs-lisp
-(add-hook! emacs-lisp-mode (setq indent-tabs-mode nil))
-#+end_src
 **** Indicate fill column
 :PROPERTIES:
 :ID:       ac20a5b1-8475-4bf7-985d-a82c804eae6a
