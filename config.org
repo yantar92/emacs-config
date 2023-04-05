@@ -13159,7 +13159,10 @@ However, I do not find it comfortable to look into notes (which are stored in dr
   :config
   (add-hook 'org-mode-hook #'org-autosort-sort-entries-in-file-maybe)
   (setq org-autosort-todo-cmp-order '("REVIEW" "DOING" "NEXT" "HOLD" "WAITING" "TODO" "SOMEDAY" "TICKLER" "FROZEN" "MERGED" "FAILED" "DONE" "CANCELLED"))
-  (setq org-autosort-global-sorting-strategy '(todo-up priority-down))
+  (setq org-autosort-global-sorting-strategy
+	'(todo-up
+          priority-down
+          (:key (lambda () (if (member "FLAGGED" (org-get-tags nil 'local)) "1" "2")))))
   (bind-key "C-c C-S-s" 'org-autosort-sort-entries-at-point org-mode-map)
   (add-to-list 'org-default-properties "SORT"))
 #+end_src
