@@ -5091,6 +5091,7 @@ Interactive fill/unfill paragraph at point.
           "Search string not set"
 	  "use-package: Unrecognized keyword"
 	  "No more buttons"
+          "No attachment directory exist"
           "No command bound to"
           "Decryption failed"
           "No such action"
