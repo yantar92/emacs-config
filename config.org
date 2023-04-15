@@ -5497,7 +5497,11 @@ It provides extra functionality to the standard =help= buffers.
 (use-package helpful
   :if init-flag
   :straight (helpful :host github :repo "Wilfred/helpful" :local-repo "~/Git/helpful"
-                     :fork (:host github :repo "yantar92/helpful")))
+                     :fork (:host github :repo "yantar92/helpful"))
+  :config
+  ;; Work around Emacs bug#58558.
+  (setq-default parse-sexp-lookup-properties nil)
+  )
 #+END_SRC
 ***** Elisp demos
 :PROPERTIES:
