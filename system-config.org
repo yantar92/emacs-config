@@ -318,6 +318,11 @@ rc-update add sysklogd default
 sys-process/cronie
 #+end_src
 
+#+begin_src bash :tangle no :dir /sudo::/ :eval yes
+rc-update add cronie default
+#+end_src
+
+
 #+begin_src conf :tangle /sudo::/var/spool/cron/crontabs/yantar92 :mkdirp yes
 SHELL=/bin/bash
 PATH=/bin:/usr/bin:/home/yantar92/.local/bin
