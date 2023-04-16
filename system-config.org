@@ -298,6 +298,16 @@ GRUB_TIMEOUT="1"
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-python/pip
 #+end_src
+*** System logging =sysklogd=
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+app-admin/sysklogd
+#+end_src
+
+#+begin_src bash :tangle no :dir /sudo::/ :eval yes
+rc-update add sysklogd default
+#+end_src
+
 
 *** cron
 :PROPERTIES:
