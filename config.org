@@ -5318,6 +5318,7 @@ Similar to the problem with debugging, profiling the time spend on fontification
 *** Profiler
 **** Appearance
 *** Inspecting objects (inside profiler or evaluation results)
+#inspector
 #+begin_src emacs-lisp
 (use-package tree-inspector
   :if init-flag
