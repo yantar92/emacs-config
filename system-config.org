@@ -8007,12 +8007,17 @@ done
 while true; do
     read -p "Sync with remote backup? " yn
     case $yn in
-        [Yy]* ) restic -r rclone:backup:Backup <<backup-opts()>> backup /home/yantar92/; break;;
+        [Yy]* ) restic -r rclone:backup:Backup <<backup-opts()>> --password-command "gpg -q  --for-your-eyes-only -d /home/yantar92/.password-store/restic-remote.gpg" backup /home/yantar92/; break;;
         [Nn]* ) break;;
         ,* ) echo "Please answer yes or no.";;
     esac
 done
 #+end_src
+
+#+begin_src bash :tangle /sudo::/etc/cron.daily/backup :shebang #!/bin/bash :noweb tangle
+restic -r rclone:backup:Backup <<backup-opts()>> --password-command "gpg -q  --for-your-eyes-only -d /home/yantar92/.password-store/restic-remote.gpg" backup /home/yantar92/
+#+end_src
+
 
 [2020-12-22 Tue] trying encrypted backup using [[id:aa43745e-4d5a-4500-bf22-fa6db3733519][restic]].
 
