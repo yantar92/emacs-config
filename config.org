@@ -5381,7 +5381,7 @@ With `\\[universal-argument]', run `inspector-inspect-expression'."
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
 :END:
-*** Language server protocol
+*** COMMENT Language server protocol
 :PROPERTIES:
 :ID:       7104c9e6-55f0-4c32-8376-b8868fea856e
 :END:
@@ -5629,7 +5629,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
                ("h t" . helm-info-auctex)
                ("h T" . helm-info-texinfo))))
 #+end_src
-*** Python
+*** COMMENT Python
 **** Do not inform me every time Python guesses indentation offset
 
 #+begin_src emacs-lisp
