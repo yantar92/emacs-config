@@ -18244,7 +18244,9 @@ ls-files' and 'grep'."
                   (project-root pr))
 		(read-directory-name "Search in directory: ")))
            (files
-            (mapcar #'find-file-noselect
+            (mapcar (lambda (file)
+		      (with-current-buffer (find-file-noselect file)
+			(widen)))
 		    (delete-dups
 		     (mapcar
 		      #'xref-file-location-file
