@@ -5474,7 +5474,7 @@ while true; do org-clocked-in.sh 2>> ~/.log/org-clocked-in.log; sleep 5; done &
 #+end_src
 #+begin_src bash :tangle /home/yantar92/.local/bin/org-clocked-in.sh :shebang #!/bin/bash
 # Make sure it exists
-touch ~/.org-clock-in
+[[ -f "/home/yantar92/.org-clock-in" ]] || touch ~/.org-clock-in
 BALANCE=""
 [[ "$1" == "balance" ]] && BALANCE="1"
 
@@ -5501,25 +5501,25 @@ if [[ "$time_string" =~ .+/.+ ]]; then
 fi
 
 # cat ~/.org-clock-in | cut -d[ -f2 | cut -d] -f1 | head -n1 | cut -d'(' -f1 | grep / &&\
-    #     estimate="/`cat ~/.org-clock-in | cut -d[ -f2 | cut -d] -f1 | head -n1 | cut -d'(' -f1 | sed -r 's|.+/||'`"\
-    # 	|| estimate=""
+     #     estimate="/`cat ~/.org-clock-in | cut -d[ -f2 | cut -d] -f1 | head -n1 | cut -d'(' -f1 | sed -r 's|.+/||'`"\
+     # 	|| estimate=""
 
-time_plus="`timefromchange.sh ~/.org-clock-in | grep -Eo "[0-9]+ hours" | grep -Eo "[0-9]+" || echo 0`:`timefromchange.sh ~/.org-clock-in | grep -Eo "[0-9]+ minutes" | grep -Eo "[0-9]+" || echo 0`"
-  hours_before="`echo $time_before | cut -d':' -f1 | sed -r 's/^0*([0-9]+)/\1/'`"
-  hours_plus="`echo $time_plus | cut -d':' -f1 | sed -r 's/^0*([0-9]+)/\1/'`"
-  minutes_before="`echo $time_before | cut -d':' -f2 | sed -r 's/^0*([0-9]+)/\1/'`"
-  minutes_plus="`echo $time_plus | cut -d':' -f2 | sed -r 's/^0*([0-9]+)/\1/'`"
-  hours_now="$(($hours_before + $hours_plus))"
-  minutes_now="$(($minutes_before + $minutes_plus))"
+ time_plus="`timefromchange.sh ~/.org-clock-in | grep -Eo "[0-9]+ hours" | grep -Eo "[0-9]+" || echo 0`:`timefromchange.sh ~/.org-clock-in | grep -Eo "[0-9]+ minutes" | grep -Eo "[0-9]+" || echo 0`"
+ hours_before="`echo $time_before | cut -d':' -f1 | sed -r 's/^0*([0-9]+)/\1/'`"
+ hours_plus="`echo $time_plus | cut -d':' -f1 | sed -r 's/^0*([0-9]+)/\1/'`"
+ minutes_before="`echo $time_before | cut -d':' -f2 | sed -r 's/^0*([0-9]+)/\1/'`"
+ minutes_plus="`echo $time_plus | cut -d':' -f2 | sed -r 's/^0*([0-9]+)/\1/'`"
+   hours_now="$(($hours_before + $hours_plus))"
+   minutes_now="$(($minutes_before + $minutes_plus))"
 
-  while (($minutes_now >= 60)); do
-      minutes_now="$(($minutes_now - 60))";
-      hours_now="$(($hours_now + 1))";
-  done
+   while (($minutes_now >= 60)); do
+       minutes_now="$(($minutes_now - 60))";
+       hours_now="$(($hours_now + 1))";
+   done
 
-  if (($minutes_now < 10)); then
-      minutes_now="0$minutes_now";
- fi
+   if (($minutes_now < 10)); then
+       minutes_now="0$minutes_now";
+   fi
 
 time_now="$hours_now:$minutes_now"
 RES="[ ${time_now}${effort_estimate} ] :: `cat ~/.org-clock-in | cut -d] -f 2- | head -n1`"
