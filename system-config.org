@@ -8014,8 +8014,33 @@ while true; do
 done
 #+end_src
 
+#+begin_src bash :tangle /home/yantar92/.local/bin/backup-archive-to-remote.sh :shebang #!/bin/bash :noweb tangle
+# Upload local archive to remote
+while true; do
+    read -p "Copy archive to remote backup? " yn
+    case $yn in
+        [Yy]* ) rclone /mnt/Backup/Archive/ archive:; break;;
+        [Nn]* ) break;;
+        ,* ) echo "Please answer yes or no.";;
+    esac
+done
+#+end_src
+
+
+#+begin_src bash :tangle ~/.local/bin/backup-full.sh :shebang #!/bin/bash
+backup-mount.sh
+/home/yantar92/.local/bin/backup-local.sh
+/home/yantar92/.local/bin/backup-archive-to-remote.sh
+backup-umount.sh
+/home/yantar92/.local/bin/backup-remote.sh
+#+end_src
+
 #+begin_src bash :tangle /sudo::/etc/cron.daily/backup :shebang #!/bin/bash :noweb tangle
-restic -r rclone:backup:Backup <<backup-opts()>> --password-command "gpg -q  --for-your-eyes-only -d /home/yantar92/.password-store/restic-remote.gpg" backup /home/yantar92/
+SHELL=/bin/bash
+PATH=/bin:/usr/bin:/home/yantar92/.local/bin
+HOME=/home/yantar92
+DISPLAY=:0
+echo "yes" | /home/yantar92/.local/bin/backup-remote.sh
 #+end_src
 
 
@@ -8028,22 +8053,21 @@ restic -r rclone:backup:Backup <<backup-opts()>> --password-command "gpg -q  --f
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQf/V99CoBJn77UuxjkYEy5qlGeX+CJdMv0WBtR6fWg2w7mB
-cw2ITKTFOpcyuw+cprKtKkhkCisTGx+fR0knEnPvVWw0jZhVgI4SabpB82L737sF
-URBOoNr5zFtDuPEVBRl4otNdKFeNjWrsh02E6tRaP4KxwVnd/B2ovOG/FqfzkxxU
-2AEfZeCcD6kDwmIX8D/q2mR54Uay+B51OTm5MSazIbZr4J+Gg2AshiOGTV5MqtZj
-0OJbfSxhuTFwW/wRLMvdeSJUuDMKRW3gE86FfH+q2ItYDzMtXz3w8RntJZc4N7S0
-zAifh71bL0zV6HvvFG93KVQ0EBWujkLI4ZlF+uiRPNLA2AEbjX+i1/xMXPmY+5wC
-I9tZD8MV8PdLEolqmTNnt0+1wIA/bNIWPEvjCeKfxz/gB2o1maiibyrCKzqYBdQ+
-QoINg1doiydVpfqwRkTK62csfMdNFPXLu1NyShUqfIdowJgxXkjKsNHLUgd0FsTp
-7a2djB83zMmPvBDhHlIBH0TdawDqknQeJEGmhgDv/fAfuPkvqpBZiRLEf1D31VlX
-d8Zerx7YFxWtu811gZ4QzTRuAOXMghQTFEh3jApz4oU8U0ixpBtwRr70Zd+7C8K/
-nfTGSJay3qJoJsM7R+Xs8bHASUThkE0R+cmqKnix/2PxmfN6MEVszrCGruoyG8qV
-ULMZ+EL/Wacip+tncuT5bBTo/ruikJ4D7wpSKCS5CFn+HV0orGs76WqFdFkc1rXn
-VwfeiZwKDUlH5utpSTVwk/nykuZtmBFF8G8VoOwmpD/Fq+IaWrYTypvrmJoKqU+u
-r279TXho97CqAj6dZ41wYgIi8AwZP4Tt9TK/DfesKkaJoiUE9o8H9OzYdi9/0zi9
-Ttk2G79d73zCog==
-=tlcP
+hQEMA3SKBiQ2zhL6AQf/drFWf6lMeo3Be7S5/RxwKq9F0fK24yFjIXTV/cRLu6/9
+m7b9t2JIwqU73+WtIOaHzWLxueMGCstS/tR0qIJQZ9AmHrDeH4BhbysI6wREB/xU
+xy6Rp62CvhPnCBKYHPUEXRTuTJEdvXGdXjEzJfbIVQ0+GqrurFNnxfEQwNMvkR7a
+IW+ynV4uoSdZ5YV0cCUu11BlozFo4fyuRkI4a3JKfXUEUm6F3bjfGXoTOPfKIPQb
+qOOQVxYHVTfaw54O6XYh5/+uCrN0VFpsWiYOev/f/cOJ32mUleFEyRtorT0Pw+XI
+SPi18qbE79JR2KVpNc+UsrOyLbB+Qyaq8xLlaN/cfdLArgE7q68Z+UKJ7p6/r8IZ
+ltjgQtIxtSzwT0t5tvQesgSo4n5mOIngEmgH9odACDPYDYeVOx9PBUXIWXfxUwmv
+0QR7D5G1ZnfHzrHI/wuIqAlv2F4MlPF/yC5leZXKXkRBZB1CH/nlRrXJiAVQPwep
+81ovQFgXoXfIpIwTr+O1gkQy8HZy+27z41hpwKEOf0txzkVNlKFCN3WQQds05bwS
+2w+NpgiJKnoILVq/NzGLhlcxHwKkb8H/6dFcnb0yrm+Op1DTG3fyg2A1p2pF0TCS
+hlNn2TNwekNK7DWbCXRRtDgV/Hl2LE9q+uPMzjmT3W7tPw96b/3To6HUOZhyK0DJ
+wCseE5UPFgpfs56IxbdzpaQVqjykV3i8L5wTxwg/ZidAZDQaOA9PcvNDKkzaOoV9
+LlnqNEL7U4g7ueEr9S4LArkfyiSqedTJwg+u5vXUFCbSXFqx+PiOUW90mg1NJEem
+WD/2EaTlhY+Jr0BLCQazZQ==
+=ANDB
 -----END PGP MESSAGE-----
 *** Mounting Nextcloud via davfs
 :PROPERTIES:
