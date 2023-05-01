@@ -18204,6 +18204,19 @@ ls-files' and 'grep'."
   :if init-flag
   :straight (piem :host nil :repo "https://git.kyleam.com/piem"))
 #+end_src
+***** Add distinguishable branch name prefix
+
+#+begin_src emacs-lisp
+(use-package piem
+  :if init-flag
+  :init
+  (defun yant/piem-name-branch-prefix-who-what-v (info)
+    "Return prefixed `piem-name-branch-who-what-v'."
+    (concat "piem/" (piem-name-branch-who-what-v info)))
+  :custom
+  (piem-default-branch-function #'yant/piem-name-branch-prefix-who-what-v))
+#+end_src
+
 ***** Repos config
 
 #+begin_src emacs-lisp
