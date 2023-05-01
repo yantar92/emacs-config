@@ -2210,26 +2210,29 @@ Keep everything in a single folder with tree ([[http://ergoemacs.org/emacs/emacs
 
 #+begin_src emacs-lisp
 ;; make backup to a designated dir, mirroring the full path
-(defun my-backup-file-name (fpath)
-  "Return a new file path of a given file path.
+(use-package no-littering
+  :demand t
+  :config
+  (defun my-backup-file-name (fpath)
+    "Return a new file path of a given file path.
 If the new path's directories does not exist, create them."
-  (let* (
-         (backupRootDir (cdar backup-directory-alist))
-         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path, for example, “C:”
-         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") ))
-         )
-    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
-    backupFilePath))
+    (let* (
+           (backupRootDir (cdar backup-directory-alist))
+           (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path, for example, “C:”
+           (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") ))
+           )
+      (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
+      backupFilePath))
 
-(setq make-backup-file-name-function 'my-backup-file-name)
+  (setq make-backup-file-name-function 'my-backup-file-name)
 
-(setq
- backup-by-copying t
- delete-old-versions t
- kept-new-versions 100
- kept-old-versions 100
- version-control t
- )
+  (setq
+   backup-by-copying t
+   backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "backup")))
+   delete-old-versions t
+   kept-new-versions 100
+   kept-old-versions 100
+   version-control t))
 #+end_src
 
 Since this config is often called in extra batch process, lock-files can mess everything up. 
