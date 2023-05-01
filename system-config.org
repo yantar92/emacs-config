@@ -6015,7 +6015,7 @@ done
 #+begin_src bash :tangle /home/yantar92/.local/bin/mail-monitor.sh :shebang #!/bin/bash
 
 if [[ ! "$1" == "--nofetch" && ! "$PROJECTING" == "true" ]]; then
-    mbsync --pull-new --push -a 2>&1 | mail-monitor-logger.sh;
+    mbsync --pull-new -a 2>&1 | mail-monitor-logger.sh;
     # slrnpull -h news2.neva.ru -d ~/Mail/spool/slrnpool/ 2>&1 |  mail-monitor-logger.sh;
 fi
 
