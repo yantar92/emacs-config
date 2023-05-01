@@ -2445,7 +2445,8 @@ Magit is able to provide word-level diff refinement.  It is disabled by default 
   :commands magit-list-repositories
   :custom
   (magit-repository-directories '(("~/Git" . 1)
-                                  ("~/Org" . 0)))
+                                  ;; ("~/Org" . 0)
+                                  ("~/.emacs.d/straight/repos/" . 1)))
   (magit-repolist-columns '(("Name" 25 magit-repolist-column-ident nil)
                             ;; ("Version" 25 magit-repolist-column-version nil)
                             ("Branch" 25 magit-repolist-column-branch nil)
