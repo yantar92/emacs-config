@@ -8058,6 +8058,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
       ("Juan Manuel Macías" . "Juan Manuel Macias")
       ("András Simonyi" . "Andras Simonyi")
       ("emacs@vergauwen.me" . "Bob Vergauwen")
+      ("gerard.vermeulen@posteo.net" . "Gerard Vermeulen")
       ("Fraga, Eric" . "Eric S.\\nbsp{}Fraga")
       ("Christopher M. Miles" . "stardiviner"))
     "Alist storing aliases for known contributor names.")
