@@ -12886,7 +12886,7 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
                                         (yant/helm-git-make-source "~/Git/org-mode-tests" :branch "master"))
       "Sources for Git repositories")
 
-
+    (require 'helm-for-files)
     (cl-defun yant/helm-org-ql-agenda-files (arg)
       "Like `helm-org-ql-agenda-files', but also allow creating a new heading."
       (interactive "P")
