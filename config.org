@@ -1381,7 +1381,7 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
     :straight t
     :demand t
     :config
-    (defmemoize mode-line-render (left right)
+    (defmemoize yant/mode-line-render (left right)
       (let* ((right-width (length right))
 	     (left-width (length left)))
 	(let ((str
@@ -1413,7 +1413,7 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 				      ?\ ))))))))
   (setq-default mode-line-format
 		'((:eval
-		   (mode-line-render
+		   (yant/mode-line-render
 		    ;; Left.
 		    (concat (format-mode-line (all-the-icons-icon-for-mode major-mode :v-adjust 0.04 :height 0.8 :face `((:foreground ,(face-foreground 'default)))))
 			    (when (buffer-narrowed-p) (concat " " (propertize (all-the-icons-faicon "filter" :v-adjust 0.04)
@@ -1424,7 +1424,7 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 			    " "
 			    (format-mode-line "%I")
 			    " "
-			    (case major-mode
+			    (cl-case major-mode
 			      (t
 			       (or
 				(and org-src-mode
