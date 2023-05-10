@@ -10161,7 +10161,7 @@ This includes:
 	       (if (member "Fri" days) '(7 7 28 2017) nil)
 	       (if (member "Sat" days) '(7 7 29 2017) nil)
 	       (if (member "Sun" days) '(7 7 30 2017) nil))))
-    (some #'(lambda (&rest args) (apply #'diary-cyclic (car args))) (remove nil data))))
+    (cl-some #'(lambda (&rest args) (apply #'diary-cyclic (car args))) (remove nil data))))
      #+end_src
 - =:CREATED:= :: Entry creation time. Inserted for all the new captures.
 - =:BLOCKER:= :: Conditions to be met before allowing the entry to be
