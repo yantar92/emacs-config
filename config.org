@@ -2379,7 +2379,7 @@ Do not even need terminal to interact with Git.
   :custom
   (forge-owned-accounts '(("yantar92"))))
 #+end_src
-***** Code review: support comments to code from Github
+***** COMMENT Code review: support comments to code from Github
 [[id:Github-wandersoncferreira-wandersoncferreira-code-review-10c][wandersoncferreira [Github] wandersoncferreira/code-review: Code Reviews with Emacs]]
 #+begin_src emacs-lisp
 (use-package code-review
@@ -11703,7 +11703,7 @@ The package idea is cool, but I would prefer vertical view. Need to write my own
   (add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
 #+end_src
 
-***** =CalFW=
+***** COMMENT =CalFW=
 :PROPERTIES:
 :ID:       1d03f6e7-0f52-4aad-926e-a6762cd2d7dc
 :END:
