@@ -7976,9 +7976,21 @@ balance-monitor.sh
 :END:
 
 [2020-12-25 Fri] Switching to [[id:aa43745e-4d5a-4500-bf22-fa6db3733519][restic]]
+
+Exclude uninteresting dirs and also notmuch dir.
+
 #+name: backup-opts
 #+begin_src emacs-lisp :results raw silent :eval yes
-yant/backup-script-opts
+(concat yant/backup-script-opts " --exclude /home/yantar92/Mail/.notmuch")
+#+end_src
+
+Notmuch tags are backed up separately, using plain text file rather than xapian binary db.
+Binary db is not best for incremental backups adding 1-2Gb unnecessarily.
+
+#+begin_src bash :tangle /sudo::/etc/cron.daily/backup-notmuch :shebang #!/bin/bash :noweb tangle
+cd /home/yantar92/Mail/
+[[ -f "/home/yantar92/Mail/notmuch-dump" ]] && mv notmuch-dump.gz notmuch-dump.gz.bak
+sudo -u yantar92 notmuch dump --gzip --output=notmuch-dump.gz
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/backup-local.sh :shebang #!/bin/bash :noweb tangle
