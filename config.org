@@ -9609,7 +9609,7 @@ Do not save excursion."
              )
 	    arg))
 
-(add-to-list 'org-link-abbrev-alist (cons "att" "attachment"))
+;; (add-to-list 'org-link-abbrev-alist (cons "att" "attachment"))
 
 ;; (defun org-att-link-complete (&optional arg)
 ;;   "Completion function for att: link."
@@ -9640,7 +9640,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 (memoize #'yant/process-att-id-abbrev)
 
 
-(add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
+;; (add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
 
 ;; FIXME: file: links cannot have custom follow:
 ;; (defun org-att-id-follow (path &optional arg)
@@ -9731,11 +9731,11 @@ Show parent project as top (or second top) suggestion."
 			      :link (concat "att-id:" id ":" link)
                               :description (org-att-id-link-description (concat "att-id:" id ":" link) ""))))))
 
-(org-link-set-parameters "att-id"
-			 :complete #'org-att-id-link-complete
-                         :store #'org-att-id-store-link
-                         :follow #'org-att-id-follow
-                         :desk #'org-att-id-link-description)
+;; (org-link-set-parameters "att-id"
+;; 			 :complete #'org-att-id-link-complete
+;;                          :store #'org-att-id-store-link
+;;                          :follow #'org-att-id-follow
+;;                          :desk #'org-att-id-link-description)
 
 #+end_src
 
