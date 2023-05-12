@@ -8028,15 +8028,6 @@ backup-umount.sh
 /home/yantar92/.local/bin/backup-remote.sh
 #+end_src
 
-#+begin_src bash :tangle /sudo::/etc/cron.daily/backup :shebang #!/bin/bash :noweb tangle
-SHELL=/bin/bash
-PATH=/bin:/usr/bin:/home/yantar92/.local/bin
-HOME=/home/yantar92
-DISPLAY=:0
-echo "yes" | /home/yantar92/.local/bin/backup-remote.sh
-#+end_src
-
-
 [2020-12-22 Tue] trying encrypted backup using [[id:aa43745e-4d5a-4500-bf22-fa6db3733519][restic]].
 
 *** Mounting the backup drive :crypt:TANGLE:
