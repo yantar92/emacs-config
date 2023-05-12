@@ -8535,6 +8535,45 @@ Go backward with prefix argument BACKWARD."
                '(yant/mastodon-url-p
                  . (lambda (url &rest args) (mastodon-url-lookup url)))))
 #+end_src
+** ChatGPT
+
+Despite the usual big-tech concerns, it makes a decent:
+1. Initial guess for searching new topics
+2. Quick translation of texts to be polished by hand
+
+#+begin_src emacs-lisp
+(use-package shell-maker
+  :if init-flag
+  :straight (shell-maker :host github :repo "xenodium/chatgpt-shell")
+  :config
+  (use-package chatgpt-shell
+    :straight (chatgpt-shell :host github :repo "xenodium/chatgpt-shell")
+    :init
+    (setq chatgpt-shell-openai-key
+	  (lambda () (nth 0 (process-lines "pass" "show" "internet/openai-key"))))))
+#+end_src
+
+** COMMENT Reddit client
+
+#+begin_src emacs-lisp
+(use-package org-pandoc-import
+  :straight (org-pandoc-import
+	     :host github :repo "tecosaur/org-pandoc-import"
+             :files ("*.el" "filters" "preprocessors")))
+(use-package reddigg
+  :if init-flag
+  :straight t
+  :config
+  (defun yant/reddigg-view-comments-raise (url &rest _)
+    "Run `reddigg-view-comments' for URL and display the window."
+    (reddigg-view-comments url)
+    ;; (switch-to-buffer (reddigg--get-cmt-buffer))
+    )
+  (add-to-list 'browse-url-handlers
+               '("^https?://\\(?:www\\.\\)?reddit\\.com"
+                 . yant/reddigg-view-comments-raise)))
+#+end_src
+
 ** COMMENT Browser
    :PROPERTIES:
    :ID:       ef9c93cd-e760-407c-82cf-2aeffa7a11ad
