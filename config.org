@@ -3121,6 +3121,11 @@ I only use it occasionally though.
               ("`" . er/expand-region)))
 
 #+END_SRC
+*** Highlight the line of the match in error/occur/grep buffers on =M-g n/p=
+
+#+begin_src emacs-lisp
+(when init-flag (setq next-error-message-highlight t))
+#+end_src
 
 ** Fold & narrow
 :PROPERTIES:
