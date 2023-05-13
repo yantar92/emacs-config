@@ -3878,7 +3878,7 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
                 ("M-S-f" . (lambda () (interactive) (yt/sudo-find-file (buffer-file-name)))))))
 #+END_SRC
 *** Directories
-**** =Dired=
+**** =Dired= (=dirvish=)
 :PROPERTIES:
 :ID:       66f5dab7-add6-48c2-9824-fed4ef202b7a
 :END:
@@ -3887,6 +3887,17 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
 - State "TODO"       from              [2018-03-12 Mon 14:57]
 - State "CANCELLED"  from              [2017-05-28 Sun 17:46]
 :END:
+
+#+begin_src emacs-lisp
+(use-package dirvish
+  :if init-flag
+  :straight t
+  :custom
+  (dirvish-attributes
+   '( vc-state subtree-state file-size all-the-icons
+      collapse git-msg file-time))
+  :init (dirvish-override-dired-mode))
+#+end_src
 
 Run =dired= from =boon-*-search-map=
 
@@ -3898,26 +3909,6 @@ Run =dired= from =boon-*-search-map=
              ("d" . dired)
              :map boon-backward-search-map
 	     ("d" . dired)))
-#+end_src
-
-And extend it with =dired+= 
-
-****************** TODO review possibilities in dired+
-****************** END
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired+
-  :if init-flag
-  :straight t
-  :after dired)
-#+END_SRC
-
-****************** TODO re-check performance
-****************** END
- do not use =dired+= mode-line. Too much performance degradation
-#+begin_src emacs-lisp
-;; (when init-flag
-;;   (remove-hook 'dired-after-readin-hook #'diredp-nb-marked-in-mode-name))
 #+end_src
 
 ***** Key bindings
@@ -3994,18 +3985,6 @@ And extend it with =dired+=
     (meta-defun meta-down :mode image-dired-thumbnail-mode image-dired-next-line)
     (meta-defun meta-up :mode image-dired-thumbnail-mode image-dired-previous-line)))
 #+end_src
-***** Narrowing \ live filter =dired-narrow=
-
-Credit: [[id:ee0f2275-09e0-443d-b2de-50bd0311d3c1][Dynamically filter directory listing with dired-narrow | Pragmatic Emacs]]
-Repo: [[id:Github-fuco1-fuco1-dired-hacks-707][Fuco1 [Github] Fuco1/dired-hacks: Collection of useful dired additions]]
-
-#+begin_src emacs-lisp
-(use-package dired-narrow
-  :if init-flag
-  :straight t
-  :bind (:map dired-mode-map
-              ("/" . dired-narrow)))
-#+end_src
 ***** Browse archives with =dired-avfs=
 :PROPERTIES:
 :ID:       f14a4a86-b866-4d20-96c5-93d174a0ae6a
@@ -4072,23 +4051,6 @@ Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
 	  (quit-window kill window))))))
 #+end_src
 
-***** COMMENT Show subtrees - org-mode-like directory folding
-:PROPERTIES:
-:ID:       cca7f06f-35f7-4921-9b9d-d93b6967a95a
-:END:
-#+begin_src emacs-lisp
-(use-package dired-subtree
-  :if init-flag
-  :straight t
-  :after dired
-  :config
-  (setq dired-subtree-use-backgrounds nil)
-  (unbind-key "<C-tab>" override-global-map)
-  (bind-keys :map dired-mode-map
-	     ("<tab>" . dired-subtree-toggle)
-	     ("<C-tab>" . dired-subtree-cycle)
-	     ("<S-iso-lefttab>" . dired-subtree-remove)))
-#+end_src
 ***** Image dired
 :PROPERTIES:
 :CREATED:  [2020-05-15 Fri 00:20]
@@ -4143,24 +4105,6 @@ Using trash is safer.
   (delete-by-moving-to-trash t)
   (trash-directory "~/tmp/Trash"))
 #+end_src
-***** TODO COMMENT Auto-revert =dired= buffers
-:PROPERTIES:
-:CREATED:  [2020-04-14 Tue 14:11]
-:ID:       6ac566c7-dbe9-4329-9710-ad05293d7b78
-:END:
-
-Some large dired buffers take a while to update, especially when there are multiple such buffers.
-This gets really annoying if I change some directory externally, switch to Emacs, and have to wait several seconds until Emacs unhangs.
-Instead of using =auto-revert=, I just update dired buffers when they become active.
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired
-  :if init-flag
-  :hook (dired-mode . auto-revert-mode)
-  :init
-  (use-package autorevert))
-#+END_SRC
-
 ***** Open file in external app from dired
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 21:55]
@@ -4174,21 +4118,6 @@ Instead of using =auto-revert=, I just update dired buffers when they become act
   :bind (:map dired-mode-map
 	      ("<return>" . dired-open-xdg)))
 #+end_src
-***** Async operations
-:PROPERTIES:
-:CREATED:  [2018-04-09 Mon 21:56]
-:ID:       06e9d624-67fe-42cb-acca-44c1e5e1fde1
-:END:
-#+BEGIN_SRC emacs-lisp
-(use-package dired
-  :if init-flag
-  :init
-  (use-package async
-    :straight t
-    :config
-    (use-package dired-async))
-  :hook (dired-mode . dired-async-mode))
-#+END_SRC
 ***** TODO Follow symlink structure
 :PROPERTIES:
 :CREATED:  [2018-07-23 Mon 15:42]
@@ -4215,39 +4144,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (apply OLDFUN args)))
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
-***** Do not update mode-line info as in =dired+=
-:PROPERTIES:
-:CREATED:  [2020-07-15 Wed 09:23]
-:ID:       d97e39ed-f771-4675-9cee-dd499e7f53e0
-:END:
-
-=diredp-nb-marked-in-mode-name= from =dired+= is very too slow.
-Disabling it
-
-#+begin_src emacs-lisp
-(use-package dired+
-  :if init-flag
-  :after dired+
-  :config
-  (remove-hook 'dired-after-readin-hook 'diredp-nb-marked-in-mode-name)
-  (remove-hook 'dired-mode-hook         'diredp-nb-marked-in-mode-name))
-
-#+end_src
-
 ***** Appearance
-****** File icons
-:PROPERTIES:
-:CREATED:  [2019-08-27 Tue 17:18]
-:ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
-:END:
-
-#+begin_src emacs-lisp
-(use-package all-the-icons-dired
-  :if init-flag
-  :straight t
-  :diminish all-the-icons-dired-mode
-  :hook (dired-mode . all-the-icons-dired-mode))
-#+end_src
 ****** Highlight files
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 22:09]
@@ -4263,35 +4160,6 @@ Additional fontification in =dired=
   :config
   (diredfl-global-mode 1))
 #+END_SRC
-****** Group files
-:PROPERTIES:
-:CREATED:  [2018-04-09 Mon 21:56]
-:ID:       18e2dd1e-dc25-4188-bad4-cdcdb76f506a
-:END:
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-filter
-  :if init-flag
-  :straight t
-  :custom (dired-filter-group-saved-groups '(("default"
-					      ("Dirs"
-					       (directory . nil))
-					      ("Archives"
-					       (extension "zip" "rar" "gz" "bz2" "tar"))
-					      ("Documents"
-					       (extension "org" "cfm" "pdf" "tex" "bib" "mobi" "fb2" "doc" "docx" "ps" "odt"))
-					      ("Scripts"
-					       (extension "gnuplot" "sh"))
-					      ("Data"
-					       (extension "txt" "hys" "xls" "xlsx"))
-					      ("Images"
-					       (extension "png" "jpg" "jpeg" "tiff" "tif" "svg"))
-					      ("Videos"
-					       (extension "avi" "mpeg" "mp4" "mkv"))
-					      )))
-  :hook (dired-mode . dired-filter-group-mode))
-#+END_SRC
-
 ****** Hide uninteresting files
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:10]
@@ -4331,20 +4199,6 @@ Do not hide symlink target when hiding details.
   :if init-flag
   :custom (dired-hide-details-hide-symlink-targets nil))
 #+end_src
-****** Show last commit in Git repos
-:PROPERTIES:
-:ID:       cb3cf7cb-c376-4ffc-9b56-a6056c44429f
-:END:
-
-Credit: [[id:Reddit:planetemacs_/u/negativeoilprice2021show_hide_emacs_dired_detail_in_stylebeb][/u/negativeoilprice [Reddit:planetemacs] (2021) Show/hide Emacs dired details in style]]
-#+begin_src emacs-lisp
-(use-package dired-git-info
-  :if init-flag
-  :straight t
-  :bind (:map dired-mode-map
-              (")" . dired-git-info-mode)))
-#+end_src
-
 **** Disk usage
 :PROPERTIES:
 :CREATED:  [2019-07-15 Mon 22:04]
@@ -18412,11 +18266,195 @@ ls-files' and 'grep'."
     (lambda nil (progn (keyfreq-mode 1) (keyfreq-autosave-mode 1))))
   (global-keyfreq-mode))
 #+end_src
+
 * Archived :ARCHIVE:
 :PROPERTIES:
 :header-args: :tangle no
 :END:
+** COMMENT Show subtrees - org-mode-like directory folding :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ID:       cca7f06f-35f7-4921-9b9d-d93b6967a95a
+:ARCHIVE_TIME: 2023-05-12 Fri 22:50
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+#+begin_src emacs-lisp
+(use-package dired-subtree
+  :if init-flag
+  :straight t
+  :after dired
+  :config
+  (setq dired-subtree-use-backgrounds nil)
+  (unbind-key "<C-tab>" override-global-map)
+  (bind-keys :map dired-mode-map
+	     ("<tab>" . dired-subtree-toggle)
+	     ("<C-tab>" . dired-subtree-cycle)
+	     ("<S-iso-lefttab>" . dired-subtree-remove)))
+#+end_src
 
+** TODO COMMENT Auto-revert =dired= buffers :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2020-04-14 Tue 14:11]
+:ID:       6ac566c7-dbe9-4329-9710-ad05293d7b78
+:ARCHIVE_TIME: 2023-05-12 Fri 22:50
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: TODO
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+Some large dired buffers take a while to update, especially when there are multiple such buffers.
+This gets really annoying if I change some directory externally, switch to Emacs, and have to wait several seconds until Emacs unhangs.
+Instead of using =auto-revert=, I just update dired buffers when they become active.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired
+  :if init-flag
+  :hook (dired-mode . auto-revert-mode)
+  :init
+  (use-package autorevert))
+#+END_SRC
+
+** COMMENT Async operations :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2018-04-09 Mon 21:56]
+:ID:       06e9d624-67fe-42cb-acca-44c1e5e1fde1
+:ARCHIVE_TIME: 2023-05-12 Fri 22:50
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+#+BEGIN_SRC emacs-lisp
+(use-package dired
+  :if init-flag
+  :init
+  (use-package async
+    :straight t
+    :config
+    (use-package dired-async))
+  :hook (dired-mode . dired-async-mode))
+#+END_SRC
+
+** COMMENT Do not update mode-line info as in =dired+= :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2020-07-15 Wed 09:23]
+:ID:       d97e39ed-f771-4675-9cee-dd499e7f53e0
+:ARCHIVE_TIME: 2023-05-12 Fri 22:50
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+=diredp-nb-marked-in-mode-name= from =dired+= is very too slow.
+Disabling it
+
+#+begin_src emacs-lisp
+(use-package dired+
+  :if init-flag
+  :after dired+
+  :config
+  (remove-hook 'dired-after-readin-hook 'diredp-nb-marked-in-mode-name)
+  (remove-hook 'dired-mode-hook         'diredp-nb-marked-in-mode-name))
+
+#+end_src
+
+** COMMENT File icons :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2019-08-27 Tue 17:18]
+:ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
+:ARCHIVE_TIME: 2023-05-12 Fri 22:56
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)/COMMENT Appearance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+#+begin_src emacs-lisp
+(use-package all-the-icons-dired
+  :if init-flag
+  :straight t
+  :diminish all-the-icons-dired-mode
+  :hook (dired-mode . all-the-icons-dired-mode))
+#+end_src
+
+** Group files :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2018-04-09 Mon 21:56]
+:ID:       18e2dd1e-dc25-4188-bad4-cdcdb76f506a
+:ARCHIVE_TIME: 2023-05-12 Fri 22:57
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)/COMMENT Appearance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-filter
+  :if init-flag
+  :straight t
+  :custom (dired-filter-group-saved-groups '(("default"
+					      ("Dirs"
+					       (directory . nil))
+					      ("Archives"
+					       (extension "zip" "rar" "gz" "bz2" "tar"))
+					      ("Documents"
+					       (extension "org" "cfm" "pdf" "tex" "bib" "mobi" "fb2" "doc" "docx" "ps" "odt"))
+					      ("Scripts"
+					       (extension "gnuplot" "sh"))
+					      ("Data"
+					       (extension "txt" "hys" "xls" "xlsx"))
+					      ("Images"
+					       (extension "png" "jpg" "jpeg" "tiff" "tif" "svg"))
+					      ("Videos"
+					       (extension "avi" "mpeg" "mp4" "mkv"))
+					      )))
+  :hook (dired-mode . dired-filter-group-mode))
+#+END_SRC
+
+** Show last commit in Git repos :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ID:       cb3cf7cb-c376-4ffc-9b56-a6056c44429f
+:ARCHIVE_TIME: 2023-05-12 Fri 22:57
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)/COMMENT Appearance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+Credit: [[id:Reddit:planetemacs_/u/negativeoilprice2021show_hide_emacs_dired_detail_in_stylebeb][/u/negativeoilprice [Reddit:planetemacs] (2021) Show/hide Emacs dired details in style]]
+#+begin_src emacs-lisp
+(use-package dired-git-info
+  :if init-flag
+  :straight t
+  :bind (:map dired-mode-map
+              (")" . dired-git-info-mode)))
+#+end_src
+
+
+** Narrowing \ live filter =dired-narrow= :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ARCHIVE_TIME: 2023-05-12 Fri 22:50
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+Credit: [[id:ee0f2275-09e0-443d-b2de-50bd0311d3c1][Dynamically filter directory listing with dired-narrow | Pragmatic Emacs]]
+Repo: [[id:Github-fuco1-fuco1-dired-hacks-707][Fuco1 [Github] Fuco1/dired-hacks: Collection of useful dired additions]]
+
+#+begin_src emacs-lisp
+(use-package dired-narrow
+  :if init-flag
+  :straight t
+  :bind (:map dired-mode-map
+              ("/" . dired-narrow)))
+#+end_src
 
 ** Search via helm :EMACS:COMMON:SOMEDAY:
 :PROPERTIES:
