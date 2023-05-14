@@ -5379,6 +5379,10 @@ media-fonts/symbola::guru
 media-fonts/symbola
 #+end_src
 
+#+begin_src conf :tangle /sudo::/etc/portage/package.license/symbola
+media-fonts/symbola UFAS
+#+end_src
+
 **** FontAwesome
 :PROPERTIES:
 :ID:       cc714fe3-1aa1-47ab-acea-8a1aa7721c04
