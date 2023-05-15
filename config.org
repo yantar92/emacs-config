@@ -10926,7 +10926,7 @@ If LOCAL is non-nil, check only local TAG."
 								 (not (tags-inherited "CANCELLED"))
 								 (not (tags "SOMEDAY"))
 								 (not (org-agenda-skip-before-SHOWFROMDATE-property))
-								 (not (org-agenda-skip-before-SHOWFROMTIME-property))
+								 ;; (not (org-agenda-skip-before-SHOWFROMTIME-property))
 								 (not (org-agenda-skip-noshowdates))))))))
 		(tags-todo "/"
 			   ((org-agenda-overriding-header "Tasks to review")
