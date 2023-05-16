@@ -8411,6 +8411,16 @@ Despite the usual big-tech concerns, it makes a decent:
     (setq chatgpt-shell-openai-key
 	  (lambda () (nth 0 (process-lines "pass" "show" "internet/openai-key"))))))
 #+end_src
+** OpenStreetMaps
+
+#+begin_src emacs-lisp
+(use-package osm
+  :if init-flag
+  :straight t
+  :init
+  (use-package org
+    :init (require 'osm-ol)))
+#+end_src
 
 ** COMMENT Reddit client
 
