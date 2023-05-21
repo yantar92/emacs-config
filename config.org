@@ -2945,7 +2945,7 @@ Requires installed [[id:0ce5f9c5-7c71-46dc-94ef-3cf7ed51fba4][=app-dicts/wordnet
   :straight t
   :config
   (require 'meta-functions)
-  (meta-defun meta-help "Get help on symbol at point." ignore)
+  (meta-defun meta-help "Get help on symbol at point." (wordnut-search (word-at-point)))
   (meta-defun meta-help
     :mode org-mode
     :cond
