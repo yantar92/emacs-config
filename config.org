@@ -4184,7 +4184,7 @@ Hide "." and ".."
 
 #+begin_src emacs-lisp
 (use-package dired
-  :custom (dired-listing-switches "-DlhGgA"))
+  :custom (dired-listing-switches "--dired -g  --group-directories-first --human-readable --no-group --almost-all"))
 #+end_src
 
 ****** Hide details
