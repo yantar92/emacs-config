@@ -15251,13 +15251,16 @@ It can be done using =org-tempo=.
   (push (cons "jp" "src jupyter-python") org-structure-template-alist))
 #+end_src
 
-***** Source block editing functions from scimax
+***** TODO COMMENT Source block editing functions from scimax
 :PROPERTIES:
 :CREATED:  [2018-10-22 Mon 20:55]
 :ID:       6d452ed8-ddb4-4252-b66e-8609866d0fe1
+:SUMMARY:  does not work
 :END:
 
-#+begin_src emacs-lisp
+- Note taken on [2023-05-21 Sun 13:21] \\
+  does not work
+#+begin_src emacs-lisp :tangle yes
 (when init-flag
   (meta-defun meta-split :mode org-mode :cond (org-in-src-block-p) scimax-split-src-block)
   (bind-keys :map boon-command-map
