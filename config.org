@@ -15893,7 +15893,7 @@ If the heading has property DISABLE-HOST-BLOCKING set to `t', unblock everything
 #+end_src
 Preview images and latex formulas.
 #+begin_src emacs-lisp
-(setq org-image-actual-width '(600))
+(setq org-image-actual-width nil)
 (setq org-latex-create-formula-image-program 'imagemagick)
 (setq org-preview-latex-default-process 'dvisvgm)
 (setq org-format-latex-options
