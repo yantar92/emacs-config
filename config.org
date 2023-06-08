@@ -4143,6 +4143,41 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (apply OLDFUN args)))
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
+***** Group files :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2018-04-09 Mon 21:56]
+:ID:       18e2dd1e-dc25-4188-bad4-cdcdb76f506a
+:ARCHIVE_TIME: 2023-05-12 Fri 22:57
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)/COMMENT Appearance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-filter
+  :if init-flag
+  :straight t
+  :custom (dired-filter-group-saved-groups '(("default"
+					      ("Dirs"
+					       (directory . nil))
+					      ("Archives"
+					       (extension "zip" "rar" "gz" "bz2" "tar"))
+					      ("Documents"
+					       (extension "org" "cfm" "pdf" "tex" "bib" "mobi" "fb2" "doc" "docx" "ps" "odt"))
+					      ("Scripts"
+					       (extension "gnuplot" "sh"))
+					      ("Data"
+					       (extension "txt" "hys" "xls" "xlsx"))
+					      ("Images"
+					       (extension "png" "jpg" "jpeg" "tiff" "tif" "svg"))
+					      ("Videos"
+					       (extension "avi" "mpeg" "mp4" "mkv"))
+					      )))
+  :hook (dired-mode . dired-filter-group-mode))
+#+END_SRC
+
+
 ***** Appearance
 ****** Highlight files
 :PROPERTIES:
@@ -18393,40 +18428,6 @@ Disabling it
   :diminish all-the-icons-dired-mode
   :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
-
-** Group files :EMACS:COMMON:SOMEDAY:
-:PROPERTIES:
-:CREATED:  [2018-04-09 Mon 21:56]
-:ID:       18e2dd1e-dc25-4188-bad4-cdcdb76f506a
-:ARCHIVE_TIME: 2023-05-12 Fri 22:57
-:ARCHIVE_FILE: ~/Git/emacs-config/config.org
-:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)/COMMENT Appearance
-:ARCHIVE_CATEGORY: config
-:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
-:END:
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-filter
-  :if init-flag
-  :straight t
-  :custom (dired-filter-group-saved-groups '(("default"
-					      ("Dirs"
-					       (directory . nil))
-					      ("Archives"
-					       (extension "zip" "rar" "gz" "bz2" "tar"))
-					      ("Documents"
-					       (extension "org" "cfm" "pdf" "tex" "bib" "mobi" "fb2" "doc" "docx" "ps" "odt"))
-					      ("Scripts"
-					       (extension "gnuplot" "sh"))
-					      ("Data"
-					       (extension "txt" "hys" "xls" "xlsx"))
-					      ("Images"
-					       (extension "png" "jpg" "jpeg" "tiff" "tif" "svg"))
-					      ("Videos"
-					       (extension "avi" "mpeg" "mp4" "mkv"))
-					      )))
-  :hook (dired-mode . dired-filter-group-mode))
-#+END_SRC
 
 ** Show last commit in Git repos :EMACS:COMMON:SOMEDAY:
 :PROPERTIES:
