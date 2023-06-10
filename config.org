@@ -15140,12 +15140,10 @@ This function is called by `org-archive-hook'.  The option
                            (revert-buffer)
                            (select-window (old-selected-window))
 		           (prog1
-                               (or (and source
-                                        (or (string-match-p "reddit\\.com" source)
-                                            (string-match-p "youtube\\.com" source))
-                                        (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html"))))
-			           (yes-or-no-p (format "%s: Delete all attachments? "
-					                heading)))
+                               (or
+                                (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html")))
+			        (yes-or-no-p (format "%s: Delete all attachments? "
+					             heading)))
                              (kill-buffer dired-buf))))
 	             org-attach-archive-delete)
 	       (org-attach-delete-all t)))))))))
