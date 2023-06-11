@@ -999,6 +999,7 @@ Installing following [[id:6ac6c92eec714e52a7fb5cf0e1a70ef62b789b83][[Wiki.Gentoo
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-containers/docker
+app-containers/docker-cli
 #+end_src
 
 #+begin_src bash :eval yes :tangle no
