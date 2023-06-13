@@ -15210,6 +15210,28 @@ Unarchive when UNARCHIVE is non-nil."
   "Move attachments to/from archive directory."
   (org-archive-move-maybe (member org-archive-tag (org-get-tags))))
 #+end_src
+***** Warn when archiving project
+
+#+begin_src emacs-lisp
+(use-package org-archive
+  :if init-flag
+  :after org
+  :demand org-ql
+  :config
+  (define-advice org-archive-subtree (:around (oldfun &optional find-done) query-project)
+    "Ask about archiving projects."
+    (interactive "P")
+    (let* ((projects (and (org-at-heading-p)
+			  (save-restriction
+                            (org-narrow-to-subtree)
+			    (org-ql-query :select #'point :from (current-buffer) :where '(project) :narrow t))))
+           (headlines (mapconcat (lambda (p) (org-with-point-at p (org-get-heading))) projects "\n")))
+      (when (or (not projects)
+                (yes-or-no-p
+                 (format "Trying to archive projects:\n%s\nReally archive?" headlines)))
+        (funcall-interactively oldfun find-done)))))
+#+end_src
+
 ***** Warn when archiving subtree with children
 
 #+begin_src emacs-lisp
