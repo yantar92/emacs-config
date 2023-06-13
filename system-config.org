@@ -8496,7 +8496,17 @@ while read x; do
     echo $(date): $x >> ~/.log/paintalaimon-monitor.log
 done
 #+end_src
+** System packages for testing optional modules of Org
+*** Lilypond
 
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+media-sound/lilypond
+#+end_src
+*** R
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-lang/R
+#+end_src
 
 
 * Archived
