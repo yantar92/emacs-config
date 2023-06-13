@@ -3898,18 +3898,6 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
   :init (dirvish-override-dired-mode))
 #+end_src
 
-Run =dired= from =boon-*-search-map=
-
-#+begin_src emacs-lisp
-(use-package boon
-  :if init-flag
-  :config
-  (bind-keys :map boon-forward-search-map
-             ("d" . dired)
-             :map boon-backward-search-map
-	     ("d" . dired)))
-#+end_src
-
 ***** Key bindings
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:18]
