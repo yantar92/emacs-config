@@ -6953,6 +6953,8 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                          ("<mo>\\(.*?\\)</mo>" "\\1")
                                          ("<p>\\(.*?\\)</p>" "\\1")
                                          ("<span[^>]*>\\(.*?\\)</span>" "\\1")
+                                         ("<radio[^>]*>\\(.*?\\)</radio>" " \\1")
+                                         ("<br>" " ")
                                          ("<span>\\(.*?\\)</span>" "\\1")
                                          ("<a[^>]*>\\(.*?\\)</a>" "\\1")
                                          ("<strong>\\(.*?\\)</strong>" "\\1")
