@@ -4206,7 +4206,9 @@ Hide "." and ".."
 
 #+begin_src emacs-lisp
 (use-package dired
-  :custom (dired-listing-switches "--dired -g  --group-directories-first --human-readable --no-group --almost-all"))
+  :custom
+  (dired-listing-switches
+   "-l --almost-all --human-readable --group-directories-first --no-group"))
 #+end_src
 
 ****** Hide details
