@@ -8508,6 +8508,26 @@ media-sound/lilypond
 dev-lang/R
 #+end_src
 
+** WeChat
+:PROPERTIES:
+:ID:       39e067f4-97ef-44b1-bb8b-587586735e68
+:END:
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/wechat
+net-im/deepin-wine-wechat::gentoo-zh
+app-emulation/deepin-wine-helper::gentoo-zh
+app-emulation/deepin-wine6-stable::gentoo-zh
+app-emulation/deepin-udis86::gentoo-zh
+app-emulation/deepin-wine-plugin::gentoo-zh
+#+end_src
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+net-im/deepin-wine-wechat
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.license/wechat
+net-im/deepin-wine-wechat Tencent
+#+end_src
 
 * Archived
 
