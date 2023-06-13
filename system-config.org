@@ -6811,7 +6811,7 @@ shortLabel(symb,unit) = sprintf("$\\nicefrac{%s}{\\si{%s}}$",symb,unit)
 Need =gstreamer= support for video. Also, need to install additional packages: gst-plugins-meta and media-plugins/gst-plugins-gtk
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-app-misc/pdfpc
+app-text/pdfpc
 media-plugins/gst-plugins-meta
 media-plugins/gst-plugins-gtk
 #+end_src
@@ -6826,7 +6826,7 @@ The result should be playing video *and no warnings about =gtksink= creation*.
 ****************** END
  
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/pdfpc
-app-misc/pdfpc gstreamer
+app-text/pdfpc gstreamer
 media-plugins/gst-plugins-base theora
 media-plugins/gst-plugins-meta ffmpeg theora ogg dvb
 #+end_src
