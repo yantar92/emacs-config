@@ -6371,8 +6371,10 @@ www-misc/urlwatch
 www-misc/urlwatch ~amd64
 #+end_src
 
+[2023-06-16 Fri] Need the same python version for =beautifulsoup=.
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/urlwatch
 www-misc/urlwatch doc
+dev-python/beautifulsoup4 python3_11
 #+end_src
 
 *** Configuration
