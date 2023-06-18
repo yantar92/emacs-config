@@ -8170,7 +8170,7 @@ The best way for quick scanning across recent article titles is RSS. I use [[id:
 
 However, Elfeed does not have the translation feature, so I am going to implement ad-hoc translation utilising [[id:718fd820-8412-49f4-806a-7667fc6d12de][translate-shell]] and [[id:cbeef2db-d5ce-4a80-ba3e-276eef64bd96][langdetect]].
 
-#+begin_src python :tangle ~/.local/bin/detect-language :shebang #!/usr/bin/python
+#+begin_src python :tangle ~/.local/bin/detect-language :shebang #!/usr/bin/python3.11
 from langdetect import detect
 import sys
 text=' '.join(sys.argv[1:])
