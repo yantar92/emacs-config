@@ -5589,6 +5589,22 @@ app-text/aspell
 www-client/w3m
 #+end_src
 
+*** Langdetect python library to translate elfeed entries
+
+[[id:c8a86cda-7c72-432f-8118-b4b1236db7b8][Automatically translate non-English and non-Russian/Ukrainian titles.]]
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/langdetect
+dev-python/langdetect::guru
+#+end_src
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-python/langdetect
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.use/langdetect
+dev-python/langdetect python3_10
+#+end_src
+
 ** Testing emacs repo
 :PROPERTIES:
 :ID:       bcebe59b-f13d-49fc-81aa-ba9dcfe71e5e
