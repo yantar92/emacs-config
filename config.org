@@ -10834,7 +10834,14 @@ If LOCAL is non-nil, check only local TAG."
       (quote (("q" "Full agenda"
 	       agenda ""
 	       ((org-agenda-tag-filter-preset '("-TICKLER" "-CANCELLED" "-WAITING" "-HOLD" "-SOMEDAY" "-NODEADLINE"))
-                (org-agenda-regexp-filter-preset '("-TICKLER"))))
+                (org-agenda-regexp-filter-preset '("-TICKLER"))
+                (org-agenda-span 'week)))
+              ("r" "3 day agenda"
+	       agenda ""
+	       ((org-agenda-tag-filter-preset '("-TICKLER" "-CANCELLED" "-WAITING" "-HOLD" "-SOMEDAY" "-NODEADLINE"))
+		(org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+					    (quote (not (todo "TICKLER" "DOING")))))
+		(org-agenda-span 3)))
 	      ("s" nil
 	       agenda ""
 	       ((org-agenda-skip-function '(yant/org-agenda-skip-org-ql
@@ -11037,8 +11044,8 @@ If LOCAL is non-nil, check only local TAG."
 							                (not (subproject)))
 							            (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 							            (not (and (area)
-								            (or (not (descendants (and (todo) (not (todo "TICKLER")))))
-                                                                                (descendants (todo "TODO")))))
+								              (or (not (descendants (and (todo) (not (todo "TICKLER")))))
+                                                                                  (descendants (todo "TODO")))))
                                                                     (not (goal))
 							            (not (descendants
 							                  (and  (todo "NEXT" "REVIEW" "DOING")
@@ -11109,14 +11116,13 @@ If LOCAL is non-nil, check only local TAG."
 									(not (subproject)))
 								    (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
 								    (not (and (area)
-									    (not (and (area)
-								                    (or (not (descendants (and (todo) (not (todo "TICKLER")))))
-                                                                                        (descendants (todo "TODO")))))))
+									      (not (or (not (descendants (and (todo) (not (todo "TICKLER")))))
+                                                                                       (descendants (todo "TODO"))))))
                                                                     (not (goal))
 								    (not (descendants
 									  (and  (todo "NEXT" "REVIEW" "DOING")
-									        (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-									        )))))))
+										(not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+										)))))))
 			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
