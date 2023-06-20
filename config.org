@@ -8413,7 +8413,9 @@ Go backward with prefix argument BACKWARD."
       "functional.cafe" "social.roger.family"
       "social.vivaldi.net" "mastodon.cloud"
       "fosstodon.org" "mathstodon.xyz"
-      "julialang.social" "mamot.fr")
+      "julialang.social" "mamot.fr"
+      "mstdn.social" "mastodon.acm.org"
+      "todon.nl")
     "List of known Mastodon hosts.")
   (defun yant/mastodon-url-p (url)
     "Wrapper for `mastodon-url-lookup' appropriate for URL handlers."
