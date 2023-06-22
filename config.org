@@ -14500,6 +14500,12 @@ For now, I avoid capturing website text directly into org. Instead, I write my o
   (defun yant/org-capture-archive-resource (&optional url attach-dir)
     "Archive resource for capture at point or for URL."
     (when-let ((url (or url (org-entry-get (point) "URL")))
+	       (url-archivable? (not (seq-find
+				    (lambda (host) (string-match-p (regexp-quote host) url))
+				    (append (when (boundp 'yant/mastodon-hosts)
+					      yant/mastodon-hosts)
+					    '("youtube"
+                                              "author.today")))))
                (attach-dir (or attach-dir (org-attach-dir-get-create))))
       (if (and yant/org-capture-archive-process
                (process-live-p yant/org-capture-archive-process))
