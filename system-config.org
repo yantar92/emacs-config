@@ -261,6 +261,7 @@ app-crypt/efitools
 #+begin_src conf :tangle /sudo::/etc/genkernel.conf
 LUKS="yes"
 LVM="yes"
+DOLVM="yes"
 ZFS="no"
 GPG="yes"
 BOOTLOADER="grub2"
