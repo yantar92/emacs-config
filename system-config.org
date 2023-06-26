@@ -6852,7 +6852,7 @@ media-plugins/gst-plugins-meta ffmpeg theora ogg dvb
 #+end_src
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/pdfpc 
-app-misc/pdfpc ~amd64
+app-text/pdfpc ~amd64
 #+end_src
 
 ** Python lib for automatic language detection: =langdetect=
