@@ -6131,6 +6131,7 @@ done
 
 #Tag messages that must directly go to inbox
 notmuch tag +inbox +todo -listinbox -- tag:"/^.+.yantar92.github.com$/" and tag:new
+notmuch tag +inbox +todo -listinbox -- tag:emacs-gc-stats.gnu.org and tag:new
 notmuch tag +inbox +todo -listinbox -- tag:emacs-orgmode.gnu.org and tag:new and not tag:track
 notmuch tag +inbox +todo -listinbox -- tag:~bzg/org-build-failures.lists.sr.ht and tag:new and not tag:track
 notmuch tag +inbox +todo -listinbox -- to:yantar92 and tag:new
