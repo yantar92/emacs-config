@@ -1144,6 +1144,10 @@ x11-apps/setxkbmap
 
 **** notification-daemon
 
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+x11-libs/libnotify
+#+end_src
+
 **** Liberation fonts
 :PROPERTIES:
 :ID:       664622ad-1ee5-4b2f-ac67-7bfb4e625d96
