@@ -3898,6 +3898,8 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
   (dirvish-attributes
    '( vc-state subtree-state file-size all-the-icons
       collapse git-msg file-time))
+  ;; FIXME: Workaround for refresh bug in dirvish.
+  (dired-free-space nil)
   :init (dirvish-override-dired-mode))
 #+end_src
 
