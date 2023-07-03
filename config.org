@@ -17523,6 +17523,16 @@ From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bul
     (meta-defun meta-cut-element :mode org-mode :cond org-at-heading-p org-cut-subtree)))
 #+end_src
 
+***** Split src block at point
+
+#+begin_src emacs-lisp
+(use-package org
+  :if init-flag
+  :after boon
+  :config
+  (bind-key "S" #'org-babel-demarcate-block boon-command-map))
+#+end_src
+
 *** Notmuch interaction
 :PROPERTIES:
 :ID:       e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326
