@@ -17514,7 +17514,7 @@ From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bul
 :LOGBOOK:
 - Refiled on [2020-04-14 Tue 15:51]
 :END:
-
+***** When at heading =C-k= cuts subtree
 #+begin_src emacs-lisp
 (use-package org
   :config
