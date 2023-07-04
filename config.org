@@ -7946,7 +7946,8 @@ I automated the check by examining WORG repository directly and checking the ~gi
       ("emacs@vergauwen.me" . "Bob Vergauwen")
       ("gerard.vermeulen@posteo.net" . "Gerard Vermeulen")
       ("Fraga, Eric" . "Eric S.\\nbsp{}Fraga")
-      ("Christopher M. Miles" . "stardiviner"))
+      ("Christopher M. Miles" . "stardiviner")
+      ("matt@excalamus.com" . "Matthew Trzcinski"))
     "Alist storing aliases for known contributor names.")
   (defun yant/org-devel-get-notmuch-sender-FSF-status (sender)
     "Retrieve FSF assignment status of SENDER."
