@@ -8083,6 +8083,8 @@ done
 
 
 #+begin_src bash :tangle ~/.local/bin/backup-full.sh :shebang #!/bin/bash
+# Compress Org git repo (it tends to generate a huge extra space otherwise)
+cd /home/yantar92/Org/; git maintenance run;
 backup-mount.sh
 /home/yantar92/.local/bin/backup-local.sh
 /home/yantar92/.local/bin/backup-archive-to-remote.sh
