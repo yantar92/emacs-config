@@ -5823,6 +5823,17 @@ WEEKLY_SPENDING_AVG="$(ledger r -X <<ledger-main-currency()>> Expenses and not W
 [[ -z "$WEEKLY_SPENDING_AVG" ]] && WEEKLY_SPENDING_AVG="0"
 MONTHLY_SPENDING_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_SPENDING_AVG" | bc -l)"
 
+INCOME_RATIO="$(echo "100.0 * $WEEKLY_INCOME_AVG / $WEEKLY_SPENDING_AVG" | bc -l | sed -r 's/\..*//')"
+if [[ "1" == "$(echo "$INCOME_RATIO < 100" | bc -l)" ]]; then
+    INCOME_RATIO="<span color=\"#FF0000\">"$INCOME_RATIO"%</span>"
+else
+    if [[ "1" == "$(echo "$INCOME_RATIO < 200" | bc -l)" ]]; then
+	INCOME_RATIO="<span color=\"#FFFF00\">"$INCOME_RATIO"%</span>"
+    else
+	INCOME_RATIO="<span color=\"#00FF00\">"$INCOME_RATIO"%</span>"
+    fi
+fi
+
 EMERGENCY_FUND="$(echo "$MONTHLY_SPENDING_AVG * <<emergency-fund-months()>>" | bc -l)"
 BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledger-checking-account()>> -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//')"
  if [[ "1" == "$(echo "$EMERGENCY_FUND > $BAL_EMERGENCY" | bc -l)" ]]; then
@@ -5878,7 +5889,7 @@ BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledg
  if [[ -f ~/.log/projecting ]]; then
      [[ "$(cat ~/.log/projecting)" == "true" ]] && PROJECTING="1";
  fi
- [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ Time:${BAL_TIME} ༼ Food:$BAL_FOOD ༼ Fruits:<<ledger-main-currency-symbol()>>$BAL_FRUITS ༼ Other:$OTHER ༼ Fun:$BAL_ENTERTAINMENT_SHORT ༼ Retirement:$RETIREMENT ༼ Emergency:$BAL_EMERGENCY ༼ Extra:$EXTRA'" | awesome-client
+ [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ Time:${BAL_TIME} ༼ Food:$BAL_FOOD ༼ Fruits:<<ledger-food-currency-symbol()>>$BAL_FRUITS ༼ Other:$OTHER ༼ Fun:$BAL_ENTERTAINMENT_SHORT ༼ Retirement:$RETIREMENT ༼ Emergency:$BAL_EMERGENCY ༼ Extra:$EXTRA ༼ ⚖:$INCOME_RATIO'" | awesome-client
 #+end_src
 
 The script is ran regularly
