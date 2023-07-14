@@ -5725,6 +5725,14 @@ yant/ledger-main-currency
 #+begin_src emacs-lisp :eval yes
 yant/ledger-main-currency-symbol
 #+end_src
+#+name: ledger-food-currency
+#+begin_src emacs-lisp :eval yes
+yant/ledger-food-currency
+#+end_src
+#+name: ledger-food-currency-symbol
+#+begin_src emacs-lisp :eval yes
+yant/ledger-food-currency-symbol
+#+end_src
 #+name: max-balance-food
 #+begin_src emacs-lisp :eval yes
 yant/ledger-max-balance-food
@@ -5768,12 +5776,12 @@ if [[ ! -z "$UNCONVERTED_CURRENCIES" ]]; then
     exit;
 fi
 
-BAL_FOOD="$(ledger bal --budget -X <<ledger-main-currency()>> Food -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' | tail -n1)";
-BAL_FRUITS="$(ledger bal --budget -X <<ledger-main-currency()>> Expenses:Fruits -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' )";
+BAL_FOOD="$(ledger bal --budget -X <<ledger-food-currency()>> Food -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' | tail -n1)";
+BAL_FRUITS="$(ledger bal --budget -X <<ledger-food-currency()>> Expenses:Fruits -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' )";
 [[ -z "$BAL_FRUITS" ]] && BAL_FRUITS="0"
 BAL_FRUITS="$(echo "${BAL_FRUITS}*(-1)" | bc -l)";
 BAL_ENTERTAINMENT="$(ledger bal --budget -X <<ledger-main-currency()>> Entertainment  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//'  | tail -n1 | sed -r 's/,//g')";
-TODAY_BAL_FOOD="$(ledger bal -X <<ledger-main-currency()>> -b `date +%F` Food | tail -n1 | sed -r 's/[^0-9-]+//'  | cut -d' ' -f 1)"
+TODAY_BAL_FOOD="$(ledger bal -X <<ledger-food-currency()>> -b `date +%F` Food | tail -n1 | sed -r 's/[^0-9-]+//'  | cut -d' ' -f 1)"
 [[ -z "$TODAY_BAL_FOOD" ]] && TODAY_BAL_FOOD="0"
 MAX_BAL_FOOD="<<max-balance-food()>>"
 NORMAL_BAL_FOOD="<<normal-balance-food()>>"
@@ -5795,11 +5803,11 @@ under_0=$(echo "$BAL_FOOD < 0" | bc -l)
 BAL_FOOD=$(echo "$BAL_FOOD" | sed -r 's/^\./0./')
 BAL_FOOD=$(echo "$BAL_FOOD" | sed -r 's/^-\./-0./')
 if [[ "$under_0" == "1" ]]; then
-    BAL_FOOD="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$BAL_FOOD milk\!</span>"
+    BAL_FOOD="<span color=\"#FF0000\"><<ledger-food-currency-symbol()>>$BAL_FOOD milk\!</span>"
 elif [[ "$under_limit" == "1" ]]; then
-    BAL_FOOD="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$BAL_FOOD canteen\!</span>"
+    BAL_FOOD="<span color=\"#FF0000\"><<ledger-food-currency-symbol()>>$BAL_FOOD canteen\!</span>"
 else
-    BAL_FOOD="<<ledger-main-currency-symbol()>>$BAL_FOOD"
+    BAL_FOOD="<<ledger-food-currency-symbol()>>$BAL_FOOD"
 fi
 
 # BAL_ENTERTAINMENT_SHORT="$(echo "$BAL_ENTERTAINMENT/1000.0*(-1)" | bc -l | grep -oE '^-?[0-9]*\.?[0-9]{0,2}')k"
