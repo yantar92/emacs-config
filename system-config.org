@@ -5790,11 +5790,10 @@ under_limit="0"
 
 if [[ -n "$BAL_FOOD" ]]; then
     BAL_FOOD="$(echo "${BAL_FOOD}*(-1)" | bc -l)";
-    res="$(echo "$BAL_FOOD > $MAX_BAL_FOOD" | bc -l)";
-    [[ "$res" == "1" ]] && BAL_FOOD="$MAX_BAL_FOOD";
+    res="$(echo "$BAL_FOOD + $TODAY_BAL_FOOD > $MAX_BAL_FOOD" | bc -l)";
+    [[ "$res" == "1" ]] && BAL_FOOD=$(echo "$MAX_BAL_FOOD - $TODAY_BAL_FOOD" | bc -l);
     under_limit=$(echo "$BAL_FOOD < $MIN_BAL_FOOD" | bc -l);
     [[ "$under_limit" == "1" ]] && BAL_FOOD="$MIN_BAL_FOOD";
-    # BAL_FOOD="$(echo "$BAL_FOOD - $TODAY_BAL_FOOD" | bc -l)"
 else
     BAL_FOOD="N/A";
 fi
