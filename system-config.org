@@ -272,6 +272,7 @@ DISTDIR="${GK_SHARE}/distfiles"
 LOGFILE="/var/log/genkernel.log"
 LOGLEVEL=1
 DEFAULT_KERNEL_SOURCE="/usr/src/linux"
+SAVE_CONFIG="yes"
 #+end_src
 
 #+begin_src conf :tangle /sudo::/etc/portage/make.conf
