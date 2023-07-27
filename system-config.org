@@ -5711,9 +5711,16 @@ ledger --no-pager -f <<ledger-file()>>  reg --budget -X <<ledger-main-currency()
 :ID:       4df7a164-25a1-4106-b610-155c5b34afd8
 :END:
 
-It is very useful to keep track of the important budget variables regularly [[id:TEDbelle2021what_your_money_habit_reveal_about_youee4][Robert A. Belle [TED] (2021) What your money habits reveal about you]].
-I have an [[id:a086f86e-5436-4aeb-9bb2-b1d5cf0364a8][Awesome WM widget]] showing the most important budgets on screen.
-The widget is populated using the following script. The script assumes Awesome WM markup convention.
+It is very useful to keep track of the important budget variables
+regularly [[id:TEDbelle2021what_your_money_habit_reveal_about_youee4][Robert A. Belle [TED] (2021) What your money habits reveal
+about you]].
+
+I have an [[id:a086f86e-5436-4aeb-9bb2-b1d5cf0364a8][Awesome WM widget]] showing the most important budgets on
+screen (seeing things is important, see [[id:6231301de4667cef9614b4e945cf417b35b08ced][James Clear [Amazon] (2018)
+Atomic Habits, Chapter 6]]).
+
+The widget is populated using the following script. The script assumes
+Awesome WM markup convention.
 
 The script also shows my [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time budget]].
 
