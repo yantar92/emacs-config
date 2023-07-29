@@ -8062,6 +8062,14 @@ while true; do
         ,* ) echo "Please answer yes or no.";;
     esac
 done
+while true; do
+    read -p "Check integrity of the local backup? " yn
+    case $yn in
+        [Yy]* ) restic -r /mnt/Backup/Backup/ check; break;;
+        [Nn]* ) break;;
+        ,* ) echo "Please answer yes or no.";;
+    esac
+done
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/backup-remote.sh :shebang #!/bin/bash :noweb tangle
@@ -8070,6 +8078,14 @@ while true; do
     read -p "Sync with remote backup? " yn
     case $yn in
         [Yy]* ) restic -r rclone:backup:Backup <<backup-opts()>> --password-command "gpg -q  --for-your-eyes-only -d /home/yantar92/.password-store/restic-remote.gpg" backup /home/yantar92/; break;;
+        [Nn]* ) break;;
+        ,* ) echo "Please answer yes or no.";;
+    esac
+done
+while true; do
+    read -p "Check integrity of the remote repository? " yn
+    case $yn in
+        [Yy]* ) restic -r rclone:backup:Backup --password-command "gpg -q  --for-your-eyes-only -d /home/yantar92/.password-store/restic-remote.gpg" check; break;;
         [Nn]* ) break;;
         ,* ) echo "Please answer yes or no.";;
     esac
