@@ -8606,12 +8606,16 @@ Research projects generally contain several typical components:
 			    ("AREA" . ?E)
                             ("FLAGGED" . ?F)
                             ("@home" . ?h)
-                            ("@work" . ?w))))
+                            ("@work" . ?w)
+                            ("_hard" . ?x)
+                            ("_easy" . ?z))))
 (setq org-tags-exclude-from-inheritance '("ATTACH" "NOCLOCK"
                                           "REFILE" "AREA"
                                           "FLAGGED"
                                           "project" "goal"))
 #+end_src
+- =hard= :: Task needed significant efforts. Useful when I am scanning for things to do with low-energy.
+- =easy= :: Task needed low efforts. Useful when I am scanning for things to do with low-energy.
 - =COMMON= :: General task
 - =PhD= :: Related to work/PhD
 - =INBOX= :: Need to be processed (for new captured tasks)
