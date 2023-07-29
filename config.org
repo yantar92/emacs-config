@@ -7604,10 +7604,9 @@ Capture using [[id:ddea3223-515c-4af1-bfc6-49174ce8bd27][yantar92 [Github] yanta
 (use-package org-capture-ref
   :if init-flag
   :load-path "~/Git/org-capture-ref/"
-  :after (notmuch org-ref)
   :init
-  ;; Use curl to retrieve DOI.
-  (setq doi-utils-metadata-function 'doi-utils-get-json-metadata-curl)
+  (use-package persid
+    :straight (persid :host github :repo "rougier/persid"))
   :config
   (defun yant/org-remove-heading-email-from-inbox ()
     "Remove email or thread associated with heading at point from notmuch inbox."
