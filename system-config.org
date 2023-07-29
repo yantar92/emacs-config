@@ -5124,7 +5124,7 @@ config.unbind('f')
 config.bind('fM', 'spawn --userscript org-protocol-add-bookmark-force.sh')
 config.bind('gL', 'open https://outline.com/{url}')
 config.bind('h', 'hint')
-config.bind(';b', 'hint all spawn -u untrack-url -b {hint-url}')
+config.bind(';b', 'hint all open -b')
 config.bind('<Alt+h>', 'hint all hover')
 config.bind('l', 'scroll-page 0 0.5')
 config.bind('o', 'set-cmd-text -s :open')
@@ -5244,7 +5244,7 @@ fi
 _url="$URL"
 _command=":later 4000 :jump-mark last-position"
 
-qutebrowser "${_command}" ":spawn -u untrack-url -r -O ${_url}"
+qutebrowser "${_command}" ":open -t ${_url}"
 
 # emacsclient -c -e "(eaf-open-browser \"$URL\")"
 #+end_src
