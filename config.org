@@ -9019,6 +9019,7 @@ NEXT and schedule it the same day."
       (org-todo "WAITING")
       (org-set-property "BLOCKER" (format "ids(\"%s\")" uuid))
       (org-set-property "SUMMARY" (format "Blocked by %s" (org-with-point-at (org-id-find uuid 'marker) (org-get-heading t t t t))))
+      (org-toggle-tag "TRACK" 'on)
       (org-with-point-at (org-id-find uuid 'marker)
         (let ((old (org-entry-get (point) "TRIGGER")))
           (unless old (setq old ""))
