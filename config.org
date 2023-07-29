@@ -7591,7 +7591,6 @@ Capture using [[id:ddea3223-515c-4af1-bfc6-49174ce8bd27][yantar92 [Github] yanta
   :config
   (use-package org-capture-ref
     :load-path "~/Git/org-capture-ref/"
-    :after org-ref
     :init
     (bind-key "t" 'org-capture-ref-capture-at-point notmuch-show-mode-map)
     (bind-key "t" 'org-capture-ref-capture-at-point notmuch-search-mode-map)
@@ -9787,7 +9786,7 @@ Do not ask every time I try to evaluate elisp: links
   (setq org-link-elisp-confirm-function nil))
 #+end_src
 
-***** Org-ref
+***** COMMENT Org-ref
 :PROPERTIES:
 :ID:       f944c2c8-f1fa-49ea-ab24-bf1b018013f1
 :END:
@@ -9850,7 +9849,7 @@ Do not ask every time I try to evaluate elisp: links
     (add-to-list 'jit-lock-functions 'org-ref-add-labels)
     (add-to-list 'before-change-functions 'org-ref-delete-labels)))
 #+end_src
-***** Org-ref-cite
+***** COMMENT Org-ref-cite
 :PROPERTIES:
 :ID:       4936ea38-3a1e-4db2-89e0-07e48d78a30d
 :END:
@@ -14399,7 +14398,7 @@ I define two link types for capturing:
 (use-package org-capture-ref
   :if init-flag
   :load-path "~/Git/org-capture-ref/"
-  :after (org-capture org-ref)
+  :after org-capture
   :demand t
   :init
   (use-package ol-bibtex
