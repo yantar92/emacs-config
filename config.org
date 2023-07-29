@@ -6997,7 +6997,9 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                     (or (elfeed-meta entry :title) (elfeed-entry-title entry) "")))
            (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
            (title (if (and (elfeed-tagged-p 'chinese entry)
-			   (member (yant/guess-language-string title) '("zh-cn" "ko")))
+			   t
+			   ;; (member (yant/guess-language-string title) '("zh-cn" "ko"))
+			   )
                       (progn (message "Translating...")
                              (with-temp-buffer
                                (insert (yant/translate-string title))
