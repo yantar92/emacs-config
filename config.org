@@ -17548,6 +17548,15 @@ From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bul
   (bind-key "S" #'org-babel-demarcate-block boon-command-map))
 #+end_src
 
+**** Do not recenter window after folding/unfolding
+
+#+begin_src emacs-lisp
+(use-package org
+  :if init-flag
+  :config
+  (remove-hook 'org-cycle-hook #'org-cycle-optimize-window-after-visibility-change))
+#+end_src
+
 *** Notmuch interaction
 :PROPERTIES:
 :ID:       e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326
