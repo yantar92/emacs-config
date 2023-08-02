@@ -9317,13 +9317,6 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
 :PROPERTIES:
 :ID:       f1be655e-5fc4-44b5-8197-22ce9457e489
 :END:
-- TODO.org :: store new entries, general home and work entries, want todo some time entries
-  #+begin_src emacs-lisp
-(when init-flag
-  (defun gtd-open ()
-    (interactive)
-    (find-file "~/Org/TODO.org")))
-              #+end_src
 - notes.org :: all kind of generally useful information
                #+begin_src emacs-lisp
 (when init-flag
@@ -9331,10 +9324,8 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
     (interactive)
     (find-file "~/Org/notes.org")))
                #+end_src
-- articles.org :: notes on research articles
 - rss.org :: rss entries for [[id:9bc385e2-0ed2-460b-875e-be9ad19144a3][Elfeed]]
 - *contacts.org* :: my contacts /via/ =org-contacts=
-- *.org :: project specific entries
 - all of it is in =agenda_files=
 - we can add new org files and remove existing
 #+begin_src emacs-lisp
@@ -18010,7 +18001,6 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
    ("C-c m" . org-capture)
    :map boon-goto-map
    ("a" . org-agenda)
-   ("C-t" . gtd-open)
    ("C-n" . notes-open)
    )
   (bind-keys :map org-mode-map
