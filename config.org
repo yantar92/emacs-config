@@ -1616,6 +1616,16 @@ Disable tooltips
 *** Key bindings
 At some point, a got very annoyed about distance between =C-n=, =C-p=, =C-f=, and =C-b= and did not want to move my hand all the way to arrow keys.
 So, I use modal editing  now, which allows me to move around using the keys, which are close to each other.
+**** Enable repeat keymaps
+
+[[help:repeat-mode]]
+
+#+begin_src emacs-lisp
+(use-package repeat
+  :if init-flag
+  :init
+  (repeat-mode +1))
+#+end_src
 
 **** Modal setup
 :PROPERTIES:
