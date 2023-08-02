@@ -3438,6 +3438,15 @@ Following my key binding theme for [[id:d388e4f5-214e-4697-a53a-be6fb6c24411][He
   (bind-key "M-j" #'isearch-repeat-forward isearch-mode-map)
   (bind-key "M-k" #'isearch-repeat-backward isearch-mode-map))
 #+end_src
+***** Immediately move to previous match when changing direction of search
+
+#+begin_src emacs-lisp
+(use-package isearch
+  :if init-flag
+  :custom
+  (isearch-repeat-on-direction-change t))
+#+end_src
+
 **** Remember previous location after moving around text
 :PROPERTIES:
 :CREATED:  [2020-04-08 Wed 16:08]
