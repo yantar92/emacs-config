@@ -4280,7 +4280,7 @@ Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not acce
 An alternative is [[id:Github-astoff-astoff-devdocs-el-636][astoff [Github] astoff/devdocs.el: Emacs viewer for DevDocs]], but it does not ([2022-05-14 Sat]) have helm support.
 
 Emacs has an excellent built-in support for Elisp and GNU system documentation.
-Moreover, it can be integrated with all other kinds of documentation using [[id:Kapeli_dash_for_macos_api_docum6c7][Dash]].
+Moreover, it can be integrated with all other kinds of documentation using Dash.
 
 #+begin_src emacs-lisp
 (use-package helm-dash
@@ -8239,7 +8239,7 @@ print(detect(text))
 
 [2020-08-11 Tue] It does not seem to handle quotes of quotes from last emails very well
 
-[[github_jeremy-compostella_jerem_compos_org_msg_orgms][org-msg]] make it possible to write email in org-mode and export it to html when sending.
+[[id:github_jeremy-compostella_jerem_compos_org_msg_orgms][org-msg]] make it possible to write email in org-mode and export it to html when sending.
 
 #+begin_src emacs-lisp 
 (use-package org-msg
@@ -15881,7 +15881,7 @@ First of all, I centralise the leisure tasks by creating habit TODOs with links 
 For other time, I do not want any easy access to them (not that I cannot get it if I really want it, but the need to spend *some* efforts in order to do the unwanted tasks is sufficient most of time). 
 For rss and maillists it is easy (at least for now) - I simply unbind my convenient key-bindings firing help:elfeed and maillist inbox in help:notmuch.
 
-Mindless browsing of websites like YouTube, Facebook, or reddit is a huge time-sink [[id:lesswrong_benkuhn2020_tools_keepin_focus][benkuhn Lesswrong 2020]]. This happens partially because these websites are designed to attract and hold people's attention [[id:goodreads_digit_minim_choos_focus_life][Digital Minimalism by Newport]]. As highlighted by [[id:lesswrong_benkuhn2020_tools_keepin_focus][benkuhn]], an effective trick to work around this problem is blocking access to destructing activities when more focus on work is desired. [[id:goodreads_digit_minim_choos_focus_lifel][Newport]] suggests to access to these websites/distractions during dedicated time periods.
+Mindless browsing of websites like YouTube, Facebook, or reddit is a huge time-sink [[id:lesswrong_benkuhn2020_tools_keepin_focus][benkuhn Lesswrong 2020]]. This happens partially because these websites are designed to attract and hold people's attention [[id:goodreads_digit_minim_choos_focus_life][Digital Minimalism by Newport]]. As highlighted by [[id:lesswrong_benkuhn2020_tools_keepin_focus][benkuhn]], an effective trick to work around this problem is blocking access to destructing activities when more focus on work is desired. [[id:goodreads_digit_minim_choos_focus_life][Newport]] suggests to access to these websites/distractions during dedicated time periods.
 
 Realising the described problem for myself, I follow the above recommendations and block certain website access from [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]]:
 
