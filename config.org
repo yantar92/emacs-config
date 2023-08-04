@@ -15071,7 +15071,7 @@ Since the archives are not always contained in a single file, org id and text se
 (use-package org-id
   :after org
   :custom
-  (org-id-extra-files 'org-agenda-text-search-extra-files)
+  (org-id-extra-files (directory-files "~/Org" nil ".*\\.org"))
   :config
   (use-package org-archive
     :config
