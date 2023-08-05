@@ -4781,6 +4781,26 @@ $0
 #+end_src
 
 *** Undo
+**** Undo displayed as a graph
+
+[[id:Github_casouricasour_vundo_visual_undo_treeb21][casouri [Github] casouri/vundo: Visualize the undo tree.]]
+
+#+begin_src emacs-lisp
+(use-package vundo
+  :if init-flag
+  :straight t
+  :demand meta-functions
+  :bind
+  ("C-x u" . vundo)
+  :custom
+  (vundo-glyph-alist vundo-unicode-symbols)
+  :config
+  (meta-defun meta-backward :mode vundo-mode vundo-backward)
+  (meta-defun meta-forward :mode vundo-mode vundo-forward)
+  (meta-defun meta-down :mode vundo-mode vundo-down)
+  (meta-defun meta-up :mode vundo-mode vundo-up))
+#+end_src
+
 **** COMMENT Save undo history between Emacs sessions
 :PROPERTIES:
 :SUMMARY:  gives ~read~ error
