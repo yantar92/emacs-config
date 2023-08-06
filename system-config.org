@@ -8100,7 +8100,7 @@ done
 while true; do
     read -p "Copy archive to remote backup? " yn
     case $yn in
-        [Yy]* ) rclone copy /mnt/Backup/Archive/ archive:; break;;
+        [Yy]* ) rclone copy --progress /mnt/Backup/Archive/ archive:; break;;
         [Nn]* ) break;;
         ,* ) echo "Please answer yes or no.";;
     esac
