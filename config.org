@@ -8306,7 +8306,6 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
 
 #+begin_src emacs-lisp
 (use-package erc
-  :requires erc-hl-nicks
   :init
   (use-package erc-hl-nicks
     :straight t
