@@ -8582,6 +8582,12 @@ media-sound/lilypond
 dev-lang/R
 #+end_src
 
+*** git-annex
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-vcs/git-annex
+#+end_src
+
 ** WeChat
 :PROPERTIES:
 :ID:       39e067f4-97ef-44b1-bb8b-587586735e68
