@@ -5793,12 +5793,12 @@ if [[ ! -z "$UNCONVERTED_CURRENCIES" ]]; then
     exit;
 fi
 
-BAL_FOOD="$(ledger bal --budget -X <<ledger-food-currency()>> Food -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' | tail -n1)";
-BAL_FRUITS="$(ledger bal --budget -X <<ledger-food-currency()>> Expenses:Fruits -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' )";
+BAL_FOOD="$(ledger bal --budget -X <<ledger-food-currency()>> Food -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' | tail -n1 | sed -r 's/,//g')";
+BAL_FRUITS="$(ledger bal --budget -X <<ledger-food-currency()>> Expenses:Fruits -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//'  | sed -r 's/,//g')";
 [[ -z "$BAL_FRUITS" ]] && BAL_FRUITS="0"
 BAL_FRUITS="$(echo "${BAL_FRUITS}*(-1)" | bc -l)";
 BAL_ENTERTAINMENT="$(ledger bal --budget -X <<ledger-main-currency()>> Entertainment  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//'  | tail -n1 | sed -r 's/,//g')";
-TODAY_BAL_FOOD="$(ledger bal -X <<ledger-food-currency()>> -b `date +%F` Food | tail -n1 | sed -r 's/[^0-9-]+//'  | cut -d' ' -f 1)"
+TODAY_BAL_FOOD="$(ledger bal -X <<ledger-food-currency()>> -b `date +%F` Food | tail -n1 | sed -r 's/[^0-9-]+//'  | cut -d' ' -f 1 | sed -r 's/,//g')"
 [[ -z "$TODAY_BAL_FOOD" ]] && TODAY_BAL_FOOD="0"
 MAX_BAL_FOOD="<<max-balance-food()>>"
 NORMAL_BAL_FOOD="<<normal-balance-food()>>"
@@ -5851,7 +5851,7 @@ else
 fi
 
 EMERGENCY_FUND="$(echo "$MONTHLY_SPENDING_AVG * <<emergency-fund-months()>>" | bc -l)"
-BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledger-checking-account()>> -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//')"
+BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledger-checking-account()>> -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
  if [[ "1" == "$(echo "$EMERGENCY_FUND > $BAL_EMERGENCY" | bc -l)" ]]; then
      BAL_EMERGENCY="<span color=\"#FF0000\">$(echo "($BAL_EMERGENCY - $EMERGENCY_FUND)/$MONTHLY_INCOME_AVG" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')m</span>"
  else
@@ -5863,7 +5863,7 @@ BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledg
  fi
 
 
- BAL_CHECKING="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledger-checking-account()>> -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//')"
+ BAL_CHECKING="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledger-checking-account()>> -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
  CHECKING_EXTRA="$(echo $BAL_CHECKING - ${MONTHLY_SPENDING_AVG} - ${EMERGENCY_FUND} | bc -l)" # extra one month
 
  if [[ "1" == "$(echo "$CHECKING_EXTRA > 0" | bc -l)" ]]; then
