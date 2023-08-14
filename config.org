@@ -8355,7 +8355,22 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   :config
   (defalias 'yant/share-file #'0x0-upload-file)
   (defalias 'yant/share-region #'0x0-upload-text)
-  (defalias 'yant/share-new-buffer #'0x0-popup))
+  (use-package helm-ring
+    :config
+    (defun yant/helm-show-kill-ring-upload-action (_)
+      "Upload selected `helm-show-kill-ring' candidates."
+      (let ((marked (helm-marked-candidates))
+            (sep (if (equal helm-current-prefix-arg '(16))
+                     (read-string "Separator: ")
+		   helm-kill-ring-separator)))
+        (kill-new
+	 (cl-loop for c in (butlast marked)
+		  concat (concat c sep) into str
+		  finally return (concat str (car (last marked)))))
+        (call-interactively #'0x0-upload-kill-ring)
+        (pop kill-ring)))
+    (push '("Upload selected" . yant/helm-show-kill-ring-upload-action)
+	  (cdr helm-kill-ring-actions))))
 #+end_src
 ** COMMENT Matrix client =ement.el=
 [[id:Github-alphapapa-alphapapa-ement-el-9d2][alphapapa [Github] alphapapa/ement.el: Matrix client for Emacs]]
