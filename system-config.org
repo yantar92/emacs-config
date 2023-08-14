@@ -227,6 +227,9 @@ L10N="en ru uk zh-CN"
 #+end_src
 
 *** Linux kernel
+:PROPERTIES:
+:ID:       7f473a7b-39bd-446d-a7ea-650aefadac28
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 sys-kernel/gentoo-sources
@@ -238,12 +241,18 @@ sys-kernel/linux-firmware linux-fw-redistributable no-source-code
 #+end_src
 
 **** Disk encryption support
+:PROPERTIES:
+:ID:       4394f1d4-238b-46ab-a9e6-f873f8b5ec4a
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 sys-fs/cryptsetup
 #+end_src
 
 **** Building and installing the kernel (=genkernel= and =grub=)
+:PROPERTIES:
+:ID:       7b221b51-cd0a-4eba-893b-714f8cd17907
+:END:
 
 Installing after update
 #+begin_src bash :tangle no :eval no
@@ -302,6 +311,9 @@ GRUB_TIMEOUT="1"
 dev-python/pip
 #+end_src
 *** System logging =sysklogd=
+:PROPERTIES:
+:ID:       a60cb107-0349-475c-8324-c672cbf3a870
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-admin/sysklogd
@@ -334,6 +346,9 @@ DISPLAY=:0
 #+end_src
 
 *** Hibernation \ Suspend (elogind)
+:PROPERTIES:
+:ID:       5e8fa0bf-7aaf-4724-9555-b7aea4a6bf5c
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 sys-auth/elogind
@@ -1038,6 +1053,9 @@ sed -i -e 's|location="quay.io/libpod"|location="docker.io/library"|' /etc/conta
 
 #+RESULTS:
 **** Rake - automation for [[id:Email-<bzg@gnuorg>2022-re-using-sr-17d][https://git.sr.ht/~bzg/org-mode-tests Bastien <bzg@gnu.org> [Email] (2022) Re: Using sr.ht CI for Org tests]]
+:PROPERTIES:
+:ID:       b42436a3-82e9-4569-b94f-89bbf3efdd38
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-ruby/rake
@@ -1151,6 +1169,9 @@ x11-apps/setxkbmap
 #+end_src
 
 **** notification-daemon
+:PROPERTIES:
+:ID:       74304f0b-064e-4edd-8fe4-a18c4a2dc450
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 x11-libs/libnotify
@@ -1177,6 +1198,9 @@ source .profile
 #+end_src
 
 *** Xorg
+:PROPERTIES:
+:ID:       d640bb6c-d2b4-432f-ae46-d57924aad9fe
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 x11-base/xorg-server
@@ -5363,6 +5387,9 @@ update-desktop-database ~/.local/share/applications
 
 *** Required fonts
 **** source code pro
+:PROPERTIES:
+:ID:       e32e08c1-eb1d-456e-a65e-e74cc6425ad0
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 media-fonts/source-code-pro
@@ -5604,6 +5631,9 @@ www-client/w3m
 #+end_src
 
 *** Langdetect python library to translate elfeed entries
+:PROPERTIES:
+:ID:       2595f8a1-fb44-41c3-9ae6-83372e8023d7
+:END:
 
 [[id:c8a86cda-7c72-432f-8118-b4b1236db7b8][Automatically translate non-English and non-Russian/Ukrainian titles.]]
 
@@ -5690,6 +5720,9 @@ yant/ledger-file
 --exchange <<ledger-main-currency()>>
 #+end_src
 *** Weekly expenses script
+:PROPERTIES:
+:ID:       087c1779-1ba4-47a7-9527-304e29c206e7
+:END:
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses.sh :shebang #!/bin/bash
 ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Expenses and not Work and not Gifts and not Medical -W -n -A
@@ -7654,6 +7687,9 @@ net-im/zoom all-rights-reserved
 net-im/zoom
 #+end_src
 ** GNU Screen (for Org mode ob-screen testing)
+:PROPERTIES:
+:ID:       b819f1e0-9956-4c49-9d84-3d7dbef12935
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-misc/screen
@@ -8340,6 +8376,9 @@ app-text/diffpdf
 
 Compare pdfs visually and/or textually
 ** =redshift=: colour adjustment according to time of day :crypt:TANGLE:
+:PROPERTIES:
+:ID:       09667015-06de-4215-8d9f-de7271b7cf30
+:END:
 
 -----BEGIN PGP MESSAGE-----
 
@@ -8485,12 +8524,18 @@ app-admin/killproc
 ** COMMENT =app-portage/pfl= search Tex packages and package files in Gentoo
 
 ** =app-portage/gentoolkit= for =equary= and =revdep-rebuild= commands
+:PROPERTIES:
+:ID:       425bfbe3-b8f1-4681-80d9-9cbaea271651
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-portage/gentoolkit
 #+end_src
 
 ** =app-portage/eix= quickly search portage packages
+:PROPERTIES:
+:ID:       607afcec-38b0-44e0-97d2-f7a004e8c109
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-portage/eix
@@ -8514,12 +8559,18 @@ dev-util/perf
 app-dicts/wordnet
 #+end_src
 ** Libreoffice
+:PROPERTIES:
+:ID:       bdf0ea35-eeec-47e3-9d24-d08a27a9c82e
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-office/libreoffice-bin
 #+end_src
 
 ** Firefox (needed for jitsi that does not work well with [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]])
+:PROPERTIES:
+:ID:       521ed8b3-7646-4b1b-95a6-5875d8ec9d1b
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 www-client/firefox-bin
@@ -8578,17 +8629,26 @@ done
 #+end_src
 ** System packages for testing optional modules of Org
 *** Lilypond
+:PROPERTIES:
+:ID:       fdaf2d20-3a4d-4dc7-a11e-acc9e77f5220
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 media-sound/lilypond
 #+end_src
 *** R
+:PROPERTIES:
+:ID:       8d47f144-5cf1-4109-9073-87ae043af76a
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-lang/R
 #+end_src
 
 *** git-annex
+:PROPERTIES:
+:ID:       de5c3ba3-3e78-45e6-b75e-d5d29cdc2195
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-vcs/git-annex
@@ -8616,6 +8676,9 @@ net-im/deepin-wine-wechat Tencent
 #+end_src
 
 ** Repair corrupted git repositories
+:PROPERTIES:
+:ID:       9163d67d-7b51-4bc4-a545-b09e26af6189
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-vcs/git-repair
