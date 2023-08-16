@@ -8319,6 +8319,8 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
 
 #+begin_src emacs-lisp
 (use-package erc
+  :if init-flag
+  :demand t
   :init
   (use-package erc-hl-nicks
     :straight t
@@ -8345,6 +8347,14 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (use-package meta-functions
     :config
     (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
+#+end_src
+*** Store history
+#+begin_src emacs-lisp
+(use-package erc
+  :custom
+  (erc-save-buffer-on-part t)
+  (erc-log-write-after-send t)
+  (erc-log-write-after-insert t))
 #+end_src
 ** File sharing via =0x0=
 [[id:GitLab-willvaughn-willvaughn-emacs-0x0-d03][willvaughn [GitLab] willvaughn/emacs-0x0: Integration with https://0x0.st from emacs. Intended for use in ERC to share images, files, and blocks of code.]]
