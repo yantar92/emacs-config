@@ -10619,7 +10619,7 @@ CLOSED: [2020-08-11 Tue 22:10]
   "Use :ATTACH_DIR_INHERIT: property."
   (let ((attach-dir-inherited (and (not (string= "nil" (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT" t)))
   				   (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))
-				   (org-with-point-at org-entry-property-inherited-from (org-attach-dir t)))))
+				   (org-with-point-at org-entry-property-inherited-from (ignore-errors (org-attach-dir t))))))
     (or attach-dir-inherited
   	dir)))
 ;; (advice-remove 'org-attach-dir #'org-attach-dir@yant/org-attach-use-attach-dir-inheritance)
