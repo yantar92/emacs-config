@@ -8626,7 +8626,8 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
   (org-modules
    '( ol-doi
       ol-w3m
-      ol-info))
+      ol-info
+      ol-irc))
   :defer t)
 #+end_src
 
