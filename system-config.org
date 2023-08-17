@@ -8644,7 +8644,6 @@ media-sound/lilypond
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-lang/R
 #+end_src
-
 *** git-annex
 :PROPERTIES:
 :ID:       de5c3ba3-3e78-45e6-b75e-d5d29cdc2195
@@ -8652,6 +8651,22 @@ dev-lang/R
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-vcs/git-annex
+#+end_src
+
+*** Maxima
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sci-mathematics/maxima
+#+end_src
+*** Octave
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sci-mathematics/octave
+#+end_src
+*** Julia
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-lang/julia-bin
 #+end_src
 
 ** WeChat
