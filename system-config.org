@@ -8654,19 +8654,34 @@ dev-vcs/git-annex
 #+end_src
 
 *** Maxima
+:PROPERTIES:
+:ID:       f0b5f90f-1203-40c2-89f8-b519199f1737
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 sci-mathematics/maxima
 #+end_src
 *** Octave
+:PROPERTIES:
+:ID:       b227c96f-904d-4452-a74f-9d55e20cff24
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 sci-mathematics/octave
 #+end_src
 *** Julia
+:PROPERTIES:
+:ID:       2ea88f55-313a-4ed2-af0c-e6be8ce9d505
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-lang/julia-bin
+#+end_src
+
+*** ESS
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+app-emacs/ess
 #+end_src
 
 ** WeChat
