@@ -8677,11 +8677,22 @@ sci-mathematics/octave
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-lang/julia-bin
 #+end_src
-
 *** ESS
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-emacs/ess
+#+end_src
+
+*** Cider (clojure)
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+app-emacs/cider
+#+end_src
+
+*** Geiser (scheme)
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+app-emacs/geiser
 #+end_src
 
 ** WeChat
