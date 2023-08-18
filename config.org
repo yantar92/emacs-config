@@ -8023,8 +8023,9 @@ I automated the check by examining WORG repository directly and checking the ~gi
 		(concat
 	         (shell-command-to-string
 	          "cd ~/Git/org-mode/; PAGER=\"cat\"; git log --format='%aN %aE' | uniq")
-                 (shell-command-to-string
-	          "cd ~/Git/emacs/; PAGER=\"cat\"; git log --format='%aN %aE' | uniq"))
+                 ;; (shell-command-to-string
+	         ;;  "cd ~/Git/emacs/; PAGER=\"cat\"; git log --format='%aN %aE' | uniq")
+		 )
                 all-committers yant/org-devel-committers-cache
                 yant/org-devel-committers-stats (make-hash-table :test #'equal)
                 yant/org-devel-committers-cache-update-time (current-time)))
@@ -8043,16 +8044,17 @@ I automated the check by examining WORG repository directly and checking the ~gi
                (format "cd ~/Git/org-mode/; git log --author=\"%s\" --pretty=oneline main | wc -l"
                        (downcase (if (string-match-p email all-committers)
                                      email sender))))
-              " | Emacs: "
-              (shell-command-to-string
-               (format "cd ~/Git/emacs/; git log --author=\"%s\" --pretty=tformat: --numstat master | gawk '{ add += $1; subs += $2; loc += $1 - $2 } END { printf \"+l: %%s -l: %%s total: %%s\", add, subs, loc }' -"
-                       (downcase (if (string-match-p email all-committers)
-                                     email sender))))
-              "; commits: "
-              (shell-command-to-string
-               (format "cd ~/Git/emacs/; git log --author=\"%s\" --pretty=oneline master | wc -l"
-                       (downcase (if (string-match-p email all-committers)
-                                     email sender)))))
+              ;; " | Emacs: "
+              ;; (shell-command-to-string
+              ;;  (format "cd ~/Git/emacs/; git log --author=\"%s\" --pretty=tformat: --numstat master | gawk '{ add += $1; subs += $2; loc += $1 - $2 } END { printf \"+l: %%s -l: %%s total: %%s\", add, subs, loc }' -"
+              ;;          (downcase (if (string-match-p email all-committers)
+              ;;                        email sender))))
+              ;; "; commits: "
+              ;; (shell-command-to-string
+              ;;  (format "cd ~/Git/emacs/; git log --author=\"%s\" --pretty=oneline master | wc -l"
+              ;;          (downcase (if (string-match-p email all-committers)
+              ;;                        email sender))))
+	      )
              yant/org-devel-committers-stats)))
         (catch :exit
           (with-current-buffer (get-buffer-create " *Org FSF data*")
