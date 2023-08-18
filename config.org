@@ -15930,45 +15930,58 @@ Alert for upcoming scheduled or agenda entries or agenda entries containing dead
   (org-alert-enable))
 #+end_src
 
-**** COMMENT Distraction-free browsing
+**** Distraction-free browsing
 :PROPERTIES:
 :ID:       9562f1fc-9b35-4573-b42e-7bb2fcef8a7a
 :END:
+ #url_blocking
 
-There are certain things I tend to do often mindlessly during a break or when I am tired. They include browsing reddit, youtube, book store, rss feeds, etc. From time to time, these activities pull me out of work for more time than I would like to. It does not mean that I want to give them up altogether (leisure is activity is important to make you brain rest from time to time, if nothing), but I would prefer to create artificial barriers when I do not want to distract myself from what is more important.
+There are certain things I tend to do often mindlessly during a break
+or when I am tired. They include browsing reddit, youtube, book store,
+rss feeds, etc. From time to time, these activities pull me out of
+work for more time than I would like to. It does not mean that I want
+to give them up altogether (leisure is activity is important to make
+you brain rest from time to time, if nothing), but I would prefer to
+create artificial barriers when I do not want to distract myself from
+what is more important.
 
-One well-known solution to it is time-based blockers to websites, which would also be useful for me if I used mainstream browsers. I have to implement my own version of such blockers fitting my software toolset.
+One well-known solution to it is time-based blockers to websites,
+which would also be useful for me if I used mainstream browsers. I
+have to implement my own version of such blockers fitting my software
+tool-set.
 
-First of all, I centralise the leisure tasks by creating habit TODOs with links (or code snippets) activating the task. By activating, I mean pulling off restrictions + firing website/app needed for the task.
-For other time, I do not want any easy access to them (not that I cannot get it if I really want it, but the need to spend *some* efforts in order to do the unwanted tasks is sufficient most of time). 
-For rss and maillists it is easy (at least for now) - I simply unbind my convenient key-bindings firing help:elfeed and maillist inbox in help:notmuch.
+First of all, I centralise the leisure tasks by creating habit TODOs
+with links (or code snippets) activating the task. By activating, I
+mean pulling off restrictions + firing website/app needed for the
+task. For other time, I do not want any easy access to them (not that
+I cannot get it if I really want it, but the need to spend *some*
+efforts in order to do the unwanted tasks is sufficient most of time).
+For rss and maillists it is easy (at least for now) - I simply unbind
+my convenient key-bindings firing help:elfeed and maillist inbox in
+help:notmuch.
 
-Mindless browsing of websites like YouTube, Facebook, or reddit is a huge time-sink [[id:lesswrong_benkuhn2020_tools_keepin_focus][benkuhn Lesswrong 2020]]. This happens partially because these websites are designed to attract and hold people's attention [[id:goodreads_digit_minim_choos_focus_life][Digital Minimalism by Newport]]. As highlighted by [[id:lesswrong_benkuhn2020_tools_keepin_focus][benkuhn]], an effective trick to work around this problem is blocking access to destructing activities when more focus on work is desired. [[id:goodreads_digit_minim_choos_focus_life][Newport]] suggests to access to these websites/distractions during dedicated time periods.
+Mindless browsing of websites like YouTube, Facebook, or reddit is a
+huge time-sink [[id:lesswrong_benkuhn2020_tools_keepin_focus][benkuhn Lesswrong 2020]]. This happens partially because
+these websites are designed to attract and hold people's attention
+[[id:goodreads_digit_minim_choos_focus_life][Digital Minimalism by Newport]]. As highlighted by [[id:lesswrong_benkuhn2020_tools_keepin_focus][benkuhn]], an effective
+trick to work around this problem is blocking access to destructing
+activities when more focus on work is desired. [[id:goodreads_digit_minim_choos_focus_life][Newport]] suggests to
+access to these websites/distractions during dedicated time periods.
 
-Realising the described problem for myself, I follow the above recommendations and block certain website access from [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]]:
-
-#+name: blocked-hosts
-| reddit.com              |
-| www.reddit.com          |
-| old.reddit.com          |
-| author.today            |
-| facebook.com            |
-| youtube.com             |
-| www.youtube.com         |
-| ficbook.net             |
-| channelnewsasia.com     |
-| www.channelnewsasia.com |
+Realizing the described problem for myself, I follow the above
+recommendations and block certain website access from [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]]:
 
 #+name: format-blocked-hosts
-#+begin_src emacs-lisp :tangle no :var hosts=blocked-hosts :results raw silent
-(mapconcat (lambda (host) (format "127.0.0.1 %s" (car host))) hosts "\n")
+#+begin_src emacs-lisp :tangle no :results raw silent
+(mapconcat (lambda (host) (format "127.0.0.1 %s" host)) yant/blocked-hosts "\n")
 #+end_src
 
 #+begin_src conf :tangle ~/.config/qutebrowser/blocked-hosts :noweb tangle
 <<format-blocked-hosts()>>
 #+end_src
 
-The access is only restored while I am doing a task related to that domain (and containing =Source= property with the domain URL)
+The access is only restored while I am doing a task related to that
+domain (and containing =Source= property with the domain URL)
 
 #+begin_src emacs-lisp
 (defvar yant/hosts-unblocked nil
