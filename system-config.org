@@ -5,7 +5,7 @@
 :END:
 #+ARCHIVE: ::* Archived
 
-* HOLD [#B] System: Gentoo Linux :COMMON:@home:HOLD:
+* HOLD [#B] System: Gentoo Linux :COMMON:HOLD:
 :PROPERTIES:
 :ID:       9fe29e54-81b8-47a1-888f-f1721f9dae54
 :END:
@@ -831,6 +831,7 @@ net-wireless/wireless-tools
 :PROPERTIES:
 :ID:       b635ba2c-5592-4bc8-9cfc-526a9ba700a0
 :END:
+
 -----BEGIN PGP MESSAGE-----
 
 hQEMA3SKBiQ2zhL6AQf9E3qVjjWUM5VMybxaXdFlKfVv5M3fMKv3Ln4wYorWb+rZ
@@ -8670,18 +8671,27 @@ sci-mathematics/octave
 dev-lang/julia-bin
 #+end_src
 *** ESS
+:PROPERTIES:
+:ID:       f8f75a55-3943-40c0-9a17-0d72a1861822
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-emacs/ess
 #+end_src
 
 *** Cider (clojure)
+:PROPERTIES:
+:ID:       7fd2d9d3-3d81-48b4-838a-fdf8760f9b99
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-emacs/cider
 #+end_src
 
 *** Geiser (scheme)
+:PROPERTIES:
+:ID:       3cfa2246-4fd1-4322-98ac-423549eb9ae2
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-emacs/geiser
@@ -8719,7 +8729,7 @@ dev-vcs/git-repair
 
 * Archived
 
-** COMMENT Compositor (compton) :COMMON:@home:HOLD:
+** COMMENT Compositor (compton) :COMMON:
 :PROPERTIES:
 :ID:       47146ef7-67fd-4f69-a9e1-a0a8290ae45d
 :ARCHIVE_TIME: 2023-01-25 Wed 13:48
@@ -8826,7 +8836,7 @@ wintypes:
 #+end_src
 
 
-** COMMENT Sakaki tools for system maintenance :COMMON:@home:HOLD:
+** COMMENT Sakaki tools for system maintenance :COMMON:
 :PROPERTIES:
 :ARCHIVE_TIME: 2023-01-08 Sun 07:55
 :ARCHIVE_FILE: ~/Org/system-config.org
@@ -8974,7 +8984,7 @@ net-misc/youtube-dl **
 
 My old config: [[attachment:Icewm/.icewm/]]
 
-** COMMENT SELinux :COMMON:@home:HOLD:
+** COMMENT SELinux :COMMON:
 :PROPERTIES:
 :ID:       73c07da0-b330-496b-a004-2352001ef1a6
 :ARCHIVE_TIME: 2023-01-07 Sat 18:27
@@ -9012,7 +9022,7 @@ SELINUXTYPE=strict
 [2020-12-13 Sun] The current version of Gentoo Wiki does not show how to enable SELinux in newer kernels (5.4.80). I found [[id:0dd53ee83c9bfbb28c750acc10c432a771455a9b][torvalds [Github] LSM: Revive CONFIG_DEFAULT_SECURITY_* for "make oldconfig"]] showing that default value of "A comma-separated list of LSMs, in initialization order" should be changed when setting SELinux.
 
 
-** COMMENT VPN service - old :COMMON:@home:HOLD:crypt:TANGLE:
+** COMMENT VPN service - old :COMMON:crypt:TANGLE:
 :PROPERTIES:
 :ID:       c9763353-b69f-44f9-800d-c4c1dd79c095
 :ARCHIVE_TIME: 2023-01-20 Fri 16:44

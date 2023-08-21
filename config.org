@@ -3076,7 +3076,7 @@ Highlight text matching =isearch=.
 (setf search-highlight t)
 (setf query-replace-highlight t))
 #+end_src
-*** NEXT #goggles Highlight recent changes\actions :@home:
+*** NEXT #goggles Highlight recent changes\actions
 SCHEDULED: <2020-12-11 Fri>
 :PROPERTIES:
 :ID:       02c8a98c-a38a-4054-a0a2-400f6757693b
