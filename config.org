@@ -18065,6 +18065,22 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
          (org-encrypt-entry)
          (outline-next-heading))))))
 #+end_src
+*** Blog publishing
+**** =org-page=
+
+Using because the package is abandoned and I am helping to maintain it.
+
+#+begin_src emacs-lisp
+(use-package org-page
+  :straight (org-page
+	     :host github :repo "emacsorphanage/org-page"
+             :local-repo "~/Git/org-page")
+  :custom
+  (op/repository-directory "~/Git/Blog/")
+  (op/hashover-comments t)
+  (op/site-domain "localhost:8080/"))
+#+end_src
+
 *** SOMEDAY Knowledge graph view :SOMEDAY:
 
 *** TODO Key combinations
