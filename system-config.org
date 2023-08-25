@@ -8687,6 +8687,11 @@ app-emacs/ess
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-emacs/cider
 #+end_src
+*** Leiningen (clojure)
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-java/leiningen-bin
+#+end_src
 
 *** Geiser (scheme)
 :PROPERTIES:
