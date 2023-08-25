@@ -8202,6 +8202,52 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
 
   (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contribution-status))
 #+end_src
+**** Display extra information for known contacts
+
+#+begin_src emacs-lisp
+(use-package notmuch
+  :if init-flag
+  :after org-ql
+  :init
+  (defun yant/notmuch-show-highlight-contact-info ()
+    "Overlay contact info for sender.
+This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
+    (goto-char (point-min))
+    (let ((indentation
+           (progn
+             (looking-at "^ *")
+             (match-string 0)))
+          (sender (condition-case nil
+		      (or (notmuch-show-get-header :Reply-To)
+			  (notmuch-show-get-from))
+                    (error
+                     (goto-char (point-min))
+                     (org-with-wide-buffer
+                      (replace-regexp-in-string
+                       " *(.+" ""
+                       (buffer-substring
+			(line-beginning-position 0)
+			(line-end-position 0))))))))
+      (when (string-match "<?\\([^ ]+@[^ >]+\\)" sender)
+	(setq sender (match-string 1 sender)))
+      (when-let ((contact-title
+		  (car
+		   (org-ql-query
+		     :from "~/Org/contacts.org"
+		     :where `(property "EMAIL" ,sender)
+		     :select
+		     (lambda (el)
+		       (org-element-interpret-data
+			(org-element-property :title el)))))))
+	(put-text-property
+	 (point-min) (1+ (point-min))
+	 'display
+	 (concat (propertize (concat "contacts.org: " contact-title) 'face 'modus-themes-refine-green) "\n"
+		 (buffer-substring (point-min) (1+ (point-min))))))))
+
+  (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contact-info))
+#+end_src
+
 
 *** Mail host address
 :PROPERTIES:
