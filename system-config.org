@@ -8700,6 +8700,7 @@ dev-java/leiningen-bin
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-emacs/geiser
+app-emacs/geiser-guile
 #+end_src
 
 ** WeChat
