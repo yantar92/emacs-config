@@ -5914,6 +5914,18 @@ BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledg
      EXTRA="no"
  fi
 
+ BAL_PROJECTION_YEAR=$(echo "($WEEKLY_SPENDING_AVG - $WEEKLY_INCOME_AVG) * 52" | bc -l)
+ if [[ "1" == "$(echo "$BAL_PROJECTION_YEAR > 0" | bc -l)" ]]; then
+     YEARS_LEFT=$(echo "$BAL_CHECKING / $BAL_PROJECTION_YEAR" | bc -l | sed -r 's/(\..{1}).+/\1/');
+     if [[ "1" == "$(echo "$YEARS_LEFT < 5" | bc -l)" ]]; then
+	 YEARS_LEFT="<span color=\"#FF0000\">+${YEARS_LEFT}y</span>";
+     else
+	 YEARS_LEFT="<span color=\"#FFFF00\">+${YEARS_LEFT}y</span>";
+     fi
+ else
+     YEARS_LEFT="<span color=\"#FFFF00\">+∞y</span>";
+ fi
+
  RETIREMENT="$(ledger b -X <<ledger-main-currency()>> "Retirement Savings" -n -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//g')"
  [[ -z "$RETIREMENT" ]] && RETIREMENT="0"
  ASSETS="$(ledger bal -X <<ledger-main-currency()>> "Assets" and not Reimbursements -n  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
@@ -5939,7 +5951,7 @@ BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledg
  if [[ -f ~/.log/projecting ]]; then
      [[ "$(cat ~/.log/projecting)" == "true" ]] && PROJECTING="1";
  fi
- [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ Time:${BAL_TIME} ༼ Food:$BAL_FOOD ༼ Fruits:<<ledger-food-currency-symbol()>>$BAL_FRUITS ༼ Other:$OTHER ༼ Fun:$BAL_ENTERTAINMENT_SHORT ༼ Retirement:$RETIREMENT ༼ Emergency:$BAL_EMERGENCY ༼ Extra:$EXTRA ༼ ⚖:$INCOME_RATIO'" | awesome-client
+ [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ Time:${BAL_TIME} ༼ Food:$BAL_FOOD ༼ Fruits:<<ledger-food-currency-symbol()>>$BAL_FRUITS ༼ Other:$OTHER ༼ Fun:$BAL_ENTERTAINMENT_SHORT ༼ Retirement:$RETIREMENT ༼ Emergency:$BAL_EMERGENCY ༼ Extra:$EXTRA ༼ ⚖:$INCOME_RATIO$YEARS_LEFT'" | awesome-client
 #+end_src
 
 The script is ran regularly
@@ -8688,6 +8700,9 @@ app-emacs/ess
 app-emacs/cider
 #+end_src
 *** Leiningen (clojure)
+:PROPERTIES:
+:ID:       a93ebe8f-282c-4ddf-b96c-c6f961b62073
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-java/leiningen-bin
