@@ -385,7 +385,7 @@ Keep customisation away from =init.el= in a separate file.
   (emacs-gc-stats-mode +1))
 #+end_src
 
-** SOMEDAY Elisp libraries to be used further :SOMEDAY:
+** SOMEDAY Elisp libraries to be used further :SKIP_PROJECT_REVIEW:SOMEDAY:
 :PROPERTIES:
 :CREATED:  [2020-04-22 Wed 16:39]
 :ID:       7b9a8c35-f3f9-4390-8e5e-fb863abd3f8b
@@ -7619,7 +7619,7 @@ Here are some workarounds
 (setq-default notmuch-show-indent-content nil)
 #+end_src
 
-**** SOMEDAY Interaction with org :SOMEDAY:
+**** SOMEDAY Interaction with org :SKIP_PROJECT_REVIEW:SOMEDAY:
 ***** Capture mail to org task
 :PROPERTIES:
 :ID:       2d9b8481-b46c-47a9-9d19-6408c6a1e82d
@@ -8727,6 +8727,7 @@ Research projects generally contain several typical components:
 			    ("NOEXPORT" . ?n)
 			    ("NODEADLINE" . ?d)
 			    ("SKIP" . ?s)
+                            ("SKIP_PROJECT_REVIEW" . ?S)
                             ("NOARCHIVE" . ?a)
                             ("ARCHIVEALL" . ?A)
                             ("NOCLOCK" . ?k)
@@ -8741,7 +8742,8 @@ Research projects generally contain several typical components:
 (setq org-tags-exclude-from-inheritance '("ATTACH" "NOCLOCK"
                                           "REFILE" "AREA"
                                           "FLAGGED"
-                                          "project" "goal"))
+                                          "project" "goal"
+                                          "SKIP_PROJECT_REVIEW"))
 #+end_src
 - =hard= :: Task needed significant efforts. Useful when I am scanning for things to do with low-energy.
 - =easy= :: Task needed low efforts. Useful when I am scanning for things to do with low-energy.
@@ -8769,6 +8771,8 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =NOEXPORT= :: Do not export an item
 - =NODEADLINE= :: Do not show these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view
 - =SKIP= :: Some projects/sub-projects contains tasks, which can be done independently to each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belong to have =NEXT= tasks.
+- =SKIP_PROJECT_REVIEW= :: Low-importance projects that I do not want to
+  see in the review (limited tracking only when stuck/hold).
 - =NOARCHIVE= :: Do not archive a task. This in not inherited.
 - =ARCHIVE= :: Prevent task from unfolding (e.g. task contains bulky data, I do not want to see)
 - =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only do it all together.
@@ -10988,10 +10992,11 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-dim-blocked-tasks nil)
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-							(quote (and (not (tags "SOMEDAY" "HOLD" "WAITING" "CANCELLED" "NODEADLINE"))
+							(quote (and (not (tags-local "SKIP_PROJECT_REVIEW"))
+								    (not (tags "SOMEDAY" "HOLD" "WAITING" "CANCELLED" "NODEADLINE"))
 								    (not (todo "TODO"))
 								    (not (area))
-                                                                    (not (goal))
+								    (not (goal))
 								    (project)
 								    (not (subproject))))))
 			    (org-agenda-sorting-strategy
@@ -11019,6 +11024,7 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
 							(quote (and (tags-local "SOMEDAY")
+								    (not (tags-local "SKIP_PROJECT_REVIEW"))
 								    (not (tags "CANCELLED" "HOLD"))
 								    (not (area))
 								    (project)
@@ -15649,7 +15655,7 @@ Leaving the code below for reference.
       '((:prologue . "exec 2>&1") (:epilogue . ":"))
       )
 #+END_SRC
-***** SOMEDAY Evaluation :SOMEDAY:
+***** SOMEDAY Evaluation :SKIP_PROJECT_REVIEW:SOMEDAY:
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 18:03]
 :ID:       49900f8e-cde9-4e41-944a-904852ad92b9
