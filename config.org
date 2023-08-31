@@ -14629,26 +14629,27 @@ For now, I avoid capturing website text directly into org. Instead, I write my o
 #+begin_src emacs-lisp
 (when init-flag
   (defvar yant/org-capture-archive-process nil)
-  (defun yant/org-capture-archive-resource (&optional url attach-dir)
-    "Archive resource for capture at point or for URL."
-    (when-let ((url (or url (org-entry-get (point) "URL")))
-	       (url-archivable? (not (seq-find
-				    (lambda (host) (string-match-p (regexp-quote host) url))
-				    (append (when (boundp 'yant/mastodon-hosts)
-					      yant/mastodon-hosts)
-					    '("youtube"
-                                              "author.today")))))
-               (attach-dir (or attach-dir (org-attach-dir-get-create))))
-      (if (and yant/org-capture-archive-process
-               (process-live-p yant/org-capture-archive-process))
-          (run-with-timer
-           30 nil #'yant/org-capture-archive-resource url attach-dir)
-        (org-toggle-tag org-attach-auto-tag 'on)
-        (setq yant/org-capture-archive-process
-              (start-process
-               "Monolith" " *Monolith*"
-               "monolith"
-               url "--output" (file-name-concat attach-dir "singlepage.html"))))))
+  (defun yant/org-capture-archive-resource (&optional url attach-dir marker)
+    "Archive resource for capture at point/MARKER or for URL."
+    (org-with-point-at marker
+      (when-let ((url (or url (org-entry-get (point) "URL")))
+		 (url-archivable? (not (seq-find
+				      (lambda (host) (string-match-p (regexp-quote host) url))
+				      (append (when (boundp 'yant/mastodon-hosts)
+						yant/mastodon-hosts)
+					      '("youtube"
+						"author.today")))))
+		 (attach-dir (or attach-dir (org-attach-dir-get-create))))
+	(if (and yant/org-capture-archive-process
+		 (process-live-p yant/org-capture-archive-process))
+            (run-with-timer
+             30 nil #'yant/org-capture-archive-resource url attach-dir (or marker (point-marker)))
+          (org-toggle-tag org-attach-auto-tag 'on)
+          (setq yant/org-capture-archive-process
+		(start-process
+		 "Monolith" " *Monolith*"
+		 "monolith"
+		 url "--output" (file-name-concat attach-dir "singlepage.html")))))))
   (add-hook 'org-capture-before-finalize-hook #'yant/org-capture-archive-resource))
 #+end_src
 
