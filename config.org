@@ -372,7 +372,7 @@ Keep customisation away from =init.el= in a separate file.
   :straight (no-littering :host github :repo "emacscollective/no-littering"
 			  :local-repo "~/Git/no-littering"))
 #+end_src
-** GC stats recorder
+** COMMENT GC stats recorder
 
 #+begin_src emacs-lisp
 (use-package emacs-gc-stats
