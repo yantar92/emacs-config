@@ -8204,6 +8204,8 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
 #+end_src
 **** Display extra information for known contacts
 
+When reading long and entangled public mailing list threads, many people can participate and it is sometimes difficult to notice emails from important people I know (maintainers, friends, etc). A clear color indication of emails from significant people is helpful in such scenarios.
+
 #+begin_src emacs-lisp
 (use-package notmuch
   :if init-flag
