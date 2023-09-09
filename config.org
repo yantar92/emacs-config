@@ -8255,6 +8255,51 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
 #+end_src
 
 
+**** Clearly indicate mailing lists a message is on
+
+When discussion goes off-topic on mailing lists, emails are sometimes
+moved to alternative lists or into a private email. Sometimes, without
+obvious indication.
+
+Mark mailing lists (and off-list messages) with different colors to
+make things more noticeable.
+
+#+begin_src emacs-lisp
+(use-package notmuch
+  :if init-flag
+  :init
+  (defun yant/notmuch-show-highlight-mailing-list ()
+    "Overlay mailing list the message is in.
+This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
+    (goto-char (point-min))
+    (let ((mailing-lists
+	   (let (lists)
+             (goto-char (point-min))
+             (when (save-excursion (search-forward "emacs-orgmode@gnu.org" nil t))
+               (push (propertize "ML: Org mode" 'face 'modus-themes-fringe-cyan) lists))
+             (when (save-excursion (search-forward "emacs-devel@gnu.org" nil t))
+               (push (propertize "ML: Emacs devel" 'face 'modus-themes-fringe-magenta) lists))
+             (when (save-excursion (search-forward "emacs-tangents@gnu.org" nil t))
+               (push (propertize "ML: Emacs tangents" 'face 'modus-themes-intense-yellow) lists))
+             (when (save-excursion (search-forward "@debbugs.gnu.org" nil t))
+               (push (propertize "Debbugs" 'face 'modus-themes-mark-alt) lists))
+             (when (save-excursion (search-forward "@noreply.github.com" nil t))
+               (push (propertize "Github" 'face 'modus-themes-refine-magenta) lists))
+             lists)))
+      (put-text-property
+       (point-min) (1+ (point-min))
+       'display
+       (concat
+	(if mailing-lists
+	    (mapconcat #'identity mailing-lists " ")
+          (propertize "--> Off list <--" 'face 'dired-flagged))
+        "\n"
+        (or (get-text-property (point-min) 'display)
+	    (buffer-substring (point-min) (1+ (point-min))))))))
+
+  (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-mailing-list))
+#+end_src
+
 *** Mail host address
 :PROPERTIES:
 :CREATED:  [2019-12-23 Mon 12:34]
