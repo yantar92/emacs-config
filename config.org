@@ -8225,30 +8225,35 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
                        " *(.+" ""
                        (buffer-substring
 			(line-beginning-position 0)
-			(line-end-position 0))))))))
-      (when (string-match "<?\\([^ ]+@[^ >]+\\)" sender)
-	(setq sender (match-string 1 sender)))
+			(line-end-position 0)))))))
+          name)
+      (setq name sender)
+      (when (string-match "\\(.+?\\) *<?\\([^ ]+@[^ >]+\\)" sender)
+	(setq name (match-string 1 sender))
+	(setq sender (match-string 2 sender)))
       (let ((contact-title
 	     (car
 	      (org-ql-query
 		:from "~/Org/contacts.org"
-		:where `(property "EMAIL" ,sender)
+		:where `(or (regexp ,sender)
+			    (regexp ,name))
 		:select
 		(lambda (el)
 		  (org-element-interpret-data
 		   (org-element-property :title el)))))))
-        (unless (equal user-full-name contact-title) ; do not highlight my own messages.
+        (unless (or (equal user-full-name contact-title) ; do not highlight my own messages.
+		    (equal "builds@sr.ht" sender))
 	  (put-text-property
 	   (point-min) (1+ (point-min))
 	   'display
-           (concat
-            (if contact-title
+	   (concat
+	    (if contact-title
 		;; Known contact.
 		(propertize contact-title 'face 'modus-themes-refine-green)
 	      ;; Unknown contact
 	      (propertize "--> Unknown contact <--" 'face 'dired-flagged))
-            " "
-            (or (get-text-property (point-min) 'display)
+	    "\n"
+	    (or (get-text-property (point-min) 'display)
 		(buffer-substring (point-min) (1+ (point-min))))))))))
 
   (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contact-info))
