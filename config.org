@@ -8288,8 +8288,10 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
                (push (propertize "ML: Emacs tangents" 'face 'modus-themes-intense-yellow) lists))
              (when (save-excursion (search-forward "@debbugs.gnu.org" nil t))
                (push (propertize "Debbugs" 'face 'modus-themes-mark-alt) lists))
-             (when (save-excursion (search-forward "@noreply.github.com" nil t))
-               (push (propertize "Github" 'face 'modus-themes-refine-magenta) lists))
+             (when (save-excursion (re-search-forward "\\([^ ]+\\) <[^<@ ]+@noreply\\.github\\.com" nil t))
+               (push (propertize (format "Github: %s" (match-string 1)) 'face 'modus-themes-refine-magenta) lists))
+             (when (save-excursion (re-search-forward "\\([^@ ]+\\)@lists\\.sr\\.ht" nil t))
+               (push (propertize (format "SourceHut: %s" (match-string 1)) 'face 'modus-themes-diff-changed) lists))
              lists)))
       (put-text-property
        (point-min) (1+ (point-min))
@@ -8298,7 +8300,7 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
 	(if mailing-lists
 	    (mapconcat #'identity mailing-lists " ")
           (propertize "--> Off list <--" 'face 'dired-flagged))
-        "\n"
+        " "
         (or (get-text-property (point-min) 'display)
 	    (buffer-substring (point-min) (1+ (point-min))))))))
 
