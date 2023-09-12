@@ -8288,6 +8288,8 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
                (push (propertize "ML: Emacs devel" 'face 'modus-themes-fringe-magenta) lists))
              (when (save-excursion (search-forward "emacs-tangents@gnu.org" nil t))
                (push (propertize "ML: Emacs tangents" 'face 'modus-themes-intense-yellow) lists))
+             (when (save-excursion (search-forward "emacs-gc-stats@gnu.org" nil t))
+               (push (propertize "ML: emacs-gc-stats" 'face 'modus-themes-intense-blue) lists))
              (when (save-excursion (search-forward "@debbugs.gnu.org" nil t))
                (push (propertize "Debbugs" 'face 'modus-themes-mark-alt) lists))
              (when (save-excursion (re-search-forward "\\([^ ]+\\) <[^<@ ]+@noreply\\.github\\.com" nil t))
