@@ -8230,6 +8230,8 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
       (setq name sender)
       (when (string-match "\\(.+?\\) *<?\\([^ ]+@[^ >]+\\)" sender)
 	(setq name (match-string 1 sender))
+        ;; Too short names cause false-positive matches.
+        (when (length< name 4) (setq name sender))
 	(setq sender (match-string 2 sender)))
       (let ((contact-title
 	     (car
