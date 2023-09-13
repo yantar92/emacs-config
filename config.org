@@ -8228,7 +8228,7 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
 			(line-end-position 0)))))))
           name)
       (setq name sender)
-      (when (string-match "\\(.+?\\) *<?\\([^ ]+@[^ >]+\\)" sender)
+      (when (string-match "\\(.+?\\) *<\\([^ ]+@[^ >]+\\)" sender)
 	(setq name (match-string 1 sender))
         ;; Too short names cause false-positive matches.
         (when (length< name 4) (setq name sender))
