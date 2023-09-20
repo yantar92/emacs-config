@@ -3220,7 +3220,7 @@ resize_draw_strategy static
 
 #: Tab bar {{{
 
-tab_bar_edge bottom
+tab_bar_edge top
 
 #: Which edge to show the tab bar on, top or bottom
 
