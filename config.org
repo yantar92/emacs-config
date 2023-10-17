@@ -2573,7 +2573,7 @@ Highlighting typos is crucial.
   (use-package boon)
   :config
   (setq ispell-program-name "/usr/bin/hunspell")
-  (setq ispell-dictionary "american")
+  (setq ispell-dictionary nil)
   (use-package no-littering
     :demand t
     :config
