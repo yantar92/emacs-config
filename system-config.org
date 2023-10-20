@@ -5621,6 +5621,7 @@ displaytime $1
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-text/aspell
+app-text/hunspell
 #+end_src
 
 *** w3m browser for rendering
