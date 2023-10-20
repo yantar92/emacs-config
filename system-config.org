@@ -2145,7 +2145,7 @@ return kbdlayout
 	<<awesome-default-conky-rule>>,
 	<<awesome-default-mpv-rule>>,
 	<<awesome-default-astrill-rule>>,
-	<<awesome-default-cr3-rule>>,
+	<<awesome-default-crqt-rule>>,
   }
 #+END_SRC
 
@@ -2351,9 +2351,9 @@ return kbdlayout
 :ID:       42486af2-87e7-4c28-947c-db14568d955f
 :END:
 
-#+name: awesome-default-cr3-rule
+#+name: awesome-default-crqt-rule
 #+begin_src lua :tangle no
-     { rule = { class = "cr3" },
+     { rule = { class = "crqt" },
        properties = {
 	  fullscreen = true
        }
@@ -8257,7 +8257,7 @@ ps aux | grep screenkey | awk '{print $2}' | xargs kill
 :END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-app-text/coolreader
+app-text/crqt-ng
 #+end_src
 
 ** pdf manipulation: pdftk
