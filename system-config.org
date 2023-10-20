@@ -5340,11 +5340,11 @@ net-misc/aria2 bittorrent
 :END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-app-editors/emacs
-=app-editors/emacs-29.0.9999-r1
- =app-editors/emacs-28.2-r4
- =app-editors/emacs-27.2-r9
- =app-editors/emacs-26.3-r11
+app-editors/emacs:30-vcs
+app-editors/emacs:29
+app-editors/emacs:28
+app-editors/emacs:27
+app-editors/emacs:26
 #+end_src
 
 Use latest master 
