@@ -8749,6 +8749,16 @@ net-im/deepin-wine-wechat Tencent
 dev-vcs/git-repair
 #+end_src
 
+** GDB
+:PROPERTIES:
+:ID:       ef2f48a7-61ca-4e77-a869-0ed45617e33d
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-devel/gdb
+#+end_src
+
+
 * Archived
 
 ** COMMENT Compositor (compton) :COMMON:
