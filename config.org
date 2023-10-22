@@ -9590,7 +9590,7 @@ Adjust some of the external application programs
 		      ("\\.tiff?\\'" . "feh-open %s")
 		      ("\\.png?\\'" . "feh-open %s")))
 #+end_src
-****** =Pdf-view= links
+****** COMMENT =Pdf-view= links
 :PROPERTIES:
 :ID:       f6b6301d-6ccb-4ee1-a454-ca6f5af845ea
 :END:
