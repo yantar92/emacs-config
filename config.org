@@ -4233,7 +4233,10 @@ Do not hide symlink target when hiding details.
 #+begin_src emacs-lisp
 (use-package dired
   :if init-flag
-  :custom (dired-hide-details-hide-symlink-targets nil))
+  :hook (dired-mode . dired-hide-details-mode)
+  :custom
+  (dired-hide-details-hide-symlink-targets nil)
+  (dired-hide-details-preserved-columns '(4 5 6 7)))
 #+end_src
 **** Disk usage
 :PROPERTIES:
