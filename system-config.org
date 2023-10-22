@@ -111,7 +111,6 @@ Instructions how to add new ebuilds: [[id:9bf6534c91e9c1bcc7ec03647dacb1b91eb8a4
 
 Need to install repoman for managing repository.
 **** Eclass docs: =eclass-manpages=
-
 **** =make.conf=
 ***** Compiler flags
 :PROPERTIES:
@@ -8758,7 +8757,6 @@ net-im/deepin-wine-wechat
 #+begin_src conf :tangle /sudo::/etc/portage/package.license/wechat
 net-im/deepin-wine-wechat Tencent
 #+end_src
-
 ** Repair corrupted git repositories
 :PROPERTIES:
 :ID:       9163d67d-7b51-4bc4-a545-b09e26af6189
