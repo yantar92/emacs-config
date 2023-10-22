@@ -225,6 +225,24 @@ GENTOO_MIRRORS="https://mirror.yandex.ru/gentoo-distfiles/ http://gentoo.aditsu.
 LINGUAS="en ru uk zh-CN"
 L10N="en ru uk zh-CN"
 #+end_src
+**** =eclean-kernel= : Clean old kernel dirs
+:PROPERTIES:
+:ID:       edf8b645-30a8-4693-9934-821158f61c42
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+app-admin/eclean-kernel
+#+end_src
+
+
+**** =smart-live-rebuild= : Rebuild =9999= packages
+:PROPERTIES:
+:ID:       6237f3bc-eaa2-431c-a4a9-5d06a737907b
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+app-portage/smart-live-rebuild
+#+end_src
 
 *** Linux kernel
 :PROPERTIES:
