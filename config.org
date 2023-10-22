@@ -3900,7 +3900,7 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
                 ("M-S-f" . (lambda () (interactive) (yt/sudo-find-file (buffer-file-name)))))))
 #+END_SRC
 *** Directories
-**** =Dired= (=dirvish=)
+**** =Dired=
 :PROPERTIES:
 :ID:       66f5dab7-add6-48c2-9824-fed4ef202b7a
 :END:
@@ -3909,19 +3909,6 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
 - State "TODO"       from              [2018-03-12 Mon 14:57]
 - State "CANCELLED"  from              [2017-05-28 Sun 17:46]
 :END:
-
-#+begin_src emacs-lisp
-(use-package dirvish
-  :if init-flag
-  :straight t
-  :custom
-  (dirvish-attributes
-   '( vc-state subtree-state file-size all-the-icons
-      collapse git-msg file-time))
-  ;; FIXME: Workaround for refresh bug in dirvish.
-  (dired-free-space nil)
-  :init (dirvish-override-dired-mode))
-#+end_src
 
 ***** Key bindings
 :PROPERTIES:
