@@ -4179,6 +4179,25 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 
 
 ***** Appearance
+****** File icons
+:PROPERTIES:
+:CREATED:  [2019-08-27 Tue 17:18]
+:ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
+:ARCHIVE_TIME: 2023-05-12 Fri 22:56
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)/COMMENT Appearance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+#+begin_src emacs-lisp
+(use-package all-the-icons-dired
+  :if init-flag
+  :straight t
+  :diminish all-the-icons-dired-mode
+  :hook (dired-mode . all-the-icons-dired-mode))
+#+end_src
+
 ****** Highlight files
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 22:09]
@@ -18681,25 +18700,6 @@ Disabling it
   (remove-hook 'dired-after-readin-hook 'diredp-nb-marked-in-mode-name)
   (remove-hook 'dired-mode-hook         'diredp-nb-marked-in-mode-name))
 
-#+end_src
-
-** COMMENT File icons :EMACS:COMMON:SOMEDAY:
-:PROPERTIES:
-:CREATED:  [2019-08-27 Tue 17:18]
-:ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
-:ARCHIVE_TIME: 2023-05-12 Fri 22:56
-:ARCHIVE_FILE: ~/Git/emacs-config/config.org
-:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)/COMMENT Appearance
-:ARCHIVE_CATEGORY: config
-:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
-:END:
-
-#+begin_src emacs-lisp
-(use-package all-the-icons-dired
-  :if init-flag
-  :straight t
-  :diminish all-the-icons-dired-mode
-  :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
 
 ** Show last commit in Git repos :EMACS:COMMON:SOMEDAY:
