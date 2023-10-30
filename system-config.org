@@ -18,9 +18,41 @@
 
 System upgrade:
 
-#+begin_src bash :eval (yes-or-no-p "Run Gentoo system upgrade? ")
-;; FIXME: TBD
-true
+#+begin_src screen :eval (yes-or-no-p "Run Gentoo system upgrade? ") :terminal kitty :session update :cmd bash
+su
+#+end_src
+
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
+eix-sync
+#+end_src
+
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
+emerge --update --ask --deep --keep-going --newuse --backtrack=50 world
+#+end_src
+
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
+haskell-updater
+smart-live-rebuild
+#+end_src
+
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
+eselect kernel list
+#+end_src
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
+eselect kernel set 1
+#+end_src
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
+genkernel --menuconfig all
+#+end_src
+
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
+revdep-rebuild
+eclean-pkg
+eclean-dist
+#+end_src
+
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
+emerge --depclean --ask
 #+end_src
 
 ** Basic toolchain
