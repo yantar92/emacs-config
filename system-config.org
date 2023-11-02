@@ -4067,7 +4067,7 @@ while read x; do
     [[ "$x" == "Waiting for Emacs..." ]] && continue
     [[ "$x" == *"libpng warning:"* ]] && continue
     [[ "$x" == *"handshake failed; returned -1, SSL error code 1"* ]] && continue
-    [[ "$x" == *"Message 4 rejected by interface blink.mojom.WidgetHost"* ]] && continue
+    [[ "$x" == *"Message 4 rejected by interface"* ]] && continue
     [[ "$x" == *"org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files"* ]] && continue
     [[ "$x" == "" ]] && continue
     notify-send "Qutebrowser: $x"
