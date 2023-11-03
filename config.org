@@ -73,8 +73,12 @@ You can find the public parts of OS setup in [[file:system-config.org]].
 :END:
  
 Init file, which loads this file.
+
 #+begin_src emacs-lisp :tangle "~/.emacs.d/init.el" :var org-file=(buffer-file-name) :var el-file="~/.emacs.d/config.el"
 ;;(package-initialize)
+;; Work around pdumper bugs
+(global-font-lock-mode t)
+(transient-mark-mode t)
 (setq init-flag t)
 (setq comp-deferred-compilation-deny-list '("pdf-cache" "org-protocol"))
 (setq comp-num-cpus 8)
