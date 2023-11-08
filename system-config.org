@@ -5194,7 +5194,7 @@ config.unbind('f')
 config.bind('fM', 'spawn --userscript org-protocol-add-bookmark-force.sh')
 config.bind('gL', 'open https://outline.com/{url}')
 config.bind('h', 'hint')
-config.bind(';b', 'hint all open -b')
+config.bind(';b', 'hint links tab-bg --rapid')
 config.bind('<Alt+h>', 'hint all hover')
 config.bind('l', 'scroll-page 0 0.5')
 config.bind('o', 'cmd-set-text -s :open')
@@ -8786,7 +8786,6 @@ net-im/deepin-wine-wechat Tencent
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-vcs/git-repair
 #+end_src
-
 ** GDB
 :PROPERTIES:
 :ID:       ef2f48a7-61ca-4e77-a869-0ed45617e33d
