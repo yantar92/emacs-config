@@ -15708,6 +15708,7 @@ Leaving the code below for reference.
 			       (calc . t)
 			       (dot . t)
 			       (latex . t)
+			       (plantuml . t)
 			       ;;(mathematica . t)
 			       ))
 (use-package wolfram-mode
@@ -16048,6 +16049,15 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
 
 ****************** TODO make auto-completion possible for babel blocks from inside editing org-src
 ****************** END
+
+***** Plantuml blocks
+
+#+begin_src emacs-lisp
+(use-package ob-plantuml
+  :defer t
+  :custom
+  (org-plantuml-exec-mode 'plantuml))
+#+end_src
 
 **** COMMENT Alerts - system notifications
 :PROPERTIES:

@@ -8797,6 +8797,12 @@ sys-devel/gdb
 #+end_src
 
 
+** Plantuml
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+media-gfx/plantuml
+#+end_src
+
 * Archived
 
 ** COMMENT Compositor (compton) :COMMON:
