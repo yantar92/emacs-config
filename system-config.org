@@ -6485,8 +6485,7 @@ docker pull diygod/rsshub
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.config/awesome/startup :shebang #!/bin/bash
-# docker run -d --name rsshub -p 1200:1200 diygod/rsshub
-docker start rsshub
+docker run -d --name rsshub -p 1200:1200 diygod/rsshub
 #+end_src
 
 ** Generic web-page update watcher (via diff): [[id:c711711207c4738449032aa13d464d500bc9aa95][urlwatch]]
