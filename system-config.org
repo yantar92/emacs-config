@@ -8433,18 +8433,18 @@ Compare pdfs visually and/or textually
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQgAnFo9ZDDZwWxfba1y/Yn0qjegwwDgpde50ORulRQHlEJ/
-j5okKGhI7Nqw+wfxwzCFQlY6OQzeYMsaPSvlRuYgP80/tRUPasHisLn9eej1FEK7
-IQHHLpVdd5iyFLlOzMxnKoOLcGb2C/paclPjj3HRCNk94hod6iWnn2aqf+82tVu+
-ouTzWAKiQLPnajmUBYTtQ6S0MyNhjCWLzumaI+p8kNT1zAqic0nWTdQUa1bkstd2
-jwZN1XA9z18lmSM5Ymb9pT43wN3XA/Og2R1ISTZ7Ew6uL5gzOQnlLEkOUYkVIpK9
-2nC9Gi1F0V0w/+PWjeSssLsQ4DX0bkkhpBhWgBG/ONLAHQHUIO4BflffbvFZxdKI
-nAlE2hJlDaNqzlm/cHfYIYNRqCZOZMc/nQU7ew1e2aATdPGIFbllDeH3ZMT8gRgM
-naovmyfzhgyZKWE/XdkCloXHPiIWDZa6aCTdMXfp6P3h35aRSA2tnbVleHS0Q8ao
-wUTSKNTN4M6NnkJhD6oY+VMHuHraWR85mQeLVZXimpPRJJ9JC0Qu/5GZh2qNdZSx
-y8YLkx6SMKsfAsSxMNK6F13c5AvAzGAu5RjxrFajNJqyxnwZuJBrbi3lP5cSgR7E
-duhINtjDS/IzCwRpT5CD
-=oFPH
+hQEMA3SKBiQ2zhL6AQf+Jb0Ful/yyROdpn8+mcVeBx2w5s8/mdOOFob5kZR0fa50
+0Pj8qLo66DVhTELS1la7LlYRghzkxq01E0oeDLbp05yKUrWCxT3nbTf35qf39T3M
+u21gKb8Ri9hmy52l7AM/D84HQ1weVdHhZ9wFMauzKJ8r6i9NR4Bv6gRnMNHBRETW
+s98DYsJFuxGeWAf/L/zdR996HMFkZgEJSbxBBSW9ql757q37uvtouDkDSDt7xTBn
+1SXIrUrJlo/Bo6q6IF/Cx7aaIr6E5mP6WyV9OgzrHGQcaJp8+SYhBkeIggnqBTsM
+ufOtDMoORp29wAyist5cg6RU2FTEDP0Lnvyn+Yz5UdLAHwGEuEkG1yN+wreu/jrH
+rWnwzefmZydMMSEJnXNiwYT2w9l2SfWfFgBfzbVpHhej4SJDcakzV3iU9xX7AUDP
+OCRl7UguoszBYHHOT5AeYGMwi0e20gxnIH7+b+Sc7jTW93v1zqvzgcWxt2Rm7WC5
+V2P+ois7/vw/5peryvNB1/WpH8Uvu7paK4c/WDL8IWpOHp/h8Ohu1d94+CWa4XSL
+Bkf9e0aIUtgPrtAyK+7v4qkjHSCus4g3XerGwlnCzOuLWFHUhvLiqXb5P8bWWg7p
+f2dxqTpkcCjh/s1tXNS4b+o=
+=K/Bz
 -----END PGP MESSAGE-----
 ** =sys-fs/avfs=: browse archives
 :PROPERTIES:
@@ -8803,6 +8803,9 @@ sys-devel/gdb
 
 
 ** Plantuml
+:PROPERTIES:
+:ID:       fd676a64-3423-4074-b3e3-81017343ba07
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 media-gfx/plantuml
