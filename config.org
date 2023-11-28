@@ -4433,8 +4433,6 @@ See [[id:a92c0e31-556b-47d5-a58e-468ab0c99a59][TeX \ LaTeX (texlive)]]
 :PROPERTIES:
 :ID:       6d0859b5-5d38-42a6-a676-aebec0867681
 :END:
-
-
 *** Ingest primary selection from OS
 :PROPERTIES:
 :CREATED:  [2019-12-23 Mon 19:43]
@@ -5991,6 +5989,8 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
     :config
     (meta-defun meta-down :mode pdf-view-mode yant/pdf-view-down)
     (meta-defun meta-up :mode pdf-view-mode yant/pdf-view-up)
+    (meta-defun meta-down-element :mode pdf-view-mode pdf-view-next-page)
+    (meta-defun meta-up-element :mode pdf-view-mode pdf-view-previous-page)
     (meta-defun meta-forward :mode pdf-view-mode (image-forward-hscroll 5))
     (meta-defun meta-backward :mode pdf-view-mode (image-backward-hscroll 5))
     (meta-defun meta-scroll-up :mode pdf-view-mode (yant/pdf-view-down 20))
