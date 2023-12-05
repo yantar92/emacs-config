@@ -13336,7 +13336,8 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
     (when (and bh/keep-clock-running
 	       (not org-clock-clocking-in)
 	       (marker-buffer org-clock-default-task)
-	       (not org-clock-resolving-clocks-due-to-idleness))
+	       (not org-clock-resolving-clocks-due-to-idleness)
+               (= 0 (org-emacs-idle-seconds)))
       (bh/clock-in-default-task)))
 
   (add-hook 'org-clock-out-hook 'yant/clock-out-maybe 'append))
