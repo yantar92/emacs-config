@@ -8154,7 +8154,7 @@ Binary db is not best for incremental backups adding 1-2Gb unnecessarily.
 
 #+begin_src bash :tangle /sudo::/etc/cron.daily/backup-notmuch :shebang #!/bin/bash :noweb tangle
 cd /home/yantar92/Mail/
-[[ -f "/home/yantar92/Mail/notmuch-dump.gz" ]] && mv notmuch-dump.gz notmuch-dump.gz.bak
+mv notmuch-dump.gz notmuch-dump.gz.bak
 sudo -u yantar92 notmuch dump --gzip --output=notmuch-dump.gz
 #+end_src
 
