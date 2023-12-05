@@ -5679,7 +5679,6 @@ app-text/hunspell
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 www-client/w3m
 #+end_src
-
 *** Langdetect python library to translate elfeed entries
 :PROPERTIES:
 :ID:       2595f8a1-fb44-41c3-9ae6-83372e8023d7
@@ -5697,6 +5696,15 @@ dev-python/langdetect
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/langdetect
 dev-python/langdetect python3_10
+#+end_src
+
+*** =xprintidle= to allow Org auto-clock-out on X11 idle
+:PROPERTIES:
+:ID:       1281c5f7-9a6b-4091-857e-374d7903450b
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+x11-misc/xprintidle
 #+end_src
 
 ** Testing emacs repo
