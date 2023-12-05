@@ -13578,7 +13578,7 @@ So, let Emacs automatically clock out the current task when Emacs is idle for a 
   :if init-flag
   :after org
   :custom
-  (org-clock-auto-clockout-timer (* 60 60 2)) ; 2 hours
+  (org-clock-auto-clockout-timer (* 10 60)) ; 10 minutes
   :config
   (org-clock-auto-clockout-insinuate))
 #+end_src
