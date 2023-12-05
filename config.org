@@ -15384,7 +15384,7 @@ This function is called by `org-archive-hook'.  The option
                            (select-window (old-selected-window))
 		           (prog1
                                (or
-                                (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html")))
+                                (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html") ("." "..")))
 			        (yes-or-no-p (format "%s: Delete all attachments? "
 					             heading)))
                              (kill-buffer dired-buf))))
