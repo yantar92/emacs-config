@@ -11199,14 +11199,6 @@ If LOCAL is non-nil, check only local TAG."
 								 ;; (not (org-agenda-skip-before-SHOWFROMTIME-property))
 								 (not (org-agenda-skip-noshowdates))))))))
 		(tags-todo "/"
-			   ((org-agenda-overriding-header "Tasks to review")
-			    (org-agenda-dim-blocked-tasks 'invisible)
-			    (org-agenda-prefix-format "%-12:c\t%?-12t")
-			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (todo "REVIEW")
-                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY"))))))))
-		(tags-todo "/"
 			   ((org-agenda-overriding-header (concat "Project Next Tasks"
 								  (if bh/hide-scheduled-and-waiting-next-tasks
 								      ""
@@ -11256,6 +11248,14 @@ If LOCAL is non-nil, check only local TAG."
 			    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
 			    (org-agenda-sorting-strategy
 			     '(priority-down todo-state-down effort-up category-keep))))
+                (tags-todo "/"
+			   ((org-agenda-overriding-header "Tasks to review")
+			    (org-agenda-dim-blocked-tasks 'invisible)
+			    (org-agenda-prefix-format "%-12:c\t%?-12t")
+			    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                                        (quote (and (todo "REVIEW")
+                                                                    (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY"))))))))
 		(tags-todo "/"
 		           ((org-agenda-overriding-header "Stuck Projects")
 		            (org-agenda-dim-blocked-tasks nil)
