@@ -8085,7 +8085,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
             (when (= 0 (buffer-size))
 	      (insert-file-contents "~/Git/worg/contributors.org"))
             (goto-char (point-min))
-	    (search-forward "Current contributors with FSF assignement")
+	    (search-forward "Current contributors with FSF assignment")
 	    (save-excursion
 	      (search-forward "Processing")
 	      (setq end-of-FSF-assign (point)))
