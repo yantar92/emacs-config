@@ -662,7 +662,11 @@ In batch mode, increase the threshold to make things faster.
 #+begin_src emacs-lisp
 (setq gc-cons-percentage 0.2)
 (if init-flag
-    (setq gc-cons-threshold (* 20 1000 1000))
+    (progn
+      (setq gc-cons-threshold (* 200 1000 1000))
+      (add-hook
+       'after-init-hook
+       (lambda () (setq gc-cons-threshold (* 20 1000 1000)))))
   (setq gc-cons-threshold (* 1 1000 1000 1000)))
 (setq garbage-collection-messages nil)
 #+end_src
