@@ -18431,6 +18431,16 @@ Using because the package is abandoned and I am helping to maintain it.
 #+begin_src emacs-lisp
 (add-hook 'org-capture-mode-hook 'boon-insert 'append)
 #+end_src
+*** Faster startup
+**** Disable initial drawer folding and instead re-fold drawers when heading is revealed
+#+begin_src emacs-lisp
+(setq org-cycle-hide-drawer-startup nil)
+(if init-flag
+    (define-advice org-fold-show-entry (:after nil hide-drawers)
+      "Hide drawers upon unfolding a heading."
+      (org-cycle-hide-drawers 'children)))
+#+end_src
+
 ** GNU development
 *** ~multi-occur~ in project
 
