@@ -4055,7 +4055,7 @@ dev-libs/jemalloc
 [[ "$#" == "0" ]] && emacsclient -c -n -e '(switch-to-buffer (quote "*scratch*"))' -e '(boon-set-command-state)' >>/dev/null 2>&1  || \
 	#    /home/yantar92/tmp/emacs2/emacs/src/emacs && exit
 	# emacs && exit
-	LD_PRELOAD=/usr/lib64/libjemalloc.so.2 emacs && exit
+	LD_PRELOAD=/usr/lib64/libjemalloc.so.2 ~/Git/emacs/src/emacs && exit
 [[ "$1" == "agenda" ]] && emacsclient -c -n -e '(org-agenda nil " ")'
 #run_single_window.sh "Emacs" "sh -c emacs -name \"main\""
 #+end_src
