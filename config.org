@@ -6374,15 +6374,23 @@ Requires [[id:61837011-1bce-41d6-8aa5-27bc4335466d][app-text/diffpdf]].
 :ID:       460ee9e2-32f5-4ad2-a535-69121b201bcf
 :END:
 *** TODO Shell
-**** Eshell
+**** Eshell + eat
 
 It is really good, actually - see [[id:Emacsconf-emacsconf-2022-talks-99a][[Emacsconf] EmacsConf - 2022 -
 talks - Top 10 reasons why you should be using Eshell]]
 
 #+begin_src emacs-lisp
+(use-package eat
+  :if init-flag
+  :straight t
+  :init
+  (add-hook 'eshell-load-hook #'eat-eshell-mode))
 (use-package eshell
   :if init-flag
-  :bind ("<f9>" . eshell))
+  :bind ("<f9>" . eshell)
+  :after meta-functions
+  :config
+  (meta-defun meta-new-line :mode eshell-mode eshell-send-input))
 #+end_src
 
 **** Vterm
