@@ -41,6 +41,7 @@ This is me
 ;; for example, by yasnippet when filling elisp file header
 (setq user-full-name "Ihor Radchenko")
 (setq user-mail-address "yantar92@posteo.net")
+(setq org-fold-core-style 'overlays)
 #+end_src
 
 I am not really doing much programming, but rather use Emacs as knowledge base management tool.  Most time, I do not even edit or type things directly, but read through the files.  Therefore, the main focus of this setup is =org-mode= and not as much programming, navigating through text and not as much editing.
@@ -17711,7 +17712,6 @@ Use UTF symbols for entities
 
 To my horror, a single =org-font-lock-add-priority-faces= takes 98% of the whole font-locking makeing the opening take of huge (2M, thousands of headlines) org file several minutes.
 [2020-07-28 Tue] Apparently the reason is because default regex can match too many things in my files. For now, just removed those long lines causing regexp search to be extremely slow.
-
 *** Misc
 :PROPERTIES:
 :ID:       b195d9ea-e3e0-476e-b898-43b69fbd365d
@@ -18256,7 +18256,6 @@ Using because the package is abandoned and I am helping to maintain it.
 #+end_src
 
 *** SOMEDAY Knowledge graph view :SOMEDAY:
-
 *** TODO Key combinations
 :PROPERTIES:
 :ID:       fe1a02aa-90fb-4ddb-9d04-925b08697e58
