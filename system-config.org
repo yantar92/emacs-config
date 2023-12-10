@@ -4161,6 +4161,10 @@ export GPG_TTY=$(tty)
 #prompt
 source ~/Dist/liquidprompt/liquidprompt
 LP_PS1_POSTFIX="\n> "
+
+# Emacs eat-terminal support
+[ -n "$EAT_SHELL_INTEGRATION_DIR" ] && \
+  source "$EAT_SHELL_INTEGRATION_DIR/bash"
 #+end_src
 
 [[file:../Dist/liquidprompt/]]
