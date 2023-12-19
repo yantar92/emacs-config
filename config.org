@@ -18438,7 +18438,7 @@ Using because the package is abandoned and I am helping to maintain it.
 #+begin_src emacs-lisp
 (setq org-cycle-hide-drawer-startup nil)
 (if init-flag
-    (define-advice org-fold-show-entry (:after nil hide-drawers)
+    (define-advice org-fold-show-entry (:after (&rest _) hide-drawers)
       "Hide drawers upon unfolding a heading."
       (org-cycle-hide-drawers 'children)))
 #+end_src
