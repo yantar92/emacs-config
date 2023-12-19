@@ -13069,6 +13069,8 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
       "Sources for Git repositories")
 
     (require 'helm-for-files)
+    (defvar yant/helm-org-ql-agenda-files-history nil
+      "`yant/helm-org-ql-agenda-files' query history.")
     (cl-defun yant/helm-org-ql-agenda-files (arg)
       "Like `helm-org-ql-agenda-files', but also allow creating a new heading."
       (interactive "P")
@@ -13079,6 +13081,7 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
             (helm-buffer-max-length 80))
         (helm :prompt (format "Query (boolean and): ")
               :truncate-lines t
+              :history 'yant/helm-org-ql-agenda-files-history
               :sources `(,(helm-make-source "Buffers" 'helm-source-buffers)
                          ,(helm-make-source "Recentf" 'helm-recentf-source
                             :fuzzy-match helm-recentf-fuzzy-match)
