@@ -160,15 +160,16 @@ First, make sure that =straight.el= can fetch remote URLs from everywhere.
 Set up the =askpass= and cache ssh password.
 Use [[id:4f11175e-8e12-4596-b651-f21864761e32][net-misc/ssh-askpass-fullscreen]].
 #+begin_src emacs-lisp
-(setenv "DISPLAY" ":0.0")
-(setenv "SSH_ASKPASS" "ssh-askpass-fullscreen")
-(when init-flag
-  (let ((ssh-auth-sock (shell-command-to-string "ssh-agent | grep SSH_AUTH_SOCK | cut -d= -f2 | cut -d';' -f1"))
-	(ssh-agent-pid (shell-command-to-string "ssh-agent | grep SSH_AGENT_PID | cut -d= -f2 | cut -d';' -f1")))
-    (setenv "SSH_AUTH_SOCK" (replace-regexp-in-string "\n" "" ssh-auth-sock))
-    (setenv "SSH_AGENT_PID" (replace-regexp-in-string "\n" "" ssh-agent-pid))
-    (shell-command-to-string "ssh-add ~/.ssh/id_rsa")
-    ))
+(when (and init-flag (display-graphic-p))
+  (setenv "DISPLAY" ":0.0")
+  (setenv "SSH_ASKPASS" "ssh-askpass-fullscreen")
+  (when init-flag
+    (let ((ssh-auth-sock (shell-command-to-string "ssh-agent | grep SSH_AUTH_SOCK | cut -d= -f2 | cut -d';' -f1"))
+	  (ssh-agent-pid (shell-command-to-string "ssh-agent | grep SSH_AGENT_PID | cut -d= -f2 | cut -d';' -f1")))
+      (setenv "SSH_AUTH_SOCK" (replace-regexp-in-string "\n" "" ssh-auth-sock))
+      (setenv "SSH_AGENT_PID" (replace-regexp-in-string "\n" "" ssh-agent-pid))
+      (shell-command-to-string "ssh-add ~/.ssh/id_rsa")
+      )))
 #+end_src
 
 And tell =straight.el= to use file watcher
@@ -1339,6 +1340,7 @@ Light face for header line.
 #+begin_src emacs-lisp
 (use-package faces
   :if init-flag
+  :if (display-graphic-p)
   :after boon
   :init
   (use-package color :demand t)
@@ -6730,6 +6732,7 @@ Show the key strokes.
 #+BEGIN_SRC emacs-lisp  
 (use-package tb-keycast
   :if init-flag
+  :if (display-graphic-p)
   :straight (tb-keycast :host github :repo "ir33k/tb-keycast"
                         :fork (:host github :repo "yantar92/tb-keycast")
                         :local-repo "~/Git/tb-keycast")
@@ -7128,6 +7131,8 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
 
 #+begin_src emacs-lisp
 (use-package elfeed
+  :if init-flag
+  :if (display-graphic-p)
   :config
   (setf (alist-get 'flagged elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10))))
   (setf (alist-get 'FLAGGED elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10)))))
