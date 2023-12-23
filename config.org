@@ -17955,6 +17955,7 @@ Some changes in org-files are very trivial and clutter more important changes I 
                                                "^\\(-\\|\\+\\)[ \t]*- \\[.\\] \\[\\[elisp:(browse-url (url-encode-url (format \"https://www\\.connectedpapers\\.com/search\\?q=%s\" (org-entry-get nil \"TITLE\"))))\\]\\[check related articles\\]\\].*\n"
                                                "^\\(-\\|\\+\\)[ \t]*- \\[.\\] check if bibtex entry has missing fields.*\n"
                                                "^\\(-\\|\\+\\)[ \t]*- \\[.\\] Consider subscribing to new citations.*\n"
+                                               "^[ \t]*- Following up ::.+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:PUBLISHER: .+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:EMAIL-SOURCE: .+\n"
                                                "^\\(-\\|\\+\\)[ \t]*:Source: .+\n"
