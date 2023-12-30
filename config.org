@@ -8485,14 +8485,10 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
 (use-package erc
   :if init-flag
   :demand t
-  :init
-  (use-package erc-hl-nicks
-    :straight t
-    :defer t)
   :custom
   (erc-default-server "irc.libera.chat")
   (erc-nick "yantar92")
-  (erc-prompt-for-nickserv-password nil)
+  ;; (erc-prompt-for-nickserv-password nil)
   (erc-interpret-mirc-color t)
   (erc-rename-buffers t)
   (erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
@@ -8508,6 +8504,8 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
                   move-to-prompt netsplit networks noncommands
                   readonly ring stamp track smiley spelling hl-nicks log))
   :config
+  (use-package erc-hl-nicks
+    :straight t)
   (use-package meta-functions
     :config
     (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
