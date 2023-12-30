@@ -5787,18 +5787,18 @@ yant/ledger-file
 :END:
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses.sh :shebang #!/bin/bash
-ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Expenses and not Work and not Gifts and not Medical -W -n -A
+ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Expenses and not Work and not Gifts and not Medical -W -n -A -b "last year"
 #+end_src
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-income.sh :shebang #!/bin/bash
-ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Income -W -n -A
+ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Income -W -n -A -b "last year"
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses-USD.sh :shebang #!/bin/bash
-ledger --no-pager -f <<ledger-file()>>  reg -X $ Expenses and not Work and not Gifts and not Medical -W -n -A
+ledger --no-pager -f <<ledger-file()>>  reg -X $ Expenses and not Work and not Gifts and not Medical -W -n -A -b "last year"
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses-EUR.sh :shebang #!/bin/bash
-ledger --no-pager -f <<ledger-file()>>  reg -X EUR Expenses and not Work and not Gifts and not Medical -W -n -A
+ledger --no-pager -f <<ledger-file()>>  reg -X EUR Expenses and not Work and not Gifts and not Medical -W -n -A -b "last year"
 #+end_src
 
 *** Food status script
