@@ -8697,6 +8697,15 @@ Despite the usual big-tech concerns, it makes a decent:
   (use-package org
     :init (require 'osm-ol)))
 #+end_src
+** Synchthing frontend
+
+#+begin_src emacs-lisp
+(use-package syncthing
+  :if init-flag
+  :straight '(emacs-syncthing :host github :repo "KeyWeeUsr/emacs-syncthing")
+  ;; `syncthing-default-server-token' is set in private config.
+  )
+#+end_src
 
 ** COMMENT Reddit client
 
