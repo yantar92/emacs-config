@@ -2441,6 +2441,20 @@ Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial V
   (magit-section-initial-visibility-alist
    '((stashes . hide) (untracked . hide) (unpushed . hide))))
 #+end_src
+**** Do not contaminate related branch list with transient =piem/= branches
+
+The default Magit commit buffer displays many "Contained:" and
+"Merged:" branches which tend to be numerous if I create separate
+branch for each submitted patch (which I do, with [[id:3b812d25-ce80-46f0-8b28-7c242423a9ad][piem]]).
+
+#+begin_src emacs-lisp
+(use-package magit
+  :custom
+  (magit-revision-insert-related-refs-display-alist
+   '((contained . nil)
+     (merged . nil))))
+#+end_src
+
 **** More detailed highlight of current chunk
 
 Magit is able to provide word-level diff refinement.  It is disabled by default though.  Enabling.
