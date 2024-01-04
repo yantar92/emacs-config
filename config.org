@@ -1,3 +1,4 @@
+# -*- after-save-hook: (org-babel-tangle); -*-
 :PROPERTIES:
 :ID:       922b85aa-b01d-47ac-b34e-99201b7f9abf
 :END:
@@ -18524,6 +18525,9 @@ ls-files' and 'grep'."
 
 *** Working with public inboxes
 **** =piem=: Apply patches from emails in Emacs
+:PROPERTIES:
+:ID:       3b812d25-ce80-46f0-8b28-7c242423a9ad
+:END:
 [[id:Git-Kyleam-piem-emacs-tools-211][[Git.Kyleam] piem - Emacs tools and glue for working with public-inbox archives]]
 
 #+begin_src emacs-lisp
