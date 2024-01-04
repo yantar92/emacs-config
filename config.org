@@ -986,7 +986,7 @@ This mode is minor-mode thus it should be less intrusive in comparison with [[id
   :straight t
   :demand t
   :after boon
-  :hook ((text-mode notmuch-show-mode) . olivetti-mode)
+  :hook ((text-mode notmuch-show-mode erc-mode) . olivetti-mode)
   :init
   (setq-default olivetti-body-width 110)
   (setq olivetti-lighter
