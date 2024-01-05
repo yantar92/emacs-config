@@ -8550,6 +8550,16 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (erc-log-write-after-insert t)
   (erc-log-insert-log-on-open t))
 #+end_src
+*** Auto-reconnect
+
+Make Emacs ERC automatically re-connect when it looses server connection.
+
+#+begin_src  emacs-lisp
+(use-package erc
+  :if init-flag
+  :custom
+  (erc-server-reconnect-attempts t))
+#+end_src
 ** File sharing via =0x0=
 [[id:GitLab-willvaughn-willvaughn-emacs-0x0-d03][willvaughn [GitLab] willvaughn/emacs-0x0: Integration with https://0x0.st from emacs. Intended for use in ERC to share images, files, and blocks of code.]]
 #+begin_src emacs-lisp
