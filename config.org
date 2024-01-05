@@ -8518,6 +8518,7 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (erc-modules '( autoaway autojoin button completion fill
                   irccontrols keep-place list match menu
                   move-to-prompt netsplit networks noncommands
+		  notifications
                   readonly ring stamp track smiley spelling hl-nicks log))
   :config
   (use-package erc-hl-nicks
