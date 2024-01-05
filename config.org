@@ -8674,8 +8674,8 @@ Go backward with prefix argument BACKWARD."
   (mastodon-instance-url "https://emacs.ch")
   (mastodon-active-user "yantar92")
   :config
-  (meta-defun meta-down-element :mode mastodon-mode mastodon-tl--goto-next-toot)
-  (meta-defun meta-up-element :mode mastodon-mode mastodon-tl--goto-prev-toot)
+  (meta-defun meta-down-element :mode mastodon-mode mastodon-tl--goto-next-item)
+  (meta-defun meta-up-element :mode mastodon-mode mastodon-tl--goto-prev-item)
   (meta-defun meta-new-line :mode mastodon-mode mastodon-tl--do-link-action-at-point))
 #+end_src
 *** Use =mastodon.el= to open Mastodon links
