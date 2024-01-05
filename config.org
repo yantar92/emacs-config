@@ -8527,6 +8527,20 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
     :config
     (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
 #+end_src
+*** Connect on startup
+
+#+begin_src emacs-lisp
+(use-package erc
+  :if init-flag
+  :init
+  (defun yant/erc-connect ()
+    "Connect to IRC."
+    (erc
+     :password
+     (nth 0 (process-lines "pass" "show" "internet/irc.libera.chat"))))
+  (add-hook 'after-init-hook #'yant/erc-connect))
+#+end_src
+
 *** Store history
 #+begin_src emacs-lisp
 (use-package erc
