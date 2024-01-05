@@ -1386,7 +1386,10 @@ Light face for header line.
 
 Use header line from [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
 However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64e-4090454da22a][Olivetti mode]] is turned on.
-#+begin_src emacs-lisp
+****************** TODO Re-write closer to the default mode-line
+****************** END
+
+#+begin_src emacs-lisp :tangle no
 (when init-flag
   (defun yant/vc-git-current-branch ()
     "Get current GIT branch."
