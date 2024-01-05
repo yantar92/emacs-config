@@ -8517,7 +8517,7 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
   (erc-fill-function #'erc-fill-static)
   (erc-fill-static-center 20)
   (erc-autojoin-timing 'indent)
-  (erc-autojoin-channels-alist '(("libera.chat" "#org-mode" "#systemcrafters")))
+  (erc-autojoin-channels-alist '(("libera.chat" "#org-mode")))
   (erc-modules '( autoaway autojoin button completion fill
                   irccontrols keep-place list match menu
                   move-to-prompt netsplit networks noncommands
