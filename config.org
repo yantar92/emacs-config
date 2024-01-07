@@ -13764,19 +13764,21 @@ Growing time balance will be reducing `org-time-balance-lossage' when
   "Get value of :ORG-TIME-BALANCE-MULTIPLIER property of an item at point or return 1."
   (save-excursion
     (save-restriction
-      (let  ((multiplier (org-entry-get (point) "ORG-TIME-BALANCE-MULTIPLIER" 'inherit)))
-	(if (seq-empty-p multiplier)
-	    1
-	  (string-to-number multiplier))))))
+      (org-with-point-at-org-buffer
+       (let  ((multiplier (org-entry-get (point) "ORG-TIME-BALANCE-MULTIPLIER" 'inherit)))
+	 (if (seq-empty-p multiplier)
+	     1
+	   (string-to-number multiplier)))))))
 
 (defun org-get-org-time-bonus-on-done-at-point ()
   "Get value of :ORG-TIME-BONUS-ON-DONE: property of an item at point or return 0."
   (save-excursion
     (save-restriction
-      (let  ((bonus (org-entry-get (point) "ORG-TIME-BONUS-ON-DONE")))
-	(if (seq-empty-p bonus)
-	    0
-	  (string-to-number bonus))))))
+      (org-with-point-at-org-buffer
+       (let  ((bonus (org-entry-get (point) "ORG-TIME-BONUS-ON-DONE")))
+	 (if (seq-empty-p bonus)
+	     0
+	   (string-to-number bonus)))))))
 
 (defun org-get-org-time-bonus-at-point ()
   "Get time bonus on done for an item at point.
@@ -17141,7 +17143,7 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 (setq org-agenda-scheduled-leaders '("* today" "* %2d d. ago"))
 (defun yant/format-summary-for-agenda ()
   "Format the contents of :SUMMARY: property to show in agenda view."
-  (let ((summary (org-entry-get (point) "SUMMARY")))
+  (let ((summary (org-with-point-at-org-buffer (org-entry-get (point) "SUMMARY"))))
     (if (not (seq-empty-p summary))
 	(format "[%s] " summary)
       "")))
