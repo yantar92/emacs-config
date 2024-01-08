@@ -8740,10 +8740,7 @@ Despite the usual big-tech concerns, it makes a decent:
 #+begin_src emacs-lisp
 (use-package osm
   :if init-flag
-  :straight t
-  :init
-  (use-package org
-    :init (require 'osm-ol)))
+  :straight t)
 #+end_src
 ** Synchthing frontend
 
