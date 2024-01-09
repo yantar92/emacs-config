@@ -5326,9 +5326,8 @@ fi
 
 #from https://github.com/qutebrowser/qutebrowser/blob/master/scripts/open_url_in_instance.sh
 _url="$URL"
-_command=":later 4000 :jump-mark last-position"
 
-qutebrowser "${_command}" ":open -t ${_url}"
+qutebrowser ":open -t ${_url}"
 
 # emacsclient -c -e "(eaf-open-browser \"$URL\")"
 #+end_src
