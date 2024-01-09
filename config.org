@@ -8530,7 +8530,7 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
     :config
     (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
 #+end_src
-*** Connect on startup
+*** COMMENT Connect on startup
 
 #+begin_src emacs-lisp
 (use-package erc
