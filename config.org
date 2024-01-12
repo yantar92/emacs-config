@@ -7092,6 +7092,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                          ("[Hh]igh[ -][Ee]ntropy"  "\\&" (face (:foreground "red")))
                                          ("[Mm]edium[ -][Ee]ntropy"  "\\&" (face (:foreground "red")))
                                          ("[Bb]ayesian"  "\\&" (face (:foreground "red")))
+                                         ("[dD]islocation"  "\\&" (face (:foreground "red")))
                                          ("[Mm]agnesium"  "\\&" (face (:foreground "red")))
                                          ("[Mm]g"  "\\&" (face (:foreground "red")))
                                          ("[Cc]rack[^ ]*" "\\&" (face (:foreground "red"))))
