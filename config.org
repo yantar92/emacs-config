@@ -882,7 +882,7 @@ Resize windows automatically making sure that active window is enlarged ([[id:3e
 
 General settings for window appearance
 
-**** Handling pop-up windows
+**** TODO Handling pop-up windows
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 14:15]
 :ID:       d74e4baa-4599-4a98-9246-2d03e52d846e
@@ -892,38 +892,6 @@ Pop-up windows in emacs sometimes behave in a strange way.
 They may unexpectedly occupy a window with useful buffer or split window in unexpected direction. 
 The most bizarre case was when a debug buffer popped-up in a non-active frame once.
 The frame was in different WM workspace and I was totally confused about what is going on. 
-
-=shackle= package allows setting rules for pop-up windows.
-****************** TODO this is an example when I want mirror text work
-****************** END
-
-#+begin_src emacs-lisp
-(use-package shackle
-  :if init-flag
-  :straight t
-  :diminish shackle-mode
-  :config (shackle-mode +1)
-  :custom
-  (shackle-rules
-   '(
-#+END_SRC
-
-Make help, info, and back-trace pop-up in separate frame
-****************** TODO back-trace buffer with the config below pops-up a new frame every time a step into execution
-****************** END
-
-#+BEGIN_SRC emacs-lisp  
-;; ("*Help*" :select t :frame t)
-;; (helpful-mode :select t :frame t)
-;; ("*info*" :select t :frame t :same t)
-("*Select Link*" :align 'below)
-("*Async shell command*" :ignore t)
-;; ("*Backtrace*" :select t :frame t :same t)
-     #+END_SRC
-
-#+BEGIN_SRC emacs-lisp  
-)))
-#+end_src
 
 **** Centered text in window
 :PROPERTIES:
