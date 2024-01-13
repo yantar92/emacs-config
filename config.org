@@ -83,7 +83,7 @@ Init file, which loads this file.
 (transient-mark-mode t)
 (setq init-flag t)
 (setq comp-deferred-compilation-deny-list '("pdf-cache" "org-protocol"))
-(setq comp-num-cpus 8)
+(setq comp-num-cpus 4)
 ;; Temporary fix for long line bugs (bug#57207).
 (setq long-line-threshold nil)
 ;; (setq comp-deferred-compilation 't) ;; enable automatic native-compilation
