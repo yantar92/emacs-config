@@ -5578,11 +5578,15 @@ PID="$(pgrep awesome | head -n1)"
 if [[ "$(cat ~/.org-clock-in | head -n1)" =~ "No clocked in task" ]]; then
     echo "orgstatus:set_text(\"No clocked in task\")" | awesome-client
     if [[ ! -z "$BALANCE" ]]; then
-	BAL=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
+	BAL=$(cat ~/.org-clock-in  | head -n2 | tail -n1 | cut -d. -f1)
         BAL=$(echo "$BAL/60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
+        LOSSAGE=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
+        LOSSAGE=$(echo "$LOSSAGE/60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
+        [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"#FF0000\"> ${LOSSAGE}h</span>" || LOSSAGE=" ${LOSSAGE}h"
 	[[ "$(echo "$BAL < 0" | bc -l)" == "1" ]] && BAL_STRING="<span color=\"#FF0000\">${BAL}h</span>" \
 		|| BAL_STRING="${BAL}h"
-        echo ${BAL_STRING}
+        BAL_STRING="${BAL_STRING}<span font=\"12\">${LOSSAGE}</span>"
+        echo $BAL_STRING
     fi
     exit
 fi
@@ -5623,9 +5627,12 @@ RES=$(echo "$RES" | sed -r "s/'/\"/g") # fix "'"
 echo "orgstatus:set_text('$RES')" | awesome-client 2>&1 >>/dev/null;
 
 if [[ ! -z "$BALANCE" ]]; then
-    MULT="$(cat ~/.org-clock-in | tail -n1)";
-    BAL="$(cat ~/.org-clock-in | head -n2 | tail -n1)";
+    MULT="$(cat ~/.org-clock-in | tail -n2 | head -n1)";
+    BAL="$(cat ~/.org-clock-in | tail -n3 | head -n1)";
     BAL_STRING=$(echo "($hours_plus * $MULT * 60 + $minutes_plus * $MULT + $BAL)/60.0" | bc -l | sed -r 's/([^.]*\..).*/\1/');
+    LOSSAGE=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
+    LOSSAGE=$(echo "$LOSSAGE/60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
+    [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"#FF0000\"> ${LOSSAGE}h</span>" || LOSSAGE=" ${LOSSAGE}h"
     if [[ $(echo "$BAL_STRING < 0" | bc -l) == "1" ]]; then
 	BAL_STRING="<span color=\"#FF0000\">${BAL_STRING}h</span>"
         [[ ! -f /tmp/negative-time-balance ]] && notify-send -u critical "Negative time balance"
@@ -5636,7 +5643,7 @@ if [[ ! -z "$BALANCE" ]]; then
     fi
     [[ $(echo "$MULT < 0" | bc -l) == "1" ]] && BAL_STRING="${BAL_STRING}<span color=\"#FF0000\">⇓"\
 	    || BAL_STRING="${BAL_STRING}<span color=\"#00FF00\">⇑"
-    BAL_STRING="${BAL_STRING}<span font=\"8\">$(echo $MULT | sed -r 's/-//')x</span></span>"
+    BAL_STRING="${BAL_STRING}<span font=\"8\">$(echo $MULT | sed -r 's/-//')x</span></span><span font=\"12\">${LOSSAGE}</span>"
     echo $BAL_STRING
 fi
 #+end_src

@@ -13507,7 +13507,7 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
   "Save info, that there is no clocked in entry."
   (let ((backup-inhibited t))
     (with-temp-file yant/org-clocking-info-file
-      (insert (format "\"No clocked in task\"\n%s" org-time-balance)))))
+      (insert (format "\"No clocked in task\"\n%s\n\n%s" org-time-balance org-time-balance-lossage)))))
 
 (defun yant/save-clocked ()
   "Save current clocked state into file."
@@ -13520,7 +13520,7 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
                  (time-balance org-time-balance))
 	    (with-temp-file buf
               (setq-local backup-inhibited t)
-              (insert (format "%s\n%s\n%s" str time-balance org-time-multiplier))))))
+              (insert (format "%s\n%s\n%s\n%s" str time-balance org-time-multiplier org-time-balance-lossage))))))
     (yant/save-noclock))
   (async-start-process "Update balance widget" "balance-monitor.sh" #'ignore))
 
