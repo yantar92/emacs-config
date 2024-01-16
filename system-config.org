@@ -304,6 +304,13 @@ sys-fs/cryptsetup
 :ID:       7b221b51-cd0a-4eba-893b-714f8cd17907
 :END:
 
+ #boot #EFI #grub #genkernel #not_loading
+[2024-01-15 Mon] EFI requires VRAM (BIOS memory) and apparently
+~genkernel~ keeps adding things there. Now, I ran out of VRAM causing
+~grub-install~ to fail silently (~genkernel~ did not report anything,
+slurping "No space left" error reported by grub). I had to reset EFI
+keys from BIOS and later clear VRAM from BIOS prompt. Now fixed.
+
 Installing after update
 #+begin_src bash :tangle no :eval no
 genkernel --menuconfig all
