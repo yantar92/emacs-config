@@ -8825,7 +8825,7 @@ dev-vcs/git-repair
 :END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-sys-devel/gdb
+dev-debug/gdb
 #+end_src
 
 
