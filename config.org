@@ -15440,22 +15440,24 @@ This function is called by `org-archive-hook'.  The option
          (when (and (org-at-heading-p) (member org-attach-auto-tag (org-get-tags nil t)));; do not ask if no attachments
            (let ((heading (org-get-heading nil nil 'norpiority 'nocomment))
                  (source (org-entry-get (point) "URL")))
-             (when (if (eq org-attach-archive-delete 'query)
-		       (let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
-									       (interactive)
-									       (dired-noselect dir nil) )))
-				           (org-attach-reveal-in-emacs))))
-                         (save-window-excursion
-                           (pop-to-buffer dired-buf)
-                           (revert-buffer)
-                           (select-window (old-selected-window))
-		           (prog1
-                               (or
-                                (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html") ("." "..")))
-			        (yes-or-no-p (format "%s: Delete all attachments? "
-					             heading)))
-                             (kill-buffer dired-buf))))
-	             org-attach-archive-delete)
+             (when (and
+		    (org-attach-dir)
+		    (if (eq org-attach-archive-delete 'query)
+			(let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
+										(interactive)
+										(dired-noselect dir nil) )))
+					    (org-attach-reveal-in-emacs))))
+                          (save-window-excursion
+			    (pop-to-buffer dired-buf)
+			    (revert-buffer)
+			    (select-window (old-selected-window))
+			    (prog1
+				(or
+                                 (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html") ("." "..")))
+			         (yes-or-no-p (format "%s: Delete all attachments? "
+						      heading)))
+			      (kill-buffer dired-buf))))
+		      org-attach-archive-delete))
 	       (org-attach-delete-all t)))))))))
 #+end_src
 
@@ -15473,7 +15475,7 @@ Unarchive when UNARCHIVE is non-nil."
      (let ((limit (save-excursion (org-end-of-subtree)))
            (parent-dir ""))
        (while (re-search-forward org-attach-auto-tag limit t)
-         (when (and (org-at-heading-p) (member org-attach-auto-tag (org-get-tags nil t))) ;; do not ask if no attachments
+         (when (and (org-at-heading-p) (org-attach-dir) (member org-attach-auto-tag (org-get-tags nil t))) ;; do not ask if no attachments
            ;; If archive dir is not in `yant/org-archive-archive-path', we did not really archive anything.
            (unless (and unarchive (not (string-prefix-p yant/org-archive-archive-path (org-attach-dir))))
              ;; Do not try to un/archive multiple times for inherited dirs.
