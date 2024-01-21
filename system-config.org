@@ -5588,7 +5588,7 @@ if [[ "$(cat ~/.org-clock-in | head -n1)" =~ "No clocked in task" ]]; then
 	BAL=$(cat ~/.org-clock-in  | head -n2 | tail -n1 | cut -d. -f1)
         BAL=$(echo "$BAL/60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
         LOSSAGE=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
-        LOSSAGE=$(echo "$LOSSAGE/60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
+        LOSSAGE=$(echo "$LOSSAGE/-60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
         [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"#FF0000\"> ${LOSSAGE}h</span>" || LOSSAGE=" ${LOSSAGE}h"
 	[[ "$(echo "$BAL < 0" | bc -l)" == "1" ]] && BAL_STRING="<span color=\"#FF0000\">${BAL}h</span>" \
 		|| BAL_STRING="${BAL}h"
@@ -5638,7 +5638,7 @@ if [[ ! -z "$BALANCE" ]]; then
     BAL="$(cat ~/.org-clock-in | tail -n3 | head -n1)";
     BAL_STRING=$(echo "($hours_plus * $MULT * 60 + $minutes_plus * $MULT + $BAL)/60.0" | bc -l | sed -r 's/([^.]*\..).*/\1/');
     LOSSAGE=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
-    LOSSAGE=$(echo "$LOSSAGE/60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
+    LOSSAGE=$(echo "$LOSSAGE/-60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
     [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"#FF0000\"> ${LOSSAGE}h</span>" || LOSSAGE=" ${LOSSAGE}h"
     if [[ $(echo "$BAL_STRING < 0" | bc -l) == "1" ]]; then
 	BAL_STRING="<span color=\"#FF0000\">${BAL_STRING}h</span>"
