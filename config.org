@@ -8315,6 +8315,9 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
 
 
 **** Clearly indicate mailing lists a message is on
+:PROPERTIES:
+:ID:       653b5860-fe8c-4593-899f-f7e5bb25151e
+:END:
 
 When discussion goes off-topic on mailing lists, emails are sometimes
 moved to alternative lists or into a private email. Sometimes, without
