@@ -8727,6 +8727,25 @@ Despite the usual big-tech concerns, it makes a decent:
   :if init-flag
   :straight t)
 #+end_src
+*** Display my GPX tracks
+
+#+begin_src emacs-lisp
+(use-package osm
+  :if init-flag
+  :init
+  (defun yant/display-all-gpx ()
+    "Display all my GPX tracks in current OSM buffer."
+    (when (derived-mode-p 'osm-mode)
+      (mapc
+       #'osm-gpx-show
+       (append (directory-files-recursively "~/Sync/GPX" "\\.gpx$")
+	       (directory-files-recursively "~/Sync/GPX2" "\\.gpx$")))))
+  (defun yant/display-all-gpx-delayed ()
+    "Call `yant/display-all-gpx' after delay."
+    (run-with-timer 2 nil #'yant/display-all-gpx))
+  (add-hook 'osm-mode-hook #'yant/display-all-gpx-delayed))
+#+end_src
+
 ** Synchthing frontend
 
 #+begin_src emacs-lisp
