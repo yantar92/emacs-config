@@ -5902,10 +5902,17 @@ if [[ ! -z "$UNCONVERTED_CURRENCIES" ]]; then
     exit;
 fi
 
-BAL_FOOD="$(ledger bal --budget -X <<ledger-food-currency()>> Food -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' | tail -n1 | sed -r 's/,//g')";
-BAL_FRUITS="$(ledger bal --budget -X <<ledger-food-currency()>> Expenses:Fruits -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//'  | sed -r 's/,//g')";
-[[ -z "$BAL_FRUITS" ]] && BAL_FRUITS="0"
-BAL_FRUITS="$(echo "${BAL_FRUITS}*(-1)" | bc -l)";
+BAL_RENT="$(ledger bal --budget -X <<ledger-main-currency()>> Expenses:Personal:Rental -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//'  | sed -r 's/,//g')";
+[[ -z "$BAL_RENT" ]] && BAL_RENT="0"
+BAL_RENT="$(echo "${BAL_RENT}*(-1)" | bc -l)";
+under_0=$(echo "$BAL_RENT < 0" | bc -l)
+if [[ "$under_0" == "1" ]]; then
+    BAL_RENT="<span color=\"#FF0000\">⏺</span>"
+else
+    BAL_RENT="<span color=\"#00FF00\">⏺</span>"
+fi
+
+
 BAL_ENTERTAINMENT="$(ledger bal --budget -X <<ledger-main-currency()>> Entertainment  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//'  | tail -n1 | sed -r 's/,//g')";
 TODAY_BAL_FOOD="$(ledger bal -X <<ledger-food-currency()>> -b `date +%F` Food | tail -n1 | sed -r 's/[^0-9-]+//'  | cut -d' ' -f 1 | sed -r 's/,//g')"
 [[ -z "$TODAY_BAL_FOOD" ]] && TODAY_BAL_FOOD="0"
@@ -5914,6 +5921,7 @@ NORMAL_BAL_FOOD="<<normal-balance-food()>>"
 MIN_BAL_FOOD="<<min-balance-food()>>"
 under_limit="0"
 
+BAL_FOOD="$(ledger bal --budget -X <<ledger-food-currency()>> Food -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' | tail -n1 | sed -r 's/,//g')";
 if [[ -n "$BAL_FOOD" ]]; then
     BAL_FOOD="$(echo "${BAL_FOOD}*(-1)" | bc -l)";
     res="$(echo "$BAL_FOOD + $TODAY_BAL_FOOD > $MAX_BAL_FOOD" | bc -l)";
@@ -6026,7 +6034,7 @@ BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledg
  if [[ -f ~/.log/projecting ]]; then
      [[ "$(cat ~/.log/projecting)" == "true" ]] && PROJECTING="1";
  fi
- [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ Time:${BAL_TIME} ༼ Food:$BAL_FOOD ༼ Fruits:<<ledger-food-currency-symbol()>>$BAL_FRUITS ༼ Other:$OTHER ༼ Fun:$BAL_ENTERTAINMENT_SHORT ༼ Retirement:$RETIREMENT ༼ Emergency:$BAL_EMERGENCY ༼ Extra:$EXTRA ༼ ⚖:$INCOME_RATIO$YEARS_LEFT'" | awesome-client
+ [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ Time:${BAL_TIME} ༼ Food:$BAL_FOOD ༼ Rental:$BAL_RENT ༼ Other:$OTHER ༼ Fun:$BAL_ENTERTAINMENT_SHORT ༼ Retirement:$RETIREMENT ༼ Emergency:$BAL_EMERGENCY ༼ Extra:$EXTRA ༼ ⚖:$INCOME_RATIO$YEARS_LEFT'" | awesome-client
 #+end_src
 
 The script is ran regularly
