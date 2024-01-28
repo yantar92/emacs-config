@@ -11202,7 +11202,7 @@ If LOCAL is non-nil, check only local TAG."
 								    ;; (not (subproject))
                                                                     ))))
 			    (org-agenda-sorting-strategy
-			     '(todo-state-down effort-up category-keep))))
+			     '(priority-down))))
 		(tags-todo "/"
 			   ((org-agenda-overriding-header "Hanging projects")
 			    (org-agenda-dim-blocked-tasks nil)
