@@ -8339,6 +8339,8 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
              (goto-char (point-min))
              (when (save-excursion (search-forward "emacs-orgmode@gnu.org" nil t))
                (push (propertize "ML: Org mode" 'face 'modus-themes-fringe-cyan) lists))
+             (when (save-excursion (search-forward "help-gnu-emacs@gnu.org" nil t))
+               (push (propertize "ML: Help GNU Emacs" 'face 'modus-themes-tab-backdrop) lists))
              (when (save-excursion (search-forward "emacs-devel@gnu.org" nil t))
                (push (propertize "ML: Emacs devel" 'face 'modus-themes-fringe-magenta) lists))
              (when (save-excursion (search-forward "emacs-tangents@gnu.org" nil t))
