@@ -1502,6 +1502,22 @@ Defining some modes below:
   )
 #+end_src
 
+*** Breadcrumbs in header line
+
+When grepping through sources, I sometimes end up in the middle of a
+long unknown function. It is then handy to see what that function is
+without having to move the cursor. =breadcrumbs= package displays
+"outline path" to function/variable/place at point in the header line.
+
+#+begin_src emacs-lisp
+(use-package breadcrumb
+  :if init-flag
+  :straight t
+  :defer 5
+  :config
+  (breadcrumb-mode +1))
+#+end_src
+
 *** Mini-buffer
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 20:29]
