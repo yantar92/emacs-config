@@ -1915,8 +1915,7 @@ Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_threa
 (when init-flag
   (unbind-key "M-u" global-map)
   (unbind-key "M-k" global-map)
-  (unbind-key "M-j" global-map)
-  (unbind-key "M-." global-map))
+  (unbind-key "M-j" global-map))
 #+END_SRC
 **** Quitting minibuffer when point is in another window
 :PROPERTIES:
