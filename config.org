@@ -18714,14 +18714,6 @@ ls-files' and 'grep'."
 ;;     (dired-mark-files-regexp "^\\." nil 'localname)
 ;;     (dired-do-kill-lines))))
 #+end_src
-*** Fix =eldoc= raising error on org src blocks
-:PROPERTIES:
-:ID:       d2bebb9f-8613-4e37-968b-4e0908b77a0b
-:END:
-
-#+begin_src emacs-lisp
-(defun org-eldoc-documentation-function (&rest _) "")
-#+end_src
 *** SOMEDAY Prevent some functions from native-compilation :SOMEDAY:
 :PROPERTIES:
 :SUMMARY:  Report to emacs
