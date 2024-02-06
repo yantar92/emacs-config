@@ -16887,13 +16887,6 @@ no indentation inside entries
 #+BEGIN_SRC emacs-lisp
 (setq org-adapt-indentation nil)
 #+END_SRC
-show sticky headers on tall tables
-#+begin_src emacs-lisp
-(use-package org-table-sticky-header
-  :straight t
-  :diminish org-table-sticky-header-mode
-  :hook (org-mode . org-table-sticky-header-mode))
-#+end_src
 hyphen as em-dash (from [[https://github.com/grettke/help/blob/master/help.org][here]])
 #+begin_src emacs-lisp
 (font-lock-add-keywords
