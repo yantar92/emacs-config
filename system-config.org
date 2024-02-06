@@ -8439,6 +8439,29 @@ app-text/languagetool
 #+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/languagetool
 app-text/languagetool ~amd64
 #+end_src
+** =app-text/vale=: Text linter
+:PROPERTIES:
+:ID:       8f5f44fe-1f48-4ff8-9f03-5eb3de8ac5b6
+:END:
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/vale
+app-text/vale::guru
+#+end_src
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+app-text/vale
+#+end_src
+
+#+begin_src conf :tangle /home/yantar92/.vale.ini
+StylesPath = styles
+
+MinAlertLevel = suggestion
+
+Packages = proselint, write-good, alex, Readability, Joblint
+
+[*]
+BasedOnStyles = Vale, proselint, write-good, alex, Readability, Joblint
+#+end_src
 
 ** =media-gfx/graphviz=: LaTeX for diagrams
 :PROPERTIES:
