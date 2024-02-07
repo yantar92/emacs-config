@@ -8509,6 +8509,9 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
 :END:
 
 #+begin_src emacs-lisp
+(use-package erc-hl-nicks
+  :if init-flag
+  :straight t)
 (use-package erc
   :if init-flag
   :demand t
@@ -8533,8 +8536,6 @@ Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues
 		  notifications
                   readonly ring stamp track smiley spelling hl-nicks log))
   :config
-  (use-package erc-hl-nicks
-    :straight t)
   (use-package meta-functions
     :config
     (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
