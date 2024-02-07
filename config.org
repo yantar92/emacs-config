@@ -61,6 +61,26 @@ which are automatically loaded by org agenda command.
 (defvar init-flag nil
   "Do normal init if not nil.")
 #+end_src
+** Speed up ~char-displayble-p~
+
+[2024-02-07 Wed] This is a fairly slow function adding 0.5 sec to my
+Emacs startup.
+
+Avoid calling it by explicit customization of variables that are
+defined by packages at run time using ~char-displayable-p~.
+
+#+begin_src emacs-lisp
+(setq truncate-string-ellipsis "…")
+(setq straight-arrow " → ")
+(setq helm-candidate-separator "――――――――――――――――――――――――――――――――――――――")
+(setq org-agenda-current-time-string "← now ───────────────────────────────────────────────")
+(setq org-agenda-time-grid '((daily today require-timed) (800 1000 1200 1400 1600 1800 2000)
+			     " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+(setq org-agenda-block-separator ?─)
+(setq-default display-fill-column-indicator-character ?\u2502)
+(setq pdf-view-use-unicode-ligther nil)
+#+end_src
+
 ** External dependencies
 :PROPERTIES:
 :ID:       c9c15be6-0c5e-44a8-aa9c-17893fb904e7
