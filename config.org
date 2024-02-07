@@ -16946,7 +16946,8 @@ In addition use =:align-to= ='display= spec to align tags to right border of the
 Optional MODE specifies major mode used for display."
   (with-temp-buffer
     (with-silent-modifications
-      (setf (buffer-string) string))
+      (erase-buffer)
+      (insert string))
     (when (fboundp mode)
       (funcall mode)
       (font-lock-fontify-buffer))
@@ -16961,7 +16962,8 @@ Optional ELLIPSIS string is shown in place of the hidden/deleted part of the str
     (with-temp-buffer
       (setq-local char-property-alias-alist char-property-alias-alist-buffer)
       (with-silent-modifications
-        (setf (buffer-string) string))
+	(erase-buffer)
+        (insert string))
       (when (fboundp mode)
         (funcall mode)
         (font-lock-fontify-buffer))
@@ -16984,7 +16986,8 @@ Optional MODE specifies major mode used for display."
   (let (wrap-prefix display-line-numbers)
     (with-temp-buffer
       (with-silent-modifications
-        (setf (buffer-string) string))
+	(erase-buffer)
+        (insert string))
       (when (fboundp mode)
         (funcall mode)
         (font-lock-fontify-buffer))
@@ -17042,25 +17045,28 @@ Optional MODE specifies major mode used for display."
 	  (while (and (setq pos (next-single-char-property-change pos 'org-agenda-afterline nil (point-max)))
 		      (setq next (next-single-char-property-change pos 'org-agenda-afterline nil (point-max)))
 		      (get-text-property pos 'org-agenda-afterline))
-	    (setf (buffer-substring pos next) "")))
+            (delete-region pos next)))
 
 	(goto-char (point-min))
 	(let ((window-width (window-width))
 	      (ellipsis "…")
 	      (gap "  "))
-	  (while (and (setf (point) (next-single-char-property-change (point) 'org-hd-marker nil (point-max)))
+	  (while (and (goto-char (next-single-char-property-change (point) 'org-hd-marker nil (point-max)))
 		      (< (point) (point-max)))
 	    (let* ((tag-width (when (re-search-forward org-tag-group-re (point-at-eol) 'noerror)
 				(string-display-width (match-string 1))))
 		   (beg (point-at-bol))
 		   (end (if tag-width (match-beginning 0) (point-at-eol))))
               (when tag-width
-	        (setf (buffer-substring beg end)
-		      (string-display-truncate (buffer-substring beg end)
-					       (- window-width
-						  tag-width
-						  (string-display-width (s-concat ellipsis gap)))
-                                               nil 'hide ellipsis))
+		(save-excursion
+                  (delete-region beg end)
+                  (goto-char beg)
+                  (insert
+                   (string-display-truncate (buffer-substring beg end)
+					    (- window-width
+					       tag-width
+					       (string-display-width (s-concat ellipsis gap)))
+                                            nil 'hide ellipsis)))
 	        (goto-char (next-single-char-property-change (point-at-bol) 'truncated nil (point-at-eol)))
 	        (let ((truncated-string (buffer-substring (point) (next-single-char-property-change (point) 'truncated nil (point-at-eol)))))
 		  (unless (seq-empty-p truncated-string)
