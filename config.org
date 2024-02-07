@@ -16855,11 +16855,6 @@ fit inline LaTeX better by increasing the image size [[[https://github.com/tecos
   :custom (org-agenda-dim-blocked-tasks nil))
 #+end_src
 
-#+begin_src emacs-lisp
-(defadvice org-agenda (around split-vertically activate)
-  (let ((split-width-threshold 1000))  ; or whatever width makes sense for you
-    ad-do-it))
-#+end_src
 Do not highlight line below mouse
   #+begin_src emacs-lisp
 (defun yant/remove-mouse-highlight ()
