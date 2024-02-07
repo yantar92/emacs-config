@@ -5994,23 +5994,11 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 **** Use =pdf-tools= fork with continuous scroll support.
 
 #+begin_src emacs-lisp
-(use-package image-roll
-  :straight (image-roll
-             :host github :repo "dalanicolai/image-roll.el"
-             :local-repo "~/Git/image-roll.el"))
-#+END_SRC
-
-#+begin_src emacs-lisp
 (use-package pdf-tools
   :if init-flag
-  :straight
-  (:host github :repo "dalanicolai/pdf-tools" :branch "pdf-roll"
-         :local-repo "~/Git/pdf-tools-fork"
-         :files ("lisp/*.el" "README"
-                 ("build" "Makefile") ("build" "server")
-                 (:exclude "lisp/tablist.el" "lisp/tablist-filter.el")))
-  :hook (pdf-view-mode . pdf-view-roll-minor-mode)
+  :straight t
   :magic ("%PDF" . pdf-view-mode)
+  :init
   :config
   (pdf-tools-install))
 #+end_src
