@@ -2664,7 +2664,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
 		  base-menu)))
       (cadr (assoc (popup-menu* menu :scroll-bar t) base-menu))))
   (fset 'flyspell-emacs-popup 'flyspell-emacs-popup-textual)
-  (defadvice flyspell-goto-next-error (after check-word-spelling activate) (ispell-word))
+  ;; (defadvice flyspell-goto-next-error (after check-word-spelling activate) (ispell-word))
   )
 #+END_SRC
 ***** Automatically add wrong spelled words to abbrev to avoid such mistakes later
@@ -7455,23 +7455,23 @@ the notmuch-tree buffer if it appears after closing the message."
 :ID:       b87ec258-7b7e-4898-b828-ab8be4d474f9
 :END:
 #+begin_src emacs-lisp
-(use-package notmuch
-  :if init-flag
-  :defer t
-  :config
-  (defvar-local notmuch-frame nil
-    "Non nil means that frame was invoked from system (not from inside emacs).")
-  (defadvice notmuch-refresh-this-buffer (around update-notmuch-frame activate)
-    "Preserve `notmuch-frame' value after refresh."
-    (let ((notmuch-frame-old notmuch-frame))
-      ad-do-it
-      (setq notmuch-frame notmuch-frame-old)))
-  (bind-key "q" (lambda()
-		  (interactive)
-		  (if notmuch-frame
-		      (delete-frame)
-		    (notmuch-bury-or-kill-this-buffer)))
-	    notmuch-search-mode-map))
+  (use-package notmuch
+    :if init-flag
+    :defer t
+    :config
+    (defvar-local notmuch-frame nil
+      "Non nil means that frame was invoked from system (not from inside emacs).")
+    (define-advice notmuch-refresh-this-buffer (:around (fun &rest args) update-notmuch-frame)
+      "Preserve `notmuch-frame' value after refresh."
+      (let ((notmuch-frame-old notmuch-frame))
+        (apply fun args)
+        (setq notmuch-frame notmuch-frame-old)))
+    (bind-key "q" (lambda()
+  		  (interactive)
+  		  (if notmuch-frame
+  		      (delete-frame)
+  		    (notmuch-bury-or-kill-this-buffer)))
+  	    notmuch-search-mode-map))
 #+end_src
 **** Inline display
 :PROPERTIES:
@@ -13771,19 +13771,20 @@ CLOSED: [2018-09-23 Sun 17:36]
 ****************** END
 New frame for capturing. The frame should only have capture buffer in it.
 #+begin_src emacs-lisp
-(use-package org-capture-pop-frame
-  :after org
-  :straight t
-  :config
-  (setq ocpf-frame-parameters '((name . "org-capture-pop-frame")))
-  (defadvice org-capture-place-template (after delete-windows activate) (delete-other-windows))
-  (defadvice org-capture-select-template (around delete-capture-frame activate)
-    "Advise org-capture-select-template to close the frame on abort.  From https://stackoverflow.com/questions/23517372/hook-or-advice-when-aborting-org-capture-before-template-selection#23517820"
-    (unless (ignore-errors ad-do-it t)
-      (setq ad-return-value "q"))
-    (if (and (equal "q" ad-return-value)
-	     (equal "org-capture-pop-frame" (frame-parameter nil 'name)))
-	(delete-frame))))
+  (use-package org-capture-pop-frame
+    :after org
+    :straight t
+    :config
+    (setq ocpf-frame-parameters '((name . "org-capture-pop-frame")))
+    (define-advice org-capture-place-template (:after (&rest _) delete-windows) (delete-other-windows))
+    (define-advice org-capture-select-template (:around (fun &rest args) delete-capture-frame)
+      "Advise org-capture-select-template to close the frame on abort.  From https://stackoverflow.com/questions/23517372/hook-or-advice-when-aborting-org-capture-before-template-selection#23517820"
+      (let ((return (or
+  		   (ignore-errors (apply fun args))
+  		   "q")))
+        (if (and (equal "q" return)
+  	       (equal "org-capture-pop-frame" (frame-parameter nil 'name)))
+  	  (delete-frame)))))
 #+end_src
 
 ****************** TODO report bug
