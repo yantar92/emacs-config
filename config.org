@@ -40,7 +40,6 @@ CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 ;; for example, by yasnippet when filling elisp file header
 (setq user-full-name "Ihor Radchenko")
 (setq user-mail-address "yantar92@posteo.net")
-(setq org-fold-core-style 'overlays)
 #+end_src
 
 I do not do much programming, but rather use Emacs as knowledge
