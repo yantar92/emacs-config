@@ -111,6 +111,24 @@ Init file, which loads this file.
 ;; (setq comp-deferred-compilation 't) ;; enable automatic native-compilation
 (load el-file)
 #+end_src
+** Defer org-ql predicates (this must load first)
+
+Defining custom predicates for org-ql is slow because it requires
+unconditional byte-compilation.  Defer it to after init time.
+Every instance of ~org-ql-defpred~ in the configuration must set
+~org-ql-defpred-defer~ to t.
+
+#+begin_src emacs-lisp
+(use-package org-ql
+  :init
+  (add-hook
+   'after-init-hook
+   (lambda ()
+     (org-ql--define-normalize-query-fn (reverse org-ql-predicates))
+     (org-ql--define-query-preamble-fn (reverse org-ql-predicates))
+     (org-ql--def-query-string-to-sexp-fn (reverse org-ql-predicates)))))
+#+end_src
+
 
 ** Emacs server settings
 :PROPERTIES:
@@ -9012,6 +9030,7 @@ The task is any item with todo keyword and no subtask.
 (use-package org-ql
   :defer t
   :config
+  (setq org-ql-defpred-defer t)
   (org-ql-defpred-alias task ()
     "Match a task without child subtasks."
     (and (or (todo) (done))
@@ -9437,6 +9456,7 @@ The project is an item with todo keyword and subtask.
 (use-package org-ql
   :defer t
   :config
+  (setq org-ql-defpred-defer t)
   (org-ql-defpred-alias project ()
     "Match a project - task with a todo subtask or :project: tag."
     (or (tags-local "project")
@@ -9491,6 +9511,7 @@ The project without parent projects.
 (use-package org-ql
   :defer t
   :config
+  (setq org-ql-defpred-defer t)
   (org-ql-defpred-alias subtask ()
     "A subtask of a project."
     (and (or (todo) (done))
@@ -9517,6 +9538,7 @@ The project with parent projects.
 (use-package org-ql
   :defer t
   :config
+  (setq org-ql-defpred-defer t)
   (org-ql-defpred-alias subproject ()
     "Match a subproject."
     (and (project)
@@ -11154,6 +11176,7 @@ If LOCAL is non-nil, check only local TAG."
 (use-package org-ql
   :defer t
   :config
+  (setq org-ql-defpred-defer t)
   (org-ql-defpred-alias goal ()
     "Match a goal."
     (tags-local "goal"))
@@ -12551,6 +12574,7 @@ instead."
   :config
   (use-package org-ql-search :demand t)
   (setq org-ql-plain-string-predicate 'keyword)
+  (setq org-ql-defpred-defer t)
   (org-ql-defpred (keyword k) (&rest strings)
     "Match a keyword in outline-path or inside body/heading with #.
 Negate match when start with ^."
