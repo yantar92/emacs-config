@@ -4787,10 +4787,10 @@ There is also built-in skeleton mode, but =yasnippet= also has a good user-contr
   :straight t
   :diminish (yas-minor-mode . " ⇶_")
   :hook ((org-mode latex-mode markdown-mode prog-mode lisp-interaction-mode) . yas-minor-mode)
-  :config
-  (use-package yasnippet-snippets
-    :straight t)
-  (yas-reload-all))
+  ;; :config
+  ;; (use-package yasnippet-snippets
+  ;;   :straight t)
+  )
 #+end_src
 **** Auto-expand snippets without a need to type trigger command
 :PROPERTIES:
