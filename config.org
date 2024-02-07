@@ -43,25 +43,16 @@ CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 #+end_src
 
 I do not do much programming, but rather use Emacs as knowledge
-base management tool. Most time, I do not even edit or type things
-directly, but read through the files. The main focus of this setup is
-=org-mode= and not as much programming, navigating through text and not
-as much editing.
-
-The usage of =org-mode= unfortunately means that the performance of
-Emacs is generally not good. To improve things a little, I run
-things that "freeze" Emacs most terribly either asynchronously or in
-separate Emacs process. Running in separate process would be terribly
-slow if I just load my main =init.el= over and over again as if I open a
-new instance of Emacs interactively. Hence, I design my =init.el= in the
-way that it can load faster in batch mode.
+base management tool. Most of the time, I do not even edit or type
+things directly, but read through the files. The main focus of this
+setup is =org-mode= and not as much programming, navigating through text
+and not as much editing.
 
 This Emacs configuration allows loading Emacs in both interactive and
-batch modes. It is controlled by special variables, identifying
+batch modes. It is controlled by special variable, identifying
 startup mode:
-- =init-flag= :: normal startup, load all the visual packages and options
-- =org-export-flag= :: load necessary options for org-export
-- =org-tangle-flag= :: load necessary options for org-tangle
+- =init-flag= :: when non-nil, load all the visual packages and options
+
 One important note about this configuration is that I do not use
 =desktop-save-mode=. Everything I intend to do is kept in my org files,
 which are automatically loaded by org agenda command.
@@ -69,12 +60,11 @@ which are automatically loaded by org agenda command.
 #+begin_src emacs-lisp
 (defvar init-flag nil
   "Do normal init if not nil.")
-(defvar org-export-flag nil
-  "Set up org export if not nil.")
-(defvar org-tangle-flag nil
-  "Set up org tangle if not nil.")
 #+end_src
 ** External dependencies
+:PROPERTIES:
+:ID:       c9c15be6-0c5e-44a8-aa9c-17893fb904e7
+:END:
 
 The configuration is integrated with my OS setup. (Or rather my OS
 setup is integrated with this configuration 😂).
