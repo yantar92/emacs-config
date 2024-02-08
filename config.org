@@ -17061,14 +17061,15 @@ Optional MODE specifies major mode used for display."
 		   (end (if tag-width (match-beginning 0) (point-at-eol))))
               (when tag-width
 		(save-excursion
-                  (delete-region beg end)
-                  (goto-char beg)
-                  (insert
-                   (string-display-truncate (buffer-substring beg end)
-					    (- window-width
-					       tag-width
-					       (string-display-width (s-concat ellipsis gap)))
-                                            nil 'hide ellipsis)))
+                  (let ((truncated (string-display-truncate
+				    (buffer-substring beg end)
+				    (- window-width
+				       tag-width
+				       (string-display-width (s-concat ellipsis gap)))
+				    nil 'hide ellipsis)))
+                    (delete-region beg end)
+                    (goto-char beg)
+                    (insert truncated)))
 	        (goto-char (next-single-char-property-change (point-at-bol) 'truncated nil (point-at-eol)))
 	        (let ((truncated-string (buffer-substring (point) (next-single-char-property-change (point) 'truncated nil (point-at-eol)))))
 		  (unless (seq-empty-p truncated-string)
