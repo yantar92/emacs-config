@@ -120,6 +120,7 @@ Every instance of ~org-ql-defpred~ in the configuration must set
 
 #+begin_src emacs-lisp
 (use-package org-ql
+  :defer t
   :init
   (add-hook
    'after-init-hook
