@@ -13761,20 +13761,21 @@ CLOSED: [2018-09-23 Sun 17:36]
 ****************** END
 New frame for capturing. The frame should only have capture buffer in it.
 #+begin_src emacs-lisp
-  (use-package org-capture-pop-frame
-    :after org
-    :straight t
-    :config
-    (setq ocpf-frame-parameters '((name . "org-capture-pop-frame")))
-    (define-advice org-capture-place-template (:after (&rest _) delete-windows) (delete-other-windows))
-    (define-advice org-capture-select-template (:around (fun &rest args) delete-capture-frame)
-      "Advise org-capture-select-template to close the frame on abort.  From https://stackoverflow.com/questions/23517372/hook-or-advice-when-aborting-org-capture-before-template-selection#23517820"
-      (let ((return (or
+(use-package org-capture-pop-frame
+  :after org
+  :straight t
+  :config
+  (setq ocpf-frame-parameters '((name . "org-capture-pop-frame")))
+  (define-advice org-capture-place-template (:after (&rest _) delete-windows) (delete-other-windows))
+  (define-advice org-capture-select-template (:around (fun &rest args) delete-capture-frame)
+    "Advise org-capture-select-template to close the frame on abort.  From https://stackoverflow.com/questions/23517372/hook-or-advice-when-aborting-org-capture-before-template-selection#23517820"
+    (let ((return (or
   		   (ignore-errors (apply fun args))
   		   "q")))
-        (if (and (equal "q" return)
-  	       (equal "org-capture-pop-frame" (frame-parameter nil 'name)))
-  	  (delete-frame)))))
+      (when (and (equal "q" return)
+  		 (equal "org-capture-pop-frame" (frame-parameter nil 'name)))
+  	(delete-frame))
+      return)))
 #+end_src
 
 ****************** TODO report bug
