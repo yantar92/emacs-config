@@ -11034,9 +11034,8 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 								    (not (tags-local "SKIP_PROJECT_REVIEW"))
 								    (not (tags "CANCELLED" "HOLD"))
 								    (not (area))
-								    (project)
-								    ;; (not (subproject))
-                                                                    ))))
+                                                                    (not (org-agenda-skip-before-SHOWFROMDATE-property))
+								    (project)))))
 			    (org-agenda-sorting-strategy
 			     '(priority-down))))
 		(tags-todo "/"
