@@ -4780,6 +4780,8 @@ There is also built-in skeleton mode, but =yasnippet= also has a good user-contr
   :straight t
   :diminish (yas-minor-mode . " ⇶_")
   :hook ((org-mode latex-mode markdown-mode prog-mode lisp-interaction-mode) . yas-minor-mode)
+  :config
+  (yas-reload-all)
   ;; :config
   ;; (use-package yasnippet-snippets
   ;;   :straight t)
