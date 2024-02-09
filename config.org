@@ -104,6 +104,9 @@ Init file, which loads this file.
 (load el-file)
 #+end_src
 ** Defer org-ql predicates (this must load first)
+:PROPERTIES:
+:ID:       f6744b91-5cc5-4003-8fb8-5d2b14343230
+:END:
 
 Defining custom predicates for org-ql is slow because it requires
 unconditional byte-compilation.  Defer it to after init time.
@@ -129,14 +132,12 @@ Every instance of ~org-ql-defpred~ in the configuration must set
 :END:
 
 I run Emacs in server mode - a no-brainer considering
-how long my huge org files I have.
+how large my org files are.
 
 Setup environment variables
-****************** TODO load .profile instead of manual setting here
-****************** END
 
 #+begin_src emacs-lisp
-  (setenv "PATH" (concat (getenv "PATH") ":/home/yantar92/.local/bin/"))
+(call-process-shell-command "source ~/.profile")
 #+end_src
 
 Ensure one server instance
