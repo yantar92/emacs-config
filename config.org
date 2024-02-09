@@ -11272,6 +11272,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 			    (org-agenda-prefix-format "%-12:c\t%?-12t %(yant/format-summary-for-agenda)")
                             (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                                         (quote (and (not (scheduled))
+								    (not (org-agenda-skip-before-SHOWFROMDATE-property))
                                                                     (or (tags-local "HOLD")
                                                                         (and (tags-local "WAITING")
                                                                              (not (tags-local "TRACK"))))
