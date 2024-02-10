@@ -2330,19 +2330,33 @@ Save virtual buffers (kill ring, etc.)
 :ID:       b72d24a2-7692-4e37-b547-10c30b058c22
 :END:
 
+Cleaning up recent entries takes some time and adds up to Emacs
+startup time. To avoid this, I instead instruct =recentf= to clean
+things up when Emacs is idle.
+
+#+begin_src emacs-lisp
+(use-package recentf
+  :config
+  ;; Do not use :custom here. Otherwise, automatic cleanup will be
+  ;; called immediately when we set this value.
+  (setq recentf-auto-cleanup 10))
+#+end_src
+
 Show recently opened files in =helm-mini= buffer.
 
 #+begin_src emacs-lisp
-(use-package helm
+(use-package recentf
   :if init-flag
-  :defer t
   :config
   (recentf-mode t)
   (setq
    recentf-max-menu-items 30
-   recentf-max-saved-items 100
-   helm-ff-file-name-history-use-recentf t))
+   recentf-max-saved-items 100)
+  (use-package helm
+    :custom
+    (helm-ff-file-name-history-use-recentf t)))
 #+end_src
+
 *** No global auto-revert
 :PROPERTIES:
 :ID:       b4f4fbea-9315-412c-bb48-6984906c67d8
