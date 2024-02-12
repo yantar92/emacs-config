@@ -151,16 +151,11 @@ Ensure one server instance
 #+end_src
 
 Do not show large file warnings for anything \le100Mb.
-The default 10Mb is too small for many pdfs.
+The default 10Mb is too small for many pdfs and for my Org files.
 #+begin_src emacs-lisp
-(if init-flag 
+(when init-flag 
     (setq large-file-warning-threshold (* 100 1024 1024)); 100Mb
-  (setq large-file-warning-threshold nil))
-#+end_src
-
-Exit server silently without asking about unsaved buffers.
-#+begin_src emacs-lisp
-(add-hook 'kill-emacs-hook (lambda() (save-some-buffers 'save-all-buffers)) 'append)
+  )
 #+end_src
 
 ** Package management & configuration
