@@ -2295,6 +2295,13 @@ Walk across the backup files
 (use-package no-littering
   :demand t
   :config
+  (auto-save-visited-mode +1)
+  (defun yant/auto-save-buffer-p ()
+    "Return non-nil when current buffer should be auto-saved."
+    (cond
+     ((derived-mode-p 'message-mode) nil)
+     (t t)))
+  (setq auto-save-visited-predicate #'yant/auto-save-buffer-p)
   (setq  auto-save-file-name-transforms `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))
 	 auto-save-interval 20))
 #+end_src
