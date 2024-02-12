@@ -150,12 +150,6 @@ Ensure one server instance
     (server-start)))
 #+end_src
 
-Run server "silently" and ignore file clashes (credit: [[https://www.reddit.com/r/emacs/comments/733698/if_a_file_has_changed_on_disk_save_anyway_without/][Reddit]])
-#+begin_src emacs-lisp
-(defun ask-user-about-supersession-threat (args)
-  "Ignore file clashes.")
-#+end_src
-
 Do not show large file warnings for anything \le100Mb.
 The default 10Mb is too small for many pdfs.
 #+begin_src emacs-lisp
