@@ -134,8 +134,10 @@ Every instance of ~org-ql-defpred~ in the configuration must set
 I run Emacs in server mode - a no-brainer considering
 how large my org files are.
 
-Setup environment variables
 
+Load shell variables. This is necessary because I run Emacs from
+non-shell environment, via [[id:6b9c69de-6701-4db0-8b4d-e4291f5ad591][Awesome WM]] key bindings and =.profile= is not
+loaded.
 #+begin_src emacs-lisp
 (call-process-shell-command "source ~/.profile")
 #+end_src
