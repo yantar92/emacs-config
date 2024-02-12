@@ -1298,6 +1298,7 @@ rc-update add display-manager default
 *** Window manager: Awesome WM
 :PROPERTIES:
 :CATEGORY: AwesomeConf
+:ID:       6b9c69de-6701-4db0-8b4d-e4291f5ad591
 :END:
 **** Installation
 :PROPERTIES:
