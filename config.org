@@ -15329,9 +15329,10 @@ Unarchive when UNARCHIVE is non-nil."
                                    (org-with-limited-levels
                                     (re-search-forward org-outline-regexp-bol end-of-subtree t)))))))
           (headline (org-get-heading))
-          (children (org-buffer-substring-fontified
-                     (org-element-property :contents-begin (org-element-at-point))
-                     (org-element-property :contents-end (org-element-at-point)))))
+          (children (when (org-element-property :contents-begin (org-element-at-point))
+		      (org-buffer-substring-fontified
+		       (org-element-property :contents-begin (org-element-at-point))
+		       (org-element-property :contents-end (org-element-at-point))))))
       (when (or (not has-children)
                 (yes-or-no-p (format "%s\n%s: There are child headings. Really archive?" children headline)))
         (funcall-interactively oldfun find-done)))))
