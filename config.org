@@ -732,26 +732,29 @@ Since it is not really a good idea to work in darkness regardless of the colour 
              :repo "protesilaos/modus-themes")
   :if init-flag
   :init
+  (require 'modus-operandi-theme)
   (setq modus-themes-bold-constructs nil
-        modus-themes-region '(accented)
         modus-themes-headings '((t . (rainbow regular)))
         modus-themes-org-blocks nil
         modus-themes-completions nil
-        modus-themes-intense-hl-line t
         modus-themes-intense-paren-match t
         modus-themes-prompts nil)
-  (setq modus-themes-operandi-color-overrides '((bg-region . nil)))
-  :custom-face
-  (org-block-begin-line ((t :inhert org-block :background ,(face-background 'default))))
-  ;; (org-verbatim ((t :background nil :foreground ,(face-foreground 'modus-themes-special-calm))))
-  ;; (region ((t :background ,(face-background 'modus-themes-special-warm))))
-  ;; :init
-  ;; (modus-themes-load-themes)
+  (setq modus-themes-hl-line nil
+        modus-themes-fringes nil)
+  (setopt modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
+  (setopt modus-operandi-tinted-palette-overrides
+	  '((bg-dim "#f2eff3")
+            (fg-dim "#505050")
+	    (fg-heading-1 "#5317ac")
+	    (bg-hl-line "#e0e0e0")
+            (fringe unspecified)
+            (bg-active bg-blue-subtle)))
+  (use-package org-faces
+    :defer t
+    :config
+    (set-face-attribute 'org-special-keyword nil :inherit '(shadow org-drawer)))
   :config
-  (modus-themes-load-operandi)
-  (use-package org :config
-    (set-face-background 'org-block-begin-line (face-background 'default)))
-  (set-face-background 'org-block-end-line (face-background 'default))
+  (modus-themes-load-theme 'modus-operandi-tinted)
   )
 #+end_src
 
@@ -2133,6 +2136,21 @@ The basic idea is to prefix movement commands with meta.
       (_ (funcall-interactively #'helm-execute-persistent-action))))
   (helm-mode 1))
 #+end_src
+**** Appearance
+
+#+begin_src emacs-lisp
+(use-package helm
+  :config
+  (defun yant/set-modus-overrides ()
+    (modus-themes-with-colors
+      (set-face-foreground  'helm-source-header fg-heading-0)
+      (set-face-background 'helm-source-header 'unspecified)
+      (set-face-background 'helm-candidate-number 'unspecified)
+      (set-face-foreground 'helm-candidate-number blue-faint)
+      (set-face-background 'helm-selection bg-hl-line)))
+  (yant/set-modus-overrides)
+  (add-hook 'modus-themes-after-load-theme-hook #'yant/set-modus-overrides))
+#+end_src
 
 **** Adaptive sorting of candidates
 :PROPERTIES:
@@ -3078,11 +3096,12 @@ The maximum file size is `yant/flycheck-file-size-threshold'."
   :if init-flag
   :straight t
   :diminish highlight-parentheses-mode
+  :init
+  (require 'modus-themes)
   :custom
   (highlight-parentheses-background-colors `(,(face-background 'modus-themes-intense-red)
                                              ,(face-background 'modus-themes-intense-magenta)
-                                             ,(face-background 'modus-themes-refine-blue)
-                                             ))
+                                             ,(face-background 'modus-themes-intense-blue)))
   :config
   (add-hook! 'minibuffer-setup-hook #'highlight-parentheses-minibuffer-setup)
   (add-hook! (prog-mode
@@ -17378,7 +17397,7 @@ Use normal colour for the default agenda face
   :config
   (defface yant/org-agenda-highlight-face `((t :inherit modus-themes-nuanced-yellow :extend t))
     "Face used to highlight flagged entries in agenda view.")
-  (set-face-background 'org-agenda-clocking (face-background 'modus-themes-diff-added))
+  (set-face-background 'org-agenda-clocking (face-background 'diff-added nil t))
   (set-face-attribute 'org-agenda-clocking nil :extend t)
   (defun yant/org-agenda-highlight-flagged ()
     "Highlight flagged items in agenda."
