@@ -168,20 +168,8 @@ The default 10Mb is too small for many pdfs and for my Org files.
 :END:
 
 Instead of the default emacs package manager, I use =straigt.el=.
-My initial motivation was mostly the ability to get packages from github directly.
-In addition, it would be useful to keep track modify the packages in some better way than advising.
-
-****************** TODO Use =el-patch= and take a look at fork+master handling by =package.el=
-****************** END
-
-=Straight.el= can use =watchexec= to watch changes in the packages, which is much faster in comparison with default =find=.
-Install =watchexec=
-#+begin_src bash :dir "/sudo::/" :tangle no
-layman -a chaoslab
-emerge -v watchexec
-#+end_src
-****************** TODO Actually, this snippet might be useless on a fresh system. Need to add some check to indicate that missing package is a problem
-****************** END
+It allows to get packages from github directly, review the new
+commits, and easily maintain custom modifications.
 
 First, make sure that =straight.el= can fetch remote URLs from everywhere.
 Set up the =askpass= and cache ssh password.
@@ -198,24 +186,12 @@ Use [[id:4f11175e-8e12-4596-b651-f21864761e32][net-misc/ssh-askpass-fullscreen]]
     (shell-command-to-string "ssh-add ~/.ssh/id_rsa")))
 #+end_src
 
-And tell =straight.el= to use file watcher
-[2020-10-14 Wed] =watchexec= appears to consume too much system resources
-#+begin_src emacs-lisp
-(setq straight-check-for-modifications
-      '(find-at-startup find-when-checking))
-#+end_src
-
-For now, I use develop branch of =straight.el=
+Use develop branch of =straight.el=
 #+begin_src emacs-lisp
 (setq straight-repository-branch "develop")
 #+end_src
 
-And use default git protocol for git repositories in =straight.el= 
-#+begin_src emacs-lisp
-(setq straight-vc-git-default-protocol 'ssh)
-#+end_src
-
-First, put the bootstrap code ([[https://github.com/raxod502/straight.el][as from straight.el readme]])
+Put the bootstrap code ([[https://github.com/raxod502/straight.el][as from straight.el readme]])
 #+begin_src emacs-lisp
   (eval-and-compile
     (defvar bootstrap-version)
