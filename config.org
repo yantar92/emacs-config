@@ -186,7 +186,7 @@ Use [[id:4f11175e-8e12-4596-b651-f21864761e32][net-misc/ssh-askpass-fullscreen]]
     (shell-command-to-string "ssh-add ~/.ssh/id_rsa")))
 #+end_src
 
-Use develop branch of =straight.el=
+Use develop branch of =straight.el=. It has bug fixes earlier.
 #+begin_src emacs-lisp
 (setq straight-repository-branch "develop")
 #+end_src
