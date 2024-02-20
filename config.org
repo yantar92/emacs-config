@@ -207,27 +207,6 @@ Put the bootstrap code ([[https://github.com/raxod502/straight.el][as from strai
 	  (eval-print-last-sexp)))
       (load bootstrap-file nil 'nomessage)))
 #+end_src
-*** Load settings
-:PROPERTIES:
-:ID:       5a8547b6-bd05-4554-930b-69c68369f437
-:END:
-
-Prefer loading fresh versions of lisp files
-#+begin_src emacs-lisp
-(setq load-prefer-newer t)
-#+end_src
-
-Setup local =load-path= for whatever is not handled by =straigh.el=
-
-****************** TODO This may better be done individually using :load-path option of use-package
-****************** END
-
-#+begin_src emacs-lisp
-  (eval-and-compile
-    (when (file-directory-p "~/.emacs.d/site-lisp/")
-      (setq load-path (append '("~/.emacs.d/site-lisp/") load-path))
-      (setq load-path (append (directory-files "~/.emacs.d/site-lisp/" t "^[^.]" t) load-path))))
-#+end_src
 *** Use-package
 :PROPERTIES:
 :ID:       156b45ac-d29b-45d1-9a6c-7cf36070c24a
