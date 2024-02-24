@@ -224,23 +224,6 @@ Now, I can setup =use-package= to simplify subsequent package configuration
 (use-package bind-key)
   #+end_src
 
-****************** TODO separate all the diminish statements into appearance
-****************** END
-**** Quick access to use-package docstring
-:PROPERTIES:
-:ID:       0ef884bb-b330-4cc9-9512-5d1dcb386b3e
-:END:
-
-#+begin_src emacs-lisp
-(use-package helm
-  :if init-flag
-  :defer t
-  :config
-  (use-package boon
-    :config
-    (bind-key "h u" #'helm-info-use-package boon-goto-map)))
-
-#+end_src
 *** Early loading of built-in notmuch version
 
 Latest version may not be compatible with system version of notmuch executable
@@ -5298,22 +5281,16 @@ We can search:
  - info entries for anything
  - man entries
 
-The default =elisp= info search does not include many useful libraries like =cl-lib=, =dash=, or =EIEIO.
-I rely on the search so much that I, for example, did not even know about =cl-lib= for a long time and still struggling to use it efficiently.
-Expanding =helm= completion to include everything.
+Add extra ~helm-info-at-point~ sources.
  #+begin_src emacs-lisp
-(when init-flag
-;;Modified from https://www.reddit.com/r/emacs/comments/e5dzv6/weekly_tipstricketc_thread/f9xug5q/
-  (defun helm-info-elisp-and-libs ()
-    "Helm for Emacs, Elisp, and CL-library info pages."
-    (interactive)
-    (helm :sources '(helm-source-info-dash
-		     helm-source-info-eieio
-		     helm-source-info-elisp
-                     helm-source-info-cl))))
+   (use-package helm-info
+     :config
+     (setq helm-info-default-sources
+   	(append helm-info-default-sources
+   		'(helm-source-info-use-package))))
  #+end_src
 
-Similarly, many emacs features are hidden in separate info nodes.
+Add command searching across Emacs-related user manuals.
  #+begin_src emacs-lisp
 (when init-flag
   (defun helm-info-emacs-and-extra ()
@@ -5326,7 +5303,6 @@ Similarly, many emacs features are hidden in separate info nodes.
  #+end_src
 
 Explore loaded library files
-
 #+begin_src emacs-lisp
 (use-package helm
   :if init-flag
@@ -5510,11 +5486,10 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
                ("h h" . helm-info)
                ("h m" . man)
                ("h n" . tldr)
-               ("h i" . helm-info-elisp-and-libs)
+               ("h i" . helm-info-at-point)
+	       ("h e" . helm-info-emacs-and-extra)
                ("h o" . helm-info-org)
-               ("h e" . helm-info-emacs-and-extra)
-               ("h t" . helm-info-auctex)
-               ("h T" . helm-info-texinfo))))
+               ("h t" . helm-info-texinfo))))
 #+end_src
 *** COMMENT Python
 **** Do not inform me every time Python guesses indentation offset
