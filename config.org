@@ -213,12 +213,9 @@ Put the bootstrap code ([[https://github.com/raxod502/straight.el][as from strai
 :END:
 
 Now, I can setup =use-package= to simplify subsequent package configuration
-****************** TODO make always defer work
-****************** END
   #+begin_src emacs-lisp
 (eval-and-compile (straight-use-package 'use-package))
 ;;(setq use-package-always-defer t)
-(setq use-package-verbose nil)
 (setq use-package-compute-statistics t)
 (use-package diminish :straight t)
 (use-package bind-key)
@@ -226,7 +223,8 @@ Now, I can setup =use-package= to simplify subsequent package configuration
 
 *** Early loading of built-in notmuch version
 
-Latest version may not be compatible with system version of notmuch executable
+Latest version from package repositories may not be compatible with
+system version of notmuch executable
 
 #+begin_src emacs-lisp
 ;; Just for local Emacs version.
