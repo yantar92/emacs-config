@@ -8100,7 +8100,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
                :exit
                (propertize
                 (string-trim (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats)))
-                'face 'modus-themes-refine-green)))
+                'face 'modus-themes-intense-green)))
 	    (save-excursion
 	      (search-forward "Current contributors with tiny changes")
 	      (setq end-of-FSF-assign (point)))
@@ -8109,17 +8109,17 @@ I automated the check by examining WORG repository directly and checking the ~gi
                :exit
                (propertize
                 (string-trim (concat "FSF assignment pending; " (gethash email yant/org-devel-committers-stats)))
-                'face 'modus-themes-refine-red)))
+                'face 'modus-themes-nuanced-red)))
             (when (or (string-match-p sender all-committers)
 		      (string-match-p sender email))
               (throw
                :exit
                (propertize
                 (concat "Tiny change contributor; " (gethash email yant/org-devel-committers-stats))
-                'face 'modus-themes-refine-yellow))))
+                'face 'modus-themes-intense-yellow))))
           (propertize
            "Contributor status unknown"
-           'face 'modus-themes-refine-red)))))
+           'face 'modus-themes-intense-red)))))
 
   (defvar yant/org-devel-ml-stats nil
     "Hash table holding Org mailing list participant stats.")
@@ -8158,7 +8158,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
         (puthash sender (list (current-time) first-mention email-count) yant/org-devel-ml-stats))
       (propertize
        (format "In Org ML since %s (%s messages)" first-mention email-count)
-       'face 'mpd-first-field-face)))
+       'face 'modus-themes-mark-alt)))
 
   (defvar yant/org-devel-maintainer-stats nil
     "Hash table holding Org maintainer stats.")
@@ -8197,7 +8197,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
       (when maintained-files
         (propertize
          (format "Maintaining: %s" maintained-files)
-         'face 'modus-themes-grue-background-intense))))
+         'face 'region))))
 
   (defun yant/notmuch-show-highlight-contribution-status ()
     "Indicate contributor status for Org ML.
@@ -8317,11 +8317,11 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
 	   (let (lists)
              (goto-char (point-min))
              (when (save-excursion (search-forward "emacs-orgmode@gnu.org" nil t))
-               (push (propertize "ML: Org mode" 'face 'modus-themes-fringe-cyan) lists))
+               (push (propertize "ML: Org mode" 'face 'modus-themes-subtle-cyan) lists))
              (when (save-excursion (search-forward "help-gnu-emacs@gnu.org" nil t))
-               (push (propertize "ML: Help GNU Emacs" 'face 'modus-themes-tab-backdrop) lists))
+               (push (propertize "ML: Help GNU Emacs" 'face 'modus-themes-subtle-green) lists))
              (when (save-excursion (search-forward "emacs-devel@gnu.org" nil t))
-               (push (propertize "ML: Emacs devel" 'face 'modus-themes-fringe-magenta) lists))
+               (push (propertize "ML: Emacs devel" 'face 'modus-themes-subtle-magenta) lists))
              (when (save-excursion (search-forward "emacs-tangents@gnu.org" nil t))
                (push (propertize "ML: Emacs tangents" 'face 'modus-themes-intense-yellow) lists))
              (when (save-excursion (search-forward "emacs-gc-stats@gnu.org" nil t))
@@ -8329,9 +8329,9 @@ This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
              (when (save-excursion (search-forward "@debbugs.gnu.org" nil t))
                (push (propertize "Debbugs" 'face 'modus-themes-mark-alt) lists))
              (when (save-excursion (re-search-forward "\\([^ ]+\\) <[^<@ ]+@noreply\\.github\\.com" nil t))
-               (push (propertize (format "Github: %s" (match-string 1)) 'face 'modus-themes-refine-magenta) lists))
+               (push (propertize (format "Github: %s" (match-string 1)) 'face 'modus-themes-intense-magenta) lists))
              (when (save-excursion (re-search-forward "\\([^@ ]+\\)@lists\\.sr\\.ht" nil t))
-               (push (propertize (format "SourceHut: %s" (match-string 1)) 'face 'modus-themes-diff-changed) lists))
+               (push (propertize (format "SourceHut: %s" (match-string 1)) 'face 'modus-themes-mark-sel) lists))
              lists)))
       (put-text-property
        (point-min) (1+ (point-min))
