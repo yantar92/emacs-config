@@ -237,7 +237,7 @@ system version of notmuch executable
 :ID:       c08a1b4f-17b8-4c4e-ba94-f49e8471cc3c
 :END:
 
-Load org to make sure that obsolete built-in org version is not used.
+Load org to make sure that older built-in org version is not used.
 The main org-mode config is provided [[id:58045c39-ffd5-4ccc-bc9d-49048c437f42][later]].
 Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to make sure that =org-plus-contrib= is used any time another packages requires =org=.
 #+begin_src emacs-lisp
@@ -307,7 +307,9 @@ _R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_
 #+END_SRC
 *** =.emacs.d= layout
 
-By default, there is no convention about file names and placement in =.emacs.d=. The result is ultimate mess once one install many different packages. Below, I am trying to organise what I can.
+By default, there is no convention about file names and placement in
+=.emacs.d=. The result is ultimate mess once one install many different
+packages. Below, I am trying to organise what I can.
 
 **** User customisation file
 :PROPERTIES:
@@ -315,8 +317,6 @@ By default, there is no convention about file names and placement in =.emacs.d=.
 :END:
 
 Keep customisation away from =init.el= in a separate file.
-****************** TODO use :custom use-package keyword for setting customisation
-****************** END
   #+begin_src emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (load custom-file)
