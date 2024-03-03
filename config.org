@@ -14903,14 +14903,6 @@ The subheadings below such a headlines are promoted up *1 level*.
 :ID:       6584931a-f8b6-4d2b-8ce2-332d03266c13
 :END:
 
-Use metropolis by default
-#+begin_src emacs-lisp
-(use-package ox-beamer
-  :if init-flag
-  :custom
-  (org-beamer-theme "[numbering=fraction,block=fill,sectionpage=none]metropolis"))
-#+end_src
-
 Use my own version of block environment
 #+begin_src emacs-lisp
 (use-package ox-beamer
