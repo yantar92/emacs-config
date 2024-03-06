@@ -352,18 +352,6 @@ Keep customisation away from =init.el= in a separate file.
 :ID:       7b9a8c35-f3f9-4390-8e5e-fb863abd3f8b
 :END:
 
-*** Extra functions for association lists
-:PROPERTIES:
-:ID:       3967e7cf-4152-4807-bedb-7f6df1312b73
-:END:
-****************** TODO study functions
-****************** END
-#+begin_src emacs-lisp
-  (use-package asoc
-    :demand t
-    :straight (asoc.el :type git :host github :repo "troyp/asoc.el"))
-#+end_src
-
 *** COMMENT Hash table library
 :PROPERTIES:
 :CREATED:  [2019-08-25 Sun 19:32]
@@ -9340,22 +9328,21 @@ I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it doe
   (use-package doct
     :defer t
     :config
-    (asoc-put! org-capture-templates
-	       "j"
-               (cdar (doct '("Journal entry"
-			     :keys "j"
-			     :type entry
-			     :file yant/org-journal-file
-			     :datetree t
-			     :clock-in t
-			     :clock-resume t
-			     :jump-to-captured t
-			     :template
-			     ("* %?"
-			      ":PROPERTIES:"
-			      "CREATED: %U"
-			      ":END:\n"))))
-               'replace)))
+    (setf
+     (alist-get "j" org-capture-templates nil nil #'equal)
+     (cdar (doct '("Journal entry"
+		   :keys "j"
+		   :type entry
+		   :file yant/org-journal-file
+		   :datetree t
+		   :clock-in t
+		   :clock-resume t
+		   :jump-to-captured t
+		   :template
+		   ("* %?"
+		    ":PROPERTIES:"
+		    "CREATED: %U"
+		    ":END:\n")))))))
 #+end_src
 
 **** TODO Files
@@ -13629,15 +13616,15 @@ $0
 (use-package ya-org-capture
   :defer t
   :config
-  (asoc-put! org-capture-templates
-	     "n"
-             (cdar (doct
-		    '("NEXT item"
-		      :keys "n"
-                      :type entry
-                      :file "~/Org/inbox.org"
-                      :template
-                      ("* %(ya-org-capture/make-snippet \"todo_capture_\")"))))))
+  (setf
+   (alist-get "n" org-capture-templates nil nil #'equal)
+   (cdar (doct
+	  '("NEXT item"
+	    :keys "n"
+	    :type entry
+	    :file "~/Org/inbox.org"
+	    :template
+	    ("* %(ya-org-capture/make-snippet \"todo_capture_\")"))))))
 #+end_src
 ****** Singular TODO item
 :PROPERTIES:
@@ -13661,15 +13648,13 @@ TODO ${1:Title} `(s-trim-right (org-capture-fill-template "%a"))`
 $0 
 #+end_src
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "t"
-           (cdar  (doct '("Singular TODO item"
-			  :keys "t"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :template
-			  ("*  %(ya-org-capture/make-snippet \"todo_singular_capture_\")"))))
-           'replace)
+(setf (alist-get "t" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Singular TODO item"
+		     :keys "t"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :template
+		     ("*  %(ya-org-capture/make-snippet \"todo_singular_capture_\")")))))
 #+end_src
 ****** Note
 :PROPERTIES:
@@ -13697,16 +13682,14 @@ ${2:Following up: `(s-trim-right (org-capture-fill-template "%a"))`}
 $0
 #+end_src
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "N"
-           (cdar (doct
-		  '("Note"
-		    :keys "N"
-                    :type entry
-                    :file "~/Org/inbox.org"
-                    :template
-                    ("* %(ya-org-capture/make-snippet \"note_capture_\")"))))
-           :replace)
+(setf (alist-get "N" org-capture-templates nil nil #'equal)
+      (cdar (doct
+	     '("Note"
+	       :keys "N"
+	       :type entry
+	       :file "~/Org/inbox.org"
+	       :template
+	       ("* %(ya-org-capture/make-snippet \"note_capture_\")")))))
 #+end_src
 ****** Habit
 :PROPERTIES:
@@ -13716,25 +13699,23 @@ $0
 I default it to no logging.
 
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "h"
-           (cdar  (doct '("Habit"
-			  :keys "h"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :template
-			  ("* NEXT %?"
-                           "SCHEDULED: <%<%Y-%m-%d %a .+1d>>" 
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-                           ":STYLE: habit"
-                           ":REPEAT_TO_STATE: NEXT"
-                           ":LOGGING: DONE(!)"
-                           ":ARCHIVE: %%S_archive_%%y.org::*Habits"
-			   ":ORG-TIME-BONUS-ON-DONE: 20"
-			   ":END:"
-			   "\n"))))
-           'replace)
+(setf (alist-get "h" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Habit"
+		     :keys "h"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :template
+		     ("* NEXT %?"
+                      "SCHEDULED: <%<%Y-%m-%d %a .+1d>>" 
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+                      ":STYLE: habit"
+                      ":REPEAT_TO_STATE: NEXT"
+                      ":LOGGING: DONE(!)"
+                      ":ARCHIVE: %%S_archive_%%y.org::*Habits"
+		      ":ORG-TIME-BONUS-ON-DONE: 20"
+		      ":END:"
+		      "\n")))))
 #+end_src
 ****** Meeting/Event
 :PROPERTIES:
@@ -13744,17 +13725,15 @@ I default it to no logging.
 Scheduled event. It is saved to =org-gcal= org file.
 
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "M"
-           (cdar  (doct '("Scheduled event/meeting"
-			  :keys "M"
-			  :type entry
-			  :file "~/Org/schedule.org"
-			  :template
-			  ("* %? :%^G:"
-                           "%^T"
-			   "\n"))))
-           'replace)
+(setf (alist-get "M" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Scheduled event/meeting"
+		     :keys "M"
+		     :type entry
+		     :file "~/Org/schedule.org"
+		     :template
+		     ("* %? :%^G:"
+                      "%^T"
+		      "\n")))))
 #+end_src
 ****** Area of interest
 :PROPERTIES:
@@ -13764,61 +13743,59 @@ Scheduled event. It is saved to =org-gcal= org file.
 An area of knowledge I am interested in. Unlike project, this does not have a concrete outcome, but can be infinite depending on my interest in the topic.
 
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "R"
-           (cdar  (doct '("Area of interest"
-			  :keys "R"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-                          :category
-                          (lambda () (or (plist-get (plist-get org-capture-plist :doct-custom) :category-string)
-                                    (progn
-                                      (setf (plist-get (plist-get org-capture-plist :doct-custom)
-                                                       :category-string)
-                                            (completing-read
-                                             "Category: "
-                                             (org-ql-select (org-agenda-files t t)
-                                               '(property "CATEGORY")
-                                               :action (lambda () (substring-no-properties (org-entry-get (point) "CATEGORY"))))))
-                                      (plist-get (plist-get org-capture-plist :doct-custom)
-                                                 :category-string))))
-                          :area-title
-                          (lambda () (or (plist-get (plist-get org-capture-plist :doct-custom) :title-string)
-                                    (progn
-                                      (setf (plist-get (plist-get org-capture-plist :doct-custom)
-                                                       :title-string)
-                                            (completing-read
-                                             "Area title: "
-                                             (org-ql-select (org-agenda-files t t)
-                                               '(tags-local "AREA" "project")
-                                               :action (lambda () (substring-no-properties (org-get-heading t t t t))))))
-                                      (plist-get (plist-get org-capture-plist :doct-custom)
-                                                 :title-string))))
-			  :template
-			  ("* TODO %{area-title} :AREA:NOREFILE:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
-                           ":CATEGORY: %{category}[T]"
-			   ":END:"
-                           "# Summary note about the area. Should be updated regularly."
-                           "\n%?"
-                           ""
-                           "** NEXT Refile relevant bookmarks/tasks to new area %{area-title}"
-                           "** Notes :REFILE:"
-                           "# Notes about what I think about the topic\n"
-                           "** Bookmarks \ references :NOARCHIVE:REFILE:"
-                           "# Notes about what is known about the topic\n"
-                           "** No deadline :NODEADLINE:SKIP:REFILE:"
-                           ":PROPERTIES:"
-                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
-                           ":CATEGORY: %{category}[D]"
-                           ":END:"
-                           "*** NEXT Refile relevant tasks from more generic topics into %{area-title}"
-                           ))))
-           'replace)
+(setf (alist-get "R" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Area of interest"
+		     :keys "R"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :clock-in t
+		     :clock-resume t
+                     :category
+                     (lambda () (or (plist-get (plist-get org-capture-plist :doct-custom) :category-string)
+			       (progn
+				 (setf (plist-get (plist-get org-capture-plist :doct-custom)
+						  :category-string)
+				       (completing-read
+					"Category: "
+					(org-ql-select (org-agenda-files t t)
+					  '(property "CATEGORY")
+					  :action (lambda () (substring-no-properties (org-entry-get (point) "CATEGORY"))))))
+				 (plist-get (plist-get org-capture-plist :doct-custom)
+                                            :category-string))))
+                     :area-title
+                     (lambda () (or (plist-get (plist-get org-capture-plist :doct-custom) :title-string)
+			       (progn
+				 (setf (plist-get (plist-get org-capture-plist :doct-custom)
+						  :title-string)
+				       (completing-read
+					"Area title: "
+					(org-ql-select (org-agenda-files t t)
+					  '(tags-local "AREA" "project")
+					  :action (lambda () (substring-no-properties (org-get-heading t t t t))))))
+				 (plist-get (plist-get org-capture-plist :doct-custom)
+                                            :title-string))))
+		     :template
+		     ("* TODO %{area-title} :AREA:NOREFILE:"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+		      ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
+                      ":CATEGORY: %{category}[T]"
+		      ":END:"
+                      "# Summary note about the area. Should be updated regularly."
+                      "\n%?"
+                      ""
+                      "** NEXT Refile relevant bookmarks/tasks to new area %{area-title}"
+                      "** Notes :REFILE:"
+                      "# Notes about what I think about the topic\n"
+                      "** Bookmarks \ references :NOARCHIVE:REFILE:"
+                      "# Notes about what is known about the topic\n"
+                      "** No deadline :NODEADLINE:SKIP:REFILE:"
+                      ":PROPERTIES:"
+                      ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
+                      ":CATEGORY: %{category}[D]"
+                      ":END:"
+                      "*** NEXT Refile relevant tasks from more generic topics into %{area-title}"
+                      )))))
 #+end_src
 ****** Project
 :PROPERTIES:
@@ -13828,341 +13805,325 @@ An area of knowledge I am interested in. Unlike project, this does not have a co
 A large task that needs to be studied systematically. It has to have a concrete outcome
 
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "P"
-           (cdar  (doct '("Research project"
-			  :keys "P"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-			  :template
-			  ("* TODO %^{Project title} :%^G:project:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
-                           ":CATEGORY: %^{Category}"
-			   ":END:"
-                           " #project"
-                           "# A short summary about the project."
-                           "\n%?"
-                           "** TODO Notes :REFILE:"
-                           "# Notes about what I think about the topic\n"
-                           "** TODO Bookmarks \ references :NOARCHIVE:REFILE:"
-                           "# Notes about what is known about the topic\n"
-                           "** NEXT Action plan :NOARCHIVE:REFILE:"
-                           "# Action plan to complete the project.\n"
-                           "*** NEXT Add tasks to the project and refile relevant info/tasks"
-                           "** Sample condition :REFILE:NOARCHIVE:"
-                           "# Limited resources I need to complete the project."
-                           "** Methods :REFILE:NOARCHIVE:"
-                           "# Nontrivial methods used to execute the action plan."
-                           "** Exp data :REFILE:NOARCHIVE:"
-                           "# The raw experimental data is stored here on per-experiment basis"
-                           "** Results :REFILE:"
-                           "# The raw data is analysed here to be put into human-readable form (in non-trivial ways)."
-                           "# The data is organised by sample rather than by experiment to avoid dealing with experimental note mess."
-                           "# Plots, important observations and thoughs are coming here.\n"
-                           "** Paperwork :REFILE:"
-                           "** Presentations :REFILE:"
-                           "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
-                           ":PROPERTIES:"
-                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
-                           ":END:"))))
-           'replace)
+(setf (alist-get "P" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Research project"
+		     :keys "P"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :clock-in t
+		     :clock-resume t
+		     :template
+		     ("* TODO %^{Project title} :%^G:project:"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+		      ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
+                      ":CATEGORY: %^{Category}"
+		      ":END:"
+                      " #project"
+                      "# A short summary about the project."
+                      "\n%?"
+                      "** TODO Notes :REFILE:"
+                      "# Notes about what I think about the topic\n"
+                      "** TODO Bookmarks \ references :NOARCHIVE:REFILE:"
+                      "# Notes about what is known about the topic\n"
+                      "** NEXT Action plan :NOARCHIVE:REFILE:"
+                      "# Action plan to complete the project.\n"
+                      "*** NEXT Add tasks to the project and refile relevant info/tasks"
+                      "** Sample condition :REFILE:NOARCHIVE:"
+                      "# Limited resources I need to complete the project."
+                      "** Methods :REFILE:NOARCHIVE:"
+                      "# Nontrivial methods used to execute the action plan."
+                      "** Exp data :REFILE:NOARCHIVE:"
+                      "# The raw experimental data is stored here on per-experiment basis"
+                      "** Results :REFILE:"
+                      "# The raw data is analysed here to be put into human-readable form (in non-trivial ways)."
+                      "# The data is organised by sample rather than by experiment to avoid dealing with experimental note mess."
+                      "# Plots, important observations and thoughs are coming here.\n"
+                      "** Paperwork :REFILE:"
+                      "** Presentations :REFILE:"
+                      "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
+                      ":PROPERTIES:"
+                      ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
+                      ":END:")))))
 
-(asoc-put! org-capture-templates
-	   "G"
-           (cdar  (doct '("General project"
-			  :keys "G"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-			  :template
-			  ("* TODO #project %^{Project title} :%^G:project:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-			   ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
-                           ":CATEGORY: %^{Category}"
-			   ":END:"
-                           "# A short summary about the project."
-                           "\n%?"
-                           "** TODO Notes :REFILE:"
-                           "# Notes about what I think about the topic\n"
-                           "** TODO Bookmarks \ references :NOARCHIVE:REFILE:"
-                           "# Notes about what is known about the topic\n"
-                           "** NEXT Action plan :NOARCHIVE:REFILE:"
-                           "# Action plan to complete the project.\n"
-                           "*** NEXT Add tasks to the project and refile relevant info/tasks"
-                           "** Methods :REFILE:NOARCHIVE:"
-                           "# Nontrivial methods used to execute the action plan."
-                           "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
-                           ":PROPERTIES:"
-                           ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
-                           ":END:"))))
-           'replace)
+(setf (alist-get "G" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("General project"
+		     :keys "G"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :clock-in t
+		     :clock-resume t
+		     :template
+		     ("* TODO #project %^{Project title} :%^G:project:"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+		      ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
+                      ":CATEGORY: %^{Category}"
+		      ":END:"
+                      "# A short summary about the project."
+                      "\n%?"
+                      "** TODO Notes :REFILE:"
+                      "# Notes about what I think about the topic\n"
+                      "** TODO Bookmarks \ references :NOARCHIVE:REFILE:"
+                      "# Notes about what is known about the topic\n"
+                      "** NEXT Action plan :NOARCHIVE:REFILE:"
+                      "# Action plan to complete the project.\n"
+                      "*** NEXT Add tasks to the project and refile relevant info/tasks"
+                      "** Methods :REFILE:NOARCHIVE:"
+                      "# Nontrivial methods used to execute the action plan."
+                      "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
+                      ":PROPERTIES:"
+                      ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
+                      ":END:")))))
 #+end_src
 ****** Conference presentation/poster
 :PROPERTIES:
 :ID:       7e2d24f4-ae20-409a-ac3b-53bd34a42cd6
 :END:
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "p"
-           (cdar  (doct '("Conference presentation/poster"
-			  :keys "p"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-			  :template
-			  ("* NEXT #%^{type|presentation|poster} %^{Title of presentation/poster} :project:conference:NOARCHIVE:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-                           ":ATTACH_DIR_INHERIT: t"
-			   ":END:"
-                           "** Bookmarks \ References :REFILE:"
-                           "** NEXT Abstract"
-                           "** TODO Revise"
-                           ":PROPERTIES:"
-                           ":REPEAT_TO_STATE: NEXT"
-                           ":LOGGING: nil"
-                           ":END:"
-                           "** TODO Submit abstract"
-                           "DEADLINE: %^t"
-                           "** TODO Get accepted"
-                           "** TODO Paperwork"
-                           "*** TODO Register for the conference"
-                           "*** TODO Apply for conference funding"
-                           "*** TODO Book a flight"
-                           "*** TODO Book accomodation"
-                           "** TODO Presentation draft"
-                           "** TODO Trial presentation"
-                           "** TODO Print poster/slides"
-                           "** TODO Present"
-                           "** TODO Submit the claim"
-                           "** Get reimbursement"))))
-           'replace)
+(setf (alist-get "p" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Conference presentation/poster"
+		     :keys "p"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :clock-in t
+		     :clock-resume t
+		     :template
+		     ("* NEXT #%^{type|presentation|poster} %^{Title of presentation/poster} :project:conference:NOARCHIVE:"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+                      ":ATTACH_DIR_INHERIT: t"
+		      ":END:"
+                      "** Bookmarks \ References :REFILE:"
+                      "** NEXT Abstract"
+                      "** TODO Revise"
+                      ":PROPERTIES:"
+                      ":REPEAT_TO_STATE: NEXT"
+                      ":LOGGING: nil"
+                      ":END:"
+                      "** TODO Submit abstract"
+                      "DEADLINE: %^t"
+                      "** TODO Get accepted"
+                      "** TODO Paperwork"
+                      "*** TODO Register for the conference"
+                      "*** TODO Apply for conference funding"
+                      "*** TODO Book a flight"
+                      "*** TODO Book accomodation"
+                      "** TODO Presentation draft"
+                      "** TODO Trial presentation"
+                      "** TODO Print poster/slides"
+                      "** TODO Present"
+                      "** TODO Submit the claim"
+                      "** Get reimbursement")))))
 #+end_src
 ****** Research publication
 :PROPERTIES:
 :ID:       dddf6e0e-ddb4-4290-a661-76e289ccf632
 :END:
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "J"
-           (cdar  (doct '("Journal publication"
-			  :keys "J"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-			  :template
-			  ("* NEXT #paper %^{Aproximate title of the paper} :publication:project:NOARCHIVE:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-                           ":ATTACH_DIR_INHERIT: t"
-			   ":END:"
-                           "\n%?"
-                           "** NEXT Outline"
-                           "DEADLINE: %^t"
-                           "*** TODO Abstract"
-                           "*** TODO Graphical abstract"
-                           "*** NEXT Introduction"
-                           "*** TODO Methods"
-                           "*** TODO Results"
-                           "*** TODO Discussion"
-                           "*** TODO Conclusions"
-                           "** TODO Email manuscript to co-authors"
-                           "** TODO Revise"
-                           ":PROPERTIES:"
-                           ":REPEAT_TO_STATE: NEXT"
-                           ":LOGGING: nil"
-                           ":END:"
-                           "** TODO Cover letter to coordinating editor"
-                           "# Why should this manuscript be published in *the* journal."
-                           "** TODO Upload data to zenodo"
-                           "** TODO Suggest reviewers"
-                           "** TODO Submit"
-                           "** TODO Revise"
-                           ":PROPERTIES:"
-                           ":REPEAT_TO_STATE: NEXT"
-                           ":LOGGING: nil"
-                           ":END:"
-                           "** TODO Get accepted"
-                           "** TODO Publish on ArXiv"
-                           "** TODO Get published"
-                           "** TODO Add to publication list"
-                           "** TODO Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]"))))
-           'replace)
+(setf (alist-get "J" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Journal publication"
+		     :keys "J"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :clock-in t
+		     :clock-resume t
+		     :template
+		     ("* NEXT #paper %^{Aproximate title of the paper} :publication:project:NOARCHIVE:"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+                      ":ATTACH_DIR_INHERIT: t"
+		      ":END:"
+                      "\n%?"
+                      "** NEXT Outline"
+                      "DEADLINE: %^t"
+                      "*** TODO Abstract"
+                      "*** TODO Graphical abstract"
+                      "*** NEXT Introduction"
+                      "*** TODO Methods"
+                      "*** TODO Results"
+                      "*** TODO Discussion"
+                      "*** TODO Conclusions"
+                      "** TODO Email manuscript to co-authors"
+                      "** TODO Revise"
+                      ":PROPERTIES:"
+                      ":REPEAT_TO_STATE: NEXT"
+                      ":LOGGING: nil"
+                      ":END:"
+                      "** TODO Cover letter to coordinating editor"
+                      "# Why should this manuscript be published in *the* journal."
+                      "** TODO Upload data to zenodo"
+                      "** TODO Suggest reviewers"
+                      "** TODO Submit"
+                      "** TODO Revise"
+                      ":PROPERTIES:"
+                      ":REPEAT_TO_STATE: NEXT"
+                      ":LOGGING: nil"
+                      ":END:"
+                      "** TODO Get accepted"
+                      "** TODO Publish on ArXiv"
+                      "** TODO Get published"
+                      "** TODO Add to publication list"
+                      "** TODO Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]")))))
 #+end_src
 ****** Co-authored research publication
 :PROPERTIES:
 :ID:       478ccd86-bfdf-4bc1-902a-e0c5d7bb9413
 :END:
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "A"
-           (cdar  (doct '("Co-authored journal publication"
-			  :keys "A"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-			  :template
-			  ("* NEXT %^{Aproximate title of the paper} :publication:project:NOARCHIVE:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-                           ":ATTACH_DIR_INHERIT: t"
-			   ":END:"
-                           " #paper #co-author"
-                           "\n%?"
-                           "** Paper versions"
-                           "** TODO Revise"
-                           ":PROPERTIES:"
-                           ":REPEAT_TO_STATE: NEXT"
-                           ":LOGGING: nil"
-                           ":END:"
-                           "** TODO Submit"
-                           "** TODO Revise"
-                           ":PROPERTIES:"
-                           ":REPEAT_TO_STATE: NEXT"
-                           ":LOGGING: nil"
-                           ":END:"
-                           "** TODO Check references"
-                           "** TODO Get accepted"
-                           "** TODO Get published"
-                           "** TODO Add to publication list"
-                           "** TODO Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]"))))
-           'replace)
+(setf (alist-get "A" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Co-authored journal publication"
+		     :keys "A"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :clock-in t
+		     :clock-resume t
+		     :template
+		     ("* NEXT %^{Aproximate title of the paper} :publication:project:NOARCHIVE:"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+                      ":ATTACH_DIR_INHERIT: t"
+		      ":END:"
+                      " #paper #co-author"
+                      "\n%?"
+                      "** Paper versions"
+                      "** TODO Revise"
+                      ":PROPERTIES:"
+                      ":REPEAT_TO_STATE: NEXT"
+                      ":LOGGING: nil"
+                      ":END:"
+                      "** TODO Submit"
+                      "** TODO Revise"
+                      ":PROPERTIES:"
+                      ":REPEAT_TO_STATE: NEXT"
+                      ":LOGGING: nil"
+                      ":END:"
+                      "** TODO Check references"
+                      "** TODO Get accepted"
+                      "** TODO Get published"
+                      "** TODO Add to publication list"
+                      "** TODO Add to XJTU university system [[id:83411a7a-dc7b-4fda-be54-4dd6aeaf58b0][XJTU: Documents and application website]]")))))
 #+end_src
 ****** Research funding application
 :PROPERTIES:
 :ID:       956894a1-f365-416b-ab93-93c1f42c9f3f
 :END:
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "F"
-           (cdar  (doct '("Funding/grant application"
-			  :keys "F"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-			  :template
-			  ("* TODO %^{Project title} :%^G:NOARCHIVE:grant:proposal:project:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-                           ":ATTACH_DIR_INHERIT: t"
-			   ":END:"
-                           "# A short summary about the proposal."
-                           "# Reference proposal template: [[att-id:a4b82837-bc08-47b5-91fa-edd738468f1c:application2.pdf][att-id:Example of funding application to NSFC]]"
-                           "# I should not forget next time that I will need to fill a form and get the school stamp before submitting the proposal for initial review."
-                           " #project_proposal #grant #funding_application #NSFC"
-                           "\n%?"
-                           "** TODO *Important*, at least a week before deadline Prepare university intellectual property paperwork"
-                           "- [ ] get supervisor's signature"
-                           "- [ ] get school approval"
-                           "** TODO Proposal outline"
-                           "*** TODO Budget"
-                           "*** TODO Research profile"
-                           "*** TODO Summary"
-                           "*** NEXT Introduction and motivation of research"
-                           "# Link to example: [[att-id:a4b82837-bc08-47b5-91fa-edd738468f1c:Ihor-2019-final2.pdf][#proposal Self-ion irradiation damage in additive manufactured single crystalline Ni-based superalloy DD407:Ihor-2019-final2.pdf]]"
-                           "*** TODO Research goal, objective, and content"
-                           "**** Research goal"
-                           "**** Research objective"
-                           "**** Details of how to solve the research objective"
-                           "*** TODO Research plan and practicability analysis"
-                           "**** Research plan"
-                           "**** Practicability analysis"
-                           "*** TODO Unique features and innovation point"
-                           "*** TODO Annual research plan and expected results (including the activity of academic exchange, international collaboration, etc.)"
-                           "*** TODO Background, prior work, and availability of equipment"
-                           "**** Research background or prior work related to the proposal"
-                           "**** Availability of equipment"
-                           "*** TODO References"
-                           "** TODO Revise"
-                           ":PROPERTIES:"
-                           ":REPEAT_TO_STATE: NEXT"
-                           ":LOGGING: nil"
-                           ":END:"
-                           "** TODO Submit proposal to university review"
-                           "** TODO Submit the grant application"
-                           "** Get accepted"))))
-           'replace)
+(setf (alist-get "F" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Funding/grant application"
+		     :keys "F"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :clock-in t
+		     :clock-resume t
+		     :template
+		     ("* TODO %^{Project title} :%^G:NOARCHIVE:grant:proposal:project:"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+                      ":ATTACH_DIR_INHERIT: t"
+		      ":END:"
+                      "# A short summary about the proposal."
+                      "# Reference proposal template: [[att-id:a4b82837-bc08-47b5-91fa-edd738468f1c:application2.pdf][att-id:Example of funding application to NSFC]]"
+                      "# I should not forget next time that I will need to fill a form and get the school stamp before submitting the proposal for initial review."
+                      " #project_proposal #grant #funding_application #NSFC"
+                      "\n%?"
+                      "** TODO *Important*, at least a week before deadline Prepare university intellectual property paperwork"
+                      "- [ ] get supervisor's signature"
+                      "- [ ] get school approval"
+                      "** TODO Proposal outline"
+                      "*** TODO Budget"
+                      "*** TODO Research profile"
+                      "*** TODO Summary"
+                      "*** NEXT Introduction and motivation of research"
+                      "# Link to example: [[att-id:a4b82837-bc08-47b5-91fa-edd738468f1c:Ihor-2019-final2.pdf][#proposal Self-ion irradiation damage in additive manufactured single crystalline Ni-based superalloy DD407:Ihor-2019-final2.pdf]]"
+                      "*** TODO Research goal, objective, and content"
+                      "**** Research goal"
+                      "**** Research objective"
+                      "**** Details of how to solve the research objective"
+                      "*** TODO Research plan and practicability analysis"
+                      "**** Research plan"
+                      "**** Practicability analysis"
+                      "*** TODO Unique features and innovation point"
+                      "*** TODO Annual research plan and expected results (including the activity of academic exchange, international collaboration, etc.)"
+                      "*** TODO Background, prior work, and availability of equipment"
+                      "**** Research background or prior work related to the proposal"
+                      "**** Availability of equipment"
+                      "*** TODO References"
+                      "** TODO Revise"
+                      ":PROPERTIES:"
+                      ":REPEAT_TO_STATE: NEXT"
+                      ":LOGGING: nil"
+                      ":END:"
+                      "** TODO Submit proposal to university review"
+                      "** TODO Submit the grant application"
+                      "** Get accepted")))))
 #+end_src
 ****** Research funding application (short)
 :PROPERTIES:
 :ID:       dd64eea8-74b6-472a-9ebc-ae4bf0a02657
 :END:
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "f"
-           (cdar  (doct '("Funding/grant application (small/postdoc)"
-			  :keys "f"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :clock-in t
-			  :clock-resume t
-			  :template
-			  ("* TODO %^{Project title} :%^G:NOARCHIVE:grant:proposal:project:"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-                           ":ATTACH_DIR_INHERIT: t"
-			   ":END:"
-                           "# A short summary about the proposal."
-                           "# Reference proposal template: [[att-id:83877bd0-dcd1-4b4e-a704-613efba2809f:Proposal-Radchenko Ihor-010201.doc][att-id:Example of funding application for postocs]]"
-                           "# I should not forget next time that I will need to fill a form and get the school stamp before submitting the proposal for initial review."
-                           " #project_proposal #grant #funding_application #postdoc"
-                           "\n%?"
-                           "** TODO *Important*, at least a week before deadline Prepare university intellectual property paperwork"
-                           "- [ ] get supervisor's signature"
-                           "- [ ] get school approval"
-                           "** TODO Proposal outline"
-                           "*** TODO Summary"
-                           "*** TODO Project research plan"
-                           "**** TODO Research goal"
-                           "**** TODO Research content"
-                           "**** TODO Research methods or technical routes to be adopted"
-                           "**** TODO Research plan and expected progress"
-                           " *Research plan*"
-                           ""
-                           " *Expected progress*"
-                           "*** TODO Research basis / motivation + References"
-                           "**** TODO Introduction / motivation"
-                           "**** TODO References"
-                           "*** TODO Project innovation"
-                           "*** TODO Budget"
-                           "** TODO Revise"
-                           ":PROPERTIES:"
-                           ":REPEAT_TO_STATE: NEXT"
-                           ":LOGGING: nil"
-                           ":END:"
-                           "** TODO Submit proposal to university review"
-                           "** TODO Submit the grant application"
-                           "** Get accepted"))))
-           'replace)
+(setf (alist-get "f" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Funding/grant application (small/postdoc)"
+		     :keys "f"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :clock-in t
+		     :clock-resume t
+		     :template
+		     ("* TODO %^{Project title} :%^G:NOARCHIVE:grant:proposal:project:"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+                      ":ATTACH_DIR_INHERIT: t"
+		      ":END:"
+                      "# A short summary about the proposal."
+                      "# Reference proposal template: [[att-id:83877bd0-dcd1-4b4e-a704-613efba2809f:Proposal-Radchenko Ihor-010201.doc][att-id:Example of funding application for postocs]]"
+                      "# I should not forget next time that I will need to fill a form and get the school stamp before submitting the proposal for initial review."
+                      " #project_proposal #grant #funding_application #postdoc"
+                      "\n%?"
+                      "** TODO *Important*, at least a week before deadline Prepare university intellectual property paperwork"
+                      "- [ ] get supervisor's signature"
+                      "- [ ] get school approval"
+                      "** TODO Proposal outline"
+                      "*** TODO Summary"
+                      "*** TODO Project research plan"
+                      "**** TODO Research goal"
+                      "**** TODO Research content"
+                      "**** TODO Research methods or technical routes to be adopted"
+                      "**** TODO Research plan and expected progress"
+                      " *Research plan*"
+                      ""
+                      " *Expected progress*"
+                      "*** TODO Research basis / motivation + References"
+                      "**** TODO Introduction / motivation"
+                      "**** TODO References"
+                      "*** TODO Project innovation"
+                      "*** TODO Budget"
+                      "** TODO Revise"
+                      ":PROPERTIES:"
+                      ":REPEAT_TO_STATE: NEXT"
+                      ":LOGGING: nil"
+                      ":END:"
+                      "** TODO Submit proposal to university review"
+                      "** TODO Submit the grant application"
+                      "** Get accepted")))))
 #+end_src
 ****** New contact 
 :PROPERTIES:
 :ID:       a87ca6dc-eb7a-45ff-bd7a-0ae81aaaaf55
 :END:
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "C"
-           (cdar  (doct '("Contact"
-			  :keys "C"
-			  :type entry
-			  :file "~/Org/contacts.org"
-			  :template
-			  ("* %(org-contacts-template-name) %?"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-			   ":EMAIL: %(org-contacts-template-email)"
-			   ":END:"))))
-           'replace)
+(setf (alist-get "C" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Contact"
+		     :keys "C"
+		     :type entry
+		     :file "~/Org/contacts.org"
+		     :template
+		     ("* %(org-contacts-template-name) %?"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+		      ":EMAIL: %(org-contacts-template-email)"
+		      ":END:")))))
 #+end_src
 ****** Experimental note 
 :PROPERTIES:
@@ -14172,21 +14133,19 @@ A large task that needs to be studied systematically. It has to have a concrete 
 ****************** END
  
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "E"
-           (cdar  (doct '("Experiment note"
-			  :keys "X"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :template
-			  ("* TODO %u %^{Experiment title}"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-			   ":END:"
-                           "- [ ] copy the data to my laptop"
-                           "- [ ] update sample condition in the project notes"
-                           "%?"))))
-           'replace)
+(setf (alist-get "E" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Experiment note"
+		     :keys "X"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :template
+		     ("* TODO %u %^{Experiment title}"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+		      ":END:"
+                      "- [ ] copy the data to my laptop"
+                      "- [ ] update sample condition in the project notes"
+                      "%?")))))
 #+end_src
 
 Reverse the order of template to make them appear as I put them in the list above
@@ -14195,43 +14154,41 @@ Reverse the order of template to make them appear as I put them in the list abov
 #+end_src
 ****** Travel
 #+begin_src emacs-lisp
-(asoc-put! org-capture-templates
-	   "T"
-           (cdar  (doct '("Travel"
-			  :keys "T"
-			  :type entry
-			  :file "~/Org/inbox.org"
-			  :template
-			  ("* TODO Travel to %^{Destination}"
-			   ":PROPERTIES:"
-			   ":CREATED: %U"
-                           ":ATTACH_DIR_INHERIT: t"
-			   ":END:"
-                           "# A short note about destination and why I want to go."
-                           "%?"
-                           "** TODO Check visa and other legal requirements"
-                           "** TODO Mark interesting places to visit on the map"
-                           "** Notes and photos"
-                           "** TODO Check people I want to visit"
-                           "** TODO Check hotels near interesting places"
-                           "** TODO Estimate transportation routes"
-                           "** TODO Estimate rough itenerary to get time frames"
-                           "** TODO Allocate vacation"
-                           "** TODO Get visa / plan how to get it"
-                           "** TODO Get tickets"
-                           "** TODO Pack"
-                           "- [ ] shoe brush and cloth brush (small)"
-                           "- [ ] toothbrush (but no liquid)"
-                           "- [ ] nailcut"
-                           "- [ ] chargers: mobile, watches"
-                           "- [ ] power bank"
-                           "- [ ] power adaptor"
-                           "- [ ] deodorant, shampoo"
-                           "- [ ] tissue (not all plces are that good)"
-                           "- [ ] dental floss"
-                           "- [ ] headache pills"
-                           "- [ ] clothes according to the plan and timing"))))
-           'replace)
+(setf (alist-get "T" org-capture-templates nil nil #'equal)
+      (cdar  (doct '("Travel"
+		     :keys "T"
+		     :type entry
+		     :file "~/Org/inbox.org"
+		     :template
+		     ("* TODO Travel to %^{Destination}"
+		      ":PROPERTIES:"
+		      ":CREATED: %U"
+                      ":ATTACH_DIR_INHERIT: t"
+		      ":END:"
+                      "# A short note about destination and why I want to go."
+                      "%?"
+                      "** TODO Check visa and other legal requirements"
+                      "** TODO Mark interesting places to visit on the map"
+                      "** Notes and photos"
+                      "** TODO Check people I want to visit"
+                      "** TODO Check hotels near interesting places"
+                      "** TODO Estimate transportation routes"
+                      "** TODO Estimate rough itenerary to get time frames"
+                      "** TODO Allocate vacation"
+                      "** TODO Get visa / plan how to get it"
+                      "** TODO Get tickets"
+                      "** TODO Pack"
+                      "- [ ] shoe brush and cloth brush (small)"
+                      "- [ ] toothbrush (but no liquid)"
+                      "- [ ] nailcut"
+                      "- [ ] chargers: mobile, watches"
+                      "- [ ] power bank"
+                      "- [ ] power adaptor"
+                      "- [ ] deodorant, shampoo"
+                      "- [ ] tissue (not all plces are that good)"
+                      "- [ ] dental floss"
+                      "- [ ] headache pills"
+                      "- [ ] clothes according to the plan and timing")))))
 #+end_src
 
 ***** Capturing references (websites, journal papers, files, etc)
@@ -14300,10 +14257,8 @@ I define two link types for capturing:
                                         :space ""
 					:immediate-finish t))))))
     (dolist (template templates)
-      (asoc-put! org-capture-templates
-		 (car template)
-		 (cdr  template)
-		 'replace))))
+      (setf (alist-get (car template) org-capture-templates nil nil #'equal)
+	    (cdr  template)))))
 #+end_src
 
 - Link to email :: It has =:EMAIL-SOURCE:= with link to =notmuch= email (more about working with emails in [[id:e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326][Notmuch interaction]]). I also mark with tag =EMAIL=.
@@ -14329,10 +14284,8 @@ I define two link types for capturing:
                                       :space ""
 				      :immediate-finish t))))))
   (dolist (template templates)
-    (asoc-put! org-capture-templates
-	       (car template)
-	       (cdr  template)
-	       'replace)))
+    (setf (alist-get (car template) org-capture-templates nil nil #'equal)
+	  (cdr  template))))
 #+end_src
 
 #+begin_src emacs-lisp

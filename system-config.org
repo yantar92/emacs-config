@@ -8862,8 +8862,6 @@ dev-vcs/git-repair
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-debug/gdb
 #+end_src
-
-
 ** Plantuml
 :PROPERTIES:
 :ID:       fd676a64-3423-4074-b3e3-81017343ba07
