@@ -8335,7 +8335,7 @@ Make Emacs ERC automatically re-connect when it looses server connection.
     (push '("Upload selected" . yant/helm-show-kill-ring-upload-action)
 	  (cdr helm-kill-ring-actions))))
 #+end_src
-** COMMENT Matrix client =ement.el=
+** Matrix client =ement.el=
 [[id:Github-alphapapa-alphapapa-ement-el-9d2][alphapapa [Github] alphapapa/ement.el: Matrix client for Emacs]]
 [2022-04-15 Fri] Setting ~print-circle~ to t in order to fix memory leakage error.
 #+begin_src emacs-lisp
@@ -8373,38 +8373,6 @@ Make Emacs ERC automatically re-connect when it looses server connection.
     (bind-key "M-g M-l" #'ement-list-rooms global-map)))
 #+end_src
 *** Command loop in room list buffer
-**** Move between rooms only
-#+begin_src emacs-lisp
-(use-package ement-room
-  :config
-  (defun yant/ement-room-forward (&optional backward)
-    "Go to next room in Room list.
-Go backward with prefix argument BACKWARD."
-    (interactive "P")
-    ;; Ement room lines have `magit-section' type for some reason.
-    (let ((start-at-boundary (eq (point) (if backward (point-max) (point-min)))))
-      (beginning-of-line (if backward 0 2))
-      (while (and (not (eq 'magit-section (oref (magit-current-section) type)))
-		  (not (if backward (bobp) (eobp))))
-        (beginning-of-line (if backward 0 2)))
-      (when (eq 'magit-section (oref (magit-current-section) type))
-        ;; Move to clickable part of the room line.
-        (unless (get-text-property (point) 'button)
-	  (goto-char (next-single-property-change (point) 'button))))
-      (unless (or start-at-boundary
-		  (eq 'magit-section (oref (magit-current-section) type)))
-        (goto-char (if backward (point-max) (point-min)))
-        (yant/ement-room-forward backward))))
-
-  (defun yant/ement-room-backward ()
-    "Go to previous room in Room list."
-    (interactive)
-    (funcall-interactively #'yant/ement-room-forward t))
-
-  (meta-defun meta-down :mode ement-room-list-mode yant/ement-room-forward)
-  (meta-defun meta-up :mode ement-room-list-mode yant/ement-room-backward))
-#+end_src
-
 *** Notifications in ement
 
 #+begin_src emacs-lisp
