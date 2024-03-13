@@ -8874,6 +8874,14 @@ dev-debug/gdb
 media-gfx/plantuml
 #+end_src
 
+** Clojure
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-lang/clojure
+dev-java/leiningen-bin
+#+end_src
+
+
 * Archived
 
 ** COMMENT Compositor (compton) :COMMON:
