@@ -346,36 +346,6 @@ Keep customisation away from =init.el= in a separate file.
   (emacs-gc-stats-mode +1))
 #+end_src
 
-** SOMEDAY Elisp libraries to be used further :SKIP_PROJECT_REVIEW:SOMEDAY:
-:PROPERTIES:
-:CREATED:  [2020-04-22 Wed 16:39]
-:ID:       7b9a8c35-f3f9-4390-8e5e-fb863abd3f8b
-:END:
-
-*** COMMENT Hash table library
-:PROPERTIES:
-:CREATED:  [2019-08-25 Sun 19:32]
-:ID:       c2f4a307-171c-4eee-aef0-e1ee27dd2e47
-:END:
-:LOGBOOK:
-- Refiled on [2020-05-04 Mon 22:44]
-:END:
-
-#+begin_src emacs-lisp
-(use-package ht
-  :straight t)
-#+end_src
-
-*** String manipulation library
-    :PROPERTIES:
-    :ID:       a373281e-87dc-4dc4-8386-a408168e5c4f
-    :END:
-
-#+begin_src emacs-lisp
-(use-package s
-  :demand t
-  :straight t)
-#+end_src
 ** Performance
 :PROPERTIES:
 :CREATED:  [2018-09-12 Wed 19:48]
@@ -669,12 +639,12 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
   :straight (centered-window-mode :host github :repo "anler/centered-window-mode")
   :after boon
   :config
-  (diminish 'centered-window-mode (s-concat " "
-					    (propertize (all-the-icons-material "tablet")
-							'face `((:family "Material Icons"
-									 :height 1.4))
-							;; 'display '(raise -0.2)
-                                                        )))
+  (diminish 'centered-window-mode (concat " "
+					  (propertize (all-the-icons-material "tablet")
+						      'face `((:family "Material Icons"
+								       :height 1.4))
+						      ;; 'display '(raise -0.2)
+                                                      )))
 
   (defun cwm-special-buffer-p (buffer)
     "Return 't if BUFF buffer name is special (starts with an *).
@@ -712,9 +682,9 @@ This mode is minor-mode thus it should be less intrusive in comparison with [[id
   :init
   (setq-default olivetti-body-width 110)
   (setq olivetti-lighter
-	(s-concat " "
-		  (propertize (all-the-icons-material "tablet")
-	 		      'face `((:family "Material Icons")))))
+	(concat " "
+		(propertize (all-the-icons-material "tablet")
+	 		    'face `((:family "Material Icons")))))
   (bind-keys :map boon-x-map ("w" . olivetti-mode))
   :config
   ;; Do not shadow cdlatex.
@@ -1115,7 +1085,9 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
   (defun yant/vc-git-current-branch ()
     "Get current GIT branch."
     (and vc-mode
-	 (cadr (s-match "Git.\\([^ ]+\\)" vc-mode))))
+	 (save-match-data
+	   (string-match "Git.\\([^ ]+\\)" vc-mode)
+           (match-string 1 vc-mode))))
   (use-package memoize
     :straight t
     :demand t
@@ -1138,18 +1110,20 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 			     ?\ ))))
 	  (if (<= (length str) (window-total-width))
 	      str
-	    (s-truncate (window-total-width)
-			(concat
-			 (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
-					(if (> span 0) span 0))
-				      ?\ )
-			 left
-			 (make-string (let ((span (- (window-width) left-width)))
-					(if (> span 0) span 0))
-				      ?\ )
-			 (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
-					(if (> span 0) span 0))
-				      ?\ ))))))))
+	    (truncate-string-to-width
+	     (concat
+	      (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
+			     (if (> span 0) span 0))
+			   ?\ )
+	      left
+	      (make-string (let ((span (- (window-width) left-width)))
+			     (if (> span 0) span 0))
+			   ?\ )
+	      (make-string (let ((span (/ (- (window-total-width) (window-width)) 2)))
+			     (if (> span 0) span 0))
+			   ?\ ))
+             (window-total-width)
+	     nil nil t))))))
   (setq-default mode-line-format
 		'((:eval
 		   (yant/mode-line-render
@@ -1211,7 +1185,7 @@ However, tweak it to follow actual text margins when [[id:1633927d-77d5-4f0e-a64
 		       ;; (when (string-match " *L[0-9]+ *" position-string)
 		       ;; 	 (setq position-string
 		       ;; 	       (replace-match "" nil nil position-string)))
-		       (setq position-string (s-trim position-string))
+		       (setq position-string (string-trim position-string))
 		       (setq position-string (replace-regexp-in-string "%" "%%" position-string))
 		       (concat " "
 			       (all-the-icons-faicon "angle-left" :v-adjust 0.00)
@@ -4863,14 +4837,14 @@ Sometimes, I just need to have any random text in buffer for testing.
   :custom (explain-pause-slow-too-long-ms 400)
   :config
   ;; (diminish 'explain-pause-mode " ⌚")
-  (diminish 'explain-pause-mode (s-concat " "
-					  (propertize (all-the-icons-material "watch" :v-adjust 0.04)
-						      'face `((
-							       :family "Material Icons"
-							       ;; :height 1.1
-                                                               ))
-						      ;; 'display '(raise -0.1)
-                                                      )))
+  (diminish 'explain-pause-mode (concat " "
+					(propertize (all-the-icons-material "watch" :v-adjust 0.04)
+						    'face `((
+							     :family "Material Icons"
+							     ;; :height 1.1
+                                                             ))
+						    ;; 'display '(raise -0.1)
+                                                    )))
   ;; (explain-pause-mode +1)
   )
 #+end_src
@@ -8173,8 +8147,8 @@ print(detect(text))
     (unless (executable-find "detect-language") (user-error "Command detect-language is not in PATH"))
     (let (result)
       (setq result
-            (s-trim-right
-             (shell-command-to-string (s-concat "detect-language \"" string "\""))))
+            (string-trim-right
+             (shell-command-to-string (concat "detect-language \"" string "\""))))
       (if (string-match-p "Traceback" result)
           (error "Failed to run detect-language script: %S" result)
         result)))
@@ -8187,7 +8161,7 @@ print(detect(text))
     (defun yant/translate-string (string)
       "Automatically translate STRING using trans shell command."
       (unless (executable-find "trans") (user-error "Command trans is not in PATH"))
-      (s-trim (shell-command-to-string (format "trans -no-warn -b \"%s\"" string))))
+      (string-trim (shell-command-to-string (format "trans -no-warn -b \"%s\"" string))))
     (memoize #'yant/translate-string)
     (memoize #'yant/guess-language-string)))
 #+end_src
@@ -8798,7 +8772,7 @@ The task is any item with todo keyword and no subtask.
             (org-set-property "SHOWFROMDATE"
 			      (ts-format "%Y-%m-%d"
 					 (ts-parse-org
-					  (org-read-date nil nil (s-replace "." "" repeater)))))) ;; do not reschedule (I am still working on the task), but show later
+					  (org-read-date nil nil (replace-regexp-in-string "\\." "" repeater)))))) ;; do not reschedule (I am still working on the task), but show later
 	  (when (member (plist-get arg :to) org-done-keywords)
 	    (if (y-or-n-p (format "Trying to mark DOING task as %s. Proceed? " (plist-get arg :to)))
 		(org-with-point-at pos
@@ -9523,11 +9497,11 @@ Do not save excursion."
 
 (defun yant/process-att-abbrev (arg)
   "Return `org-attach-dir' for the current entry."
-  (s-concat (f-slash
-	     ;; (org-attach-dir-symlink 'CREATE)
-             (let ((org-attach-dir-suppress-extra-checks t)) (org-attach-dir))
-             )
-	    arg))
+  (concat (f-slash
+	   ;; (org-attach-dir-symlink 'CREATE)
+           (let ((org-attach-dir-suppress-extra-checks t)) (org-attach-dir))
+           )
+	  arg))
 
 ;; (add-to-list 'org-link-abbrev-alist (cons "att" "attachment"))
 
@@ -9536,7 +9510,7 @@ Do not save excursion."
 ;;   (let* ((ref-dir (org-attach-dir 'CREATE))
 ;; 	 (filelink (let ((default-directory (f-slash ref-dir)))
 ;; 		     (org-file-complete-link)))
-;; 	 (filepath (apply #'s-concat (cdr (s-split ":" filelink)))))
+;; 	 (filepath (apply #'concat (cdr (split-string ":" filelink)))))
 ;;     (format "att:%s" filepath)))
 
 ;; (org-link-set-parameters "att"
@@ -9549,13 +9523,13 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 (defun yant/process-att-id-abbrev (arg)
   "Return `org-attach-dir' for the entry in att-id: link type."
   (require 'org-ql)
-  (let ((id (car (s-split ":" arg)))
-        (file (cadr (s-split ":" arg))))
-    (s-concat (f-slash (let* ((org-attach-dir-suppress-extra-checks t)
-                              (pos (org-id-find id 'marker)))
-                         (org-with-point-at pos
-			   (org-attach-dir 'CREATE))))
-              file)))
+  (let ((id (car (split-string ":" arg)))
+        (file (cadr (split-string ":" arg))))
+    (concat (f-slash (let* ((org-attach-dir-suppress-extra-checks t)
+                            (pos (org-id-find id 'marker)))
+                       (org-with-point-at pos
+			 (org-attach-dir 'CREATE))))
+            file)))
 ;; Cache results
 (memoize #'yant/process-att-id-abbrev)
 
@@ -9566,7 +9540,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 ;; (defun org-att-id-follow (path &optional arg)
 ;;   "Follow att-id: link"
 ;;   (if arg
-;;       (let ((id (car (s-split ":" path))))
+;;       (let ((id (car (split-string ":" path))))
 ;; 	(org-link-open-from-string (concat "id:" id)))
 ;;     (org-link-open-from-string (concat "file:" (yant/process-att-id-abbrev path)))))
 
@@ -9591,16 +9565,23 @@ Show parent project as top (or second top) suggestion."
 		    (org-up-heading-safe))
 	  (when (and (bh/is-project-p)
 		     (not (bh/is-subproject-p)))
-            (setq parent-project (list (s-join "/"
-					       (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
-						       (append (list (f-filename (buffer-file-name (buffer-base-buffer))))
-							       (org-get-outline-path 'with-self 'use-cache))))))))))
+            (setq parent-project
+		  (list
+                   (mapconcat
+                    #'identity
+		    (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
+			    (append (list (f-filename (buffer-file-name (buffer-base-buffer))))
+				    (org-get-outline-path 'with-self 'use-cache)))
+                    "/")))))))
     (when (string= "id" (plist-get org-store-link-plist :type))
       (org-with-point-at (org-id-find (cadr (split-string (plist-get org-store-link-plist :link) ":")) 'marker)
-	(setq saved-id (list (s-join "/"
-				     (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
-					     (append (list (f-filename (buffer-file-name (buffer-base-buffer))))
-						     (org-get-outline-path 'with-self 'use-cache))))))))
+	(setq saved-id
+              (list (mapconcat
+		     #'identity
+		     (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
+			     (append (list (f-filename (buffer-file-name (buffer-base-buffer))))
+				     (org-get-outline-path 'with-self 'use-cache)))
+                     "/")))))
     (let ((org-refile-history (append saved-id parent-project))
 	  (org-refile-cache nil)
 	  (org-refile-target-verify-function #'org-att-id-skip-function))
@@ -9617,18 +9598,18 @@ Show parent project as top (or second top) suggestion."
 		    (org-attach-dir 'CREATE)))
 	 (filelink (let ((default-directory (f-slash ref-dir)))
 		     (org-file-complete-link)))
-	 (filepath (apply #'s-concat (cdr (s-split ":" filelink)))))
+	 (filepath (apply #'s-concat (cdr (split-string ":" filelink)))))
     (format "att-id:%s:%s" id filepath)))
 
 (defun org-att-id-link-description (link desc)
   "Return description of an att-id: link."
   (if (not (seq-empty-p desc))
       desc
-      (when-let ((id (nth 1 (s-split ":" link)))
-		 (file (nth 2 (s-split ":" link))))
+      (when-let ((id (nth 1 (split-string ":" link)))
+		 (file (nth 2 (split-string ":" link))))
 	(org-with-point-at (org-id-find id 'marker)
 	  (when-let ((heading (org-get-heading 'no-tags 'no-todo 'no-priority 'no-comment)))
-	    (s-concat heading ":" file))))))
+	    (concat heading ":" file))))))
 
 (defun org-att-id-store-link ()
   "Store att-id: link."
@@ -9636,8 +9617,8 @@ Show parent project as top (or second top) suggestion."
     (when (and (memq major-mode '(dired-mode image-mode))
 	       (string-match (regexp-quote (f-expand org-attach-id-dir))
 			     (f-expand default-directory))
-               (string-match (s-concat (regexp-quote (f-expand org-attach-id-dir))
-				       "\\([0-9a-z][0-9a-z]\\)/\\([0-9a-z-_]+\\)/\\(.+\\)$")
+               (string-match (concat (regexp-quote (f-expand org-attach-id-dir))
+				     "\\([0-9a-z][0-9a-z]\\)/\\([0-9a-z-_]+\\)/\\(.+\\)$")
                              (pcase major-mode
                                ('dired-mode (dired-get-filename))
                                ('image-mode (buffer-file-name)))))
@@ -9778,7 +9759,7 @@ The src block should be in the same org file."
     (setq params (seq-difference block-params block-default-params))
     (let ((var-params (alist-get :var params)))
       (setq params (seq-difference params (list (cons :var (alist-get :var params)))))
-      (when params (setq params (s-join " " (mapcar (lambda (el) (format "%s %s" (car el) (cdr el))) params))))
+      (when params (setq params (mapconcat #'identity (mapcar (lambda (el) (format "%s %s" (car el) (cdr el))) params) " ")))
       (when var-params (setq var-params (format "%s" var-params)))
       (format "babel:%s[%s](%s)" name (or params "") (or var-params "")))))
 
@@ -9989,7 +9970,7 @@ This includes:
   ;; I do not like this behaviour.
   (unbind-key "_" org-cdlatex-mode-map)
   (unbind-key "^" org-cdlatex-mode-map)
-  (diminish 'org-cdlatex-mode (s-concat
+  (diminish 'org-cdlatex-mode (concat
 			       " "
 			       (propertize "CD"
 					   'face `((:height 0.5)))
@@ -11949,10 +11930,10 @@ Also, hide the contents once task is clocked out.
   (org-quick-peek-show-lines 20)
   (org-quick-peek-show-drawers nil)
   (org-quick-peek-show-planning nil)
-  (org-quick-peek-filter-functions (list (apply-partially #'s-replace-regexp "\n" "\n\n")
+  (org-quick-peek-filter-functions (list (apply-partially #'replace-regexp-in-string "\n" "\n\n")
 					 (apply-partially #'s-word-wrap 80)
 					 #'s-trim
-                                         (apply-partially #'s-replace-regexp "\n+" "\n")))
+                                         (apply-partially #'replace-regexp-in-string "\n+" "\n")))
   :config
   (bind-key "<tab>" #'org-quick-peek-agenda-current-item 'org-agenda-mode-map)
   (define-advice org-agenda-clock-in (:after (&rest args) quick-peek-maybe)
@@ -12028,8 +12009,8 @@ instead."
 					   (ts-format "%Y-%m-%d" now)
 					   (or org-extend-today-until 0))))
          (stillyesterday? (ts<= now beginningofday))
-         (showfromtime (ts-parse (s-concat (ts-format "%Y-%m-%d " now)
-					   showfromtime))))
+         (showfromtime (ts-parse (concat (ts-format "%Y-%m-%d " now)
+					 showfromtime))))
     (or stillyesterday? (ts>= now showfromtime))))
 
 (use-package org-ql
@@ -13564,9 +13545,9 @@ All these templates generally record the creation time in =:CREATED:=
 # name: todo_capture
 # key: todo_capture_
 # --
-TODO ${1:Title} ${2:`(s-trim-right (org-capture-fill-template "%a"))`}
+TODO ${1:Title} ${2:`(string-trim-right (org-capture-fill-template "%a"))`}
 :PROPERTIES:
-:CREATED: `(s-trim-right (org-capture-fill-template "%U"))`
+:CREATED: `(string-trim-right (org-capture-fill-template "%U"))`
 :END:
 ${3:`(yant/org-capture-followup-string)`}
 $0 
@@ -13611,9 +13592,9 @@ Used for the items, which are unlikely to be time tracked
 # name: todo_singular_capture
 # key: todo_singular_capture_
 # --
-TODO ${1:Title} `(s-trim-right (org-capture-fill-template "%a"))`
+TODO ${1:Title} `(string-trim-right (org-capture-fill-template "%a"))`
 :PROPERTIES:
-:CREATED: `(s-trim-right (org-capture-fill-template "%U"))`
+:CREATED: `(string-trim-right (org-capture-fill-template "%U"))`
 :ORG-TIME-BONUS-ON-DONE: 20
 :END:
 
@@ -13640,16 +13621,16 @@ A note, which is not actionable or expected to contain a lot of text
 # name: note_capture
 # key: note_capture_
 # --
-TODO ${1:`(or (and (boundp 'helm-org-ql-default-title) (not (string-empty-p helm-org-ql-default-title)) helm-org-ql-default-title) (concat "Fleeting note on " (s-trim-right (org-capture-fill-template "%u"))))`} :note:
+TODO ${1:`(or (and (boundp 'helm-org-ql-default-title) (not (string-empty-p helm-org-ql-default-title)) helm-org-ql-default-title) (concat "Fleeting note on " (string-trim-right (org-capture-fill-template "%u"))))`} :note:
 :PROPERTIES:
-:CREATED: `(s-trim-right (org-capture-fill-template "%U"))`
+:CREATED: `(string-trim-right (org-capture-fill-template "%U"))`
 :END:
 
 - [ ] Check what notes are followed by this link
 - [ ] Make title
 - [ ] Refile to relevant topics
 - [ ] Elaborate
-${2:Following up: `(s-trim-right (org-capture-fill-template "%a"))`}
+${2:Following up: `(string-trim-right (org-capture-fill-template "%a"))`}
 
 $0
 #+end_src
@@ -14206,13 +14187,15 @@ I define two link types for capturing:
                                                (when (string= "video" (org-capture-ref-get-bibtex-field :typealt))
                                                  (org-set-tags (seq-union (org-get-tags nil t) (list "@home")))))
                             :extra (lambda () (if (org-capture-ref-get-bibtex-field :journal)
-					     (s-join "\n"
-						     '("- [ ] [[elisp:(browse-url (url-encode-url (format \"https://sci-hub.se/%s\" (org-entry-get nil \"DOI\"))))][downlaod and attach pdf]]"
-						       "- [ ] [[elisp:org-attach-open][read paper capturing interesting references]]"
-						       "- [ ] [[elisp:(browse-url (url-encode-url (format \"https://www.semanticscholar.org/search?q=%s\" (org-entry-get nil \"TITLE\"))))][check citing articles]]"
-						       "- [ ] [[elisp:(browse-url (url-encode-url (format \"https://www.connectedpapers.com/search?q=%s\" (org-entry-get nil \"TITLE\"))))][check related articles]]"
-                                                       "- [ ] check if bibtex entry has missing fields"
-                                                       "- [ ] Consider subscribing to new citations"))
+					     (mapconcat
+                                              #'identity
+					      '("- [ ] [[elisp:(browse-url (url-encode-url (format \"https://sci-hub.se/%s\" (org-entry-get nil \"DOI\"))))][downlaod and attach pdf]]"
+						"- [ ] [[elisp:org-attach-open][read paper capturing interesting references]]"
+						"- [ ] [[elisp:(browse-url (url-encode-url (format \"https://www.semanticscholar.org/search?q=%s\" (org-entry-get nil \"TITLE\"))))][check citing articles]]"
+						"- [ ] [[elisp:(browse-url (url-encode-url (format \"https://www.connectedpapers.com/search?q=%s\" (org-entry-get nil \"TITLE\"))))][check related articles]]"
+						"- [ ] check if bibtex entry has missing fields"
+						"- [ ] Consider subscribing to new citations")
+                                              "\n")
                                            ""))
                             :followup (lambda () (yant/org-capture-followup-string))
                             :org-entry (lambda () (org-capture-ref-get-org-entry))
@@ -15301,7 +15284,7 @@ Allow passing file: links as variables to src blocks
   "Convert file LINK-STRING to file path."
   (setq link-string (org-link-expand-abbrev link-string))
   (unless (string-match-p org-bracket-link-regexp link-string)
-    (setq link-string (s-concat "[[" link-string "]]")))
+    (setq link-string (concat "[[" link-string "]]")))
   (let ((link
 	 (with-temp-buffer
 	   (let ((org-inhibit-startup nil))
@@ -15658,11 +15641,11 @@ domain (and containing =Source= property with the domain URL)
     (goto-char (point-min))
     (let ((hosts))
       (while (re-search-forward "127\\.0\\.0\\.1 \\(.+\\) *$" nil t)
-        (when (or (s-contains-p (match-string 1) url)
-                  (and (s-contains-p "reddit" url)
-                       (s-contains-p "reddit" (match-string 1))))
+        (when (or (string-match-p (regexp-quote (match-string 1)) url)
+                  (and (string-match-p "reddit" url)
+                       (string-match-p "reddit" (match-string 1))))
           (push (match-string 1) hosts)))
-      (if (and hosts (or (s-contains-p "reddit" url) (s-contains-p "youtube" url))) (let ((prevent-interactive-run t)) (yant/unblock-all-hosts))
+      (if (and hosts (or (string-match-p "reddit" url) (string-match-p "youtube" url))) (let ((prevent-interactive-run t)) (yant/unblock-all-hosts))
         (when hosts
           (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
             (setq yant/hosts-unblocked t)
@@ -15810,7 +15793,7 @@ JUSTIFICATION is a symbol for 'left, 'center or 'right."
 		 ;; This means the equation is at the start of the line
 		 (= beg (line-beginning-position))
 		 (or
-		  (string= "" (s-trim (buffer-substring end (line-end-position))))
+		  (string= "" (string-trim (buffer-substring end (line-end-position))))
 		  (eq 'latex-environment (car (org-element-context)))))
 	(setq space-left (- (window-max-chars-per-line) (car (image-size img)))
 	      offset (floor (cond
@@ -15941,12 +15924,12 @@ Org-capture mode lighter
 (use-package org-capture
   :if init-flag
   :config
-  (diminish 'org-capture-mode (s-concat " "
-					(propertize (all-the-icons-material "note_add" 
-									    :v-adjust 0.04)
-						    'face `(( :family "Material Icons"
-							      :foreground "red"
-                                                              :height 1.4))))))
+  (diminish 'org-capture-mode (concat " "
+				      (propertize (all-the-icons-material "note_add" 
+									  :v-adjust 0.04)
+						  'face `(( :family "Material Icons"
+							    :foreground "red"
+                                                            :height 1.4))))))
 #+end_src
 
 Org src mode lighter
@@ -15956,14 +15939,14 @@ Org src mode lighter
   :if init-flag
   :after org
   :config
-  (diminish 'org-src-mode (s-concat " "
-                                    (propertize (all-the-icons-material "code" :v-adjust 0.04)
-						'face `((
-							 :family "Material Icons"
-							 :height 1.2))
-						;; 'display '(raise -0.2)
-                                                )
-				    "org")))
+  (diminish 'org-src-mode (concat " "
+                                  (propertize (all-the-icons-material "code" :v-adjust 0.04)
+					      'face `((
+						       :family "Material Icons"
+						       :height 1.2))
+					      ;; 'display '(raise -0.2)
+                                              )
+				  "org")))
 #+end_src
 **** Text
 :PROPERTIES:
@@ -16567,7 +16550,13 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 		       (or (save-excursion (outline-next-heading) (point))
 			   (point-max)))))
          (entry-text (and entry-text (replace-regexp-in-string org-babel-src-block-regexp "" entry-text)))
-         (entry-hashtags (and entry-text (mapcar #'car (s-match-strings-all " #[^+ ][^# ]+" entry-text)))))
+         (entry-hashtags
+          (and entry-text
+               (let (hashtags (pos 0))
+		 (while (string-match " #[^+ ][^# ]+" entry-text pos)
+                   (push (match-string 0 entry-text) hashtags)
+                   (setq pos (match-end 0)))
+                 (nreverse hashtags)))))
     (if (seq-empty-p entry-hashtags)
 	""
       (concat "\t\t" (mapconcat #'s-trim entry-hashtags " ") "\n"))))
@@ -16742,7 +16731,7 @@ Optional MODE specifies major mode used for display."
 				    (buffer-substring beg end)
 				    (- window-width
 				       tag-width
-				       (string-display-width (s-concat ellipsis gap)))
+				       (string-display-width (concat ellipsis gap)))
 				    nil 'hide ellipsis)))
                     (delete-region beg end)
                     (goto-char beg)
@@ -18278,128 +18267,128 @@ By default, the position in buffer =mode-line-position= is shown in %. However, 
 
 Show boon state
   #+begin_src emacs-lisp
-    (use-package boon
-      :if init-flag
+(use-package boon
+  :if init-flag
+  :defer t
+  :config
+  (use-package boon-powerline
+    :config
+    (custom-set-faces '(mode-line-inactive ((t (:background "#dfe4ea" :foreground "dim gray" :box nil)))))
+    (custom-set-faces '(mode-line ((t (:foreground "DarkSeaGreen" :box nil)))))
+    (custom-set-faces '(sml/prefix ((t (:foreground "DarkSeaGreen")))))
+    (custom-set-faces '(boon-modeline-ins ((t (:foreground "White" :background "Brown2")))))
+    (custom-set-faces '(boon-modeline-spc ((t (:foreground "White" :background "DarkSeaGreen")))))
+    
+    (set-face-foreground 'boon-modeline-cmd "white")
+    (set-face-foreground 'boon-modeline-off "white")
+
+    (set-face-background 'powerline-inactive2 "#dfe4ea")
+    (set-face-background 'powerline-inactive1 "#bfc4ca")
+    (set-face-background 'powerline-active2 "grey25")
+
+
+    (defface mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))
+      "Highligh on active modeline."
+      :group 'mode-line)
+    (face-spec-set 'mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))) ;; why is it needed?
+
+    ;; (use-package all-the-icons
+    ;;   :init
+    ;;   (use-package memoize :straight t :demand t)
+    ;;   :config
+    ;;   ;; the functions below constantly create long lists in memory
+    ;;   ;; this triggers GC too often and hangs emacs when I use custom all-the-icons in mode-line
+    ;;   ;; memoize them to cache the results
+    ;;   (memoize #'all-the-icons-material)
+    ;;   (memoize #'all-the-icons-faicon)
+    ;;   (memoize #'all-the-icons-fileicon)
+    ;;   (memoize #'all-the-icons-alltheicon))
+    
+    (defun yant-powerline-theme ()
+      "Set up a powerline based on powerline-default-theme and spaceline-all-the-icons-theme which also displays boon-state."
+      (interactive)
+      (require 'spaceline-all-the-icons-segments)
+      (setq-default mode-line-position " ")
+      (setq-default mode-line-format
+		    '("%e"
+		      (:eval
+		       (let* ((active (powerline-selected-window-active))
+			      (mode-line (if active 'mode-line 'mode-line-inactive))
+			      (mode-line-highlight (if active 'mode-line-highlight 'mode-line-inactive))
+			      (face0 (if active (boon-state-face) 'mode-line-inactive))
+			      (face1 (if active 'powerline-active1 'powerline-inactive1))
+			      (face2 (if active 'powerline-active2 'powerline-inactive2))
+			      (separator-left (intern (format "powerline-%s-%s"
+							      powerline-default-separator
+							      (car powerline-default-separator-dir))))
+			      (separator-right (intern (format "powerline-%s-%s"
+							       powerline-default-separator
+							       (cdr powerline-default-separator-dir))))
+			      (boon (list
+				     (powerline-raw (when current-input-method-title (concat " " (string-trim-right current-input-method-title))) face0)
+				     (powerline-raw (eval (get 'spaceline-all-the-icons-modified-p :code)) face0 'l)
+				     (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-size-p :code)) face0 'l)
+				     (powerline-raw " " face0)
+				     (funcall 'powerline-bar-right mode-line face0)
+				     (when (bound-and-true-p boon-mode) (powerline-raw " " face0))
+				     (when (bound-and-true-p boon-mode) (powerline-raw (boon-state-string) face0 'r))
+				     (when (bound-and-true-p boon-mode) (funcall separator-left face0 mode-line))
+				     ))
+			      (lhs (list
+				    (powerline-raw (eval (get 'spaceline-all-the-icons-mode-icon-p :code)) mode-line 'l)
+				    (powerline-buffer-id mode-line nil)
+				    (when (and (boundp 'which-func-mode) which-func-mode)
+				      (powerline-raw which-func-format mode-line 'l))
+				    (when (eval (get 'spaceline-all-the-icons-narrowed-p :when))
+				      (powerline-raw (eval (get 'spaceline-all-the-icons-narrowed-p :code))
+						     mode-line-highlight 'l))
+				    (powerline-raw (if truncate-lines
+						       (propertize (all-the-icons-faicon "arrow-right")
+								   'face `((
+									    :family "file-icons"
+									    :height 0.6))
+								   'display '(raise 0.3))
+						     (propertize (all-the-icons-fileicon "factor")
+								 'face `((
+									  :family "Material Icons"
+									  :height 0.6))
+								 'display '(raise 0.3)))
+						   mode-line-highlight 'l)
+				    (funcall separator-left mode-line face1)
+				    (powerline-process face1)
+				    (when active (powerline-minor-modes face1 'l))
+				    (powerline-raw " " face1)
+				    (funcall separator-left face1 face2)
+				    (powerline-vc face2 'r)
+				    ))
+			      (rhs (list
+				    (powerline-raw global-mode-string face2 'r)
+				    (funcall separator-right face2 face1)
+				    (powerline-raw "%l" face1 'l)
+				    (powerline-raw ":" face1)
+				    (powerline-raw "%c" face1 'r)
+				    (funcall separator-right face1 mode-line)
+				    (powerline-raw " " mode-line)
+				    (powerline-raw "%p" mode-line)
+				    (powerline-raw mode-line-position mode-line)
+				    (powerline-raw " " mode-line)
+				    )))
+			 (concat (powerline-render boon)
+				 (powerline-render lhs)
+				 (powerline-fill face2 (powerline-width rhs))
+				 (powerline-render rhs)))))))
+    
+    (setq flymake--mode-line-format '(:eval (when flymake-mode (flymake--mode-line-format))))
+    (use-package all-the-icons
+      :init
+      (add-to-list 'all-the-icons-mode-icon-alist '(helpful-mode all-the-icons-faicon "info" :v-adjust -0.1 :face all-the-icons-purple))
+      (add-to-list 'all-the-icons-mode-icon-alist '(pdf-view-mode all-the-icons-octicon "file-pdf" :v-adjust 0.0 :face all-the-icons-dred)))
+    (yant-powerline-theme)
+    (use-package helm
       :defer t
       :config
-      (use-package boon-powerline
-	:config
-	(custom-set-faces '(mode-line-inactive ((t (:background "#dfe4ea" :foreground "dim gray" :box nil)))))
-	(custom-set-faces '(mode-line ((t (:foreground "DarkSeaGreen" :box nil)))))
-	(custom-set-faces '(sml/prefix ((t (:foreground "DarkSeaGreen")))))
-	(custom-set-faces '(boon-modeline-ins ((t (:foreground "White" :background "Brown2")))))
-	(custom-set-faces '(boon-modeline-spc ((t (:foreground "White" :background "DarkSeaGreen")))))
-    
-	(set-face-foreground 'boon-modeline-cmd "white")
-	(set-face-foreground 'boon-modeline-off "white")
-
-	(set-face-background 'powerline-inactive2 "#dfe4ea")
-	(set-face-background 'powerline-inactive1 "#bfc4ca")
-	(set-face-background 'powerline-active2 "grey25")
-
-
-	(defface mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))
-	  "Highligh on active modeline."
-	  :group 'mode-line)
-	(face-spec-set 'mode-line-highlight `((t (:foreground ,(face-background 'region) :box nil :inherit mode-line)))) ;; why is it needed?
-
-	;; (use-package all-the-icons
-	;;   :init
-	;;   (use-package memoize :straight t :demand t)
-	;;   :config
-	;;   ;; the functions below constantly create long lists in memory
-	;;   ;; this triggers GC too often and hangs emacs when I use custom all-the-icons in mode-line
-	;;   ;; memoize them to cache the results
-	;;   (memoize #'all-the-icons-material)
-	;;   (memoize #'all-the-icons-faicon)
-	;;   (memoize #'all-the-icons-fileicon)
-	;;   (memoize #'all-the-icons-alltheicon))
-    
-	(defun yant-powerline-theme ()
-	  "Set up a powerline based on powerline-default-theme and spaceline-all-the-icons-theme which also displays boon-state."
-	  (interactive)
-	  (require 'spaceline-all-the-icons-segments)
-	  (setq-default mode-line-position " ")
-	  (setq-default mode-line-format
-			'("%e"
-			  (:eval
-			   (let* ((active (powerline-selected-window-active))
-				  (mode-line (if active 'mode-line 'mode-line-inactive))
-				  (mode-line-highlight (if active 'mode-line-highlight 'mode-line-inactive))
-				  (face0 (if active (boon-state-face) 'mode-line-inactive))
-				  (face1 (if active 'powerline-active1 'powerline-inactive1))
-				  (face2 (if active 'powerline-active2 'powerline-inactive2))
-				  (separator-left (intern (format "powerline-%s-%s"
-								  powerline-default-separator
-								  (car powerline-default-separator-dir))))
-				  (separator-right (intern (format "powerline-%s-%s"
-								   powerline-default-separator
-								   (cdr powerline-default-separator-dir))))
-				  (boon (list
-					 (powerline-raw (when current-input-method-title (s-concat " " (s-trim-right current-input-method-title))) face0)
-					 (powerline-raw (eval (get 'spaceline-all-the-icons-modified-p :code)) face0 'l)
-					 (powerline-raw (eval (get 'spaceline-all-the-icons-buffer-size-p :code)) face0 'l)
-					 (powerline-raw " " face0)
-					 (funcall 'powerline-bar-right mode-line face0)
-					 (when (bound-and-true-p boon-mode) (powerline-raw " " face0))
-					 (when (bound-and-true-p boon-mode) (powerline-raw (boon-state-string) face0 'r))
-					 (when (bound-and-true-p boon-mode) (funcall separator-left face0 mode-line))
-					 ))
-				  (lhs (list
-					(powerline-raw (eval (get 'spaceline-all-the-icons-mode-icon-p :code)) mode-line 'l)
-					(powerline-buffer-id mode-line nil)
-					(when (and (boundp 'which-func-mode) which-func-mode)
-					  (powerline-raw which-func-format mode-line 'l))
-					(when (eval (get 'spaceline-all-the-icons-narrowed-p :when))
-					  (powerline-raw (eval (get 'spaceline-all-the-icons-narrowed-p :code))
-							 mode-line-highlight 'l))
-					(powerline-raw (if truncate-lines
-							   (propertize (all-the-icons-faicon "arrow-right")
-								       'face `((
-										:family "file-icons"
-										:height 0.6))
-								       'display '(raise 0.3))
-							 (propertize (all-the-icons-fileicon "factor")
-								     'face `((
-									     :family "Material Icons"
-									     :height 0.6))
-								     'display '(raise 0.3)))
-						       mode-line-highlight 'l)
-					(funcall separator-left mode-line face1)
-					(powerline-process face1)
-					(when active (powerline-minor-modes face1 'l))
-					(powerline-raw " " face1)
-					(funcall separator-left face1 face2)
-					(powerline-vc face2 'r)
-					))
-				  (rhs (list
-					(powerline-raw global-mode-string face2 'r)
-					(funcall separator-right face2 face1)
-					(powerline-raw "%l" face1 'l)
-					(powerline-raw ":" face1)
-					(powerline-raw "%c" face1 'r)
-					(funcall separator-right face1 mode-line)
-					(powerline-raw " " mode-line)
-					(powerline-raw "%p" mode-line)
-					(powerline-raw mode-line-position mode-line)
-					(powerline-raw " " mode-line)
-					)))
-			     (concat (powerline-render boon)
-				     (powerline-render lhs)
-				     (powerline-fill face2 (powerline-width rhs))
-				     (powerline-render rhs)))))))
-    
-	(setq flymake--mode-line-format '(:eval (when flymake-mode (flymake--mode-line-format))))
-	(use-package all-the-icons
-	  :init
-	  (add-to-list 'all-the-icons-mode-icon-alist '(helpful-mode all-the-icons-faicon "info" :v-adjust -0.1 :face all-the-icons-purple))
-	  (add-to-list 'all-the-icons-mode-icon-alist '(pdf-view-mode all-the-icons-octicon "file-pdf" :v-adjust 0.0 :face all-the-icons-dred)))
-	(yant-powerline-theme)
-	(use-package helm
-	  :defer t
-	  :config
-	  (spaceline-helm-mode +1))
-	))
+      (spaceline-helm-mode +1))
+    ))
 #+end_src
 
 Fancy minor mode lighters
@@ -18407,12 +18396,12 @@ Fancy minor mode lighters
 #+begin_src emacs-lisp
 (use-package simple
   :config
-  (diminish 'auto-fill-function (s-concat " "
-					  (propertize (all-the-icons-material "wrap_text")
-						      'face `((
-							       :family "Material Icons"
-							       ;; :height 1.2
-							       ))))))
+  (diminish 'auto-fill-function (concat " "
+					(propertize (all-the-icons-material "wrap_text")
+						    'face `((
+							     :family "Material Icons"
+							     ;; :height 1.2
+							     ))))))
 (use-package mml
   :diminish (mml-mode . " 🖂"))
 (use-package footnote
