@@ -11183,13 +11183,17 @@ By default, filtering commands in agenda replace the currently active filter. Ad
             (other other)))
     (list strip-or-accumulate char exclude)))
 #+end_src
-***** Focused daily agenda
+***** Focused daily agenda (must-do list)
 :PROPERTIES:
 :ID:       a6054643-449e-48d7-afff-4155465efc19
 :END:
 This agenda show the items for the current day and time.
 
 - all the items with deadline, according =org-deadline-warning-days=, unless the item is scheduled. If the item is scheduled, it is shown from the scheduled day.
+
+Similar idea with must-do -> want to do if have time is described in
+[[id:Youtube-grey2011-time-management-teachers-01b][CGP Grey [Youtube] (2011) Time Management for Teachers]]
+
   #+begin_src emacs-lisp
 (defun org-agenda-skip-deadlines-before-schedule ()
   "Skip tasks, with deadline and scheduled in future and tasks without deadline."
