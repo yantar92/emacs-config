@@ -353,9 +353,12 @@ rc-update add lvm default
 sys-boot/grub:2 device-mapper
 #+end_src
 
+[2024-03-12 Tue] Observing SSD errors in dmesg log, like in
+https://unix.stackexchange.com/questions/470778/nvme-missing-or-invalid-subnqn-field
+Disabling SSD power saving as suggested in the answer.
 #+begin_src conf :tangle /sudo::/etc/default/grub
 GRUB_DISTRIBUTOR="Gentoo"
-GRUB_CMDLINE_LINUX="dolvm crypt crypt_root=UUID=b074fbfd-65b3-4830-971c-0dd07b8977b5 root_trim=yes root_key=luks-key.gpg"
+GRUB_CMDLINE_LINUX="dolvm crypt crypt_root=UUID=b074fbfd-65b3-4830-971c-0dd07b8977b5 root_trim=yes root_key=luks-key.gpg nvme_core.default_ps_max_latency_us=0"
 GRUB_TIMEOUT="1"
 #+end_src
 
