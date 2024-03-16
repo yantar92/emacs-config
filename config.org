@@ -10870,20 +10870,21 @@ I use different skip functions here in agenda to filter the agenda. Some of them
                              '(yant/org-agenda-skip-org-ql
 			       '(and
 				 (or (project) (area))
+                                 (not (goal))
 				 (not (todo "SOMEDAY" "TODO"))
 				 (or (todo "NEXT" "REVIEW" "DOING")
 				     (not (subproject)))
 				 (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
-				 (not (and
-                                       (area)
-				       (or (not (descendants (and (todo) (not (todo "TICKLER")) (not (habit)))))
-                                           (descendants (todo "TODO")))))
-                                 (not (goal))
 				 (not (descendants
-				       (and  (todo "NEXT" "REVIEW" "DOING")
-					     (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-                                             (not (habit))
-					     ))))))
+				     '(and  (if (area)
+						(todo "NEXT" "REVIEW" "DOING" "TODO")
+                                              (todo "NEXT" "REVIEW" "DOING"))
+					    (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+                                            (not (habit)))))
+                                 (if (area)
+                                     ;; Areas can only be stuck only when there are actual tasks inside.
+                                     (descendants '(and (todo) (not (todo "TICKLER")) (not (habit))))
+                                   t))))
 		            (org-agenda-todo-ignore-scheduled t)
 		            (org-agenda-sorting-strategy
 		             '(category-keep))))
@@ -10944,20 +10945,23 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 			    (org-agenda-prefix-format "%-12:c\t%?-12t")
 			    (org-agenda-skip-function
                              '(yant/org-agenda-skip-org-ql
-			       '(and (or (project) (area))
-				     (not (todo "SOMEDAY" "TODO"))
-				     (or (todo "NEXT" "REVIEW" "DOING")
-					 (not (subproject)))
-				     (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
-				     (not (and (area)
-					     (not (or (not (descendants (and (todo) (not (todo "TICKLER")) (not (habit)))))
-						    (descendants (todo "TODO"))))))
-                                     (not (goal))
-				     (not (descendants
-					 (and  (todo "NEXT" "REVIEW" "DOING")
-					       (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-					       (not (habit))
-					       ))))))
+			       '(and
+				 (or (project) (area))
+                                 (not (goal))
+				 (not (todo "SOMEDAY" "TODO"))
+				 (or (todo "NEXT" "REVIEW" "DOING")
+				     (not (subproject)))
+				 (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
+				 (not (descendants
+				     '(and  (if (area)
+						(todo "NEXT" "REVIEW" "DOING" "TODO")
+                                              (todo "NEXT" "REVIEW" "DOING"))
+					    (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+                                            (not (habit)))))
+                                 (if (area)
+                                     ;; Areas can only be stuck only when there are actual tasks inside.
+                                     (descendants '(and (todo) (not (todo "TICKLER")) (not (habit))))
+                                   t))))
 			    (org-agenda-todo-ignore-scheduled t)
 			    (org-agenda-sorting-strategy
 			     '(category-keep))))
