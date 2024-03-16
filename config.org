@@ -8309,7 +8309,7 @@ Make Emacs ERC automatically re-connect when it looses server connection.
     (push '("Upload selected" . yant/helm-show-kill-ring-upload-action)
 	  (cdr helm-kill-ring-actions))))
 #+end_src
-** Matrix client =ement.el=
+** COMMENT Matrix client =ement.el=
 [[id:Github-alphapapa-alphapapa-ement-el-9d2][alphapapa [Github] alphapapa/ement.el: Matrix client for Emacs]]
 [2022-04-15 Fri] Setting ~print-circle~ to t in order to fix memory leakage error.
 #+begin_src emacs-lisp
