@@ -3919,9 +3919,9 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 (define-advice dired-find-file (:around (OLDFUN &rest args) disable-abbreviate-file-name)
   "Disable `abbreviate-file-name' in dired."
   (cl-flet ((abbreviate-file-name (filename) ""
-				  (if (f-directory? filename)
-				      (f-slash filename)
-                                    filename)))
+	      (if (file-directory-p filename)
+		  (file-name-as-directory filename)
+                filename)))
     (apply OLDFUN args)))
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
@@ -9497,10 +9497,8 @@ Do not save excursion."
 
 (defun yant/process-att-abbrev (arg)
   "Return `org-attach-dir' for the current entry."
-  (concat (f-slash
-	   ;; (org-attach-dir-symlink 'CREATE)
-           (let ((org-attach-dir-suppress-extra-checks t)) (org-attach-dir))
-           )
+  (concat (file-name-as-directory
+           (let ((org-attach-dir-suppress-extra-checks t)) (org-attach-dir)))
 	  arg))
 
 ;; (add-to-list 'org-link-abbrev-alist (cons "att" "attachment"))
@@ -9508,7 +9506,7 @@ Do not save excursion."
 ;; (defun org-att-link-complete (&optional arg)
 ;;   "Completion function for att: link."
 ;;   (let* ((ref-dir (org-attach-dir 'CREATE))
-;; 	 (filelink (let ((default-directory (f-slash ref-dir)))
+;; 	 (filelink (let ((default-directory (file-name-as-directory ref-dir)))
 ;; 		     (org-file-complete-link)))
 ;; 	 (filepath (apply #'concat (cdr (split-string ":" filelink)))))
 ;;     (format "att:%s" filepath)))
@@ -9525,10 +9523,11 @@ Just links to the current entry are not always sufficient. I sometimes want to l
   (require 'org-ql)
   (let ((id (car (split-string ":" arg)))
         (file (cadr (split-string ":" arg))))
-    (concat (f-slash (let* ((org-attach-dir-suppress-extra-checks t)
-                            (pos (org-id-find id 'marker)))
-                       (org-with-point-at pos
-			 (org-attach-dir 'CREATE))))
+    (concat (file-name-as-directory
+	     (let* ((org-attach-dir-suppress-extra-checks t)
+		    (pos (org-id-find id 'marker)))
+	       (org-with-point-at pos
+		 (org-attach-dir 'CREATE))))
             file)))
 ;; Cache results
 (memoize #'yant/process-att-id-abbrev)
@@ -9570,7 +9569,7 @@ Show parent project as top (or second top) suggestion."
                    (mapconcat
                     #'identity
 		    (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
-			    (append (list (f-filename (buffer-file-name (buffer-base-buffer))))
+			    (append (list (file-name-nondirectory (buffer-file-name (buffer-base-buffer))))
 				    (org-get-outline-path 'with-self 'use-cache)))
                     "/")))))))
     (when (string= "id" (plist-get org-store-link-plist :type))
@@ -9579,7 +9578,7 @@ Show parent project as top (or second top) suggestion."
               (list (mapconcat
 		     #'identity
 		     (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
-			     (append (list (f-filename (buffer-file-name (buffer-base-buffer))))
+			     (append (list (file-name-nondirectory (buffer-file-name (buffer-base-buffer))))
 				     (org-get-outline-path 'with-self 'use-cache)))
                      "/")))))
     (let ((org-refile-history (append saved-id parent-project))
@@ -9596,7 +9595,7 @@ Show parent project as top (or second top) suggestion."
   (let* ((id (org-att-id-prompt-id))
 	 (ref-dir (org-with-point-at (org-id-find id 'marker)
 		    (org-attach-dir 'CREATE)))
-	 (filelink (let ((default-directory (f-slash ref-dir)))
+	 (filelink (let ((default-directory (file-name-as-directory ref-dir)))
 		     (org-file-complete-link)))
 	 (filepath (apply #'s-concat (cdr (split-string ":" filelink)))))
     (format "att-id:%s:%s" id filepath)))
@@ -9615,9 +9614,9 @@ Show parent project as top (or second top) suggestion."
   "Store att-id: link."
   (save-match-data
     (when (and (memq major-mode '(dired-mode image-mode))
-	       (string-match (regexp-quote (f-expand org-attach-id-dir))
-			     (f-expand default-directory))
-               (string-match (concat (regexp-quote (f-expand org-attach-id-dir))
+	       (string-match (regexp-quote (expand-file-name org-attach-id-dir))
+			     (expand-file-name default-directory))
+               (string-match (concat (regexp-quote (expand-file-name org-attach-id-dir))
 				     "\\([0-9a-z][0-9a-z]\\)/\\([0-9a-z-_]+\\)/\\(.+\\)$")
                              (pcase major-mode
                                ('dired-mode (dired-get-filename))
@@ -10142,14 +10141,17 @@ The new files are usually coming from my Downloads (=yant/org-attach-default-sou
   "Look for new attachments from `yant/org-attach-default-source' directory instead of `default-directory'."
   (interactive
    (list
-    (mapcar #'directory-file-name (helm-read-file-name "File to keep as an attachment:"
-						       :initial-input (or (progn
-									    (require 'dired-aux)
-									    (dired-dwim-target-directory))
-									  (and yant/org-attach-default-source
-									       (f-slash yant/org-attach-default-source))
-									  default-directory)
-						       :marked-candidates t))
+    (mapcar #'directory-file-name
+	    (helm-read-file-name
+             "File to keep as an attachment:"
+	     :initial-input
+             (or (progn
+		   (require 'dired-aux)
+		   (dired-dwim-target-directory))
+		 (and yant/org-attach-default-source
+		      (file-name-as-directory yant/org-attach-default-source))
+		 default-directory)
+	     :marked-candidates t))
     current-prefix-arg
     nil))
   (unless (listp files) (setq files (list files)))
@@ -10237,7 +10239,7 @@ This is separate package now. All the code below is exported to =org-attach-fs.e
 ;; (setq org-attach-method 'mv)
 ;; (setq org-attach-id-dir "~/.data/")
 ;; (setq org-id-locations-file
-;;       (f-join org-attach-id-dir ".org-id-locations"))
+;;       (file-name-concat org-attach-id-dir ".org-id-locations"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -10249,7 +10251,7 @@ This is separate package now. All the code below is exported to =org-attach-fs.e
 (setq org-attach-method 'mv)
 (setq org-attach-id-dir "~/.data/")
 (setq org-id-locations-file
-      (f-join org-attach-id-dir ".org-id-locations"))
+      (file-name-concat org-attach-id-dir ".org-id-locations"))
 #+end_src
 
 The above does not follow the task hierarchy of the tasks.
@@ -10329,18 +10331,24 @@ The DIR is ensured to be in the symlink mirror dir structure for the entry.
 Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
   (prog1
       (and dir
-	   (f-slash dir))
+	   (file-name-as-directory dir))
 
     (when (and (equal major-mode 'org-mode)
 	       dir
 	       (not (bound-and-true-p org-attach-dir-suppress-extra-checks)) ;; an option to make `org-attach-dir' faster if needed
-	       (f-exists-p dir)
-	       (f-dir-p dir))
+	       (file-exists-p dir)
+	       (file-directory-p dir))
       (let* ((attach-path dir)
-	     (symlinks-directory (f-slash (f-join dir
-						  yant/org-attach-symlinks-directory)))
-	     (attachments-symlink-directory (f-slash (f-join symlinks-directory
-							     yant/org-attach-attachments-symlink-directory)))
+	     (symlinks-directory
+              (file-name-as-directory
+               (file-name-concat
+		dir
+		yant/org-attach-symlinks-directory)))
+	     (attachments-symlink-directory
+              (file-name-as-directory
+               (file-name-concat
+		symlinks-directory
+		yant/org-attach-attachments-symlink-directory)))
 	     (org-id (org-id-get nil 'create))
 	     (entry-name (yant/org-entry-name-cleanup-for-dir))
 	     (attach-dir-inherited-p (or (not (org-entry-get (point) "ID"))
@@ -10353,48 +10361,55 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 	(unless (member org-id yant/--processed-entry-ids)
 	  (add-to-list 'yant/--processed-entry-ids org-id)
 	  (unless attach-dir-inherited-p
-	    (when (f-file-p symlinks-directory)
+	    (when (file-regular-p symlinks-directory)
 	      (error (format "File exist in place of dir: %s" symlinks-directory)))
-	    (when (and (f-exists-p attachments-symlink-directory)
-		       (not (f-symlink-p (directory-file-name attachments-symlink-directory))))
+	    (when (and (file-exists-p attachments-symlink-directory)
+		       (not (file-symlink-p (directory-file-name attachments-symlink-directory))))
 	      (error (format "Not a symlink: %s" attachments-symlink-directory)))
 
 	    ;; update dirs
-	    (unless (f-exists-p symlinks-directory)
-	      (f-mkdir symlinks-directory))
-	    (unless (or (f-exists-p attachments-symlink-directory)
+	    (unless (file-exists-p symlinks-directory)
+	      (make-directory symlinks-directory))
+	    (unless (or (file-exists-p attachments-symlink-directory)
 			(not (yant/org-task-has-attachments-p)))
               ;;(debug)
-	      (f-symlink attach-path (directory-file-name attachments-symlink-directory)))
-	    (when (and (f-exists-p attachments-symlink-directory)
+	      (file-symlink-p attach-path (directory-file-name attachments-symlink-directory)))
+	    (when (and (file-exists-p attachments-symlink-directory)
 		       (not (yant/org-task-has-attachments-p)))
-	      (f-delete (directory-file-name attachments-symlink-directory)))
+	      (delete-file (directory-file-name attachments-symlink-directory)))
 
 	    ;; add to parent entry attachment dir
 	    (unless (seq-empty-p entry-name) ;; prevent empty folder names
 	      (org-with-wide-buffer
 	       (let ((entry-symlink-name (if (org-up-heading-safe)
-					     (directory-file-name (f-join (let ((org-attach-dir-recursive-p t))
-									    (org-attach-dir 'CREATE))
-									  yant/org-attach-symlinks-directory
-									  entry-name))
+					     (directory-file-name
+                                              (file-name-concat
+                                               (let ((org-attach-dir-recursive-p t))
+						 (org-attach-dir 'CREATE))
+					       yant/org-attach-symlinks-directory
+					       entry-name))
 					   (or yant/org-attach-file-symlink-path (hack-local-variables))
                                            (when yant/org-attach-file-symlink-path
-                                             (unless (file-exists-p yant/org-attach-file-symlink-path) (f-mkdir yant/org-attach-file-symlink-path)))
-					   (directory-file-name (f-join (or yant/org-attach-file-symlink-path
-									    default-directory)
-									entry-name)))))
-		 (if (not (f-exists-p entry-symlink-name))
+                                             (unless (file-exists-p yant/org-attach-file-symlink-path)
+                                               (make-directory yant/org-attach-file-symlink-path)))
+					   (directory-file-name
+                                            (file-name-concat
+                                             (or yant/org-attach-file-symlink-path
+						 default-directory)
+					     entry-name)))))
+		 (if (not (file-exists-p entry-symlink-name))
                      (progn
                        ;;(debug)
-		       (f-symlink symlinks-directory (directory-file-name entry-symlink-name)))
-		   (unless (f-symlink-p entry-symlink-name)
+		       (make-symbolic-link symlinks-directory (directory-file-name entry-symlink-name)))
+		   (unless (file-symlink-p entry-symlink-name)
 		     (error (format "File exists: %s" entry-symlink-name)))))))
 
 	    ;; check children
             (when (yant/org-subtree-has-attachments-p)
 	      (let ((dirs (delete (directory-file-name attachments-symlink-directory)
-				  (f-directories symlinks-directory))))
+				  (seq-filter
+                                   #'file-directory-p
+				   (directory-files symlinks-directory)))))
 		(org-with-wide-buffer
 		 (org-back-to-heading)
 		 (let ((subtree-end (save-excursion (org-end-of-subtree))))
@@ -10402,7 +10417,8 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 		   (when (re-search-forward org-heading-regexp subtree-end t)
 		     (while (< (point) subtree-end)
 		       (when (yant/org-entry-name-cleanup-for-dir)
-			 (let ((child-dir (f-join symlinks-directory (yant/org-entry-name-cleanup-for-dir))))
+			 (let ((child-dir
+				(file-name-concat symlinks-directory (yant/org-entry-name-cleanup-for-dir))))
 			   (when (yant/org-subtree-has-attachments-p)
 			     (unless (member child-dir dirs)
                                (let ((org-attach-dir-recursive-p t))
@@ -10411,9 +10427,9 @@ Do nothing if `org-attach-dir-suppress-extra-checks' is non-nil."
 		       (or (yant/outline-get-next-sibling subtree-end)
 			   (goto-char subtree-end))))))
 		(mapc (lambda (d)
-			(let ((dir (f-long d)))
-			  (when (f-symlink-p (directory-file-name dir))
-			    (f-delete dir) ; delete the dirs, which do not point to children
+			(let ((dir (expand-file-name d)))
+			  (when (file-symlink-p (directory-file-name dir))
+			    (delete-directory dir) ; delete the dirs, which do not point to children
 			    )))
 		      dirs)))))))))
 
@@ -10439,14 +10455,15 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
   (org-with-point-at-org-buffer
    (when create-if-not-exists-p
      (let ((symlink (org-attach-dir-symlink nil nil no-data-dir)))
-       (when (not (f-exists-p symlink))
+       (when (not (file-exists-p symlink))
 	 (org-attach-dir 't))
        symlink))
    (let* ((entry-name (yant/org-entry-name-cleanup-for-dir))
 	  (attach-dir-inherited-p (and (org-entry-get-with-inheritance "ATTACH_DIR_INHERIT")
 				       (not (org-entry-get (point) "ATTACH_DIR_INHERIT" nil))));; only consider if the entry is the child
           (entry-path (and entry-name
-			   (f-join entry-name (if no-data-dir "" yant/org-attach-attachments-symlink-directory)))))
+			   (file-name-concat
+                            entry-name (if no-data-dir "" yant/org-attach-attachments-symlink-directory)))))
      (if attach-dir-inherited-p
 	 (org-with-wide-buffer
           (org-up-heading-safe) ;; if this is false, something went really wrong
@@ -10455,10 +10472,14 @@ Do not append symlink to data directory if NO-DATA-dir is not nil."
 	 (org-with-wide-buffer
 	  (if (org-up-heading-safe)
 	      (let ((head-path (org-attach-dir-symlink create-if-not-exists-p nil 't)))
-		(when head-path (f-slash (f-join head-path entry-path))))
-	    (f-slash (f-join (or yant/org-attach-file-symlink-path
-				 default-directory)
-			     entry-path)))))))))
+		(when head-path
+                  (file-name-as-directory
+                   (file-name-concat head-path entry-path))))
+	    (file-name-as-directory
+             (file-name-concat
+              (or yant/org-attach-file-symlink-path
+		  default-directory)
+	      entry-path)))))))))
 
 (define-advice org-attach-reveal (:around (OLDFUN) reveal-symlink)
   "Go to symlink attach dir structure instead of an actual attach dir."
@@ -15269,11 +15290,13 @@ I hate when org is cluttering org file directory with generated files (=:file=).
              (info (cadr args))
              (params (org-babel-merge-params (nth 2 info) (caddr args)))
              (dir-param (alist-get :dir params)))
-        (unless (and dir-param (or (equal (f-full default-directory) (f-full dir-param))
-				   (f-absolute-p dir-param)))
+        (unless (and dir-param (or (equal
+				    (file-name-as-directory (expand-file-name default-directory))
+                                    (file-name-as-directory (expand-file-name dir-param)))
+				   (file-name-absolute-p dir-param)))
           (setf (alist-get :dir params)
 	        (if dir-param
-                    (f-join directory (alist-get :dir params))
+                    (file-name-concat directory (alist-get :dir params))
                   directory)))
         (list arg info params))
     args))
