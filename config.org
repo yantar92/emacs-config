@@ -61,7 +61,9 @@ which are automatically loaded by org agenda command.
 (defvar init-flag nil
   "Do normal init if not nil.")
 #+end_src
-** Speed up ~char-displayble-p~
+
+** Some performance tricks to speed up initialization
+*** Speed up ~char-displayble-p~
 
 [2024-02-07 Wed] This is a fairly slow function adding 0.5 sec to my
 Emacs startup.
@@ -81,6 +83,33 @@ defined by packages at run time using ~char-displayable-p~.
 (setq pdf-view-use-unicode-ligther nil)
 #+end_src
 
+*** Defer org-ql predicates (this must load first)
+:PROPERTIES:
+:ID:       f6744b91-5cc5-4003-8fb8-5d2b14343230
+:END:
+
+Defining custom predicates for org-ql is slow because it requires
+unconditional byte-compilation.  Defer it to after init time.
+Every instance of ~org-ql-defpred~ in the configuration must set
+~org-ql-defpred-defer~ to t.
+
+****************** TODO Ideally, org-ql should not impact init time as much. Consider reporting as a bug.
+****************** END
+
+
+#+begin_src emacs-lisp
+(use-package org-ql
+  :defer t
+  :init
+  (add-hook
+   'after-init-hook
+   (lambda ()
+     (org-ql--define-normalize-query-fn (reverse org-ql-predicates))
+     (org-ql--define-query-preamble-fn (reverse org-ql-predicates))
+     (org-ql--def-query-string-to-sexp-fn (reverse org-ql-predicates)))))
+#+end_src
+
+
 ** External dependencies
 :PROPERTIES:
 :ID:       c9c15be6-0c5e-44a8-aa9c-17893fb904e7
@@ -98,33 +127,10 @@ You can find the public parts of OS setup in [[file:system-config.org]].
  
 Init file, which loads this file.
 
-#+begin_src emacs-lisp :tangle "~/.emacs.d/init.el" :var org-file=(buffer-file-name) :var el-file="~/.emacs.d/config.el"
+#+begin_src emacs-lisp :tangle "~/.emacs.d/init.el"  :var el-file="~/.emacs.d/config.el"
 (setq init-flag t)
-(setq comp-num-cpus 4)
 (load el-file)
 #+end_src
-** Defer org-ql predicates (this must load first)
-:PROPERTIES:
-:ID:       f6744b91-5cc5-4003-8fb8-5d2b14343230
-:END:
-
-Defining custom predicates for org-ql is slow because it requires
-unconditional byte-compilation.  Defer it to after init time.
-Every instance of ~org-ql-defpred~ in the configuration must set
-~org-ql-defpred-defer~ to t.
-
-#+begin_src emacs-lisp
-(use-package org-ql
-  :defer t
-  :init
-  (add-hook
-   'after-init-hook
-   (lambda ()
-     (org-ql--define-normalize-query-fn (reverse org-ql-predicates))
-     (org-ql--define-query-preamble-fn (reverse org-ql-predicates))
-     (org-ql--def-query-string-to-sexp-fn (reverse org-ql-predicates)))))
-#+end_src
-
 
 ** Emacs server settings
 :PROPERTIES:
@@ -133,7 +139,6 @@ Every instance of ~org-ql-defpred~ in the configuration must set
 
 I run Emacs in server mode - a no-brainer considering
 how large my org files are.
-
 
 Load shell variables. This is necessary because I run Emacs from
 non-shell environment, via [[id:6b9c69de-6701-4db0-8b4d-e4291f5ad591][Awesome WM]] key bindings and =.profile= is not
@@ -151,7 +156,7 @@ Ensure one server instance
 #+end_src
 
 Do not show large file warnings for anything \le100Mb.
-The default 10Mb is too small for many pdfs and for my Org files.
+The default 10Mb is too small for typical pdfs and for my Org files.
 #+begin_src emacs-lisp
 (when init-flag 
     (setq large-file-warning-threshold (* 100 1024 1024)); 100Mb
@@ -168,7 +173,7 @@ The default 10Mb is too small for many pdfs and for my Org files.
 :END:
 
 Instead of the default emacs package manager, I use =straigt.el=.
-It allows to get packages from github directly, review the new
+It allows getting packages from github directly, review the new
 commits, and easily maintain custom modifications.
 
 First, make sure that =straight.el= can fetch remote URLs from everywhere.
@@ -207,6 +212,7 @@ Put the bootstrap code ([[https://github.com/raxod502/straight.el][as from strai
 	  (eval-print-last-sexp)))
       (load bootstrap-file nil 'nomessage)))
 #+end_src
+
 *** Use-package
 :PROPERTIES:
 :ID:       156b45ac-d29b-45d1-9a6c-7cf36070c24a
