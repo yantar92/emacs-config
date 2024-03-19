@@ -219,18 +219,24 @@ Put the bootstrap code ([[https://github.com/raxod502/straight.el][as from strai
 :END:
 
 Now, I can setup =use-package= to simplify subsequent package configuration
-  #+begin_src emacs-lisp
-(eval-and-compile (straight-use-package 'use-package))
+#+begin_src emacs-lisp
+(eval-and-compile (require 'use-package))
+#+end_src
+
+****************** TODO document
+****************** END
+
+#+begin_src emacs-lisp
 ;;(setq use-package-always-defer t)
-(setq use-package-compute-statistics t)
+;; (setq use-package-compute-statistics t)
 (use-package diminish :straight t)
 (use-package bind-key)
-  #+end_src
+#+end_src
 
 *** Early loading of built-in notmuch version
 
-Latest version from package repositories may not be compatible with
-system version of notmuch executable
+The latest version from package repositories may not be compatible
+with system version of notmuch executable.  Ensure build-in version.
 
 #+begin_src emacs-lisp
 ;; Just for local Emacs version.
@@ -322,9 +328,12 @@ packages. Below, I am trying to organise what I can.
 :ID:       4856ba0e-6a7e-4d52-85d1-a2f23c060a65
 :END:
 
-Keep customisation away from =init.el= in a separate file.
+Keep customisation away from =init.el= in a separate file. Load the
+custom file now, before everything else in the config. This way,
+things explicitly set in the config will take priority over
+(overwrite) the customization.
   #+begin_src emacs-lisp
-(setq custom-file (concat user-emacs-directory "custom.el"))
+(setq custom-file (file-name-concat user-emacs-directory "custom.el"))
 (load custom-file)
   #+end_src
 
@@ -332,6 +341,10 @@ Keep customisation away from =init.el= in a separate file.
 :PROPERTIES:
 :ID:       d64f3725-f2c9-45d0-a917-4013c987d2b0
 :END:
+
+=no-littering= is a set of package-specific overrides that
+1. Moves package files to standard directory structure under =.emacs.d=.
+2. Renames them to have the owner package name in the name/path.
 
 #+begin_src emacs-lisp
 (use-package no-littering
