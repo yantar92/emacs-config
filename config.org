@@ -317,6 +317,7 @@ things explicitly set in the config will take priority over
 
 Elisp is not the fastest language in the world.
 There are various options, which can improve the performance.
+
 *** Bidirectional text is not something I use frequently (never used up until writing this)
 #+BEGIN_SRC emacs-lisp
 (setq bidi-display-reordering nil)
@@ -324,22 +325,6 @@ There are various options, which can improve the performance.
 *** Speed up line movement [[https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746][source]]
 #+begin_src emacs-lisp
 (setq auto-window-vscroll nil)
-#+end_src
-*** COMMENT Smart garbage collect. 
-Though I don't want it in batch mode because it is optimised for interactive use.
-
-[2020-05-29 Fri] [[notmuch:id:note_351562434@gitlab.com][Email from Koral: Re: gcmh | Commands invoking garbage-collect directly can hang emacs when non-idle (#6)]]
-Reducing help:gcmh-cons-threshold to avoid hangs on undo.
-
-#+begin_src emacs-lisp :tangle no
-(when init-flag
-  (use-package gcmh
-    :straight (gcmh :type git :host gitlab :repo "koral/gcmh")
-    :demand t
-    :diminish gcmh-mode
-    :hook (after-init . gcmh-mode)
-    :custom
-    (gcmh-verbose t)))
 #+end_src
 *** Increase GC threshold
 
