@@ -318,14 +318,6 @@ things explicitly set in the config will take priority over
 Elisp is not the fastest language in the world.
 There are various options, which can improve the performance.
 
-*** Bidirectional text is not something I use frequently (never used up until writing this)
-#+BEGIN_SRC emacs-lisp
-(setq bidi-display-reordering nil)
-#+END_SRC
-*** Speed up line movement [[https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag/28746][source]]
-#+begin_src emacs-lisp
-(setq auto-window-vscroll nil)
-#+end_src
 *** Increase GC threshold
 
 And increase GC threshold on top of that (I found emacs spend >25% of time doing GC when just moving around the buffer). 
@@ -340,17 +332,6 @@ In batch mode, increase the threshold to make things faster.
        (lambda () (setq gc-cons-threshold (* 20 1000 1000)))))
   (setq gc-cons-threshold (* 1 1000 1000 1000)))
 (setq garbage-collection-messages nil)
-#+end_src
-*** Do not compact font caches
-
- 
-#+begin_src emacs-lisp
-(setq inhibit-compacting-font-caches t)
-#+end_src
-*** Try to improve typing speed
-Try to improve the typing speed. The typing lags after long Emacs session (presumably because of garbage collection, but trying this anyway)
-#+begin_src emacs-lisp
-(setq redisplay-skip-fontification-on-input t)
 #+end_src
 ** Appearance
 :PROPERTIES:
