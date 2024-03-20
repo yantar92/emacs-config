@@ -2038,6 +2038,8 @@ Show recently opened files in =helm-mini= buffer.
     (helm-ff-file-name-history-use-recentf t)))
 #+end_src
 
+
+
 *** No global auto-revert
 :PROPERTIES:
 :ID:       b4f4fbea-9315-412c-bb48-6984906c67d8
@@ -10690,7 +10692,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
 							'(and (not (tags "CANCELLED" "SOMEDAY"))
                                                               (not (and (tags-local "WAITING")
-                                                                      (tags-local "TRACK")))
+									(tags-local "TRACK")))
 							      (not (area))
 							      (not (todo "TODO"))
                                                               (not (tags-inherited "HOLD" "WAITING"))
@@ -10843,6 +10845,28 @@ I use different skip functions here in agenda to filter the agenda. Some of them
                                                         (quote (and (todo "REVIEW")
                                                                     (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY"))))))))
 		(tags-todo "/"
+			   ((org-agenda-overriding-header "Tasks in progress")
+			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
+			    (org-tags-match-list-sublevels t)
+                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                                        (quote (and (todo "DOING")
+                                                                    (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY"))))))
+			    (org-agenda-sorting-strategy
+			     '(priority-down todo-state-down effort-up category-keep))))
+                (tags-todo "/"
+			   ((org-agenda-overriding-header (concat "Hold Tasks" ""))
+			    (org-agenda-prefix-format "%-12:c\t%?-12t %(yant/format-summary-for-agenda)")
+                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                                        (quote (and (not (scheduled))
+								    (not (org-agenda-skip-before-SHOWFROMDATE-property))
+                                                                    (tags-local "HOLD")
+                                                                    (not (tags-inherited "HOLD" "WAITING"))
+                                                                    (not (tags "CANCELLED" "SOMEDAY"))
+                                                                    (task)))))
+			    (org-tags-match-list-sublevels nil)
+			    (org-agenda-sorting-strategy
+			     '(todo-state-down))))
+                (tags-todo "/"
 		           ((org-agenda-overriding-header "Stuck Projects")
 		            (org-agenda-dim-blocked-tasks nil)
 		            (org-agenda-prefix-format "%-12:c\t%?-12t")
@@ -10867,16 +10891,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
                                    t))))
 		            (org-agenda-todo-ignore-scheduled t)
 		            (org-agenda-sorting-strategy
-		             '(category-keep))))
-		(tags-todo "/"
-			   ((org-agenda-overriding-header "Tasks in progress")
-			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
-			    (org-tags-match-list-sublevels t)
-                            (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                        (quote (and (todo "DOING")
-                                                                    (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY"))))))
-			    (org-agenda-sorting-strategy
-			     '(priority-down todo-state-down effort-up category-keep))))))
+		             '(category-keep))))))
 	      ("v" "GTD overview"
 	       ((agenda ""
 			((org-agenda-prefix-format "%-12s\t%-12:c\t%?-12t")
@@ -10935,7 +10950,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 				 (not (descendants
 				     '(and  (if (area)
 						(todo "NEXT" "REVIEW" "DOING" "TODO")
-                                              (todo "NEXT" "REVIEW" "DOING"))
+					      (todo "NEXT" "REVIEW" "DOING"))
 					    (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
                                             (not (habit)))))
                                  (if (area)
@@ -11019,8 +11034,8 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 							(quote (and (tags-local "AREA")
 								    (not (tags-inherited "SOMEDAY"))
 								    (not (descendants
-									  (and (tags-local "AREA")
-									       (todo "NEXT"))))))))
+									(and (tags-local "AREA")
+									     (todo "NEXT"))))))))
 			    (org-agenda-sorting-strategy
 			     '(todo-state-down effort-up category-keep))))
 		(tags-todo "/"
