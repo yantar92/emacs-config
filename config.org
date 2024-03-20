@@ -18028,6 +18028,32 @@ ls-files' and 'grep'."
   (global-keyfreq-mode))
 #+end_src
 
+* Archived
+
+** COMMENT Smart garbage collect. :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-03-20 Wed 13:37
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Performance
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+Though I don't want it in batch mode because it is optimised for interactive use.
+
+[2020-05-29 Fri] [[notmuch:id:note_351562434@gitlab.com][Email from Koral: Re: gcmh | Commands invoking garbage-collect directly can hang emacs when non-idle (#6)]]
+Reducing help:gcmh-cons-threshold to avoid hangs on undo.
+
+#+begin_src emacs-lisp :tangle no
+(when init-flag
+  (use-package gcmh
+    :straight (gcmh :type git :host gitlab :repo "koral/gcmh")
+    :demand t
+    :diminish gcmh-mode
+    :hook (after-init . gcmh-mode)
+    :custom
+    (gcmh-verbose t)))
+#+end_src
+
 * Archived :ARCHIVE:
 :PROPERTIES:
 :header-args: :tangle no
