@@ -309,30 +309,34 @@ things explicitly set in the config will take priority over
   (emacs-gc-stats-mode +1))
 #+end_src
 
-** Performance
+** Performance (garbage collection)
 :PROPERTIES:
 :CREATED:  [2018-09-12 Wed 19:48]
 :ID:       45c70cb5-df2f-4e86-8ccd-42c1881a7dbf
 :END:
 
-Elisp is not the fastest language in the world.
-There are various options, which can improve the performance.
+Garbage collection algorithm in Emacs is not the most optimal
+https://emacsconf.org/2023/talks/gc/. I found that Emacs spends over
+25% of time doing GC when just moving around the buffer. And a few
+seconds during loading.
 
-*** Increase GC threshold
+Increase the GC thresholds to 200Mb temporarily during loading (it
+reduces GC time during init 10x), and increase GC percentage threshold
+for long-term in-session effect. See Increase the GC thresholds to
+200Mb temporarily during loading (it reduces GC time during init 10x),
+and increase GC percentage threshold for long-term in-session effect.
+See https://emacsconf.org/2023/talks/gc/ for rationale and statistical
+data.
 
-And increase GC threshold on top of that (I found emacs spend >25% of time doing GC when just moving around the buffer). 
-In batch mode, increase the threshold to make things faster.
 #+begin_src emacs-lisp
 (setq gc-cons-percentage 0.2)
-(if init-flag
-    (progn
-      (setq gc-cons-threshold (* 200 1000 1000))
+(setq gc-cons-threshold (* 200 1000 1000))
       (add-hook
        'after-init-hook
-       (lambda () (setq gc-cons-threshold (* 20 1000 1000)))))
-  (setq gc-cons-threshold (* 1 1000 1000 1000)))
-(setq garbage-collection-messages nil)
+       (lambda () (setq gc-cons-threshold (* 20 1000 1000))))
+(setq garbage-collection-messages nil) ; nil is default, this is just to remind about the option
 #+end_src
+
 ** Appearance
 :PROPERTIES:
 :ID:       5b50a90f-4f47-4244-a6ac-e3646464539d
