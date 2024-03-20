@@ -349,18 +349,12 @@ The major mode-specific configuration is configured later on per-mode basis.
 :PROPERTIES:
 :ID:       335a0a70-61ef-4691-bf1f-90351bd7c3bd
 :END:
- #modus
+ #modus_themes
 For a while, I have been using various dark themes for emacs.
 Later, I found light themes easier for my eyes when it is not dark outside.
 Since it is not really a good idea to work in darkness regardless of the colour scheme, I ended up using a light theme I prefer.
 
 #+begin_src emacs-lisp
-;; (use-package flatui-theme
-;;   :if init-flag
-;;   :straight t
-;;   :demand t
-;;   :config
-;;   (load-theme 'flatui t))
 (use-package modus-themes
   :straight (modus-themes
              :host gitlab
@@ -368,14 +362,7 @@ Since it is not really a good idea to work in darkness regardless of the colour 
   :if init-flag
   :init
   (require 'modus-operandi-theme)
-  (setq modus-themes-bold-constructs nil
-        modus-themes-headings '((t . (rainbow regular)))
-        modus-themes-org-blocks nil
-        modus-themes-completions nil
-        modus-themes-intense-paren-match t
-        modus-themes-prompts nil)
-  (setq modus-themes-hl-line nil
-        modus-themes-fringes nil)
+  (setq modus-themes-headings '((t regular)))
   (setopt modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
   (setopt modus-operandi-tinted-palette-overrides
 	  '((bg-dim "#f2eff3")
@@ -389,8 +376,7 @@ Since it is not really a good idea to work in darkness regardless of the colour 
     :config
     (set-face-attribute 'org-special-keyword nil :inherit '(shadow org-drawer)))
   :config
-  (modus-themes-load-theme 'modus-operandi-tinted)
-  )
+  (modus-themes-load-theme 'modus-operandi-tinted))
 #+end_src
 
 For the font, I prefer something that works fine with mixed code and text (e.g. org files).
