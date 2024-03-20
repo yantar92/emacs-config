@@ -2012,6 +2012,17 @@ things up when Emacs is idle.
   (setq recentf-auto-cleanup 10))
 #+end_src
 
+Do not display messages about cleaning the recent file list.
+
+#+begin_src emacs-lisp
+(use-package recentf
+  :config
+  (defun yant/recentf-cleanup-silent (fun)
+    "Call `recentf-cleanup' suppressing messages."
+    (let (message-log-max (inhibit-message t)) (funcall fun)))
+  (advice-add 'recentf-cleanup :around #'yant/recentf-cleanup-silent))
+#+end_src
+
 Show recently opened files in =helm-mini= buffer.
 
 #+begin_src emacs-lisp
