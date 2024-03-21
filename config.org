@@ -425,7 +425,7 @@ For =all-the-icons= it is important to install the fonts via [[elisp:all-the-ico
   :demand t)
 #+end_src
 
-*** Startup appearance
+*** Disable startup message
 :PROPERTIES:
 :ID:       5450bef9-a57a-4afb-85f3-893dbcb5f4ba
 :END:
@@ -445,7 +445,7 @@ Disabling
 General frame appearance configuration.
 
 First, disable unnecessary graphical elements
-No tool bar, no scroll bar, no menu bar.
+No tool bar, no scroll bar, no menu bar (not recommended for newcomers).
 #+begin_src emacs-lisp
 (when init-flag
   (tool-bar-mode -1)
@@ -468,29 +468,11 @@ Using =window-divider-mode= to emphasise it more.
 By default, emacs frame height can only be a multiple of line height.
 This is a little annoying when emacs frame is in maximised state, but yet have a small gap on the bottom.
 Setting resizing to be exact instead.
-****************** TODO Not setting it now because of weird bug when capture frame does not render
-****************** END
 
 #+begin_src emacs-lisp
 (when init-flag
   (setq frame-resize-pixelwise t))
 #+end_src
-**** COMMENT Resize windows with =golden-ratio= mode
-
-Resize windows automatically making sure that active window is enlarged ([[id:3e7e8b3a9f65a4f6d7bfa710a7ec7a5c62a19619][[Git.Sr] ~wklew/golden - sourcehut git]])
-#+begin_src emacs-lisp
-(use-package golden-ratio
-  :straight (golden-ratio :type git :url "https://git.sr.ht/~wklew/golden")
-  :diminish golden-ratio-mode
-  :custom
-  (golden-ratio-exclude-modes '(notmuch-tree-mode
-                                calendar-mode
-                                ;; This is needed to avoid resizing todo selection window.
-                                fundamental-mode))
-  :config
-  (golden-ratio-mode +1))
-#+end_src
-
 *** Window
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 14:14]
@@ -517,60 +499,22 @@ The frame was in different WM workspace and I was totally confused about what is
 :LOGBOOK:
 - Refiled on [2019-12-25 Wed 14:15]
 :END:
+
 My screen is too wide to read text comfortably.
 I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer width.
-
-***** COMMENT Centered window mode
-      :PROPERTIES:
-      :ID:       3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad
-      :END:
-[2020-08-08 Sat] There is annoying bug when the mode activates in modes I do not want it to be activated (pdf-mode, org-agenda-mode). Specifically, it happens more often when I create a new frame. 
-
-#+begin_src emacs-lisp
-(use-package centered-window
-  :if init-flag
-  :straight (centered-window-mode :host github :repo "anler/centered-window-mode")
-  :after boon
-  :config
-  (diminish 'centered-window-mode (concat " "
-					  (propertize (all-the-icons-material "tablet")
-						      'face `((:family "Material Icons"
-								       :height 1.4))
-						      ;; 'display '(raise -0.2)
-                                                      )))
-
-  (defun cwm-special-buffer-p (buffer)
-    "Return 't if BUFF buffer name is special (starts with an *).
-
-The *scratch* buffer although special, is treated as not special
-by this function."
-    (let ((buffname (string-trim (buffer-name buffer))))
-      (and buffname
-           (string-prefix-p "*" buffname)
-           (not (eq major-mode 'notmuch-show-mode))
-           (not (string= "*scratch*" buffname)))))
-
-  (defun pdf-view-mode-p (&rest args)
-    "Return non-nil if in pdf-view-mode."
-    (eq major-mode 'pdf-view-mode))
-  (add-to-list 'cwm-ignore-buffer-predicates 'pdf-view-mode-p)
-  (bind-keys :map boon-x-map ("w" . centered-window-mode))
-  (centered-window-mode +1))
-#+end_src
 
 ***** =Olivetti= mode \ narrow window display
 :PROPERTIES:
 :ID:       1633927d-77d5-4f0e-a64e-4090454da22a
 :END:
 
-This mode is minor-mode thus it should be less intrusive in comparison with [[id:3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad][Centered window mode]]
+This mode is minor-mode thus it should be less intrusive in comparison with [[id:3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad][Centered window mode]].
 
 #+begin_src emacs-lisp
 (use-package olivetti
   :if init-flag
   :straight t
   :demand t
-  :after boon
   :hook ((text-mode notmuch-show-mode erc-mode) . olivetti-mode)
   :init
   (setq-default olivetti-body-width 110)
@@ -578,47 +522,14 @@ This mode is minor-mode thus it should be less intrusive in comparison with [[id
 	(concat " "
 		(propertize (all-the-icons-material "tablet")
 	 		    'face `((:family "Material Icons")))))
-  (bind-keys :map boon-x-map ("w" . olivetti-mode))
+  (use-package boon
+    :config
+    (bind-keys :map boon-x-map ("w" . olivetti-mode)))
   :config
   ;; Do not shadow cdlatex.
   (unbind-key "C-c {" olivetti-mode-map))
 #+end_src
-**** COMMENT Text wrap indicators
-     :PROPERTIES:
-     :ID:       7b84d543-2d95-4a04-ba1f-a96e47daa853
-     :END:
 
-Nicer text wrap/truncation indicators. 
-Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
-
-This works instead of default fringe indicators and hence I need to disable fringe.  Without fringe there is also a need to put some internal border in frames.  Otherwise, text will be shifted right to the frame edge, which is not nice.
-
-#+begin_src emacs-lisp
-;; Fringe provides the same (but not customisable functionality
-(fringe-mode '(0 . 0))
-(add-to-list 'default-frame-alist '(internal-border-width . 10))
-(set-frame-parameter (selected-frame)
-                     'internal-border-width 10)
-(defface fallback '((t :family "Fira Code Light"
-		       :inherit 'face-faded)) "Fallback")
-(set-display-table-slot standard-display-table 'truncation
-                        (make-glyph-code ?… 'fallback))
-(set-display-table-slot standard-display-table 'wrap
-                        (make-glyph-code ?↩ 'fallback))
-(set-display-table-slot standard-display-table 'selective-display
-                        (string-to-vector " …"))
-;; Org buffers would use empty table by default
-(use-package org
-  :defer t
-  :init
-  (setq org-display-table (make-display-table))
-  (set-display-table-slot org-display-table 'truncation
-                          (make-glyph-code ?… 'fallback))
-  (set-display-table-slot org-display-table 'wrap
-                          (make-glyph-code ?↩ 'fallback))
-  (set-display-table-slot org-display-table 'selective-display
-                          (string-to-vector " …")))
-#+end_src
 **** Window boundaries
 :PROPERTIES:
 :ID:       00975142-2491-4f85-bd0b-f1f6c2938e36
@@ -654,6 +565,7 @@ Match default face background
   :hook
   (after-init . pixel-scroll-precision-mode))
 #+end_src
+
 *** Buffer
 
 General buffer appearance.
@@ -17988,8 +17900,51 @@ ls-files' and 'grep'."
   (global-keyfreq-mode))
 #+end_src
 
-* Archived
+** COMMENT Text wrap indicators :EMACS:COMMON:SOMEDAY:
+     :PROPERTIES:
+     :ID:       7b84d543-2d95-4a04-ba1f-a96e47daa853
+     :ARCHIVE_TIME: 2024-03-21 Thu 17:11
+     :ARCHIVE_FILE: ~/Git/emacs-config/config.org
+     :ARCHIVE_OLPATH: Emacs configuration/Appearance/Window
+     :ARCHIVE_CATEGORY: config
+     :ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+     :END:
 
+Nicer text wrap/truncation indicators. 
+Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
+
+This works instead of default fringe indicators and hence I need to disable fringe.  Without fringe there is also a need to put some internal border in frames.  Otherwise, text will be shifted right to the frame edge, which is not nice.
+
+#+begin_src emacs-lisp
+;; Fringe provides the same (but not customisable functionality
+(fringe-mode '(0 . 0))
+(add-to-list 'default-frame-alist '(internal-border-width . 10))
+(set-frame-parameter (selected-frame)
+                     'internal-border-width 10)
+(defface fallback '((t :family "Fira Code Light"
+		       :inherit 'face-faded)) "Fallback")
+(set-display-table-slot standard-display-table 'truncation
+                        (make-glyph-code ?… 'fallback))
+(set-display-table-slot standard-display-table 'wrap
+                        (make-glyph-code ?↩ 'fallback))
+(set-display-table-slot standard-display-table 'selective-display
+                        (string-to-vector " …"))
+;; Org buffers would use empty table by default
+(use-package org
+  :defer t
+  :init
+  (setq org-display-table (make-display-table))
+  (set-display-table-slot org-display-table 'truncation
+                          (make-glyph-code ?… 'fallback))
+  (set-display-table-slot org-display-table 'wrap
+                          (make-glyph-code ?↩ 'fallback))
+  (set-display-table-slot org-display-table 'selective-display
+                          (string-to-vector " …")))
+#+end_src
+* Archived :ARCHIVE:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 ** COMMENT Smart garbage collect. :EMACS:COMMON:SOMEDAY:
 :PROPERTIES:
 :ARCHIVE_TIME: 2024-03-20 Wed 13:37
@@ -18014,10 +17969,29 @@ Reducing help:gcmh-cons-threshold to avoid hangs on undo.
     (gcmh-verbose t)))
 #+end_src
 
-* Archived :ARCHIVE:
+** COMMENT Resize windows with =golden-ratio= mode :EMACS:COMMON:SOMEDAY:
 :PROPERTIES:
-:header-args: :tangle no
+:ARCHIVE_TIME: 2024-03-21 Thu 17:09
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Appearance/Frame
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
 :END:
+
+Resize windows automatically making sure that active window is enlarged ([[id:3e7e8b3a9f65a4f6d7bfa710a7ec7a5c62a19619][[Git.Sr] ~wklew/golden - sourcehut git]])
+#+begin_src emacs-lisp
+(use-package golden-ratio
+  :straight (golden-ratio :type git :url "https://git.sr.ht/~wklew/golden")
+  :diminish golden-ratio-mode
+  :custom
+  (golden-ratio-exclude-modes '(notmuch-tree-mode
+                                calendar-mode
+                                ;; This is needed to avoid resizing todo selection window.
+                                fundamental-mode))
+  :config
+  (golden-ratio-mode +1))
+#+end_src
+
 ** COMMENT Show subtrees - org-mode-like directory folding :EMACS:COMMON:SOMEDAY:
 :PROPERTIES:
 :ID:       cca7f06f-35f7-4921-9b9d-d93b6967a95a
