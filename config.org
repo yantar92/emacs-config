@@ -350,9 +350,14 @@ The major mode-specific configuration is configured later on per-mode basis.
 :ID:       335a0a70-61ef-4691-bf1f-90351bd7c3bd
 :END:
  #modus_themes
-For a while, I have been using various dark themes for emacs.
-Later, I found light themes easier for my eyes when it is not dark outside.
-Since it is not really a good idea to work in darkness regardless of the colour scheme, I ended up using a light theme I prefer.
+
+For a while, I have been using dark themes for emacs. Later, I found
+light themes easier for my eyes when it is not dark outside. Since it
+is not really a good idea to work in darkness regardless of the colour
+scheme, I ended up using a light theme I prefer.
+
+****************** TODO Move org faces setting to relevant section
+****************** END
 
 #+begin_src emacs-lisp
 (use-package modus-themes
@@ -370,7 +375,8 @@ Since it is not really a good idea to work in darkness regardless of the colour 
 	    (fg-heading-1 "#5317ac")
 	    (bg-hl-line "#e0e0e0")
             (fringe unspecified)
-            (bg-active bg-blue-subtle)))
+            (bg-active bg-blue-subtle)
+            (bg-hover-secondary "#aae59c")))
   (use-package org-faces
     :defer t
     :config
@@ -379,71 +385,39 @@ Since it is not really a good idea to work in darkness regardless of the colour 
   (modus-themes-load-theme 'modus-operandi-tinted))
 #+end_src
 
+*** Fonts
+
 For the font, I prefer something that works fine with mixed code and text (e.g. org files).
 My choice is Source Code Pro.
 Setting it up as default everywhere.
 
-[2020-03-10 Tue] <<39a84dde-88d1-46e8-86d0-28fb8f72f30c>>
-Chinese symbols are not covered by Source Code Pro. 
-The result is different character width for Chinese characters.
-Using Sarasa Gothic hc with slightly larger size for Chinese symbols in order to keep the character width same all the time.
-Credit: https://www.reddit.com/r/emacs/comments/fgbnfv/is_there_a_fixed_width_font_supporting_multiple/
-
-Also, automatically detecting and setting any missing fonts (this comes before manual settings to avoid overrides)
-
-[2021-01-09 Sat] Does not load
-#+begin_src emacs-lisp :tangle no
-(use-package unicode-fonts
-  :if init-flag
-  :straight t
-  :init
-  (use-package persistent-soft
-    :straight t) ;; Speed-up unicode-fonts startup, as suggested in unicode-fonts.el commentary
-  :config
-  (unicode-fonts-setup))
+#+begin_src emacs-lisp
+(when init-flag
+  (set-face-attribute 'default nil :height 130 :family "Source Code Pro"))
 #+end_src
+
+[2020-03-10 Tue] <<39a84dde-88d1-46e8-86d0-28fb8f72f30c>>
+Chinese symbols are not covered by Source Code Pro. The result is
+different character width for Chinese characters. Using Sarasa Gothic
+hc with slightly larger size for Chinese symbols in order to keep the
+character width same all the time.
+Credit: https://www.reddit.com/r/emacs/comments/fgbnfv/is_there_a_fixed_width_font_supporting_multiple/
 
   #+begin_src emacs-lisp
 (when init-flag
-  (set-face-attribute 'default nil
-		      :height 130
-		      :family "Source Code Pro")
   (set-fontset-font "fontset-default" 'chinese-gbk (font-spec :family "Sarasa Mono hc"))
   ;; Credit for the suggestion about `face-font-rescale-alist': @viz:okash.it (Matrix)
   (push `("Sarasa Mono hc" . ,(/ 16.0 13.0)) face-font-rescale-alist)
   (set-fontset-font "fontset-default" 'cyrillic-iso8859-5 (font-spec :family "source code pro"))
   (mapc (lambda (char)
 	  (set-fontset-font "fontset-default" char (font-spec :family "Symbola")))
-        '(?⏩ ?⛔ ?⌛ ?👨 ?🔗 ?💡 ?🔁 ?🧠))
-  ;; (mapc (lambda (char)
-  ;; 	  (set-fontset-font "fontset-default" char (font-spec :size 12.0 :family "Source Code Pro")))
-  ;;       '(?λ))
-  ;; (mapc (lambda (char)
-  ;; (set-fontset-font "fontset-default" char (font-spec :size 5.0 :family "Quivira")))
-  ;;       '(?⏩ ?⛔))
-  ;; (mapc (lambda (char)
-  ;; 	  (set-fontset-font "fontset-default" char (font-spec :size 10.0 :family "Quivira")))
-  ;;       '(?★ ?⌛))
-  ;; (mapc (lambda (char)
-  ;; 	  (set-fontset-font "fontset-default" char (font-spec :size 12.0 :family "Symbola")))
-  ;;       '(?🖂 ?🖳 ?🏠 ?🔗 ?🖹))
-  ;; (mapc (lambda (char)
-  ;; 	  (set-fontset-font "fontset-default" char (font-spec :size 8.0 :family "Symbola")))
-  ;;       '(?🖹 ?⛕))
-  )
+        '(?⏩ ?⛔ ?⌛ ?👨 ?🔗 ?💡 ?🔁 ?🧠)))
   #+end_src
 
-The colour of secondary selection in the theme is the same colour with some symbols in my =org-agenda=.
-Actually, it is probably not the case anymore, but it is used to be so...
-The colour I use is below
-#+BEGIN_SRC emacs-lisp
-(when init-flag
-  (set-face-background 'secondary-selection "#aae59c"))
-#+END_SRC
+*** Icons
 
 For =all-the-icons= it is important to install the fonts via [[elisp:all-the-icons-install-fonts]]
-****************** TODO check if hangs disappear
-****************** END
+
 #+begin_src emacs-lisp
 (use-package all-the-icons
   :if init-flag
