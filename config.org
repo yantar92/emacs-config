@@ -473,12 +473,13 @@ Setting resizing to be exact instead.
 (when init-flag
   (setq frame-resize-pixelwise t))
 #+end_src
+
 *** Window
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 14:14]
 :END:
 
-General settings for window appearance
+General settings for window appearance.
 
 **** TODO Handling pop-up windows
 :PROPERTIES:
@@ -533,18 +534,19 @@ This mode is minor-mode thus it should be less intrusive in comparison with [[id
 **** Window boundaries
 :PROPERTIES:
 :ID:       00975142-2491-4f85-bd0b-f1f6c2938e36
-:SUMMARY:  Does not work without fringe
 :END:
 :LOGBOOK:
 - Note taken on [2020-08-20 Thu 18:04] \\
   Does not work without fringe
 - Refiled on [2019-12-25 Wed 14:15]
 :END:
-When the buffer text takes less space then a window, it's neat to see the beginning/end of the buffer in emacs.
+When the buffer text takes less space then a window, it's neat to see
+the beginning/end of the buffer in emacs.
 #+begin_src emacs-lisp
 (when init-flag
   (setq-default indicate-buffer-boundaries 'left))
 #+end_src
+
 **** Fringes
 :PROPERTIES:
 :ID:       79fe1059-8e0d-44f4-ac76-2cd04e7cce9f
@@ -557,7 +559,10 @@ Match default face background
 		    :background (face-background 'default))
 #+end_src
 
-**** Scrolling
+**** Smooth scrolling
+
+As the usual Emacs user belief goes, fancy "bells and whistles" should be unnecessary.
+Yet, smooth scrolling makes surprisingly good experience when reading things.
 
 #+begin_src emacs-lisp
 (use-package pixel-scroll
