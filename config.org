@@ -591,9 +591,9 @@ However, long lines are pretty common in special buffers like in =elfeed=, =notm
 Setting line wrapping there makes them look ugly.
 Moreover, a need to wrap lines in =prog-mode= buffers is a sign that the code is not formatted well.
 So, I don't really need line wrapping in most of the major modes.
-I am setting line truncation globally and enable line wrapping only for several certain major modes (i.e. =org-mode=).
+I am setting line truncation globally and enable line wrapping only for specific major modes (i.e. =org-mode=).
 
-If the line wrapping is active, I also want the word wrap to be activated automatically and obey the indentation of the beginning of the line.
+If the line wrapping is active, I also want the word wrap to be activated automatically and obey the indentation of the beginning of the line (=adaprive-wrap= package; not yet part of Emacs, but will likely be https://yhetil.org/emacs-devel/878r4eqjh8.fsf@yahoo.com/).
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -615,6 +615,7 @@ If the line wrapping is active, I also want the word wrap to be activated automa
 		word-wrap t
                 line-move-visual nil))
 #+end_src
+
 *** Text in buffers
 :PROPERTIES:
 :ID:       45675819-9551-43da-8e21-4437dde591e5
@@ -623,8 +624,11 @@ If the line wrapping is active, I also want the word wrap to be activated automa
 :PROPERTIES:
 :ID:       07c3544a-bcbd-4790-815a-25615ca2ca03
 :END:
-Prefer UTF
+
+Prefer UTF.
+
   #+begin_src emacs-lisp
+;; English is the default, but still keeping it here to remember that such thing exists.
 (set-language-environment "English")
 (prefer-coding-system 'utf-8)
 (add-to-list 'file-coding-system-alist '("\\.org" utf-8))
@@ -635,8 +639,12 @@ Prefer UTF
 :CREATED:  [2019-12-23 Mon 20:02]
 :ID:       86eccbaa-8999-4630-9784-07a91b8d14bd
 :END:
+
 This looks nicer.
 [[http://ergoemacs.org/emacs/emacs_toggle_line_spacing.html][credit: Xah Lee]]
+
+The downside is that images created with ~insert-sliced-image~ will not be continuous.
+
 #+begin_src emacs-lisp
 (setq-default line-spacing 0.15)
 #+end_src
@@ -646,12 +654,13 @@ This looks nicer.
 :ID:       ec85fac4-8fad-4adf-a159-2219ace7e7d7
 :END:
 
-Show some text in buffer differently
+Show some text in buffer differently.
 
 ***** Page break shown as lines
 :PROPERTIES:
 :ID:       6c1e16d6-7f4e-41e5-99a8-13fac4eab2a3
 :END:
+
 #+begin_src emacs-lisp
 (use-package page-break-lines
   :if init-flag
