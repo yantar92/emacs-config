@@ -524,6 +524,7 @@ This mode is minor-mode thus it should be less intrusive in comparison with [[id
 		(propertize (all-the-icons-material "tablet")
 	 		    'face `((:family "Material Icons")))))
   (use-package boon
+    :defer t
     :config
     (bind-keys :map boon-x-map ("w" . olivetti-mode)))
   :config
