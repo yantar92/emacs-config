@@ -317,7 +317,11 @@ genkernel --menuconfig all
 grub-mkconfig -o /boot/grub/grub.cfg
 #+end_src
 
+[2024-03-23 Sat] Need to install =installkernel= (it generates
+=vmlinuz-x.y.z= in =/boot=) manually according to Gentoo news.
+
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-kernel/installkernel
 sys-kernel/genkernel
 sys-boot/grub
 # kernel signature and EFI trust certificate manipulation
