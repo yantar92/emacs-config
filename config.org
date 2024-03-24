@@ -504,12 +504,8 @@ The frame was in different WM workspace and I was totally confused about what is
 My screen is too wide to read text comfortably.
 I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer width.
 
-***** =Olivetti= mode \ narrow window display
-:PROPERTIES:
-:ID:       1633927d-77d5-4f0e-a64e-4090454da22a
-:END:
-
-This mode is minor-mode thus it should be less intrusive in comparison with [[id:3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad][Centered window mode]].
+=olivetti= mode is minor-mode and thus it is less intrusive in
+comparison with [[id:3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad][Centered window mode]] (major mode).
 
 #+begin_src emacs-lisp
 (use-package olivetti
@@ -541,6 +537,7 @@ This mode is minor-mode thus it should be less intrusive in comparison with [[id
   Does not work without fringe
 - Refiled on [2019-12-25 Wed 14:15]
 :END:
+
 When the buffer text takes less space then a window, it's neat to see
 the beginning/end of the buffer in emacs.
 #+begin_src emacs-lisp
@@ -631,6 +628,7 @@ Prefer UTF.
 ;; English is the default, but still keeping it here to remember that such thing exists.
 (set-language-environment "English")
 (prefer-coding-system 'utf-8)
+;; Automatic detection somehow does not work for some of my files
 (add-to-list 'file-coding-system-alist '("\\.org" utf-8))
  #+end_src
 
@@ -739,12 +737,7 @@ Show some text in buffer differently.
 				    ))))
 #+end_src
 ***** COMMENT SVG symbols
-:PROPERTIES:
-:SUMMARY:  Not usable now - text is shifted by different offsets
-:END:
 
-- Note taken on [2021-08-29 Sun 14:56] \\
-  Not usable now - text is shifted by different offsets
  #svg-tag-mode
 
 [[id:Github-rougier-github-rougier-svg-981][rougier [Github] GitHub - rougier/svg-tag-mode: A minor mode for Emacs that replace keywords with nice SVG labels]]
