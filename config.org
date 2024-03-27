@@ -752,21 +752,6 @@ Show some text in buffer differently.
   (svg-tag-horizontal-offset 0))
 #+end_src
 
-***** Latex pretty symbols
-:PROPERTIES:
-:ID:       bdf24c4b-681c-4286-86cd-e81f63b94ec0
-:END:
-****************** TODO Move to latex
-****************** END
-
-#+begin_src emacs-lisp
-(use-package latex-pretty-symbols
-  :if init-flag
-  :straight t
-  :config
-  (global-prettify-symbols-mode t))
-#+end_src
-
 **** Selection
 :PROPERTIES:
 :CREATED:  [2020-04-20 Mon 01:47]
