@@ -775,17 +775,15 @@ Show some text in buffer differently.
   :hook (emacs-lisp-mode . hl-todo-mode)
   :config
   (setq hl-todo-keyword-faces
-	'(("TODO"   . "#FF0000")
-          ("FIXME"  . "#FF0000")
-          ("DEBUG"  . "#A020F0")
-          ("GOTCHA" . "#FF4500")
-          ("STUB"   . "#1E90FF"))))
+	'(("TODO:"   . "#FF0000")
+          ("FIXME:"  . "#FF0000"))))
 #+end_src
 
 **** No ugly button for checkboxes
 :PROPERTIES:
 :ID:       36ef77bf-1a8e-45c5-a306-10f02ebaf671
 :END:
+
 Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
 
 #+begin_src emacs-lisp
