@@ -795,28 +795,14 @@ Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very
 :PROPERTIES:
 :ID:       506912a1-1daf-4506-8e5a-87f90214b42c
 :END:
+
 Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
-Surprisingly, it looks quite nice
+Surprisingly, it looks quite nice.
 
 #+begin_src emacs-lisp
 (when init-flag
   (setq x-underline-at-descent-line t))
 #+end_src
-**** Info buffers
-:PROPERTIES:
-:ID:       00f5f951-a002-4c0d-922d-e8e5fbc19df4
-:END:
-
-Add extra fontification
-
-#+begin_src emacs-lisp
-(use-package info-colors
-  :if init-flag
-  :straight t
-  :init
-  (add-hook 'Info-selection-hook 'info-colors-fontify-node))
-#+end_src
-
 *** Header line
 :PROPERTIES:
 :CREATED:  [2020-04-23 Thu 20:43]
@@ -5314,6 +5300,20 @@ It warns me if the original definition changes from what I expect.
   :if init-flag
   :straight t)
 #+end_src
+** Info
+*** Extra fontification
+:PROPERTIES:
+:ID:       00f5f951-a002-4c0d-922d-e8e5fbc19df4
+:END:
+
+#+begin_src emacs-lisp
+(use-package info-colors
+  :if init-flag
+  :straight t
+  :init
+  (add-hook 'Info-selection-hook 'info-colors-fontify-node))
+#+end_src
+
 
 ** LaTeX
 :PROPERTIES:
