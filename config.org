@@ -803,7 +803,7 @@ Surprisingly, it looks quite nice.
 (when init-flag
   (setq x-underline-at-descent-line t))
 #+end_src
-*** Header line
+*** TODO Mode line
 :PROPERTIES:
 :CREATED:  [2020-04-23 Thu 20:43]
 :ID:       e0d58345-6e68-4672-a9d7-37ff73717cf3
@@ -1030,7 +1030,9 @@ without having to move the cursor. =breadcrumbs= package displays
   (diminish 'eldoc-mode))
 #+end_src
 
-Since I wrap the default movement commands into custom functions (see [[id:0fe0bca3-fb51-4e0c-8b35-79a5e92975d6][Modal setup]]), I need to make these custom commands trigger =eldoc= information update.
+Since I wrap the default movement commands into custom functions (see
+[[id:0fe0bca3-fb51-4e0c-8b35-79a5e92975d6][Modal setup]]), I need to make these custom commands trigger =eldoc=
+information update.
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -1079,7 +1081,8 @@ Since I wrap the default movement commands into custom functions (see [[id:0fe0b
 :ID:       47b6a282-1ab2-4137-a4eb-db62f8a376fd
 :END:
 
-Blinking does not matter much for me and no blinking is one less timer and hence one more tiny bit of slowing Emacs.
+Blinking does not matter much for me and no blinking is one less timer
+and hence one more tiny bit of slowing Emacs.
 
 #+begin_src emacs-lisp
 (when init-flag
