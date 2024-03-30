@@ -1094,69 +1094,68 @@ and hence one more tiny bit of slowing Emacs.
 :ID:       ff7a4c41-d457-4a90-bcb9-4f653af48ff4
 :END:
 
-This section contains customisation relevant to actions associated with running various commands.
+This section contains customisation relevant to actions associated
+with running various commands.
 
 *** Dialogues
 :PROPERTIES:
 :ID:       b1e1c83a-18be-4c5c-bd77-970a0a163b72
 :END:
-- do not use graphical dialogues
+
+Do not use graphical dialogues.
 
   #+begin_src emacs-lisp
 (setq use-dialog-box nil)
   #+end_src
-*** Minibuffer
-**** Do not transfer minibuffer between frames
-:PROPERTIES:
-:ID:       cde20f58-0458-49cc-af89-62b376ca0eef
-:END:
-
-#+begin_src emacs-lisp
-(setq minibuffer-follows-selected-frame nil)
-#+end_src
-
 *** Tooltips
 :PROPERTIES:
 :ID:       2b71a4fe-82e8-4ec6-9164-ad6958c6767f
 :END:
-Disable tooltips
+Disable tooltips.
 #+begin_src emacs-lisp
 (tooltip-mode -1)
 #+end_src
 
 *** Key bindings
-At some point, a got very annoyed about distance between =C-n=, =C-p=, =C-f=, and =C-b= and did not want to move my hand all the way to arrow keys.
-So, I use modal editing  now, which allows me to move around using the keys, which are close to each other.
-**** Enable repeat keymaps
+:PROPERTIES:
+:ID:       2e69950e-21b5-40aa-8f82-895cc04aa5c2
+:END:
 
-[[help:repeat-mode]]
-
-#+begin_src emacs-lisp
-(use-package repeat
-  :if init-flag
-  :init
-  (repeat-mode +1))
-#+end_src
+At some point, a got very annoyed about distance between =C-n=, =C-p=,
+=C-f=, and =C-b= and did not want to move my hand all the way to arrow
+keys. So, I use modal editing now, which allows me to move around
+using the keys, which are close to each other.
 
 **** Modal setup
 :PROPERTIES:
 :ID:       0fe0bca3-fb51-4e0c-8b35-79a5e92975d6
 :END:
 
-Do not use =self-insert-command= by default, but bind character keys to navigation, selection, etc.
-I use [[https://github.com/jyp/boon][boon]] package for this purpose.
+Do not use =self-insert-command= by default, but bind character keys to
+navigation, selection, etc. I use [[https://github.com/jyp/boon][boon]] package for this purpose.
 
-It is bad idea to enable boon insert mode in special buffers, so it has =special mode= with limited redefined key binding by default.
-This mode replaces normal =insert mode=.
-I add extra functionality for the case when =special mode= or =command mode= should not be enabled by default --- the buffer requires a lot of writing (I mean shell buffers, for example).
-This is defined by =boon-insert-state-major-mode-list= where the default mode is =insert mode=.
+It is bad idea to enable boon insert mode in special buffers, so it
+has =special mode= with limited redefined key binding by default. This
+mode replaces normal =insert mode=. I add extra functionality for the
+case when =special mode= or =command mode= should not be enabled by
+default --- the buffer requires a lot of writing (I mean shell
+buffers, for example). This is defined by
+=boon-insert-state-major-mode-list= where the default mode is =insert
+mode=.
 
-=boon-special-mode= is frequently useful in all kinds of major modes, like debug, org-agenda, =notmuch=, etc.
-However, many major modes use the conventional movement key bindings or their derivatives (like "n" and "p" in =org-agenda=).
-I do not like it.
-I prefer to have some minimal set of movement keys working in all the buffers (see below).
-It means that I need to redefine the movement commands to be able to act according to the major mode (like "n" from org-mode is bound to =org-next-line= and, hence, "j" from =org-special-map= should be also bound to =org-next-line=.
-This can be done by defining special wrapper command, which acts differently depending on the mode or buffer position, while the general result or running the command is similar (i.e. move next line in text buffer, but move next file in =dired=, or next agenda item in =org-agenda=.
+=boon-special-mode= is frequently useful in all kinds of major modes,
+like debug, org-agenda, =notmuch=, etc. However, many major modes use
+the conventional movement key bindings or their derivatives (like "n"
+and "p" in =org-agenda=). I do not like it. I prefer to have some
+minimal set of movement keys working in all the buffers (see below).
+It means that I need to redefine the movement commands to be able to
+act according to the major mode (like "n" from org-mode is bound to
+=org-next-line= and, hence, "j" from =org-special-map= should be also
+bound to =org-next-line=. This can be done by defining special wrapper
+command, which acts differently depending on the mode or buffer
+position, while the general result or running the command is similar
+(i.e. move next line in text buffer, but move next file in =dired=, or
+next agenda item in =org-agenda=.
 
 ****************** TODO respect interactive definitions
 ****************** END
