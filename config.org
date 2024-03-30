@@ -1157,18 +1157,6 @@ position, while the general result or running the command is similar
 (i.e. move next line in text buffer, but move next file in =dired=, or
 next agenda item in =org-agenda=.
 
-****************** TODO respect interactive definitions
-****************** END
-
-****************** TODO Provide a way to prepend condition
-****************** END 
-****************** TODO check when trying to bind non-existing function? maybe link to function symbol instead
-****************** END
-
-****************** TODO make sure that defining default function after conditional does not mess up anything
-****************** END
-
-
 Second, implement the wrapper command <<meta-functions>>.
 And use the wrapper command in interactive mode.
 
