@@ -1343,16 +1343,6 @@ The problem is that it may mess up the cases when I want to assign special meani
   (boon-mode))
 #+end_src
 
-Also, I do not like default implementation of =boon-special-mode-p=, which forces setting special mode for terminal-modes. I prefer to rewrite it
-
-#+BEGIN_SRC emacs-lisp
-(use-package boon
-  :if init-flag
-  :config
-  (define-advice boon-special-mode-p (:around (oldfun) force-special-mode-list-only)
-    "Force setting boon-special-mode when mode is in `boon-special-mode-list' and only in it. No exceptions."
-    (memq major-mode boon-special-mode-list)))
-#+END_SRC
 **** Hydra
 :PROPERTIES:
 :CREATED:  [2017-12-31 Sun 08:36]
