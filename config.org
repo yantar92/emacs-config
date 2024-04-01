@@ -354,9 +354,6 @@ light themes easier for my eyes when it is not dark outside. Since it
 is not really a good idea to work in darkness regardless of the colour
 scheme, I ended up using a light theme I prefer.
 
-****************** TODO Move org faces setting to relevant section
-****************** END
-
 #+begin_src emacs-lisp
 (use-package modus-themes
   :straight (modus-themes
@@ -375,10 +372,6 @@ scheme, I ended up using a light theme I prefer.
             (fringe unspecified)
             (bg-active bg-blue-subtle)
             (bg-hover-secondary "#aae59c")))
-  (use-package org-faces
-    :defer t
-    :config
-    (set-face-attribute 'org-special-keyword nil :inherit '(shadow org-drawer)))
   :config
   (modus-themes-load-theme 'modus-operandi-tinted))
 #+end_src
@@ -16817,7 +16810,6 @@ Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/c
 #+begin_src emacs-lisp :tangle no
 (add-hook 'org-mode-hook #'org-fold-hide-block-all)
 #+end_src
-
 **** Property drawers
 :PROPERTIES:
 :CREATED:  [2020-05-13 Wed 23:51]
@@ -16825,6 +16817,9 @@ Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/c
 :END:
 
 ***** Smaller font for property drawers
+:PROPERTIES:
+:ID:       af30c834-3dbe-4df9-a287-c9c72f2b335d
+:END:
 
 #+begin_src emacs-lisp
 (use-package org
@@ -16900,6 +16895,17 @@ If a property drawer conatins only these properties, hide the drawer as well."
     "Do not hide proprety drawers on startup"
     (unless (eq state 'all) (funcall oldfun state)))
   (add-hook 'org-cycle-hook #'org-cycle-hide-drawers))
+#+end_src
+
+**** Keywords
+
+Dim keywords and use smaller font size as in [[id:af30c834-3dbe-4df9-a287-c9c72f2b335d][Smaller font for property drawers]].
+
+#+begin_src emacs-lisp
+  (use-package org-faces
+    :defer t
+    :config
+    (set-face-attribute 'org-special-keyword nil :inherit '(shadow org-drawer)))
 #+end_src
 
 **** Symbols
