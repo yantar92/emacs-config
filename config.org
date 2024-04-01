@@ -218,19 +218,17 @@ Put the bootstrap code ([[https://github.com/raxod502/straight.el][as from strai
 :ID:       156b45ac-d29b-45d1-9a6c-7cf36070c24a
 :END:
 
-Now, I can setup =use-package= to simplify subsequent package configuration
+Now, I can setup =use-package= to simplify subsequent package configuration.
+
 #+begin_src emacs-lisp
 (eval-and-compile (require 'use-package))
 #+end_src
 
-****************** TODO document
-****************** END
+Add support for =:diminish= keyword that alters how minor modes are
+indicated in the mode line.
 
 #+begin_src emacs-lisp
-;;(setq use-package-always-defer t)
-;; (setq use-package-compute-statistics t)
-(use-package diminish :straight t)
-(use-package bind-key)
+  (use-package diminish :straight t)
 #+end_src
 
 *** Early loading of built-in notmuch version
