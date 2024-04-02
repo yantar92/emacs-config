@@ -10592,7 +10592,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 	       ((tags-todo "/"
 			   ((org-agenda-overriding-header "All other active tasks")
 			    (org-agenda-dim-blocked-tasks 'invisible)
-			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
+			    (org-agenda-prefix-format "[%(yant/get-clocked-time-today-for-agenda)%e] %-12:c\t%?-12t")
 			    (org-agenda-todo-ignore-scheduled t)
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
 							(quote (and (todo "TODO")
@@ -10679,7 +10679,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
                                                                     (not (tags "CANCELLED" "WAITING" "HOLD" "DEFAULT" "SOMEDAY"))))))))
 		(tags-todo "/"
 			   ((org-agenda-overriding-header "Tasks in progress")
-			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
+			    (org-agenda-prefix-format "[%(yant/get-clocked-time-today-for-agenda)%e] %-12:c\t%?-12t")
 			    (org-tags-match-list-sublevels t)
                             (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
                                                         (quote (and (todo "DOING")
@@ -10810,7 +10810,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 			     '(todo-state-down))))
 		(tags-todo "/"
 			   ((org-agenda-overriding-header "Project Next Tasks")
-			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
+			    (org-agenda-prefix-format "[%(yant/get-clocked-time-today-for-agenda)%e] %-12:c\t%?-12t")
                             (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
 							(quote
 							 (and (todo "NEXT")
@@ -10833,7 +10833,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
 			     '(priority-down todo-state-down effort-up category-keep))))
 		(tags-todo "/"
 			   ((org-agenda-overriding-header "Extra Next Tasks")
-			    (org-agenda-prefix-format "[%e] %-12:c\t%?-12t")
+			    (org-agenda-prefix-format "[%(yant/get-clocked-time-today-for-agenda)%e] %-12:c\t%?-12t")
 			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
 							(quote
 							 (and (todo "NEXT")
@@ -16372,6 +16372,13 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 	(format "[%s] " summary)
       "")))
 
+(defun yant/get-clocked-time-today-for-agenda ()
+  "Get total clocked-in time for an entry in agenda."
+  (let ((minutes (org-with-point-at-org-buffer
+		  (org-narrow-to-subtree)
+		  (org-clock-sum-today))))
+    (if (= minutes 0) "" (concat (org-duration-from-minutes minutes 'h:mm) "/"))))
+
 (defun yant/format-hashtags-for-agenda ()
   "Format the list of hashtags to show in agenda view."
   (let* ((entry-text (org-with-point-at-org-buffer
@@ -16408,10 +16415,10 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 	  (format "%s%s%s" (if scheduled? (format "%-4s" (format "%s↰" repeat-string)) "    ") (if mult (format "%+.1fx" mult) "")
 		  (if (and bonus (> bonus 0)) (format "+%-3s" bonus) "    "))))
     (error "")))
-(setq org-agenda-prefix-format '((agenda . "%-12.12s %-14.14:c [%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-				 (search . "%s %-14.14:c [%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-				 (todo . "%-14.14:c [%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-                                 (tags . "%-14.14:c [%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")))
+(setq org-agenda-prefix-format '((agenda . "%-12.12s %-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+				 (search . "%s %-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+				 (todo . "%-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+                                 (tags . "%-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")))
   #+end_src
 
 Hide some uninteresting tags
