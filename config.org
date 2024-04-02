@@ -9842,7 +9842,12 @@ This includes:
 
 (defun org-set-SHOWFROMDATE-property (PROMPT &rest args)
   "Read :SHOWFROMDATE: property."
-  (org-read-date nil nil nil PROMPT))
+  (let* ((ans (org-read-date nil nil nil PROMPT))
+	 (days-from-now (/ (float-time (time-since (org-time-string-to-time ans))) 60 60 24)))
+    (if (or (> days-from-now -30) ; not more than 1 month ahead
+	    (yes-or-no-p (format "Really postpone to %s (+%d days)?" ans (- days-from-now))))
+	ans
+      (user-error "Postponed too far ahead. Aborting"))))
 
 (add-to-list 'org-property-set-functions-alist '("SHOWFROMDATE" . org-set-SHOWFROMDATE-property))
 
