@@ -274,6 +274,7 @@ Keep customisation away from =init.el= in a separate file. Load the
 custom file now, before everything else in the config. This way,
 things explicitly set in the config will take priority over
 (overwrite) the customization.
+
   #+begin_src emacs-lisp
 (setq custom-file (file-name-concat user-emacs-directory "custom.el"))
 (load custom-file)
@@ -294,6 +295,7 @@ things explicitly set in the config will take priority over
   :straight (no-littering :host github :repo "emacscollective/no-littering"
 			  :local-repo "~/Git/no-littering"))
 #+end_src
+
 ** COMMENT GC stats recorder
 
 #+begin_src emacs-lisp
@@ -437,6 +439,7 @@ General frame appearance configuration.
 
 First, disable unnecessary graphical elements
 No tool bar, no scroll bar, no menu bar (not recommended for newcomers).
+
 #+begin_src emacs-lisp
 (when init-flag
   (tool-bar-mode -1)
@@ -531,6 +534,7 @@ comparison with [[id:3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad][Centered window mode]
 
 When the buffer text takes less space then a window, it's neat to see
 the beginning/end of the buffer in emacs.
+
 #+begin_src emacs-lisp
 (when init-flag
   (setq-default indicate-buffer-boundaries 'left))
