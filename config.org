@@ -1168,7 +1168,9 @@ Do not use graphical dialogues.
 :PROPERTIES:
 :ID:       2b71a4fe-82e8-4ec6-9164-ad6958c6767f
 :END:
+
 Disable tooltips.
+
 #+begin_src emacs-lisp
 (tooltip-mode -1)
 #+end_src
@@ -1267,13 +1269,14 @@ Define the most basic movement commands:
      (meta-split "Split element at point." split-line)
      (meta-recenter-top-bottom "Recenter text on scree." yant/recenter-top-bottom-pixel)
      (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
-     (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore)
-     ))
-  )
+     (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore))))
 #+end_src
 
-It should be noted that the same can be done via setting the proper bindings for "j", "k", etc. in the mode itself. 
-The problem is that it may mess up the cases when I want to assign special meanings to some keys in =command-mode=, but leave the normal editing on in the =insert-mode=.
+It should be noted that the same can be done via setting the proper
+bindings for "j", "k", etc. in the mode itself. The problem is that it
+may mess up the cases when I want to assign special meanings to some
+keys in =command-mode=, but leave the normal editing on in the
+=insert-mode=.
 
 #+begin_src emacs-lisp
 (use-package boon
@@ -1302,17 +1305,19 @@ The problem is that it may mess up the cases when I want to assign special meani
            bm-show-mode font-lock-studio-mode
            Info-mode woman-mode Man-mode
            eaf-mode image-mode))
-  (defvar boon-insert-state-major-mode-list '()
+
+  (defvar boon-insert-state-major-mode-list
+    '( ediff-mode notmuch-message-mode eshell-mode
+       shell-mode calc-mode
+       term-mode vterm-mode
+       magit-popup-mode)
     "List of major modes started with insert state active.")
   
-  (setq boon-insert-state-major-mode-list '( ediff-mode notmuch-message-mode eshell-mode
-                                             shell-mode calc-mode
-                                             term-mode vterm-mode
-                                             magit-popup-mode))
   (use-package org
     :defer t
     :config
     (add-hook 'org-log-buffer-setup-hook (lambda () (boon-set-state 'boon-insert-state))))
+
   (add-to-list 'boon-insert-conditions
                '(member major-mode boon-insert-state-major-mode-list))
   (use-package boon-qwerty)
