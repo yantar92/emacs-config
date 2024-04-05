@@ -809,22 +809,6 @@ Show some text in buffer differently.
 				    (?∅ nil "\\<nil\\>" (,@lisps))
 				    ))))
 #+end_src
-***** COMMENT SVG symbols
-
- #svg-tag-mode
-
-[[id:Github-rougier-github-rougier-svg-981][rougier [Github] GitHub - rougier/svg-tag-mode: A minor mode for Emacs that replace keywords with nice SVG labels]]
-
-#+begin_src emacs-lisp
-(use-package svg-tag-mode
-  :if init-flag
-  :straight t
-  :custom
-  (svg-tag-default-radius 0)
-  (svg-tag-vertical-offset 0)
-  (svg-tag-horizontal-offset 0))
-#+end_src
-
 **** Selection
 :PROPERTIES:
 :CREATED:  [2020-04-20 Mon 01:47]
