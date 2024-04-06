@@ -1329,9 +1329,11 @@ keys in =command-mode=, but leave the normal editing on in the
 :CREATED:  [2017-12-31 Sun 08:36]
 :ID:       8ad95362-807a-457d-8b59-32e83a350c18
 :END:
-Hydra is useful to quickly run commands in special contexts. 
-It can be treated as a combination of command mode in =boon= to get simple key bindings in context with =which-key= to remind the meanings of these bindings. 
-Additionally, it is possible to build hydras dynamically.
+
+Hydra is useful to quickly run commands in special contexts. It can be
+treated as a combination of command mode in =boon= to get simple key
+bindings in context with =which-key= to remind the meanings of these
+bindings. Additionally, it is possible to build hydras dynamically.
 
 I currently do not use hydras often.
 
@@ -1340,10 +1342,12 @@ I currently do not use hydras often.
   :if init-flag
   :straight t)
 #+END_SRC
+
 **** Ignore some system keybindings, which are used in my WM (annoying unknown keybinding error)
 :PROPERTIES:
 :ID:       af77c219-c181-4534-bdfc-325616965ddc
 :END:
+
 #+begin_src emacs-lisp
 (when init-flag
 (global-set-key (kbd "<XF86MonBrightnessUp>") #'ignore)
