@@ -380,9 +380,9 @@ scheme, I ended up using a light theme I prefer.
 
 *** Fonts
 
-For the font, I prefer something that works fine with mixed code and text (e.g. org files).
-My choice is Source Code Pro.
-Setting it up as default everywhere.
+For the font, I prefer something that works fine with mixed code and
+text (e.g. org files). My choice is Source Code Pro. Setting it up as
+default everywhere.
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -423,13 +423,13 @@ For =all-the-icons= it is important to install the fonts via [[elisp:all-the-ico
 :ID:       5450bef9-a57a-4afb-85f3-893dbcb5f4ba
 :END:
 
-Startup message probably only makes sense for someone who is not yet familiar enough with emacs.
-Disabling
+Startup message probably only makes sense for someone who is not yet
+familiar enough with emacs. Disabling.
 
 #+begin_src emacs-lisp
-(when init-flag
-  (setq inhibit-startup-message t))
+(when init-flag (setq inhibit-startup-message t))
 #+end_src
+
 *** Frame
 :PROPERTIES:
 :ID:       098ff7ca-d99c-493e-a2be-a2e5eeddab82
@@ -437,8 +437,8 @@ Disabling
 
 General frame appearance configuration.
 
-First, disable unnecessary graphical elements
-No tool bar, no scroll bar, no menu bar (not recommended for newcomers).
+First, disable unnecessary graphical elements No tool bar, no scroll
+bar, no menu bar (not recommended for newcomers).
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -460,12 +460,12 @@ Using =window-divider-mode= to emphasise it more.
 #+END_SRC
 
 By default, emacs frame height can only be a multiple of line height.
-This is a little annoying when emacs frame is in maximised state, but yet have a small gap on the bottom.
-Setting resizing to be exact instead.
+This is a little annoying when emacs frame is in maximised state, but
+yet have a small gap on the bottom. Setting resizing to be exact
+instead.
 
 #+begin_src emacs-lisp
-(when init-flag
-  (setq frame-resize-pixelwise t))
+(when init-flag (setq frame-resize-pixelwise t))
 #+end_src
 
 *** Window
