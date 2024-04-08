@@ -494,7 +494,6 @@ Understanding how to set ~display-buffer-alist~ is not intuitive,
 unfortunately. After digging the documentation it is making a lot of
 sense though. I also recommend [[id:demystifying-emacss-window-manager-6a0][[Mastering Emacs] Demystifying Emacs's
 Window Manager]].
-
 ***** Display =*Warnings*= at the bottom
 
 Since Emacs got native compilation, it really sped things up.
@@ -517,6 +516,37 @@ of Emacs session).
 (when init-flag
   (setf (alist-get (regexp-quote "*Warnings*") display-buffer-alist nil nil #'equal)
 	'(display-buffer-at-bottom (window-height . 0.3))))
+#+end_src
+
+
+***** Force displaying Org mode's =*Select link*= buffer at the bottom
+
+#+begin_src emacs-lisp
+(when init-flag
+  (use-package posframe
+    :config
+    (defun yant/display-buffer-in-posframe (buffer alist)
+      "Display BUFFER using `posframe-show'.
+ALIST may have non-standard elements `poshandler', `foreground-color',
+`background-color', `internal-border-color', and
+`internal-border-width' to be passed to `posframe-show'."
+      (posframe-show
+       buffer
+       :override-parameters `((quit-restore . (frame frame nil ,buffer)))
+       :poshandler (alist-get 'poshandler alist)
+       :foreground-color (alist-get 'foreground-color alist)
+       :background-color (alist-get 'background-color alist)
+       :internal-border-color (alist-get 'internal-border-color alist)
+       :internal-border-width (alist-get 'internal-border-width alist))
+      ;; FIXME: suppress `org-fit-window-to-buffer'.
+      (setq-local window-size-fixed t))
+    (setf (alist-get (regexp-quote "*Select Link*") display-buffer-alist nil nil #'equal)
+	  `(yant/display-buffer-in-posframe
+            (poshandler . posframe-poshandler-frame-center)
+            (foreground-color . ,(face-foreground 'mode-line))
+            (background-color . ,(face-background 'highlight))
+            (internal-border-color . ,(face-background 'highlight))
+            (internal-border-width . 20)))))
 #+end_src
 
 
@@ -1144,6 +1174,67 @@ information update.
 :END:
 
 #+begin_src emacs-lisp
+(defun multi-message--ellipsis-p (message)
+  "Return non nil when MESSAGE ends with ellipsis."
+  (string-match-p "\\.\\.\\.\\'" message))
+
+(defun multi-message--keystroke-regex-p (message)
+  "Return non nil when MESSAGE looks like a keystroke echo."
+  (string-match-p "^[A-Za-z]\\(-[A-Za-z]\\)*-?$" message))
+
+(defun multi-message--keystroke-echo-p (message)
+  "Return non nil when MESSAGE is a currently entered keystroke."
+  (string-match-p (key-description (this-command-keys-vector)) message))
+
+
+(defcustom multi-message-transient-functions '(multi-message--ellipsis-p multi-message--keystroke-echo-p multi-message--keystroke-regex-p)
+  "List of functions to filter out transient messages that should not be stacked.
+  Each function is called in sequence with message string as an only argument.
+  If any of the functions returns non nil, the message is filtered out."
+  :type 'list
+  :group 'minibuffer
+  :version "28.1")
+
+(defvar yant/multi-message-list nil)
+
+(defun yant/set-multi-message (message)
+  "Return recent messages as one string to display in the echo area.
+  Note that this feature works best only when `resize-mini-windows'
+  is at its default value `grow-only'."
+  (let ((last-message (car yant/multi-message-list)))
+    (if (and last-message (equal message (aref last-message 1)))
+        (progn
+          (cl-incf (aref last-message 3))
+          (setf (aref last-message 0) (float-time)))
+      (when last-message
+        (cond
+         ((> (float-time) (+ (aref last-message 0) multi-message-timeout))
+	  (setq yant/multi-message-list nil))
+         ((or
+	   ;; `message-log-max' was nil, potential clutter.
+	   (aref last-message 2)
+	   (run-hook-with-args-until-success 'multi-message-transient-functions (aref last-message 1)))
+	  (setq yant/multi-message-list (cdr yant/multi-message-list)))))
+      (push (vector (float-time) message (not message-log-max) 1) yant/multi-message-list)
+      (when (> (length yant/multi-message-list) multi-message-max)
+	(setf (nthcdr multi-message-max yant/multi-message-list) nil)))
+    (mapconcat (lambda (m)
+                 (if (= 1 (aref m 3))
+                     (aref m 1)
+                   (concat (aref m 1) (format  " (x%d)" (aref m 3)))))
+	       (reverse yant/multi-message-list)
+	       multi-message-separator)
+    ;; (let ((message-display (mapconcat (lambda (m) (aref m 1))
+    ;; 				      (reverse multi-message-list)
+    ;; 				      multi-message-separator))
+    ;;       (n-lines (s-count-matches "\n" message-display)))
+    ;;   (if (and last-message
+    ;; 	       (equal this-command (aref 3 last-message))
+    ;;            (< n-lines multi-message-max))
+    ;;       (s-concat message-display (s-repeat (- multi-message-max n-lines) "\n"))
+    ;;     message-display))
+    ))
+
 (setq set-message-function 'set-multi-message)
 #+end_src
 
