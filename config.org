@@ -1235,7 +1235,7 @@ information update.
     ;;     message-display))
     ))
 
-(setq set-message-function 'set-multi-message)
+(setq set-message-function 'yant/set-multi-message)
 #+end_src
 
 *** Cursor
