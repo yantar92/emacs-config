@@ -1294,6 +1294,7 @@ Do not use graphical dialogues.
   #+begin_src emacs-lisp
 (setq use-dialog-box nil)
   #+end_src
+
 *** Tooltips
 :PROPERTIES:
 :ID:       2b71a4fe-82e8-4ec6-9164-ad6958c6767f
@@ -1480,17 +1481,18 @@ I currently do not use hydras often.
 
 #+begin_src emacs-lisp
 (when init-flag
-(global-set-key (kbd "<XF86MonBrightnessUp>") #'ignore)
-(global-set-key (kbd "<XF86MonBrightnessDown>") #'ignore)
-(global-set-key (kbd "S-_") #'ignore)
-(global-set-key (kbd "S-)") #'ignore)
-(global-set-key (kbd "S-I") #'ignore)
-(global-set-key (kbd "S-y") #'ignore)
-(global-set-key (kbd "S-u") #'ignore)
-(global-set-key (kbd "S-w") #'ignore)
-(global-set-key (kbd "C-s-g") #'ignore)
-(global-set-key (kbd "C-S-g") #'ignore))
+  (global-set-key (kbd "<XF86MonBrightnessUp>") #'ignore)
+  (global-set-key (kbd "<XF86MonBrightnessDown>") #'ignore)
+  (global-set-key (kbd "S-_") #'ignore)
+  (global-set-key (kbd "S-)") #'ignore)
+  (global-set-key (kbd "S-I") #'ignore)
+  (global-set-key (kbd "S-y") #'ignore)
+  (global-set-key (kbd "S-u") #'ignore)
+  (global-set-key (kbd "S-w") #'ignore)
+  (global-set-key (kbd "C-s-g") #'ignore)
+  (global-set-key (kbd "C-S-g") #'ignore))
 #+end_src
+
 **** Disable terminal key aliases (I don't use console emacs anyway)
 :PROPERTIES:
 :CREATED:  [2019-11-18 Mon 10:24]
@@ -1514,12 +1516,14 @@ Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_threa
 :CREATED:  [2018-09-25 Tue 20:22]
 :ID:       c952de1f-b5f9-4238-b01e-ff0870159694
 :END:
+
 #+BEGIN_SRC emacs-lisp
 (when init-flag
   (unbind-key "M-u" global-map)
   (unbind-key "M-k" global-map)
   (unbind-key "M-j" global-map))
 #+END_SRC
+
 **** Quitting minibuffer when point is in another window
 :PROPERTIES:
 :CREATED:  [2020-07-25 Sat 20:45]
@@ -1613,6 +1617,7 @@ behavior added."
 :CREATED:  [2019-08-03 Sat 17:01]
 :ID:       c822d425-3cfa-4cb7-bf1e-9ea893fbee5c
 :END:
+
 #+begin_src emacs-lisp
   (use-package pyim 
     :if init-flag
@@ -1636,6 +1641,9 @@ behavior added."
 Use text-mode by default.
 From https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
 
+The default mode is useful when I need to create temporary buffers.
+For example, when working with logs copied from clipboard.
+
 #+begin_src emacs-lisp
 ;; Default mode is ‘text-mode’.  The actual default,
 ;; ‘fundamental-mode’ is rather useless.
@@ -1655,14 +1663,15 @@ Completion is what makes working in Emacs look like magic.
 :ID:       d388e4f5-214e-4697-a53a-be6fb6c24411
 :END:
 
-****************** TODO The update is delayed terribly sometimes. Not sure why. Sometimes, the helm buffer does not get updated at all, especially on short input (1-2 chars)
-****************** END
+Unlike default completion, =helm= lets you see all the possible
+completions dynamically updated as you type. No need to press TAB like
+crazy.
 
-Unlike default completion, =helm= lets you see all the possible completions dynamically updated as you type. 
-No need to press TAB like crazy.
-
-In addition to Emacs-wide change of the completion method, =Helm= also provides a bunch of useful commands, which especially benefit from live completion:
-- =M-x= completion does not require the user to remember exact command names and exact sequence of words in command names
+In addition to Emacs-wide change of the completion method, =Helm= also
+provides a bunch of useful commands, which especially benefit from
+live completion:
+- =M-x= completion does not require the user to remember exact command
+  names and exact sequence of words in command names
 - apropos commands become a lot easier to discover
 - can search in kill ring
 - can search in most of info pages, including Emacs manual
@@ -1673,10 +1682,7 @@ The basic idea is to prefix movement commands with meta.
 
 #+begin_src emacs-lisp
 ;; Working around https://github.com/emacs-helm/helm/issues/2481
-(straight-use-package '(helm-core :type git :host github :repo "emacs-helm/helm" :local-repo "~/Git/helm"
-				  ;; :fork (:host github
-				  ;;              :repo "yantar92/helm")
-				  ))
+(straight-use-package '(helm-core :type git :host github :repo "emacs-helm/helm" :local-repo "~/Git/helm"))
 (use-package helm
   :if init-flag
   :straight (helm :type git :host github :repo "emacs-helm/helm" :local-repo "~/Git/helm"
