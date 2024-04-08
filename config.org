@@ -1567,40 +1567,6 @@ behavior added."
 (global-set-key [remap keyboard-quit] #'keyboard-quit-context+)
 #+end_src
 
-**** Make key bindings work in Ukrainian/Russian =keymap=
-:PROPERTIES:
-:ID:       943917fe-aecf-45a7-bc0d-591492d17898
-:END:
-#+begin_src emacs-lisp
-(use-package reverse-im
-  :straight t
-  :if init-flag
-  :config
-  (reverse-im-activate "russian-computer"))
-(when init-flag
-  (cl-loop
-   for from across "йцукенгшщзхїфівапролджєячсмитьбюЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ№"
-   for to   across "qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>#"
-   do
-   (eval `(define-key local-function-key-map
-	    (kbd ,(concat "C-"
-			  (string from)))
-	    (kbd ,(concat "C-"
-			  (string to)))))
-   (eval `(define-key local-function-key-map
-	    (kbd ,(concat "M-"
-			  (string from)))
-	    (kbd ,(concat "M-"
-			  (string to)))))
-   (eval `(define-key local-function-key-map
-	    (kbd ,(concat "C-M-"
-			  (string from)))
-	    (kbd ,(concat "C-M-"
-			  (string to)))))
-   (eval `(define-key local-function-key-map
-	    (kbd ,(string from))
-	    (kbd ,(string to))))))
-#+end_src
 **** Mnemonic key binding for =exit-recursive-edit=
 :PROPERTIES:
 :CREATED:  [2020-05-13 Wed 00:11]
@@ -19129,3 +19095,48 @@ Making sure to conform to Bastein's [[notmuch:id:87o8lwhek2.fsf@gnu.org][request
   (meta-defun meta-down-element :mode telega-chat-mode telega-button-forward)
   (meta-defun meta-up-element :mode telega-chat-mode telega-button-backward))
 #+end_src
+
+** COMMENT Make key bindings work in Ukrainian/Russian =keymap= :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ID:       943917fe-aecf-45a7-bc0d-591492d17898
+:SUMMARY:  I am using built-in input methods these days
+:ARCHIVE_TIME: 2024-04-08 Mon 10:52
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Command loop/Key bindings
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+- Note taken on [2024-04-08 Mon 10:51] \\
+  I am using built-in input methods these days
+#+begin_src emacs-lisp
+(use-package reverse-im
+  :straight t
+  :if init-flag
+  :config
+  (reverse-im-activate "russian-computer"))
+(when init-flag
+  (cl-loop
+   for from across "йцукенгшщзхїфівапролджєячсмитьбюЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ№"
+   for to   across "qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>#"
+   do
+   (eval `(define-key local-function-key-map
+	    (kbd ,(concat "C-"
+			  (string from)))
+	    (kbd ,(concat "C-"
+			  (string to)))))
+   (eval `(define-key local-function-key-map
+	    (kbd ,(concat "M-"
+			  (string from)))
+	    (kbd ,(concat "M-"
+			  (string to)))))
+   (eval `(define-key local-function-key-map
+	    (kbd ,(concat "C-M-"
+			  (string from)))
+	    (kbd ,(concat "C-M-"
+			  (string to)))))
+   (eval `(define-key local-function-key-map
+	    (kbd ,(string from))
+	    (kbd ,(string to))))))
+#+end_src
+
