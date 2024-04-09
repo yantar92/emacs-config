@@ -524,6 +524,7 @@ of Emacs session).
 #+begin_src emacs-lisp
 (when init-flag
   (use-package posframe
+    :straight t
     :config
     (defun yant/display-buffer-in-posframe (buffer alist)
       "Display BUFFER using `posframe-show'.
