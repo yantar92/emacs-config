@@ -2555,6 +2555,7 @@ Note that I write a lot of scientific staff and hence passive voice is hard to a
   :straight t
   :hook (org-mode . yant/writegood-mode)
   :config
+  (set-face-attribute 'writegood-weasels-face nil :inherit 'modus-themes-lang-note)
   (defun yant/writegood-mode (&optional arg)
     "Turn on `writegood-mode', but disable passive voice checks."
     (writegood-mode +1)
