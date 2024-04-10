@@ -1595,8 +1595,7 @@ behavior added."
     (setq-default pyim-english-input-switch-functions
 		  '(pyim-probe-isearch-mode
 		    pyim-probe-program-mode
-		    pyim-probe-org-structure-template))
-    (setq pyim-page-length 5))
+		    pyim-probe-org-structure-template)))
 #+end_src
 
 *** Default major mode
