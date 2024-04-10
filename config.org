@@ -571,7 +571,7 @@ comparison with [[id:3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad][Centered window mode]
   :if init-flag
   :straight t
   :demand t
-  :hook ((text-mode notmuch-show-mode erc-mode) . olivetti-mode)
+  :hook ((text-mode notmuch-show-mode erc-mode Info-mode) . olivetti-mode)
   :init
   (setq-default olivetti-body-width 110)
   (defun yant/set-olivetti-width ()
