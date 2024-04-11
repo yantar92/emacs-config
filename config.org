@@ -17092,7 +17092,8 @@ From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bul
   :if init-flag
   :after boon
   :config
-  (bind-key "S" #'org-babel-demarcate-block boon-command-map))
+  (meta-defun meta-split :mode org-mode (org-babel-demarcate-block))
+  (bind-key "S" #'meta-split boon-command-map))
 #+end_src
 
 **** Do not recenter window after folding/unfolding
