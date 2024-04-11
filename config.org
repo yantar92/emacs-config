@@ -1732,7 +1732,73 @@ Credit: [[id:b9619989-5416-463c-a5e9-42d35364cbf2][emacs-tv-config/init-helm.el 
   :config
   (helm-ff-icon-mode +1))
 #+end_src
-*** Company
+*** In-buffer completion menu =corfu=
+
+=corfu= provides a popup menu just like =company=. However, unlike
+company, it integrates with built-in completion system. I am able to
+use =orderless= completion style without efforts.
+
+I configure =corfu= to popup the completion list automatically
+(~corfu-auto~) as I type and do it quickly (~corfu-auto-delay~ +
+~corfu-auto-prefix~), so that I can simply type, for example, =beg reg=
+and get the full completion of ~region-beginning~ even when typing fast.
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :straight t
+  :diminish (corfu-mode . " ⭿")
+  :hook ((prog-mode ledger-mode) . corfu-mode)
+  :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0.02)
+  (corfu-auto-prefix 2)
+  :config
+  (bind-keys
+   :map corfu-map
+   ("M-j" . corfu-next)
+   ("M-k" . corfu-previous)
+   ("RET" . nil)))
+#+end_src
+
+**** Enable =corfu= in minibuffers (where it make sense, as in ~M-:~)
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :init
+  (defun corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer."
+    (when (local-variable-p 'completion-at-point-functions)
+      ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
+      (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+                  corfu-popupinfo-delay nil)
+      (corfu-mode 1)))
+  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer))
+#+end_src
+**** Sort completion candidates according to the completion history
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :init (use-package corfu-history)
+  :config
+  (corfu-history-mode 1)
+  (savehist-mode 1)
+  (add-to-list 'savehist-additional-variables 'corfu-history))
+#+end_src
+**** Use =orderless= in-buffer completion
+
+#+begin_src emacs-lisp
+(use-package orderless
+  :straight t
+  :init
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion))))
+  (use-package corfu
+    :config
+    (bind-keys :map corfu-map ("SPC" . corfu-insert-separator))))
+#+end_src
+
+*** COMMENT Company
 :PROPERTIES:
 :ID:       8ca3a911-ad9d-43a6-83a6-a7b12b383984
 :END:
