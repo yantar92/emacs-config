@@ -2444,6 +2444,20 @@ Mostly we check word delimiters."
 	 (t t)))
        (t t)))))
 #+end_src
+**** COMMENT =jinx= - spell checker
+:PROPERTIES:
+:SUMMARY:  too slow on large Org buffers. See https://github.com/minad/jinx/discussions/156
+:END:
+
+- Note taken on [2024-04-11 Thu 14:48] \\
+  too slow on large Org buffers. See https://github.com/minad/jinx/discussions/156
+#+begin_src emacs-lisp
+(use-package jinx
+  :straight t
+  :hook ((notmuch-message-mode org-mode text-mode) . jinx-mode)
+  :bind* (("M-h" . jinx-correct)))
+#+end_src
+
 **** Language tool
 :PROPERTIES:
 :ID:       955d0dd9-29d4-4bde-a9a3-46129580ba6f
@@ -17966,7 +17980,6 @@ ls-files' and 'grep'."
     (lambda nil (progn (keyfreq-mode 1) (keyfreq-autosave-mode 1))))
   (global-keyfreq-mode))
 #+end_src
-
 ** COMMENT Text wrap indicators :EMACS:COMMON:SOMEDAY:
      :PROPERTIES:
      :ID:       7b84d543-2d95-4a04-ba1f-a96e47daa853
