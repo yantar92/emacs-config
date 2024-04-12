@@ -1798,6 +1798,21 @@ and get the full completion of ~region-beginning~ even when typing fast.
     (bind-keys :map corfu-map ("SPC" . corfu-insert-separator))))
 #+end_src
 
+With the default value of ~corfu-quit-no-match~ (=separator=), when I type
+something like ~(buffer-substring~, because there are multiple matches
+for ~buffer-substring~: ~buffer-substring~ and
+~buffer-substring-no-properties~, I keep getting completion for already
+written function name. Then, if I keep typing =(buffer-substring
+(region-=, I get "No matches" instead of completion for
+~region-beginning/end~. So, change the default to quit currnet
+completion when there are no matches.
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :custom (corfu-quit-no-match t))
+#+end_src
+
+
 *** COMMENT Company
 :PROPERTIES:
 :ID:       8ca3a911-ad9d-43a6-83a6-a7b12b383984
