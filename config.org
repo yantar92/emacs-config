@@ -5284,6 +5284,8 @@ Smarter elisp editing
   :demand t ;; I need it in scratch buffer
   :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . paredit-mode)
   :config
+  ;; Fix hooks being added too late for scratch buffer.
+  (add-hook 'after-init-hook (lambda () (run-mode-hooks 'lisp-interaction-mode-hook)))
   (use-package boon
     :defer t
     :after meta-functions
