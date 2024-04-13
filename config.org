@@ -1910,9 +1910,9 @@ Walk across the backup files
      ((derived-mode-p 'message-mode) nil)
      (t t)))
   (setq auto-save-visited-predicate #'yant/auto-save-buffer-p)
-  (setq  auto-save-file-name-transforms `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))
-	 auto-save-interval 20))
+  (setq auto-save-file-name-transforms `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 #+end_src
+
 Save virtual buffers (kill ring, etc.)
 
   #+begin_src emacs-lisp
