@@ -1813,53 +1813,6 @@ completion when there are no matches.
 #+end_src
 
 
-*** COMMENT Company
-:PROPERTIES:
-:ID:       8ca3a911-ad9d-43a6-83a6-a7b12b383984
-:END:
-:LOGBOOK:
-- State "CANCELLED"  from              [2017-09-22 Fri 07:58]
-:END:
-
-Context completion is *very* useful, especially if a major mode supports the completion. 
-I use company for completion just because it is easy to use.
-
-#+begin_src emacs-lisp
-(use-package company
-  :if init-flag
-  :straight t
-  :diminish (company-mode . " ⭿")
-  :hook ((prog-mode ledger-mode) . company-mode)
-  :custom
-  (company-idle-delay 0.05)
-  (company-minimum-prefix-length 2)
-  (company-selection-wrap-around t)
-  (company-require-match nil)
-  (company-transformers '(company-sort-by-occurrence))
-  :config
-  (bind-key* "M-/" #'company-complete)
-  :bind (:map company-active-map
-	      ("<tab>" . nil)
-	      ("M-j" . company-select-next)
-	      ("M-k" . company-select-previous)
-	      ("C-h" . backward-delete-char-untabify)
-              ("C-M-h" . backward-kill-word)
-              ("M-l" . nil)
-              ("M-h" . company-show-doc-buffer)
-              ("M-s" . company-filter-candidates)))
-#+end_src
-
-*** TODO Skeleton
-:PROPERTIES:
-:CREATED:  [2018-10-21 Sun 14:28]
-:END:
-:LOGBOOK:
-- State "TODO"       from              [2018-10-21 Sun 14:28]
-:END:
-
-Skeletons go beyond simple completion of a single word. 
-They define a powerful template system making completion programmable and interactive. 
-
 ** History & version control
 :PROPERTIES:
 :ID:       a76e7822-8153-4adc-a3f8-8f05588eff5e
@@ -19155,5 +19108,46 @@ Making sure to conform to Bastein's [[notmuch:id:87o8lwhek2.fsf@gnu.org][request
    (eval `(define-key local-function-key-map
 	    (kbd ,(string from))
 	    (kbd ,(string to))))))
+#+end_src
+
+** COMMENT Company :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ID:       8ca3a911-ad9d-43a6-83a6-a7b12b383984
+:ARCHIVE_TIME: 2024-04-12 Fri 11:16
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Completion
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+:LOGBOOK:
+- State "CANCELLED"  from              [2017-09-22 Fri 07:58]
+:END:
+
+Context completion is *very* useful, especially if a major mode supports the completion. 
+I use company for completion just because it is easy to use.
+
+#+begin_src emacs-lisp
+(use-package company
+  :if init-flag
+  :straight t
+  :diminish (company-mode . " ⭿")
+  :hook ((prog-mode ledger-mode) . company-mode)
+  :custom
+  (company-idle-delay 0.05)
+  (company-minimum-prefix-length 2)
+  (company-selection-wrap-around t)
+  (company-require-match nil)
+  (company-transformers '(company-sort-by-occurrence))
+  :config
+  (bind-key* "M-/" #'company-complete)
+  :bind (:map company-active-map
+	      ("<tab>" . nil)
+	      ("M-j" . company-select-next)
+	      ("M-k" . company-select-previous)
+	      ("C-h" . backward-delete-char-untabify)
+              ("C-M-h" . backward-kill-word)
+              ("M-l" . nil)
+              ("M-h" . company-show-doc-buffer)
+              ("M-s" . company-filter-candidates)))
 #+end_src
 
