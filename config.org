@@ -1624,6 +1624,106 @@ For example, when working with logs copied from clipboard.
 
 Completion is what makes working in Emacs look like magic. 
 
+*** =orderless= completion style
+
+The default completion is helpful, but it requires not only
+remembering the keywords used in various function and symbol names,
+but also the exact order how they appear.
+
+=orderless= lifts this restriction, allowing to type space-separated
+parts of keywords in any order, providing much more pleasant experience.
+
+To illustrate, consider some especially cryptic name like
+~org-element--cache-avoid-synchronous-headline-re-parsing~.
+With default completion, one would need to type
+: org-ele<tab>--cache-avoid-sync<tab>-...
+in exact order, while =orderless= allows simply
+: org pars cache
+
+#+begin_src emacs-lisp
+(use-package orderless
+  :straight t
+  :init
+  (setq completion-styles '(orderless basic)
+	completion-category-defaults nil
+	completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+*** In-buffer completion menu =corfu=
+
+=corfu= provides a popup menu just like =company=. However, unlike
+company, it integrates with built-in completion system. I am able to
+use =orderless= completion style without efforts.
+
+I configure =corfu= to popup the completion list automatically
+(~corfu-auto~) as I type and do it quickly (~corfu-auto-delay~ +
+~corfu-auto-prefix~), so that I can simply type, for example, =beg reg=
+and get the full completion of ~region-beginning~ even when typing fast.
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :straight t
+  :diminish (corfu-mode . " ⭿")
+  :hook ((prog-mode ledger-mode) . corfu-mode)
+  :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0.02)
+  (corfu-auto-prefix 2)
+  :config
+  (bind-keys
+   :map corfu-map
+   ("M-j" . corfu-next)
+   ("M-k" . corfu-previous)
+   ("RET" . nil)))
+#+end_src
+
+**** Enable =corfu= in minibuffers (where it make sense, as in ~M-:~)
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :init
+  (defun corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer."
+    (when (local-variable-p 'completion-at-point-functions)
+      ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
+      (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+                  corfu-popupinfo-delay nil)
+      (corfu-mode 1)))
+  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer))
+#+end_src
+**** Sort completion candidates according to the completion history
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :init (use-package corfu-history)
+  :config
+  (corfu-history-mode 1)
+  (savehist-mode 1)
+  (add-to-list 'savehist-additional-variables 'corfu-history))
+#+end_src
+**** Use =orderless= in-buffer completion
+
+#+begin_src emacs-lisp
+(use-package orderless
+  :config
+  (use-package corfu
+    :config
+    (bind-keys :map corfu-map ("SPC" . corfu-insert-separator))))
+#+end_src
+
+With the default value of ~corfu-quit-no-match~ (=separator=), when I type
+something like ~(buffer-substring~, because there are multiple matches
+for ~buffer-substring~: ~buffer-substring~ and
+~buffer-substring-no-properties~, I keep getting completion for already
+written function name. Then, if I keep typing =(buffer-substring
+(region-=, I get "No matches" instead of completion for
+~region-beginning/end~. So, change the default to quit currnet
+completion when there are no matches.
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :custom (corfu-quit-no-match t))
+#+end_src
 *** Helm
 :PROPERTIES:
 :ID:       d388e4f5-214e-4697-a53a-be6fb6c24411
@@ -1732,87 +1832,6 @@ Credit: [[id:b9619989-5416-463c-a5e9-42d35364cbf2][emacs-tv-config/init-helm.el 
   :config
   (helm-ff-icon-mode +1))
 #+end_src
-*** In-buffer completion menu =corfu=
-
-=corfu= provides a popup menu just like =company=. However, unlike
-company, it integrates with built-in completion system. I am able to
-use =orderless= completion style without efforts.
-
-I configure =corfu= to popup the completion list automatically
-(~corfu-auto~) as I type and do it quickly (~corfu-auto-delay~ +
-~corfu-auto-prefix~), so that I can simply type, for example, =beg reg=
-and get the full completion of ~region-beginning~ even when typing fast.
-
-#+begin_src emacs-lisp
-(use-package corfu
-  :straight t
-  :diminish (corfu-mode . " ⭿")
-  :hook ((prog-mode ledger-mode) . corfu-mode)
-  :custom
-  (corfu-auto t)
-  (corfu-auto-delay 0.02)
-  (corfu-auto-prefix 2)
-  :config
-  (bind-keys
-   :map corfu-map
-   ("M-j" . corfu-next)
-   ("M-k" . corfu-previous)
-   ("RET" . nil)))
-#+end_src
-
-**** Enable =corfu= in minibuffers (where it make sense, as in ~M-:~)
-
-#+begin_src emacs-lisp
-(use-package corfu
-  :init
-  (defun corfu-enable-in-minibuffer ()
-    "Enable Corfu in the minibuffer."
-    (when (local-variable-p 'completion-at-point-functions)
-      ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
-      (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
-                  corfu-popupinfo-delay nil)
-      (corfu-mode 1)))
-  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer))
-#+end_src
-**** Sort completion candidates according to the completion history
-
-#+begin_src emacs-lisp
-(use-package corfu
-  :init (use-package corfu-history)
-  :config
-  (corfu-history-mode 1)
-  (savehist-mode 1)
-  (add-to-list 'savehist-additional-variables 'corfu-history))
-#+end_src
-**** Use =orderless= in-buffer completion
-
-#+begin_src emacs-lisp
-(use-package orderless
-  :straight t
-  :init
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion))))
-  (use-package corfu
-    :config
-    (bind-keys :map corfu-map ("SPC" . corfu-insert-separator))))
-#+end_src
-
-With the default value of ~corfu-quit-no-match~ (=separator=), when I type
-something like ~(buffer-substring~, because there are multiple matches
-for ~buffer-substring~: ~buffer-substring~ and
-~buffer-substring-no-properties~, I keep getting completion for already
-written function name. Then, if I keep typing =(buffer-substring
-(region-=, I get "No matches" instead of completion for
-~region-beginning/end~. So, change the default to quit currnet
-completion when there are no matches.
-
-#+begin_src emacs-lisp
-(use-package corfu
-  :custom (corfu-quit-no-match t))
-#+end_src
-
-
 ** History & version control
 :PROPERTIES:
 :ID:       a76e7822-8153-4adc-a3f8-8f05588eff5e
