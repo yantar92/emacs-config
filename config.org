@@ -1648,6 +1648,41 @@ in exact order, while =orderless= allows simply
 	completion-category-defaults nil
 	completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
+*** Live completion updates with =mct=
+
+Because =orderless= is so efficient in reducing the number of keys
+required to find the exact match, it becomes critical to avoid any
+additional key stokes that assign completion.
+
+=mct= package makes the completions buffer pop up automatically, without
+a need to type =<TAB>= or =<SPC>=.
+
+#+begin_src emacs-lisp
+(use-package mct
+  :if init-flag
+  :straight t
+  :custom
+  (mct-hide-completion-mode-line t)
+  :config
+  (mct-mode +1)
+  (bind-key "M-j" #'meta-move-line-down minibuffer-mode-map)
+  (bind-key "M-k" #'meta-move-line-up minibuffer-mode-map)
+  (meta-defun meta-move-line-down
+    :cond (local-variable-p 'completion-at-point-functions)
+    mct-switch-to-completions-top)
+  (meta-defun meta-move-line-up
+    :cond (local-variable-p 'completion-at-point-functions)
+    mct-switch-to-completions-bottom)
+  )
+#+end_src
+*** Provide icons in completion buffer
+
+#+begin_src emacs-lisp
+(use-package all-the-icons-completion
+  :straight t
+  :if init-flag
+  :config (all-the-icons-completion-mode t))
+#+end_src
 
 *** In-buffer completion menu =corfu=
 
