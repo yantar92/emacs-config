@@ -1684,6 +1684,32 @@ a need to type =<TAB>= or =<SPC>=.
   :config (all-the-icons-completion-mode t))
 #+end_src
 
+*** Display docstrings or other annotations for completions
+**** Enable built-in extra information
+
+#+begin_src emacs-lisp
+(when init-flag (setq completions-detailed t))
+#+end_src
+**** Marginalia
+
+#+begin_src emacs-lisp
+(use-package marginalia
+  :if init-flag
+  :straight t
+  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+  ;; available in the *Completions* buffer, add it to the
+  ;; `completion-list-mode-map'.
+  :bind (:map minibuffer-local-map
+              ("M-a" . marginalia-cycle))
+
+  :init
+
+  ;; Marginalia must be activated in the :init section of use-package such that
+  ;; the mode gets enabled right away. Note that this forces loading the
+  ;; package.
+  (marginalia-mode +1))
+#+end_src
+
 *** In-buffer completion menu =corfu=
 
 =corfu= provides a popup menu just like =company=. However, unlike
