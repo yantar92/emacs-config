@@ -1715,6 +1715,12 @@ a need to type =<TAB>= or =<SPC>=.
 (when init-flag (setq completions-sort 'historical))
 #+end_src
 
+**** Live preview in completions
+
+#+begin_src emacs-lisp
+(use-package consult
+  :straight t)
+#+end_src
 
 *** In-buffer completion menu =corfu=
 
