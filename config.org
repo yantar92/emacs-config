@@ -1709,6 +1709,12 @@ a need to type =<TAB>= or =<SPC>=.
   ;; package.
   (marginalia-mode +1))
 #+end_src
+**** Show recent completions first
+
+#+begin_src emacs-lisp
+(when init-flag (setq completions-sort 'historical))
+#+end_src
+
 
 *** In-buffer completion menu =corfu=
 
