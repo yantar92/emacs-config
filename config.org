@@ -1644,7 +1644,7 @@ in exact order, while =orderless= allows simply
 (use-package orderless
   :straight t
   :init
-  (setq completion-styles '(orderless basic)
+  (setq completion-styles '(orderless flex basic)
 	completion-category-defaults nil
 	completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
