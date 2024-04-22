@@ -1568,6 +1568,7 @@ behavior added."
 (global-set-key [remap keyboard-quit] #'keyboard-quit-context+)
 #+end_src
 
+
 **** Mnemonic key binding for =exit-recursive-edit=
 :PROPERTIES:
 :CREATED:  [2020-05-13 Wed 00:11]
@@ -1617,13 +1618,13 @@ For example, when working with logs copied from clipboard.
 (setq-default major-mode 'text-mode)
 #+end_src
 
+
 ** Completion
 :PROPERTIES:
 :ID:       f78e9123-ed35-4c76-a5fd-5549cc8f8210
 :END:
 
 Completion is what makes working in Emacs look like magic. 
-
 *** =orderless= completion style
 
 The default completion is helpful, but it requires not only
@@ -1648,7 +1649,12 @@ in exact order, while =orderless= allows simply
 	completion-category-defaults nil
 	completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
-*** Live completion updates with =mct=
+
+*** Minibuffer completion
+**** Live completion updates with =mct=
+:PROPERTIES:
+:ID:       b5e04b4b-a1d9-46d0-9290-aac0014ba605
+:END:
 
 Because =orderless= is so efficient in reducing the number of keys
 required to find the exact match, it becomes critical to avoid any
@@ -1662,20 +1668,131 @@ a need to type =<TAB>= or =<SPC>=.
   :if init-flag
   :straight t
   :custom
-  (mct-hide-completion-mode-line t)
+  (mct-hide-completion-mode-line t) ; do not display mode line, making completion appear right above minibuffer
+  (mct-live-update-delay 0.1) ; pop up faster
+  (mct-completion-passlist '(file buffer consult-buffer org-tag)) ; popup even without typing a few chars
+  :config (mct-mode +1))
+#+end_src
+***** Do not re-compute the whole completion buffer on =<SPC>=
+
+By default, pressing space triggers re-computing completions and
+causes a delay in live completion buffer updates. With =ordeless=
+completion style, this special behavior is no longer useful. Disable
+it.
+
+#+begin_src emacs-lisp
+(use-package orderless
   :config
-  (mct-mode +1)
+  (bind-key "<SPC>" #'self-insert-command minibuffer-local-completion-map))
+#+end_src
+
+***** Custom bindings to replicate =helm= look and feel
+
+I am so used to =helm= behavior, that I feel more comfortable navigating
+the completions while staying inside the editable minibuffer.
+This requires some customized key bindings.
+
+1. Navigate completions using =M-j=, =M-k=, =<TAB>=
+
+   #+begin_src emacs-lisp
+(use-package mct
+  :config
   (bind-key "M-j" #'meta-move-line-down minibuffer-mode-map)
   (bind-key "M-k" #'meta-move-line-up minibuffer-mode-map)
-  (meta-defun meta-move-line-down
-    :cond (local-variable-p 'completion-at-point-functions)
-    mct-switch-to-completions-top)
-  (meta-defun meta-move-line-up
-    :cond (local-variable-p 'completion-at-point-functions)
-    mct-switch-to-completions-bottom)
-  )
-#+end_src
-*** Provide icons in completion buffer
+  (defun yant/minibuffer-complete-or-select ()
+    "Partially complete input or select next completion."
+    (interactive)
+    (let ((minibuffer-string (buffer-string)))
+      (minibuffer-complete)
+      (when (equal (buffer-string) minibuffer-string)
+	(with-minibuffer-completions-window
+	  (call-interactively #'next-completion)
+          (run-hooks 'post-command-hook)))))
+  (bind-key "<TAB>" #'yant/minibuffer-complete-or-select minibuffer-local-must-match-map))
+   #+end_src
+
+2. Select first listed completion on =<RET>= even when multiple
+   completions match the input
+
+   #+begin_src emacs-lisp
+(use-package mct
+  :config
+  ;; Indicate the changed behavior by auto-highlighting the first
+  ;; completion.
+  (defun yant/select-first-completion ()
+    (let ((completions-window (get-buffer-window "*Completions*" 0)))
+      (when completions-window
+	(with-selected-window completions-window
+	  (first-completion)
+          (mct--completions-candidate-highlight)))))
+
+  (add-hook 'completion-list-mode-hook #'yant/select-first-completion)
+
+  (defun yant/complete-minibuffer-selection ()
+    (interactive)
+    (let ((completions-window (get-buffer-window "*Completions*" 0)))
+      (if completions-window
+          (with-selected-window completions-window
+            (condition-case _
+		(mct-choose-completion-exit)
+              (error
+               (first-completion)
+               (mct-choose-completion-exit))))
+	(minibuffer-complete-and-exit))))
+  (bind-key "<RET>" #'yant/complete-minibuffer-selection minibuffer-local-must-match-map))
+   #+end_src
+
+3. Insert selected completion candidate into minibuffer
+
+   #+begin_src emacs-lisp
+(use-package mct
+  :config
+  (defun yant/complete-minibuffer-selection-no-exit ()
+    "Insert selected or first completion into minibuffer.
+When completion window is not displayed, perform partial completion."
+    (interactive)
+    (let ((completions-window (get-buffer-window "*Completions*" 0)))
+      (if completions-window
+          (with-selected-window completions-window
+	    (condition-case _
+		(mct-choose-completion-no-exit)
+	      (error
+	       (first-completion)
+	       (mct-choose-completion-no-exit))))
+	(minibuffer-complete))))
+  (bind-key "M-l" #'yant/complete-minibuffer-selection-no-exit minibuffer-local-must-match-map))
+   #+end_src
+
+4. Provide command to delete the current segment of multi-stage completion
+   For example, when completing file name, it is handy to be able to
+   delete the input up to the parent directory and re-start completing
+   the file/directory name from there.
+
+   #+begin_src emacs-lisp
+(use-package mct
+  :config
+  (defun yant/delete-up-to-completion-boundary ()
+    "Delete backwards until reachind completion boundary."
+    (interactive)
+    (when minibuffer-completion-table
+      (let ((boundary
+	     (car (completion-boundaries
+		   (buffer-string)
+		   minibuffer-completion-table
+		   minibuffer-completion-predicate
+		   (buffer-substring (point) (point-max))))))
+	(if (>= (1+ boundary) (point))
+	    (progn
+	      (delete-char -1)
+	      (yant/delete-up-to-completion-boundary))
+          (delete-region (1+ boundary) (point-max))))))
+
+  (bind-key "C-l" #'yant/delete-up-to-completion-boundary minibuffer-local-must-match-map)
+  ;; Remove clash
+  (unbind-key "C-l" mct-minibuffer-local-completion-map))
+   #+end_src
+   
+**** Provide icons in completion buffer
 
 #+begin_src emacs-lisp
 (use-package all-the-icons-completion
@@ -1683,14 +1800,13 @@ a need to type =<TAB>= or =<SPC>=.
   :if init-flag
   :config (all-the-icons-completion-mode t))
 #+end_src
-
-*** Display docstrings or other annotations for completions
-**** Enable built-in extra information
+**** Display docstrings or other annotations for completions
+***** Enable built-in extra information
 
 #+begin_src emacs-lisp
 (when init-flag (setq completions-detailed t))
 #+end_src
-**** Marginalia
+***** Marginalia
 
 #+begin_src emacs-lisp
 (use-package marginalia
@@ -1764,6 +1880,7 @@ and get the full completion of ~region-beginning~ even when typing fast.
       (corfu-mode 1)))
   (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer))
 #+end_src
+
 **** Sort completion candidates according to the completion history
 
 #+begin_src emacs-lisp
@@ -1774,6 +1891,7 @@ and get the full completion of ~region-beginning~ even when typing fast.
   (savehist-mode 1)
   (add-to-list 'savehist-additional-variables 'corfu-history))
 #+end_src
+
 **** Use =orderless= in-buffer completion
 
 #+begin_src emacs-lisp
@@ -1797,6 +1915,7 @@ completion when there are no matches.
 (use-package corfu
   :custom (corfu-quit-no-match t))
 #+end_src
+
 *** Helm
 :PROPERTIES:
 :ID:       d388e4f5-214e-4697-a53a-be6fb6c24411
@@ -1814,6 +1933,8 @@ live completion:
 - apropos commands become a lot easier to discover
 - can search in kill ring
 - can search in most of info pages, including Emacs manual
+[2024-04-22 Mon] As an experiment, I am switching to [[id:c4a958ed-33e4-48f0-8594-fce1d8380e45][consult]] + [[id:b5e04b4b-a1d9-46d0-9290-aac0014ba605][mct]];
+although I still prefer some helm commands.
 
 Helm mode is very special in regards to =boon= because it works in mini-buffer. 
 Hence, I had to define special versions of =boon=-like bindings for helm. 
@@ -1825,13 +1946,10 @@ The basic idea is to prefix movement commands with meta.
 (use-package helm
   :if init-flag
   :straight (helm :type git :host github :repo "emacs-helm/helm" :local-repo "~/Git/helm")
-  :diminish helm-mode
   :requires boon
   :after boon
   :bind (
-	 ("M-x" . helm-M-x)
 	 ("M-y" . helm-show-kill-ring)
-	 ("<f1> a" . helm-apropos)
 	 ("<f1> b" . helm-descbindings)
 	 ("C-x c" . nil)
 	 :map helm-map
@@ -1848,7 +1966,6 @@ The basic idea is to prefix movement commands with meta.
 	 ("M-l" . helm-execute-persistent-action)
 	 :map boon-goto-map
 	 ("e" . helm-resume))
-  :defines helm-global-mode
   :custom
   (helm-M-x-show-short-doc t)
   (helm-split-window-inside-p t)
@@ -1862,8 +1979,7 @@ The basic idea is to prefix movement commands with meta.
     (interactive "P")
     (pcase helm--prompt
       ((pred (string-match-p "Refile\\|\\(Link to attachment from\\)")) (funcall-interactively #'helm-yank-selection arg))
-      (_ (funcall-interactively #'helm-execute-persistent-action))))
-  (helm-mode 1))
+      (_ (funcall-interactively #'helm-execute-persistent-action)))))
 #+end_src
 **** Appearance
 
@@ -3379,7 +3495,7 @@ Just use external browser to open URLs.
   (use-package helm
     :config  
     (use-package meta-functions :config  
-      (meta-defun meta-goto "Goto place in document." helm-imenu)
+      (meta-defun meta-goto "Goto place in document." consult-imenu)
       (meta-defun meta-goto :mode emacs-lisp-mode
         :cond (let ((state (syntax-ppss)))
                 (and (not (nth 3 state))
@@ -3395,17 +3511,24 @@ Just use external browser to open URLs.
 :PROPERTIES:
 :ID:       b69737e2-daa5-4b12-bb10-9ce37831edd4
 :END:
-***** Use =helm-mini= to switch buffers
+***** Use =consult= to switch buffers
+:PROPERTIES:
+:ID:       c4a958ed-33e4-48f0-8594-fce1d8380e45
+:END:
 
 #+begin_src emacs-lisp
-(use-package helm
+(use-package consult
   :if init-flag
+  :config
+  (consult-customize consult-buffer :preview-key nil)
   :bind (:map boon-forward-search-map
-	      ("b" . helm-mini)
+	      ("b" . consult-buffer)
 	      :map boon-backward-search-map
-	      ("b" . helm-mini))
+	      ("b" . consult-buffer))
   :after boon)
 #+end_src
+
+
 ***** Skip some uninteresting buffers when switching to next/previous buffer
 
 Credit: [[id:4ebf4428-3ed3-42cd-9d6c-ddc2d949dd53][nv-elisp comments on Weekly tips/trick/etc/ thread]]
@@ -3652,10 +3775,10 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
   :if init-flag
   :config
   (bind-keys :map boon-forward-search-map
-	     ("f" . helm-find-files)
+	     ("f" . find-file)
              ("F" . helm-locate)
              :map boon-backward-search-map
-	     ("f" . helm-find-files)
+	     ("f" . find-file)
              ("F" . helm-locate)))
 #+end_src
 **** Open files as root
@@ -4465,6 +4588,9 @@ I do not use mouse as much as possible and discourage myself to use it unnecessa
 :ID:       61ed40af-8165-4ffa-9412-96d802bb8e18
 :END:
 
+****************** TODO I had to put completion commands here to work around meta-functions bug, but they truly belong to completion section
+****************** END
+
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
   :if init-flag
@@ -4499,8 +4625,20 @@ I do not use mouse as much as possible and discourage myself to use it unnecessa
 		       (meta-move-element-right "Move the element under cursor right." ignore)
 		       (meta-move-element-left "Move the element under cursor left." ignore)
 		       (meta-move-element-down "Move the element under cursor down." move-text-down)
-		       (meta-move-element-up "Move the element under cursor up." move-text-up))))
-  :init (use-package boon))
+		       (meta-move-element-up "Move the element under cursor up." move-text-up)))
+    (meta-defun meta-move-line-down
+      :mode minibuffer-mode
+      (with-minibuffer-completions-window
+	(call-interactively #'next-completion)
+        (run-hooks 'post-command-hook)))
+    (meta-defun meta-move-line-down :mode completion-list-mode mct-next-completion-or-mini)
+    (meta-defun meta-move-line-up
+      :mode minibuffer-mode
+      (with-minibuffer-completions-window
+	(call-interactively #'previous-completion)
+        (run-hooks 'post-command-hook)))
+    (meta-defun meta-move-line-up :mode completion-list-mode mct-previous-completion-or-mini))
+  (use-package boon))
 #+END_SRC
 *** =Yasnippet=
 :PROPERTIES:
@@ -11153,10 +11291,11 @@ Also, no contexts are prompted in Inbox agenda.
 	    tags
 	    tag-filter)
 	(let ((completion-ignore-case t))
-	  (setq tags (condition-case _
-                         (helm-comp-read
-		          "Tags: " location-tags :must-match t :name "Select location context")
-                       (quit nil))))
+	  (setq tags
+		(condition-case _
+		    (let ((completion-extra-properties '(:category org-tag)))
+                      (completing-read "Location context: " location-tags nil 'must-match))
+                  (quit nil))))
 	(when tags
 	  (unless (listp tags) (setq tags (list tags)))
 	  (let ((tags-exclude (seq-difference location-tags tags)))
@@ -19243,3 +19382,21 @@ I use company for completion just because it is easy to use.
               ("M-s" . company-filter-candidates)))
 #+end_src
 
+** COMMENT Use =helm-mini= to switch buffers :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-04-22 Mon 12:05
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Buffers/Switching buffers
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+#+begin_src emacs-lisp
+(use-package helm
+  :if init-flag
+  :bind (:map boon-forward-search-map
+	      ("b" . helm-mini)
+	      :map boon-backward-search-map
+	      ("b" . helm-mini))
+  :after boon)
+#+end_src
