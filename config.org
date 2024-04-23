@@ -1708,7 +1708,8 @@ This requires some customized key bindings.
 	(with-minibuffer-completions-window
 	  (call-interactively #'next-completion)
           (run-hooks 'post-command-hook)))))
-  (bind-key "<TAB>" #'yant/minibuffer-complete-or-select minibuffer-local-must-match-map))
+  (bind-key "<TAB>" #'yant/minibuffer-complete-or-select minibuffer-local-must-match-map)
+  (bind-key "<TAB>" #'yant/minibuffer-complete-or-select minibuffer-local-map))
    #+end_src
 
 2. Select first listed completion on =<RET>= even when multiple
@@ -1760,7 +1761,8 @@ When completion window is not displayed, perform partial completion."
 	       (first-completion)
 	       (mct-choose-completion-no-exit))))
 	(minibuffer-complete))))
-  (bind-key "M-l" #'yant/complete-minibuffer-selection-no-exit minibuffer-local-must-match-map))
+  (bind-key "M-l" #'yant/complete-minibuffer-selection-no-exit minibuffer-local-must-match-map)
+  (bind-key "M-l" #'yant/complete-minibuffer-selection-no-exit minibuffer-local-map))
    #+end_src
 
 4. Provide command to delete the current segment of multi-stage completion
