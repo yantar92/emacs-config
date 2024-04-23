@@ -1827,10 +1827,44 @@ When completion window is not displayed, perform partial completion."
   ;; package.
   (marginalia-mode +1))
 #+end_src
-**** Show recent completions first
+**** Show recent completions first, then by Levenshtein distance to input
 
 #+begin_src emacs-lisp
-(when init-flag (setq completions-sort 'historical))
+(when init-flag
+  (defun yant/minibuffer-sort-by-history-then-distance (completions)
+    "Sort COMPLETIONS by Levenshtein distance to input, then put recent on top.
+This function is like `minibuffer-sort-by-history', but sorts by
+string distance + `string-lessp' first rather than using only
+`string-lessp'."
+    (let* ((minibuffer-input (when (minibufferp) (minibuffer-contents)))
+           (to-complete-string
+            (when minibuffer-input
+              (substring minibuffer-input
+			 (car (completion-boundaries
+			       minibuffer-input
+                               minibuffer-completion-table nil "")))))
+	   (pre-sorted
+	    (sort completions
+		  :lessp
+		  (if to-complete-string
+		      (lambda (a b)
+			(let ((distance-a (string-distance to-complete-string a))
+                              (distance-b (string-distance to-complete-string b)))
+                          (or (< distance-a distance-b)
+                              (and (= distance-a distance-b)
+				   (string-lessp a b)))))
+                    #'string-lessp))))
+      ;; The following code is copied from
+      ;; `minibuffer-sort-by-history'.
+      ;;
+      ;; Only use history when it's specific to these completions.
+      (if (eq minibuffer-history-variable
+              (default-value minibuffer-history-variable))
+          pre-sorted
+	(minibuffer--sort-by-position
+	 (minibuffer--sort-preprocess-history minibuffer-completion-base)
+	 pre-sorted))))
+  (setq completions-sort #'yant/minibuffer-sort-by-history-then-distance))
 #+end_src
 
 **** Live preview in completions
