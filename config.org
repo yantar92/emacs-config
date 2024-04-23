@@ -2073,6 +2073,7 @@ One is already using it or not yet using...
 Boon =command mode= allows translating =c 'symbol= key bindings into =C-c
 'symbol= key bindings. It is useful, but =save-buffer= is more meaningful
 to rebind to =C-c s= is such a case and =save-some-buffers= to =C-c C-s=.
+
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
@@ -2081,13 +2082,15 @@ to rebind to =C-c s= is such a case and =save-some-buffers= to =C-c C-s=.
   (bind-key "C-x s" 'save-buffer)
   (bind-key "C-x C-s" 'save-some-buffers))
 #+end_src
+
 *** Backup
 :PROPERTIES:
 :ID:       e9322c07-68fa-485f-abac-af5b5a2b97f5
 :END:
 
-I don't like Emacs' default behaviour to save backup files in the same folder, thus cluttering it annoyingly.
-Keep everything in a single folder with tree ([[http://ergoemacs.org/emacs/emacs_set_backup_into_a_directory.html][credit: Xah Lee]]) structure.
+I don't like Emacs' default behaviour to save backup files in the same
+folder, thus cluttering it annoyingly. Keep everything in a single
+folder with tree ([[http://ergoemacs.org/emacs/emacs_set_backup_into_a_directory.html][credit: Xah Lee]]) structure.
 
 #+begin_src emacs-lisp
 ;; make backup to a designated dir, mirroring the full path
@@ -2116,26 +2119,11 @@ If the new path's directories does not exist, create them."
    version-control t))
 #+end_src
 
-Since this config is often called in extra batch process, lock-files can mess everything up. 
-Disable them.
+Since this config is often called in extra batch process, lock-files
+can mess everything up. Disable them.
 
 #+begin_src emacs-lisp
 (setq create-lockfiles nil)
-#+end_src
-
-*** Backup walker
-:PROPERTIES:
-:CREATED:  [2019-08-22 Thu 22:51]
-:ID:       3837955e-831d-46b3-8cbb-a4e7a9e19b92
-:END:
-
-Walk across the backup files
-
-#+begin_src emacs-lisp
-(use-package backup-walker
-  :if init-flag
-  :straight t
-  :commands backup-walker-start)
 #+end_src
 
 *** Auto save
