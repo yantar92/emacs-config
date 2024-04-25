@@ -2282,19 +2282,6 @@ Do not even need terminal to interact with Git.
   :custom
   (forge-owned-accounts '(("yantar92"))))
 #+end_src
-***** COMMENT Code review: support comments to code from Github
-[[id:Github-wandersoncferreira-wandersoncferreira-code-review-10c][wandersoncferreira [Github] wandersoncferreira/code-review: Code Reviews with Emacs]]
-#+begin_src emacs-lisp
-(use-package code-review
-  :if init-flag
-  :after forge
-  :straight t
-  :config
-  (define-advice forge-visit-pullreq (:override () use-code-review)
-    "Call `code-review-forge-pr-at-point'."
-    (interactive)
-    (funcall-interactively #'code-review-forge-pr-at-point)))
-#+end_src
 
 **** Activate insert state when editing commits
 :PROPERTIES:
@@ -19424,3 +19411,25 @@ I use company for completion just because it is easy to use.
 	      ("b" . helm-mini))
   :after boon)
 #+end_src
+
+** COMMENT Code review: support comments to code from Github :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-04-24 Wed 11:33
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/History & version control/=Magit=/Interaction with Github \ other forges
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+[[id:Github-wandersoncferreira-wandersoncferreira-code-review-10c][wandersoncferreira [Github] wandersoncferreira/code-review: Code Reviews with Emacs]]
+#+begin_src emacs-lisp
+(use-package code-review
+  :if init-flag
+  :after forge
+  :straight t
+  :config
+  (define-advice forge-visit-pullreq (:override () use-code-review)
+    "Call `code-review-forge-pr-at-point'."
+    (interactive)
+    (funcall-interactively #'code-review-forge-pr-at-point)))
+#+end_src
+
