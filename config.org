@@ -2263,9 +2263,6 @@ Do not even need terminal to interact with Git.
 	      ("G" . magit-dispatch-popup)
 	      ("M-g" . magit-file-dispatch))
   :config
-  ;; Remove added hook
-  (ignore-errors
-    (setq magit-diff-visit-file (-remove-last magit-diff-visit-file)))
   (use-package meta-functions
     :config
     (meta-defun meta-magit-status "Open magit status buffer" magit-status)
