@@ -2259,8 +2259,6 @@ Do not even need terminal to interact with Git.
   (use-package meta-functions
     :config
     (meta-defun meta-magit-status "Open magit status buffer" magit-status)
-    (use-package piem :defer t :config
-      (meta-defun meta-magit-status :mode notmuch-show-mode piem-am))
     (meta-defun meta-down-element :mode magit-diff-mode magit-section-forward)
     (meta-defun meta-up-element :mode magit-diff-mode magit-section-backward)
     (meta-defun meta-down-element :mode magit-status-mode magit-section-forward)
@@ -18051,8 +18049,12 @@ ls-files' and 'grep'."
 #+begin_src emacs-lisp
 (use-package piem
   :after notmuch
-  :config (piem-notmuch-mode +1))
+  :config (piem-notmuch-mode +1)
+  (use-package meta-functions
+    :config
+    (meta-defun meta-magit-status :mode notmuch-show-mode piem-am)))
 #+end_src
+
 **** =git-email=: Send patches as email from Emacs
 
 #+begin_src emacs-lisp
