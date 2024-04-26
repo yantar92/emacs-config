@@ -2279,6 +2279,7 @@ Do not even need terminal to interact with Git.
 :ID:       b5cd6c65-f254-42aa-a423-2001c72d6dfa
 :END:
 ***** =forge= package
+
 #+begin_src emacs-lisp
 (use-package forge
   :if init-flag
@@ -2295,22 +2296,9 @@ Do not even need terminal to interact with Git.
 
 #+begin_src emacs-lisp
 (when init-flag
-(add-hook 'with-editor-mode-hook #'boon-set-insert-state))
+  (add-hook 'with-editor-mode-hook #'boon-set-insert-state))
 #+end_src
-**** Initial section visibility
-:PROPERTIES:
-:CREATED:  [2020-05-26 Tue 16:45]
-:ID:       3b8d01b1-878f-466a-bc75-64be45f7e967
-:END:
-Credit: [[id:7fe204b5-3d7e-4227-a4b3-ff3b96ee1601][Irreal: Setting the Initial Visibility of Magit Sections]]
 
-#+begin_src emacs-lisp
-(use-package magit
-  :after magit
-  :custom
-  (magit-section-initial-visibility-alist
-   '((stashes . hide) (untracked . hide) (unpushed . hide))))
-#+end_src
 **** Do not contaminate related branch list with transient =piem/= branches
 
 The default Magit commit buffer displays many "Contained:" and
