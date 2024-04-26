@@ -2357,6 +2357,13 @@ default though. Enabling.
 #+end_src
 
 **** Store Org links to Magit buffers
+
+Org links can point to arbitrary buffers given that an appropriate
+Elisp implementation is provided. =orgit= provides Org links for magit
+buffers, including links to specific commits. Handy when using
+~org-capture~ where the link to current context is automatically added
+in my [[id:e3d02bee-a924-4808-9a2f-fe577065038d][capture templates]].
+
 #+begin_src emacs-lisp
 (use-package magit
   :if init-flag
@@ -2366,6 +2373,7 @@ default though. Enabling.
     :custom
     (orgit-store-reference t)))
 #+end_src
+
 *** =Ediff=
 :PROPERTIES:
 :ID:       0a071515-0aff-4cbe-982c-374860cdc9fc
