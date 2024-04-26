@@ -2355,15 +2355,6 @@ default though. Enabling.
                               (:help-echo "Local changes not in upstream")))
                             ("Path" 99 magit-repolist-column-path nil))))
 #+end_src
-**** Opening repository file in remote =browse-at-remote=
-
-#+begin_src emacs-lisp
-(use-package browse-at-remote
-  :if init-flag
-  :straight t
-  :config
-  (bind-key "C-c M-o" #'browse-at-remote))
-#+end_src
 
 **** Store Org links to Magit buffers
 #+begin_src emacs-lisp
@@ -19427,5 +19418,26 @@ I use company for completion just because it is easy to use.
     "Call `code-review-forge-pr-at-point'."
     (interactive)
     (funcall-interactively #'code-review-forge-pr-at-point)))
+#+end_src
+
+** Opening repository file in remote =browse-at-remote= :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ID:       b8072b8b-115e-4791-865f-cbe3fc272a8d
+:SUMMARY:  I am not really using it
+:ARCHIVE_TIME: 2024-04-25 Thu 20:19
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/History & version control/=Magit=
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+- Note taken on [2024-04-25 Thu 20:19] \\
+  I am not really using it
+#+begin_src emacs-lisp
+(use-package browse-at-remote
+  :if init-flag
+  :straight t
+  :config
+  (bind-key "C-x M-o" #'browse-at-remote))
 #+end_src
 
