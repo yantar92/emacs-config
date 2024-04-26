@@ -2132,6 +2132,13 @@ can mess everything up. Disable them.
 :ID:       2e32ad16-4c7a-46b9-8c47-06f7f5566032
 :END:
 
+=auto-save-visited-mode= saves buffers every five seconds. Frequently
+enough to tame my paranoia.
+
+However, I do not want to auto-save email drafts. Mostly because
+[[id:f6ca2367-45c4-45bc-acec-49837cadc5ac][Notmuch]] lists them immediately in the inbox - something I do not want
+to dig into.
+
 #+begin_src emacs-lisp
 (use-package no-littering
   :demand t
@@ -2152,10 +2159,14 @@ Save virtual buffers (kill ring, etc.)
 (when init-flag
   (savehist-mode 1))
   #+end_src
+
 *** Persistent scratch
 :PROPERTIES:
 :ID:       4185d833-9d1f-4763-97a0-d44bcc322da7
 :END:
+
+Save and restore scratch buffer as well.
+
 #+begin_src emacs-lisp
 (use-package  persistent-scratch
   :if init-flag
@@ -2164,10 +2175,22 @@ Save virtual buffers (kill ring, etc.)
   :config
   (persistent-scratch-autosave-mode 1))
 #+end_src
+
 *** Recent files
 :PROPERTIES:
 :ID:       b72d24a2-7692-4e37-b547-10c30b058c22
 :END:
+
+Record recently opened files.
+~helm-mini~ and ~consult-buffer~ list these files alongside open buffers,
+making it convenient to select what I have in mind most of the time.
+
+#+begin_src emacs-lisp
+(use-package recentf
+  :if init-flag
+  :config (recentf-mode t)
+  :custom (recentf-max-saved-items 100))
+#+end_src
 
 Cleaning up recent entries takes some time and adds up to Emacs
 startup time. To avoid this, I instead instruct =recentf= to clean
@@ -2177,7 +2200,8 @@ things up when Emacs is idle.
 (use-package recentf
   :config
   ;; Do not use :custom here. Otherwise, automatic cleanup will be
-  ;; called immediately when we set this value.
+  ;; called immediately when we set this value (due to :set function
+  ;; of this custom option)
   (setq recentf-auto-cleanup 10))
 #+end_src
 
@@ -2191,23 +2215,6 @@ Do not display messages about cleaning the recent file list.
     (let (message-log-max (inhibit-message t)) (funcall fun)))
   (advice-add 'recentf-cleanup :around #'yant/recentf-cleanup-silent))
 #+end_src
-
-Show recently opened files in =helm-mini= buffer.
-
-#+begin_src emacs-lisp
-(use-package recentf
-  :if init-flag
-  :config
-  (recentf-mode t)
-  (setq
-   recentf-max-menu-items 30
-   recentf-max-saved-items 100)
-  (use-package helm
-    :custom
-    (helm-ff-file-name-history-use-recentf t)))
-#+end_src
-
-
 
 *** No global auto-revert
 :PROPERTIES:
@@ -2323,7 +2330,8 @@ branch for each submitted patch (which I do, with [[id:3b812d25-ce80-46f0-8b28-7
 
 **** More detailed highlight of current chunk
 
-Magit is able to provide word-level diff refinement.  It is disabled by default though.  Enabling.
+Magit is able to provide word-level diff refinement. It is disabled by
+default though. Enabling.
 
 #+begin_src emacs-lisp
 (use-package magit
@@ -2350,7 +2358,6 @@ Magit is able to provide word-level diff refinement.  It is disabled by default 
   :commands magit-list-repositories
   :custom
   (magit-repository-directories '(("~/Git" . 1)
-                                  ;; ("~/Org" . 0)
                                   ("~/.emacs.d/straight/repos/" . 1)))
   (magit-repolist-columns '(("Name" 25 magit-repolist-column-ident nil)
                             ;; ("Version" 25 magit-repolist-column-version nil)
@@ -9654,124 +9661,125 @@ Do not save excursion."
 Just links to the current entry are not always sufficient. I sometimes want to link a file from another entry.
 
 #+begin_src emacs-lisp
-(defun yant/process-att-id-abbrev (arg)
-  "Return `org-attach-dir' for the entry in att-id: link type."
-  (require 'org-ql)
-  (let ((id (car (split-string ":" arg)))
-        (file (cadr (split-string ":" arg))))
-    (concat (file-name-as-directory
-	     (let* ((org-attach-dir-suppress-extra-checks t)
-		    (pos (org-id-find id 'marker)))
-	       (org-with-point-at pos
-		 (org-attach-dir 'CREATE))))
-            file)))
-;; Cache results
-(memoize #'yant/process-att-id-abbrev)
+  (defun yant/process-att-id-abbrev (arg)
+    "Return `org-attach-dir' for the entry in att-id: link type."
+    (require 'org-ql)
+    (let ((id (car (split-string ":" arg)))
+          (file (cadr (split-string ":" arg))))
+      (concat (file-name-as-directory
+  	     (let* ((org-attach-dir-suppress-extra-checks t)
+  		    (pos (org-id-find id 'marker)))
+  	       (org-with-point-at pos
+  		 (org-attach-dir 'CREATE))))
+              file)))
+  ;; Cache results
+  (use-package memoize :config (memoize #'yant/process-att-id-abbrev))
 
+  
 
-;; (add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
+  ;; (add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
 
-;; FIXME: file: links cannot have custom follow:
-;; (defun org-att-id-follow (path &optional arg)
-;;   "Follow att-id: link"
-;;   (if arg
-;;       (let ((id (car (split-string ":" path))))
-;; 	(org-link-open-from-string (concat "id:" id)))
-;;     (org-link-open-from-string (concat "file:" (yant/process-att-id-abbrev path)))))
+  ;; FIXME: file: links cannot have custom follow:
+  ;; (defun org-att-id-follow (path &optional arg)
+  ;;   "Follow att-id: link"
+  ;;   (if arg
+  ;;       (let ((id (car (split-string ":" path))))
+  ;; 	(org-link-open-from-string (concat "id:" id)))
+  ;;     (org-link-open-from-string (concat "file:" (yant/process-att-id-abbrev path)))))
 
-(defun org-att-id-skip-function ()
-  "Test if an entry contains attachments. Move point to next candidate location."
-  (if (yant/org-task-has-attachments-p)
-      't
-    (and (search-forward org-attach-auto-tag nil 'noerror)
-	 (beginning-of-line)
-         (backward-char))))
+  (defun org-att-id-skip-function ()
+    "Test if an entry contains attachments. Move point to next candidate location."
+    (if (yant/org-task-has-attachments-p)
+        't
+      (and (search-forward org-attach-auto-tag nil 'noerror)
+  	 (beginning-of-line)
+           (backward-char))))
 
-(defun org-att-id-prompt-id ()
-  "Prompt for the id during completion of att-id: link.
-If there is an id: link in `org-store-link-plist' suggest that heading.
-Show parent project as top (or second top) suggestion."
-  (let (parent-project
-	saved-id)
-    (when (eq major-mode 'org-mode)
-      (org-with-point-at (point)
-	(org-back-to-heading)
-	(while (and (not parent-project)
-		    (org-up-heading-safe))
-	  (when (and (bh/is-project-p)
-		     (not (bh/is-subproject-p)))
-            (setq parent-project
-		  (list
-                   (mapconcat
-                    #'identity
-		    (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
-			    (append (list (file-name-nondirectory (buffer-file-name (buffer-base-buffer))))
-				    (org-get-outline-path 'with-self 'use-cache)))
-                    "/")))))))
-    (when (string= "id" (plist-get org-store-link-plist :type))
-      (org-with-point-at (org-id-find (cadr (split-string (plist-get org-store-link-plist :link) ":")) 'marker)
-	(setq saved-id
-              (list (mapconcat
-		     #'identity
-		     (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
-			     (append (list (file-name-nondirectory (buffer-file-name (buffer-base-buffer))))
-				     (org-get-outline-path 'with-self 'use-cache)))
-                     "/")))))
-    (let ((org-refile-history (append saved-id parent-project))
-	  (org-refile-cache nil)
-	  (org-refile-target-verify-function #'org-att-id-skip-function))
-      (let ((prompt-ans (org-refile-get-location "Link to attachment from")))
-	(prog1
-	    (org-id-get (seq-find #'markerp
-				  prompt-ans)
-			'create))))))
+  (defun org-att-id-prompt-id ()
+    "Prompt for the id during completion of att-id: link.
+  If there is an id: link in `org-store-link-plist' suggest that heading.
+  Show parent project as top (or second top) suggestion."
+    (let (parent-project
+  	saved-id)
+      (when (eq major-mode 'org-mode)
+        (org-with-point-at (point)
+  	(org-back-to-heading)
+  	(while (and (not parent-project)
+  		    (org-up-heading-safe))
+  	  (when (and (bh/is-project-p)
+  		     (not (bh/is-subproject-p)))
+              (setq parent-project
+  		  (list
+                     (mapconcat
+                      #'identity
+  		    (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
+  			    (append (list (file-name-nondirectory (buffer-file-name (buffer-base-buffer))))
+  				    (org-get-outline-path 'with-self 'use-cache)))
+                      "/")))))))
+      (when (string= "id" (plist-get org-store-link-plist :type))
+        (org-with-point-at (org-id-find (cadr (split-string (plist-get org-store-link-plist :link) ":")) 'marker)
+  	(setq saved-id
+                (list (mapconcat
+  		     #'identity
+  		     (mapcar (lambda (str) (replace-regexp-in-string "/" "\\\\/" str))
+  			     (append (list (file-name-nondirectory (buffer-file-name (buffer-base-buffer))))
+  				     (org-get-outline-path 'with-self 'use-cache)))
+                       "/")))))
+      (let ((org-refile-history (append saved-id parent-project))
+  	  (org-refile-cache nil)
+  	  (org-refile-target-verify-function #'org-att-id-skip-function))
+        (let ((prompt-ans (org-refile-get-location "Link to attachment from")))
+  	(prog1
+  	    (org-id-get (seq-find #'markerp
+  				  prompt-ans)
+  			'create))))))
 
-(defun org-att-id-link-complete (&optional arg)
-  "Completion function for att-id: link."
-  (let* ((id (org-att-id-prompt-id))
-	 (ref-dir (org-with-point-at (org-id-find id 'marker)
-		    (org-attach-dir 'CREATE)))
-	 (filelink (let ((default-directory (file-name-as-directory ref-dir)))
-		     (org-file-complete-link)))
-	 (filepath (apply #'s-concat (cdr (split-string ":" filelink)))))
-    (format "att-id:%s:%s" id filepath)))
+  (defun org-att-id-link-complete (&optional arg)
+    "Completion function for att-id: link."
+    (let* ((id (org-att-id-prompt-id))
+  	 (ref-dir (org-with-point-at (org-id-find id 'marker)
+  		    (org-attach-dir 'CREATE)))
+  	 (filelink (let ((default-directory (file-name-as-directory ref-dir)))
+  		     (org-file-complete-link)))
+  	 (filepath (apply #'s-concat (cdr (split-string ":" filelink)))))
+      (format "att-id:%s:%s" id filepath)))
 
-(defun org-att-id-link-description (link desc)
-  "Return description of an att-id: link."
-  (if (not (seq-empty-p desc))
-      desc
-      (when-let ((id (nth 1 (split-string ":" link)))
-		 (file (nth 2 (split-string ":" link))))
-	(org-with-point-at (org-id-find id 'marker)
-	  (when-let ((heading (org-get-heading 'no-tags 'no-todo 'no-priority 'no-comment)))
-	    (concat heading ":" file))))))
+  (defun org-att-id-link-description (link desc)
+    "Return description of an att-id: link."
+    (if (not (seq-empty-p desc))
+        desc
+        (when-let ((id (nth 1 (split-string ":" link)))
+  		 (file (nth 2 (split-string ":" link))))
+  	(org-with-point-at (org-id-find id 'marker)
+  	  (when-let ((heading (org-get-heading 'no-tags 'no-todo 'no-priority 'no-comment)))
+  	    (concat heading ":" file))))))
 
-(defun org-att-id-store-link ()
-  "Store att-id: link."
-  (save-match-data
-    (when (and (memq major-mode '(dired-mode image-mode))
-	       (string-match (regexp-quote (expand-file-name org-attach-id-dir))
-			     (expand-file-name default-directory))
-               (string-match (concat (regexp-quote (expand-file-name org-attach-id-dir))
-				     "\\([0-9a-z][0-9a-z]\\)/\\([0-9a-z-_]+\\)/\\(.+\\)$")
-                             (pcase major-mode
-                               ('dired-mode (dired-get-filename))
-                               ('image-mode (buffer-file-name)))))
-      (let* ((filename (pcase major-mode
-                         ('dired-mode (dired-get-filename))
-                         ('image-mode (buffer-file-name))))
-             (id (concat (match-string 1 filename)
-			 (match-string 2 filename)))
-             (link (match-string 3 filename)))
-        (org-link-store-props :type "att-id"
-			      :link (concat "att-id:" id ":" link)
-                              :description (org-att-id-link-description (concat "att-id:" id ":" link) ""))))))
+  (defun org-att-id-store-link ()
+    "Store att-id: link."
+    (save-match-data
+      (when (and (memq major-mode '(dired-mode image-mode))
+  	       (string-match (regexp-quote (expand-file-name org-attach-id-dir))
+  			     (expand-file-name default-directory))
+                 (string-match (concat (regexp-quote (expand-file-name org-attach-id-dir))
+  				     "\\([0-9a-z][0-9a-z]\\)/\\([0-9a-z-_]+\\)/\\(.+\\)$")
+                               (pcase major-mode
+                                 ('dired-mode (dired-get-filename))
+                                 ('image-mode (buffer-file-name)))))
+        (let* ((filename (pcase major-mode
+                           ('dired-mode (dired-get-filename))
+                           ('image-mode (buffer-file-name))))
+               (id (concat (match-string 1 filename)
+  			 (match-string 2 filename)))
+               (link (match-string 3 filename)))
+          (org-link-store-props :type "att-id"
+  			      :link (concat "att-id:" id ":" link)
+                                :description (org-att-id-link-description (concat "att-id:" id ":" link) ""))))))
 
-;; (org-link-set-parameters "att-id"
-;; 			 :complete #'org-att-id-link-complete
-;;                          :store #'org-att-id-store-link
-;;                          :follow #'org-att-id-follow
-;;                          :desk #'org-att-id-link-description)
+  ;; (org-link-set-parameters "att-id"
+  ;; 			 :complete #'org-att-id-link-complete
+  ;;                          :store #'org-att-id-store-link
+  ;;                          :follow #'org-att-id-follow
+  ;;                          :desk #'org-att-id-link-description)
 
 #+end_src
 
