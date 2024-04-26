@@ -1117,7 +1117,7 @@ Defining some modes below:
 
 #+begin_src emacs-lisp
 (use-package all-the-icons
-  :init
+  :config
   (add-to-list 'all-the-icons-mode-icon-alist '(elfeed-search-mode all-the-icons-faicon "rss" :v-adjust 0.0 :face all-the-icons-purple))
   (add-to-list 'all-the-icons-mode-icon-alist '(helpful-mode all-the-icons-faicon "info" :v-adjust -0.1 :face all-the-icons-purple))
   (add-to-list 'all-the-icons-mode-icon-alist '(pdf-view-mode all-the-icons-octicon "file-pdf" :v-adjust 0.0 :face all-the-icons-dred))
@@ -2020,17 +2020,18 @@ The basic idea is to prefix movement commands with meta.
 **** Appearance
 
 #+begin_src emacs-lisp
-(use-package helm
-  :config
-  (defun yant/set-modus-overrides ()
-    (modus-themes-with-colors
-      (set-face-foreground  'helm-source-header fg-heading-0)
-      (set-face-background 'helm-source-header 'unspecified)
-      (set-face-background 'helm-candidate-number 'unspecified)
-      (set-face-foreground 'helm-candidate-number blue-faint)
-      (set-face-background 'helm-selection bg-hl-line)))
-  (yant/set-modus-overrides)
-  (add-hook 'modus-themes-after-load-theme-hook #'yant/set-modus-overrides))
+  (use-package helm
+    :config
+    (use-package modus-themes :demand t)
+    (defun yant/set-modus-overrides ()
+      (modus-themes-with-colors
+        (set-face-foreground  'helm-source-header fg-heading-0)
+        (set-face-background 'helm-source-header 'unspecified)
+        (set-face-background 'helm-candidate-number 'unspecified)
+        (set-face-foreground 'helm-candidate-number blue-faint)
+        (set-face-background 'helm-selection bg-hl-line)))
+    (yant/set-modus-overrides)
+    (add-hook 'modus-themes-after-load-theme-hook #'yant/set-modus-overrides))
 #+end_src
 
 **** Adaptive sorting of candidates
@@ -2217,12 +2218,14 @@ Auto-revert mode is nice, but it slows down Emacs on my huge .org files.
 Hence, I do not use it globally, but enable only where I need it.
 
 #+begin_src emacs-lisp
-(global-auto-revert-mode -1)
-(diminish 'auto-revert-mode)
-(setq auto-revert-verbose nil)
-(setq revert-without-query '(".*"))
-(bind-key* "M-r" #'revert-buffer)
+(when init-flag
+  (global-auto-revert-mode -1)
+  (diminish 'auto-revert-mode)
+  (setq auto-revert-verbose nil)
+  (setq revert-without-query '(".*"))
+  (bind-key* "M-r" #'revert-buffer))
 #+end_src
+
 *** Follow symlinks to vc files
 :PROPERTIES:
 :CREATED:  [2020-07-12 Sun 18:35]
@@ -3661,9 +3664,6 @@ Instead of =delete-other-windows=, use =windower's= version, which toggles maxim
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
-  :init
-  (use-package windower
-    :straight (emacs-windower :host gitlab :repo "ambrevar/emacs-windower" :local-repo "~/Git/emacs-windower"))
   :config
   (bind-keys*
    ("M-1" . windower-toggle-single)
@@ -3680,6 +3680,7 @@ Then I used to delete the window (=M-0)= and re-split, but can as well save a ke
 
 #+begin_src emacs-lisp
 (use-package windower
+  :straight (emacs-windower :host gitlab :repo "ambrevar/emacs-windower" :local-repo "~/Git/emacs-windower")
   :bind ("M-`" . #'windower-toggle-split))
 #+end_src
 **** Window selection
@@ -5632,7 +5633,7 @@ It warns me if the original definition changes from what I expect.
 :END:
 #+begin_src emacs-lisp
 (use-package gnuplot
-  :if (or init-flag org-export-flag)
+  :if init-flag
   :straight t
   :mode ("\\.\\(gp\\|gnuplot\\|plot\\)$" . gnuplot-mode))
 #+end_src
@@ -8679,7 +8680,7 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 
 #+begin_src emacs-lisp
 (use-package org
-  :if (or init-flag org-export-flag org-tangle-flag)
+  :if init-flag
   :custom
   (org-modules
    '( ol-doi
