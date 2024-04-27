@@ -2374,31 +2374,6 @@ in my [[id:e3d02bee-a924-4808-9a2f-fe577065038d][capture templates]].
     (orgit-store-reference t)))
 #+end_src
 
-*** =Ediff=
-:PROPERTIES:
-:ID:       0a071515-0aff-4cbe-982c-374860cdc9fc
-:END:
-
-Inspired by [[id:f69a49e2e7f32a4854d049826353240659f965ff][/u/freesteph [Reddit:emacs] (2021) M-x emacs-reddit: How do you solve merge conflicts?]]
-#+begin_src emacs-lisp
-(use-package ediff
-  :if init-flag
-  :config
-  (setq ediff-diff-options "")
-  (setq ediff-custom-diff-options "-u")
-  (setq ediff-split-window-function 'split-window-vertically))
-#+end_src
-**** COMMENT Disable =golden-ratio= during e-diffing
-:PROPERTIES:
-:ID:       cefa8487-df1a-4916-9f09-395c297916c4
-:END:
-
-#+begin_src emacs-lisp
-(use-package golden-ratio
-  :config
-  (add-hook 'ediff-mode-hook (lambda () (golden-ratio-mode -1))))
-#+end_src
-
 ** Text highlight & colouring
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
