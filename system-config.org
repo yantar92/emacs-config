@@ -6400,116 +6400,6 @@ done
 # done
 #+end_src
 
-*** COMMENT Davmail server for Exchange forced by SUTD mail server
-:PROPERTIES:
-:ID:       9870b79e-4ca8-4ab8-a841-4d29dd014755
-:END:
-
-[2023-01-08 Sun] SUTD disabled my last means to send email using my client. Falling back to redirect + manual WEB interface when necessary. No other options left.
-
-I need to use Microsoft Exchange protocol (everything else was disabled) to access SUTD mail [[notmuch:id:SG2PR03MB322660872358C604CB3537EFADCF0@SG2PR03MB3226.apcprd03.prod.outlook.com][Email from IT Service Desk: RE: IMAP settings for the email server]]
-
-The best option seems to be Davmail
-[[id:e8384cfa2557dcfe939e1cf4c3ae80d5b4ae937f][[Reddit] Anyone knows a Mailbox synchronizer supporting Microsoft Exchange protocol? : Gentoo]]
-
-It is not available in Gentoo by default, but I can use =pentoo= overlay:
-#+begin_src bash :tangle no :dir /sudo::/ :results output
-eselect repository enable pentoo
-#+end_src
-Do not enable any other packages from the overlay
-#+begin_src conf :tangle /sudo::/etc/portage/package.mask/pentoo-repo
-,*/*::pentoo
-#+end_src
-#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/davmail-bin
-net-mail/davmail-bin::pentoo
-acct-user/davmail::pentoo
-acct-group/davmail::pentoo
-#+end_src
-
-Run as server system-wide
-#+begin_src conf :tangle /sudo::/etc/portage/package.use/davmail-bin
-net-mail/davmail-bin server
-#+end_src
-#+begin_src bash :tangle no :dir /sudo::/
-rc-update add davmail default
-#+end_src
-
-I will use IMAP Port 10043 in my config.
-Other important settings:
-davmail.server=true and davmail.allowRemote=true
-
-[2021-04-14 Wed] [[notmuch:id:SG2PR03MB3226925B2E536A18D77C9507AD4E9@SG2PR03MB3226.apcprd03.prod.outlook.com][Email from IT Service Desk: Re: Case ID: 77322 - Assist on EASE enrolment]]
-The new two-factor authentication requires MFA authentication: =davmail.mode=O365Modern=
-Details on configuration: [[id:Davmail.Sourceforge_guessantdavmail_pop_imap_smtp_caldav858][Mickael Guessant [Davmail.Sourceforge] DavMail POP/IMAP/SMTP/Caldav/Carddav/LDAP Exchange Gateway - Frequently asked questions]]
-
-#+begin_src conf :tangle /sudo::/etc/davmail.properties
-davmail.ssl.keystoreType=
-davmail.ssl.keystorePass=
-davmail.proxyPassword=
-davmail.oauth.tenantId=
-davmail.oauth.clientId=
-davmail.enableKerberos=false
-davmail.smtpPort=1025
-davmail.folderSizeLimit=
-davmail.forceActiveSyncUpdate=false
-davmail.imapAutoExpunge=true
-davmail.useSystemProxies=false
-davmail.proxyUser=
-davmail.caldavEditNotifications=false
-davmail.ssl.nosecuresmtp=false
-davmail.caldavPastDelay=0
-davmail.ssl.keyPass=
-log4j.logger.httpclient.wire=WARN
-davmail.noProxyFor=
-log4j.logger.org.apache.commons.httpclient=WARN
-davmail.server=true
-davmail.popMarkReadOnRetr=false
-davmail.ssl.nosecureimap=false
-davmail.disableTrayActivitySwitch=false
-davmail.caldavAutoSchedule=true
-davmail.enableProxy=false
-davmail.proxyPort=
-davmail.logFileSize=
-davmail.mode=O365Modern
-davmail.smtpSaveInSent=true
-davmail.bindAddress=
-davmail.ssl.nosecurepop=false
-davmail.ssl.pkcs11Library=
-log4j.rootLogger=WARN
-davmail.ssl.keystoreFile=
-log4j.logger.davmail=DEBUG
-davmail.ssl.clientKeystoreType=
-davmail.clientSoTimeout=
-davmail.ssl.pkcs11Config=
-davmail.ssl.clientKeystorePass=
-davmail.imapPort=10043
-davmail.url=https://outlook.office365.com/EWS/Exchange.asmx
-davmail.sentKeepDelay=0
-davmail.ssl.nosecureldap=false
-davmail.imapAlwaysApproxMsgSize=false
-davmail.ssl.nosecurecaldav=false
-davmail.popPort=1110
-davmail.defaultDomain=
-davmail.showStartupBanner=true
-davmail.proxyHost=
-davmail.ldapPort=1389
-log4j.logger.org.apache.http.wire=WARN
-davmail.disableGuiNotifications=false
-davmail.server.certificate.hash=
-davmail.imapIdleDelay=
-davmail.allowRemote=true
-davmail.disableUpdateCheck=false
-log4j.logger.org.apache.http=WARN
-davmail.caldavPort=1080
-davmail.enableKeepAlive=false
-davmail.ssl.clientKeystoreFile=
-davmail.logFilePath=/var/log/davmail.log
-davmail.carddavReadPhoto=true
-davmail.keepDelay=30
-davmail.oauth.redirectUri=
-davmail.caldavAlarmSound=
-#+end_src
-
 ** Mailing list sync (slrn - slrnpull)
 :PROPERTIES:
 :ID:       508d0fad-8572-43e9-8ac7-d40432e091aa
@@ -6781,20 +6671,6 @@ else
 	    (setxkbmap us; xdotool type --clearmodifiers --file -; setxkbmap us,ua)
     fi    
 fi
-#+end_src
-
-** COMMENT Office programs (wps-office)
-:PROPERTIES:
-:ID:       b975b51c-e283-4381-b6ce-af4c0c9d83fb
-:END:
-
-It is masked (proprietary). Last time, libreoffice did not work for me, so keep using this
-#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/wps-office
-app-office/wps-office ~amd64
-#+end_src
-
-#+begin_src conf :tangle /sudo::/etc/portage/package.license/wps-office
-app-office/wps-office WPS-EULA
 #+end_src
 
 ** Anki: spaced repetition software
@@ -7270,25 +7146,6 @@ StartupNotify=true
 MimeType=image/bmp;image/gif;image/x-tga;image/x-xbitmap;image/tiff;image/jpeg;image/x-psp;image/png;image/x-icon;image/webp;
 #+end_src
 
-** Music (mpd)
-:PROPERTIES:
-:ID:       f57fbfc1-caa7-4927-96e6-24201fc9d6ec
-:END:
-
-#+begin_src conf :tangle /sudo::/var/lib/portage/world
-media-sound/mpd
-#+end_src
-
-#+begin_src conf :tangle /sudo::/etc/portage/package.use/mpd
-media-sound/mpd libmpdclient pipe musepack wavpack
-#+end_src
-
-Also need =media-sound/mpc= to control.
-
-#+begin_src conf :tangle /sudo::/var/lib/portage/world
-media-sound/mpc
-#+end_src
-
 ** Video
 *** mpv
 :PROPERTIES:
@@ -7556,145 +7413,6 @@ quality_strings=[ {"4320p" : "bestvideo[height<=?4320p]+bestaudio/best"}, {"2160
 net-misc/yt-dlp
 #+end_src
 
-** COMMENT =Hypothes.is= annotation server
-*** Install
-
-[[id:c469e0bf6a70756236001d62dc6c42b52285ae90][[H.Readthedocs] Installing h in a development environment — h 0.0.2 documentation]]
-
-**** Install npm, [[id:8abca0b9-a070-4362-ab0b-abe6bafaddae][docker]], *docker-compose,* and pyenv
-:PROPERTIES:
-:ID:       9842c841-0a74-4dfd-8fe5-3c5f250a6a61
-:END:
-
-=pyenv= is not available in repos. Need to install manually.
-[[id:8b0269a50cf6bf187c5c5616f8891c2e3d00e6b0][pyenv [Github] pyenv: Simple Python version management]]
-
-Installing using [[id:1117a1b523eeec52a7952c4905f676407269b61e][pyenv [Github] pyenv-installer: This tool is used to install `pyenv` and friends.]]
-*The notes about uninstalling are on the same page*
-
-#+begin_src bash :tangle /home/yantar92/.bashrc
-export PATH="/home/yantar92/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-#+end_src
-**** Install server https://github.com/hypothesis/client/
-:PROPERTIES:
-:ID:       1b0737b8-fe42-4e27-850d-d518d523a419
-:END:
-
-#+begin_src bash :tangle no
-make services
-#+end_src
-
-Note that docker may error-out complaining about IPv4 address. It is because VPN is running. It needs to be stopped when docker is called.
-
-
-*The following does not work*
-Also, need to install =psycopg=
-#+begin_src bash :tangle no
-make devdata
-#+end_src
-
-Need to use [[id:988dd2e65225cd72359febd3c6502c89e18d6d40][[H.Readthedocs] Manually setting up the Hypothesis client integration — h 0.0.2 documentation]]
-#+begin_src bash :tangle no
-make dev
-#+end_src
-
-Now, server is running at http://localhost:5000/
-Need to create admin user first [[https://h.readthedocs.io/en/latest/developing/administration/][Accessing the admin interface — h 0.0.2 documentation]]
-#+begin_src bash :tangle no
-pyenv global 3.6.9
-cd ~/Dist/h
-tox -qe dev -- sh bin/hypothesis --dev user add
-tox -qe dev -- sh bin/hypothesis --dev user admin yantar92
-#+end_src
-
-Username: yantar92; password:easy
-
-Restart server
-#+begin_src bash :tangle no
-make dev
-#+end_src
-*Login from the web-page*
-
-Open http://localhost:5000/admin/oauthclients
-
-ID: [[id:75e9fa6a-9f31-4de0-8f85-fbaa7a41f5e5][Client id]]
-
-#+begin_src bash :tangle no
-export CLIENT_OAUTH_ID=<THE_CLIENT_ID_OF_THE_OAUTH_CLIENT_YOU_CREATED_ABOVE>
-export CLIENT_URL=http://localhost:3001/hypothesis
-# may need https, see below
-#+end_src
-
-
-***** Client id :crypt:
-:PROPERTIES:
-:ID:       75e9fa6a-9f31-4de0-8f85-fbaa7a41f5e5
-:END:
-
------BEGIN PGP MESSAGE-----
-
-hQEMA3SKBiQ2zhL6AQf+JwMlPK4fWqyZOFjPpCm55+2rCej1M3z/vTNYMTwMj9AP
-kZ4/4rzJ0G/sbxoWXjTlQCeByJjvMXBMlDTWm5iqJkSumj1vn95Ts+Iq8QPF7FiX
-BPBOfvcSLgH5+mpwDXmk5qiA6LIKKAOr5Y87O5GH1td+SFHKlj9tiGfaDgBpFSFA
-gio+aMYLF4BLefLNfvYHG06uapD/d4uS+sNCzVQGGd7/bEiQg8gE7Mh/fu4WaqMM
-JLGiBrIhxL+G2ygm5/t/1OT1xjGwEHY6MiTLX356XwytKvx2gZ1O+e46wuaidVa5
-bHrTJoSCBFUDVUADTQYpzKgsl+S6bW2XYnskg1857dJuAcnqmvUx1AgUYbyvMFxC
-GM4JqJ5U1R/R0q5KGxP87EI/7Y0Zg7PRWDPedySS53pP2+CwNK0j5rBSI+yMlNvp
-uvvZ5m03RfMo3JsmMBzDlsqdh7F0DshetEb5qo+JX5h6iB2x86Uy5SsYqC7ndEM=
-=PIof
------END PGP MESSAGE-----
-***** API Token :crypt:
-
------BEGIN PGP MESSAGE-----
-
-hQEMA3SKBiQ2zhL6AQf/XrqdBAdAMvxU7XSy0i+ju/5mplN85Vp2P7vw2tIBaREw
-uXC3LRiCGaWJb+WLVRPf0LKYdaNVCUD2pm1ohyr4fmynfjW6zb+ZlQOSw132s2r3
-kzZxNMuI//i/9o0pQQBB9zRVhb5ChdS87XJVbVd4POniQ2x6leIfmlJ97aunmEQS
-ugFNhsKSPwcuR0HDt50mcYWe2UXavN1tQKWP4jGy95ff4iu2sLlD0TN3ZebI7Q8N
-6SCzIqOH2BSoyaIBVI/GlKeV6k2wVGc+D8c45fqPFLaDZciuu3iCUyl8J5TclmkH
-PK1MJg8dmJOdLy3cW3XxWo/8SkKs1nYSTI0DTjHC19JvAd63uxnR74ywfMybK+ZG
-8rMnhb9OB/Gtn8YJJ+tX6fmWbRJ51zI2rMJWt05VW7wlsIiXaRRK2TdcoFNHu19d
-Ep82Sqxvm6yPDhtRnRUuvEBypmmDYssKlshMJYap+OPVdRQkXFwxamFVBjgbB+T0
-=938x
------END PGP MESSAGE-----
-**** Install client  [[id:849188124da0aefe4334694a0301421b57c9b943][hypothesis [Github] client: The Hypothesis web-based annotation client.]]
-
-[[id:7a29773fd241d87fe884443831eee02456689518][[H.Readthedocs] Developing the Client — Hypothesis Client 1.0.0 documentation]]
-
-Need yarn.
-**** Configure HTTPS access to the running server
-:PROPERTIES:
-:ID:       ec1a1a2b-9d3b-448f-983e-2c48bc86fb6d
-:END:
-
-This is needed because I would not be able to load javascript from local http server into https website - browser would refuse to load for security reasons.
-
-[[id:6b3f94b8dd2f0f2a622f2f454a48873e9eee2d2f][[H.Readthedocs] Serving h over SSL in development — h 0.0.2 documentation]]
-
-#+begin_src bash :tangle no
-cd ~/Dist/h
-# openssl req -newkey rsa:1024 -nodes -keyout .tlskey.pem -out .tlscsr.pem
-# openssl x509 -req -in .tlscsr.pem -signkey .tlskey.pem -out .tlscert.pem
-export CLIENT_OAUTH_ID=<THE_CLIENT_ID_OF_THE_OAUTH_CLIENT_YOU_CREATED_ABOVE>
-export CLIENT_URL=https://localhost:3001/hypothesis
-make devssl
-#+end_src
-
-#+begin_src bash :tangle no
-cd ~/Dist/client
-openssl req -newkey rsa:1024 -nodes -keyout .tlskey.pem -out .tlscsr.pem
-openssl x509 -req -in .tlscsr.pem -signkey .tlskey.pem -out .tlscert.pem
-export CLIENT_OAUTH_ID=<THE_CLIENT_ID_OF_THE_OAUTH_CLIENT_YOU_CREATED_ABOVE>
-export CLIENT_URL=https://localhost:3001/hypothesis
-make dev
-#+end_src
-
-**** TODO Package into docker
-**** TODO Intercept annotation calls to raise capture template, add captured annotation, and push it to the hyposes.is server
-**** TODO Push changes annotations from org to h-server
-
 ** Wine
 :PROPERTIES:
 :ID:       e509984f-3715-43a3-8d73-2bf99a82db2d
@@ -7726,47 +7444,6 @@ net-fs/samba winbind
 #+end_src
 
 ** Scientific image manipulation: Fiji \ [[id:5aa36a1d631ea6266284bbc74d3591217237a36a][[Imagej] ImageJ]]
-** COMMENT Archivebox
-:PROPERTIES:
-:ID:       269904a8-3bb6-4e9e-a385-2e2b2c980879
-:END:
-
-[[id:9598a00b34cc76a635228df65b3ecd1a9a194498][ArchiveBox [Github] ArchiveBox: 🗃 The open source self-hosted web archive. Takes browser history/bookmarks/Pocket/Pinboard/etc., saves HTML, JS, PDFs, media, and more...]]
-
-Instruction:
-[[id:a64393ccd93411fa51d5b9dc5c3438e1ddbb0fb7][ArchiveBox [Github] ArchiveBox Wiki]]
-
-#+begin_src bash :tangle no
-mkdir ~/.data/web-mirror
-cd ~/.data/web-mirror
-docker run -v $PWD:/data -it archivebox/archivebox init
-#+end_src
-
-Do not download youtube, and upload to archive.org (privacy)
-#+begin_src bash :tangle no 
-cd ~/.data/web-mirror
-docker run -v $PWD:/data -it -p 8000:8000 archivebox/archivebox config --set SAVE_MEDIA=False
-#+end_src
-
-Increase default download timeout. My internet is not that fast over VPN
-#+begin_src bash :tangle no 
-cd ~/.data/web-mirror
-docker run -v $PWD:/data -it -p 8000:8000 archivebox/archivebox config --set TIMEOUT=600
-#+end_src
-
-Script to run =archivebox=
-#+begin_src bash :tangle /home/yantar92/.local/bin/archivebox :shebang #!/bin/bash
-cd ~/.data/web-mirror
-docker run -v $PWD:/data -it -p 8000:8000 archivebox/archivebox $*
-#+end_src
-
-Noninteractive script (suitable to pass io pipe to)
-#+begin_src bash :tangle /home/yantar92/.local/bin/archivebox-cmd :shebang #!/bin/bash
-cd ~/.data/web-mirror
-docker run -v $PWD:/data -i -p 8000:8000 archivebox/archivebox $*
-#+end_src
-
-
 ** Zoom (video conference) =net-im/zoom=
 :PROPERTIES:
 :ID:       e260391c-aa79-4d7b-a55d-6790cc94b40d
@@ -8614,22 +8291,6 @@ media-video/obs-studio v4l
 media-video/obs-studio ~amd64
 #+end_src
 
-** shotcut - video editing
-:PROPERTIES:
-:ID:       affdb0c5-d0d2-4a9c-bc29-3ad008beccf5
-:END:
-
-#+begin_src conf :tangle /sudo::/var/lib/portage/world
-media-video/shotcut
-#+end_src
-
-#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/shotcut
-media-video/shotcut ~amd64
-#+end_src
-#+begin_src conf :tangle /sudo::/etc/portage/package.use/shotcut
-media-libs/opencv contrib
-#+end_src
-** COMMENT diction - command line text style checker
 ** =app-admin/killproc=: For usleep
 :PROPERTIES:
 :ID:       b5256619-1f92-4552-b40d-2d477d289da9
@@ -8638,8 +8299,6 @@ media-libs/opencv contrib
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-admin/killproc
 #+end_src
-
-** COMMENT =app-portage/pfl= search Tex packages and package files in Gentoo
 
 ** =app-portage/gentoolkit= for =equary= and =revdep-rebuild= commands
 :PROPERTIES:
@@ -8694,57 +8353,6 @@ app-office/libreoffice
 www-client/firefox-bin
 #+end_src
 
-** COMMENT pantalaimon: end-to-end encryption server for matrix
-:PROPERTIES:
-:ID:       871f0af1-da9b-4fc0-8275-24f59dd6318e
-:END:
-
-#+begin_src bash :tangle no :dir /sudo::/ :results output :eval yes
-eselect repository enable src_prepare-overlay
-#+end_src
-
-We only enable packages from the foreign repository selectively
-#+begin_src conf :tangle /sudo::/etc/portage/package.mask/src_prepare-overlay-repo
-,*/*::src_prepare-overlay
-#+end_src
-
-#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/pantalaimon
-net-im/pantalaimon::src_prepare-overlay
-#+end_src 
-
-#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/pantalaimon
-net-im/pantalaimon::src_prepare-overlay ~amd64
-#+end_src 
-
-#+begin_src conf :tangle /sudo::/var/lib/portage/world
-net-im/pantalaimon
-#+end_src
-
-#+begin_src conf :tangle /sudo::/etc/portage/package.use/pantalaimon
-net-im/pantalaimon panctl dbus
-#+end_src
-
-Configuration [[id:Cogitri-setting-up-pantalaimon-a80][[Cogitri] Setting up Pantalaimon for usage with Matrix clients and using panctl - Cogitri's blog]]
-
-#+begin_src conf :tangle /home/yantar92/.config/pantalaimon/pantalaimon.conf :mkdirp yes
-[local-matrix]
-Homeserver = https://matrix.org
-ListenAddress = localhost
-ListenPort = 8010
-#+end_src
-
-Autostart
-
-#+begin_src bash :tangle /home/yantar92/.config/awesome/startup :shebang #!/bin/bash
-pantalaimon --log-level warning 2>&1 | pantalaimon-logger.sh &
-#+end_src
-
-#+begin_src bash :tangle /home/yantar92/.local/bin/pantalaimon-logger.sh :shebang #!/bin/bash
-while read x; do
-    [[ "$x" == "" ]] && continue
-    echo $(date): $x >> ~/.log/paintalaimon-monitor.log
-done
-#+end_src
 ** System packages for testing optional modules of Org
 *** Lilypond
 :PROPERTIES:
@@ -9191,45 +8799,427 @@ SELINUXTYPE=strict
 
 -----BEGIN PGP MESSAGE-----
 
-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
-HTSEhXTfUFX7ouiBGjS4tzGJ6A1JcA==
-=asGb
+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
+CLyV/uBUIMCQXYPnkmA/Sjwp
+=3DPc
 -----END PGP MESSAGE-----
+** COMMENT pantalaimon: end-to-end encryption server for matrix :COMMON:HOLD:
+:PROPERTIES:
+:ID:       871f0af1-da9b-4fc0-8275-24f59dd6318e
+:ARCHIVE_TIME: 2024-04-26 Fri 14:10
+:ARCHIVE_FILE: ~/Git/emacs-config/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_ITAGS: COMMON HOLD
+:END:
+
+#+begin_src bash :tangle no :dir /sudo::/ :results output :eval yes
+eselect repository enable src_prepare-overlay
+#+end_src
+
+We only enable packages from the foreign repository selectively
+#+begin_src conf :tangle /sudo::/etc/portage/package.mask/src_prepare-overlay-repo
+,*/*::src_prepare-overlay
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/pantalaimon
+net-im/pantalaimon::src_prepare-overlay
+#+end_src 
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/pantalaimon
+net-im/pantalaimon::src_prepare-overlay ~amd64
+#+end_src 
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+net-im/pantalaimon
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.use/pantalaimon
+net-im/pantalaimon panctl dbus
+#+end_src
+
+Configuration [[id:Cogitri-setting-up-pantalaimon-a80][[Cogitri] Setting up Pantalaimon for usage with Matrix clients and using panctl - Cogitri's blog]]
+
+#+begin_src conf :tangle /home/yantar92/.config/pantalaimon/pantalaimon.conf :mkdirp yes
+[local-matrix]
+Homeserver = https://matrix.org
+ListenAddress = localhost
+ListenPort = 8010
+#+end_src
+
+Autostart
+
+#+begin_src bash :tangle /home/yantar92/.config/awesome/startup :shebang #!/bin/bash
+pantalaimon --log-level warning 2>&1 | pantalaimon-logger.sh &
+#+end_src
+
+#+begin_src bash :tangle /home/yantar92/.local/bin/pantalaimon-logger.sh :shebang #!/bin/bash
+while read x; do
+    [[ "$x" == "" ]] && continue
+    echo $(date): $x >> ~/.log/paintalaimon-monitor.log
+done
+#+end_src
+
+** COMMENT =Hypothes.is= annotation server :COMMON:HOLD:
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-04-26 Fri 14:11
+:ARCHIVE_FILE: ~/Git/emacs-config/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_ITAGS: COMMON HOLD
+:END:
+*** Install
+
+[[id:c469e0bf6a70756236001d62dc6c42b52285ae90][[H.Readthedocs] Installing h in a development environment — h 0.0.2 documentation]]
+
+**** Install npm, [[id:8abca0b9-a070-4362-ab0b-abe6bafaddae][docker]], *docker-compose,* and pyenv
+:PROPERTIES:
+:ID:       9842c841-0a74-4dfd-8fe5-3c5f250a6a61
+:END:
+
+=pyenv= is not available in repos. Need to install manually.
+[[id:8b0269a50cf6bf187c5c5616f8891c2e3d00e6b0][pyenv [Github] pyenv: Simple Python version management]]
+
+Installing using [[id:1117a1b523eeec52a7952c4905f676407269b61e][pyenv [Github] pyenv-installer: This tool is used to install `pyenv` and friends.]]
+*The notes about uninstalling are on the same page*
+
+#+begin_src bash :tangle /home/yantar92/.bashrc
+export PATH="/home/yantar92/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+#+end_src
+**** Install server https://github.com/hypothesis/client/
+:PROPERTIES:
+:ID:       1b0737b8-fe42-4e27-850d-d518d523a419
+:END:
+
+#+begin_src bash :tangle no
+make services
+#+end_src
+
+Note that docker may error-out complaining about IPv4 address. It is because VPN is running. It needs to be stopped when docker is called.
+
+
+*The following does not work*
+Also, need to install =psycopg=
+#+begin_src bash :tangle no
+make devdata
+#+end_src
+
+Need to use [[id:988dd2e65225cd72359febd3c6502c89e18d6d40][[H.Readthedocs] Manually setting up the Hypothesis client integration — h 0.0.2 documentation]]
+#+begin_src bash :tangle no
+make dev
+#+end_src
+
+Now, server is running at http://localhost:5000/
+Need to create admin user first [[https://h.readthedocs.io/en/latest/developing/administration/][Accessing the admin interface — h 0.0.2 documentation]]
+#+begin_src bash :tangle no
+pyenv global 3.6.9
+cd ~/Dist/h
+tox -qe dev -- sh bin/hypothesis --dev user add
+tox -qe dev -- sh bin/hypothesis --dev user admin yantar92
+#+end_src
+
+Username: yantar92; password:easy
+
+Restart server
+#+begin_src bash :tangle no
+make dev
+#+end_src
+*Login from the web-page*
+
+Open http://localhost:5000/admin/oauthclients
+
+ID: [[id:75e9fa6a-9f31-4de0-8f85-fbaa7a41f5e5][Client id]]
+
+#+begin_src bash :tangle no
+export CLIENT_OAUTH_ID=<THE_CLIENT_ID_OF_THE_OAUTH_CLIENT_YOU_CREATED_ABOVE>
+export CLIENT_URL=http://localhost:3001/hypothesis
+# may need https, see below
+#+end_src
+
+
+***** Client id :crypt:
+:PROPERTIES:
+:ID:       75e9fa6a-9f31-4de0-8f85-fbaa7a41f5e5
+:END:
+
+-----BEGIN PGP MESSAGE-----
+
+hQEMA3SKBiQ2zhL6AQf+JwMlPK4fWqyZOFjPpCm55+2rCej1M3z/vTNYMTwMj9AP
+kZ4/4rzJ0G/sbxoWXjTlQCeByJjvMXBMlDTWm5iqJkSumj1vn95Ts+Iq8QPF7FiX
+BPBOfvcSLgH5+mpwDXmk5qiA6LIKKAOr5Y87O5GH1td+SFHKlj9tiGfaDgBpFSFA
+gio+aMYLF4BLefLNfvYHG06uapD/d4uS+sNCzVQGGd7/bEiQg8gE7Mh/fu4WaqMM
+JLGiBrIhxL+G2ygm5/t/1OT1xjGwEHY6MiTLX356XwytKvx2gZ1O+e46wuaidVa5
+bHrTJoSCBFUDVUADTQYpzKgsl+S6bW2XYnskg1857dJuAcnqmvUx1AgUYbyvMFxC
+GM4JqJ5U1R/R0q5KGxP87EI/7Y0Zg7PRWDPedySS53pP2+CwNK0j5rBSI+yMlNvp
+uvvZ5m03RfMo3JsmMBzDlsqdh7F0DshetEb5qo+JX5h6iB2x86Uy5SsYqC7ndEM=
+=PIof
+-----END PGP MESSAGE-----
+***** API Token :crypt:
+
+-----BEGIN PGP MESSAGE-----
+
+hQEMA3SKBiQ2zhL6AQf/XrqdBAdAMvxU7XSy0i+ju/5mplN85Vp2P7vw2tIBaREw
+uXC3LRiCGaWJb+WLVRPf0LKYdaNVCUD2pm1ohyr4fmynfjW6zb+ZlQOSw132s2r3
+kzZxNMuI//i/9o0pQQBB9zRVhb5ChdS87XJVbVd4POniQ2x6leIfmlJ97aunmEQS
+ugFNhsKSPwcuR0HDt50mcYWe2UXavN1tQKWP4jGy95ff4iu2sLlD0TN3ZebI7Q8N
+6SCzIqOH2BSoyaIBVI/GlKeV6k2wVGc+D8c45fqPFLaDZciuu3iCUyl8J5TclmkH
+PK1MJg8dmJOdLy3cW3XxWo/8SkKs1nYSTI0DTjHC19JvAd63uxnR74ywfMybK+ZG
+8rMnhb9OB/Gtn8YJJ+tX6fmWbRJ51zI2rMJWt05VW7wlsIiXaRRK2TdcoFNHu19d
+Ep82Sqxvm6yPDhtRnRUuvEBypmmDYssKlshMJYap+OPVdRQkXFwxamFVBjgbB+T0
+=938x
+-----END PGP MESSAGE-----
+**** Install client  [[id:849188124da0aefe4334694a0301421b57c9b943][hypothesis [Github] client: The Hypothesis web-based annotation client.]]
+
+[[id:7a29773fd241d87fe884443831eee02456689518][[H.Readthedocs] Developing the Client — Hypothesis Client 1.0.0 documentation]]
+
+Need yarn.
+**** Configure HTTPS access to the running server
+:PROPERTIES:
+:ID:       ec1a1a2b-9d3b-448f-983e-2c48bc86fb6d
+:END:
+
+This is needed because I would not be able to load javascript from local http server into https website - browser would refuse to load for security reasons.
+
+[[id:6b3f94b8dd2f0f2a622f2f454a48873e9eee2d2f][[H.Readthedocs] Serving h over SSL in development — h 0.0.2 documentation]]
+
+#+begin_src bash :tangle no
+cd ~/Dist/h
+# openssl req -newkey rsa:1024 -nodes -keyout .tlskey.pem -out .tlscsr.pem
+# openssl x509 -req -in .tlscsr.pem -signkey .tlskey.pem -out .tlscert.pem
+export CLIENT_OAUTH_ID=<THE_CLIENT_ID_OF_THE_OAUTH_CLIENT_YOU_CREATED_ABOVE>
+export CLIENT_URL=https://localhost:3001/hypothesis
+make devssl
+#+end_src
+
+#+begin_src bash :tangle no
+cd ~/Dist/client
+openssl req -newkey rsa:1024 -nodes -keyout .tlskey.pem -out .tlscsr.pem
+openssl x509 -req -in .tlscsr.pem -signkey .tlskey.pem -out .tlscert.pem
+export CLIENT_OAUTH_ID=<THE_CLIENT_ID_OF_THE_OAUTH_CLIENT_YOU_CREATED_ABOVE>
+export CLIENT_URL=https://localhost:3001/hypothesis
+make dev
+#+end_src
+
+**** TODO Package into docker
+**** TODO Intercept annotation calls to raise capture template, add captured annotation, and push it to the hyposes.is server
+**** TODO Push changes annotations from org to h-server
+
+** COMMENT Davmail server for Exchange forced by SUTD mail server :COMMON:HOLD:
+:PROPERTIES:
+:ID:       9870b79e-4ca8-4ab8-a841-4d29dd014755
+:ARCHIVE_TIME: 2024-04-26 Fri 14:11
+:ARCHIVE_FILE: ~/Git/emacs-config/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux/Email sync client (mbsync from net-mail/isync)
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_ITAGS: COMMON HOLD
+:END:
+
+[2023-01-08 Sun] SUTD disabled my last means to send email using my client. Falling back to redirect + manual WEB interface when necessary. No other options left.
+
+I need to use Microsoft Exchange protocol (everything else was disabled) to access SUTD mail [[notmuch:id:SG2PR03MB322660872358C604CB3537EFADCF0@SG2PR03MB3226.apcprd03.prod.outlook.com][Email from IT Service Desk: RE: IMAP settings for the email server]]
+
+The best option seems to be Davmail
+[[id:e8384cfa2557dcfe939e1cf4c3ae80d5b4ae937f][[Reddit] Anyone knows a Mailbox synchronizer supporting Microsoft Exchange protocol? : Gentoo]]
+
+It is not available in Gentoo by default, but I can use =pentoo= overlay:
+#+begin_src bash :tangle no :dir /sudo::/ :results output
+eselect repository enable pentoo
+#+end_src
+Do not enable any other packages from the overlay
+#+begin_src conf :tangle /sudo::/etc/portage/package.mask/pentoo-repo
+,*/*::pentoo
+#+end_src
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/davmail-bin
+net-mail/davmail-bin::pentoo
+acct-user/davmail::pentoo
+acct-group/davmail::pentoo
+#+end_src
+
+Run as server system-wide
+#+begin_src conf :tangle /sudo::/etc/portage/package.use/davmail-bin
+net-mail/davmail-bin server
+#+end_src
+#+begin_src bash :tangle no :dir /sudo::/
+rc-update add davmail default
+#+end_src
+
+I will use IMAP Port 10043 in my config.
+Other important settings:
+davmail.server=true and davmail.allowRemote=true
+
+[2021-04-14 Wed] [[notmuch:id:SG2PR03MB3226925B2E536A18D77C9507AD4E9@SG2PR03MB3226.apcprd03.prod.outlook.com][Email from IT Service Desk: Re: Case ID: 77322 - Assist on EASE enrolment]]
+The new two-factor authentication requires MFA authentication: =davmail.mode=O365Modern=
+Details on configuration: [[id:Davmail.Sourceforge_guessantdavmail_pop_imap_smtp_caldav858][Mickael Guessant [Davmail.Sourceforge] DavMail POP/IMAP/SMTP/Caldav/Carddav/LDAP Exchange Gateway - Frequently asked questions]]
+
+#+begin_src conf :tangle /sudo::/etc/davmail.properties
+davmail.ssl.keystoreType=
+davmail.ssl.keystorePass=
+davmail.proxyPassword=
+davmail.oauth.tenantId=
+davmail.oauth.clientId=
+davmail.enableKerberos=false
+davmail.smtpPort=1025
+davmail.folderSizeLimit=
+davmail.forceActiveSyncUpdate=false
+davmail.imapAutoExpunge=true
+davmail.useSystemProxies=false
+davmail.proxyUser=
+davmail.caldavEditNotifications=false
+davmail.ssl.nosecuresmtp=false
+davmail.caldavPastDelay=0
+davmail.ssl.keyPass=
+log4j.logger.httpclient.wire=WARN
+davmail.noProxyFor=
+log4j.logger.org.apache.commons.httpclient=WARN
+davmail.server=true
+davmail.popMarkReadOnRetr=false
+davmail.ssl.nosecureimap=false
+davmail.disableTrayActivitySwitch=false
+davmail.caldavAutoSchedule=true
+davmail.enableProxy=false
+davmail.proxyPort=
+davmail.logFileSize=
+davmail.mode=O365Modern
+davmail.smtpSaveInSent=true
+davmail.bindAddress=
+davmail.ssl.nosecurepop=false
+davmail.ssl.pkcs11Library=
+log4j.rootLogger=WARN
+davmail.ssl.keystoreFile=
+log4j.logger.davmail=DEBUG
+davmail.ssl.clientKeystoreType=
+davmail.clientSoTimeout=
+davmail.ssl.pkcs11Config=
+davmail.ssl.clientKeystorePass=
+davmail.imapPort=10043
+davmail.url=https://outlook.office365.com/EWS/Exchange.asmx
+davmail.sentKeepDelay=0
+davmail.ssl.nosecureldap=false
+davmail.imapAlwaysApproxMsgSize=false
+davmail.ssl.nosecurecaldav=false
+davmail.popPort=1110
+davmail.defaultDomain=
+davmail.showStartupBanner=true
+davmail.proxyHost=
+davmail.ldapPort=1389
+log4j.logger.org.apache.http.wire=WARN
+davmail.disableGuiNotifications=false
+davmail.server.certificate.hash=
+davmail.imapIdleDelay=
+davmail.allowRemote=true
+davmail.disableUpdateCheck=false
+log4j.logger.org.apache.http=WARN
+davmail.caldavPort=1080
+davmail.enableKeepAlive=false
+davmail.ssl.clientKeystoreFile=
+davmail.logFilePath=/var/log/davmail.log
+davmail.carddavReadPhoto=true
+davmail.keepDelay=30
+davmail.oauth.redirectUri=
+davmail.caldavAlarmSound=
+#+end_src
+
+** COMMENT Archivebox :COMMON:HOLD:
+:PROPERTIES:
+:ID:       269904a8-3bb6-4e9e-a385-2e2b2c980879
+:ARCHIVE_TIME: 2024-04-26 Fri 14:11
+:ARCHIVE_FILE: ~/Git/emacs-config/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_ITAGS: COMMON HOLD
+:END:
+
+[[id:9598a00b34cc76a635228df65b3ecd1a9a194498][ArchiveBox [Github] ArchiveBox: 🗃 The open source self-hosted web archive. Takes browser history/bookmarks/Pocket/Pinboard/etc., saves HTML, JS, PDFs, media, and more...]]
+
+Instruction:
+[[id:a64393ccd93411fa51d5b9dc5c3438e1ddbb0fb7][ArchiveBox [Github] ArchiveBox Wiki]]
+
+#+begin_src bash :tangle no
+mkdir ~/.data/web-mirror
+cd ~/.data/web-mirror
+docker run -v $PWD:/data -it archivebox/archivebox init
+#+end_src
+
+Do not download youtube, and upload to archive.org (privacy)
+#+begin_src bash :tangle no 
+cd ~/.data/web-mirror
+docker run -v $PWD:/data -it -p 8000:8000 archivebox/archivebox config --set SAVE_MEDIA=False
+#+end_src
+
+Increase default download timeout. My internet is not that fast over VPN
+#+begin_src bash :tangle no 
+cd ~/.data/web-mirror
+docker run -v $PWD:/data -it -p 8000:8000 archivebox/archivebox config --set TIMEOUT=600
+#+end_src
+
+Script to run =archivebox=
+#+begin_src bash :tangle /home/yantar92/.local/bin/archivebox :shebang #!/bin/bash
+cd ~/.data/web-mirror
+docker run -v $PWD:/data -it -p 8000:8000 archivebox/archivebox $*
+#+end_src
+
+Noninteractive script (suitable to pass io pipe to)
+#+begin_src bash :tangle /home/yantar92/.local/bin/archivebox-cmd :shebang #!/bin/bash
+cd ~/.data/web-mirror
+docker run -v $PWD:/data -i -p 8000:8000 archivebox/archivebox $*
+#+end_src
+
+** COMMENT Office programs (wps-office) :COMMON:HOLD:
+:PROPERTIES:
+:ID:       b975b51c-e283-4381-b6ce-af4c0c9d83fb
+:ARCHIVE_TIME: 2024-04-26 Fri 14:11
+:ARCHIVE_FILE: ~/Git/emacs-config/system-config.org
+:ARCHIVE_OLPATH: System: Gentoo Linux
+:ARCHIVE_CATEGORY: system-config
+:ARCHIVE_ITAGS: COMMON HOLD
+:END:
+
+It is masked (proprietary). Last time, libreoffice did not work for me, so keep using this
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/wps-office
+app-office/wps-office ~amd64
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.license/wps-office
+app-office/wps-office WPS-EULA
+#+end_src
+
