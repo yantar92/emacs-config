@@ -2392,7 +2392,8 @@ User-defined temporary highlighting.
   :if init-flag
   :diminish hi-lock-mode)
 #+end_src
-*** SOMEDAY Spell\grammar checking :SOMEDAY:
+
+*** Spell\grammar checking
 :PROPERTIES:
 :ID:       117c5718-7a46-4a7a-ab0d-b5b347444080
 :END:
@@ -2402,6 +2403,7 @@ User-defined temporary highlighting.
 
 Typos are inevitable. 
 Highlighting typos is crucial.
+
 **** =Flyspell=
 :PROPERTIES:
 :CREATED:  [2018-10-12 Fri 14:07]
@@ -2414,11 +2416,7 @@ Highlighting typos is crucial.
   :straight t 
   :diminish (flyspell-mode . " ✓")
   :hook ((notmuch-message-mode org-mode text-mode) . flyspell-mode)
-  :hook ((prog-mode) . flyspell-prog-mode)
-  :bind (("<f8>" . ispell-word)
-	 ("M-<f8>" . ispell-buffer)
-         :map boon-forward-search-map
-         ("s" . flyspell-goto-next-error)))
+  :hook ((prog-mode) . flyspell-prog-mode))
 #+end_src
 
 ***** Use hunspell and American dictionary
@@ -2443,12 +2441,13 @@ Highlighting typos is crucial.
 :ID:       f99358cd-f847-4004-ac4e-bc1f49fdfcce
 :END:
 #+BEGIN_SRC emacs-lisp
+
 (use-package flyspell
   :if init-flag
   :config
   (defun flyspell-emacs-popup-textual (event poss word)
     "A textual flyspell popup menu.
-From https://www.emacswiki.org/emacs/FlySpell"
+From <https://www.emacswiki.org/emacs/FlySpell>."
     (require 'popup)
     (let* ((corrects (if flyspell-sort-corrections
 			 (sort (car (cdr (cdr poss))) 'string<)
@@ -2476,9 +2475,7 @@ From https://www.emacswiki.org/emacs/FlySpell"
 		  (lambda (arg) (if (consp arg) (car arg) arg))
 		  base-menu)))
       (cadr (assoc (popup-menu* menu :scroll-bar t) base-menu))))
-  (fset 'flyspell-emacs-popup 'flyspell-emacs-popup-textual)
-  ;; (defadvice flyspell-goto-next-error (after check-word-spelling activate) (ispell-word))
-  )
+  (fset 'flyspell-emacs-popup 'flyspell-emacs-popup-textual))
 #+END_SRC
 ***** Automatically add wrong spelled words to abbrev to avoid such mistakes later
 :PROPERTIES:
@@ -2665,6 +2662,7 @@ Mostly we check word delimiters."
 
 #+end_src
 ***** Ignore markup
+
 [[id:Github-cjl8zf-cjl8zf-langtool-ignore-c3a][cjl8zf [Github] cjl8zf/langtool-ignore-fonts: Force Emacs Langtool to ignore certain fonts. For example, this can be used to prevent langtool from highlighting LaTeX in math-mode.]]
 
 #+begin_src emacs-lisp
@@ -2686,7 +2684,8 @@ Mostly we check word delimiters."
    '( message-cited-text-1 message-cited-text-2
       message-cited-text-3 message-cited-text-4)))
 #+end_src
-***** Auto-check current paragraph
+
+***** TODO Auto-check current paragraph
 
 #+begin_src emacs-lisp
 (use-package langtool
@@ -2776,6 +2775,7 @@ Mostly we check word delimiters."
     (langtool-correct-buffer))
   (add-hook 'message-send-hook #'langtool-check-buffer-ensure))
 #+end_src
+
 **** =Writegood=: Highlight common problematic words, including custom words
 
 [[id:Github-bnbeckwith-bnbeckwith-writegood-mode-453][bnbeckwith [Github] bnbeckwith/writegood-mode: Minor mode for Emacs to improve English writing]]
@@ -8761,16 +8761,16 @@ Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-h
 - =AREA= :: Some projects are not "real" projects, but rather areas of interest. The difference with normal projects is that areas are not expected to be ever finished. Thus, it has little point to keep them in weekly review together with projects. However, they can be stuck, as any other project.
 ****** TODO Tags for everything
 ****** TICKLER try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
-SCHEDULED: <2022-05-03 Tue>
+SCHEDULED: <2024-05-08 Wed>
 :PROPERTIES:
 :CREATED:  [2018-02-12 Mon 00:51]
 :Source:   https://www.gnu.org/software/emacs/manual/html_node/elisp/Special-Properties.html#Special-Properties
-:DRILL_LAST_INTERVAL: 4.14
-:DRILL_REPEATS_SINCE_FAIL: 2
-:DRILL_TOTAL_REPEATS: 1
+:DRILL_LAST_INTERVAL: 10.5363
+:DRILL_REPEATS_SINCE_FAIL: 3
+:DRILL_TOTAL_REPEATS: 2
 :DRILL_FAILURE_COUNT: 0
-:DRILL_AVERAGE_QUALITY: 5.0
-:DRILL_EASE: 2.6
+:DRILL_AVERAGE_QUALITY: 4.0
+:DRILL_EASE: 2.46
 :END:
 :LOGBOOK:
 CLOCK: [2018-02-12 Mon 00:51]--[2018-02-12 Mon 00:52] =>  0:01
