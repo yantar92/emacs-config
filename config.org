@@ -2756,39 +2756,9 @@ Note that I write a lot of scientific staff and hence passive voice is hard to a
       ("For me,"
        0 '(face writegood-weasels-face help-echo "Use \"To me\" instead") prepend)
       ("Schmidt"
-       0 '(face writegood-weasels-face help-echo "Use \"Schmid\" instead") prepend))))
-#+end_src
-
-**** Style
-***** =smog= (using GNU diction)
-
-#+begin_src emacs-lisp
-(use-package smog
-  :if init-flag
-  :straight t
-  :config
-  (setq smog-command "style -L en -l 30 -N"))
-#+end_src
-
-**** Dictionary
-***** =wordnut=
-[[id:Github-gromnitsky-gromnitsky-wordnut-emacs-0d0][gromnitsky [Github] gromnitsky/wordnut: Emacs major mode interface to WordNet lexical database]]
-Requires installed [[id:0ce5f9c5-7c71-46dc-94ef-3cf7ed51fba4][=app-dicts/wordnet= package]]
-
-#+begin_src emacs-lisp
-(use-package wordnut
-  :straight t
-  :config
-  (require 'meta-functions)
-  (meta-defun meta-help "Get help on symbol at point." (wordnut-search (word-at-point)))
-  (meta-defun meta-help
-    :mode org-mode
-    :cond
-    (progn
-      (and
-       (not (memq (org-element-type (org-element-at-point)) '(src-block)))
-       (not (memq (org-element-type (org-element-context)) '(code)))))
-    (wordnut-search (word-at-point))))
+       0 '(face writegood-weasels-face help-echo "Use \"Schmid\" instead") prepend)
+      ("is not"
+       0 '(face writegood-duplicates-face help-echo "Double check if I meant \"is now\"") prepend))))
 #+end_src
 
 *** Code and prose checking (=flycheck=)
@@ -2830,6 +2800,7 @@ The maximum file size is `yant/flycheck-file-size-threshold'."
                  :map boon-backward-search-map
                  ("c" . flycheck-tip-cycle-reverse)))))
 #+end_src
+
 **** Inherit ~load-path~ when checking
 
 #+begin_src emacs-lisp
@@ -4155,6 +4126,29 @@ See [[id:a92c0e31-556b-47d5-a58e-468ab0c99a59][TeX \ LaTeX (texlive)]]
 (add-to-list 'Info-additional-directory-list "/usr/share/texmf-dist/doc/info/")
 #+end_src
 
+
+*** Dictionary
+
+**** =wordnut=
+
+[[id:Github-gromnitsky-gromnitsky-wordnut-emacs-0d0][gromnitsky [Github] gromnitsky/wordnut: Emacs major mode interface to WordNet lexical database]]
+Requires installed [[id:0ce5f9c5-7c71-46dc-94ef-3cf7ed51fba4][=app-dicts/wordnet= package]]
+
+#+begin_src emacs-lisp
+(use-package wordnut
+  :straight t
+  :config
+  (require 'meta-functions)
+  (meta-defun meta-help "Get help on symbol at point." (wordnut-search (word-at-point)))
+  (meta-defun meta-help
+    :mode org-mode
+    :cond
+    (progn
+      (and
+       (not (memq (org-element-type (org-element-at-point)) '(src-block)))
+       (not (memq (org-element-type (org-element-context)) '(code)))))
+    (wordnut-search (word-at-point))))
+#+end_src
 
 *** TODO Bookmarks
 :PROPERTIES:
