@@ -2768,8 +2768,9 @@ Note that I write a lot of scientific staff and hence passive voice is hard to a
 
 Show errors in code with =flycheck=, in tooltips (via =flycheck-tip=).
 
-I also use =shellcheck= software to check my bash scripts (it is automatically used by =flycheck= if available).
-Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's notes: Trying out ShellCheck]] for suggestion!
+I also use =shellcheck= software to check my bash scripts (it is
+automatically used by =flycheck= if available). Thanks [[id:0c12a7e7-6cd0-45aa-b6d2-9f0f9e164d92][Alvaro Ramirez's
+notes: Trying out ShellCheck]] for suggestion!
 
 #+begin_src emacs-lisp
 (use-package flycheck
@@ -2818,14 +2819,16 @@ The maximum file size is `yant/flycheck-file-size-threshold'."
 #+begin_src emacs-lisp
 (use-package highlight-parentheses
   :if init-flag
+  :demand t
   :straight t
   :diminish highlight-parentheses-mode
   :init
   (require 'modus-themes)
   :custom
-  (highlight-parentheses-background-colors `(,(face-background 'modus-themes-intense-red)
-                                             ,(face-background 'modus-themes-intense-magenta)
-                                             ,(face-background 'modus-themes-intense-blue)))
+  (highlight-parentheses-background-colors
+   `(,(face-background 'modus-themes-intense-red)
+     ,(face-background 'modus-themes-intense-magenta)
+     ,(face-background 'modus-themes-intense-blue)))
   :config
   (add-hook 'minibuffer-setup-hook #'highlight-parentheses-minibuffer-setup)
   (dolist (hook
@@ -2835,19 +2838,24 @@ The maximum file size is `yant/flycheck-file-size-threshold'."
 
 (use-package rainbow-delimiters
   :if init-flag
+  :demand t
   :straight t
   :hook ((prog-mode lisp-interaction-mode) . rainbow-delimiters-mode))
 #+end_src
+
 *** Highlight numbers
 :PROPERTIES:
 :ID:       024a16ec-c9db-4906-9896-8ebf8af76dae
 :END:
+
 #+begin_src emacs-lisp
 (use-package highlight-numbers
   :if init-flag
+  :demand t
   :straight t
   :hook ((prog-mode lisp-interaction-mode) . highlight-numbers-mode))
 #+end_src
+
 *** Regexp escape smart highlight
 :PROPERTIES:
 :ID:       5d7810ea-35d4-4ee9-afaa-61b9c6c624c6
@@ -2861,10 +2869,12 @@ Emacs regex escaping in string is often confusing.
 #+begin_src emacs-lisp
 (use-package easy-escape
   :if init-flag
+  :demand t
   :straight t
   :diminish easy-escape-minor-mode
   :hook ((prog-mode lisp-interaction-mode) . easy-escape-minor-mode))
 #+end_src
+
 *** Search highlight
 :PROPERTIES:
 :ID:       afa67877-bede-41c1-9c44-bb168070d292
@@ -2874,11 +2884,11 @@ Highlight text matching =isearch=.
 
 #+begin_src emacs-lisp
 (when init-flag
-(setf search-highlight t)
-(setf query-replace-highlight t))
+  (setf search-highlight t)
+  (setf query-replace-highlight t))
 #+end_src
-*** NEXT #goggles Highlight recent changes\actions
-SCHEDULED: <2020-12-11 Fri>
+
+*** #goggles Highlight recent changes\actions
 :PROPERTIES:
 :ID:       02c8a98c-a38a-4054-a0a2-400f6757693b
 :SUMMARY:  Fix errors in pull request
@@ -2893,13 +2903,13 @@ CLOCK: [2020-12-10 Thu 21:45]--[2020-12-10 Thu 21:47] =>  0:02
 Highlight recently changed text. 
 Especially useful when inserting/replacing big chunks of text.
 
-[2020-12-08 Tue] Replacing =volatile-highlights= with [[id:19b9e85375d14376f40911b62bba8876a6de0d56][goggles]], as the former is not maintained.
+[2020-12-08 Tue] Replacing =volatile-highlights= with [[id:19b9e85375d14376f40911b62bba8876a6de0d56][goggles]], as the
+former is not maintained.
 
   #+begin_src emacs-lisp
 (use-package goggles
   :if init-flag
-  :straight (goggles :host github :repo "minad/goggles" :local-repo "~/Git/goggles"
-                     :fork (:host github :repo "yantar92/goggles"))
+  :straight (goggles :host github :repo "minad/goggles")
   :diminish goggles-mode
   :hook ((text-mode prog-mode) . goggles-mode)
   :config
