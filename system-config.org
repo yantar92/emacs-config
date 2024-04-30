@@ -84,6 +84,18 @@ but also mixing it with some parts of Sakaki guide.
 :PROPERTIES:
 :ID:       6723441a-8121-44b1-87f7-e32474f6c95c
 :END:
+
+**** Binary package repository
+
+See https://wiki.gentoo.org/wiki/Gentoo_Binary_Host_Quickstart
+
+#+begin_src conf :tangle /sudo::/etc/portage/binrepos.conf/gentoobinhost.conf :mkdirp yes
+[binhost]
+priority = 9999
+sync-uri = https://mirror.bytemark.co.uk/gentoo/releases/amd64/binpackages/23.0/x86-64/
+#+end_src
+
+
 **** Main package repository 
 :PROPERTIES:
 :ID:       11c8a8ef-978d-4dce-b88c-499999c9db28
@@ -196,6 +208,12 @@ USE="$USE cjk"
 USE="$USE vulkan"
 CPU_FLAGS_X86="aes avx avx2 f16c fma3 mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
 #+END_SRC
+***** Use binary packages unless custom use flags are selected
+
+#+BEGIN_SRC conf  :tangle /sudo::/etc/portage/make.conf
+EMERGE_DEFAULT_OPTS="$EMERGE_DEFAULT_OPTS --getbinpkg"
+#+END_SRC
+
 ***** Portage directories
 :PROPERTIES:
 :ID:       8ccb1316-8738-4930-96f4-ee671f8b68e7
@@ -228,7 +246,8 @@ PORTAGE_ELOG_SYSTEM="echo save"
 
 # Ensure elogs saved in category subdirectories.
 # Build binary packages as a byproduct of each emerge, a useful backup
-FEATURES="split-elog buildpkg"
+# Enable binary packages
+FEATURES="split-elog buildpkg binpkg-request-signature"
 #+END_SRC
 ***** Video cards
 :PROPERTIES:
@@ -239,7 +258,6 @@ FEATURES="split-elog buildpkg"
 VIDEO_CARDS="intel i965"
 INPUT_DEVICES="libinput"
 #+END_SRC
-
 ***** Gentoo mirrors
 :PROPERTIES:
 :ID:       928605a8-3229-4371-bffb-df87937d83ac
@@ -4228,10 +4246,8 @@ www-client/qutebrowser **
 #+end_src
 
 Use built-in scripts.
-Also, enable =jumbo-build= use-flag as suggested in [[id:e650114a17f9ec488765f5da2972d6e207119349][Phate6660 [Github] issue#451 Some Gentoo recommendations]]
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/qutebrowser
 www-client/qutebrowser scripts
-dev-qt/qtwebengine jumbo-build
 #+end_src
 
 *** Userscripts
