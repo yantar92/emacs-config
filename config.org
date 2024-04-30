@@ -17858,6 +17858,26 @@ Using because the package is abandoned and I am helping to maintain it.
 #+begin_src emacs-lisp
 (add-hook 'org-capture-mode-hook 'boon-insert 'append)
 #+end_src
+*** Faster refile
+
+I have some really large Org files (20+Mb) and Emacs has a hard time
+rendering them, especially when huge chunks of text needs to be hidden
+within the window span inside folds.
+
+This redisplay is especially annoying when I am not actually looking
+at that file, but Emacs still tries to render it briefly while
+displaying a message after refiling is done.
+
+Work around this issue by suppressing messages coming from ~org-store-log-note~.
+
+#+begin_src emacs-lisp
+(use-package org
+  :config
+  (define-advice org-store-log-note  (:around (fun) silence)
+    "Run `org-store-log-note', but do not produce any message."
+    (let ((inhibit-message t)) (funcall fun))))
+#+end_src
+
 *** Faster startup
 **** Disable initial drawer folding and instead re-fold drawers when heading is revealed
 #+begin_src emacs-lisp
