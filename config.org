@@ -2923,29 +2923,11 @@ former is not maintained.
 :END:
 
 #+begin_src emacs-lisp
-(use-package eval-sexp-fu :straight t)
+(use-package eval-sexp-fu
+  :if init-flag
+  :straight t)
 #+end_src
 
-*** Expand region
-:PROPERTIES:
-:CREATED:  [2018-04-09 Mon 20:46]
-:ID:       13ec58f5-636b-479f-ad19-ad229ce47603
-:END:
-
-Incrementally expand active region.
-I only use it occasionally though.
-
-#+BEGIN_SRC emacs-lisp
-(use-package expand-region
-  :if init-flag
-  :straight t
-  :after org
-  :bind (:map boon-command-map
-	      ("`" . er/expand-region)
-              :map boon-special-map
-              ("`" . er/expand-region)))
-
-#+END_SRC
 *** Highlight the line of the match in error/occur/grep buffers on =M-g n/p=
 
 #+begin_src emacs-lisp
