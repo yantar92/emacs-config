@@ -2943,10 +2943,14 @@ former is not maintained.
 :ID:       6ea2a9f7-7b73-4289-976f-b53adcae8f38
 :END:
 
-[2021-05-26 Wed] =outline-minor-mode= is better than hideshow for buffer cycle (aka =org-shifttab=), but unfortunately does not support cycling sexps inside functions.  So, I am using =hideshow= for sexp cycling and [[id:00d3a491-4e46-4140-b713-6a70fd7470da][outline-minor-mode]] for comment/defun cycling.
+It is useful to explore large source code files with hidden details of
+implementation. I often use it to search interesting things in Emacs
+packages.
 
-It is useful to explore large source code files with hidden details of implementation.
-I often use it to search interesting things in Emacs packages.
+[2021-05-26 Wed] =outline-minor-mode= is better than hideshow for buffer
+cycling (aka =org-shifttab=), but unfortunately does not support cycling
+sexps inside functions. So, I am using =hideshow= for sexp cycling and
+[[id:00d3a491-4e46-4140-b713-6a70fd7470da][outline-minor-mode]] for comment/defun cycling.
 
 #+begin_src emacs-lisp
 (use-package hideshow
@@ -2997,17 +3001,18 @@ I often use it to search interesting things in Emacs packages.
 :ID:       00d3a491-4e46-4140-b713-6a70fd7470da
 :END:
 
-It is useful to explore large source code files with hidden details of implementation.
-I often use it to search interesting things in Emacs packages.
+It is useful to explore large source code files with hidden details of
+implementation. I often use it to search interesting things in Emacs
+packages.
 
 #+begin_src emacs-lisp
 (use-package outline
   :if init-flag
   :diminish outline-minor-mode
-  :bind (:map outline-minor-mode-map
-	      :filter boon-command-state
-	      ("<tab>" . meta-tab)
-              ("<backtab>" . outline-cycle-buffer))
+  :bind ( :map outline-minor-mode-map
+	  :filter boon-command-state
+	  ("<tab>" . meta-tab)
+          ("<backtab>" . outline-cycle-buffer))
   :hook ((c-mode-common emacs-lisp-mode sh-mode) . outline-minor-mode))
 #+end_src
 
@@ -3016,13 +3021,14 @@ I often use it to search interesting things in Emacs packages.
 :ID:       9b629716-48c5-41c7-b34e-5e458922368b
 :END:
 
-Narrowing is very useful, especially in large org files or when working with a large function in Elisp code.
-Enable it. 
+Narrowing is very useful, especially in large org files or when
+working with a large function in Elisp code. Enable it.
 
 #+begin_src emacs-lisp
 (when init-flag
   (put 'narrow-to-region 'disabled nil))
 #+end_src
+
 ** Search & navigation
 :PROPERTIES:
 :ID:       46fb459b-7794-4b9a-9fce-85389aba1d95
