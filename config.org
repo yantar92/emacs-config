@@ -13713,6 +13713,22 @@ $0
 	       :template
 	       ("* %(ya-org-capture/make-snippet \"note_capture_\")")))))
 #+end_src
+****** A quick note to currently clocked task
+:PROPERTIES:
+:ID:       35d35046-9afa-4cba-942d-2887c018adff
+:END:
+
+#+begin_src emacs-lisp
+(setf (alist-get "c" org-capture-templates nil nil #'equal)
+      (cdar (doct
+	     '("Quick note to current task"
+	       :keys "n"
+	       :type item
+	       :clock t
+	       :template
+	       ("- %u %?")))))
+#+end_src
+
 ****** Habit
 :PROPERTIES:
 :ID:       990bbabb-4f5b-408c-b504-69b314af0836
