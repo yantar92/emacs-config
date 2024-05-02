@@ -3034,26 +3034,6 @@ working with a large function in Elisp code. Enable it.
 :ID:       46fb459b-7794-4b9a-9fce-85389aba1d95
 :END:
 *** Text
-**** Case fold search
-:PROPERTIES:
-:CREATED:  [2020-05-03 Sun 22:32]
-:ID:       7087ec1b-50ab-4161-9819-db874fe53a21
-:END:
-
-Ignore case during search by default
-
-#+begin_src emacs-lisp
-(setq-default case-fold-search t)
-(use-package isearch
-  :if init-flag
-  :config
-  (setq-default isearch-case-fold-search t))(
-  use-package helm
-  :if init-flag
-  :custom
-  (helm-set-case-fold-search 'smart))
-#+end_src
-
 **** Boon navigation & search
 :PROPERTIES:
 :ID:       e90d8071-a7ed-4aba-a694-a78aa5fded78
