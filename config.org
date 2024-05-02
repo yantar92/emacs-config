@@ -5057,6 +5057,17 @@ With `\\[universal-argument]', run `inspector-inspect-expression'."
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
 :END:
+*** Create new projects via templates =M-x skeletor-create-project=
+
+#+begin_src emacs-lisp
+(use-package skeletor
+  :if init-flag
+  :straight t
+  :custom
+  (skeletor-completing-read-function #'completing-read)
+  (skeletor-project-directory "~/Git"))
+#+end_src
+
 *** COMMENT Language server protocol
 :PROPERTIES:
 :ID:       7104c9e6-55f0-4c32-8376-b8868fea856e
