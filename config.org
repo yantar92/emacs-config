@@ -3196,30 +3196,6 @@ I do not move by visual line in files. Instead, I prefer to use =avy= to move wi
     (avy-timeout-seconds 0.2 "The default is too long.")))
 #+end_src
 
-**** End of sentence
-:PROPERTIES:
-:CREATED:  [2018-01-18 Thu 14:43]
-:ID:       40e35090-b8ec-4770-864b-9e286459533c
-:END:
-
-Double space convention is outdated.
-
-#+BEGIN_SRC emacs-lisp
-(setq-default sentence-end-double-space nil)
-#+END_SRC
-**** COMMENT =goto-line= with preview
-:PROPERTIES:
-:CREATED:  [2019-08-07 Wed 21:38]
-:ID:       6e7fa2e9-644d-4682-84c9-53e2f0c2d295
-:END:
-[2021-01-09 Sat] Not loading on emacs master
-#+begin_src emacs-lisp
-(use-package goto-line-preview
-  :if init-flag
-  :straight t
-  :config
-  (global-set-key [remap goto-line] 'goto-line-preview))
-#+end_src
 **** =Isearch=
 :PROPERTIES:
 :CREATED:  [2020-03-31 Tue 01:37]
@@ -17016,19 +16992,13 @@ Use normal colour for the default agenda face
 :PROPERTIES:
 :ID:       6fed68f0-c4ca-43f3-b487-4b58d9dc1315
 :END:
-[2020-09-04 Fri] Disabling source block fontification - it is slow on large src blocks
-#+begin_src emacs-lisp
-(setq org-src-fontify-natively t
-      org-src-tab-acts-natively nil ;; see https://lists.gnu.org/archive/html/emacs-orgmode/2019-12/msg00318.html
-      org-src-preserve-indentation t
-      org-hide-block-startup nil)
-#+end_src
 
 Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/config/.emacs.d/config.org#appearance][credit]]]
 [2021-03-21 Sun] Disabling to reduce startup time
 #+begin_src emacs-lisp :tangle no
 (add-hook 'org-mode-hook #'org-fold-hide-block-all)
 #+end_src
+
 **** Property drawers
 :PROPERTIES:
 :CREATED:  [2020-05-13 Wed 23:51]
