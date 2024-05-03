@@ -3039,18 +3039,31 @@ working with a large function in Elisp code. Enable it.
 :ID:       e90d8071-a7ed-4aba-a694-a78aa5fded78
 :END:
 
-File navigation and search are the most frequent actions for me. 
-Here, I want to make sure that the navigation commands are bind to easily accessible keys on home row of the keyboard.
+File navigation and search are the most frequent actions for me. Here,
+I want to make sure that the navigation commands are bound to easily
+accessible keys on home row of the keyboard.
 
-The core keys for left hand are =jkl;= =uiop=, and =bn= which are easy to access with pointing finger sitting on top of =j=. I use these keys for buffer navigation. 
+The core keys for left hand are =jkl;= =uiop=, and =bn= which are easy to
+access with pointing finger sitting on top of =j=. I use these keys for
+buffer navigation.
 
-The left hand is mostly sitting on =<SHIFT>sdf= with =<TAB>wert= and =zxcv= being easily accessible. Note that I do not include =a=. It is to simplify access to =<CTRL><TAB><SHIFT>=, which are useful for traditional Emacs keys. Also, left thumb is mostly sitting on =<META><SPACE>=. Nothing special here.
+The left hand is mostly sitting on =<SHIFT>sdf= with =<TAB>wert= and =zxcv=
+being easily accessible. Note that I do not include =a=. It is to
+simplify access to =<CTRL><TAB><SHIFT>=, which are useful for
+traditional Emacs keys. Also, left thumb is mostly sitting on
+=<META><SPACE>=. Nothing special here.
 
-Exiting insert mode with =<ESC>= is extremely uncomfortable. I prefer =M-l=, which is very fast to use.
-Because of this, I have to unbind =M-l= in global map (it calls capitalise word by default). 
+Exiting insert mode with =<ESC>= is extremely uncomfortable. I prefer
+=M-l=, which is very fast to use. Because of this, I have to unbind =M-l=
+in global map (it calls capitalise word by default).
 
-Note that I use [[meta-functions][meta-functions]] here as much as possible to unify the navigation in different major modes.
-The =n= binding to =boon-switch-mark= and =N= for =pop-global-mark= is especially useful because it can jump backward in the mark-ring, exchange region marks, or jump in global mark ring which is especially useful if I temporary move to some place to look for something. Many of the movement functions are also additionally modified to store mark before moving.
+Note that I use [[meta-functions][meta-functions]] here as much as possible to unify the
+navigation in different major modes. The =n= binding to =boon-switch-mark=
+and =N= for =pop-global-mark= is especially useful because it can jump
+backward in the mark-ring, exchange region marks, or jump in global
+mark ring which is especially useful if I temporary move to some place
+to look for something. Many of the movement functions are also
+additionally modified to store mark before moving.
 
 #+begin_src emacs-lisp
 (use-package boon
