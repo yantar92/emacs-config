@@ -3247,12 +3247,17 @@ it, since it is not very useful for me anyway.
 :ID:       7d61e5bb-4b05-41a7-bf75-4cdeb36b5a8a
 :END:
 
+By default, when using hi-lock commands to highlight occurrences of a
+regexp/symbol in buffer, hi-lock asks for the face to use for
+highlighting. I do not care. Just select whatever.
+
 #+begin_src emacs-lisp
 (use-package hi-lock
   :if init-flag
   :config
   (setq hi-lock-auto-select-face t))
 #+end_src
+
 *** Links
 :PROPERTIES:
 :ID:       7908bb55-6bc0-4db2-b5d2-258ff985250d
