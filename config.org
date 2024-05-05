@@ -3315,13 +3315,7 @@ Just use external browser to open URLs.
                  . yant/browse-url-orgmode-ml))
   (add-to-list 'browse-url-handlers
                '("^https?://list\\.orgmode\\.org/\\(?:orgmode/\\)?\\([^/]+\\)"
-                 . yant/browse-url-orgmode-ml))
-  (use-package notmuch
-    :defer t
-    :config
-    (use-package w3m
-      :commands w3m-view-url-with-browse-url)
-    (bind-key "C-c C-o" #'w3m-view-url-with-browse-url notmuch-show-mode-map)))
+                 . yant/browse-url-orgmode-ml)))
 #+end_src
 
 *** =Imenu=
