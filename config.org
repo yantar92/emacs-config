@@ -2378,7 +2378,6 @@ in my [[id:e3d02bee-a924-4808-9a2f-fe577065038d][capture templates]].
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
 :END:
-
 *** Temporary highlight text in buffer
 :PROPERTIES:
 :CREATED:  [2018-03-12 Mon 14:29]
@@ -3262,61 +3261,69 @@ highlighting. I do not care. Just select whatever.
 :PROPERTIES:
 :ID:       7908bb55-6bc0-4db2-b5d2-258ff985250d
 :END:
-
 **** Browse URL
 :PROPERTIES:
 :ID:       17ccb0ae-e369-45bb-bfab-1d3cac9ca147
 :END:
 
-Just use external browser to open URLs. 
+Use =eww= for most Urls, except some (like EDX) that do not work well
+and that I use frequently.  Use [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]] for the websites that
+require javascript or complex rendering.
 
 #+begin_src emacs-lisp
-(use-package browse-url
-  :init
-  (defun yant/browse-url (url &optional new-window)
-    "Open in mpv or eaf-browser."
-    (setq url (replace-regexp-in-string ".*scholar\\.google\\.com[^/]*/scholar_url\\?url=\\([^&]+\\).+" "\\1" url))
-    (if (and (string-match-p "youtube\\.com" url)
-	     (not (string-match-p "/channel" url)))
-	(browse-url-generic url new-window)
-      (if (or (string-match-p "author\\.today" url)
-              (string-match-p "semanticscholar\\.org" url)
-              (string-match-p "sciencedirect\\.com" url)
-              (string-match-p "coursera\\.org" url)
-              (string-match-p "edx\\.org" url)
-              (string-match-p "connectedpapers\\.com" url)
-              (string-match-p "reddit\\.com" url)
-              (string-match-p "doi\\.org" url)
-              (string-match-p "weibo\\.com" url)
-              (string-match-p "china\\.mfa\\.gov\\.ua" url)
-              (string-match-p "archive\\.org" url)
-              (string-match-p "github\\.com" url)
-              (string-match-p "habr\\.com" url)
-              (string-match-p "samlib\\.ru" url)
-              (string-match-p "weixin\\.qq\\.com" url)
-              )
-          ;; (eaf-open-browser url)
-          (browse-url-generic url new-window)
-        (eww url))))
-  (defun yant/browse-url-orgmode-ml (url &optional _)
-    "Open an orgmode list url using notmuch."
-    (let ((id (and (or (string-match "^https?://orgmode\\.org/list/\\([^/]+\\)" url)
-                       (string-match "^https?://list\\.orgmode\\.org/\\(?:orgmode/\\)?\\([^/]+\\)" url))
-                   (match-string 1 url))))
-      (when id
-        (notmuch-show (format "id:%s" id)))))
-  :custom
-  (browse-url-browser-function 'yant/browse-url)
-  ;; (browse-url-browser-function 'browse-url-generic)
-  (browse-url-generic-program "qutebrowser-call.sh")
-  :config
-  (add-to-list 'browse-url-handlers
-               '("^https?://orgmode\\.org/list/\\([^/]+\\)"
-                 . yant/browse-url-orgmode-ml))
-  (add-to-list 'browse-url-handlers
-               '("^https?://list\\.orgmode\\.org/\\(?:orgmode/\\)?\\([^/]+\\)"
-                 . yant/browse-url-orgmode-ml)))
+  (use-package browse-url
+    :init
+    (defun yant/browse-url (url &optional new-window)
+      "Open in mpv or eaf-browser."
+      (setq url (replace-regexp-in-string ".*scholar\\.google\\.com[^/]*/scholar_url\\?url=\\([^&]+\\).+" "\\1" url))
+      (if (and (string-match-p "youtube\\.com" url)
+  	     (not (string-match-p "/channel" url)))
+  	(browse-url-generic url new-window)
+        (if (or (string-match-p "author\\.today" url)
+                (string-match-p "semanticscholar\\.org" url)
+                (string-match-p "sciencedirect\\.com" url)
+                (string-match-p "coursera\\.org" url)
+                (string-match-p "edx\\.org" url)
+                (string-match-p "connectedpapers\\.com" url)
+                (string-match-p "reddit\\.com" url)
+                (string-match-p "doi\\.org" url)
+                (string-match-p "archive\\.org" url)
+                (string-match-p "github\\.com" url)
+                (string-match-p "habr\\.com" url)
+                (string-match-p "samlib\\.ru" url)
+                (string-match-p "weixin\\.qq\\.com" url)
+                )
+            (browse-url-generic url new-window)
+          (eww url))))
+    :custom
+    (browse-url-browser-function 'yant/browse-url)
+    (browse-url-generic-program "qutebrowser-call.sh"))
 #+end_src
+
+***** Browse mailing list archive Urls using my local notmuch archives
+
+Since I have the Org mailing list stored locally, I do not need to
+open the email threads in browser.  Can instead use [[id:f6ca2367-45c4-45bc-acec-49837cadc5ac][Notmuch]].
+
+#+begin_src emacs-lisp
+  (use-package browse-url
+    :init
+    (defun yant/browse-url-orgmode-ml (url &optional _)
+      "Open an orgmode list url using notmuch."
+      (let ((id (and (or (string-match "^https?://orgmode\\.org/list/\\([^/]+\\)" url)
+                         (string-match "^https?://list\\.orgmode\\.org/\\(?:orgmode/\\)?\\([^/]+\\)" url))
+                     (match-string 1 url))))
+        (when id
+          (notmuch-show (format "id:%s" id)))))
+    :config
+    (add-to-list 'browse-url-handlers
+                 '("^https?://orgmode\\.org/list/\\([^/]+\\)"
+                   . yant/browse-url-orgmode-ml))
+    (add-to-list 'browse-url-handlers
+                 '("^https?://list\\.orgmode\\.org/\\(?:orgmode/\\)?\\([^/]+\\)"
+                   . yant/browse-url-orgmode-ml)))
+#+end_src
+
 
 *** =Imenu=
 :PROPERTIES:
@@ -3324,24 +3331,25 @@ Just use external browser to open URLs.
 :ID:       fdbef4e6-7b49-4c80-88be-cf9f85bce94f
 :END:
 
-=Imenu= allows navigating through the buffer structure, according to the major mode.
+=Imenu= allows navigating through the buffer structure, according to the
+major mode.
 
 #+begin_src emacs-lisp
-(use-package imenu
-  :if init-flag
-  :config
-  (use-package helm
-    :config  
-    (use-package meta-functions :config  
-      (meta-defun meta-goto "Goto place in document." consult-imenu)
-      (meta-defun meta-goto :mode emacs-lisp-mode
-        :cond (let ((state (syntax-ppss)))
-                (and (not (nth 3 state))
-                     (not (nth 4 state))))
-        :cond (thing-at-point 'symbol)
-        (let ((pos (point-marker)))
-          (xref-find-definitions (thing-at-point 'symbol))
-          (not (eq pos (point))))))))
+  (use-package imenu
+    :if init-flag
+    :config
+    (use-package consult
+      :config
+      (use-package meta-functions :config  
+        (meta-defun meta-goto "Goto place in document." consult-imenu)
+        (meta-defun meta-goto :mode emacs-lisp-mode
+          :cond (let ((state (syntax-ppss)))
+                  (and (not (nth 3 state))
+                       (not (nth 4 state))))
+          :cond (thing-at-point 'symbol)
+          (let ((pos (point-marker)))
+            (xref-find-definitions (thing-at-point 'symbol))
+            (not (eq pos (point))))))))
 #+end_src
 
 *** Buffers
@@ -3349,6 +3357,17 @@ Just use external browser to open URLs.
 :PROPERTIES:
 :ID:       b69737e2-daa5-4b12-bb10-9ce37831edd4
 :END:
+
+Sometimes, I want to switch to previous/next buffer in current window.
+The definition of previous/next buffer may depend on the major mode though. 
+ 
+#+begin_src emacs-lisp
+(use-package boon
+  :bind (:map boon-goto-map
+	      ("o" . meta-next-buffer)
+	      ("i" . meta-previous-buffer)))
+#+end_src
+
 ***** Use =consult= to switch buffers
 :PROPERTIES:
 :ID:       c4a958ed-33e4-48f0-8594-fce1d8380e45
@@ -3365,7 +3384,6 @@ Just use external browser to open URLs.
 	      ("b" . consult-buffer))
   :after boon)
 #+end_src
-
 
 ***** Skip some uninteresting buffers when switching to next/previous buffer
 
@@ -3426,29 +3444,13 @@ Credit: [[id:4ebf4428-3ed3-42cd-9d6c-ddc2d949dd53][nv-elisp comments on Weekly t
 (provide 'skip-buffers-mode)
 #+end_src
 
-***** Key bindings
-:PROPERTIES:
-:CREATED:  [2020-04-09 Thu 17:30]
-:ID:       6e8fd921-88ca-411d-9045-6141121e9afa
-:END:
-
-Sometimes, I want to switch to previous/next buffer in current window.
-The definition of previous/next buffer may depend on the major mode though. 
- 
-#+begin_src emacs-lisp
-(use-package boon
-  :bind (:map boon-goto-map
-	      ("o" . meta-next-buffer)
-	      ("i" . meta-previous-buffer)))
-#+end_src
-
 **** Go to scratch key binding
 :PROPERTIES:
 :ID:       53b113ca-e2be-4f79-a575-aedbd0f0f7ad
 :END:
 
-There is a significant number cases when I want to quickly pop to scratch buffer. 
-Setting a binding for this.
+I often want to quickly pop to scratch buffer.  Setting a binding for
+this.
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -3465,7 +3467,9 @@ Setting a binding for this.
 :ID:       cb74c835-f010-4880-ad84-00736172753f
 :END:
 
-The default function to kill buffer bound to =C-x k= always ask for a buffer to kill. I often just need to kill current buffer without redundant confirmation. 
+The default function to kill buffer bound to =C-x k= always ask for a
+buffer to kill. I often just need to kill current buffer without
+redundant confirmation.
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -3475,17 +3479,19 @@ The default function to kill buffer bound to =C-x k= always ask for a buffer to 
     (kill-buffer (current-buffer)))
   (bind-key "C-x q" #'yant/kill-this-buffer))
 #+end_src
+
 *** Windows
 **** Window layout management
 :PROPERTIES:
 :ID:       413ad4db-e20c-432f-8d15-b849d35b6cff
 :END:
 
-If we use boon, it frees up =M-digit= bindings.
-I use them to manage windows. It is much faster than default.
+I use boon, and it frees up =M-digit= bindings.
+So, I re-purpose them to manage windows. It is much faster than default.
 
-Also, improve the default commands by using =windower=. 
-Instead of =delete-other-windows=, use =windower's= version, which toggles maximised/original layout.
+Also, improve the default commands by using =windower=.  Instead of
+=delete-other-windows=, use =windower's= version, which toggles
+maximised/original layout.
 
 #+begin_src emacs-lisp
 (use-package boon
@@ -3501,14 +3507,17 @@ Instead of =delete-other-windows=, use =windower's= version, which toggles maxim
               (call-interactively #'clone-indirect-buffer-other-window)))))
 #+end_src
 
-Sometimes, there is a need to split window vertically or horizontally, but I make a mistake and split in wrong direction.
-Then I used to delete the window (=M-0)= and re-split, but can as well save a keystroke if I can change direction of the split.
+Sometimes, there is a need to split window vertically or horizontally,
+but I make a mistake and split in wrong direction.  Then I used to
+delete the window (=M-0)= and re-split, but can as well save a keystroke
+if I can change direction of the split.
 
 #+begin_src emacs-lisp
 (use-package windower
   :straight (emacs-windower :host gitlab :repo "ambrevar/emacs-windower" :local-repo "~/Git/emacs-windower")
   :bind ("M-`" . #'windower-toggle-split))
 #+end_src
+
 **** Window selection
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 00:00]
@@ -3519,7 +3528,7 @@ Use =boon-*-search-map= to select windows and =C-M-l= to cycle current window.
 
 #+begin_src emacs-lisp
 (use-package windmove
-  :bind (("M-'" . other-window)
+  :bind (("C-M-l" . other-window)
          :map boon-forward-search-map
 	 ("j" . windmove-down)
          ("k" . windmove-up)
@@ -3568,9 +3577,9 @@ However, most of time I use this function is aligning text to top of the window.
 I need an extra binding here to make =x c= work in boon command map.
 
 #+begin_src emacs-lisp
-(when init-flag
-(global-set-key (kbd "C-x C-c") 'delete-frame)
-(global-set-key (kbd "C-x c") 'delete-frame))
+  (when init-flag
+    (global-set-key (kbd "C-x C-c") 'delete-frame)
+    (global-set-key (kbd "C-x c") 'delete-frame))
 #+end_src
 
 **** Detach current window from the frame
@@ -3598,6 +3607,7 @@ For example, debugger window may sometimes occupy too much of frame space and de
     :config
     (bind-key "M-5" #'my/tear-off-window)))
 #+end_src
+
 *** Files
 **** Find files
 :PROPERTIES:
@@ -12029,267 +12039,267 @@ instead."
 ****************** END
 
 #+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :config
-  (add-to-list 'org-default-properties "SHOWDATES"))
+  (use-package org
+    :defer t
+    :config
+    (add-to-list 'org-default-properties "SHOWDATES"))
 
-(defun yant/diary-sexp-match-showdate? (entry) ;; the ENTRY name is important, since it is used internally by calendar
-  "Does current time match SHOWDATE?."
-  (or (not entry) ;; no condition: match
-      (let ((date (diary-make-date (nth 4 (decode-time)) (nth 3 (decode-time)) (nth 5 (decode-time)))))
-	(pcase (eval (car (read-from-string entry)))
-	  ((and (pred listp) res)
-	   (when (cdr res) t))
-	  (res (when res t))))))
+  (defun yant/diary-sexp-match-showdate? (entry) ;; the ENTRY name is important, since it is used internally by calendar
+    "Does current time match SHOWDATE?."
+    (or (not entry) ;; no condition: match
+        (let ((date (diary-make-date (nth 4 (decode-time)) (nth 3 (decode-time)) (nth 5 (decode-time)))))
+  	(pcase (eval (car (read-from-string entry)))
+  	  ((and (pred listp) res)
+  	   (when (cdr res) t))
+  	  (res (when res t))))))
 
-(defun yant/now-after-showfromtime? (showfromtime)
-  "Is time of the day after SHOWFROMTIME? Take into account `org-extend-today-until'."
-  (let* ((now (ts-now))
-	 (beginningofday (ts-parse (format "%s %s:00"
-					   (ts-format "%Y-%m-%d" now)
-					   (or org-extend-today-until 0))))
-         (stillyesterday? (ts<= now beginningofday))
-         (showfromtime (ts-parse (concat (ts-format "%Y-%m-%d " now)
-					 showfromtime))))
-    (or stillyesterday? (ts>= now showfromtime))))
+  (defun yant/now-after-showfromtime? (showfromtime)
+    "Is time of the day after SHOWFROMTIME? Take into account `org-extend-today-until'."
+    (let* ((now (ts-now))
+  	 (beginningofday (ts-parse (format "%s %s:00"
+  					   (ts-format "%Y-%m-%d" now)
+  					   (or org-extend-today-until 0))))
+           (stillyesterday? (ts<= now beginningofday))
+           (showfromtime (ts-parse (concat (ts-format "%Y-%m-%d " now)
+  					 showfromtime))))
+      (or stillyesterday? (ts>= now showfromtime))))
 
-(use-package org-ql
-  :straight (org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
-	      :fork (:host github :repo "yantar92/org-ql"))
-  :after org
-  :config
-  (use-package org-ql-search :demand t)
-  (setq org-ql-plain-string-predicate 'keyword)
-  (setq org-ql-defpred-defer t)
-  (org-ql-defpred (keyword k) (&rest strings)
-    "Match a keyword in outline-path or inside body/heading with #.
-Negate match when start with ^."
-    :normalizers
-    ((`(,predicate-names . ,strings)
-      `(keyword ,@strings)))
-    :body
-    (or
-     (catch :fail
-       (dolist (string strings)
-         (unless
-             (pcase string
-               ((pred (string= "A")) (tags-local "AREA"))
-               ((pred (string= "p")) (tags-local "project"))
-               ((pred (string= "a")) (tags-local "article"))
-               ((pred (string= "b")) (tags-local "book"))
-               ((pred (string= "n")) (tags-local "note"))
-               ((pred (string= "m")) (tags-local "BOOKMARK"))
-               ((pred (string= "f")) (tags-local "FLAGGED"))
-               ((pred (string= "S")) (todo "SOMEDAY"))
-               ((pred (string= "N")) (todo "NEXT"))
-               ((pred (string= "D")) (todo "DONE"))
-               ((pred (string= "T")) (todo "TODO"))
-               ((pred (string= "O")) (todo "DOING"))
-               ((pred (string= "F")) (todo "FAILED"))
-               ((pred (string= "W")) (todo "WAITING"))
-               ((pred (string= "H")) (todo "HOLD"))
-               ((pred (string= "C")) (todo "CANCELLED"))
-               ((pred (string= "L")) (todo "TICKLER"))
-               ((pred (string= "E")) (todo "REVIEW"))
-               ((and (rx string-start (let str (1+ any)) ":" string-end)
-                     (guard str))
-                (tags str))
-               ((and (rx string-start (let str (1+ any)) "!" string-end)
-                     (guard str))
-                (tags-local str))
-               ((and (rx string-start (let str (1+ any)) "/" string-end)
-                     (guard str))
-                (path str))
-               ((and (rx string-start (let str (1+ any)) ";" string-end)
-                     (guard str))
-                (heading str))
-               ((and (rx string-start (let str (1+ any)) "=" string-end)
-                     (guard str))
-                (or (regexp str)
-                    (outline-path str)))
-               ((and (rx string-start (let str (1+ any)) "#" string-end)
-                     (guard str))
-                (regexp (rx-to-string `(or (seq "#" (1+ (not " ")) "_" ,str (or eow "_"))
-                                           (seq "#" ,str (or eow "_"))))))
-               (str
-                (or (path str)
-                    (regexp (rx-to-string `(or (seq "#" (1+ (not " ")) (any ?- "_/") ,str)
-                                               (seq "#" ,str))))
-                    (let ((case-fold-search t)) (outline-path (rx-to-string `(seq bow ,str))))
-                    (let ((case-fold-search t)) (regexp (rx-to-string `(seq bol ":" (or "AUTHOR" "JOURNAL" "YEAR") ": " (0+ any) ,str))))
-                    (tags-regexp str)
-                    (tags str)
-                    (ancestors (org-ql--query-predicate
-                                (org-ql--normalize-query `(or (path ,str)
-                                                              (regexp (rx-to-string '(or (seq "#" (1+ (not " ")) (any ?- "_/") ,str)
-                                                                                         (seq "#" ,str))))
-                                                              (let ((case-fold-search t)) (regexp (rx-to-string '(seq bol ":" (or "AUTHOR" "JOURNAL" "YEAR") ": " (0+ any) ,str)))))))))))
-           (throw :fail nil)))
-       t)
-     (when (and (outline-next-heading)
-                (let ((case-fold-search t))
-                  (re-search-forward
-                   (regexp-opt
-                    (cl-loop for string in strings
-                             collect
-                             (pcase string
-                               ((pred (string= "A")) "AREA")
-                               ((pred (string= "p")) "project")
-                               ((pred (string= "a")) "article")
-                               ((pred (string= "b")) "book")
-                               ((pred (string= "n")) "note")
-                               ((pred (string= "m")) "BOOKMARK")
-                               ((pred (string= "f")) "FLAGGED")
-                               ((pred (string= "S")) "SOMEDAY")
-                               ((pred (string= "N")) "NEXT")
-                               ((pred (string= "D")) "DONE")
-                               ((pred (string= "T")) "TODO")
-                               ((pred (string= "O")) "DOING")
-                               ((pred (string= "F")) "FAILED")
-                               ((pred (string= "W")) "WAITING")
-                               ((pred (string= "H")) "HOLD")
-                               ((pred (string= "C")) "CANCELLED")
-                               ((pred (string= "L")) "TICKLER")
-                               ((pred (string= "E")) "REVIEW")
-                               ((and (rx string-start (let str (1+ any)) ":" string-end)
-                                     (guard str))
-                                str)
-                               ((and (rx string-start (let str (1+ any)) "!" string-end)
-                                     (guard str))
-                                str)
-                               ((and (rx string-start (let str (1+ any)) "/" string-end)
-                                     (guard str))
-                                str)
-                               ((and (rx string-start (let str (1+ any)) ";" string-end)
-                                     (guard str))
-                                str)
-                               ((and (rx string-start (let str (1+ any)) "=" string-end)
-                                     (guard str))
-                                str)
-                               ((and (rx string-start (let str (1+ any)) "#" string-end)
-                                     (guard str))
-                                (rx-to-string `(or (seq "#" (1+ (not " ")) "_" ,str (or eow "_"))
-                                                   (seq "#" ,str (or eow "_")))))
-                               (string
-                                string))))
-                   nil 'move)))
-       ;; Move to next likely match.
-       (org-back-to-heading t)
-       (backward-char))))
+  (use-package org-ql
+    :straight (org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
+  	      :fork (:host github :repo "yantar92/org-ql"))
+    :after org
+    :config
+    (use-package org-ql-search :demand t)
+    (setq org-ql-plain-string-predicate 'keyword)
+    (setq org-ql-defpred-defer t)
+    (org-ql-defpred (keyword k) (&rest strings)
+      "Match a keyword in outline-path or inside body/heading with #.
+  Negate match when start with ^."
+      :normalizers
+      ((`(,predicate-names . ,strings)
+        `(keyword ,@strings)))
+      :body
+      (or
+       (catch :fail
+         (dolist (string strings)
+           (unless
+               (pcase string
+                 ((pred (string= "A")) (tags-local "AREA"))
+                 ((pred (string= "p")) (tags-local "project"))
+                 ((pred (string= "a")) (tags-local "article"))
+                 ((pred (string= "b")) (tags-local "book"))
+                 ((pred (string= "n")) (tags-local "note"))
+                 ((pred (string= "m")) (tags-local "BOOKMARK"))
+                 ((pred (string= "f")) (tags-local "FLAGGED"))
+                 ((pred (string= "S")) (todo "SOMEDAY"))
+                 ((pred (string= "N")) (todo "NEXT"))
+                 ((pred (string= "D")) (todo "DONE"))
+                 ((pred (string= "T")) (todo "TODO"))
+                 ((pred (string= "O")) (todo "DOING"))
+                 ((pred (string= "F")) (todo "FAILED"))
+                 ((pred (string= "W")) (todo "WAITING"))
+                 ((pred (string= "H")) (todo "HOLD"))
+                 ((pred (string= "C")) (todo "CANCELLED"))
+                 ((pred (string= "L")) (todo "TICKLER"))
+                 ((pred (string= "E")) (todo "REVIEW"))
+                 ((and (rx string-start (let str (1+ any)) ":" string-end)
+                       (guard str))
+                  (tags str))
+                 ((and (rx string-start (let str (1+ any)) "!" string-end)
+                       (guard str))
+                  (tags-local str))
+                 ((and (rx string-start (let str (1+ any)) "/" string-end)
+                       (guard str))
+                  (path str))
+                 ((and (rx string-start (let str (1+ any)) ";" string-end)
+                       (guard str))
+                  (heading str))
+                 ((and (rx string-start (let str (1+ any)) "=" string-end)
+                       (guard str))
+                  (or (regexp str)
+                      (outline-path str)))
+                 ((and (rx string-start (let str (1+ any)) "#" string-end)
+                       (guard str))
+                  (regexp (rx-to-string `(or (seq "#" (1+ (not " ")) "_" ,str (or eow "_"))
+                                             (seq "#" ,str (or eow "_"))))))
+                 (str
+                  (or (path str)
+                      (regexp (rx-to-string `(or (seq "#" (1+ (not " ")) (any ?- "_/") ,str)
+                                                 (seq "#" ,str))))
+                      (let ((case-fold-search t)) (outline-path (rx-to-string `(seq bow ,str))))
+                      (let ((case-fold-search t)) (regexp (rx-to-string `(seq bol ":" (or "AUTHOR" "JOURNAL" "YEAR") ": " (0+ any) ,str))))
+                      (tags-regexp str)
+                      (tags str)
+                      (ancestors (org-ql--query-predicate
+                                  (org-ql--normalize-query `(or (path ,str)
+                                                                (regexp (rx-to-string '(or (seq "#" (1+ (not " ")) (any ?- "_/") ,str)
+                                                                                           (seq "#" ,str))))
+                                                                (let ((case-fold-search t)) (regexp (rx-to-string '(seq bol ":" (or "AUTHOR" "JOURNAL" "YEAR") ": " (0+ any) ,str)))))))))))
+             (throw :fail nil)))
+         t)
+       (when (and (outline-next-heading)
+                  (let ((case-fold-search t))
+                    (re-search-forward
+                     (regexp-opt
+                      (cl-loop for string in strings
+                               collect
+                               (pcase string
+                                 ((pred (string= "A")) "AREA")
+                                 ((pred (string= "p")) "project")
+                                 ((pred (string= "a")) "article")
+                                 ((pred (string= "b")) "book")
+                                 ((pred (string= "n")) "note")
+                                 ((pred (string= "m")) "BOOKMARK")
+                                 ((pred (string= "f")) "FLAGGED")
+                                 ((pred (string= "S")) "SOMEDAY")
+                                 ((pred (string= "N")) "NEXT")
+                                 ((pred (string= "D")) "DONE")
+                                 ((pred (string= "T")) "TODO")
+                                 ((pred (string= "O")) "DOING")
+                                 ((pred (string= "F")) "FAILED")
+                                 ((pred (string= "W")) "WAITING")
+                                 ((pred (string= "H")) "HOLD")
+                                 ((pred (string= "C")) "CANCELLED")
+                                 ((pred (string= "L")) "TICKLER")
+                                 ((pred (string= "E")) "REVIEW")
+                                 ((and (rx string-start (let str (1+ any)) ":" string-end)
+                                       (guard str))
+                                  str)
+                                 ((and (rx string-start (let str (1+ any)) "!" string-end)
+                                       (guard str))
+                                  str)
+                                 ((and (rx string-start (let str (1+ any)) "/" string-end)
+                                       (guard str))
+                                  str)
+                                 ((and (rx string-start (let str (1+ any)) ";" string-end)
+                                       (guard str))
+                                  str)
+                                 ((and (rx string-start (let str (1+ any)) "=" string-end)
+                                       (guard str))
+                                  str)
+                                 ((and (rx string-start (let str (1+ any)) "#" string-end)
+                                       (guard str))
+                                  (rx-to-string `(or (seq "#" (1+ (not " ")) "_" ,str (or eow "_"))
+                                                     (seq "#" ,str (or eow "_")))))
+                                 (string
+                                  string))))
+                     nil 'move)))
+         ;; Move to next likely match.
+         (org-back-to-heading t)
+         (backward-char))))
 
-  (defun yant/org-ql-focused-agenda-block (&rest args)
-    "Return expression, suitable for `org-agenda-custom-commands', which matches focused agenda view."
-    (org-ql-block
-     '(and (todo)
-	   (not (priority "C"))
-	   (or (and (deadline auto) ;; deadline check first because deadlines are far more scarse in comparison with scheduled
-		    (not (scheduled :from +1)))
-	       (and (priority "A")
-		    (scheduled :to 0) ;; these two are easy checks, do them before heavy property matches
-		    (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
-		        (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
-		    (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)) ;; I have more of this in cmp with SHOWDATES
-		    (yant/diary-sexp-match-showdate? (org-entry-get (point) "SHOWDATES" 'inherit))
-		    )
-	       (and (scheduled :on 0)
-		    (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)))
-	       (ts-active :on 0) ;; diary
-	       ))))
+    (defun yant/org-ql-focused-agenda-block (&rest args)
+      "Return expression, suitable for `org-agenda-custom-commands', which matches focused agenda view."
+      (org-ql-block
+       '(and (todo)
+  	   (not (priority "C"))
+  	   (or (and (deadline auto) ;; deadline check first because deadlines are far more scarse in comparison with scheduled
+  		    (not (scheduled :from +1)))
+  	       (and (priority "A")
+  		    (scheduled :to 0) ;; these two are easy checks, do them before heavy property matches
+  		    (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
+  		        (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
+  		    (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)) ;; I have more of this in cmp with SHOWDATES
+  		    (yant/diary-sexp-match-showdate? (org-entry-get (point) "SHOWDATES" 'inherit))
+  		    )
+  	       (and (scheduled :on 0)
+  		    (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)))
+  	       (ts-active :on 0) ;; diary
+  	       ))))
 
-  (eval
-   '(defun org-ql-skip-function (query)
-      "Return a function for `org-agenda-skip-function' for QUERY.
-Compared to using QUERY in `org-ql', this effectively turns QUERY
-into (not QUERY)."
-      (let* ((predicate (org-ql--query-predicate (org-ql--pre-process-query query))))
-        (lambda ()
-	  ;; This duplicates the functionality of `org-ql--select'.
-	  (let (orig-fns)
-            (--each org-ql-predicates
-              ;; Save original function mappings.
-              (let ((name (plist-get it :name)))
-                (push (list :name name :fn (symbol-function name)) orig-fns)))
-            (unwind-protect
-                (progn
-		  (--each org-ql-predicates
-                    ;; Set predicate functions.
-                    (fset (plist-get it :name) (plist-get it :fn)))
-		  ;; Run query.
-		  ;; FIXME: "If this function returns nil, the current match should not be skipped.
-		  ;; Otherwise, the function must return a position from where the search
-		  ;; should be continued."
-		  (funcall predicate))
-              (--each orig-fns
-                ;; Restore original function mappings.
-                (fset (plist-get it :name) (plist-get it :fn))))))))
-   'lexical)
+    (eval
+     '(defun org-ql-skip-function (query)
+        "Return a function for `org-agenda-skip-function' for QUERY.
+  Compared to using QUERY in `org-ql', this effectively turns QUERY
+  into (not QUERY)."
+        (let* ((predicate (org-ql--query-predicate (org-ql--pre-process-query query))))
+          (lambda ()
+  	  ;; This duplicates the functionality of `org-ql--select'.
+  	  (let (orig-fns)
+              (--each org-ql-predicates
+                ;; Save original function mappings.
+                (let ((name (plist-get it :name)))
+                  (push (list :name name :fn (symbol-function name)) orig-fns)))
+              (unwind-protect
+                  (progn
+  		  (--each org-ql-predicates
+                      ;; Set predicate functions.
+                      (fset (plist-get it :name) (plist-get it :fn)))
+  		  ;; Run query.
+  		  ;; FIXME: "If this function returns nil, the current match should not be skipped.
+  		  ;; Otherwise, the function must return a position from where the search
+  		  ;; should be continued."
+  		  (funcall predicate))
+                (--each orig-fns
+                  ;; Restore original function mappings.
+                  (fset (plist-get it :name) (plist-get it :fn))))))))
+     'lexical)
 
-  (defun yant/org-ql-focused-agenda-query ()
-    "Return org-ql skip function that matches focused agenda view."
-    (org-ql-skip-function
-     '(and (todo)
-	   (not (priority "C"))
-	   (or (and (deadline auto) ;; deadline check first because deadlines are far more scarse in comparison with scheduled
-		    (not (scheduled :from +1)))
-	       (and (priority "A")
-		    (scheduled :to 0) ;; these two are easy checks, do them before heavy property matches
-		    (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
-		        (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
-		    (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)) ;; I have more of this in cmp with SHOWDATES
-		    (yant/diary-sexp-match-showdate? (org-entry-get (point) "SHOWDATES" 'inherit))
-		    )
-	       (and (scheduled :on 0)
-		    (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)))
-	       (ts-active :on 0) ;; diary
-	       )
-	   )))
-
-
-  (defun yant/org-ql-full-agenda-block (&rest args)
-    "Return expression, suitable for `org-agenda-custom-commands', which lists all the active scheduled todo items."
-    (org-ql-block
-     '(and (todo)
-	   (scheduled :to 0)
-           (not (tags "HOLD")))))
+    (defun yant/org-ql-focused-agenda-query ()
+      "Return org-ql skip function that matches focused agenda view."
+      (org-ql-skip-function
+       '(and (todo)
+  	   (not (priority "C"))
+  	   (or (and (deadline auto) ;; deadline check first because deadlines are far more scarse in comparison with scheduled
+  		    (not (scheduled :from +1)))
+  	       (and (priority "A")
+  		    (scheduled :to 0) ;; these two are easy checks, do them before heavy property matches
+  		    (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
+  		        (ts>= (ts-now) (ts-parse-org (property "SHOWFROMDATE"))))
+  		    (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)) ;; I have more of this in cmp with SHOWDATES
+  		    (yant/diary-sexp-match-showdate? (org-entry-get (point) "SHOWDATES" 'inherit))
+  		    )
+  	       (and (scheduled :on 0)
+  		    (yant/now-after-showfromtime? (org-entry-get (point) "SHOWFROMTIME" 'inherit)))
+  	       (ts-active :on 0) ;; diary
+  	       )
+  	   )))
 
 
-  ;; how to do it? I do not want children to be listed if the parent is listed. But cannot give up tag inheritance
-  ;; In normal agenda, it is achieved by `org-tags-match-list-sublevels' 
-  (defun yant/org-ql-inbox-block (&rest args)
-    "Return expression, suitable for `org-agenda-custom-commands', which lists all the inbox items."
-    (org-ql-block
-     '(and (level 1)
-	   (tags "INBOX"))))
+    (defun yant/org-ql-full-agenda-block (&rest args)
+      "Return expression, suitable for `org-agenda-custom-commands', which lists all the active scheduled todo items."
+      (org-ql-block
+       '(and (todo)
+  	   (scheduled :to 0)
+             (not (tags "HOLD")))))
 
-  ;; changing the project definition. Either project tag or the sub-project with NEXT/DOING/REVIEW
-  (defmacro yant/org-ql-is-project-p ()
-    "org-ql query to match a project."
-    `(or (and (tag "project")
-	      (todo))
-         (and (todo "NEXT" "DOING" "REVIEW")
-              (children (todo)))))
 
-  (defun yant/org-ql-stuck-projects-block (&rest args)
-    "Return expression, suitable for `org-agenda-custom-commands', which lists all the stuck projects."
-    (org-ql-block
-     '(and (not (tags "HOLD" "WAITING"))
-	   (yant/org-ql-is-project-p)
-           (not (children (todo "NEXT" "DOING" "REVIEW"))))))
+    ;; how to do it? I do not want children to be listed if the parent is listed. But cannot give up tag inheritance
+    ;; In normal agenda, it is achieved by `org-tags-match-list-sublevels' 
+    (defun yant/org-ql-inbox-block (&rest args)
+      "Return expression, suitable for `org-agenda-custom-commands', which lists all the inbox items."
+      (org-ql-block
+       '(and (level 1)
+  	   (tags "INBOX"))))
 
-  (defun yant/org-ql-waiting-and-hold-tasks-block (&rest args)
-    "Return expression, suitable for `org-agenda-custom-commands', which lists all the waiting and hold tasks."
-    (org-ql-block
-     '(todo "HOLD" "WAITING")))
+    ;; changing the project definition. Either project tag or the sub-project with NEXT/DOING/REVIEW
+    (defmacro yant/org-ql-is-project-p ()
+      "org-ql query to match a project."
+      `(or (and (tag "project")
+  	      (todo))
+           (and (todo "NEXT" "DOING" "REVIEW")
+                (children (todo)))))
 
-  ;; (defun yant/org-ql-next-tasks-block (&rest args)
-  ;;   "Return expression, suitable for `org-agenda-custom-commands', which lists all the NEXT and REVIEW tasks in projects."
-  ;;   (org-ql-block
-  ;;    '(and (not (habit))
-  ;; 	 ()
-  ;; 	 )))
+    (defun yant/org-ql-stuck-projects-block (&rest args)
+      "Return expression, suitable for `org-agenda-custom-commands', which lists all the stuck projects."
+      (org-ql-block
+       '(and (not (tags "HOLD" "WAITING"))
+  	   (yant/org-ql-is-project-p)
+             (not (children (todo "NEXT" "DOING" "REVIEW"))))))
 
-  )
+    (defun yant/org-ql-waiting-and-hold-tasks-block (&rest args)
+      "Return expression, suitable for `org-agenda-custom-commands', which lists all the waiting and hold tasks."
+      (org-ql-block
+       '(todo "HOLD" "WAITING")))
+
+    ;; (defun yant/org-ql-next-tasks-block (&rest args)
+    ;;   "Return expression, suitable for `org-agenda-custom-commands', which lists all the NEXT and REVIEW tasks in projects."
+    ;;   (org-ql-block
+    ;;    '(and (not (habit))
+    ;; 	 ()
+    ;; 	 )))
+
+    )
 #+end_src
 
 ****** TODO use it |- (=alphapapa/org-ql=: An Org query language, and experimental code for a next-generation Org Agenda) :BOOKMARK:
@@ -17826,7 +17836,7 @@ Using because the package is abandoned and I am helping to maintain it.
 #+begin_src emacs-lisp
 (add-hook 'org-capture-mode-hook 'boon-insert 'append)
 #+end_src
-*** Faster refile
+*** Faster refile and archive
 
 I have some really large Org files (20+Mb) and Emacs has a hard time
 rendering them, especially when huge chunks of text needs to be hidden
@@ -17836,14 +17846,16 @@ This redisplay is especially annoying when I am not actually looking
 at that file, but Emacs still tries to render it briefly while
 displaying a message after refiling is done.
 
-Work around this issue by suppressing messages coming from ~org-store-log-note~.
+Work around this issue by suppressing messages coming from
+~org-store-log-note~ and ~org-archive-subtree~.
 
 #+begin_src emacs-lisp
-(use-package org
-  :config
-  (define-advice org-store-log-note  (:around (fun) silence)
-    "Run `org-store-log-note', but do not produce any message."
-    (let ((inhibit-message t)) (funcall fun))))
+  (use-package org
+    :config
+    (define-advice org-store-log-note  (:around (fun) silence)
+      "Run `org-store-log-note', but do not produce any message."
+      (let ((inhibit-message t)) (funcall fun)))
+    (advice-add 'org-archive-subtree :around #'org-store-log-note@silence))
 #+end_src
 
 *** Faster startup
