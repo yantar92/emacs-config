@@ -3536,20 +3536,6 @@ Use =boon-*-search-map= to select windows and =C-M-l= to cycle current window.
          ("o" . windmove-right)))
 #+end_src
 
-**** Undo window configuration changes
-:PROPERTIES:
-:CREATED:  [2018-10-08 Mon 14:45]
-:ID:       46cd7842-d65f-4794-9ddd-e9dc50f6495c
-:END:
-
-#+BEGIN_SRC emacs-lisp
-(when init-flag
-  (winner-mode +1)
-  (use-package boon
-    :bind (:map boon-goto-map
-		("u" . winner-undo)
-		("p" . winner-redo))))
-#+END_SRC
 **** Recentering text in window
 :PROPERTIES:
 :ID:       0e666b8b-fed0-45e1-8921-b67e0c24790b
