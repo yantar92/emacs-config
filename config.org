@@ -3600,19 +3600,16 @@ For example, debugger window may sometimes occupy too much of frame space and de
 :ID:       ecf20706-a6b2-4a46-b3c6-db3236a46d0f
 :END:
 
-I use helm to find files. Binding to =boon-*-search-map=, since it is logical. 
-
 #+begin_src emacs-lisp
 (use-package boon
   :if init-flag
   :config
   (bind-keys :map boon-forward-search-map
 	     ("f" . find-file)
-             ("F" . helm-locate)
              :map boon-backward-search-map
-	     ("f" . find-file)
-             ("F" . helm-locate)))
+	     ("f" . find-file)))
 #+end_src
+
 **** Open files as root
 :PROPERTIES:
 :CREATED:  [2018-01-10 Wed 02:38]
@@ -3635,11 +3632,10 @@ I use helm to find files. Binding to =boon-*-search-map=, since it is logical.
     :defer t
     :bind (:map boon-forward-search-map
 		("M-f" . yt/sudo-find-file)
-                ("M-S-f" . (lambda () (interactive) (yt/sudo-find-file (buffer-file-name))))
                 :map boon-backward-search-map
-		("M-f" . yt/sudo-find-file)
-                ("M-S-f" . (lambda () (interactive) (yt/sudo-find-file (buffer-file-name)))))))
+		("M-f" . yt/sudo-find-file))))
 #+END_SRC
+
 *** Directories
 **** =Dired=
 :PROPERTIES:
