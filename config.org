@@ -3472,12 +3472,15 @@ buffer to kill. I often just need to kill current buffer without
 redundant confirmation.
 
 #+begin_src emacs-lisp
-(when init-flag
-  (defun yant/kill-this-buffer ()
-    "Kill current buffer."
-    (interactive)
-    (kill-buffer (current-buffer)))
-  (bind-key "C-x q" #'yant/kill-this-buffer))
+  (when init-flag
+    (defun yant/kill-this-buffer ()
+      "Kill current buffer."
+      (interactive)
+      (kill-buffer (current-buffer)))
+    (use-package meta-functions
+      :config
+      (meta-defun meta-kill-buffer yant/kill-this-buffer)
+      (bind-key "C-x q" #'meta-kill-buffer)))
 #+end_src
 
 *** Windows
@@ -3772,19 +3775,21 @@ Some people solve this problem by using
 Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
 
 #+begin_src emacs-lisp
-(use-package dired
-  :if init-flag
-  :bind (:map dired-mode-map
-	      ("q" . dired-quit-window))
-  :init
-  (defun dired-quit-window (&optional kill window)
-    "Run `quit-window' until first non-dired buffer in the current window."
-    (interactive)
-    (let ((window (or window (selected-window))))
-      (with-selected-window window
-	(while (and (window-live-p window)
-		    (eq major-mode 'dired-mode))
-	  (quit-window kill window))))))
+  (use-package dired
+    :if init-flag
+    :init
+    (defun dired-quit-window (&optional kill window)
+      "Run `quit-window' until first non-dired buffer in the current window."
+      (interactive)
+      (let ((window (or window (selected-window))))
+        (with-selected-window window
+  	(while (and (window-live-p window)
+  		    (eq major-mode 'dired-mode))
+  	  (quit-window kill window)))))
+    :config
+    (use-package meta-functions
+      :config
+      (meta-defun meta-kill-buffer :mode dired-mode dired-quit-window)))
 #+end_src
 
 ***** Image dired
