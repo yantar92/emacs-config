@@ -3988,29 +3988,7 @@ Do not hide symlink target when hiding details.
   (dired-hide-details-hide-symlink-targets nil)
   (dired-hide-details-preserved-columns '(4 5 6 7)))
 #+end_src
-**** Disk usage
-:PROPERTIES:
-:CREATED:  [2019-07-15 Mon 22:04]
-:ID:       1b72898b-f2e1-4534-862e-143f30e16d3c
-:END:
 
-#+begin_src emacs-lisp
-(use-package disk-usage
-  :if init-flag
-  :straight t
-  :config
-  (meta-defun meta-up-element :mode disk-usage-mode disk-usage-up))
-#+end_src
-
-Fix =ange-ftp= using =dired-listing-switches= even when ftp server does not accept them
-
-#+begin_src emacs-lisp
-(define-advice ange-ftp-ls (:around (oldfun file lsargs parse &optional no-error wildcard) force-default-ls-switches)
-  "Always use -al in ftp."
-  (unless (string= lsargs "-al")
-    (setq lsargs "-Al --dired"))
-  (apply oldfun (list file "-al" parse no-error wildcard)))
-#+end_src
 *** Documentation
 **** TODO COMMENT =helm-dash=
 :PROPERTIES:
