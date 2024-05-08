@@ -3649,7 +3649,6 @@ For example, debugger window may sometimes occupy too much of frame space and de
 - State "TODO"       from              [2018-03-12 Mon 14:57]
 - State "CANCELLED"  from              [2017-05-28 Sun 17:46]
 :END:
-
 ***** Key bindings
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:18]
@@ -3675,9 +3674,7 @@ For example, debugger window may sometimes occupy too much of frame space and de
 		("<tab>" . dired-filter-group-toggle-header))
     :config
     (set-face-attribute 'dired-filter-group-header nil
-			:underline nil)
-    ;; (unbind-key "<tab>" dired-filter-group-mode-map)
-    )
+			:underline nil))
   (use-package meta-functions
     :init
     (use-package dired-hacks-utils :straight t)
@@ -3688,8 +3685,7 @@ For example, debugger window may sometimes occupy too much of frame space and de
     (meta-defun meta-up-element :mode dired-mode :cond (get-text-property (point) 'dired-filter-group-header) dired-filter-group-backward-drawer)
     (meta-defun meta-down-element :mode dired-mode dired-filter-group-forward-drawer)
     (meta-defun meta-return :mode dired-mode :cond (get-text-property (point) 'dired-filter-group-header) dired-filter-group-toggle-header)
-    (meta-defun meta-return :mode dired-mode :cond (get-text-property (point) 'dired-filter-group-header) dired-filter-group-toggle-header)
-    ))
+    (meta-defun meta-return :mode dired-mode :cond (get-text-property (point) 'dired-filter-group-header) dired-filter-group-toggle-header)))
 #+end_src
 
 ****** =Image-dired= bindings
@@ -3697,8 +3693,6 @@ For example, debugger window may sometimes occupy too much of frame space and de
 :CREATED:  [2019-05-07 Tue 21:26]
 :ID:       c095c061-ffdc-4adb-a889-bb4e54b6a514
 :END:
-****************** TODO review capabilities of image-dired
-****************** END
 
 #+begin_src emacs-lisp
 (use-package image-dired
@@ -3724,6 +3718,7 @@ For example, debugger window may sometimes occupy too much of frame space and de
     (meta-defun meta-down :mode image-dired-thumbnail-mode image-dired-next-line)
     (meta-defun meta-up :mode image-dired-thumbnail-mode image-dired-previous-line)))
 #+end_src
+
 ***** Browse archives with =dired-avfs=
 :PROPERTIES:
 :ID:       f14a4a86-b866-4d20-96c5-93d174a0ae6a
@@ -3798,9 +3793,6 @@ Kill all the =dired= buffers in the window until non-=dired= buffer on "q"
 :ID:       0513c7b0-f723-40f7-85bc-ee3c4b35b823
 :END:
 
-****************** TODO suggest to add to emacs?
-****************** END
-
 Unselect all the files after showing thumbnails. Useful to mark files from the =image-dired= buffer. 
 #+begin_src emacs-lisp
 (use-package image-dired
@@ -3813,8 +3805,10 @@ Unselect all the files after showing thumbnails. Useful to mark files from the =
 #+end_src
 
 
-Increase the border size around thumbnails. Default size make it difficult to me spotting the cursor position.
+Increase the border size around thumbnails. Default size make it
+difficult to me spotting the cursor position.
 Inspired by: [[id:4bc3aabf24f87d95784e463c42b4e114bce3be59][[Protesilaos] GNU Emacs integrated computing environment | Protesilaos Stavrou]]
+
 #+begin_src emacs-lisp
 (use-package image-dired
   :if init-flag
@@ -3846,6 +3840,7 @@ Using trash is safer.
   (delete-by-moving-to-trash t)
   (trash-directory "~/tmp/Trash"))
 #+end_src
+
 ***** Open file in external app from dired
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 21:55]
@@ -3868,7 +3863,8 @@ Using trash is safer.
 - State "TODO"       from              [2018-07-23 Mon 15:45]
 :END:
 
-=dired-find-file= calls =find-file=, which calls =find-file-noselect=, which forces =abbreviate-file-name= to be applied.
+=dired-find-file= calls =find-file=, which calls =find-file-noselect=, which
+forces =abbreviate-file-name= to be applied.
 It makes entering symlink in =~/Dropbox/Org/->~/Org= go into "~/Org".
 As a result, =dired-up-directory= goes to =~/= instead of =~/Dropbox=.
 
@@ -3885,51 +3881,43 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
     (apply OLDFUN args)))
 (advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
 #+END_SRC
+
 ***** Group files :EMACS:COMMON:SOMEDAY:
 :PROPERTIES:
 :CREATED:  [2018-04-09 Mon 21:56]
 :ID:       18e2dd1e-dc25-4188-bad4-cdcdb76f506a
-:ARCHIVE_TIME: 2023-05-12 Fri 22:57
-:ARCHIVE_FILE: ~/Git/emacs-config/config.org
-:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)/COMMENT Appearance
-:ARCHIVE_CATEGORY: config
-:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
 :END:
 
 #+BEGIN_SRC emacs-lisp
-(use-package dired-filter
-  :if init-flag
-  :straight t
-  :custom (dired-filter-group-saved-groups '(("default"
-					      ("Dirs"
-					       (directory . nil))
-					      ("Archives"
-					       (extension "zip" "rar" "gz" "bz2" "tar"))
-					      ("Documents"
-					       (extension "org" "cfm" "pdf" "tex" "bib" "mobi" "fb2" "doc" "docx" "ps" "odt"))
-					      ("Scripts"
-					       (extension "gnuplot" "sh"))
-					      ("Data"
-					       (extension "txt" "hys" "xls" "xlsx"))
-					      ("Images"
-					       (extension "png" "jpg" "jpeg" "tiff" "tif" "svg"))
-					      ("Videos"
-					       (extension "avi" "mpeg" "mp4" "mkv"))
-					      )))
-  :hook (dired-mode . dired-filter-group-mode))
+  (use-package dired-filter
+    :if init-flag
+    :straight t
+    :custom
+    (dired-filter-group-saved-groups
+     '(("default"
+        ("Dirs"
+         (directory . nil))
+        ("Archives"
+         (extension "zip" "rar" "gz" "bz2" "tar"))
+        ("Documents"
+         (extension "org" "cfm" "pdf" "tex" "bib" "mobi" "fb2" "doc" "docx" "ps" "odt"))
+        ("Scripts"
+         (extension "gnuplot" "sh"))
+        ("Data"
+         (extension "txt" "hys" "xls" "xlsx"))
+        ("Images"
+         (extension "png" "jpg" "jpeg" "tiff" "tif" "svg"))
+        ("Videos"
+         (extension "avi" "mpeg" "mp4" "mkv"))
+        )))
+    :hook (dired-mode . dired-filter-group-mode))
 #+END_SRC
-
 
 ***** Appearance
 ****** File icons
 :PROPERTIES:
 :CREATED:  [2019-08-27 Tue 17:18]
 :ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
-:ARCHIVE_TIME: 2023-05-12 Fri 22:56
-:ARCHIVE_FILE: ~/Git/emacs-config/config.org
-:ARCHIVE_OLPATH: Emacs configuration/Search & navigation/Directories/=Dired= (=dirvish=)/COMMENT Appearance
-:ARCHIVE_CATEGORY: config
-:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
 :END:
 
 #+begin_src emacs-lisp
@@ -3946,7 +3934,7 @@ Same for =dired-noselect= (called by =dired=, which is called by =dired-up-direc
 :ID:       45393002-d153-42bf-ae39-70b6e49b25b0
 :END:
 
-Additional fontification in =dired=
+Additional fontification in =dired=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package diredfl
@@ -3955,6 +3943,7 @@ Additional fontification in =dired=
   :config
   (diredfl-global-mode 1))
 #+END_SRC
+
 ****** Hide uninteresting files
 :PROPERTIES:
 :CREATED:  [2020-04-14 Tue 14:10]
@@ -3964,7 +3953,7 @@ Additional fontification in =dired=
 - Refiled on [2020-04-14 Tue 14:16]
 :END:
 
-Hide =dotfiles=
+Hide =dotfiles=.
 
 #+begin_src emacs-lisp
 (use-package dired-hide-dotfiles
