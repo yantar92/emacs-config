@@ -3989,53 +3989,13 @@ Do not hide symlink target when hiding details.
   (dired-hide-details-preserved-columns '(4 5 6 7)))
 #+end_src
 
-*** Documentation
-**** TODO COMMENT =helm-dash=
-:PROPERTIES:
-:ID:       648e38a1-8a1c-4453-ab4c-5376716b2639
-:END:
-
-An alternative is [[id:Github-astoff-astoff-devdocs-el-636][astoff [Github] astoff/devdocs.el: Emacs viewer for DevDocs]], but it does not ([2022-05-14 Sat]) have helm support.
-
-Emacs has an excellent built-in support for Elisp and GNU system documentation.
-Moreover, it can be integrated with all other kinds of documentation using Dash.
-
-#+begin_src emacs-lisp
-(use-package helm-dash
-  :if init-flag
-  :straight t
-  :demand t
-  :custom
-  (dash-docs-enable-debugging nil)
-  (helm-dash-docsets-path (no-littering-expand-var-file-name "dash-docs/docsets"))
-  (dash-docsets-path (no-littering-expand-var-file-name "dash-docs/docsets"))
-  (helm-dash-browser-func 'eww)
-  (helm-dash-common-docsets '("Bash" "LaTeX" "Python 3"))
-  :config
-  (add-hook latex-mode (lambda () (setq dash-docs-docsets '("LaTeX"))))
-  (add-hook sh-mode (lambda () (setq dash-docs-docsets '("Bash"))))
-  (add-hook python-mode (lambda () (setq dash-docs-docsets '("Python 3"))))
-  (use-package helm-dash
-    :config  
-    (meta-defun meta-help :mode latex-mode (helm-dash (concat "LaTeX " (thing-at-point 'symbol))))
-    (meta-defun meta-help :mode sh-mode (helm-dash (concat "Bash " (thing-at-point 'symbol))))
-    (meta-defun meta-help :mode python-mode (helm-dash (concat "Python 3 " (thing-at-point 'symbol))))))
-#+end_src
-**** latex2e info documentation
-
-See [[id:a92c0e31-556b-47d5-a58e-468ab0c99a59][TeX \ LaTeX (texlive)]]
-
-#+begin_src emacs-lisp
-(add-to-list 'Info-additional-directory-list "/usr/share/texmf-dist/doc/info/")
-#+end_src
-
-
 *** Dictionary
-
 **** =wordnut=
 
 [[id:Github-gromnitsky-gromnitsky-wordnut-emacs-0d0][gromnitsky [Github] gromnitsky/wordnut: Emacs major mode interface to WordNet lexical database]]
 Requires installed [[id:0ce5f9c5-7c71-46dc-94ef-3cf7ed51fba4][=app-dicts/wordnet= package]]
+
+Display dictionary when requesting help at point in non-code contexts.
 
 #+begin_src emacs-lisp
 (use-package wordnut
