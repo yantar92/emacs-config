@@ -4265,27 +4265,12 @@ Mostly intended to use with org.
                 ("C-M-j" . meta-insert-enclosure-new-line)
                 ("C-J" . meta-insert-active-enclosure-new-line))))
 #+end_src
-*** Do no yank with mouse, but use Shift-Ins to yank the primary selection
-:PROPERTIES:
-:ID:       88a3703a-21fe-47a1-9b8c-bce7fdb5d10a
-:END:
 
-I do not use mouse as much as possible and discourage myself to use it unnecessarily.
-
-#+begin_src emacs-lisp
-(when init-flag
-  (bind-key "<S-insert>" (lambda () (interactive)
-			   (insert (gui-get-primary-selection))))
-  (bind-key "<mouse-2>" #'ignore))
-#+end_src
 *** Move lines, elements around
 :PROPERTIES:
 :CREATED:  [2018-03-12 Mon 15:00]
 :ID:       61ed40af-8165-4ffa-9412-96d802bb8e18
 :END:
-
-****************** TODO I had to put completion commands here to work around meta-functions bug, but they truly belong to completion section
-****************** END
 
 #+BEGIN_SRC emacs-lisp
 (use-package meta-functions
@@ -4393,17 +4378,6 @@ I also added =self-insert-command= check to avoid calling, say, on movement comm
 \begin{equation}
 $0
 \end{equation}
-#+end_src
-
-**** Software licence snippets
-
-#+begin_src emacs-lisp
-(use-package license-snippets
-  :if init-flag
-  :after yasnippet
-  :straight (license-snippets :host github :repo "sei40kr/license-snippets")
-  :config
-  (license-snippets-init))
 #+end_src
 
 *** Undo
