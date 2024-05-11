@@ -4046,9 +4046,9 @@ Display dictionary when requesting help at point in non-code contexts.
 :ID:       94ed4714-1f9d-43f7-8ddc-74f855154b2c
 :END:
 
-The boon's default =ESC= key binding to go back to command state is too hard to press.
-I prefer a key on home row. 
-=M-l= have proven to be good enough for me.
+The boon's default =ESC= key binding to go back to command state is too
+hard to press.  I prefer a key on home row.  =M-l= have proven to be
+good enough for me.
 
 #+begin_src emacs-lisp
 (use-package boon
@@ -4056,6 +4056,7 @@ I prefer a key on home row.
   :config
   (bind-key "M-l" 'boon-set-command-state boon-insert-map))
 #+end_src
+
 *** Multiple cursors
 :PROPERTIES:
 :ID:       8cbda343-0d1f-4abd-92d1-75a22b0b8d3c
@@ -4074,36 +4075,38 @@ Bind it to command mode in boon.
     :bind (:map boon-command-map
 		("C-V" . mc/edit-beginnings-of-lines))))
 #+end_src
+
 *** Open current line
 :PROPERTIES:
 :CREATED:  [2017-12-29 Fri 16:03]
 :ID:       0d1d2022-e094-49b0-abc0-0957536690ee
 :END:
 
-This is one of the frequently used commands and I want it to be available from command state. 
-However, org has its own version of open-line. 
-So, I define a meta-function to make open-line work as correctly regardless of the mode.
+This is one of the frequently used commands and I want it to be
+available from command state.  However, Org has its own version of
+open-line.  So, I define a meta-function to make open-line work as
+correctly regardless of the mode.
 
 #+BEGIN_SRC emacs-lisp
-(use-package boon
-  :if init-flag
-  :config
-  (meta-defun meta-open-line "Create an empty line above point." boon-open-line)
-  (use-package org
-    :defer t
+  (use-package boon
+    :if init-flag
     :config
-    (meta-defun meta-open-line :mode org-mode org-open-line))
-  (bind-key "C-o" 'meta-open-line boon-command-map))
+    (meta-defun meta-open-line "Create an empty line above point." boon-open-line)
+    (use-package org
+      :defer t
+      :config
+      (meta-defun meta-open-line :mode org-mode org-open-line))
+    (bind-key "C-o" 'meta-open-line boon-command-map))
 #+END_SRC
 
 Also, don't break the current line if the cursor is in the middle of a line
 
 #+begin_src emacs-lisp
-(use-package simple
-  :if init-flag
-  :config
-  (define-advice open-line (:before (&rest args) mote-to-beg-first)
-    (beginning-of-line)))
+  (use-package simple
+    :if init-flag
+    :config
+    (define-advice open-line (:before (&rest args) move-to-beg-first)
+      (beginning-of-line)))
 #+end_src
 
 *** Cut element at point
@@ -4116,10 +4119,10 @@ Also, don't break the current line if the cursor is in the middle of a line
 :END:
 
 #+begin_src emacs-lisp
-(use-package meta-functions
-  :if init-flag
-  :config
-  (meta-defun meta-cut-element () "Cut element at point" kill-paragraph))
+  (use-package meta-functions
+    :if init-flag
+    :config
+    (meta-defun meta-cut-element () "Cut element at point" kill-paragraph))
 #+end_src
 
 *** Query replace
@@ -4130,23 +4133,25 @@ Also, don't break the current line if the cursor is in the middle of a line
 Use a query replace version with nice highlights.
 
 #+begin_src emacs-lisp
-(use-package boon
-  :if init-flag
-  :config
-  (use-package visual-regexp
-    :straight t  
-    :bind (:map boon-command-map
-		("?" . vr/query-replace))))
+  (use-package boon
+    :if init-flag
+    :config
+    (use-package visual-regexp
+      :straight t  
+      :bind (:map boon-command-map
+  		("?" . vr/query-replace))))
 #+end_src
+
 *** Indent region
 :PROPERTIES:
 :ID:       703f08dd-3ad9-4eba-a60e-2ad4de642375
 :END:
 
 #+begin_src emacs-lisp
-(when init-flag
-  (bind-key* "C-<tab>" 'indent-region))
+  (when init-flag
+    (bind-key* "C-<tab>" 'indent-region))
 #+end_src
+
 *** Aggressive indent
 :PROPERTIES:
 :ID:       f3eaeebf-fe50-4ec6-81ed-f42e8b7b71c6
@@ -4163,7 +4168,8 @@ Automatic indentation is handy to keep the code nice and readable.
   (add-hook 'prog-mode-hook #'aggressive-indent-mode))
 #+end_src
 
-Inhibit message that indentation is completed
+Inhibit message that indentation is completed.
+
 #+begin_src emacs-lisp
 (define-advice indent-region (:around (fun &rest args) silence)
   "Do not show meessages."
@@ -4177,8 +4183,8 @@ Inhibit message that indentation is completed
 :END:
 
 Deleting a char/word backward is pretty common command when typing.
-However, <DEL> key is too far on keyboard. 
-I prefer something on home row - =C-h= and =C-M-h=.
+However, <DEL> key is too far on keyboard.  I prefer something on home
+row - =C-h= and =C-M-h=.
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -4188,6 +4194,7 @@ I prefer something on home row - =C-h= and =C-M-h=.
 	     ("C-h" . isearch-delete-char)
              ("C-M-h" . isearch-delete-char)))
 #+end_src
+
 *** Smarter =backward-kill-word=
 :PROPERTIES:
 :CREATED:  [2019-07-29 Mon 21:58]
@@ -4238,8 +4245,6 @@ From [[https://www.reddit.com/r/emacs/comments/bz9rxn/weekly_tipstricketc_thread
 :PROPERTIES:
 :ID:       ce7df944-6c64-4a7d-8e11-136237250e3c
 :END:
-****************** TODO adjust keybindings to avoid interference with WM
-****************** END
 
 Meta-versions of return/return-dwim commands.
 Mostly intended to use with org.
@@ -4331,6 +4336,7 @@ I do not use mouse as much as possible and discourage myself to use it unnecessa
     (meta-defun meta-move-line-up :mode completion-list-mode mct-previous-completion-or-mini))
   (use-package boon))
 #+END_SRC
+
 *** =Yasnippet=
 :PROPERTIES:
 :CREATED:  [2019-08-07 Wed 10:53]
@@ -4338,10 +4344,8 @@ I do not use mouse as much as possible and discourage myself to use it unnecessa
 :END:
 
 =Yasnippet= is a very handy way to use templates as you type.
-There is also built-in skeleton mode, but =yasnippet= also has a good user-contributed snippet database.
- 
-****************** TODO study the snippets
-****************** END
+There is also built-in skeleton mode, but =yasnippet= allows more visual
+interactive editing style without prompts.
 
 #+begin_src emacs-lisp
 (use-package yasnippet
@@ -4350,12 +4354,9 @@ There is also built-in skeleton mode, but =yasnippet= also has a good user-contr
   :diminish (yas-minor-mode . " ⇶_")
   :hook ((org-mode latex-mode markdown-mode prog-mode lisp-interaction-mode) . yas-minor-mode)
   :config
-  (yas-reload-all)
-  ;; :config
-  ;; (use-package yasnippet-snippets
-  ;;   :straight t)
-  )
+  (yas-reload-all))
 #+end_src
+
 **** Auto-expand snippets without a need to type trigger command
 :PROPERTIES:
 :ID:       4f8271fa-7574-4846-91f9-a66660b26d2f
@@ -4378,6 +4379,7 @@ I also added =self-insert-command= check to avoid calling, say, on movement comm
           (yas-expand)))))
   (add-hook 'post-command-hook #'my-yas-try-expanding-auto-snippets))
 #+end_src
+
 **** Org mode snippets
 :PROPERTIES:
 :ID:       039ff2cb-c373-4c39-815e-1f65e7039458
