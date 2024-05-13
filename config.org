@@ -3854,33 +3854,6 @@ Using trash is safer.
   :bind (:map dired-mode-map
 	      ("<return>" . dired-open-xdg)))
 #+end_src
-***** TODO Follow symlink structure
-:PROPERTIES:
-:CREATED:  [2018-07-23 Mon 15:42]
-:ID:       3f656102-43d7-4a91-b245-92af4ffca9a6
-:END:
-:LOGBOOK:
-- State "TODO"       from              [2018-07-23 Mon 15:45]
-:END:
-
-=dired-find-file= calls =find-file=, which calls =find-file-noselect=, which
-forces =abbreviate-file-name= to be applied.
-It makes entering symlink in =~/Dropbox/Org/->~/Org= go into "~/Org".
-As a result, =dired-up-directory= goes to =~/= instead of =~/Dropbox=.
-
-Hence, I avoid =abbreviate-file-name= in =dired-find-file=.
-Same for =dired-noselect= (called by =dired=, which is called by =dired-up-directory=).
-
-#+BEGIN_SRC emacs-lisp
-(define-advice dired-find-file (:around (OLDFUN &rest args) disable-abbreviate-file-name)
-  "Disable `abbreviate-file-name' in dired."
-  (cl-flet ((abbreviate-file-name (filename) ""
-	      (if (file-directory-p filename)
-		  (file-name-as-directory filename)
-                filename)))
-    (apply OLDFUN args)))
-(advice-add 'dired-noselect :around #'dired-find-file@disable-abbreviate-file-name)
-#+END_SRC
 
 ***** Appearance
 ****** Group files :EMACS:COMMON:SOMEDAY:
@@ -4401,71 +4374,6 @@ $0
   (meta-defun meta-up :mode vundo-mode vundo-up))
 #+end_src
 
-**** COMMENT Save undo history between Emacs sessions
-:PROPERTIES:
-:SUMMARY:  gives ~read~ error
-:END:
-
-- Note taken on [2022-07-29 Fri 14:43] \\
-  gives ~read~ error
-[[id:Github-emacsorphanage-emacsorphanage-undohist-persistent-37b][emacsorphanage [Github] emacsorphanage/undohist: Persistent Undo History for GNU Emacs]]
-
-#+begin_src emacs-lisp
-(use-package undohist
-  :straight t
-  :config
-  (undohist-initialize))
-#+end_src
-
-**** COMMENT Undo-tree 
-:PROPERTIES:
-:CREATED:  [2020-01-20 Mon 10:34]
-:ID:       8b8023ed-03c8-4aa7-a47e-6195f94bc63d
-:END:
-
-[2020-09-18 Fri] garbage-collect is slow
-
-Tree view of emacs undo history.
-Very useful to undo and redo after complex edits.
-
-#+begin_src emacs-lisp
-(use-package undo-tree
-  :straight t
-  :diminish undo-tree-mode
-  :custom 
-  (undo-tree-auto-save-history nil) ;; disabling since it causes cryptic error
-  :config
-  (global-undo-tree-mode +1))
-#+end_src
-
-Add meta-bindings
-
-#+begin_src emacs-lisp
-(use-package meta-functions
-  :after undo-tree 
-  :config
-  (meta-defun meta-up :mode undo-tree-visualizer-mode undo-tree-visualize-undo)
-  (meta-defun meta-down :mode undo-tree-visualizer-mode undo-tree-visualize-redo)
-  (meta-defun meta-forward :mode undo-tree-visualizer-mode undo-tree-visualize-switch-branch-right)
-  (meta-defun meta-backward :mode undo-tree-visualizer-mode undo-tree-visualize-switch-branch-left))
-#+end_src
-
-*** SOMEDAY Editing outside emacs
-:PROPERTIES:
-:CREATED:  [2019-08-25 Sun 19:56]
-:ID:       b8575b61-511d-482b-ae5b-bd542db5f443
-:END:
-:LOGBOOK:
-CLOCK: [2020-04-23 Thu 14:49]--[2020-04-23 Thu 14:50] =>  0:01
-:END:
-
-=emacs-anywhere= allows to invoke emacs for editing in any other application
-
-#+begin_src emacs-lisp
-(use-package emacs_anywhere
-  :disabled t
-  :straight (emacs_anywhere :type git :host github :repo "zachcurry/emacs-anywhere"))
-#+end_src
 *** Fill/unfill paragraph
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 15:20]
