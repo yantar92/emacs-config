@@ -4279,21 +4279,28 @@ Mostly intended to use with org.
 		       (meta-move-element-right "Move the element under cursor right." ignore)
 		       (meta-move-element-left "Move the element under cursor left." ignore)
 		       (meta-move-element-down "Move the element under cursor down." move-text-down)
-		       (meta-move-element-up "Move the element under cursor up." move-text-up)))
+		       (meta-move-element-up "Move the element under cursor up." move-text-up))))
+  (use-package boon))
+#+END_SRC
+
+**** Navigate completions with M-j/k
+
+#+begin_src emacs-lisp
+  (use-package meta-functions
+    :config
     (meta-defun meta-move-line-down
       :mode minibuffer-mode
       (with-minibuffer-completions-window
-	(call-interactively #'next-completion)
+        (call-interactively #'next-completion)
         (run-hooks 'post-command-hook)))
     (meta-defun meta-move-line-down :mode completion-list-mode mct-next-completion-or-mini)
     (meta-defun meta-move-line-up
       :mode minibuffer-mode
       (with-minibuffer-completions-window
-	(call-interactively #'previous-completion)
+        (call-interactively #'previous-completion)
         (run-hooks 'post-command-hook)))
     (meta-defun meta-move-line-up :mode completion-list-mode mct-previous-completion-or-mini))
-  (use-package boon))
-#+END_SRC
+#+end_src
 
 *** =Yasnippet=
 :PROPERTIES:
@@ -4399,6 +4406,7 @@ Interactive fill/unfill paragraph at point.
     :bind (:map boon-command-map
 		("M-q" . endless/fill-or-unfill))))
 #+end_src
+
 ** Debugging
 :PROPERTIES:
 :ID:       749e7414-827f-45cb-9ee0-19637eb2274e
