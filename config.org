@@ -17812,10 +17812,46 @@ This works instead of default fringe indicators and hence I need to disable frin
   (set-display-table-slot org-display-table 'selective-display
                           (string-to-vector " …")))
 #+end_src
+
 * Archived :ARCHIVE:
 :PROPERTIES:
 :header-args: :tangle no
 :END:
+** COMMENT Hunt for the commands causing hangs =explain-pause-mode= :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2020-05-25 Mon 18:45]
+:ID:       e55d91e3-562c-465b-a564-82729edad44d
+:ARCHIVE_TIME: 2024-05-14 Tue 00:06
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Debugging
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+[2020-09-18 Fri] Profiler cache eats a lot of memory. Should only use it when I need to debug
+[2021-03-21 Sun] Enabling again. Emacs is pretty fast now, so it could be useful to narrow non-obvious bottlenecks
+[2021-04-02 Fri] Again too much memory usage. Ether because of this or I am just playing with something else.
+
+#+begin_src emacs-lisp
+(use-package explain-pause-mode
+  :if init-flag
+  :demand t
+  :straight (explain-pause-mode :host github :repo "lastquestion/explain-pause-mode")
+  :custom (explain-pause-slow-too-long-ms 400)
+  :config
+  ;; (diminish 'explain-pause-mode " ⌚")
+  (diminish 'explain-pause-mode (concat " "
+					(propertize (all-the-icons-material "watch" :v-adjust 0.04)
+						    'face `((
+							     :family "Material Icons"
+							     ;; :height 1.1
+                                                             ))
+						    ;; 'display '(raise -0.1)
+                                                    )))
+  ;; (explain-pause-mode +1)
+  )
+#+end_src
+
 ** COMMENT Smart garbage collect. :EMACS:COMMON:SOMEDAY:
 :PROPERTIES:
 :ARCHIVE_TIME: 2024-03-20 Wed 13:37
