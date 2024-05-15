@@ -4547,44 +4547,6 @@ Sometimes, I just need to have any random text in buffer for testing.
   :straight t)
 #+end_src
 
-*** Persistent profiling
-
-Emacs provides an excelled profiler via ~M-x profiler-start~ ~M-x profiler-report~.
-However, it has a disadvantage - you need to know in advance that some slowness is about to happen.
-If the profiler is started too early, a lot of recorded information will be useless and, more importantly, shadow the actual slowdown of interest.
-
-The solution is tripping the profiler data periodically on timer.
-This way, only last minutes of the profiling will be shown even if the profiler is running continuously.
-
-#+begin_src emacs-lisp
-(if init-flag
-    (defvar yant/profiler--start-time (current-time)
-      "Starting time of the last profiler call.")
-  (defvar yant/profiler-max-time (* 60 5)
-    "Maximum time allowed for profiler to run continuously.")
-  (defun yant/profiler-restart-maybe ()
-    "Restart profiler running for too long.
-Too long is defined by `yant/profiler-max-time'."
-    (when (and (or (profiler-cpu-running-p)
-		   (profiler-memory-running-p))
-	       (> (float-time (time-since yant/profiler--start-time))
-		  yant/profiler-max-time))
-      (setq yant/profiler--start-time (current-time))
-      (cond
-       ((and (profiler-cpu-running-p)
-	     (profiler-memory-running-p))
-        (profiler-stop)
-        (profiler-start 'cpu+mem))
-       ((profiler-cpu-running-p)
-        (profiler-stop)
-        (profiler-start 'cpu))
-       ((profiler-memory-running-p)
-        (profiler-stop)
-        (profiler-start 'mem)))
-      (message "Profiler restarted.")))
-  (run-with-timer 1 yant/profiler-max-time #'yant/profiler-restart-maybe))
-#+end_src
-
 *** Hung memory leaks
     :PROPERTIES:
     :ID:       b6df8ed3-75b4-4e9f-a866-0c6abce32e0d
@@ -19084,5 +19046,50 @@ I use company for completion just because it is easy to use.
   :straight t
   :config
   (bind-key "C-x M-o" #'browse-at-remote))
+#+end_src
+
+** Persistent profiling :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-05-14 Tue 12:54
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Debugging
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+Emacs provides an excelled profiler via ~M-x profiler-start~ ~M-x profiler-report~.
+However, it has a disadvantage - you need to know in advance that some slowness is about to happen.
+If the profiler is started too early, a lot of recorded information will be useless and, more importantly, shadow the actual slowdown of interest.
+
+The solution is tripping the profiler data periodically on timer.
+This way, only last minutes of the profiling will be shown even if the profiler is running continuously.
+
+#+begin_src emacs-lisp
+(if init-flag
+    (defvar yant/profiler--start-time (current-time)
+      "Starting time of the last profiler call.")
+  (defvar yant/profiler-max-time (* 60 5)
+    "Maximum time allowed for profiler to run continuously.")
+  (defun yant/profiler-restart-maybe ()
+    "Restart profiler running for too long.
+Too long is defined by `yant/profiler-max-time'."
+    (when (and (or (profiler-cpu-running-p)
+		   (profiler-memory-running-p))
+	       (> (float-time (time-since yant/profiler--start-time))
+		  yant/profiler-max-time))
+      (setq yant/profiler--start-time (current-time))
+      (cond
+       ((and (profiler-cpu-running-p)
+	     (profiler-memory-running-p))
+        (profiler-stop)
+        (profiler-start 'cpu+mem))
+       ((profiler-cpu-running-p)
+        (profiler-stop)
+        (profiler-start 'cpu))
+       ((profiler-memory-running-p)
+        (profiler-stop)
+        (profiler-start 'mem)))
+      (message "Profiler restarted.")))
+  (run-with-timer 1 yant/profiler-max-time #'yant/profiler-restart-maybe))
 #+end_src
 
