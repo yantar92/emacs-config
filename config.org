@@ -4533,6 +4533,7 @@ Sometimes, I just need to have any random text in buffer for testing.
   :if init-flag
   :straight t)
 #+end_src
+
 *** Bug hunting in =init.el=
 :PROPERTIES:
 :ID:       fa3afe58-87b9-4230-a9a6-298be9f6998d
@@ -4547,23 +4548,17 @@ Sometimes, I just need to have any random text in buffer for testing.
   :straight t)
 #+end_src
 
-*** Hung memory leaks
-    :PROPERTIES:
-    :ID:       b6df8ed3-75b4-4e9f-a866-0c6abce32e0d
-    :END:
-
-#+begin_src emacs-lisp
-(use-package memory-usage
-  :if init-flag
-  :straight t)
-#+end_src
 *** Debugging of font-lock
 :PROPERTIES:
 :CREATED:  [2020-07-28 Tue 17:46]
 :ID:       e8ad6617-d24c-4dfe-8f28-e6336e4c7787
 :END:
 
-By default, font-locking is not debuggable because all the errors thrown by fontification functions are catched and cause the functions to be removed. It indeed makes sense since errors in fontification functions can easily hang Emacs. However, it makes debugging such functions very difficult.
+By default, font-locking is not debuggable because all the errors
+thrown by fontification functions are catched and cause the functions
+to be removed. It indeed makes sense since errors in fontification
+functions can easily hang Emacs. However, it makes debugging such
+functions very difficult.
 
 Here is the solution: [[id:d3ad021d-475f-48d6-9b80-315dbff60322][Lindydancer/font-lock-studio: Debugger for Font Lock keywords]]
 Just invoke =M-x font-lock-studio= for interactive debugging.
@@ -4577,7 +4572,9 @@ Just invoke =M-x font-lock-studio= for interactive debugging.
              ("d" . font-lock-studio-step-into)))
 #+end_src
 
-The same author also wrote font-lock profiler: [[id:github_lindydancer_lindy_font_lock_profil_cover][Lindydancer [Github] Lindydancer Font-Lock-Profiler: Coverage and Timing Tool for Font-Lock Keywords]]
+The same author also wrote font-lock profiler: [[id:github_lindydancer_lindy_font_lock_profil_cover][Lindydancer [Github]
+Lindydancer Font-Lock-Profiler: Coverage and Timing Tool for Font-Lock
+Keywords]]
 
 #+begin_src emacs-lisp
 (use-package font-lock-profiler
@@ -4606,6 +4603,7 @@ Similar to the problem with debugging, profiling the time spend on fontification
   :if init-flag
   :straight (font-lock-profiler :host github :repo "Lindydancer/font-lock-profiler"))
 #+end_src
+
 *** Debugging macros using =macrostep=
 :PROPERTIES:
 :ID:       a7e6bf1d-576f-4262-a74f-2a32f64ea3dd
@@ -4616,9 +4614,9 @@ Similar to the problem with debugging, profiling the time spend on fontification
   :if init-flag
   :straight t)
 #+end_src
-*** Profiler
-**** Appearance
+
 *** Inspecting objects (inside profiler or evaluation results)
+
 #inspector
 #+begin_src emacs-lisp
 (use-package inspector
@@ -4633,6 +4631,7 @@ With `\\[universal-argument]', run `inspector-inspect-last-sexp'."
       ('(4) (inspector-inspect-last-sexp))
       (_ (call-interactively oldfun)))))
 #+end_src
+
 **** Inspect when =C-u M-:=
 #+begin_src emacs-lisp
 (use-package inspector
