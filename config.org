@@ -4677,7 +4677,7 @@ With `\\[universal-argument]', run `inspector-inspect-expression'."
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
 :END:
-*** Create new projects via templates =M-x skeletor-create-project=
+*** (experimental) Create new projects via templates =M-x skeletor-create-project=
 
 #+begin_src emacs-lisp
 (use-package skeletor
@@ -4688,21 +4688,9 @@ With `\\[universal-argument]', run `inspector-inspect-expression'."
   (skeletor-project-directory "~/Git"))
 #+end_src
 
-*** COMMENT Language server protocol
-:PROPERTIES:
-:ID:       7104c9e6-55f0-4c32-8376-b8868fea856e
-:END:
-
-#+begin_src emacs-lisp
-(use-package lsp-ui
-  :defer t
-  :straight t
-  :if init-flag)
-#+end_src
-
 *** Emacs help
 
-There are various ways Emacs can assist on getting documentation.
+There are multiple ways Emacs can assist on getting documentation.
 
 **** Symbol&info lookup
 :PROPERTIES:
@@ -4739,56 +4727,10 @@ Add command searching across Emacs-related user manuals.
                      helm-source-info-tramp))))
  #+end_src
 
-Explore loaded library files
-#+begin_src emacs-lisp
-(use-package helm
-  :if init-flag
-  :bind (("<f1> l" . helm-locate-library)))
-#+end_src
-
-**** Man
-:PROPERTIES:
-:ID:       45d67bee-9fa3-4c00-8f48-2b41ed03ea46
-:END:
-
-#+begin_src emacs-lisp
-(use-package woman
-  :if init-flag
-  :commands woman
-  :config
-  (use-package meta-functions
-    :config
-    (meta-defun meta-down-element :mode woman-mode Man-next-section)
-    (meta-defun meta-up-element :mode woman-mode Man-previous-section)))
-#+end_src
-**** TL;DR - short practical version of man
-:PROPERTIES:
-:CREATED:  [2019-01-20 Sun 02:28]
-:ID:       fd10055f-2a65-4c7e-a1e9-3d95e7d8ea72
-:END:
-
-#+begin_src emacs-lisp
-(use-package tldr
-  :if init-flag
-  :straight t)
-#+end_src
-
 **** Appearance
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 15:19]
 :END:
-***** COMMENT Info+
-:PROPERTIES:
-:CREATED:  [2019-07-26 Fri 21:36]
-:ID:       e75f029b-943d-4600-933b-e76ceb98f501
-:END:
-Better info pages (see [[https://onlinelibrary.wiley.com/doi/abs/10.1002/adem.201900474][emacswiki]]). Specifically, the package improves the highlighting.
-
-#+begin_src emacs-lisp
-(use-package info+
-  :if init-flag
-  :straight (info+ :host github :repo "emacsmirror/emacswiki.org"))
-#+end_src
 ***** Helpful - better help buffers
 :PROPERTIES:
 :CREATED:  [2018-03-29 Thu 23:16]
@@ -4804,9 +4746,9 @@ It provides extra functionality to the standard =help= buffers.
                      :fork (:host github :repo "yantar92/helpful"))
   :config
   ;; Work around Emacs bug#58558.
-  (setq-default parse-sexp-lookup-properties nil)
-  )
+  (setq-default parse-sexp-lookup-properties nil))
 #+END_SRC
+
 ***** Elisp demos
 :PROPERTIES:
 :CREATED:  [2019-08-15 Thu 12:17]
@@ -4822,23 +4764,11 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   :config
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
+
 **** Command loop
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 15:19]
 :END:
-***** Explore keymaps
-:PROPERTIES:
-:CREATED:  [2020-04-28 Tue 11:34]
-:ID:       d4a815d0-a548-4913-b47e-a500282624ca
-:END:
-
-#+begin_src emacs-lisp
-(use-package helm
-  :if init-flag
-  :defer t
-  :config
-  (use-package helm-descbinds :straight t))
-#+end_src
 ***** Show the continuation of unfinished keybindings
 :PROPERTIES:
 :ID:       af18cad7-734f-491f-85a8-1fc817cf2dbd
@@ -4851,10 +4781,12 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   :config
   (which-key-mode))
 #+end_src
+
 ***** Help buffer navigation
 :PROPERTIES:
 :ID:       2bc3b25c-9754-4bce-a885-8d8b1300b6cc
 :END:
+
 #+begin_src emacs-lisp
 (use-package boon
   :defer t
@@ -4865,11 +4797,13 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
     (meta-defun meta-next-buffer :mode help-mode help-go-forward)
     (meta-defun meta-previous-buffer :mode help-mode help-go-back)))
 #+end_src
+
 ***** Info buffer navigation
 :PROPERTIES:
 :CREATED:  [2018-07-11 Wed 14:55]
 :ID:       924cdc83-3ddc-4ef1-ae8d-8ca57682d389
 :END:
+
 #+begin_src emacs-lisp
 (use-package boon
   :defer t
@@ -4883,6 +4817,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
     (meta-defun meta-previous-buffer :mode Info-mode Info-history-back)
     (meta-defun meta-next-buffer :mode Info-mode Info-history-forward)))
 #+end_src
+
 ***** Global key bindings
 :PROPERTIES:
 :CREATED:  [2020-04-28 Tue 11:37]
@@ -4928,6 +4863,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
                ("h o" . helm-info-org)
                ("h t" . helm-info-texinfo))))
 #+end_src
+
 *** COMMENT Python
 **** Do not inform me every time Python guesses indentation offset
 
