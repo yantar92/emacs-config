@@ -638,67 +638,69 @@ Yet, smooth scrolling makes surprisingly good experience when reading things.
 However, I'd also like recentering window to use smooth scrolling.
 
 #+begin_src emacs-lisp
-(use-package pixel-scroll
-  :if init-flag
-  :init
-  (defun yant/recenter (&optional arg redisplay)
-    "Like `recenter' but use smooth scroll."
-    (pcase arg
-      (`nil
-       ;; Scroll smoothly, with line precision.
-       (ignore-errors
-         (pixel-scroll-precision-interpolate
-          (* (line-pixel-height)
-             (- (/ (count-screen-lines (window-start) (window-end)) 2)
-                (count-screen-lines (window-start) (point))))
-          nil 1))
-       ;; Call original recenter for final adjustment.
-       (recenter arg redisplay))
-      ((pred (not numberp))
-       (recenter arg redisplay))
-      ((pred (<= 0))
-       ;; Scroll smoothly, with line precision.
-       (ignore-errors
-         (pixel-scroll-precision-interpolate
-          (* -1 (line-pixel-height)
-             (max 0 (- (count-screen-lines (window-start) (point)) 2 arg)))
-          nil 1))
-       ;; Call original recenter for final adjustment.
-       (recenter arg redisplay))
-      ((pred (> 0))
-       ;; Scroll smoothly, with line precision.
-       (ignore-errors
-         (pixel-scroll-precision-interpolate
-          (* (line-pixel-height)
-             (max 0 (- (count-screen-lines (point) (window-end)) 3 arg)))
-          nil 1))
-       ;; Call original recenter for final adjustment.
-       (recenter arg redisplay))))
-  (defun yant/recenter-top-bottom-pixel (&optional arg)
-    "Like `recenter-top-bottom' but use smooth scrolling."
-    (interactive "P")
-    (cond
-     (arg (yant/recenter arg t))                 ; Always respect ARG.
-     (t
-      (setq recenter-last-op
-	    (if (eq this-command last-command)
-	        (car (or (cdr (member recenter-last-op recenter-positions))
-		         recenter-positions))
-	      (car recenter-positions)))
-      (let ((this-scroll-margin
-	     (min (max 1 scroll-margin)
-		  (truncate (/ (window-body-height) 4.0)))))
-        (cond ((eq recenter-last-op 'middle)
-	       (yant/recenter nil t))
-	      ((eq recenter-last-op 'top)
-	       (yant/recenter this-scroll-margin t))
-	      ((eq recenter-last-op 'bottom)
-	       (yant/recenter (- this-scroll-margin) t))
-	      ((integerp recenter-last-op)
-	       (yant/recenter recenter-last-op t))
-	      ((floatp recenter-last-op)
-	       (yant/recenter (round (* recenter-last-op (window-height))) t)))))))
-  )
+  (use-package pixel-scroll
+    :if init-flag
+    :init
+    (defun yant/recenter (&optional arg redisplay)
+      "Like `recenter' but use smooth scroll."
+      (pcase arg
+        (`nil
+         ;; Scroll smoothly, with line precision.
+         (save-excursion
+  	 (ignore-errors
+             (pixel-scroll-precision-interpolate
+              (* (line-pixel-height)
+                 (- (/ (count-screen-lines (window-start) (window-end)) 2)
+                    (count-screen-lines (window-start) (point))))
+              nil 1)))
+         ;; Call original recenter for final adjustment.
+         (recenter arg redisplay))
+        ((pred (not numberp))
+         (recenter arg redisplay))
+        ((pred (> 0))
+         ;; Scroll smoothly, with line precision.
+         (save-excursion
+  	 (ignore-errors
+             (pixel-scroll-precision-interpolate
+              (* (line-pixel-height)
+                 (max 0 (+ (count-screen-lines (point) (window-end)) arg)))
+              nil 1)))
+         ;; Call original recenter for final adjustment.
+         (recenter arg redisplay))
+        ((pred (<= 0))
+         ;; Scroll smoothly, with line precision.
+         (save-excursion
+  	 (ignore-errors
+             (pixel-scroll-precision-interpolate
+              (* -1 (line-pixel-height)
+                 (max 0 (- (count-screen-lines (window-start) (point)) arg)))
+              nil 1)))
+         ;; Call original recenter for final adjustment.
+         (recenter arg redisplay))))
+    (defun yant/recenter-top-bottom-pixel (&optional arg)
+      "Like `recenter-top-bottom' but use smooth scrolling."
+      (interactive "P")
+      (cond
+       (arg (yant/recenter arg t))                 ; Always respect ARG.
+       (t
+        (setq recenter-last-op
+  	    (if (eq this-command last-command)
+  	        (car (or (cdr (member recenter-last-op recenter-positions))
+  		         recenter-positions))
+  	      (car recenter-positions)))
+        (let ((this-scroll-margin
+  	     (min (max 0 scroll-margin)
+  		  (truncate (/ (window-body-height) 4.0)))))
+          (cond ((eq recenter-last-op 'middle)
+  	       (yant/recenter nil t))
+  	      ((eq recenter-last-op 'top)
+  	       (yant/recenter this-scroll-margin t))
+  	      ((eq recenter-last-op 'bottom)
+  	       (yant/recenter (min -2 (- -1 this-scroll-margin)) t))
+  	      ((integerp recenter-last-op)
+  	       (yant/recenter recenter-last-op t))
+  	      ((floatp recenter-last-op)
+  	       (yant/recenter (round (* recenter-last-op (window-height))) t))))))))
 #+end_src
 
 Use smooth page-up/down, but do it quickly to not trade visuals for work efficiency.
