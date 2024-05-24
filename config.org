@@ -4832,7 +4832,6 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   :config
   (use-package boon
     :if init-flag
-    :after dash
     :config
     (meta-defun meta-help
       :mode org-mode
@@ -5029,25 +5028,6 @@ The result is useful to avoid mess in the global variables, but also makes the v
     (advice-add 'eros-eval-last-sexp :around #'yant/eval-or-display)))
 #+end_src
 
-**** COMMENT Improved interactive evaluation of elisp code
-:PROPERTIES:
-:CREATED:  [2018-07-14 Sat 00:42]
-:ID:       08ca8dd5-a692-470f-97fd-5e46f8255a90
-:END:
-1. Evaluating Quoted Expressions
-2. Evaluating Function Symbols
-3. Redefining Variables
-4. Default Expressions to Evaluate
-5. Editing Default Expressions
-
-#+BEGIN_SRC emacs-lisp
-  (use-package rsw-elisp
-    :if init-flag
-    :straight (rsw-elisp :host github :repo "rswgnu/rsw-elisp")
-    :config
-    (rsw-elisp-enable))
-#+END_SRC
-
 **** Smart redefining functions
 :PROPERTIES:
 :CREATED:  [2020-04-01 Wed 21:28]
@@ -5067,6 +5047,7 @@ It warns me if the original definition changes from what I expect.
   :straight t
   :demand t)
 #+end_src
+
 *** Scripts
 :PROPERTIES:
 :CREATED:  [2020-05-14 Thu 14:39]
