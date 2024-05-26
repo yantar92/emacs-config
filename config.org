@@ -5026,7 +5026,7 @@ Use company backend instead of main jedi that uses auto-completion
 - Refiled on [2020-04-23 Thu 14:42]
 :END:
 
-Smarter elisp editing
+Smarter elisp editing.  (not enough said, but one just has to try for a few days first)
 
 #+begin_src emacs-lisp
 (use-package paredit
@@ -5058,6 +5058,7 @@ Smarter elisp editing
 	       ("M-o" . meta-move-line-right)
 	       ("M-i" . meta-move-line-left))))
 #+end_src
+
 ***** Use =paredit= in =M-:= minibuffer
 
 Inspired by https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
@@ -5075,6 +5076,7 @@ Inspired by https://github.com/cadadr/configuration/blob/master/emacs.d/init.el
              ("M-i" . paredit-convolute-sexp))
   (add-hook 'minibuffer-setup-hook #'yant/paredit-enable-maybe-minibuffer))
 #+end_src
+
 **** COMMENT Font-lock based namespace for writing modes
 :PROPERTIES:
 :ID:       5b5c84f0-e363-4e5c-b373-69ddf019f9e3
@@ -5100,6 +5102,7 @@ The result is useful to avoid mess in the global variables, but also makes the v
   (setq nameless-private-prefix t)
   (bind-key "_" #'nameless-insert-name-or-self-insert nameless-mode-map))
 #+end_src
+
 **** Show elisp result in overlay
 :PROPERTIES:
 :CREATED:  [2019-07-20 Sat 19:34]
@@ -5158,12 +5161,14 @@ It warns me if the original definition changes from what I expect.
 :PROPERTIES:
 :ID:       192254a2-dc90-4a29-a713-f43f794211f6
 :END:
+
 #+begin_src emacs-lisp
 (use-package gnuplot
   :if init-flag
   :straight t
   :mode ("\\.\\(gp\\|gnuplot\\|plot\\)$" . gnuplot-mode))
 #+end_src
+
 *** Lua
 :PROPERTIES:
 :CREATED:  [2019-12-05 Thu 15:17]
@@ -5186,7 +5191,11 @@ It warns me if the original definition changes from what I expect.
   :if init-flag
   :straight t)
 #+end_src
+
 ** Info
+:PROPERTIES:
+:ID:       15746e5f-1f8a-4fc9-8d1d-c0c7c6e16ad3
+:END:
 *** Extra fontification
 :PROPERTIES:
 :ID:       00f5f951-a002-4c0d-922d-e8e5fbc19df4
