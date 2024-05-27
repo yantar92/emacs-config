@@ -5215,48 +5215,9 @@ It warns me if the original definition changes from what I expect.
 :ID:       2fb97bdf-d310-4e5a-8266-d68a1ae10298
 :END:
 
-****************** SOMEDAY [#A] revise config from here :SOMEDAY:
-:PROPERTIES:
-:SHOWFROMDATE: 2020-05-13 18:00
-:SUMMARY:  Later, when I do not have more important emacs things to do
-:END:
-:LOGBOOK:
-- State "SOMEDAY"    from "HOLD"          [2020-12-11 Fri 15:48]
-- State "HOLD"       from "DOING"         [2020-05-13 Wed 21:56] \\
-  Later, when I do not have more important emacs things to do
-CLOCK: [2020-05-05 Tue 23:50]--[2020-05-06 Wed 00:09] =>  0:19
-CLOCK: [2020-05-05 Tue 22:45]--[2020-05-05 Tue 23:06] =>  0:21
-CLOCK: [2020-05-05 Tue 22:21]--[2020-05-05 Tue 22:45] =>  0:24
-CLOCK: [2020-05-05 Tue 22:18]--[2020-05-05 Tue 22:20] =>  0:02
-CLOCK: [2020-05-04 Mon 22:42]--[2020-05-04 Mon 22:51] =>  0:09
-CLOCK: [2020-04-28 Tue 11:32]--[2020-04-28 Tue 11:50] =>  0:18
-CLOCK: [2020-04-27 Mon 15:17]--[2020-04-27 Mon 15:20] =>  0:03
-CLOCK: [2020-04-27 Mon 15:03]--[2020-04-27 Mon 15:16] =>  0:13
-CLOCK: [2020-04-23 Thu 14:35]--[2020-04-23 Thu 14:49] =>  0:14
-CLOCK: [2020-04-22 Wed 22:52]--[2020-04-22 Wed 23:07] =>  0:15
-CLOCK: [2020-04-21 Tue 23:12]--[2020-04-21 Tue 23:14] =>  0:02
-CLOCK: [2020-04-20 Mon 21:21]--[2020-04-20 Mon 21:22] =>  0:01
-CLOCK: [2020-04-20 Mon 20:56]--[2020-04-20 Mon 21:21] =>  0:25
-CLOCK: [2020-04-20 Mon 20:47]--[2020-04-20 Mon 20:56] =>  0:09
-CLOCK: [2020-04-17 Fri 16:30]--[2020-04-17 Fri 16:59] =>  0:29
-CLOCK: [2020-04-14 Tue 14:08]--[2020-04-14 Tue 15:00] =>  0:52
-CLOCK: [2020-04-12 Sun 19:54]--[2020-04-12 Sun 19:55] =>  0:01
-CLOCK: [2020-04-09 Thu 16:49]--[2020-04-09 Thu 17:43] =>  0:54
-CLOCK: [2020-04-08 Wed 13:57]--[2020-04-08 Wed 14:00] =>  0:03
-CLOCK: [2020-04-02 Thu 13:30]--[2020-04-02 Thu 13:40] =>  0:10
-CLOCK: [2020-03-30 Mon 22:39]--[2020-03-30 Mon 23:07] =>  0:28
-- State "DONE"       from "DOING"      [2019-12-19 Thu 13:06]
-CLOCK: [2019-12-19 Thu 12:55]--[2019-12-19 Thu 13:06] =>  0:11
-CLOCK: [2019-12-18 Wed 16:26]--[2019-12-18 Wed 16:46] =>  0:20
-CLOCK: [2019-12-10 Tue 22:29]--[2019-12-10 Tue 22:31] =>  0:02
-CLOCK: [2019-12-09 Mon 16:27]--[2019-12-09 Mon 20:45] =>  4:18
-CLOCK: [2019-12-09 Mon 13:01]--[2019-12-09 Mon 16:26] =>  3:25
-CLOCK: [2019-12-05 Thu 12:17]--[2019-12-05 Thu 13:59] =>  1:42
-:END:
-****************** END
-
-Nowadays, I do not really write pure LaTeX, but rather use org-mode export.
-The below configuration is here just in case if I need to open and edit tex files for some reason.
+Nowadays, I do not really write pure LaTeX, but rather use org-mode
+export.  The below configuration is here just in case if I need to
+open and edit tex files for some reason.
 
 *** =Auctex=
 :PROPERTIES:
@@ -5275,10 +5236,12 @@ This is also required for =cdlatex= to work with org-mode.
   (TeX-auto-save t)
   (TeX-parse-self t))
 #+end_src
+
 *** Use =pdf-tools= to view resulting pdf
 :PROPERTIES:
 :ID:       a0515bfd-07df-418a-90a2-5515b1a4deb3
 :END:
+
 #+begin_src emacs-lisp
 (when init-flag
   (setq TeX-view-program-list '(("pdf tools refresh" (lambda() (pdf-tools-install)
@@ -5291,6 +5254,11 @@ This is also required for =cdlatex= to work with org-mode.
 :PROPERTIES:
 :ID:       a0cacc17-641c-4b29-86b2-7dcf609cd803
 :END:
+
+Finance tracking.
+The Emacs config is coupled with finance modeline indicators that keep
+me informed about my budget status - [[id:4df7a164-25a1-4106-b610-155c5b34afd8][Continuous monitoring of budget]].
+
 #+begin_src emacs-lisp
 (use-package ledger-mode
   :if init-flag
@@ -5329,8 +5297,7 @@ This is also required for =cdlatex= to work with org-mode.
   (use-package meta-functions
     :config
     (meta-defun meta-down-element :mode ledger-mode ledger-navigate-next-xact-or-directive)
-    (meta-defun meta-up-element :mode ledger-mode ledger-navigate-prev-xact-or-directive))
-  )
+    (meta-defun meta-up-element :mode ledger-mode ledger-navigate-prev-xact-or-directive)))
 #+END_SRC
 
 *** Do not end the completions with string
