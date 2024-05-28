@@ -5328,34 +5328,12 @@ me informed about my budget status - [[id:4df7a164-25a1-4106-b610-155c5b34afd8][
 :CREATED:  [2018-07-23 Mon 17:37]
 :ID:       fbacbe1c-3e5c-47f0-9e2d-e6e5bde1fa5c
 :END:
+
 #+BEGIN_SRC emacs-lisp
 (use-package wolfram-mode
   :if init-flag
-  :straight t
-  )
+  :straight t)
 #+END_SRC
-** COMMENT Jupyter
-:PROPERTIES:
-:SUMMARY:  emacs crushes because of emacs-zmq.so
-:END:
-
-- Note taken on [2022-07-17 Sun 15:20] \\
-  emacs crushes because of emacs-zmq.so
-Use scimax version
-
-#+begin_src emacs-lisp
-(use-package scimax-ob
-  :straight (scimax-ob :host github :files ("scimax-ob.el") :repo "jkitchin/scimax")
-  :init
-  ;; Otherwise, it overwrites C-<RET>
-  (setq scimax-ob-src-key-bindings nil))
-(use-package jupyter :straight t)
-(use-package pretty-hydra :straight t)
-(use-package scimax-jupyter
-  :after org
-  :defer 10
-  :straight (scimax-jupyter :host github :files ("scimax-jupyter.el") :repo "jkitchin/scimax"))
-#+end_src
 
 ** Pdf
 *** Compressing too large pdfs
@@ -5386,8 +5364,6 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 :ID:       201475d1-64b3-4e1d-8e78-d850c6067761
 :END:
 
-**** Use =pdf-tools= fork with continuous scroll support.
-
 #+begin_src emacs-lisp
 (use-package pdf-tools
   :if init-flag
@@ -5397,6 +5373,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
   :config
   (pdf-tools-install))
 #+end_src
+
 **** Key bindings
 
 #+BEGIN_SRC emacs-lisp  
@@ -5438,7 +5415,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 (use-package pdf-tools
   :if init-flag
   :config
-  (add-hook 'pdf-view-mode-hook #'pdf-view-fit-width-to-window 'APPEND))
+  (add-hook 'pdf-view-mode-hook #'pdf-view-fit-width-to-window 'append))
 #+end_src
 
 **** Enable extra minor modes
@@ -5449,12 +5426,10 @@ Enable goodies like =isearch= support, link selection, jump history, etc (see ~p
 (use-package pdf-tools
   :if init-flag
   :config
-  (add-hook 'pdf-view-mode-hook #'pdf-tools-enable-minor-modes 'APPEND))
+  (add-hook 'pdf-view-mode-hook #'pdf-tools-enable-minor-modes 'append))
 #+end_src
-**** Select links using =avy=
 
-****************** TODO Support selecting annotations
-****************** END
+**** Select links using =avy=
 
 #+begin_src emacs-lisp
 (use-package pdf-tools
@@ -5463,6 +5438,7 @@ Enable goodies like =isearch= support, link selection, jump history, etc (see ~p
   (require 'meta-functions)
   (meta-defun meta-goto-char :mode pdf-view-mode pdf-links-action-perform))
 #+end_src
+
 **** Highlight text using keyboard
 
 Use code from https://github.com/dalanicolai/dala-emacs-lisp/blob/master/pdf-avy-highlight.el
@@ -5603,25 +5579,6 @@ When called with \\[universal-argumen], add text annotation instead."
   (meta-defun meta-goto-char-timer :mode pdf-view-mode pdf-keyboard-highlight))
 #+end_src
 
-**** TODO Highlight =DONE= in annotation list
-
-This is handy when working with review comments.
-
-#+begin_src emacs-lisp
-(when init-flag
-  (add-hook
-   'pdf-annot-list-mode-hook
-   (lambda ()
-     (font-lock-add-keywords
-      'pdf-annot-list-mode
-      '(("DONE" (0 'modus-themes-grue-background-active t))))
-     (font-lock-mode -1)
-     (font-lock-mode +1)
-     ;; (font-lock-update)
-     )))
-
-#+end_src
-
 **** Display annotation text in annotation list
 
 #+begin_src emacs-lisp
@@ -5703,96 +5660,12 @@ This is handy when working with review comments.
     (interactive "P")
     (pdf-view--rotate :counterclockwise (not arg))))
 #+end_src
-**** TODO Fix page number in boon mode-line when the pdf is opened in a new frame
-:PROPERTIES:
-:CREATED:  [2019-07-03 Wed 18:14]
-:ID:       5fb47379-ccda-4f17-a834-7796b0f188dc
-:END:
-It's magic
-#+begin_src emacs-lisp
-(use-package boon-powerline
-  :if init-flag
-  :defer t
-  :init
-  (use-package pdf-view
-    :defer t
-    :config
-    (setq pdf-cache-prefetch-delay 8)))
-#+end_src
-**** Kill pdf buffer on =q=
-:PROPERTIES:
-:CREATED:  [2019-12-05 Thu 11:16]
-:ID:       ee42b095-7f3a-4bc9-a07b-3c830287c59c
-:END:
-
-#+begin_src emacs-lisp
-(use-package pdf-tools
-  :if init-flag
-  :defer t
-  :config
-  (defun yant/kill-pdf-buffer-and-quit-window ()
-    "When in pdf-view-mode, kill the buffer and clear image cache.
-See https://lists.gnu.org/archive/html/bug-gnu-emacs/2019-11/msg01731.html for details why clearing cache is useful."
-    (interactive)
-    (if (eq major-mode 'pdf-view-mode)
-	(progn
-	  (quit-window 'kill)
-          (delete-frame (selected-frame))
-          (clear-image-cache t))
-      (funcall-interactively #'quit-window)))
-  (bind-key "q" #'yant/kill-pdf-buffer-and-quit-window pdf-view-mode-map))
-#+end_src
-*** COMMENT =EAF-pdf=
-:PROPERTIES:
-:ID:       9194264a-b022-4c1d-89f1-16eb685c06e6
-:END:
-[2021-03-20 Sat] Got strange error when eaf does not react to key bindings and switches to another emacs frame
-[[id:Github_manateelazycatmanat_emacs_applic_framew_emacs_applic_framew7b8][manateelazycat/emacs-application-framework]] provides native pdf reader with integration to Emacs. Using native non-elisp code is potentially better as it can freely use concurrency.
-
-Note: Need to install =pymupdf=, =epc=, =retrying=, and =pygetwindow= with =pip=, =dev-python/qtconsole=, and =dev-python/qrcode=. Additionally, run =npm install= in =eaf= folder.
-
-#+begin_src emacs-lisp
-(use-package eaf
-  :init
-  (use-package epc :defer t :straight t)
-  (use-package ctable :defer t :straight t)
-  (use-package deferred :defer t :straight t)
-  (use-package s :defer t :straight t)
-  :straight (eaf :host github
-                 :repo "manateelazycat/emacs-application-framework"
-                 :local-repo "~/Git/emacs-application-framework"
-                 :files ("*")
-                 :pre-build (("npm" "install")))
-  :config
-  (defun adviser-find-file (orig-fn file &rest args)
-    (let ((fn (if (commandp 'eaf-open) 'eaf-open orig-fn)))
-      (pcase (file-name-extension file)
-        ("pdf"  (apply fn file nil))
-        ("epub" (apply fn file nil))
-        (_      (apply orig-fn file args)))))
-  (advice-add #'find-file :around #'adviser-find-file)
-  (eaf-bind-key scroll_left "i" eaf-pdf-viewer-keybinding)
-  (eaf-bind-key scroll_right "o" eaf-pdf-viewer-keybinding)
-  (eaf-bind-key scroll_down_page "L" eaf-pdf-viewer-keybinding)
-  (eaf-bind-key scroll_up_page "l" eaf-pdf-viewer-keybinding))
-#+end_src
 *** =diffpdf=
 
 Requires [[id:61837011-1bce-41d6-8aa5-27bc4335466d][app-text/diffpdf]].
 
 #+begin_src emacs-lisp
 (use-package diffpdf
-  :if init-flag
-  :straight t)
-#+end_src
-
-** TODO COMMENT Ebook reader
-   :PROPERTIES:
-   :ID:       b1733b83-8c7d-4254-b2c6-d9b38793542a
-   :END:
-
-#+begin_src emacs-lisp
-(use-package ereader
   :if init-flag
   :straight t)
 #+end_src
