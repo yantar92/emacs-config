@@ -5783,26 +5783,6 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
     (meta-defun meta-new-line :mode term-mode term-send-raw)))
 
 #+END_SRC
-**** Kill process buffer after finishing
-:PROPERTIES:
-:CREATED:  [2019-08-09 Fri 17:30]
-:ID:       6027fccc-5e96-4c55-9e5a-12194caadefd
-:END:
-
-#+begin_src emacs-lisp
-(when init-flag
-  (defun jt-shell-sentinel (process event)
-    "Kill buffer and window on shell PROCESS termination when EVENT describe normal termination."
-    (when (and (not (process-live-p process))
-	       (string-equal event "finished\n"))
-      (let ((buf (process-buffer process)))
-	(when (buffer-live-p buf)
-	  (with-current-buffer buf
-            (kill-buffer)
-            (delete-window))))))
-  (add-hook 'shell-mode-hook (lambda () (set-process-sentinel (get-buffer-process (buffer-name) ) #'jt-shell-sentinel))))
-#+end_src
-
 *** Calc
 :PROPERTIES:
 :ID:       db607f5d-6270-4193-942a-c1f772a97ca6
@@ -5820,6 +5800,7 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 	      ("c" . calc)
               ("C" . calc-dispatch)))
 #+end_src
+
 **** Do not evaluate expressions as much as possible (symbolic mode)
 :PROPERTIES:
 :ID:       6a8477ce-56a7-44fb-bf7e-ea6a9d17cef7
@@ -5840,6 +5821,7 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
   :config
   (setq calc-gnuplot-default-device "qt"))
 #+end_src
+
 **** Appearance
 ***** Render symbolic math in LaTeX using =calctex-mode=
 :PROPERTIES:
@@ -5867,6 +5849,7 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
     (let ((default-directory (file-name-directory calctex-dvichop-bin)))
       (call-process "make" nil nil nil))))
 #+end_src
+
 ****** Extra customisation from [[id:de714e334e29b6ebfe88071cade9ecf618cfe342][tecosaur [Tecosaur.Github] (2021) Doom Emacs Configuration]]
 :PROPERTIES:
 :ID:       1042348d-0023-483b-b3cf-be8f71d93089
@@ -5892,55 +5875,6 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
         (concat calctex-additional-latex-macros
                 "\n\\let\\evalto\\Rightarrow")))
 #+end_src
-*** Music
-**** COMMENT Mingus (=mpd=)
-:PROPERTIES:
-:ID:       dad9e1d1-308f-4706-900e-3ec546e6eb58
-:END:
-I usually run =mingus= in a new frame using global WM key binding.
-Hence, delete frame instead of burying the =mingus= buffer.
-
-#+begin_src emacs-lisp
-(use-package mingus
-  :if init-flag
-  :straight t
-  :bind (:map mingus-playlist-map
-	      ("q" . (lambda() (interactive) (mingus-git-out) (delete-frame)))))
-#+end_src
-
-When listening a new band/album, I usually go through all the songs and delete what I do no like until several song remain in the playlist. It is much more convenient to have a global command to delete currently playing song if I do not like it instead of opening =mingus= frame and doing it manually.
-
-#+begin_src emacs-lisp
-(use-package mingus
-  :defer t
-  :if init-flag
-  :config
-  (defun yant/mingus-delete-currently-playing ()
-    "Remove currently playing song from playlist."
-    (interactive)
-    (when (and (get-buffer "*Mingus*")
-	       (mingus-cur-song-number))
-      (with-current-buffer "*Mingus*"
-	(mingus-goto-current-song)
-	(mingus-del)))))
-#+end_src
-
-**** Boon special mode bindings
-:PROPERTIES:
-:ID:       336d16e1-7a21-44c1-8469-15a8658871a3
-:END:
-
-#+begin_src emacs-lisp
-(use-package meta-functions
-  :if init-flag
-  :config
-  (meta-defun meta-move-line-down :mode mingus-playlist-mode mingus-move-down)
-  (meta-defun meta-move-line-up :mode mingus-playlist-mode mingus-move-up)
-  (meta-defun meta-new-line :mode mingus-playlist-mode mingus-play)
-  (meta-defun meta-new-line :mode mingus-browse-mode mingus-down-dir-or-play-song)
-  (meta-defun meta-up-element :mode mingus-browse-mode mingus-open-parent))
-#+end_src
-
 *** Printing
 :PROPERTIES:
 :ID:       7e2f9ad8-6c30-40db-bdbd-9ba3acd70b2a
@@ -18746,5 +18680,58 @@ Too long is defined by `yant/profiler-max-time'."
         (profiler-start 'mem)))
       (message "Profiler restarted.")))
   (run-with-timer 1 yant/profiler-max-time #'yant/profiler-restart-maybe))
+#+end_src
+
+** COMMENT Mingus (=mpd=) :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:ID:       dad9e1d1-308f-4706-900e-3ec546e6eb58
+:ARCHIVE_TIME: 2024-05-29 Wed 11:14
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Utils/Music
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+I usually run =mingus= in a new frame using global WM key binding.
+Hence, delete frame instead of burying the =mingus= buffer.
+
+#+begin_src emacs-lisp
+(use-package mingus
+  :if init-flag
+  :straight t
+  :bind (:map mingus-playlist-map
+	      ("q" . (lambda() (interactive) (mingus-git-out) (delete-frame)))))
+#+end_src
+
+When listening a new band/album, I usually go through all the songs and delete what I do no like until several song remain in the playlist. It is much more convenient to have a global command to delete currently playing song if I do not like it instead of opening =mingus= frame and doing it manually.
+
+#+begin_src emacs-lisp
+(use-package mingus
+  :defer t
+  :if init-flag
+  :config
+  (defun yant/mingus-delete-currently-playing ()
+    "Remove currently playing song from playlist."
+    (interactive)
+    (when (and (get-buffer "*Mingus*")
+	       (mingus-cur-song-number))
+      (with-current-buffer "*Mingus*"
+	(mingus-goto-current-song)
+	(mingus-del)))))
+#+end_src
+
+*** Boon special mode bindings
+:PROPERTIES:
+:ID:       336d16e1-7a21-44c1-8469-15a8658871a3
+:END:
+
+#+begin_src emacs-lisp
+(use-package meta-functions
+  :if init-flag
+  :config
+  (meta-defun meta-move-line-down :mode mingus-playlist-mode mingus-move-down)
+  (meta-defun meta-move-line-up :mode mingus-playlist-mode mingus-move-up)
+  (meta-defun meta-new-line :mode mingus-playlist-mode mingus-play)
+  (meta-defun meta-new-line :mode mingus-browse-mode mingus-down-dir-or-play-song)
+  (meta-defun meta-up-element :mode mingus-browse-mode mingus-open-parent))
 #+end_src
 
