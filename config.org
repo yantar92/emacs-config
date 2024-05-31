@@ -5875,22 +5875,13 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
         (concat calctex-additional-latex-macros
                 "\n\\let\\evalto\\Rightarrow")))
 #+end_src
-*** Printing
-:PROPERTIES:
-:ID:       7e2f9ad8-6c30-40db-bdbd-9ba3acd70b2a
-:END:
-#+begin_src emacs-lisp
-(setq lpr-command "gtklp")
-(setq lpr-add-switches "-C \"emacs-print\"")
-(setq pdf-misc-print-programm "gtklp")
-(setq pdf-misc-print-programm-args '("-C \"emacs-print\""))
-#+end_src
 *** Calendar
 :PROPERTIES:
 :CREATED:  [2020-01-09 Thu 19:41]
 :ID:       581abcb2-4a7a-4b0e-b9b9-a0dc6281748b
 :END:
-Meta bindings for calendar
+Meta bindings for calendar.
+
 #+begin_src emacs-lisp
 (use-package calendar
   :if init-flag
@@ -5905,6 +5896,7 @@ Meta bindings for calendar
   (meta-defun meta-forward-element :mode calendar-mode calendar-forward-month)
   (meta-defun meta-backward-element :mode calendar-mode calendar-backward-month))
 #+end_src
+
 *** Yaml
 :PROPERTIES:
 :CREATED:  [2020-05-26 Tue 00:46]
@@ -5916,6 +5908,7 @@ Meta bindings for calendar
   :if init-flag
   :straight t)
 #+end_src
+
 *** Images
 :PROPERTIES:
 :ID:       da6aa18c-b0bd-4318-a9b4-988f17faa44b
@@ -5930,6 +5923,7 @@ Viewing images in Emacs
   (meta-defun meta-down :mode image-mode image-next-file)
   (meta-defun meta-up :mode image-mode image-previous-file))
 #+end_src
+
 *** Screencasting
 :PROPERTIES:
 :ID:       2aa3e942-e4e9-4703-9539-4be5192072d7
