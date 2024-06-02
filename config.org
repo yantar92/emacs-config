@@ -6090,8 +6090,17 @@ Show the key strokes.
     (setq rmh-elfeed-org-files (list "~/Org/rss.org"))))
 #+end_src
 
-It is very hard to look through many new rss entries when entries from different feeds/topics are mixed. I constantly need to switch my focus thinking about different topics, which makes going through news feeds extremely slow. 
-To mitigate the issue, I prefer to group the feeds by similar topic, so that I can quickly decide what feeds I want to capture. The grouping can be done by progressive search filter, like =+unread -topic1 -topic2 -topic3 ...=. I can simply edit the filter and remove last keyword one by one thus going through the new feeds topic-by-topic.
+It is very hard to look through many new rss entries when entries from
+different feeds/topics are mixed. I constantly need to switch my focus
+thinking about different topics, which makes going through news feeds
+extremely slow.
+
+To mitigate the issue, I prefer to group the feeds by similar topic,
+so that I can quickly decide what feeds I want to capture. The
+grouping can be done by progressive search filter, like =+unread
+-topic1 -topic2 -topic3 ...=. I can simply edit the filter and remove
+last keyword one by one thus going through the new feeds
+topic-by-topic.
 
 Similar idea: [[id:36ba1ec888a75c0461e9eeb1cf2fe8c7747ed7bd][Álvaro Ramírez [Xenodium] (2018) Quickly swapping elfeed filters]]
 
@@ -6143,152 +6152,136 @@ And group them by rss feed, which further helps to focus on a single topic at a 
 						 (yant/elfeed-group-by-feed a b)))))))
 #+end_src
 
-Save elfeed buffer on quit to make sure that database is more likely saved if Emacs crashes.
-[2020-09-18 Fri] Disabling because of large memory usage
-#+begin_src emacs-lisp :tangle no
-(use-package elfeed
-  :if init-flag
-  :defer t
-  :config
-  (remove-hook #'kill-emacs-hook #'elfeed-db-save-safe)
-  (remove-hook #'kill-emacs-hook #'elfeed-db-gc-safe)
-  (defun yant/elfeed-save-and-quit ()
-    "Save elfeed database and quit."
-    (interactive)
-    (message "Saving elfeed database...")
-    (elfeed-db-save-safe)
-    (message "Saving elfeed database... done")
-    (delete-frame))
-  (bind-key "q" #'yant/elfeed-save-and-quit elfeed-search-mode-map))
-#+end_src
 **** Custom title formatting
 :PROPERTIES:
 :ID:       0e3c7484-a453-44f8-b826-6f83e893455d
 :END:
 
-Default =elfeed= format function does not remove things like =\mathrm= (or similar) from titles. I am doing it in the following function.
+Default =elfeed= format function does not remove things like =\mathrm= (or
+similar) from titles. I am doing it in the following function.
 
 In addition, I highlight some noteworthy phrases to simplify scanning through the feeds.
 
 #+begin_src emacs-lisp
-(use-package elfeed
-  :init
-  (defvar yant/elfeed-title-transforms `(("\\\\mathrm{\\([^}]+\\)}" "\\1")
-                                         ("\\$\\([^$]+\\)\\$" "\\1")
-                                         ("<em>\\(.+?\\)</em>" "\\1")
-                                         ("&#60;" "<")
-                                         ("&lt;" "<")
-                                         ("&gt;" ">")
-                                         ("&nbsp;" " ")
-                                         ("&#39;" "'")
-                                         ("<math xmlns:mml=\"http://www\\.w3\\.org/1998/Math/MathML\" altimg=\"si[0-9]+\\.svg\" class=\"math\">\\(.+?\\)</math>" "\\1")
-                                         ("<mover accent=\"true\">\\(.+?\\)</mover>" "\\1")
-                                         ("<mrow>\\(.*?\\)</mrow>" "\\1")
-                                         ("<mtext>\\(.*?\\)</mtext>" "\\1")
-                                         ("<mn>\\(.*?\\)</mn>" "\\1")
-                                         ("<br>\\(.*?\\)</br>" "\\1")
-                                         ("<mo>\\(.*?\\)</mo>" "\\1")
-                                         ("<p>\\(.*?\\)</p>" "\\1")
-                                         ("<span[^>]*>\\(.*?\\)</span>" "\\1")
-                                         ("<radio[^>]*>\\(.*?\\)</radio>" " \\1")
-                                         ("<br>" " ")
-                                         ("<span>\\(.*?\\)</span>" "\\1")
-                                         ("<a[^>]*>\\(.*?\\)</a>" "\\1")
-                                         ("<strong>\\(.*?\\)</strong>" "\\1")
-                                         ("<mi[^>]*>\\(.*?\\)</mi>" "\\1")
-                                         ("<msub>\\(.+?\\)</msub>" "\\1" (display ,(car org-script-display)))
-                                         ("_\\([^{]\\)" "\\1" (display ,(car org-script-display)))
-                                         ("_{\\([^}]+\\)}" "\\1" (display ,(car org-script-display)))
-                                         ("<sub>\\(.+?\\)</sub>" "\\1" (display ,(car org-script-display)))
-                                         ("\\^\\([^{]\\)" "\\1" (display ,(cadr org-script-display)))
-                                         ("\\^{\\([^}]+\\)}" "\\1" (display ,(cadr org-script-display)))
-                                         ("<sup>\\(.+?\\)</sup>" "\\1" (display ,(cadr org-script-display)))
-                                         ("<msup>\\(.+?\\)</msup>" "\\1" (display ,(cadr org-script-display)))
-                                         ("<i>\\(.+?\\)</i>" "\\1"  (face (:slant italic)))
-                                         ("<mi>\\(.+?\\)</mi>" "\\1"  (face (:slant italic)))
-                                         ("{\\([^}]+\\)}" "\\1")
-                                         ("slid[^ ]+" "\\&" (face (:foreground "red")))
-                                         ("geolog[^ ]+" "\\&" (face (:foreground "red")))
-                                         ("[Rr]eview" "\\&" (face (:foreground "red" :background "yellow")))
-                                         ("[Aa]nisotro[^ ]+" "\\&" (face (:foreground "red")))
-                                         ("[^ ]*laminate[^ ]*" "\\&" (face (:foreground "red")))
-                                         ("[Oo]ligo[^ ]*" "\\&" (face (:foreground "red")))
-                                         ("[Bb]oundar[^ ]*" "\\&" (face (:foreground "red")))
-                                         ("[Ss]ynchrotron" "\\&" (face (:foreground "red")))
-                                         ("[Ii]nterfac[^ ]+" "\\&" (face (:foreground "red")))
-                                         ("[Ll]ayer[^ ]+" "\\&" (face (:foreground "red")))
-                                         ("[Mm]icro-cantilever[^ ]*" "\\&" (face (:foreground "red")))
-                                         ("[Pp]illar" "\\&" (face (:foreground "red")))
-                                         ("[Bb]i-?crystals?" "\\&" (face (:foreground "red")))
-                                         ("[Cc]antilever" "\\&" (face (:foreground "red")))
-                                         ("[Ii]n.situ" "\\&" (face (:foreground "red")))
-                                         ("M[m]g[0-9]*[-/]*[Aa]l[0-9]*" "\\&" (face (:foreground "red")))
-                                         ("[Mm]ulti-?layer" "\\&" (face (:foreground "red")))
-                                         ("[Nn]ano-?layer" "\\&" (face (:foreground "red")))
-                                         ("[Hh]igh[ -][Ee]ntropy"  "\\&" (face (:foreground "red")))
-                                         ("[Mm]edium[ -][Ee]ntropy"  "\\&" (face (:foreground "red")))
-                                         ("[Bb]ayesian"  "\\&" (face (:foreground "red")))
-                                         ("[dD]islocation"  "\\&" (face (:foreground "red")))
-                                         ("[Mm]agnesium"  "\\&" (face (:foreground "red")))
-                                         ("[Mm]g"  "\\&" (face (:foreground "red")))
-                                         ("[Cc]rack[^ ]*" "\\&" (face (:foreground "red"))))
-    "Replacements to be performed in the elfeed entry titles.")
-  (defun yant/elfeed-search-print-entry (entry)
-    "Print ENTRY to the buffer."
-    (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
-           (score (or (elfeed-meta entry :elfeed-score/score) elfeed-score-scoring-default-score))
-           (title (if (elfeed-tagged-p 'content_is_entry entry)
-                      (or (elfeed-deref (or (elfeed-meta entry :content) (elfeed-entry-content entry) "")) "")
-                    (or (elfeed-meta entry :title) (elfeed-entry-title entry) "")))
-           (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
-           (title (if (and (elfeed-tagged-p 'chinese entry)
-			   t
-			   ;; (member (yant/guess-language-string title) '("zh-cn" "ko"))
-			   )
-                      (progn (message "Translating...")
-                             (with-temp-buffer
-                               (insert (yant/translate-string title))
-                               (add-face-text-property (point-min) (point-max) title-faces 'append)
-                               (buffer-string)))
-                    (with-temp-buffer
-                      (insert title)
-                      (cl-loop for (re repl display)
-                               in yant/elfeed-title-transforms
-                               do
-                               (goto-char (point-min))
-                               (while (re-search-forward re nil t)
-                                 (replace-match repl)
-                                 (when display
-                                   (with-silent-modifications
-                                     (apply #'put-text-property
-                                            (match-beginning 0)
-                                            (match-end 0)
-                                            display)))))
-                      (add-face-text-property (point-min) (point-max) title-faces 'append)
-                      (buffer-string))))
-           (feed (elfeed-entry-feed entry))
-           (feed-title
-            (when feed
-              (or (elfeed-meta feed :title) (elfeed-feed-title feed))))
-           (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
-           (tags-str (mapconcat
-                      (lambda (s) (propertize s 'face 'elfeed-search-tag-face))
-                      tags ","))
-           (title-width (- (window-width) 10 elfeed-search-trailing-width))
-           (title-column (elfeed-format-column
-                          title (elfeed-clamp
-                                 elfeed-search-title-min-width
-                                 title-width
-                                 elfeed-search-title-max-width)
-                          :left)))
-      ;; (insert (propertize date 'face 'elfeed-search-date-face) " ")
-      (insert (propertize (format "%-3d" score) 'face 'elfeed-search-date-face) " ")
-      (insert (propertize title-column 'kbd-help title) " ")
-      (when feed-title
-        (insert (propertize feed-title 'face 'elfeed-search-feed-face) " "))
-      (when tags
-        (insert "(" tags-str ")"))))
-  (setq elfeed-search-print-entry-function #'yant/elfeed-search-print-entry))
+  (use-package elfeed
+    :init
+    (defvar yant/elfeed-title-transforms
+      `(("\\\\mathrm{\\([^}]+\\)}" "\\1")
+        ("\\$\\([^$]+\\)\\$" "\\1")
+        ("<em>\\(.+?\\)</em>" "\\1")
+        ("&#60;" "<")
+        ("&lt;" "<")
+        ("&gt;" ">")
+        ("&nbsp;" " ")
+        ("&#39;" "'")
+        ("<math xmlns:mml=\"http://www\\.w3\\.org/1998/Math/MathML\" altimg=\"si[0-9]+\\.svg\" class=\"math\">\\(.+?\\)</math>" "\\1")
+        ("<mover accent=\"true\">\\(.+?\\)</mover>" "\\1")
+        ("<mrow>\\(.*?\\)</mrow>" "\\1")
+        ("<mtext>\\(.*?\\)</mtext>" "\\1")
+        ("<mn>\\(.*?\\)</mn>" "\\1")
+        ("<br>\\(.*?\\)</br>" "\\1")
+        ("<mo>\\(.*?\\)</mo>" "\\1")
+        ("<p>\\(.*?\\)</p>" "\\1")
+        ("<span[^>]*>\\(.*?\\)</span>" "\\1")
+        ("<radio[^>]*>\\(.*?\\)</radio>" " \\1")
+        ("<br>" " ")
+        ("<span>\\(.*?\\)</span>" "\\1")
+        ("<a[^>]*>\\(.*?\\)</a>" "\\1")
+        ("<strong>\\(.*?\\)</strong>" "\\1")
+        ("<mi[^>]*>\\(.*?\\)</mi>" "\\1")
+        ("<msub>\\(.+?\\)</msub>" "\\1" (display ,(car org-script-display)))
+        ("_\\([^{]\\)" "\\1" (display ,(car org-script-display)))
+        ("_{\\([^}]+\\)}" "\\1" (display ,(car org-script-display)))
+        ("<sub>\\(.+?\\)</sub>" "\\1" (display ,(car org-script-display)))
+        ("\\^\\([^{]\\)" "\\1" (display ,(cadr org-script-display)))
+        ("\\^{\\([^}]+\\)}" "\\1" (display ,(cadr org-script-display)))
+        ("<sup>\\(.+?\\)</sup>" "\\1" (display ,(cadr org-script-display)))
+        ("<msup>\\(.+?\\)</msup>" "\\1" (display ,(cadr org-script-display)))
+        ("<i>\\(.+?\\)</i>" "\\1"  (face (:slant italic)))
+        ("<mi>\\(.+?\\)</mi>" "\\1"  (face (:slant italic)))
+        ("{\\([^}]+\\)}" "\\1")
+        ("slid[^ ]+" "\\&" (face (:foreground "red")))
+        ("geolog[^ ]+" "\\&" (face (:foreground "red")))
+        ("[Rr]eview" "\\&" (face (:foreground "red" :background "yellow")))
+        ("[Aa]nisotro[^ ]+" "\\&" (face (:foreground "red")))
+        ("[^ ]*laminate[^ ]*" "\\&" (face (:foreground "red")))
+        ("[Oo]ligo[^ ]*" "\\&" (face (:foreground "red")))
+        ("[Bb]oundar[^ ]*" "\\&" (face (:foreground "red")))
+        ("[Ss]ynchrotron" "\\&" (face (:foreground "red")))
+        ("[Ii]nterfac[^ ]+" "\\&" (face (:foreground "red")))
+        ("[Ll]ayer[^ ]+" "\\&" (face (:foreground "red")))
+        ("[Mm]icro-cantilever[^ ]*" "\\&" (face (:foreground "red")))
+        ("[Pp]illar" "\\&" (face (:foreground "red")))
+        ("[Bb]i-?crystals?" "\\&" (face (:foreground "red")))
+        ("[Cc]antilever" "\\&" (face (:foreground "red")))
+        ("[Ii]n.situ" "\\&" (face (:foreground "red")))
+        ("M[m]g[0-9]*[-/]*[Aa]l[0-9]*" "\\&" (face (:foreground "red")))
+        ("[Mm]ulti-?layer" "\\&" (face (:foreground "red")))
+        ("[Nn]ano-?layer" "\\&" (face (:foreground "red")))
+        ("[Hh]igh[ -][Ee]ntropy"  "\\&" (face (:foreground "red")))
+        ("[Mm]edium[ -][Ee]ntropy"  "\\&" (face (:foreground "red")))
+        ("[Bb]ayesian"  "\\&" (face (:foreground "red")))
+        ("[dD]islocation"  "\\&" (face (:foreground "red")))
+        ("[Mm]agnesium"  "\\&" (face (:foreground "red")))
+        ("[Mm]g"  "\\&" (face (:foreground "red")))
+        ("[Cc]rack[^ ]*" "\\&" (face (:foreground "red"))))
+      "Replacements to be performed in the elfeed entry titles.")
+    (defun yant/elfeed-search-print-entry (entry)
+      "Print ENTRY to the buffer."
+      (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
+             (score (or (elfeed-meta entry :elfeed-score/score) elfeed-score-scoring-default-score))
+             (title (if (elfeed-tagged-p 'content_is_entry entry)
+                        (or (elfeed-deref (or (elfeed-meta entry :content) (elfeed-entry-content entry) "")) "")
+                      (or (elfeed-meta entry :title) (elfeed-entry-title entry) "")))
+             (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
+             (title (if (and (elfeed-tagged-p 'chinese entry)
+  			   t
+  			   ;; (member (yant/guess-language-string title) '("zh-cn" "ko"))
+  			   )
+                        (progn (message "Translating...")
+                               (with-temp-buffer
+                                 (insert (yant/translate-string title))
+                                 (add-face-text-property (point-min) (point-max) title-faces 'append)
+                                 (buffer-string)))
+                      (with-temp-buffer
+                        (insert title)
+                        (cl-loop for (re repl display)
+                                 in yant/elfeed-title-transforms
+                                 do
+                                 (goto-char (point-min))
+                                 (while (re-search-forward re nil t)
+                                   (replace-match repl)
+                                   (when display
+                                     (with-silent-modifications
+                                       (apply #'put-text-property
+                                              (match-beginning 0)
+                                              (match-end 0)
+                                              display)))))
+                        (add-face-text-property (point-min) (point-max) title-faces 'append)
+                        (buffer-string))))
+             (feed (elfeed-entry-feed entry))
+             (feed-title
+              (when feed
+                (or (elfeed-meta feed :title) (elfeed-feed-title feed))))
+             (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
+             (tags-str (mapconcat
+                        (lambda (s) (propertize s 'face 'elfeed-search-tag-face))
+                        tags ","))
+             (title-width (- (window-width) 10 elfeed-search-trailing-width))
+             (title-column (elfeed-format-column
+                            title (elfeed-clamp
+                                   elfeed-search-title-min-width
+                                   title-width
+                                   elfeed-search-title-max-width)
+                            :left)))
+        ;; (insert (propertize date 'face 'elfeed-search-date-face) " ")
+        (insert (propertize (format "%-3d" score) 'face 'elfeed-search-date-face) " ")
+        (insert (propertize title-column 'kbd-help title) " ")
+        (when feed-title
+          (insert (propertize feed-title 'face 'elfeed-search-feed-face) " "))
+        (when tags
+          (insert "(" tags-str ")"))))
+    (setq elfeed-search-print-entry-function #'yant/elfeed-search-print-entry))
 
 #+end_src
 **** Highlight FLAGGED feed entries
@@ -6301,6 +6294,7 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
   (setf (alist-get 'flagged elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10))))
   (setf (alist-get 'FLAGGED elfeed-search-face-alist) `((t :weight semibold :foreground "red" :background ,(color-darken-name (face-background 'default) 10)))))
 #+end_src
+
 *** =Notmuch=
 :PROPERTIES:
 :ID:       f6ca2367-45c4-45bc-acec-49837cadc5ac
