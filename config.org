@@ -6300,9 +6300,10 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
 :ID:       f6ca2367-45c4-45bc-acec-49837cadc5ac
 :END:
 
-I was using notmuch-tree-mode for a while, but find it not very comfortable. 
-Especially in threads with many small messages, which could otherwise appear all together in notmuch-show-mode. 
-Can be still occasionally useful to navigate the complicated threads though. 
+I was using notmuch-tree-mode for a while, but find it not very
+comfortable.  Especially in threads with many small messages, which
+could otherwise appear all together in notmuch-show-mode.  Can be
+still occasionally useful to navigate the complicated threads though.
 
 #+begin_src emacs-lisp
 (use-package notmuch
@@ -6431,7 +6432,10 @@ the notmuch-tree buffer if it appears after closing the message."
                          ("yantar92@posteo.net" . "Posteo/Sent +sent -unread")))
   #+end_src
 - automatic email signing
-  I have to skip signing for some email accounts, because the server appends some text to messages. Even though the resulting message is correct, but some email clients are not able to open these messages properly. They show the appended text and unreadable attachment.
+  I have to skip signing for some email accounts, because the server
+  appends some text to messages. Even though the resulting message is
+  correct, but some email clients are not able to open these messages
+  properly. They show the appended text and unreadable attachment.
   #+begin_src emacs-lisp
 (setq mml-default-sign-method "pgp")
 (setq notmuch-crypto-process-mime t)
@@ -6449,19 +6453,7 @@ the notmuch-tree buffer if it appears after closing the message."
 
 (add-hook 'message-send-hook #'yant/mml-secure-message-sign-pgpmime-maybe)
   #+end_src
-- async mail sending
-****************** TODO Make it work
-****************** END
 
-#+BEGIN_SRC emacs-lisp
-;; (use-package async
-;;   :if init-flag
-;;   :straight t
-;;   :config
-;;   (use-package smtpmail-async
-;;     :config
-;;     (setq message-send-mail-function 'message-send-mail-with-sendmail)))
-#+END_SRC
 **** Tagging of sent messages
 :PROPERTIES:
 :ID:       42f1433a-3c25-47d4-b81a-76579130a611
@@ -6599,32 +6591,6 @@ text/*; xdg-open "%s"
 application/*; xdg-open "%s"
 video/*; xdg-open "%s"
 image/*; xdg-open "%s"
-#+end_src
-
-**** =Notmuch= hello
-:PROPERTIES:
-:ID:       645a5628-289a-4373-9668-b79e10738215
-:END:
-#+begin_src emacs-lisp
-(when init-flag
-  (setq notmuch-hello-sections '(notmuch-hello-insert-header notmuch-hello-insert-saved-searches
-                                                             notmuch-hello-insert-alltags)
-	notmuch-saved-searches '((:name "todo" :query "tag:todo and tag:inbox" :sort-order newest-first)
-				 (:name "work" :query "tag:todo or tag:inbox and not tag:private" :sort-order newest-first)
-				 (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
-				 (:name "all mail" :query "*" :key "a"))))
-#+end_src
-**** COMMENT Opening large threads
-:PROPERTIES:
-:CREATED:  [2019-12-21 Sat 14:34]
-:ID:       ec8e6f0d-bb74-40fc-9088-becd7fa36d86
-:END:
-
-Notmuch is known to have poor performance on long threads ([[notmuch:id:87fttpy0n5.fsf@mechane.wlandry.net][as reported in maillist]])
-Here are some workarounds
-
-#+begin_src emacs-lisp
-(setq-default notmuch-show-indent-content nil)
 #+end_src
 
 **** SOMEDAY Interaction with org :SKIP_PROJECT_REVIEW:SOMEDAY:
@@ -6865,30 +6831,6 @@ As recommended in [[https://orgmode.org/worg/org-mailing-list.html#orgf343a0f][W
 	      (error "Org mode ML is not in CC"))))))
     (notmuch-show-reply prompt-for-sender))
   (bind-key "R" #'yant/notmuch-show-check-cc-and-reply  notmuch-show-mode-map))
-#+end_src
-
-**** Fix "Exceed max-specpdl-size"
-:PROPERTIES:
-:ID:       22c94bab-619c-483c-85d1-b552eec0ca66
-:END:
-
-#+begin_src emacs-lisp
-(setq max-specpdl-size 5000)
-#+end_src
-**** Prevent interactive use of notmuch
-:PROPERTIES:
-:ID:       440d8f30-d281-4d45-9a1f-b16dd8b7c546
-:END:
-
-Part of eliminating bad habits as in [[id:9562f1fc-9b35-4573-b42e-7bb2fcef8a7a][Distraction-free browsing]].
-
-#+begin_src emacs-lisp
-(use-package notmuch
-  :defer t
-  :config
-  (define-advice notmuch (:override () disable)
-    "Disable `notmuch' command."
-    (error "Do something better!")))
 #+end_src
 
 **** Avoid replying to "no-reply" when replying to all
