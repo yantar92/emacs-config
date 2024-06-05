@@ -7346,53 +7346,6 @@ merged together with [[id:0e3c7484-a453-44f8-b826-6f83e893455d][Custom title for
     (memoize #'yant/guess-language-string)))
 #+end_src
 
-*** COMMENT Org-mode in messages (via =org-msg=)
-    :PROPERTIES:
-    :ID:       90e6045d-c09e-4022-bd59-33084bd68114
-    :END:
-
-[2020-08-11 Tue] It does not seem to handle quotes of quotes from last emails very well
-
-[[id:github_jeremy-compostella_jerem_compos_org_msg_orgms][org-msg]] make it possible to write email in org-mode and export it to html when sending.
-
-#+begin_src emacs-lisp 
-(use-package org-msg
-  :straight t
-  :after notmuch
-  :config
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:Ihor Radchenko email:nil \\n:t"
-	org-msg-startup "hidestars inlineimages"
-	org-msg-greeting-fmt ""
-	org-msg-text-plain-alternative t
-        org-msg-signature "Ihor Radchenko,
-PhD,
-Center for Advancing Materials Performance from the Nanoscale (CAMP-nano)
-State Key Laboratory for Mechanical Behavior of Materials, Xi'an Jiaotong University, Xi'an, China
-Email: yantar92@posteo.net, ihor_radchenko@alumni.sutd.edu.sg")
-  (org-msg-mode))
-#+end_src
-
-Make company completion work in notmuch.
-Credit: [[id:github_jeremy-compostella_notmuc_compan_suppor_org_msg][jeremy-compostella [Github] Notmuch Company Support in Org-Msg-Edit-Mode · Issue #53 · Jeremy-Compostella Org-Msg]]
-#+begin_src emacs-lisp 
-(defun arvindsv/org-msg-notmuch-company (old-fn &rest args)
-  ;; Cheat and say that this buffer, which should be org-msg-edit-mode, is derived from message-mode.
-  (cl-letf (((symbol-function 'derived-mode-p) (lambda (mode) (if (eq mode 'message-mode) t (derived-mode-p mode)))))
-    (apply old-fn args)))
-
-(advice-add 'notmuch-company :around #'arvindsv/org-msg-notmuch-company)
-
-(add-hook 'org-msg-edit-mode-hook #'notmuch-company-setup)
-#+end_src
-
-Fix saving sent messages ([[https://github.com/jeremy-compostella/org-msg/issues/58#issuecomment-675185846][credit]])
-#+begin_src emacs-lisp
-(use-package org-msg
-  :if init-flag
-  :after notmuch
-  :config
-  (remove-hook 'notmuch-mua-send-hook #'notmuch-mua-message-send-hook))
-#+end_src
 ** ERC
 :PROPERTIES:
 :ID:       6211904f-0abd-46de-b56c-62bfaf76849e
