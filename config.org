@@ -7383,19 +7383,6 @@ merged together with [[id:0e3c7484-a453-44f8-b826-6f83e893455d][Custom title for
     :config
     (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
 #+end_src
-*** COMMENT Connect on startup
-
-#+begin_src emacs-lisp
-(use-package erc
-  :if init-flag
-  :init
-  (defun yant/erc-connect ()
-    "Connect to IRC."
-    (erc
-     :password
-     (nth 0 (process-lines "pass" "show" "internet/irc.libera.chat"))))
-  (add-hook 'after-init-hook #'yant/erc-connect))
-#+end_src
 
 *** Store history
 #+begin_src emacs-lisp
@@ -7417,31 +7404,18 @@ Make Emacs ERC automatically re-connect when it looses server connection.
   (erc-server-reconnect-attempts t))
 #+end_src
 ** File sharing via =0x0=
-[[id:GitLab-willvaughn-willvaughn-emacs-0x0-d03][willvaughn [GitLab] willvaughn/emacs-0x0: Integration with https://0x0.st from emacs. Intended for use in ERC to share images, files, and blocks of code.]]
+
+[[id:GitLab-willvaughn-willvaughn-emacs-0x0-d03][willvaughn [GitLab] willvaughn/emacs-0x0: Integration with https://0x0.st from emacs]]
+
 #+begin_src emacs-lisp
-(use-package 0x0
-  :if init-flag
-  :straight (0x0 :host gitlab :repo "willvaughn/emacs-0x0")
-  :config
-  (defalias 'yant/share-file #'0x0-upload-file)
-  (defalias 'yant/share-region #'0x0-upload-text)
-  (use-package helm-ring
+  (use-package 0x0
+    :if init-flag
+    :straight (0x0 :host gitlab :repo "willvaughn/emacs-0x0")
     :config
-    (defun yant/helm-show-kill-ring-upload-action (_)
-      "Upload selected `helm-show-kill-ring' candidates."
-      (let ((marked (helm-marked-candidates))
-            (sep (if (equal helm-current-prefix-arg '(16))
-                     (read-string "Separator: ")
-		   helm-kill-ring-separator)))
-        (kill-new
-	 (cl-loop for c in (butlast marked)
-		  concat (concat c sep) into str
-		  finally return (concat str (car (last marked)))))
-        (call-interactively #'0x0-upload-kill-ring)
-        (pop kill-ring)))
-    (push '("Upload selected" . yant/helm-show-kill-ring-upload-action)
-	  (cdr helm-kill-ring-actions))))
+    (defalias 'yant/share-file #'0x0-upload-file)
+    (defalias 'yant/share-region #'0x0-upload-text))
 #+end_src
+
 ** COMMENT Matrix client =ement.el=
 [[id:Github-alphapapa-alphapapa-ement-el-9d2][alphapapa [Github] alphapapa/ement.el: Matrix client for Emacs]]
 [2022-04-15 Fri] Setting ~print-circle~ to t in order to fix memory leakage error.
@@ -7553,9 +7527,9 @@ Despite the usual big-tech concerns, it makes a decent:
   (setf (alist-get 'org-mode gptel-response-prefix-alist)
 	"# AI response\n")
   (dolist (map '(boon-forward-search-map boon-backward-search-map))
-    (bind-key "q" #'gptel-send map)
-    (bind-key "a" #'gptel-menu map)))
+    (bind-key "q" #'gptel-menu map)))
 #+end_src
+
 ** OpenStreetMaps
 
 #+begin_src emacs-lisp
@@ -7590,27 +7564,6 @@ Despite the usual big-tech concerns, it makes a decent:
   :straight '(emacs-syncthing :host github :repo "KeyWeeUsr/emacs-syncthing")
   ;; `syncthing-default-server-token' is set in private config.
   )
-#+end_src
-
-** COMMENT Reddit client
-
-#+begin_src emacs-lisp
-(use-package org-pandoc-import
-  :straight (org-pandoc-import
-	     :host github :repo "tecosaur/org-pandoc-import"
-             :files ("*.el" "filters" "preprocessors")))
-(use-package reddigg
-  :if init-flag
-  :straight t
-  :config
-  (defun yant/reddigg-view-comments-raise (url &rest _)
-    "Run `reddigg-view-comments' for URL and display the window."
-    (reddigg-view-comments url)
-    ;; (switch-to-buffer (reddigg--get-cmt-buffer))
-    )
-  (add-to-list 'browse-url-handlers
-               '("^https?://\\(?:www\\.\\)?reddit\\.com"
-                 . yant/reddigg-view-comments-raise)))
 #+end_src
 
 ** COMMENT Browser
@@ -7653,17 +7606,6 @@ Emacs application framework provides its own implementation of keyboard-driven b
   (setq eaf-browser-continue-where-left-off t)
   (setq eaf-browser-default-search-engine "duckduckgo"))
 #+end_src
-** Typing speed
-*** =speed-type=
-
-[[id:Github-hagleitn-hagleitn-speed-type-48c][hagleitn [Github] hagleitn/speed-type: Practice touch/speed typing in emacs]]
-
-#+begin_src emacs-lisp
-(use-package speed-type
-  :if init-flag
-  :straight t)
-#+end_src
-
 ** Org mode
 :PROPERTIES:
 :ID:       58045c39-ffd5-4ccc-bc9d-49048c437f42
