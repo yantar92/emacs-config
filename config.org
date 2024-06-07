@@ -16995,6 +16995,7 @@ ls-files' and 'grep'."
   :if init-flag
   :straight (piem :host nil :repo "https://git.kyleam.com/piem"))
 #+end_src
+
 ***** Add distinguishable branch name prefix
 
 #+begin_src emacs-lisp
@@ -17021,6 +17022,7 @@ ls-files' and 'grep'."
        :url "https://orgmode.org/list/"
        :maildir "~/Mail/Orgmode-maillist/orgmode/"))))
 #+end_src
+
 ***** Integration with =notmuch=
 
 #+begin_src emacs-lisp
@@ -17045,12 +17047,15 @@ ls-files' and 'grep'."
    ;; exclude this file.
    :files (:defaults (:exclude "git-email-mu4e.el"))))
 #+end_src
+
 ***** Send patches as attachments
+
 #+begin_src emacs-lisp
 (use-package git-email
   :custom
   (git-email-format-patch-default-args "--attach"))
 #+end_src
+
 ***** TODO Work around changed project.el format in Emacs 29
 
 #+begin_src emacs-lisp
@@ -17071,6 +17076,7 @@ ls-files' and 'grep'."
   :config
   (git-email-piem-mode +1))
 #+end_src
+
 ***** Integration with =notmuch=
 
 #+begin_src emacs-lisp
@@ -17079,6 +17085,7 @@ ls-files' and 'grep'."
   :config
   (git-email-notmuch-mode +1))
 #+end_src
+
 ***** Integration with =magit=
 
 #+begin_src emacs-lisp
@@ -17092,97 +17099,9 @@ ls-files' and 'grep'."
 :PROPERTIES:
 :ID:       83801f6a-daf5-4738-a15e-2d20c2b4551c
 :END:
+
 #+begin_src emacs-lisp
-;; (org-babel-load-file "~/PersonalDocuments/emacs-personal.org")
 (load "~/PersonalDocuments/emacs-personal.el")
-#+end_src
-** Magic - I have no clue why it works
-:PROPERTIES:
-:CREATED:  [2018-03-07 Wed 09:50]
-:END:
-*** Make =dired-hide-dotfiles= work
-:PROPERTIES:
-:CREATED:  [2019-08-02 Fri 16:09]
-:ID:       7165a65e-b501-48c7-a227-138e035f0418
-:END:
-
-#+begin_src emacs-lisp
-;; (use-package dired-hide-dotfiles
-;; :config
-;; (defun dired-hide-dotfiles--hide ()
-;;   "Hide all dot-files in the current `dired' buffer."
-;;   (when dired-hide-dotfiles-mode
-;;     (dired-mark-files-regexp "^\\." nil 'localname)
-;;     (dired-do-kill-lines))))
-#+end_src
-*** SOMEDAY Prevent some functions from native-compilation :SOMEDAY:
-:PROPERTIES:
-:SUMMARY:  Report to emacs
-:ID:       1e3165d8-789d-466c-ab42-4deeb129476d
-:END:
-
-#+begin_src emacs-lisp
-(setq comp-deferred-compilation-deny-list
-      '("pdf-cache"))
-#+end_src
-
-:LOGBOOK:
-- Note taken on [2020-12-10 Thu 21:34] \\
-  Report to emacs
-:END:
-** Summary of key bindings
-*** COMMENT Command frequency measurement in emacs
-:PROPERTIES:
-:ID:       cd5dd0a5-e810-4846-91a3-ba5b6c649cdc
-:END:
-#+begin_src emacs-lisp
-(use-package keyfreq
-  :straight t
-  :config
-  (define-globalized-minor-mode global-keyfreq-mode keyfreq-mode
-    (lambda nil (progn (keyfreq-mode 1) (keyfreq-autosave-mode 1))))
-  (global-keyfreq-mode))
-#+end_src
-** COMMENT Text wrap indicators :EMACS:COMMON:SOMEDAY:
-     :PROPERTIES:
-     :ID:       7b84d543-2d95-4a04-ba1f-a96e47daa853
-     :ARCHIVE_TIME: 2024-03-21 Thu 17:11
-     :ARCHIVE_FILE: ~/Git/emacs-config/config.org
-     :ARCHIVE_OLPATH: Emacs configuration/Appearance/Window
-     :ARCHIVE_CATEGORY: config
-     :ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
-     :END:
-
-Nicer text wrap/truncation indicators. 
-Credit: [[id:155ab4ae-961b-4665-9c31-2e16378a5fff][rougier/elegant-emacs: A very minimal but elegant emacs (I think)]]
-
-This works instead of default fringe indicators and hence I need to disable fringe.  Without fringe there is also a need to put some internal border in frames.  Otherwise, text will be shifted right to the frame edge, which is not nice.
-
-#+begin_src emacs-lisp
-;; Fringe provides the same (but not customisable functionality
-(fringe-mode '(0 . 0))
-(add-to-list 'default-frame-alist '(internal-border-width . 10))
-(set-frame-parameter (selected-frame)
-                     'internal-border-width 10)
-(defface fallback '((t :family "Fira Code Light"
-		       :inherit 'face-faded)) "Fallback")
-(set-display-table-slot standard-display-table 'truncation
-                        (make-glyph-code ?… 'fallback))
-(set-display-table-slot standard-display-table 'wrap
-                        (make-glyph-code ?↩ 'fallback))
-(set-display-table-slot standard-display-table 'selective-display
-                        (string-to-vector " …"))
-;; Org buffers would use empty table by default
-(use-package org
-  :defer t
-  :init
-  (setq org-display-table (make-display-table))
-  (set-display-table-slot org-display-table 'truncation
-                          (make-glyph-code ?… 'fallback))
-  (set-display-table-slot org-display-table 'wrap
-                          (make-glyph-code ?↩ 'fallback))
-  (set-display-table-slot org-display-table 'selective-display
-                          (string-to-vector " …")))
 #+end_src
 
 * Archived :ARCHIVE:
