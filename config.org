@@ -7610,24 +7610,11 @@ Emacs application framework provides its own implementation of keyboard-driven b
 :PROPERTIES:
 :ID:       58045c39-ffd5-4ccc-bc9d-49048c437f42
 :END:
-This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's config]].
-****************** TODO Describe the workflow
-:PROPERTIES:
-:ID:       2b1456f8-c2fe-41ef-8d3d-99aa4adf362e
-:END:
-****************** END
 
-#+begin_src emacs-lisp
-(use-package org
-  :if init-flag
-  :custom
-  (org-modules
-   '( ol-doi
-      ol-w3m
-      ol-info
-      ol-irc))
-  :defer t)
-#+end_src
+This config was originally inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's config]], but have
+gone a long way since then.  Now, includes elements of Zettelkasten,
+P.A.R.A., and many other task management approaches I have encountered
+and tried in the past. Everything tailored to my personal needs.
 
 *** Workflow
 :PROPERTIES:
@@ -7637,26 +7624,38 @@ This config is inspired by [[http://doc.norang.ca/org-mode.html][Bernt Hansen's 
 :PROPERTIES:
 :ID:       8cef1ba5-d5ea-4ad1-955b-932952c77b0c
 :END:
-I need to deal with many projects running at the same time in my work. Hence, I need some good structure for all these projects to keep track of deadlines, have all the notes to be able to recall what is going on in the project after some time.
 
-The projects are care most about are my research projects at work. And I treat most of my life projects pretty much like research projects (because when you have a hummer, everything around start looking like nails all of a sudden).
+I need to deal with many projects running at the same time in my
+work. Hence, I need some good structure for all these projects to keep
+track of deadlines, have all the notes to be able to recall what is
+going on in the project after some time.
+
+The projects are care most about are my research projects at work. And
+I treat most of my life projects pretty much like research projects
+(because when you have a hummer, everything around start looking like
+nails all of a sudden).
 
 Research projects generally contain several typical components:
-1. Papers related to the project topic that I need to read (this tends to grow quite a lot at times)
+
+1. Papers related to the project topic that I need to read (this tends
+   to grow quite a lot at times)
 2. Actions I need to perform to understand the research question
-3. Ideas, which are not immediately useful, but might become handy as the project progresses
+3. Ideas, which are not immediately useful, but might become handy as
+   the project progresses
 4. Reporting/paperwork related to project
 
-****************** TODO add discussion about project management from the email
-****************** END
-
-****************** Handling ideas
-:PROPERTIES:
-:ID:       92a0a71b-d269-4455-88ae-74e4367e5bfa
-:END:
-[2021-01-15 Fri] The ideas part turned out to be quite tricky. In the past, I kept all the ideas in separate headline. However, practice showed that I tend to forget checking that long list of the ideas. This might be solved by reviewing the idea list regularly, but it is also not very practical since the idea lists tend to grow a lot and require very long time to go through. Instead or reviewing all the ideas together, it would be better to make sure that ideas are reminded to me from time to time without a need for me to think when is the next time I want to be reminded. This is similar to tickler list in GTD [[id:1f151305-2d61-42b9-9438-503c9b538352][Allen David [2015] Getting things done : the art of stress-free productivity]] managed using org-drill, so that spaced repetition method is used to find out when to remind about the idea next time.
-****************** END
-
+[2021-01-15 Fri] The ideas part turned out to be quite tricky. In the
+past, I kept all the ideas in separate headline. However, practice
+showed that I tend to forget checking that long list of the
+ideas. This might be solved by reviewing the idea list regularly, but
+it is also not practical since the idea lists tend to grow a lot and
+require long time to go through. Instead or reviewing all the ideas
+together, it would be better to make sure that ideas are reminded to
+me from time to time without a need for me to think when is the next
+time I want to be reminded. This is similar to tickler list in GTD
+[[id:1f151305-2d61-42b9-9438-503c9b538352][Allen David [2015] Getting things done : the art of stress-free
+productivity]] managed using =org-drill=, so that spaced repetition method
+is used to find out when to remind about the idea next time.
 
 ***** Tags
 :PROPERTIES:
@@ -7666,100 +7665,68 @@ Research projects generally contain several typical components:
 :PROPERTIES:
 :ID:       adc6f5ae-183f-4c5f-97e8-7bfe18f028d2
 :END:
+
 #+begin_src emacs-lisp
-(setq org-tag-alist (quote (("COMMON" . ?c)
-			    ("PhD" . ?p)
-			    ("INBOX" . ?i)
-			    ("TRACK" . ?t)
-			    ("BOOKMARK" . ?b)
-			    ("ORG" . ?o)
-			    ("NOEXPORT" . ?n)
-			    ("NODEADLINE" . ?d)
-			    ("SKIP" . ?s)
-                            ("SKIP_PROJECT_REVIEW" . ?S)
-                            ("NOARCHIVE" . ?a)
-                            ("ARCHIVEALL" . ?A)
-                            ("NOCLOCK" . ?k)
-			    ("ignore" . ?g)
-                            ("REFILE" . ?r)
-			    ("AREA" . ?E)
-                            ("FLAGGED" . ?F)
-                            ("@home" . ?h)
-                            ("@work" . ?w)
-                            ("_hard" . ?x)
-                            ("_easy" . ?z))))
-(setq org-tags-exclude-from-inheritance '("ATTACH" "NOCLOCK"
-                                          "REFILE" "AREA"
-                                          "FLAGGED"
-                                          "project" "goal"
-                                          "SKIP_PROJECT_REVIEW"))
+  (setq org-tag-alist
+        '(("COMMON" . ?c) ("PhD" . ?p) ("INBOX" . ?i) ("TRACK" . ?t)
+  	("BOOKMARK" . ?b) ("NOEXPORT" . ?n) ("NODEADLINE" . ?d)
+  	("SKIP" . ?s) ("SKIP_PROJECT_REVIEW" . ?S) ("NOARCHIVE" . ?a)
+  	("ARCHIVEALL" . ?A) ("ignore" . ?g) ("REFILE" . ?r)
+  	("AREA" . ?E) ("FLAGGED" . ?F) ("@home" . ?h) ("@work" . ?w)
+  	("_hard" . ?x) ("_easy" . ?z)))
+  (setq org-tags-exclude-from-inheritance
+        '("ATTACH"
+          "REFILE" "AREA"
+          "FLAGGED"
+          "project" "goal"
+          "SKIP_PROJECT_REVIEW"))
 #+end_src
-- =hard= :: Task needed significant efforts. Useful when I am scanning for things to do with low-energy.
-- =easy= :: Task needed low efforts. Useful when I am scanning for things to do with low-energy.
+
+- =_hard= :: Task needs significant efforts. Useful when I am scanning
+  for things to do with low-energy.
+- =_easy= :: Task does not require much effort. Useful when I am
+  scanning for things to do with low-energy.
 - =COMMON= :: General task
 - =PhD= :: Related to work/PhD
 - =INBOX= :: Need to be processed (for new captured tasks)
-- =TRACK= :: The link from this task/item should be monitored for changes in the internet
-****************** TODO Need to add automatic handling of this
-:PROPERTIES:
-:ID:       27eb85b6-114f-437f-9424-b28d400f6aa9
-:END:
-****************** END
+- =TRACK= :: The link from this task/item is monitored for changes in
+  the internet.  So, I will eventually get reminded automatically to
+  do the task by email, website notification or other means.
 - =BOOKMARK= :: Contains a link
-- =ORG= :: if the task is not finished - include the org file linked during agenda creation if todo keyword is =NEXT=.The purpose of this tag is reduce the file size: I had a large database of books, which I've read/will read. The file with all the authors included was more than =2Mb=, which took forever to open and, more importantly, made my agenda view build/update time *few minutes*. So, I created separate project for different authors and kept the links to that projects with =ORG= tag assigned, so that I can add the author book list to file/agenda view if the project is =NEXT=.
-****************** TODO add link management system
-****************** TODO need to implement this (ORG tag)
-:PROPERTIES:
-:ID:       648e5339-0732-4464-80de-90a8f5f72467
-:END:
-:LOGBOOK:
-- State "TODO"       from "NEXT"       [2018-09-20 Thu 22:32]
-:END:
-Text properties: =modification-hooks=, =insert-in-front-hooks=, =insert-behind-hooks=
-****************** END
 - =NOEXPORT= :: Do not export an item
-- =NODEADLINE= :: Do not show these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view
-- =SKIP= :: Some projects/sub-projects contains tasks, which can be done independently to each other. I want to see these tasks in "All other tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects they belong to have =NEXT= tasks.
+- =NODEADLINE= :: Do not show these tasks in "All other tasks" part of
+  my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view
+- =SKIP= :: Some projects/sub-projects contains tasks, which can be done
+  independently to each other. I want to see these tasks in "All other
+  tasks" part of my [[id:d110dae9-f563-48bb-8293-a10b1afbe772][GTD self-check]] agenda view even if the projects
+  they belong to have =NEXT= tasks.
 - =SKIP_PROJECT_REVIEW= :: Low-importance projects that I do not want to
   see in the review (limited tracking only when stuck/hold).
 - =NOARCHIVE= :: Do not archive a task. This in not inherited.
-- =ARCHIVE= :: Prevent task from unfolding (e.g. task contains bulky data, I do not want to see)
-- =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only do it all together.
-- =NOCLOCK= :: prevent entry from being clocked in automatically (after child task clock out [[id:d1afb1ae-a3a4-45b4-8186-8e7242e0edc1][Clocking & logging]]). This is not inherited.
+- =ARCHIVE= :: Prevent task from unfolding (e.g. task contains bulky
+  data, I do not want to see).  Setting this tag also moves task
+  attachments to my backup drive.
+- =ARCHIVEALL= :: Do not archive individual tasks in the subtree. Only
+  do it all together.
 - =DEFAULT= :: Do not list the task in GTD agenda
-- NOFOLLOW :: Do not add link to this task [[id:e65adaed-acf4-4872-93fd-5560cde0723b][capture]]
-- REFILE :: can be refile target even if it is not project/sub-project
+- =NOFOLLOW= :: Do not add link to this task [[id:e65adaed-acf4-4872-93fd-5560cde0723b][capture]]
+- =REFILE= :: can be refile target even if it is not project/sub-project
 - =NOREFILE= :: *cannot* be refile target
-- =TICKLER= :: The items refiled here will have their todo state changed to =TICKLER=.
-- =AREA= :: Some projects are not "real" projects, but rather areas of interest. The difference with normal projects is that areas are not expected to be ever finished. Thus, it has little point to keep them in weekly review together with projects. However, they can be stuck, as any other project.
-****** TODO Tags for everything
-****** TICKLER try to implement multiple files/buffers in the same buffer via text properties like modification hooks |- (Special Properties - GNU Emacs Lisp Reference Manual) :BOOKMARK:
-SCHEDULED: <2024-05-08 Wed>
-:PROPERTIES:
-:CREATED:  [2018-02-12 Mon 00:51]
-:Source:   https://www.gnu.org/software/emacs/manual/html_node/elisp/Special-Properties.html#Special-Properties
-:DRILL_LAST_INTERVAL: 10.5363
-:DRILL_REPEATS_SINCE_FAIL: 3
-:DRILL_TOTAL_REPEATS: 2
-:DRILL_FAILURE_COUNT: 0
-:DRILL_AVERAGE_QUALITY: 4.0
-:DRILL_EASE: 2.46
-:END:
-:LOGBOOK:
-CLOCK: [2018-02-12 Mon 00:51]--[2018-02-12 Mon 00:52] =>  0:01
-:END:
-modified b
-******* may be useful |- (multifiles.el/multifiles.el at master · magnars/multifiles.el) :BOOKMARK:
-:PROPERTIES:
-:CREATED:  [2018-02-12 Mon 00:56]
-:Source:   https://github.com/magnars/multifiles.el/blob/master/multifiles.el
-:END:
-fun create-or
+- =TICKLER= :: The items refiled here will have their todo state changed
+  to =TICKLER=
+- =project= :: The task is a project
+- =AREA= :: Some projects are not "real" projects, but rather areas of
+  interest. The difference with normal projects is that areas are not
+  expected to be ever finished. Thus, it has little point to keep them
+  in weekly review together with projects. However, they can be stuck,
+  as any other project.
+
 ***** Tasks
 :PROPERTIES:
 :ID:       d38441a2-1431-44db-b831-8cdec011b1dc
 :END:
 The task is any item with todo keyword and no subtask.
+
 #+begin_src emacs-lisp
 (use-package org-ql
   :defer t
@@ -7786,7 +7753,9 @@ The task is any item with todo keyword and no subtask.
 	    (setq has-subtask t))))
       (and is-a-task (not has-subtask)))))
 #+end_src
-- keywords for not done tasks: =TODO=, =NEXT=, =DOING=, =REVIEW=, =SOMEDAY=, =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=, =TICKLER=
+
+- keywords for not done tasks: =TODO=, =NEXT=, =DOING=, =REVIEW=, =SOMEDAY=,
+  =WAITING=, =HOLD=, =CANCELLED=, =DONE=, =FAILED=, =MERGED=, =TICKLER=
 #+begin_src emacs-lisp
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "DOING(o)" "REVIEW(e)" "|" "DONE(d!)" "FAILED(f@/!)" "MERGED(m!)" )
@@ -11968,7 +11937,7 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 The main purpose of clocking for me is to control the time I spend for important projects and for other staff (like configuring Emacs ;)). Hence, it is important to do a continuous tracking of the tasks, which I can choose to do or not to do (e.g. it is useless to keep track of how much time I spend brushing my teeth in the morning).
 A lot of time, the task I am doing is not useful to add to my org files explicitly (e.g. initial checks on some side project, which may or may not work; routine work). I use special tasks for all kinds of such activity:
 - Organisation :: related to work, general
-- Check =TORead= ... :: related to home, browsing, reading fiction, etc I start the activity from clocking in one of these tasks. Later, I clock in the task, which I am doing at the moment. Once it's done, clocking automatically comes back to higher level task (unless it is marked =:NOCLOCK=, see [[id:adc6f5ae-183f-4c5f-97e8-7bfe18f028d2][General org mode tags]]) or to one of the tasks above when I clocked out top level project.
+- Check =TORead= ... :: related to home, browsing, reading fiction, etc I start the activity from clocking in one of these tasks. Later, I clock in the task, which I am doing at the moment. Once it's done, clocking automatically comes back to higher level task or to one of the tasks above when I clocked out top level project.
      Captures are also clocked, but once done, clocking comes back to previously active task, if any, or to default task otherwise.
 ****************** TODO The default task is not being saved if I restart emacs
 ****************** END
@@ -13527,7 +13496,7 @@ will be refiled."
   )
 #+end_src
 
-***** Refiling [[id:92a0a71b-d269-4455-88ae-74e4367e5bfa][ideas]]
+***** Refiling ideas
 :PROPERTIES:
 :ID:       735633c2-423b-4b92-b1a2-8a0989dcb205
 :END:
@@ -15251,7 +15220,6 @@ Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much f
                   (?🕮 org-specific ":\\(book\\):" (org-mode) 1)
                   (?🎬 org-specific ":\\(video\\):" (org-mode) 1)
                   (? org-specific ":\\(TRACK\\):" (org-mode) 1)
-                  ('(?🕒 (cc . cc) ?🚫) org-specific ":\\(NOCLOCK\\):" (org-mode) 1)
                   (?🖇 org-specific ":\\(misc\\):" (org-mode) 1)
                   (?🖂 org-specific ":\\(email\\):" (org-mode) 1)
                   (?📥 org-specific ":\\(INBOX\\):" (org-mode) 1)
@@ -15659,20 +15627,10 @@ Modify prefix for the entries to show if the entry is repeatable and the time [[
 
 Hide some uninteresting tags
 #+begin_src emacs-lisp
-(setq org-agenda-hide-tags-regexp (rx-to-string '(or "DEFAULT"
-                                                     "flagged"
-                                                     "NOFOLLOW"
-                                                     "TICKLER"
-						     "SKIP"
-                                                     "NOARCHIVE"
-                                                     "INBOX"
-                                                     "HOLD"
-                                                     "WAITING"
-                                                     "NODEADLINE"
-                                                     "CANCELLED"
-                                                     "NOCLOCK"
-                                                     "NOREFILE"
-                                                     "REFILE")))
+  (setq org-agenda-hide-tags-regexp
+        (rx (or "DEFAULT" "flagged" "NOFOLLOW" "TICKLER" "SKIP"
+                "NOARCHIVE" "INBOX" "HOLD" "WAITING" "NODEADLINE"
+                "CANCELLED" "NOREFILE" "REFILE")))
 #+end_src
 
 Shorten too long headlines in agenda. 
