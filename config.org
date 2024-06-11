@@ -7476,6 +7476,7 @@ Make Emacs ERC automatically re-connect when it looses server connection.
   (meta-defun meta-up-element :mode mastodon-mode mastodon-tl--goto-prev-item)
   (meta-defun meta-new-line :mode mastodon-mode mastodon-tl--do-link-action-at-point))
 #+end_src
+
 *** Use =mastodon.el= to open Mastodon links
 :PROPERTIES:
 :SUMMARY:  their heuristics is not ideal
@@ -7661,10 +7662,6 @@ is used to find out when to remind about the idea next time.
 :PROPERTIES:
 :ID:       f87a094b-d4cf-4ade-acb2-08818810dd6e
 :END:
-****** General org mode tags
-:PROPERTIES:
-:ID:       adc6f5ae-183f-4c5f-97e8-7bfe18f028d2
-:END:
 
 #+begin_src emacs-lisp
   (setq org-tag-alist
@@ -7725,7 +7722,8 @@ is used to find out when to remind about the idea next time.
 :PROPERTIES:
 :ID:       d38441a2-1431-44db-b831-8cdec011b1dc
 :END:
-The task is any item with todo keyword and no subtask.
+
+The task is any item with todo keyword, which is not a project.
 
 #+begin_src emacs-lisp
 (use-package org-ql
@@ -7784,8 +7782,6 @@ The task is any item with todo keyword and no subtask.
 :ID:       66396995-13e9-4dfa-854e-476c71a4faa9
 :END:
   - DOING(o) :: A task I am working on, but do not expect to finish quickly (e.g. reading book). Marking this task =DOING =-> =DOING=, reschedules it to tomorrow. Marking a task DOING if it had other keyword and not scheduled, schedules it for today and asks for effort estimate. 
-****************** END
-****************** TODO make it reschedule according to repeater instead
 ****************** END
   #+begin_src emacs-lisp
 (defun org-trigger-doing (arg)
@@ -8280,56 +8276,6 @@ The project with parent projects.
 
 The above definition of a project creates really many small projects and sub-projects. Eventually, the number becomes so high that it is nearly impossible to review them regularly (as recommended by GTD [[id:1f151305-2d61-42b9-9438-503c9b538352][Allen [2015] Getting things done]]). However, some particularly complex (or large) projects do need to be tracked manually to keep the number of daily tasks sane. These projects are marked with =:project:= tag and listed in [[id:d110dae9-f563-48bb-8293-a10b1afbe772][weekly review]].
 Sometimes, I can even mark sub-projects with this tag if the sub-projects are important enough to review the progress regularly.
-
-**** Journal
-:PROPERTIES:
-:CREATED:  [2018-10-23 Tue 18:19]
-:ID:       46346e6b-4ed8-4570-bf4c-05639c125046
-:END:
-:LOGBOOK:
-CLOCK: [2019-07-29 Mon 13:33]--[2019-07-29 Mon 14:06] =>  0:33
-- State "NEXT"       from              [2018-10-23 Tue 18:50]
-:END:
-
-Sometimes, I do some trial tasks for my projects or just try random things with programming.
-These things are unlikely to go into my actual notes or projects files.
-Not always though.
-It is always frustrating when I remember trying something and want to move it to actual notes of project file, but lose what I did.
-
-Journal seems to be a good solution for it.
-I can dump all kind of staff there instead of having it spread over the bash history or just lost.
-I can write notes, run shell commands, calculations, etc without loosing what I have done.
-I may not even need to run terminal in such a case!
-
-I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it does not really work for me because it creates too many files. A simple =date-tree= capture works just fine.
-
-#+begin_src emacs-lisp
-(use-package org-capture
-  :if init-flag
-  :after org
-  :requires org
-  :config
-  (defvar yant/org-journal-file "~/Org/Journal.org"
-    "Filename of the journal file")
-  (use-package doct
-    :defer t
-    :config
-    (setf
-     (alist-get "j" org-capture-templates nil nil #'equal)
-     (cdar (doct '("Journal entry"
-		   :keys "j"
-		   :type entry
-		   :file yant/org-journal-file
-		   :datetree t
-		   :clock-in t
-		   :clock-resume t
-		   :jump-to-captured t
-		   :template
-		   ("* %?"
-		    ":PROPERTIES:"
-		    "CREATED: %U"
-		    ":END:\n")))))))
-#+end_src
 
 **** TODO Files
 :PROPERTIES:
@@ -18431,5 +18377,67 @@ When listening a new band/album, I usually go through all the songs and delete w
   (meta-defun meta-new-line :mode mingus-playlist-mode mingus-play)
   (meta-defun meta-new-line :mode mingus-browse-mode mingus-down-dir-or-play-song)
   (meta-defun meta-up-element :mode mingus-browse-mode mingus-open-parent))
+#+end_src
+
+** Journal :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2018-10-23 Tue 18:19]
+:ID:       46346e6b-4ed8-4570-bf4c-05639c125046
+:SUMMARY:  Alas, ain't working in practice
+:ARCHIVE_TIME: 2024-06-10 Mon 10:13
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+:LOGBOOK:
+CLOCK: [2019-07-29 Mon 13:33]--[2019-07-29 Mon 14:06] =>  0:33
+- State "NEXT"       from              [2018-10-23 Tue 18:50]
+:END:
+
+- Note taken on [2024-06-10 Mon 10:12] \\
+  Alas, ain't working in practice
+
+Sometimes, I do some trial tasks for my projects or just try random
+things with programming.  These things are unlikely to go into my
+actual notes or projects files.  Not always though.  It is always
+frustrating when I remember trying something and want to move it to
+actual notes of project file, but lose what I did.
+
+Journal seems to be a good solution for it.  I can dump all kind of
+staff there instead of having it spread over the bash history or just
+lost.  I can write notes, run shell commands, calculations, etc
+without loosing what I have done.  I may not even need to run terminal
+in such a case!
+
+I have tried [[https://github.com/bastibe/org-journal][org-journal]], but it does not really work for me because
+it creates too many files. A simple =date-tree= capture works just fine.
+
+#+begin_src emacs-lisp
+(use-package org-capture
+  :if init-flag
+  :after org
+  :requires org
+  :config
+  (defvar yant/org-journal-file "~/Org/Journal.org"
+    "Filename of the journal file")
+  (use-package doct
+    :defer t
+    :config
+    (setf
+     (alist-get "j" org-capture-templates nil nil #'equal)
+     (cdar (doct '("Journal entry"
+		   :keys "j"
+		   :type entry
+		   :file yant/org-journal-file
+		   :datetree t
+		   :clock-in t
+		   :clock-resume t
+		   :jump-to-captured t
+		   :template
+		   ("* %?"
+		    ":PROPERTIES:"
+		    "CREATED: %U"
+		    ":END:\n")))))))
 #+end_src
 
