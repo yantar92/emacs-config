@@ -7538,7 +7538,8 @@ Despite the usual big-tech concerns, it makes a decent:
   :if init-flag
   :straight t)
 #+end_src
-*** Display my GPX tracks
+
+*** TODO Display my GPX tracks
 
 #+begin_src emacs-lisp
 (use-package osm
@@ -7972,9 +7973,10 @@ So, I define =:LOGGING:= property in some subtrees to avoid logging.
 :PROPERTIES:
 :ID:       54ee8e08-0cb5-4104-94c2-948be5830c4e
 :END:
-I use inline tasks to add temporary todo state (instead of notes). It should be removed once done and placed into notes when archiving.
-****************** TODO Implement this on inline task done
-****************** END
+
+I use inline tasks to add temporary todo state (instead of notes). It
+should be removed once done and placed into notes when archiving.
+
 #+begin_src emacs-lisp
 (use-package org
   :defer t
@@ -7984,27 +7986,6 @@ I use inline tasks to add temporary todo state (instead of notes). It should be 
     :config
     (setq org-inlinetask-default-state "TODO")
     (setq org-inlinetask-min-level 18)))
-#+end_src
-
-It seems that inline tasks interferes with =org-outline-regexp=.
-Fix it:
-
-#+begin_src emacs-lisp
-(defun org-outline-regexp-no-inline ()
-  "Return string matching an non-inline task heading.
-The maximum number of levels is controlled by `org-inlinetask-min-level'."
-  (let* ((org-inlinetask-min-level (- org-inlinetask-min-level 1))
-	 (nstars (if org-odd-levels-only
-		     (1- (* org-inlinetask-min-level 2))
-		   org-inlinetask-min-level)))
-    (format "^\\(\\*\\{1,%d\\}\\)[ \t]+" nstars)))
-;; (define-advice org-back-to-heading (:around (oldfun &optional args) skip-inlinetasks)
-;;   "Ignore preceding inline tasks when calling outline-back-to-heading."
-;;   (if (org-inlinetask-in-task-p)
-;;       (funcall oldfun args) ;; inside inlinetask - just go to heading
-;;     (let ((outline-regexp (org-outline-regexp-no-inline)))
-;;       (funcall oldfun args))))
-;; (advice-remove 'org-back-to-heading #'org-back-to-heading@skip-inlinetasks)
 #+end_src
 
 By default, org-mode does not allow storing links to inline headings.
