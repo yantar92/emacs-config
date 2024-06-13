@@ -7988,26 +7988,6 @@ should be removed once done and placed into notes when archiving.
     (setq org-inlinetask-min-level 18)))
 #+end_src
 
-By default, org-mode does not allow storing links to inline headings.
-It is really strange. 
-I force org-mode to store link to inline headings by adding inline heading store link function.
-****************** TODO report to org-mode 
-:PROPERTIES:
-:ID:       8764bf9c-51f1-439e-88aa-8650b8e0f83a
-:END:
-****************** END
-
-#+begin_src emacs-lisp
-(defun org-inlinetask-store-link (oldfun &rest args)
-  "Store link to inlinetask at point."
-  (if (and (derived-mode-p 'org-mode)
-	   (org-inlinetask-in-task-p))
-      (let ((org-inlinetask-min-level (1+ org-inlinetask-max-level)))
-	(apply oldfun args))
-    (apply oldfun args)))
-
-(advice-add 'org-store-link :around #'org-inlinetask-store-link)
-#+end_src
 ***** TODO Task dependencies 
 :PROPERTIES:
 :CREATED:  [2017-12-29 Fri 06:10]
