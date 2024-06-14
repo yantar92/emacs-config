@@ -8247,69 +8247,23 @@ The project with parent projects.
 The above definition of a project creates really many small projects and sub-projects. Eventually, the number becomes so high that it is nearly impossible to review them regularly (as recommended by GTD [[id:1f151305-2d61-42b9-9438-503c9b538352][Allen [2015] Getting things done]]). However, some particularly complex (or large) projects do need to be tracked manually to keep the number of daily tasks sane. These projects are marked with =:project:= tag and listed in [[id:d110dae9-f563-48bb-8293-a10b1afbe772][weekly review]].
 Sometimes, I can even mark sub-projects with this tag if the sub-projects are important enough to review the progress regularly.
 
-**** TODO Files
+**** Files
 :PROPERTIES:
 :ID:       f1be655e-5fc4-44b5-8197-22ce9457e489
 :END:
+- inbox.org :: Temporary staging area for fleeting notes and captured tasks
 - notes.org :: all kind of generally useful information
-               #+begin_src emacs-lisp
-(when init-flag
-  (defun notes-open ()
-    (interactive)
-    (find-file "~/Org/notes.org")))
-               #+end_src
+  #+begin_src emacs-lisp
+    (when init-flag
+      (defun notes-open ()
+        (interactive)
+        (find-file "~/Org/notes.org")))
+  #+end_src
 - rss.org :: rss entries for [[id:9bc385e2-0ed2-460b-875e-be9ad19144a3][Elfeed]]
 - *contacts.org* :: my contacts /via/ =org-contacts=
+- schedule.org :: appointments
 - all of it is in =agenda_files=
-- we can add new org files and remove existing
-#+begin_src emacs-lisp
-(when init-flag
-(defun add-buffer-to-agenda-files (buffer)
-  (let ((file_name (buffer-file-name buffer)))
-    (with-temp-file "~/Org/agenda_files"
-      (interactive)
-      (insert-file-contents "~/Org/agenda_files")
-      (beginning-of-buffer)
-      (let ((pos (search-forward file_name nil 't)))
-	(when (not pos)
-	  (end-of-buffer)
-	  (newline)
-	  (insert file_name)
-	  (message "%S is added to agenda_files" file_name)
-	  )
-	(when pos
-	  (message "%S is already in agenda_files" file_name))
-	)
-      )
-    )
-  )
-(defun add-current-buffer-to-agenda-files ()
-  (interactive)
-  (add-buffer-to-agenda-files (current-buffer))
-  )
-(defun remove-buffer-from-agenda-files (buffer)
-  (let ((file_name (buffer-file-name buffer)))
-    (with-temp-file "~/Org/agenda_files"
-      (interactive)
-      (insert-file-contents "~/Org/agenda_files")
-      (beginning-of-buffer)
-      (let ((pos (search-forward file_name nil 't)))
-	(when (not pos)
-	  (message "%S is not in agenda_files" file_name))
-	(when pos
-	  (beginning-of-buffer)
-	  (delete-matching-lines file_name)
-	  (message "%S is deleted from agenda_files" file_name)
-	  )
-	)
-      )
-    )
-  )
-(defun remove-current-buffer-from-agenda-files ()
-  (interactive)
-  (remove-buffer-from-agenda-files (current-buffer))
-  ))
-#+end_src
+
 **** Links
 :PROPERTIES:
 :ID:       7122dce7-7d3e-4167-a444-8811d588db42
@@ -16629,8 +16583,6 @@ Using because the package is abandoned and I am helping to maintain it.
    )
   (bind-keys :map org-mode-map
 	     ("C-c C-l" . org-insert-link)
-	     ("C-c C-+" . add-current-buffer-to-agenda-files)
-	     ("C-c C--" . remove-current-buffer-from-agenda-files)
 	     ("C-c e" . yant/add-email-to-task)
 	     ("C-c i" . org-clock-in)
 	     ("C-c o" . org-clock-out)
