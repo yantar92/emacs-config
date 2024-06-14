@@ -5693,6 +5693,15 @@ talks - Top 10 reasons why you should be using Eshell]]
   :config
   (meta-defun meta-new-line :mode eshell-mode eshell-send-input))
 #+end_src
+***** Force color support
+
+#+begin_src emacs-lisp
+  (use-package eat
+    :if init-flag
+    :custom
+    ;; xterm makes programs use colors, but not the default value (no idea why)
+    (eat-term-name "xterm"))
+#+end_src
 
 **** Vterm
 :PROPERTIES:
