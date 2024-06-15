@@ -8262,37 +8262,12 @@ Sometimes, I can even mark sub-projects with this tag if the sub-projects are im
 - rss.org :: rss entries for [[id:9bc385e2-0ed2-460b-875e-be9ad19144a3][Elfeed]]
 - *contacts.org* :: my contacts /via/ =org-contacts=
 - schedule.org :: appointments
-- all of it is in =agenda_files=
+- all of it is in =~/Org/agenda_files=
 
 **** Links
 :PROPERTIES:
 :ID:       7122dce7-7d3e-4167-a444-8811d588db42
 :END:
-***** Link description function
-:PROPERTIES:
-:CREATED:  [2019-05-07 Tue 10:27]
-:ID:       bd43272d-9ef4-45a6-85ab-bebbef75c18b
-:END:
-:LOGBOOK:
-- State "WAITING"    from "HOLD"          [2020-09-24 Thu 21:55]
-- State "HOLD"       from "SOMEDAY"    [2020-09-24 Thu 21:55] \\
-  Get reply to my patch
-CLOCK: [2019-08-03 Sat 00:01]--[2019-08-03 Sat 00:02] =>  0:01
-- State "NEXT"       from "TODO"       [2019-05-07 Tue 10:34]
-:END:
-
-#+begin_src emacs-lisp
-(defun yant/org-make-link-description-function (link desk)
-  "Return description of the link LINK according to :desk link property.
-Return DESK if :desk is not set."
-  (let ((fun (org-link-get-parameter (car (split-string link ":")) :desk)))
-    (if (functionp fun)
-	(funcall fun link desk)
-      desk)))
-
-(setq org-link-make-description-function #'yant/org-make-link-description-function)
-#+end_src
-
 ***** External
 :PROPERTIES:
 :ID:       e74697d9-3d3e-4db4-8a4c-e9cad8f73d23
@@ -8550,7 +8525,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
   ;; 			 :complete #'org-att-id-link-complete
   ;;                          :store #'org-att-id-store-link
   ;;                          :follow #'org-att-id-follow
-  ;;                          :desk #'org-att-id-link-description)
+  ;;                          :description #'org-att-id-link-description)
 
 #+end_src
 
@@ -8602,7 +8577,7 @@ Just links to the current entry are not always sufficient. I sometimes want to l
 
 (org-link-set-parameters "id"
 			 :complete #'org-id-link-complete
-                         :desk #'org-id-link-desk)
+                         :description #'org-id-link-desk)
 #+end_src
 
 
