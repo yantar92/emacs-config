@@ -8276,7 +8276,9 @@ Sometimes, I can even mark sub-projects with this tag if the sub-projects are im
 :PROPERTIES:
 :ID:       2fe2cfaf-3ad4-4b87-99b1-2897e7c0bf20
 :END:
-Adjust some of the external application programs
+
+Adjust some of the external application programs.
+
 #+begin_src emacs-lisp
 (setq org-file-apps '((directory . emacs)
                       ("\\.bib\\'" . emacs)
@@ -8287,33 +8289,6 @@ Adjust some of the external application programs
 		      ("\\.tiff?\\'" . "feh-open %s")
 		      ("\\.png?\\'" . "feh-open %s")))
 #+end_src
-****** COMMENT =Pdf-view= links
-:PROPERTIES:
-:ID:       f6b6301d-6ccb-4ee1-a454-ca6f5af845ea
-:END:
-Store links to pages in pdf
-#+begin_src emacs-lisp
-(use-package org-pdftools
-  :straight t
-  :after (org pdf-tools)
-  :config
-  (org-pdftools-setup-link))
-
-(add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (file link) (org-pdfview-open link))))
-
-(setq org-file-apps  (delete '("\\.pdf\\'" . (lambda (file link) (org-pdfview-open link))) org-file-apps ))
-#+end_src
-****** TODO Inkscape (svg) links
-:PROPERTIES:
-:CREATED:  [2018-10-21 Sun 14:05]
-:ID:       824be892-df30-4c07-bf02-93a234fb7885
-:END:
-Open and preview inkscape svg files.
-Copy paste from https://github.com/jkitchin/scimax/blob/master/scimax-inkscape.el
-#+BEGIN_SRC emacs-lisp
-(use-package scimax-inkscape
-  :straight (scimax-inkscape :host github :files ("scimax-inkscape.el") :repo "jkitchin/scimax"))
-#+END_SRC
 
 ****** Links to attached files
 :PROPERTIES:
