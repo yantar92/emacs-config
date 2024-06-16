@@ -8313,70 +8313,49 @@ Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while
 ****************** END
 
 #+BEGIN_SRC emacs-lisp
-(defmacro org-with-point-at-org-buffer (&rest body)
-  "If in agenda, put the point into the corresponding org buffer."
-  `(cond ((eq major-mode 'org-agenda-mode)
-	  (when-let ((marker (org-get-at-bol 'org-hd-marker))
-                     (agenda-buffer (current-buffer)))
-	    (org-with-point-at marker
-	      ,@body)))
-         ((eq major-mode 'org-mode)
-          (org-with-wide-buffer
-	   ,@body))
-	 (t (display-warning :warning "Trying to call org function in non-org buffer."))))
+  (defmacro org-with-point-at-org-buffer (&rest body)
+    "If in agenda, put the point into the corresponding org buffer."
+    `(cond ((eq major-mode 'org-agenda-mode)
+  	  (when-let ((marker (org-get-at-bol 'org-hd-marker))
+                       (agenda-buffer (current-buffer)))
+  	    (org-with-point-at marker
+  	      ,@body)))
+           ((eq major-mode 'org-mode)
+            (org-with-wide-buffer
+  	   ,@body))
+  	 (t (display-warning :warning "Trying to call org function in non-org buffer."))))
 
-(defmacro org-with-point-at-org-buffer-drop-excursion (&rest body)
-  "If in agenda, put the point into the corresponding org buffer.
-Do not save excursion."
-  `(cond ((eq major-mode 'org-agenda-mode)
-	  (when-let ((marker (org-get-at-bol 'org-hd-marker))
-                     (agenda-buffer (current-buffer)))
-	    (org-with-point-at-drop-excursion marker
-	      ,@body)))
-         ((eq major-mode 'org-mode)
-          (org-with-wide-buffer-drop-excursion
-	   ,@body))
-	 (t (display-warning :warning "Trying to call org function in non-org buffer."))))
+  (defmacro org-with-point-at-org-buffer-drop-excursion (&rest body)
+    "If in agenda, put the point into the corresponding org buffer.
+  Do not save excursion."
+    `(cond ((eq major-mode 'org-agenda-mode)
+  	  (when-let ((marker (org-get-at-bol 'org-hd-marker))
+                       (agenda-buffer (current-buffer)))
+  	    (org-with-point-at-drop-excursion marker
+  	      ,@body)))
+           ((eq major-mode 'org-mode)
+            (org-with-wide-buffer-drop-excursion
+  	   ,@body))
+  	 (t (display-warning :warning "Trying to call org function in non-org buffer."))))
 
-(defmacro org-with-point-at-drop-excursion (pom &rest body)
-  "Move to buffer and point of point-or-marker POM for the duration of BODY.
-Do not save excursion."
-  (declare (debug (form body)) (indent 1))
-  (org-with-gensyms (mpom)
-    `(let ((,mpom ,pom))
-       (when (markerp ,mpom) (set-buffer (marker-buffer ,mpom)))
-       (org-with-wide-buffer-drop-excursion
-	(goto-char (or ,mpom (point)))
-	,@body))))
+  (defmacro org-with-point-at-drop-excursion (pom &rest body)
+    "Move to buffer and point of point-or-marker POM for the duration of BODY.
+  Do not save excursion."
+    (declare (debug (form body)) (indent 1))
+    (org-with-gensyms (mpom)
+      `(let ((,mpom ,pom))
+         (when (markerp ,mpom) (set-buffer (marker-buffer ,mpom)))
+         (org-with-wide-buffer-drop-excursion
+  	(goto-char (or ,mpom (point)))
+  	,@body))))
 
-(defmacro org-with-wide-buffer-drop-excursion (&rest body)
-  "Execute body while temporarily widening the buffer.
-Do not save excursion."
-  (declare (debug (body)))
-  `(save-restriction
-     (widen)
-     ,@body))
-
-(setq org-link-file-path-type 'relative)
-
-(defun yant/process-att-abbrev (arg)
-  "Return `org-attach-dir' for the current entry."
-  (concat (file-name-as-directory
-           (let ((org-attach-dir-suppress-extra-checks t)) (org-attach-dir)))
-	  arg))
-
-;; (add-to-list 'org-link-abbrev-alist (cons "att" "attachment"))
-
-;; (defun org-att-link-complete (&optional arg)
-;;   "Completion function for att: link."
-;;   (let* ((ref-dir (org-attach-dir 'CREATE))
-;; 	 (filelink (let ((default-directory (file-name-as-directory ref-dir)))
-;; 		     (org-file-complete-link)))
-;; 	 (filepath (apply #'concat (cdr (split-string ":" filelink)))))
-;;     (format "att:%s" filepath)))
-
-;; (org-link-set-parameters "att"
-;; 			 :complete #'org-att-link-complete)
+  (defmacro org-with-wide-buffer-drop-excursion (&rest body)
+    "Execute body while temporarily widening the buffer.
+  Do not save excursion."
+    (declare (debug (body)))
+    `(save-restriction
+       (widen)
+       ,@body))
 #+END_SRC
 
 Just links to the current entry are not always sufficient. I sometimes want to link a file from another entry.
@@ -8395,18 +8374,6 @@ Just links to the current entry are not always sufficient. I sometimes want to l
               file)))
   ;; Cache results
   (use-package memoize :config (memoize #'yant/process-att-id-abbrev))
-
-  
-
-  ;; (add-to-list 'org-link-abbrev-alist (cons "att-id" "file:%(yant/process-att-id-abbrev)"))
-
-  ;; FIXME: file: links cannot have custom follow:
-  ;; (defun org-att-id-follow (path &optional arg)
-  ;;   "Follow att-id: link"
-  ;;   (if arg
-  ;;       (let ((id (car (split-string ":" path))))
-  ;; 	(org-link-open-from-string (concat "id:" id)))
-  ;;     (org-link-open-from-string (concat "file:" (yant/process-att-id-abbrev path)))))
 
   (defun org-att-id-skip-function ()
     "Test if an entry contains attachments. Move point to next candidate location."
