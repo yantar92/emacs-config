@@ -8396,6 +8396,13 @@ media-sound/lilypond
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-lang/R
 #+end_src
+
+[2024-06-05 Wed] Need to compile image support to produce =:results
+graphics= in R src blocks.
+#+begin_src conf :tangle /sudo::/etc/portage/package.use/R
+dev-lang/R png jpg
+#+end_src
+
 *** git-annex
 :PROPERTIES:
 :ID:       de5c3ba3-3e78-45e6-b75e-d5d29cdc2195
