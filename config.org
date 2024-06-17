@@ -4798,6 +4798,7 @@ We can search:
  - man entries
 
 Add extra ~helm-info-at-point~ sources.
+
  #+begin_src emacs-lisp
    (use-package helm-info
      :config
@@ -4807,6 +4808,7 @@ Add extra ~helm-info-at-point~ sources.
  #+end_src
 
 Add command searching across Emacs-related user manuals.
+
  #+begin_src emacs-lisp
 (when init-flag
   (defun helm-info-emacs-and-extra ()
@@ -10396,7 +10398,7 @@ Agenda is excellent for short term planning, however it is not very useful if I 
 	  cfw:fchar-top-left-corner ?┏
 	  cfw:fchar-top-right-corner ?┓)))
 #+end_src
-***** TODO COMMENT =Gcal= - sync with Google calendar
+***** COMMENT =Gcal= - sync with Google calendar
 :PROPERTIES:
 :ID:       b66193fa-9189-4822-b68f-87f5bc30c3fd
 :END:

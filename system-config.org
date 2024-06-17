@@ -86,6 +86,9 @@ but also mixing it with some parts of Sakaki guide.
 :END:
 
 **** Binary package repository
+:PROPERTIES:
+:ID:       53e321be-f48a-478f-99b3-a77f526b3c81
+:END:
 
 See https://wiki.gentoo.org/wiki/Gentoo_Binary_Host_Quickstart
 
