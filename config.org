@@ -13331,8 +13331,10 @@ Subtrees containing ideas are marked with :TICKLER: tag. Any task refiled to suc
 (setq org-export-allow-bind-keywords t)
   #+end_src
   #+begin_src emacs-lisp
-(setq org-export-use-babel t)
-(setf (alist-get :eval org-babel-default-header-args) "never-export")
+    (setq org-export-use-babel t)
+    (use-package ob-core
+      :config
+      (setf (alist-get :eval org-babel-default-header-args) "never-export"))
   #+end_src
 ***** =Orgdiff=: Produce diffs from version-controlled exports
 
@@ -14053,22 +14055,20 @@ Leaving the code below for reference.
 :END:
 - =Noweb= is useful, I'd rather enable it everywhere than set it every time to run the code
 #+BEGIN_SRC emacs-lisp
-(setq org-babel-default-header-args '((:session . "none")
-				      (:results . "replace")
-                                      (:exports . "code")
-                                      (:cache . "no")
-                                      (:noweb . "yes")
-                                      (:hlines . "no")
-                                      (:tangle . "no")
-                                      (:comments . "link")
-                                      (:eval . "never-export")))
-(setq org-babel-default-header-args:shell '((:results . "output")))
+  (use-package ob-core
+    :config
+    (setf (alist-get :comments org-babel-default-header-args) "link")
+    (setf (alist-get :noweb org-babel-default-header-args) "yes"))
+  (use-package ob-shell
+    :config
+    (setf (alist-get :results org-babel-default-header-args:shell) "output"))
 #+END_SRC
 - Show stderr in the shell output ([[https://github.com/novoid/dot-emacs/blob/master/config.org][Source]])
 #+BEGIN_SRC emacs-lisp
-(setq org-babel-default-header-args:sh
-      '((:prologue . "exec 2>&1") (:epilogue . ":"))
-      )
+  (use-package ob-shell
+    :config
+    (setf (alist-get :prologue org-babel-default-header-args:sh) "exec 2>&1")
+    (setf (alist-get :epilogue org-babel-default-header-args:sh) ":"))
 #+END_SRC
 ***** SOMEDAY Evaluation :SKIP_PROJECT_REVIEW:SOMEDAY:
 :PROPERTIES:
