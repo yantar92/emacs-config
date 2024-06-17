@@ -4820,6 +4820,12 @@ Add command searching across Emacs-related user manuals.
                      helm-source-info-tramp))))
  #+end_src
 
+Add binding to search Elisp libraries.
+
+#+begin_src emacs-lisp
+  (bind-key "<f1> l" #'find-library)
+#+end_src
+
 **** Appearance
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 15:19]
