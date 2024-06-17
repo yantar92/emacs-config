@@ -14081,35 +14081,6 @@ Leaving the code below for reference.
 #+BEGIN_SRC emacs-lisp
 (setq org-confirm-babel-evaluate nil)
 #+END_SRC
-I hate when org is cluttering org file directory with generated files (=:file=). It is better to save everything inside hidden entry's attachment folder instead. I just redefine =default-directory= before
-=org-babel-execute-src-block=, so that =:dir= or =:output-dir= can be still set if needed.
-
-****************** TODO we cannot do it using default-directory because expand-file-name is going recursive if org-babel-execute-src-block calls expand-file-name inside
-****************** END
-
-#+BEGIN_SRC emacs-lisp
-(define-advice org-babel-execute-src-block (:filter-args (&optional args) set-detault-dir-to-org-attach-path)
-  "Set working directory to the current entry's attach directory."
-  (if (and (eq major-mode 'org-mode)
-           (buffer-file-name))
-      (let* ((directory (file-name-as-directory (org-attach-dir 'create-if-none)))
-	     (arg (car args))
-             (info (cadr args))
-             (params (org-babel-merge-params (nth 2 info) (caddr args)))
-             (dir-param (alist-get :dir params)))
-        (unless (and dir-param (or (equal
-				    (file-name-as-directory (expand-file-name default-directory))
-                                    (file-name-as-directory (expand-file-name dir-param)))
-				   (file-name-absolute-p dir-param)))
-          (setf (alist-get :dir params)
-	        (if dir-param
-                    (file-name-concat directory (alist-get :dir params))
-                  directory)))
-        (list arg info params))
-    args))
-
-;; (advice-remove 'org-babel-execute-src-block #'org-babel-execute-src-block@set-detault-dir-to-org-attach-path)
-#+END_SRC
 
 Allow passing file: links as variables to src blocks
 
