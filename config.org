@@ -8471,11 +8471,11 @@ Just links to the current entry are not always sufficient. I sometimes want to l
   			      :link (concat "att-id:" id ":" link)
                                 :description (org-att-id-link-description (concat "att-id:" id ":" link) ""))))))
 
-  ;; (org-link-set-parameters "att-id"
-  ;; 			 :complete #'org-att-id-link-complete
-  ;;                          :store #'org-att-id-store-link
-  ;;                          :follow #'org-att-id-follow
-  ;;                          :description #'org-att-id-link-description)
+  (org-link-set-parameters "att-id"
+  			 :complete #'org-att-id-link-complete
+                           :store #'org-att-id-store-link
+                           :follow #'org-att-id-follow
+                           :description #'org-att-id-link-description)
 
 #+end_src
 
