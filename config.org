@@ -1496,24 +1496,6 @@ I currently do not use hydras often.
   (global-set-key (kbd "C-S-g") #'ignore))
 #+end_src
 
-**** Disable terminal key aliases (I don't use console emacs anyway)
-:PROPERTIES:
-:CREATED:  [2019-11-18 Mon 10:24]
-:ID:       5656ef63-a887-47c0-9427-f7d53d9ddc13
-:END:
-
-Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_thread/ehcg919/
-#+begin_src emacs-lisp
-  (when init-flag
-  ;; free up blocked keys (GUI only)
-  ;; add to your init.el
-  (define-key input-decode-map [?\C-m] [C-m])
-  (define-key input-decode-map [?\C-i] [C-i])
-  ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=55672
-  ;; (define-key input-decode-map (kbd "C-[") [C-\[])
-)
-#+end_src
-
 **** Disable some keybinding, which interfere with my setup (easy to press by mistake)
 :PROPERTIES:
 :CREATED:  [2018-09-25 Tue 20:22]
@@ -18257,5 +18239,31 @@ it creates too many files. A simple =date-tree= capture works just fine.
 		    ":PROPERTIES:"
 		    "CREATED: %U"
 		    ":END:\n")))))))
+#+end_src
+
+** Disable terminal key aliases (I don't use console emacs anyway) :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2019-11-18 Mon 10:24]
+:ID:       5656ef63-a887-47c0-9427-f7d53d9ddc13
+:SUMMARY:  disabling the aliases is problematic in practice - is makes it impossible to use C-m keymap prefix (in magit commit, C-m v is used to set version)
+:ARCHIVE_TIME: 2024-06-20 Thu 08:49
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Command loop/Key bindings
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+- Note taken on [2024-06-20 Thu 08:48] \\
+  disabling the aliases is problematic in practice - is makes it impossible to use C-m keymap prefix (in magit commit, C-m v is used to set version)
+Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_thread/ehcg919/
+#+begin_src emacs-lisp
+  (when init-flag
+    ;; free up blocked keys (GUI only)
+    ;; add to your init.el
+    (define-key input-decode-map [?\C-m] [C-m])
+    (define-key input-decode-map [?\C-i] [C-i])
+    ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=55672
+    ;; (define-key input-decode-map (kbd "C-[") [C-\[])
+    )
 #+end_src
 
