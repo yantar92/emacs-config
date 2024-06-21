@@ -14720,9 +14720,14 @@ Verbatim text font
 :ID:       df5b9cb0-e3d1-406e-b71f-55a7b90c221e
 :END:
 #+begin_src emacs-lisp
-(org-link-set-parameters
- "file"
- :face (lambda (path) (if (file-exists-p (org-link-unescape path)) 'org-link 'org-warning)))
+  (org-link-set-parameters
+   "file"
+   :face
+   (lambda (path)
+     (let ((file (org-link-unescape path)))
+       (if (or (file-remote-p file) (file-exists-p file))
+  	 'org-link
+         'org-warning))))
 #+end_src
 ***** Use posframe to offer link selection
 :PROPERTIES:
