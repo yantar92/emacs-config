@@ -8339,7 +8339,9 @@ CLOCK: [2018-07-09 Mon 21:47]--[2018-07-09 Mon 23:02] =>  1:15
        ,@body))
 #+END_SRC
 
-Just links to the current entry are not always sufficient. I sometimes want to link a file from another entry.
+Org mode provides =attachment:= link type to link to files attached to
+current heading.  However, just links to the current entry are not
+always sufficient. I sometimes want to link a file from another entry.
 
 #+begin_src emacs-lisp
   (defun yant/process-att-id-abbrev (arg)
@@ -8760,8 +8762,8 @@ Also, use =org-attach-open= instead of =org-attach-reveal= in =org-open-at-point
 :ID:       6807bed8-dc56-4f1a-adde-e1f2942786dd
 :END:
 
-Additional auto-typing for LaTeX fragments directly inside org. 
-This includes:
+Additional auto-typing for LaTeX fragments directly inside org.  This
+includes:
 1. C-c { for inserting environment
 2. TAB for LaTeX abbrev expansion
 3. _ and ^ automatically adds curly braces
@@ -8820,10 +8822,13 @@ This includes:
                                  "SHOWFROMTIME" nil)))))
     (not (yant/now-after-showfromtime? showfromtime))))
      #+end_src
-- =:SHOWFROMDATE:= :: The purpose of this is to be able to postpone the scheduled tasks for future if I cannot do it. The property is formatted as an org date.
-     This property is especially useful if there is something more pressing, so that there is a temptation to reschedule less pressing event to another day. If the more pressing task is done earlier than expected, the postponed tasks can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
-****************** TODO maybe move showing overlay in agenda to appearance
-****************** END
+- =:SHOWFROMDATE:= :: The purpose of this is to be able to postpone the
+     scheduled tasks for future if I cannot do it. The property is
+     formatted as an org date.  This property is especially useful if
+     there is something more pressing, so that there is a temptation
+     to reschedule less pressing event to another day. If the more
+     pressing task is done earlier than expected, the postponed tasks
+     can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
      #+begin_src emacs-lisp
 (require 'org-agenda)
 (add-to-list 'org-default-properties "SHOWFROMDATE")
@@ -8884,7 +8889,12 @@ This includes:
 	      (currenttime (ts-now)))
     (ts< currenttime showfromdate)))
      #+end_src
-- =:SHOWDATES:= (always inheriting) :: It contains dairy =sexps= to set when the project should be shown. For example, I may want to work on Saturday once or twice, but the working items should not be shown on weekend normally. Hence, I can define it. Or some things can only be done on specific dates (say, going to some shop, which is open few days a week only)
+- =:SHOWDATES:= (always inheriting) :: It contains dairy =sexps= to set
+  when the project should be shown. For example, I may want to work on
+  Saturday once or twice, but the working items should not be shown on
+  weekend normally. Hence, I can define it. Or some things can only be
+  done on specific dates (say, going to some shop, which is open few
+  days a week only)
      #+begin_src emacs-lisp
 (add-to-list 'org-default-properties "SHOWDATES")
 (defun org-agenda-skip-noshowdates()
