@@ -8293,15 +8293,6 @@ CLOCK: [2018-07-09 Mon 21:47]--[2018-07-09 Mon 23:02] =>  1:15
 - State "TODO"       from              [2018-07-09 Mon 21:47]
 :END:
 
-I have symlinks to the attached files stored in the directory tree mimicking org file structure (see [[id:9361bc68-010b-45f1-bddd-4638d6344758][Store files in folder structure, following my org tree structure]])
-However, they can be moved upon refiling.
-Hence, it is better to avoid =file= links to the attached files.
-Therefore, I define a new link type to the attached files of the current entry.
-Note that if helm-find-files is used in emacs, it is possible to =C-c C-f= while selecting an image link - it will show the preview of images in separate buffer (idea from [[https://www.reddit.com/r/emacs/comments/9dh45j/preview_images_while_helmfindfiles/][reddit]]).
-
-****************** TODO need to use caching for =org-attach-dir-symlink=. slowing down flycheck too much
-****************** END
-
 #+BEGIN_SRC emacs-lisp
   (defmacro org-with-point-at-org-buffer (&rest body)
     "If in agenda, put the point into the corresponding org buffer."
@@ -8993,23 +8984,6 @@ The new files are usually coming from my Downloads (=yant/org-attach-default-sou
 The default =org-attach-attach= function does not allow to attach directories.
 I made it so in the interactive specification in [[id:3a0ca96a-3ce5-4f72-ba38-16990342fb5a][Default attachment directory]].
 
-***** Automatically insert link at point after adding new attachment
-:PROPERTIES:
-:CREATED:  [2020-07-07 Tue 19:11]
-:ID:       96a327b6-d204-433c-af62-d3700d46674a
-:END:
-
-The most common scenario working with attachments is when I want to add an attachment and immidiately insert the corresponding =attachment:= link. 
-So, it makes sense to copy the link to added attachment into link ring.
-
-#+begin_src emacs-lisp
-(use-package org-attach
-  :if init-flag
-  :after org
-  :custom
-  (org-attach-store-link-p 'attached))
-#+end_src
-
 ***** HOLD Store files in folder structure, following my org tree structure :HOLD:
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 18:11]
@@ -9392,55 +9366,6 @@ CLOSED: [2020-08-11 Tue 22:10]
     (or attach-dir-inherited
   	dir)))
 ;; (advice-remove 'org-attach-dir #'org-attach-dir@yant/org-attach-use-attach-dir-inheritance)
-#+end_src
-
-***** Saving web pages into notes
-:PROPERTIES:
-:CREATED:  [2017-12-30 Sat 22:20]
-:ID:       8e1af85e-3e47-40c3-9b33-34a5e848b483
-:END:
-:LOGBOOK:
-- State "DONE"       from "NEXT"       [2018-09-06 Thu 20:53]
-- State "TODO"       from              [2017-12-30 Sat 22:20]
-:END:
-
-Sometimes, I want to save certain interesting online articles to disk to make sure that all the content and comments are preserved regardless of the website changes.
-
-****** COMMENT org-web-tools
-:PROPERTIES:
-:CREATED:  [2019-04-23 Tue 23:44]
-:ID:       f8a52437-48d9-418a-a00d-c1af5680c230
-:END:
-:LOGBOOK:
-- State "DONE"       from "NEXT"       [2019-04-24 Wed 15:43]
-CLOCK: [2019-04-24 Wed 15:23]--[2019-04-24 Wed 15:43] =>  0:20
-- State "NEXT"       from "TODO"       [2019-04-23 Tue 23:45]
-:END:
-
-With =org-webtools=, I can download and attach web pages to an entry or even insert them converted into org format.
-
-****************** TODO make the web-pages open on C-c C-o
-****************** END
-
-
-#+begin_src emacs-lisp
-(use-package org-web-tools
-  :if init-flag
-  :after org
-  :straight (org-web-tools :host github :repo "alphapapa/org-web-tools" :local-repo "~/Git/org-web-tools"
-			   :fork (:host github :repo "yantar92/org-web-tools"))
-  :bind (:map org-mode-map
-	      ("C-c C-S-u a" . org-web-tools-archive-attach)
-	      ("C-c C-S-u o" . org-web-tools-archive-view)
-	      ("C-c C-S-u i" . org-web-tools-insert-web-page-as-entry))
-  :config
-  (use-package org-web-tools-archive)
-  ;; (setq org-web-tools-archive-fn #'org-web-tools-archive--wget-tar)
-  (setq org-web-tools-archive-wget-options
-	(append (-remove-item  "--execute robots=off" org-web-tools-archive-wget-options) (list "--max-redirect=100")))
-  (setq org-web-tools-archive-wget-html-only-options
-	(append (-remove-item  "--execute robots=off" org-web-tools-archive-wget-html-only-options) (list "--max-redirect=100")))
-  (setq org-web-tools-pandoc-sleep-time 1.0))
 #+end_src
 
 ***** =_epilogue=
@@ -18265,5 +18190,59 @@ Source: https://www.reddit.com/r/emacs/comments/auwzjr/weekly_tipstricketc_threa
     ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=55672
     ;; (define-key input-decode-map (kbd "C-[") [C-\[])
     )
+#+end_src
+
+** Saving web pages into notes :EMACS:COMMON:SOMEDAY:
+:PROPERTIES:
+:CREATED:  [2017-12-30 Sat 22:20]
+:ID:       8e1af85e-3e47-40c3-9b33-34a5e848b483
+:ARCHIVE_TIME: 2024-06-20 Thu 11:11
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Org mode/Workflow/Attach
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"       [2018-09-06 Thu 20:53]
+- State "TODO"       from              [2017-12-30 Sat 22:20]
+:END:
+
+Sometimes, I want to save certain interesting online articles to disk to make sure that all the content and comments are preserved regardless of the website changes.
+
+*** COMMENT org-web-tools
+:PROPERTIES:
+:CREATED:  [2019-04-23 Tue 23:44]
+:ID:       f8a52437-48d9-418a-a00d-c1af5680c230
+:END:
+:LOGBOOK:
+- State "DONE"       from "NEXT"       [2019-04-24 Wed 15:43]
+CLOCK: [2019-04-24 Wed 15:23]--[2019-04-24 Wed 15:43] =>  0:20
+- State "NEXT"       from "TODO"       [2019-04-23 Tue 23:45]
+:END:
+
+With =org-webtools=, I can download and attach web pages to an entry or even insert them converted into org format.
+
+****************** TODO make the web-pages open on C-c C-o
+****************** END
+
+
+#+begin_src emacs-lisp
+(use-package org-web-tools
+  :if init-flag
+  :after org
+  :straight (org-web-tools :host github :repo "alphapapa/org-web-tools" :local-repo "~/Git/org-web-tools"
+			   :fork (:host github :repo "yantar92/org-web-tools"))
+  :bind (:map org-mode-map
+	      ("C-c C-S-u a" . org-web-tools-archive-attach)
+	      ("C-c C-S-u o" . org-web-tools-archive-view)
+	      ("C-c C-S-u i" . org-web-tools-insert-web-page-as-entry))
+  :config
+  (use-package org-web-tools-archive)
+  ;; (setq org-web-tools-archive-fn #'org-web-tools-archive--wget-tar)
+  (setq org-web-tools-archive-wget-options
+	(append (-remove-item  "--execute robots=off" org-web-tools-archive-wget-options) (list "--max-redirect=100")))
+  (setq org-web-tools-archive-wget-html-only-options
+	(append (-remove-item  "--execute robots=off" org-web-tools-archive-wget-html-only-options) (list "--max-redirect=100")))
+  (setq org-web-tools-pandoc-sleep-time 1.0))
 #+end_src
 
