@@ -2599,23 +2599,23 @@ abort completely with `C-g'."
 [[id:Github-cjl8zf-cjl8zf-langtool-ignore-c3a][cjl8zf [Github] cjl8zf/langtool-ignore-fonts: Force Emacs Langtool to ignore certain fonts. For example, this can be used to prevent langtool from highlighting LaTeX in math-mode.]]
 
 #+begin_src emacs-lisp
-(use-package langtool-ignore-fonts
-  :straight t
-  :if init-flag
-  :after langtool
-  :config
-  (dolist (hook '(latex-mode-hook markdown-mode-hook notmuch-message-mode-hook))
-    (add-hook hook #'langtool-ignore-fonts-minor-mode))
-  (langtool-ignore-fonts-add
-   'latex-mode  '(font-lock-comment-face
-		  font-latex-math-face font-latex-string-face))
-  (langtool-ignore-fonts-add 'markdown-mode '(markdown-code-face))
-  (langtool-ignore-fonts-add
-   'org-mode  '(org-property-value org-block org-link))
-  (langtool-ignore-fonts-add
-   'notmuch-message-mode
-   '( message-cited-text-1 message-cited-text-2
-      message-cited-text-3 message-cited-text-4)))
+  (use-package langtool-ignore-fonts
+    :straight t
+    :if init-flag
+    :after langtool
+    :config
+    (dolist (hook '(latex-mode-hook markdown-mode-hook notmuch-message-mode-hook))
+      (add-hook hook #'langtool-ignore-fonts-minor-mode))
+    (langtool-ignore-fonts-add
+     'latex-mode  '(font-lock-comment-face
+  		  font-latex-math-face font-latex-string-face))
+    (langtool-ignore-fonts-add 'markdown-mode '(markdown-code-face))
+    (langtool-ignore-fonts-add
+     'org-mode  '(org-property-value org-block org-link org-meta-line org-macro org-code org-verbatim org-block-begin-line org-block-end-line))
+    (langtool-ignore-fonts-add
+     'notmuch-message-mode
+     '( message-cited-text-1 message-cited-text-2
+        message-cited-text-3 message-cited-text-4)))
 #+end_src
 
 ***** TODO Auto-check current paragraph
