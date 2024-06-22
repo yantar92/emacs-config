@@ -2557,41 +2557,43 @@ abort completely with `C-g'."
 ***** Run =languagetool= on region
 
 #+BEGIN_SRC emacs-lisp  
-(use-package langtool
-  :straight t
-  :if init-flag
-  :init
-  (setq langtool-bin "languagetool")
-  (setq langtool-default-language "en-GB")
-  (setq langtool-mother-tongue "uk-UA")
-  (setq langtool-user-arguments "-c UTF8 -b")
-  (setq langtool-disabled-rules
-        '(
-          "DASH_RULE"
-          ;; "WHITESPACE_RULE"
-          ;; "PUNCTUATION_PARAGRAPH_END"
-          "EN_QUOTES"
-          ))
-  (defhydra help/hydra/both/langtool (:color blue :hint nil)
-    "
- Langtool:^         ^|^                   ^|^
--------------------^^+^-------------------^+^----------------------
- _h_: check buffer   | _j_: next error     | _i_: brief message
- _y_: correct buffer | _k_: previous error | _o_: detailed message
- _n_: finished       | _q_: quit           |
- "
-    ("h" langtool-check :exit nil)
-    ("y" langtool-correct-buffer :exit nil)
-    ("n" langtool-check-done)
+  (use-package langtool
+    :straight t
+    :if init-flag
+    :init
+    (setq langtool-bin "languagetool")
+    (setq langtool-default-language "en-US")
+    (setq langtool-mother-tongue "uk-UA")
+    (setq langtool-user-arguments "-c UTF8 -b")
+    (setq langtool-disabled-rules
+          '(
+            "DASH_RULE"
+            "WHITESPACE_RULE"
+            ;; "PUNCTUATION_PARAGRAPH_END"
+            "EN_QUOTES"
+            "EN_UNPAIRED_BRACKETS"
+            "CONSECUTIVE_SPACES"
+            ))
+    (defhydra help/hydra/both/langtool (:color blue :hint nil)
+      "
+   Langtool:^         ^|^                   ^|^
+  -------------------^^+^-------------------^+^----------------------
+   _h_: check buffer   | _j_: next error     | _i_: brief message
+   _y_: correct buffer | _k_: previous error | _o_: detailed message
+   _n_: finished       | _q_: quit           |
+   "
+      ("h" langtool-check :exit nil)
+      ("y" langtool-correct-buffer :exit nil)
+      ("n" langtool-check-done)
 
-    ("j" langtool-goto-next-error :exit nil)
-    ("k" langtool-goto-previous-error :exit nil)
+      ("j" langtool-goto-next-error :exit nil)
+      ("k" langtool-goto-previous-error :exit nil)
 
-    ("i" langtool-show-brief-message-at-point :exit nil)
-    ("o" langtool-show-message-at-point :exit nil)
+      ("i" langtool-show-brief-message-at-point :exit nil)
+      ("o" langtool-show-message-at-point :exit nil)
 
-    ("q" nil))
-  (bind-key "M-s" #'help/hydra/both/langtool/body boon-forward-search-map))
+      ("q" nil))
+    (bind-key "M-s" #'help/hydra/both/langtool/body boon-forward-search-map))
 
 #+end_src
 ***** Ignore markup
@@ -2611,7 +2613,10 @@ abort completely with `C-g'."
   		  font-latex-math-face font-latex-string-face))
     (langtool-ignore-fonts-add 'markdown-mode '(markdown-code-face))
     (langtool-ignore-fonts-add
-     'org-mode  '(org-property-value org-block org-link org-meta-line org-macro org-code org-verbatim org-block-begin-line org-block-end-line))
+     'org-mode  '( org-property-value org-block
+  		 org-link org-meta-line org-macro
+                   org-code org-verbatim org-special-keyword
+                   org-block-begin-line org-block-end-line))
     (langtool-ignore-fonts-add
      'notmuch-message-mode
      '( message-cited-text-1 message-cited-text-2
