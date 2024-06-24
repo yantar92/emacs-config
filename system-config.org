@@ -7443,7 +7443,7 @@ quality_strings=[ {"4320p" : "bestvideo[height<=?4320p]+bestaudio/best"}, {"2160
 net-misc/yt-dlp
 #+end_src
 
-** Wine
+** COMMENT Wine
 :PROPERTIES:
 :ID:       e509984f-3715-43a3-8d73-2bf99a82db2d
 :END:
@@ -8260,7 +8260,7 @@ dev-python/numpy doc
 
 
 ** Games
-*** =steam=
+*** COMMENT =steam=
 :PROPERTIES:
 :ID:       701aa136-bd29-452e-8d0e-5de963a5e1f6
 :END:
@@ -8476,7 +8476,7 @@ app-emacs/geiser
 app-emacs/geiser-guile
 #+end_src
 
-** WeChat
+** COMMENT WeChat
 :PROPERTIES:
 :ID:       39e067f4-97ef-44b1-bb8b-587586735e68
 :END:
