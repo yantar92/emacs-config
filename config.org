@@ -6169,7 +6169,8 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
   (use-package elfeed
     :init
     (defvar yant/elfeed-title-transforms
-      `(("\\\\mathrm{\\([^}]+\\)}" "\\1")
+      `(("@[^ \n]+" "@⣀")
+        ("\\\\mathrm{\\([^}]+\\)}" "\\1")
         ("\\$\\([^$]+\\)\\$" "\\1")
         ("<em>\\(.+?\\)</em>" "\\1")
         ("&#60;" "<")
@@ -6187,7 +6188,8 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
         ("<p>\\(.*?\\)</p>" "\\1")
         ("<span[^>]*>\\(.*?\\)</span>" "\\1")
         ("<radio[^>]*>\\(.*?\\)</radio>" " \\1")
-        ("<br>" " ")
+        ("<br[^>]*>" " ")
+        ("<hr[^>]*>" " ")
         ("<span>\\(.*?\\)</span>" "\\1")
         ("<a[^>]*>\\(.*?\\)</a>" "\\1")
         ("<strong>\\(.*?\\)</strong>" "\\1")
@@ -6202,6 +6204,9 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
         ("<msup>\\(.+?\\)</msup>" "\\1" (display ,(cadr org-script-display)))
         ("<i>\\(.+?\\)</i>" "\\1"  (face (:slant italic)))
         ("<mi>\\(.+?\\)</mi>" "\\1"  (face (:slant italic)))
+        ("<span[^>]*>\\(.+?\\)</span>" "\\1")
+        ("<span[^>]*>" "")
+        ("<a[^>]+>" "")
         ("{\\([^}]+\\)}" "\\1")
         ("slid[^ ]+" "\\&" (face (:foreground "red")))
         ("geolog[^ ]+" "\\&" (face (:foreground "red")))
@@ -6227,7 +6232,16 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
         ("[dD]islocation"  "\\&" (face (:foreground "red")))
         ("[Mm]agnesium"  "\\&" (face (:foreground "red")))
         ("[Mm]g"  "\\&" (face (:foreground "red")))
-        ("[Cc]rack[^ ]*" "\\&" (face (:foreground "red"))))
+        ("[Cc]rack[^ ]*" "\\&" (face (:foreground "red")))
+        ("\\(#[^#[:space:]]+\\)\\([:space:]+#[^#[:space:]]+\\)+" "\\1᳟")
+        ("\\(?:https?://www\\.\\|https?://\\|www\\.\\)\\([^/ \n]+\\)[^ \n]*" "\\&"
+         ( eval .
+  	 (list 'display
+                 (format "%s᳟↗"
+  		       (let ((str (match-string 0)))
+  			 (string-match "\\(?:https?://www\\.\\|https?://\\|www\\.\\)\\([^/ \n]+\\)[^ \n]*" str)
+                           (match-string 1 str))))))
+        (" +" " "))
       "Replacements to be performed in the elfeed entry titles.")
     (defun yant/elfeed-search-print-entry (entry)
       "Print ENTRY to the buffer."
@@ -6259,7 +6273,9 @@ In addition, I highlight some noteworthy phrases to simplify scanning through th
                                        (apply #'put-text-property
                                               (match-beginning 0)
                                               (match-end 0)
-                                              display)))))
+                                              (if (eq (car-safe display) 'eval)
+  						(eval (cdr display))
+  					      display))))))
                         (add-face-text-property (point-min) (point-max) title-faces 'append)
                         (buffer-string))))
              (feed (elfeed-entry-feed entry))
@@ -6869,49 +6885,52 @@ This should be called as a hook ran inside `message-header-setup-hook'."
 ***** Semantic scholar and Google scholar alerts
 
 #+begin_src emacs-lisp
-(use-package notmuch
-  :config
-  (defun yant/notmuch-show-fontify-semanticscholar-email ()
-    "Fontify text part of semantic scholar New Citations email."
-    (when (and (eq major-mode 'notmuch-show-mode)
-	       (string-match-p (regexp-quote "Semantic Scholar <do-not-reply@semanticscholar.org>") (notmuch-show-get-from)))
-      (save-excursion
-        (goto-char (point-min))
-        (when (search-forward "[ text/plain ]" nil t)
-	  (while (search-forward "Learn more here:" nil t)
-            (save-excursion
-              (beginning-of-line -1)
-              (re-search-backward "^$")
-              (beginning-of-line 2)
-              (let ((beg (point)))
-                (re-search-forward "^$")
-                (let ((inhibit-read-only t))
-		  (with-silent-modifications
-		    (add-face-text-property beg (line-end-position -1)
-					    '(face (:weight bold :underline t :background "Gainsboro"))))))))))))
-  (defun yant/notmuch-show-fontify-keywords ()
-    "Fontify interesting keywords according to `yant/elfeed-title-transforms'."
-    (when (and (eq major-mode 'notmuch-show-mode)
-	       (string-match-p (regexp-opt '("Semantic Scholar <do-not-reply@semanticscholar.org>"
-					     "Google Scholar Alerts <scholaralerts-noreply@google.com>"
-                                             "ScienceDirect Message Center <sciencedirect@notification.elsevier.com>"))
-			       (notmuch-show-get-from)))
-      (let ((inhibit-read-only t))
+  (use-package notmuch
+    :config
+    (defun yant/notmuch-show-fontify-semanticscholar-email ()
+      "Fontify text part of semantic scholar New Citations email."
+      (when (and (eq major-mode 'notmuch-show-mode)
+  	       (string-match-p (regexp-quote "Semantic Scholar <do-not-reply@semanticscholar.org>") (notmuch-show-get-from)))
         (save-excursion
-	  (cl-loop for (re repl display)
-                   in yant/elfeed-title-transforms
-                   do
-                   (message-goto-body)
-                   (while (re-search-forward re nil t)
-                     (replace-match repl)
-                     (when display
-                       (with-silent-modifications
-                         (apply #'put-text-property
-                                (match-beginning 0)
-                                (match-end 0)
-                                display)))))))))
-  (add-hook 'notmuch-show-hook #'yant/notmuch-show-fontify-semanticscholar-email)
-  (add-hook 'notmuch-show-hook #'yant/notmuch-show-fontify-keywords))
+          (goto-char (point-min))
+          (when (search-forward "[ text/plain ]" nil t)
+  	  (while (search-forward "Learn more here:" nil t)
+              (save-excursion
+                (beginning-of-line -1)
+                (re-search-backward "^$")
+                (beginning-of-line 2)
+                (let ((beg (point)))
+                  (re-search-forward "Learn more here:")
+                  (let ((inhibit-read-only t))
+  		  (with-silent-modifications
+  		    (add-face-text-property beg (match-beginning 0)
+  					    '(face (:weight bold))))))))))))
+    (defun yant/notmuch-show-fontify-keywords ()
+      "Fontify interesting keywords according to `yant/elfeed-title-transforms'."
+      (when (and (eq major-mode 'notmuch-show-mode)
+  	       (string-match-p (regexp-opt '("Semantic Scholar <do-not-reply@semanticscholar.org>"
+  					     "Google Scholar Alerts <scholaralerts-noreply@google.com>"
+                                               "ScienceDirect Message Center <sciencedirect@notification.elsevier.com>"))
+  			       (notmuch-show-get-from)))
+        (let ((inhibit-read-only t))
+          (save-excursion
+  	  (cl-loop for (re repl display)
+                     in yant/elfeed-title-transforms
+                     do
+                     (message-goto-body)
+                     (re-search-forward "^$")
+                     (while (re-search-forward re nil t)
+                       (replace-match repl)
+                       (when display
+                         (with-silent-modifications
+                           (apply #'put-text-property
+                                  (match-beginning 0)
+                                  (match-end 0)
+                                  (if (eq (car-safe display) 'eval)
+  				    (eval (cdr display))
+  				  display))))))))))
+    (add-hook 'notmuch-show-hook #'yant/notmuch-show-fontify-semanticscholar-email)
+    (add-hook 'notmuch-show-hook #'yant/notmuch-show-fontify-keywords))
 #+end_src
 **** Detect FSF contribution status of sender for Org ML
 
