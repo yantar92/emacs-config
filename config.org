@@ -3212,6 +3212,14 @@ Following my key binding theme for [[id:d388e4f5-214e-4697-a53a-be6fb6c24411][He
   (isearch-repeat-on-direction-change t))
 #+end_src
 
+**** TODO Programmatic =isearch= in Lisp-like code buffers
+
+#+begin_src emacs-lisp
+  (use-package el-search
+    :straight t
+    :if init-flag)
+#+end_src
+
 **** Disable "Mark set" message
 :PROPERTIES:
 :CREATED:  [2020-04-06 Mon 00:34]
@@ -16583,38 +16591,45 @@ the buffers with actual matches rather than opening all the files in
 project.
 
 #+begin_src emacs-lisp
-(use-package project
-  :if init-flag
-  :bind
-  ( :map project-prefix-map
-    ("g" . yant/occur-current-project))
-  :init
-  (defun yant/occur-current-project (regexp &optional nlines directory-to-search)
-    "Perform `multi-occur' with REGEXP in the current project files.
-When called with a prefix argument NLINES, display NLINES lines before and after.
-If DIRECTORY-TO-SEARCH is specified, this directory will be searched recursively;
-otherwise, the user will be prompted to specify a directory to search.
+  (use-package project
+    :if init-flag
+    :bind
+    ( :map project-prefix-map
+      ("g" . yant/occur-current-project))
+    :init
+    (require 'el-search)
+    (defun yant/occur-current-project (regexp &optional nlines directory-to-search)
+      "Perform `multi-occur' with REGEXP in the current project files.
+  When called with a prefix argument NLINES, display NLINES lines before and after.
+  If DIRECTORY-TO-SEARCH is specified, this directory will be searched recursively;
+  otherwise, the user will be prompted to specify a directory to search.
 
-For performance reasons, files are filtered using 'find' or 'git
-ls-files' and 'grep'."
-    (interactive
-     (list
-      (project--read-regexp)
-      (and current-prefix-arg (prefix-numeric-value current-prefix-arg))))
-    (let* ((default-directory
-	    (or directory-to-search
-		(when-let ((pr (project-current t)))
-                  (project-root pr))
-		(read-directory-name "Search in directory: ")))
-           (files
-            (mapcar #'find-file-noselect
-		    (delete-dups
-		     (mapcar
-		      #'xref-file-location-file
-		      (mapcar
-		       #'xref-item-location
-		       (xref-matches-in-files regexp (project-files (project-current t)))))))))
-      (multi-occur files regexp nlines))))
+  For performance reasons, files are filtered using 'find' or 'git
+  ls-files' and 'grep'."
+      (interactive
+       (list
+        (unless (derived-mode-p '(emacs-lisp-mode))
+  	(project--read-regexp))
+        (and current-prefix-arg (prefix-numeric-value current-prefix-arg))))
+      (if (derived-mode-p '(emacs-lisp-mode))
+  	(el-search-repository
+           (when-let ((pr (project-current t)))
+             (project-root pr))
+           (el-search-read-pattern-for-interactive "Search pattern: "))
+        (let* ((default-directory
+  	      (or directory-to-search
+  		  (when-let ((pr (project-current t)))
+                      (project-root pr))
+  		  (read-directory-name "Search in directory: ")))
+               (files
+  	      (mapcar #'find-file-noselect
+  		      (delete-dups
+  		       (mapcar
+  			#'xref-file-location-file
+  			(mapcar
+  			 #'xref-item-location
+  			 (xref-matches-in-files regexp (project-files (project-current t)))))))))
+  	(multi-occur files regexp nlines)))))
 #+end_src
 
 *** Working with public inboxes
