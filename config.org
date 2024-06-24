@@ -1371,39 +1371,39 @@ Define the most basic movement commands:
  - forward-sexp/backward-sexp :: move forward/backward by an element, which typically takes less then a single line
 
 #+begin_src emacs-lisp
-(use-package meta-functions
-  :if init-flag
-  :config
-  (use-package helm-occur
-    :defer t
+  (use-package meta-functions
+    :if init-flag
     :config
-    (meta-defun meta-occur "Occur." helm-occur))
-  (use-package boon
-    :defer t
-    :config
-    (meta-defun meta-new-line "Insert new line." boon-newline-dwim))
-  (meta-defun meta-undo "Undo." undo)
-  (meta-defun meta-scroll-down "Scroll down." pixel-scroll-interpolate-up)
-  (meta-defun meta-scroll-up "Scroll up." pixel-scroll-interpolate-down)
-  (meta-defun-mapc
-   '((meta-down "Move down." next-logical-line)
-     (meta-up "Move up." previous-logical-line)
-     (meta-end-of-line "Move to the end of line."
-		       (boon-end-of-line)
-                       :mode org-agenda-mode
-                       org-agenda-end-of-line)
-     (meta-down-element "Move down one element." forward-paragraph)
-     (meta-up-element "Move up one element." backward-paragraph)
-     (meta-forward "Move forward." forward-char)
-     (meta-forward-sexp "Move forward sexp." forward-sexp)
-     (meta-backward "Move backward." backward-char)
-     (meta-backward-sexp "Move backward sexp." backward-sexp)
-     (meta-forward-element "Move forward one element." forward-word)
-     (meta-backward-element "Move backward one element." backward-word)
-     (meta-split "Split element at point." split-line)
-     (meta-recenter-top-bottom "Recenter text on scree." yant/recenter-top-bottom-pixel)
-     (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
-     (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore))))
+    (use-package helm-occur
+      :defer t
+      :config
+      (meta-defun meta-occur "Occur." helm-occur))
+    (use-package boon
+      :defer t
+      :config
+      (meta-defun meta-new-line "Insert new line." boon-newline-dwim))
+    (meta-defun meta-undo "Undo." undo)
+    (meta-defun meta-scroll-down "Scroll down." pixel-scroll-interpolate-up)
+    (meta-defun meta-scroll-up "Scroll up." pixel-scroll-interpolate-down)
+    (meta-defun-mapc
+     '((meta-down "Move down." next-logical-line)
+       (meta-up "Move up." previous-logical-line)
+       (meta-end-of-line "Move to the end of line."
+  		       (boon-end-of-line)
+                         :mode org-agenda-mode
+                         org-agenda-end-of-line)
+       (meta-down-element "Move down one element." forward-paragraph)
+       (meta-up-element "Move up one element." backward-paragraph)
+       (meta-forward "Move forward." forward-char)
+       (meta-forward-sexp "Move forward sexp." forward-sexp)
+       (meta-backward "Move backward." backward-char)
+       (meta-backward-sexp "Move backward sexp." backward-sexp)
+       (meta-forward-element "Move forward one element." forward-word)
+       (meta-backward-element "Move backward one element." backward-word)
+       (meta-split "Split element at point." split-line)
+       (meta-recenter-top-bottom "Recenter text on scree." yant/recenter-top-bottom-pixel)
+       (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
+       (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore))))
 #+end_src
 
 It should be noted that the same can be done via setting the proper
@@ -3054,91 +3054,91 @@ to look for something. Many of the movement functions are also
 additionally modified to store mark before moving.
 
 #+begin_src emacs-lisp
-(use-package boon
-  :if init-flag
-  :demand t
-  :config
-  (define-key boon-x-map "n" narrow-map)
-  (bind-keys ("C-M-S-j" . scroll-other-window)
-	     ("C-M-S-k" . scroll-other-window-down)
-	     :map boon-x-map
-	     ("e" . eval-last-sexp)
-	     ("c" . delete-frame)
-	     :map boon-moves-map
-             ("v" . (lambda () (interactive) (boon-set-state 'boon-insert-state)))
-	     ("j" . meta-down)
-	     ("J" . meta-down-element)
-	     ("k" . meta-up)
-	     ("K" . meta-up-element)
-	     ("o" . meta-forward)
-	     ("O" . meta-forward-element)
-	     ("P" . meta-forward-sexp)
-	     ("i" . meta-backward)
-	     ("I" . meta-backward-element)
-	     ("U" . meta-backward-sexp)
-	     ("l" . meta-scroll-up)
-	     ("L" . meta-scroll-down)
-	     (";" . meta-recenter-top-bottom)
-	     ("G" . end-of-buffer)
-	     ("g" . boon-goto-map)
-	     ;;("U" . move-beginning-of-line)
-	     ;;("P" . move-end-of-line)
-	     ("u" . boon-beginning-of-line)
-	     ("p" . meta-end-of-line)
-	     :map boon-goto-map
-	     ("g" . beginning-of-buffer)
-	     ("G" . end-of-buffer)
-	     :map boon-command-map
-	     ("-" . meta-undo)
-             ("_" . undo-redo)
-	     ("~" . boon-repeat-command)
-	     ("Q" . kmacro-end-or-call-macro)
-	     ("z" . boon-quote-character)
-	     ("y" . transpose-chars)
-	     ("Y" . transpose-words)
-             ("C-Y" . transpose-sexps)
-             ("n" . boon-switch-mark)
-             ("m" . bm-previous)
-             ("C-k" . meta-cut-element)
-	     :map boon-forward-search-map
-	     ("C-SPC" . isearch-forward-regexp)
-	     ("C-g" . boon-unhighlight)
-	     ("w" . meta-occur)
-             ("g" . meta-goto)
-             ("r" . helm-occur)
-             ("'" . helm-surfraw)
-             ("/" . helm-do-grep-ag)
-	     :map boon-backward-search-map
-	     ("C-SPC" . isearch-backward-regexp)
-	     ("C-g" . boon-unhighlight)
-	     ("e" . meta-occur)
-             ("g" . meta-goto)
-	     :map boon-special-map
-	     ("j" . meta-down)
-	     ("J" . meta-down-element)
-	     ("k" . meta-up)
-	     ("K" . meta-up-element)
-	     ("o" . meta-forward)
-	     ("O" . meta-forward-element)
-	     ("i" . meta-backward)
-	     ("I" . meta-backward-element)
-	     ("l" . meta-scroll-up)
-	     ("L" . meta-scroll-down)
-	     (";" . meta-recenter-top-bottom)
-	     ;;("U" . move-beginning-of-line)
-	     ;;("P" . move-end-of-line)
-	     ("u" . boon-beginning-of-line)
-	     ("p" . meta-end-of-line)
-	     ("c" . boon-c-god)
-	     ("z" . boon-quote-character)
-	     ("e" . boon-forward-search-map)
-	     ("w" . boon-backward-search-map)
-	     ("q" . nil)
-	     ("g" . boon-goto-map)
-	     ("G" . end-of-buffer)
-	     ("D" . boon-treasure-region)
-	     ("<SPC>" . boon-drop-mark))
-  (unbind-key "M-l" global-map))
+  (use-package boon
+    :if init-flag
+    :demand t
+    :config
+    (define-key boon-x-map "n" narrow-map)
+    (bind-keys ("C-M-S-j" . scroll-other-window)
+  	     ("C-M-S-k" . scroll-other-window-down)
+  	     :map boon-x-map
+  	     ("e" . eval-last-sexp)
+  	     ("c" . delete-frame)
+  	     :map boon-moves-map
+               ("v" . (lambda () (interactive) (boon-set-state 'boon-insert-state)))
+  	     ("j" . meta-down)
+  	     ("J" . meta-down-element)
+  	     ("k" . meta-up)
+  	     ("K" . meta-up-element)
+  	     ("o" . meta-forward)
+  	     ("O" . meta-forward-element)
+  	     ("P" . meta-forward-sexp)
+  	     ("i" . meta-backward)
+  	     ("I" . meta-backward-element)
+  	     ("U" . meta-backward-sexp)
+  	     ("l" . meta-scroll-up)
+  	     ("L" . meta-scroll-down)
+  	     (";" . meta-recenter-top-bottom)
+  	     ("G" . end-of-buffer)
+  	     ("g" . boon-goto-map)
+  	     ;;("U" . move-beginning-of-line)
+  	     ;;("P" . move-end-of-line)
+  	     ("u" . boon-beginning-of-line)
+  	     ("p" . meta-end-of-line)
+  	     :map boon-goto-map
+  	     ("g" . beginning-of-buffer)
+  	     ("G" . end-of-buffer)
+  	     :map boon-command-map
+  	     ("-" . meta-undo)
+               ("_" . undo-redo)
+  	     ("~" . boon-repeat-command)
+  	     ("Q" . kmacro-end-or-call-macro)
+  	     ("z" . boon-quote-character)
+  	     ("y" . transpose-chars)
+  	     ("Y" . transpose-words)
+               ("C-Y" . transpose-sexps)
+               ("n" . boon-switch-mark)
+               ("m" . bm-previous)
+               ("C-k" . meta-cut-element)
+  	     :map boon-forward-search-map
+  	     ("C-SPC" . isearch-forward-regexp)
+  	     ("C-g" . boon-unhighlight)
+  	     ("w" . meta-occur)
+               ("g" . meta-goto)
+               ("r" . helm-occur)
+               ("'" . helm-surfraw)
+               ("/" . helm-do-grep-ag)
+  	     :map boon-backward-search-map
+  	     ("C-SPC" . isearch-backward-regexp)
+  	     ("C-g" . boon-unhighlight)
+  	     ("e" . meta-occur)
+               ("g" . meta-goto)
+  	     :map boon-special-map
+  	     ("j" . meta-down)
+  	     ("J" . meta-down-element)
+  	     ("k" . meta-up)
+  	     ("K" . meta-up-element)
+  	     ("o" . meta-forward)
+  	     ("O" . meta-forward-element)
+  	     ("i" . meta-backward)
+  	     ("I" . meta-backward-element)
+  	     ("l" . meta-scroll-up)
+  	     ("L" . meta-scroll-down)
+  	     (";" . meta-recenter-top-bottom)
+  	     ;;("U" . move-beginning-of-line)
+  	     ;;("P" . move-end-of-line)
+  	     ("u" . boon-beginning-of-line)
+  	     ("p" . meta-end-of-line)
+  	     ("c" . boon-c-god)
+  	     ("z" . boon-quote-character)
+  	     ("e" . boon-forward-search-map)
+  	     ("w" . boon-backward-search-map)
+  	     ("q" . nil)
+  	     ("g" . boon-goto-map)
+  	     ("G" . end-of-buffer)
+  	     ("D" . boon-treasure-region)
+  	     ("<SPC>" . boon-drop-mark))
+    (unbind-key "M-l" global-map))
 #+end_src
 ***** Do not set natural state on frame switch
 
@@ -3183,7 +3183,6 @@ I do not move by visual line in files. Instead, I prefer to use =avy= to move wi
     :custom
     (avy-timeout-seconds 0.2 "The default is too long.")))
 #+end_src
-
 **** =Isearch=
 :PROPERTIES:
 :CREATED:  [2020-03-31 Tue 01:37]
@@ -7489,29 +7488,29 @@ Make Emacs ERC automatically re-connect when it looses server connection.
 - Note taken on [2023-01-16 Mon 11:45] \\
   their heuristics is not ideal
 #+begin_src emacs-lisp
-(use-package mastodon
-  :if init-flag
-  :config
-  (defvar yant/mastodon-hosts
-    '("emacs.ch" "mastodon.social"
-      "writeout.ink" "social.tchncs.de"
-      "framapiaf.org" "social.lol"
-      "functional.cafe" "social.roger.family"
-      "social.vivaldi.net" "mastodon.cloud"
-      "fosstodon.org" "mathstodon.xyz"
-      "julialang.social" "mamot.fr"
-      "mstdn.social" "mastodon.acm.org"
-      "todon.nl" "indieweb.social"
-      "masto.ai")
-    "List of known Mastodon hosts.")
-  (defun yant/mastodon-url-p (url)
-    "Wrapper for `mastodon-url-lookup' appropriate for URL handlers."
-    (cl-loop for host in yant/mastodon-hosts
-             when (string-match-p (regexp-quote host) url)
-             return t))
-  (add-to-list 'browse-url-handlers
-               '(yant/mastodon-url-p
-                 . (lambda (url &rest args) (mastodon-url-lookup url)))))
+  (use-package mastodon
+    :if init-flag
+    :config
+    (defvar yant/mastodon-hosts
+      '("emacs.ch" "mastodon.social"
+        "writeout.ink" "social.tchncs.de"
+        "framapiaf.org" "social.lol"
+        "functional.cafe" "social.roger.family"
+        "social.vivaldi.net" "mastodon.cloud"
+        "fosstodon.org" "mathstodon.xyz"
+        "julialang.social" "mamot.fr"
+        "mstdn.social" "mastodon.acm.org"
+        "todon.nl" "indieweb.social"
+        "masto.ai" "pkm.social" "hostux.social")
+      "List of known Mastodon hosts.")
+    (defun yant/mastodon-url-p (url)
+      "Wrapper for `mastodon-url-lookup' appropriate for URL handlers."
+      (cl-loop for host in yant/mastodon-hosts
+               when (string-match-p (regexp-quote host) url)
+               return t))
+    (add-to-list 'browse-url-handlers
+                 '(yant/mastodon-url-p
+                   . (lambda (url &rest args) (mastodon-url-lookup url)))))
 #+end_src
 ** ChatGPT
 
@@ -8776,46 +8775,57 @@ includes:
 5. ' inserts LaTeX accents
 
 #+begin_src emacs-lisp
-(use-package org
-  :if init-flag
-  :defer t
-  :init
-  (use-package cdlatex
-    :straight t
+  (use-package org
+    :if init-flag
+    :defer t
+    :init
+    (use-package cdlatex
+      :straight t
+      :config
+      (require 'texmathp))
+    :hook (org-mode . org-cdlatex-mode)
     :config
-    (require 'texmathp))
-  :hook (org-mode . org-cdlatex-mode)
-  :config
-  ;; I do not like this behaviour.
-  (unbind-key "_" org-cdlatex-mode-map)
-  (unbind-key "^" org-cdlatex-mode-map)
-  (diminish 'org-cdlatex-mode (concat
-			       " "
-			       (propertize "CD"
-					   'face `((:height 0.5)))
-			       (propertize (all-the-icons-fileicon "tex" :v-adjust 0.04)
-					   'face `((
-						    :family "file-icons"
-						    ;; :height 1.4
-						    )))))
-  (diminish 'org-cdlatex-mode)
-  )
+    ;; I do not like this behaviour.
+    (unbind-key "_" org-cdlatex-mode-map)
+    (unbind-key "^" org-cdlatex-mode-map)
+    (diminish 'org-cdlatex-mode
+  	    (concat
+  	     " "
+  	     (propertize "CD"
+  			 'face `((:height 0.5)))
+  	     (propertize (all-the-icons-fileicon "tex" :v-adjust 0.04)
+  			 'face `((
+  				  :family "file-icons"
+  				  ;; :height 1.4
+  				  ))))))
 #+end_src
 
-**** TODO Properties
+
+
+**** Properties
 :PROPERTIES:
 :ID:       598c2b16-2eb8-404a-b7e9-00969a1c4d72
 :END:
+
 #+begin_src emacs-lisp
-(setq org-use-property-inheritance '("ORG-TIME-BONUS-ON-DONE" "ORG-TIME-BALANCE-MULTIPLIER" "SORT" "SHOWDATES" "SHOWFROMDATE" "SHOWFROMTIME" ))
+  (setq org-use-property-inheritance
+        '("ORG-TIME-BONUS-ON-DONE" "ORG-TIME-BALANCE-MULTIPLIER"
+  	"SORT" "SHOWDATES" "SHOWFROMDATE" "SHOWFROMTIME" ))
 #+end_src
-- =:SHOWFROMTIME:= (always inheriting) :: The purpose of this is to be able to assign specific projects for different days of week or, say, show the home items only in the evening of weekdays and not annoy it at work when I cannot do it any way. Hence, I can focus on the items I really need to do now in this agenda.
-     Additionally, the time of the day after midnight is treated specially here. If =org-extend-today-until= is not 0 and the current time is before its value, the current time is still considered to be yesterday.
+- =:SHOWFROMTIME:= (always inheriting) :: The purpose of this is to be
+  able to assign specific projects for different days of week or, say,
+  show the home items only in the evening of weekdays and not annoy it
+  at work when I cannot do it any way. Hence, I can focus on the items
+  I really need to do now in this agenda.
+
+  Additionally, the time of the day after midnight is treated
+  specially here. If =org-extend-today-until= is not 0, and the current
+  time is before its value, the current time is still considered to be
+  yesterday.
      #+begin_src emacs-lisp
 (setq org-extend-today-until 4)
 (setq org-use-effective-time t) ; respect `org-extend-today-until' when setting time-stamps
 
-;; (add-to-list 'org-default-properties "SHOWFROMTIME")
 (defun org-agenda-skip-before-SHOWFROMTIME-property ()
   "Skip agenda item if :SHOWFROMTIME: property is set and time of day is before it"
   (when-let ((showfromtime (condition-case nil
@@ -14479,7 +14489,7 @@ Inspired by https://www.reddit.com/r/orgmode/comments/f8qngz/toggle_only_current
   (add-hook 'org-ctrl-c-ctrl-c-hook #'org-toggle-inline-images-at-point))
 #+end_src
 
-Use the same binding to preview LaTeX
+Use the same binding to preview LaTeX.
 #+begin_src emacs-lisp
   (use-package org
     :if init-flag
@@ -14493,7 +14503,7 @@ Use the same binding to preview LaTeX
     (add-hook 'org-ctrl-c-ctrl-c-hook #'yant/org-toggle-latex-fragment-at-point-maybe))
 #+end_src
 
-Justify and number the formulas
+Justify and number the formulas.
 #+begin_src emacs-lisp
 ;; from https://github.com/jkitchin/scimax/blob/master/scimax-org.el
 (use-package ov
@@ -15812,23 +15822,17 @@ To my horror, a single =org-font-lock-add-priority-faces= takes 98% of the whole
 :PROPERTIES:
 :ID:       b195d9ea-e3e0-476e-b898-43b69fbd365d
 :END:
+**** Display lineage when jumping to heading from agenda
 #+begin_src emacs-lisp
-(setq org-catch-invisible-edits 'smart)
-(setq org-startup-folded nil)
-(setq org-fold-show-context-detail
-      '((agenda . lineage) ;; instead of "local"
-	(bookmark-jump . lineage)
-	(isearch . lineage)
-	))
+  (use-package org-fold
+    :config
+    (setf (alist-get 'agenda org-fold-show-context-detail) 'lineage))
 #+end_src
 **** Org element cache
 :PROPERTIES:
 :CREATED:  [2018-11-18 Sun 13:04]
 :ID:       7c1c828b-3a77-4e79-b07a-4ad173a5f87a
 :END:
-
-I was irritated by org-mode behaviour when =flycheck= is turned on. org-mode introduces additional =flycheck= hook, which is ran after movement/editing commands. This hook calls =org-element-at-point=, which is terrible on large files.
-Turning on org element cache in attempt to make it faster.
 
 :BACKLOG:
 [2019-08-27 Tue] Disabling cache for now due to strange errors. Most commonly "Wrong side of point"
@@ -15842,30 +15846,19 @@ Turning on org element cache in attempt to make it faster.
 [2021-08-15 Sun] Trying again
 [2021-08-16 Mon] Disabling until I fix tests and issue with incorrectly found IDs during tangle
 [2021-09-19 Sun] [[notmuch:id:87bl4p6n0m.fsf@localhost][Email to emacs-orgmode@gnu.org: [feature proposal] Headline caching via org-element-cache = up to 2.5x performance boost]]. Let's solve it once and for all!
+[2024-06-22 Sat] The cache is now enabled for all Org users
 :END:
 
 #+begin_src emacs-lisp
-(custom-set-variables '(org-element-use-cache t))
-(custom-set-variables '(org-element--cache-self-verify nil))
-;; (setq org-element--cache-diagnostics-level 3)
-(setq org-element--cache-diagnostics-ring-size 200000)
-(custom-set-variables '(org-element--cache-self-verify-frequency 0.05))
+  (use-package org-element
+    :config
+    (setq org-element-use-cache t)
+    (setq org-element--cache-self-verify nil)
+    ;; (setq org-element--cache-diagnostics-level 3)
+    (setq org-element--cache-diagnostics-ring-size 200000)
+    (setq org-element--cache-self-verify-frequency 0.05))
 #+end_src
 
-****************** TODO check if it is good enough
-****************** END
-
-**** COMMENT =M-RET= should not split lines inside folded entry
-:PROPERTIES:
-:CREATED:  [2019-08-11 Sun 16:50]
-:ID:       e87616b0-d0f7-47e0-a64a-c1b6c7798539
-:END:
-
-From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bullet_after_a_folded_item/e1pbs57/
-
-#+begin_src emacs-lisp
-(setq org-M-RET-may-split-line '((default . nil)))
-#+end_src
 **** Org mode editing
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 18:45]
@@ -15875,6 +15868,7 @@ From https://www.reddit.com/r/orgmode/comments/8vor99/how_can_i_insert_a_new_bul
 - Refiled on [2020-04-14 Tue 15:51]
 :END:
 ***** When at heading =C-k= cuts subtree
+
 #+begin_src emacs-lisp
 (use-package org
   :config
@@ -15912,93 +15906,93 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :END:
 
 #+begin_src emacs-lisp
-(use-package ol-notmuch
-  :after org
-  :straight t
-  :init (require 'notmuch)
-  :custom
-  (org-notmuch-open-function (lambda (link) (if (string-match-p "thread:" link)
-                                           (org-notmuch-follow-link link)
-                                         (org-notmuch-follow-link link)))))
-(use-package helm-notmuch
-  :straight t
-  :after (notmuch helm)
-  :config
-  (let ((helm-source-notmuch-action (alist-get 'action helm-source-notmuch)))
-    (setf (alist-get 'action helm-source-notmuch)
-	  (append helm-source-notmuch-action (list '("Copy message link" . org-store-notmuch-link))))))
+  (use-package ol-notmuch
+    :after org
+    :straight t
+    :init (require 'notmuch)
+    :custom
+    (org-notmuch-open-function #'org-notmuch-follow-link))
 
-(defun org-store-notmuch-link (CANDIDATE)
-  "Store CANDIDATE org link to notmuch message."
-  (let ((link (format "notmuch:%s" CANDIDATE)))
+  (use-package helm-notmuch
+    :straight t
+    :after (notmuch helm)
+    :config
+    (let ((helm-source-notmuch-action (alist-get 'action helm-source-notmuch)))
+      (setf (alist-get 'action helm-source-notmuch)
+  	  (append helm-source-notmuch-action (list '("Copy message link" . org-store-notmuch-link))))))
+
+  (defun org-store-notmuch-link (CANDIDATE)
+    "Store CANDIDATE org link to notmuch message."
+    (let ((link (format "notmuch:%s" CANDIDATE)))
+      (interactive)
+      (org-open-link-from-string link)
+      (set-buffer (first (buffer-list)))
+      (let ((desc (replace-regexp-in-string "\\[\\|\\]" "" (notmuch-show-get-subject))))
+        (notmuch-bury-or-kill-this-buffer)
+        (push (list (format "notmuch:%s" CANDIDATE) desc) org-stored-links))))
+
+
+  (defun yant/add-email-to-task (&optional ARG)
+    "Add an email into :EMAIL-SOURCE: property of the task.
+         C-u argument means that we add the last link from link ring."
     (interactive)
-    (org-open-link-from-string link)
-    (set-buffer (first (buffer-list)))
-    (let ((desc (replace-regexp-in-string "\\[\\|\\]" "" (notmuch-show-get-subject))))
-      (notmuch-bury-or-kill-this-buffer)
-      (push (list (format "notmuch:%s" CANDIDATE) desc) org-stored-links))))
+    (if (eq ARG '4)
+        (let ((last-link (car (car org-stored-links)))
+  	    (last-description (cadr (car org-stored-links))))
+  	(if (string-match "^notmuch.*$" last-link)
+              (progn
+  	      (org-set-property "EMAIL-SOURCE" (concat "[[" last-link "][" last-description "]]"))
+                (org-back-to-heading)
+                (org-set-tags-to (append (org-get-tags nil t) '("EMAIL"))))
+  	  (message "Link \"%s\" is not a message link." last-link))
+          (yant/mark-linked-email-after-todo-state-change))
+      (let ((helm-source-tmp (copy-alist helm-source-notmuch)))
+        (setf (alist-get 'action helm-source-tmp) (list '("Copy message link" . org-store-notmuch-link)))
+        (setf (alist-get 'header-line helm-source-tmp) "C-j: Associate the task with an email")
+        (helm :sources helm-source-tmp
+  	    :buffer "*helm notmuch*"
+  	    :truncate-lines t))
+      (yant/add-email-to-task '4)))
 
+  (defun yant/mark-linked-email-after-todo-state-change ()
+    "Remove track tag from a linked email :EMAIL-SOURCE: after the task is marked as finished."
+    (let* ((mystate (or (and (fboundp 'org-state) state)
+   		      (nth 2 (org-heading-components))))
+           (email-link (or (org-entry-get nil "EMAIL-SOURCE")
+                           (org-entry-get nil "LINK")
+                           ))
+           (email-link (and email-link
+                            (save-match-data
+                              (string-match "^\\(?:\\[\\[\\)?\\(notmuch.+?\\)\\(?:\\]\\]\\)?$" email-link)
+                              (match-string 1 email-link))))
+  	 (done-keywords org-done-keywords))
+      (when (and email-link
+                 (not (string-empty-p email-link)))
+        (save-match-data
+          (string-match "^notmuch:\\(.+\\)" email-link)
+          (setq email-link (match-string 1 email-link)))
+        (if (member mystate done-keywords)
+            (call-process notmuch-command nil nil nil "tag" "-track" "--" email-link)
+          (call-process notmuch-command nil nil nil "tag" "-todo" "--" email-link)))))
 
-(defun yant/add-email-to-task (&optional ARG)
-  "Add an email into :EMAIL-SOURCE: property of the task.
-       C-u argument means that we add the last link from link ring."
-  (interactive)
-  (if (eq ARG '4)
-      (let ((last-link (car (car org-stored-links)))
-	    (last-description (cadr (car org-stored-links))))
-	(if (string-match "^notmuch.*$" last-link)
-            (progn
-	      (org-set-property "EMAIL-SOURCE" (concat "[[" last-link "][" last-description "]]"))
-              (org-back-to-heading)
-              (org-set-tags-to (append (org-get-tags nil t) '("EMAIL"))))
-	  (message "Link \"%s\" is not a message link." last-link))
-        (yant/mark-linked-email-after-todo-state-change))
-    (let ((helm-source-tmp (copy-alist helm-source-notmuch)))
-      (setf (alist-get 'action helm-source-tmp) (list '("Copy message link" . org-store-notmuch-link)))
-      (setf (alist-get 'header-line helm-source-tmp) "C-j: Associate the task with an email")
-      (helm :sources helm-source-tmp
-	    :buffer "*helm notmuch*"
-	    :truncate-lines t))
-    (yant/add-email-to-task '4)))
-
-(defun yant/mark-linked-email-after-todo-state-change ()
-  "Remove track tag from a linked email :EMAIL-SOURCE: after the task is marked as finished."
-  (let* ((mystate (or (and (fboundp 'org-state) state)
- 		      (nth 2 (org-heading-components))))
-         (email-link (or (org-entry-get nil "EMAIL-SOURCE")
-                         (org-entry-get nil "LINK")
-                         ))
-         (email-link (and email-link
-                          (save-match-data
-                            (string-match "^\\(?:\\[\\[\\)?\\(notmuch.+?\\)\\(?:\\]\\]\\)?$" email-link)
-                            (match-string 1 email-link))))
-	 (done-keywords org-done-keywords))
-    (when (and email-link
-               (not (string-empty-p email-link)))
-      (save-match-data
-        (string-match "^notmuch:\\(.+\\)" email-link)
-        (setq email-link (match-string 1 email-link)))
-      (if (member mystate done-keywords)
-          (call-process notmuch-command nil nil nil "tag" "-track" "--" email-link)
-        (call-process notmuch-command nil nil nil "tag" "-todo" "--" email-link)))))
-
-(add-hook 'org-after-todo-state-change-hook 'yant/mark-linked-email-after-todo-state-change 'append)
-(add-hook 'org-capture-before-finalize-hook 'yant/mark-linked-email-after-todo-state-change 'append)
+  (add-hook 'org-after-todo-state-change-hook 'yant/mark-linked-email-after-todo-state-change 'append)
+  (add-hook 'org-capture-before-finalize-hook 'yant/mark-linked-email-after-todo-state-change 'append)
 #+end_src
-*** Imenu integration
+
+*** Use ~helm-org-ql~ as imenu replacement
 :PROPERTIES:
 :CREATED:  [2018-10-25 Thu 22:50]
 :ID:       72afd20b-f9c7-4c5b-84cf-a4073c62af76
 :END:
-=Imenu= appears to be slower in =org-mode= in comparison with =org-goto=
+
 #+begin_src emacs-lisp
-;; (setq org-imenu-depth 8)
 (use-package meta-functions
   :if init-flag
   :after helm-org-ql
   :config
   (meta-defun meta-goto :mode org-mode (helm-org-ql (current-buffer) :narrow t)))
 #+end_src
+
 *** Magit integration 
 **** Auto-commit trivial changes in org files
 :PROPERTIES:
@@ -16006,183 +16000,186 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 :END:
  #autocommit
 
-Some changes in org-files are very trivial and clutter more important changes I actually want to keep an eye on. So, I made a command hiding the trivial changes.
+Some changes in org-files are very trivial and clutter more important
+changes I actually want to keep an eye on. So, I made a command hiding
+the trivial changes.
 
 #+begin_src emacs-lisp
-(use-package magit
-  :if init-flag
-  :after magit
-  :config
-  (defvar yant/magit-show-autocommit-regexps '("^\\(-\\|\\+\\)[ \t]*:SHOWFROMDATE:.+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:Effort:.+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:SUMMARY:.+\n"
-					       "^\\(\\+\\|-\\)[ \t]*- State .+from.+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:LAST_REPEAT: \\[.+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:ORG-TIME-BONUS:.+\n"
-					       "^\\(-\\|\\+\\)[ \t]*CLOCK: \\[.+\n"
-					       "^\\(-\\|\\+\\)[ \t]*SCHEDULED: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*$"
-					       "^[ \t]*\\(-\\|\\+\\)[ \t]*- Refiled on .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:PROPERTIES:[ \t]*\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:LOGBOOK:[ \t]*\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:END:[ \t]*\n"
-					       "^\\(-\\|\\+\\)[ \t]*:TITLE: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:BTYPE: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:TYPEALT: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:MERGED-WITH: .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:KEYWORDS: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:AUTHOR: .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:JOURNAL: .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:VOLUME: .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:RSS: .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:PAGES: .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:NUMBER: .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:DOI: .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*- \\[.\\] download and attach pdf.*\n"
-                                               "^\\(-\\|\\+\\)[ \t]*- \\[.\\] \\[\\[elisp:org-attach-open\\]\\[read paper capturing interesting references\\]\\].*\n"
-                                               "^\\(-\\|\\+\\)[ \t]*- \\[.\\] \\[\\[elisp:(browse-url (url-encode-url (format \"https://www\\.semanticscholar\\.org/search\\?q=%s\" (org-entry-get nil \"TITLE\"))))\\]\\[check citing articles\\]\\].*\n"
-                                               "^\\(-\\|\\+\\)[ \t]*- \\[.\\] \\[\\[elisp:(browse-url (url-encode-url (format \"https://www\\.connectedpapers\\.com/search\\?q=%s\" (org-entry-get nil \"TITLE\"))))\\]\\[check related articles\\]\\].*\n"
-                                               "^\\(-\\|\\+\\)[ \t]*- \\[.\\] check if bibtex entry has missing fields.*\n"
-                                               "^\\(-\\|\\+\\)[ \t]*- \\[.\\] Consider subscribing to new citations.*\n"
-                                               "^[ \t]*- Following up ::.+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:PUBLISHER: .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:EMAIL-SOURCE: .+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:Source: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:CREATED: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:HOWPUBLISHED: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:NOTE: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:URL: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:LINK: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:YEAR: .+\n"
-					       "^\\(-\\|\\+\\)[ \t]*:ID: .+\n"
-                                               "^\\(-\\|\\+\\)CLOSED:.+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_LAST_INTERVAL:.+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_REPEATS_SINCE_FAIL:.+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_FAILURE_COUNT:.+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_TOTAL_REPEATS:.+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_AVERAGE_QUALITY:.+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:DRILL_EASE:.+\n"
-                                               "^\\(-\\|\\+\\)[ \t]*:ARCHIVE_[^:]+:.+\n"
-                                               "^\\+CLOSED:.+\n"
-                                               "^\\-SCHEDULED:.+\n"
-                                               "^[+-]DEADLINE:.+\n"
-					       )
-    "List of regexps hide in magit buffer.")
+  (use-package magit
+    :if init-flag
+    :after magit
+    :config
+    (defvar yant/magit-show-autocommit-regexps
+      '("^\\(-\\|\\+\\)[ \t]*:SHOWFROMDATE:.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:Effort:.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:SUMMARY:.+\n"
+        "^\\(\\+\\|-\\)[ \t]*- State .+from.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:LAST_REPEAT: \\[.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:ORG-TIME-BONUS:.+\n"
+        "^\\(-\\|\\+\\)[ \t]*CLOCK: \\[.+\n"
+        "^\\(-\\|\\+\\)[ \t]*SCHEDULED: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*$"
+        "^[ \t]*\\(-\\|\\+\\)[ \t]*- Refiled on .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:PROPERTIES:[ \t]*\n"
+        "^\\(-\\|\\+\\)[ \t]*:LOGBOOK:[ \t]*\n"
+        "^\\(-\\|\\+\\)[ \t]*:END:[ \t]*\n"
+        "^\\(-\\|\\+\\)[ \t]*:TITLE: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:BTYPE: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:TYPEALT: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:MERGED-WITH: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:KEYWORDS: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:AUTHOR: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:JOURNAL: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:VOLUME: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:RSS: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:PAGES: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:NUMBER: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:DOI: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*- \\[.\\] download and attach pdf.*\n"
+        "^\\(-\\|\\+\\)[ \t]*- \\[.\\] \\[\\[elisp:org-attach-open\\]\\[read paper capturing interesting references\\]\\].*\n"
+        "^\\(-\\|\\+\\)[ \t]*- \\[.\\] \\[\\[elisp:(browse-url (url-encode-url (format \"https://www\\.semanticscholar\\.org/search\\?q=%s\" (org-entry-get nil \"TITLE\"))))\\]\\[check citing articles\\]\\].*\n"
+        "^\\(-\\|\\+\\)[ \t]*- \\[.\\] \\[\\[elisp:(browse-url (url-encode-url (format \"https://www\\.connectedpapers\\.com/search\\?q=%s\" (org-entry-get nil \"TITLE\"))))\\]\\[check related articles\\]\\].*\n"
+        "^\\(-\\|\\+\\)[ \t]*- \\[.\\] check if bibtex entry has missing fields.*\n"
+        "^\\(-\\|\\+\\)[ \t]*- \\[.\\] Consider subscribing to new citations.*\n"
+        "^[ \t]*- Following up ::.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:PUBLISHER: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:EMAIL-SOURCE: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:Source: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:CREATED: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:HOWPUBLISHED: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:NOTE: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:URL: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:LINK: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:YEAR: .+\n"
+        "^\\(-\\|\\+\\)[ \t]*:ID: .+\n"
+        "^\\(-\\|\\+\\)CLOSED:.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:DRILL_LAST_INTERVAL:.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:DRILL_REPEATS_SINCE_FAIL:.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:DRILL_FAILURE_COUNT:.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:DRILL_TOTAL_REPEATS:.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:DRILL_AVERAGE_QUALITY:.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:DRILL_EASE:.+\n"
+        "^\\(-\\|\\+\\)[ \t]*:ARCHIVE_[^:]+:.+\n"
+        "^\\+CLOSED:.+\n"
+        "^\\-SCHEDULED:.+\n"
+        "^[+-]DEADLINE:.+\n"
+        )
+      "List of regexps hide in magit buffer.")
 
-  (defun yant/magit-org-hide-boring ()
-    "Hide `yant/magit-show-autocommit-regexps' from all the chunks."
-    (interactive)
-    (unless (eq major-mode 'magit-status-mode)
-      (user-error "Thus command should run in magit-status window."))
-    (magit-section-show-level-4-all)
-    (save-excursion
+    (defun yant/magit-org-hide-boring ()
+      "Hide `yant/magit-show-autocommit-regexps' from all the chunks."
+      (interactive)
+      (unless (eq major-mode 'magit-status-mode)
+        (user-error "Thus command should run in magit-status window."))
+      (magit-section-show-level-4-all)
+      (save-excursion
+        (magit-jump-to-unstaged)
+        (let ((staged-pos (or (save-excursion
+  			      (unless (let ((inhibit-message t))
+                                          (member (magit-jump-to-staged)
+                                                  '(nil "Section \"Staged changes\" wasn’t found")))
+  			        (point)))
+                              (point-max)))
+              (re (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps)))))
+          (while (< (point) staged-pos)
+            (when (and (re-search-forward re nil 'move)
+                       (< (point) staged-pos))
+              (with-silent-modifications
+                (put-text-property (match-beginning 0) (match-end 0) 'invisible t)))))))
+    (add-hook 'magit-status-sections-hook #'yant/magit-org-hide-boring 100)
+
+    (defun thread-yield-safe (&rest _)
+      "Call `thread-yield' preserving buffer and point."
+      (let ((buf-- (current-buffer))
+            (mk-- (point-marker)))
+        (thread-yield)
+        (set-buffer buf--)
+        (goto-char mk--)))
+
+    (defmacro with-async-calls (functions &rest body)
+      "Execute BODY with every function symbol in FUNCTIONS list followed by `thread-yield-safe'."
+      (declare (debug (form body)) (indent 1))
+      `(progn
+         (mapc (lambda (f) (advice-add f :after #'thread-yield-safe)) ,functions)
+         (unwind-protect
+             ;; Otherwise, we may end up changing point and buffer position.
+             (cl-letf (((symbol-function 'sleep-for) #'thread-yield-safe))
+               (progn ,@body))
+           (mapc (lambda (f) (advice-remove f #'thread-yield-safe)) ,functions))))
+
+    (defun yant/magit-autocommit ()
+      "Asynchronously commit all the lines matching `yant/magit-show-autocommit-regexps'."
+      (interactive)
+      ;; (yant/magit--autocommit)
+      (make-thread #'yant/magit--autocommit "Magit autocommit")
+      )
+
+    (defun yant/magit--autocommit ()
+      "Commit all the lines matching `yant/magit-show-autocommit-regexps'."
+      (interactive)
+      (unless (eq major-mode 'magit-status-mode)
+        (user-error "Thus command should run in magit-status window."))
+      (magit-section-show-level-4-all)
       (magit-jump-to-unstaged)
-      (let ((staged-pos (or (save-excursion
-			      (unless (let ((inhibit-message t))
-                                        (member (magit-jump-to-staged)
-                                                '(nil "Section \"Staged changes\" wasn’t found")))
-			        (point)))
-                            (point-max)))
-            (re (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps)))))
-        (while (< (point) staged-pos)
-          (when (and (re-search-forward re nil 'move)
-                     (< (point) staged-pos))
-            (with-silent-modifications
-              (put-text-property (match-beginning 0) (match-end 0) 'invisible t)))))))
-  (add-hook 'magit-status-sections-hook #'yant/magit-org-hide-boring 100)
-
-  (defun thread-yield-safe (&rest _)
-    "Call `thread-yield' preserving buffer and point."
-    (let ((buf-- (current-buffer))
-          (mk-- (point-marker)))
-      (thread-yield)
-      (set-buffer buf--)
-      (goto-char mk--)))
-
-  (defmacro with-async-calls (functions &rest body)
-    "Execute BODY with every function symbol in FUNCTIONS list followed by `thread-yield-safe'."
-    (declare (debug (form body)) (indent 1))
-    `(progn
-       (mapc (lambda (f) (advice-add f :after #'thread-yield-safe)) ,functions)
-       (unwind-protect
-           ;; Otherwise, we may end up changing point and buffer position.
-           (cl-letf (((symbol-function 'sleep-for) #'thread-yield-safe))
-             (progn ,@body))
-         (mapc (lambda (f) (advice-remove f #'thread-yield-safe)) ,functions))))
-
-  (defun yant/magit-autocommit ()
-    "Asynchronously commit all the lines matching `yant/magit-show-autocommit-regexps'."
-    (interactive)
-    ;; (yant/magit--autocommit)
-    (make-thread #'yant/magit--autocommit "Magit autocommit")
-    )
-
-  (defun yant/magit--autocommit ()
-    "Commit all the lines matching `yant/magit-show-autocommit-regexps'."
-    (interactive)
-    (unless (eq major-mode 'magit-status-mode)
-      (user-error "Thus command should run in magit-status window."))
-    (magit-section-show-level-4-all)
-    (magit-jump-to-unstaged)
-    ;; Make Emacs responsive while staging.
-    (with-async-calls '(magit-insert-heading magit-section-ident-value)
-      (let ((magit-buffer (current-buffer))
-            (pos (point))
-            (previous-pos (point))
-            (progress (make-progress-reporter "Autocommiting hunks..." 1 (point-max))))
-        (catch :last-section
-          (let (
-                ;; Make magit refresh faster.
-                (magit-section-cache-visibility nil)
-                ;; Simplify magit-status-sections-hook.
-                (magit-status-sections-hook '(magit-insert-unstaged-changes))
-                ;; disable some hooks
-                (magit-section-set-visibility-hook nil))
-            (magit-refresh)
-            (while (with-current-buffer magit-buffer
-                     (< pos (point-max)))
-              (with-current-buffer magit-buffer
-                (save-excursion
-                  (goto-char pos)
-                  (progress-reporter-update progress pos)
-                  (when (and (re-search-forward (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps))) nil 'move)
-                             (< (point) (point-max)))
-                    (let ((section (magit-current-section)))
-                      (if (not (eq 'hunk (oref section type)))
-                          (condition-case err
-                              (magit-section-forward)
-                            (user-error
-                             (setq pos (point))
-                             (throw :last-section t)))
-                        (let ((hunk-text (buffer-substring-no-properties (oref section start) (oref section end))))
-                          (when (with-temp-buffer
-                                  (insert hunk-text)
-                                  (goto-char 1)
-                                  (keep-lines "^[+-].+$")
-                                  (mapc (lambda (regexp)
-                                          (goto-char 1)
-                                          (delete-matching-lines regexp))
-                                        yant/magit-show-autocommit-regexps)
-                                  (string-empty-p (buffer-string)))
-                            (progn
-                              ;; Do not refresh buffer.
-                              (let ((magit-inhibit-refresh t))
-                                (magit-stage))))
-                          (setq previous-pos pos)
-                          (condition-case err
-                              (magit-section-forward)
-                            (user-error
-                             (setq pos (point))
-                             (throw :last-section t)))))))
-                  (setq pos (point)))))))
-        (magit-refresh)
-        (progress-reporter-done progress)
-        (with-current-buffer magit-buffer
-          (unless (magit-jump-to-staged) ;; returns nil on success.
-            (funcall-interactively
-             #'magit-commit-create
-             `("-m"
-               ,(format-time-string "Autoupdate %Y-%m-%d" (current-time))))))))))
+      ;; Make Emacs responsive while staging.
+      (with-async-calls '(magit-insert-heading magit-section-ident-value)
+        (let ((magit-buffer (current-buffer))
+              (pos (point))
+              (previous-pos (point))
+              (progress (make-progress-reporter "Autocommiting hunks..." 1 (point-max))))
+          (catch :last-section
+            (let (
+                  ;; Make magit refresh faster.
+                  (magit-section-cache-visibility nil)
+                  ;; Simplify magit-status-sections-hook.
+                  (magit-status-sections-hook '(magit-insert-unstaged-changes))
+                  ;; disable some hooks
+                  (magit-section-set-visibility-hook nil))
+              (magit-refresh)
+              (while (with-current-buffer magit-buffer
+                       (< pos (point-max)))
+                (with-current-buffer magit-buffer
+                  (save-excursion
+                    (goto-char pos)
+                    (progress-reporter-update progress pos)
+                    (when (and (re-search-forward (rx-to-string `(or ,@(mapcar (lambda (re) `(regex ,re)) yant/magit-show-autocommit-regexps))) nil 'move)
+                               (< (point) (point-max)))
+                      (let ((section (magit-current-section)))
+                        (if (not (eq 'hunk (oref section type)))
+                            (condition-case err
+                                (magit-section-forward)
+                              (user-error
+                               (setq pos (point))
+                               (throw :last-section t)))
+                          (let ((hunk-text (buffer-substring-no-properties (oref section start) (oref section end))))
+                            (when (with-temp-buffer
+                                    (insert hunk-text)
+                                    (goto-char 1)
+                                    (keep-lines "^[+-].+$")
+                                    (mapc (lambda (regexp)
+                                            (goto-char 1)
+                                            (delete-matching-lines regexp))
+                                          yant/magit-show-autocommit-regexps)
+                                    (string-empty-p (buffer-string)))
+                              (progn
+                                ;; Do not refresh buffer.
+                                (let ((magit-inhibit-refresh t))
+                                  (magit-stage))))
+                            (setq previous-pos pos)
+                            (condition-case err
+                                (magit-section-forward)
+                              (user-error
+                               (setq pos (point))
+                               (throw :last-section t)))))))
+                    (setq pos (point)))))))
+          (magit-refresh)
+          (progress-reporter-done progress)
+          (with-current-buffer magit-buffer
+            (unless (magit-jump-to-staged) ;; returns nil on success.
+              (funcall-interactively
+               #'magit-commit-create
+               `("-m"
+                 ,(format-time-string "Autoupdate %Y-%m-%d" (current-time))))))))))
 #+end_src
 
 *** Spell checking
@@ -16192,7 +16189,6 @@ Some changes in org-files are very trivial and clutter more important changes I 
 :END:
 
 Spell check rules for org syntax.
-
 
 Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 
