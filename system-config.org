@@ -169,16 +169,18 @@ Need to install repoman for managing repository.
 (string-to-number (string-remove-suffix "\n" (shell-command-to-string "nproc")))
 #+end_src
 
-#+name: numcpushalf
+Do not use literally all the CPUs for compilation to keep the laptop
+usable even during upgrades.
+#+name: numcpusreduced
 #+begin_src emacs-lisp :results silent :eval yes
-(/ <<numcpus()>> 2)
+(- <<numcpus()>> 2)
 #+end_src
 
 
 #+begin_src conf :tangle /sudo::/etc/portage/make.conf
 # C, C++ and FORTRAN options for GCC.
-MAKEOPTS="-j<<numcpushalf()>> -l<<numcpushalf()>>"
-EMERGE_DEFAULT_OPTS="--jobs=<<numcpushalf()>> --load-average=<<numcpushalf()>>"
+MAKEOPTS="-j<<numcpusreduced()>> -l<<numcpusreduced()>>"
+EMERGE_DEFAULT_OPTS="--jobs=<<numcpusreduced()>> --load-average=<<numcpusreduced()>>"
 COMMON_FLAGS="-march=native -O3 -pipe"
 CFLAGS="${COMMON_FLAGS}"
 CXXFLAGS="${COMMON_FLAGS}"
