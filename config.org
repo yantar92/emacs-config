@@ -15938,28 +15938,6 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
         (push (list (format "notmuch:%s" CANDIDATE) desc) org-stored-links))))
 
 
-  (defun yant/add-email-to-task (&optional ARG)
-    "Add an email into :EMAIL-SOURCE: property of the task.
-         C-u argument means that we add the last link from link ring."
-    (interactive)
-    (if (eq ARG '4)
-        (let ((last-link (car (car org-stored-links)))
-  	    (last-description (cadr (car org-stored-links))))
-  	(if (string-match "^notmuch.*$" last-link)
-              (progn
-  	      (org-set-property "EMAIL-SOURCE" (concat "[[" last-link "][" last-description "]]"))
-                (org-back-to-heading)
-                (org-set-tags-to (append (org-get-tags nil t) '("EMAIL"))))
-  	  (message "Link \"%s\" is not a message link." last-link))
-          (yant/mark-linked-email-after-todo-state-change))
-      (let ((helm-source-tmp (copy-alist helm-source-notmuch)))
-        (setf (alist-get 'action helm-source-tmp) (list '("Copy message link" . org-store-notmuch-link)))
-        (setf (alist-get 'header-line helm-source-tmp) "C-j: Associate the task with an email")
-        (helm :sources helm-source-tmp
-  	    :buffer "*helm notmuch*"
-  	    :truncate-lines t))
-      (yant/add-email-to-task '4)))
-
   (defun yant/mark-linked-email-after-todo-state-change ()
     "Remove track tag from a linked email :EMAIL-SOURCE: after the task is marked as finished."
     (let* ((mystate (or (and (fboundp 'org-state) state)
@@ -16376,7 +16354,6 @@ Using because the package is abandoned and I am helping to maintain it.
      ("C-n" . notes-open))
     (bind-keys :map org-mode-map
   	     ("C-c C-l" . org-insert-link)
-  	     ("C-c e" . yant/add-email-to-task)
   	     ("C-c i" . org-clock-in)
   	     ("C-c o" . org-clock-out)
                :map org-agenda-mode-map
