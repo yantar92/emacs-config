@@ -7366,12 +7366,7 @@ q ignore
 ******* Change quality :ATTACH:
 :PROPERTIES:
 :CREATED:  [2019-12-15 Sun 02:52]
-:ID:       d745535d-faf9-4ab2-b39c-89b8c6087c44
-:END:
-****************** SOMEDAY save repo separately :SOMEDAY:
-****************** END
-:PROPERTIES:
-:ID: edfcf73c-fdec-4173-bf83-dc0fa2e07810
+:ID:       f8737f19-a0ac-4785-a62c-2504313910ec
 :END:
 
 =C-f= to call menu.
