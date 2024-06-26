@@ -16529,7 +16529,7 @@ Work around this issue by suppressing messages coming from
     (define-advice org-store-log-note  (:around (fun) silence)
       "Run `org-store-log-note', but do not produce any message."
       (let ((inhibit-message t)) (funcall fun)))
-    (define-advice org-archive-subrtee (:around (fun &rest args) silence)
+    (define-advice org-archive-subtree (:around (fun &rest args) silence)
       "Run `org-store-log-note', but do not produce any message."
       (let ((inhibit-message t)) (funcall fun args))))
 #+end_src
