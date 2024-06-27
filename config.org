@@ -14704,131 +14704,26 @@ Org src mode lighter.
   :custom-face
   (org-verbatim ((t (:height 0.95 :weight semi-light)))))
 #+end_src
-***** COMMENT Render latex fragments
-:PROPERTIES:
-:SUMMARY:  slow on main
-:END:
-- Note taken on [2023-02-22 Wed 16:42] \\
-  slow on main
-#+begin_src emacs-lisp
-(use-package org
-  :if init-flag
-  :init
-  (setq org-highlight-latex-and-related '(native latex script)))
-#+end_src
+
 **** Links
 ***** Show broken links to files
 :PROPERTIES:
 :ID:       df5b9cb0-e3d1-406e-b71f-55a7b90c221e
 :END:
+
 #+begin_src emacs-lisp
-  (org-link-set-parameters
-   "file"
-   :face
-   (lambda (path)
-     (let ((file (org-link-unescape path)))
-       (if (or (file-remote-p file) (file-exists-p file))
-  	 'org-link
-         'org-warning))))
+  (use-package ol
+    :config
+    (org-link-set-parameters
+     "file"
+     :face
+     (lambda (path)
+       (let ((file (org-link-unescape path)))
+         (if (or (file-remote-p file) (file-exists-p file))
+  	   'org-link
+  	 'org-warning)))))
 #+end_src
-***** Use posframe to offer link selection
-:PROPERTIES:
-:CREATED:  [2020-03-28 Sat 18:51]
-:ID:       e8ee8fc7-55ec-4396-83e6-97559ab1d5bf
-:END:
- #org_open_at_point
-[2020-10-14 Wed] Add smarted duplicate removal: =link= means the same as =[[link]]=
-#+begin_src emacs-lisp
-(use-package posframe
-  :if init-flag
-  :straight t
-  :after el-patch
-  :config
-  (el-patch-feature org)
-  (el-patch-defun org-offer-links-in-entry (buffer marker &optional nth zero)
-    "Offer links in the current entry and return the selected link.
-If there is only one link, return it.
-If NTH is an integer, return the NTH link found.
-If ZERO is a string, check also this string for a link, and if
-there is one, return it."
-    (with-current-buffer buffer
-      (org-with-wide-buffer
-       (goto-char marker)
-       (let ((cnt ?0)
-	     have-zero end links link c)
-	 (when (and (stringp zero) (string-match org-link-bracket-re zero))
-	   (push ((el-patch-swap match-string match-string-no-properties) 0 zero) links)
-	   (setq cnt (1- cnt) have-zero t))
-	 (save-excursion
-	   (org-back-to-heading t)
-	   (setq end (save-excursion (outline-next-heading) (point)))
-	   (while (re-search-forward org-link-any-re end t)
-             (unless (save-match-data (eq 'src-block (org-element-type (org-element-at-point))))
-	       (push ((el-patch-swap match-string match-string-no-properties) 0) links)))
-           ;; (el-patch-add
-           ;;   (setq links
-	   ;; 	   (mapcar (lambda (link)
-	   ;; 		     (if (string-match-p "^\\[\\[" link)
-	   ;; 			 link
-	   ;; 		       (format "[[%s]]" link)))
-	   ;; 		   links)))
-	   (setq links (org-uniquify (reverse links))))
-         (el-patch-add
-           (when-let ((attach-dir (org-attach-dir)))
-             (unless (directory-empty-p attach-dir)
-               (push "[[elisp:(org-attach-open)][Open attachment]]" links))))
-	 (cond
-	  ((null links)
-	   (message "No links"))
-	  ((equal (length links) 1)
-	   (setq link (car links)))
-	  ((and (integerp nth) (>= (length links) (if have-zero (1+ nth) nth)))
-	   (setq link (nth (if have-zero nth (1- nth)) links)))
-	  (t				; we have to select a link
-	   (save-excursion
-	     (save-window-excursion
-	       (el-patch-remove (delete-other-windows))
-	       ((el-patch-swap with-output-to-temp-buffer with-current-buffer) (el-patch-swap  "*Select Link*" (get-buffer-create "*Select Link*"))
-                (el-patch-add (erase-buffer))
-                (el-patch-add (insert "Select link to open, RET to open all:\n"))
-		(dolist (l links)
-		  (cond
-		   ((not (string-match org-link-bracket-re l))
-		    ((el-patch-swap princ insert) (format "[%c]  %s\n" (cl-incf cnt)
-							  (org-unbracket-string "<" ">" l))))
-		   ((match-end 2)
-		    ((el-patch-swap princ insert)  (format "[%c]  %s (%s)\n" (cl-incf cnt)
-							   (match-string 2 l) (match-string 1 l))))
-		   (t ((el-patch-swap princ insert)  (format "[%c]  %s\n" (cl-incf cnt)
-							     (match-string 1 l)))))))
-               (el-patch-wrap 1 0
-                 (unwind-protect
-                     (el-patch-wrap 1 0
-		       (progn
-			 (el-patch-swap
-			   (org-fit-window-to-buffer (get-buffer-window "*Select Link*"))
-			   (posframe-show (get-buffer "*Select Link*")
-					  :poshandler 'posframe-poshandler-frame-center
-                                          :foreground-color (face-foreground 'mode-line)
-                                          :background-color (face-background 'highlight)
-                                          :internal-border-color (face-background 'highlight)
-                                          :internal-border-width 20
-					  ))
-			 (message "Select link to open, RET to open all:")
-			 (setq c (read-char-exclusive))))
-		   (and (get-buffer "*Select Link*") (kill-buffer "*Select Link*"))))))
-	   (when (equal c ?q) (user-error "Abort"))
-	   (if (equal c ?\C-m)
-	       (setq link links)
-	     (setq nth (- c ?0))
-	     (when have-zero (setq nth (1+ nth)))
-	     (unless (and (integerp nth) (>= (length links) nth))
-	       (user-error "Invalid link selection"))
-	     (setq link (nth (1- nth) links)))))
-         (when (string= link "[[elisp:(org-attach-open)][Open attachment]]")
-           (setq link nil))
-	 (cons link end))))))
-#+end_src
+
 **** Items
 :PROPERTIES:
 :ID:       6b238696-fbbe-4206-91fb-eeebff4a032a
