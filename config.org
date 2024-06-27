@@ -13133,7 +13133,8 @@ For now, I avoid capturing website text directly into org. Instead, I write my o
   		  (start-process
   		   "Monolith" " *Monolith*"
   		   "monolith"
-  		   url "--quiet"  "--output" (file-name-concat attach-dir "singlepage.html"))))))))
+  		   url "--quiet" "--no-progress"
+                     "--output" (file-name-concat attach-dir "singlepage.html"))))))))
     (add-hook 'org-capture-before-finalize-hook #'yant/org-capture-archive-resource))
 #+end_src
 
