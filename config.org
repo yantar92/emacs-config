@@ -4388,7 +4388,6 @@ interactive editing style without prompts.
 (use-package yasnippet
   :if init-flag
   :straight t
-  :diminish (yas-minor-mode . " ⇶_")
   :hook ((org-mode latex-mode markdown-mode prog-mode lisp-interaction-mode) . yas-minor-mode)
   :config
   (yas-reload-all))
@@ -5022,7 +5021,6 @@ Smarter elisp editing.  (not enough said, but one just has to try for a few days
 (use-package paredit
   :if init-flag
   :straight t
-  :diminish (paredit-mode . " (⤑)")
   :demand t ;; I need it in scratch buffer
   :hook ((lisp-mode lisp-interaction-mode emacs-lisp-mode) . paredit-mode)
   :config
@@ -8782,21 +8780,8 @@ includes:
     :config
     ;; I do not like this behaviour.
     (unbind-key "_" org-cdlatex-mode-map)
-    (unbind-key "^" org-cdlatex-mode-map)
-    (diminish 'org-cdlatex-mode
-  	    (concat
-  	     " "
-  	     (propertize "CD"
-  			 'face `((:height 0.5)))
-  	     (propertize (all-the-icons-fileicon "tex" :v-adjust 0.04)
-  			 'face `((
-  				  :family "file-icons"
-  				  ;; :height 1.4
-  				  ))))))
+    (unbind-key "^" org-cdlatex-mode-map))
 #+end_src
-
-
-
 **** Properties
 :PROPERTIES:
 :ID:       598c2b16-2eb8-404a-b7e9-00969a1c4d72
@@ -14634,22 +14619,6 @@ Org-capture mode lighter.
                         :height 1.4))))))
 #+end_src
 
-Org src mode lighter.
-
-#+begin_src emacs-lisp
-  (use-package org-src
-    :if init-flag
-    :after org
-    :config
-    (diminish
-     'org-src-mode
-     (concat " "
-             (propertize
-              (all-the-icons-material "code" :v-adjust 0.04)
-  	    'face `(( :family "Material Icons"
-  		      :height 1.2)))
-  	   "org")))
-#+end_src
 **** Text
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 13:25]
