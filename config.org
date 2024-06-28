@@ -2373,7 +2373,7 @@ in my [[id:e3d02bee-a924-4808-9a2f-fe577065038d][capture templates]].
 Typos are inevitable. 
 Highlighting typos is crucial.
 
-**** =Flyspell=
+**** COMMENT =Flyspell=
 :PROPERTIES:
 :CREATED:  [2018-10-12 Fri 14:07]
 :ID:       b79658d1-8d62-4c47-be3b-cc399a0a8c59
@@ -2499,7 +2499,7 @@ abort completely with `C-g'."
   (setq-default abbrev-mode t)
   (diminish 'abbrev-mode))
 #+end_src
-**** COMMENT =jinx= - spell checker
+**** =jinx= - spell checker
 :PROPERTIES:
 :SUMMARY:  too slow on large Org buffers. See https://github.com/minad/jinx/discussions/156
 :END:
