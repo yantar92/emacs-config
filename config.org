@@ -119,13 +119,13 @@ The configuration is integrated with my OS setup. (Or rather my OS
 setup is integrated with this configuration 😂).
 You can find the public parts of OS setup in [[file:system-config.org]].
 
-** init.el
+** =init.el=
 :PROPERTIES:
 :ID:       0948a927-42a3-4284-aaed-1ca9dd27a538
 :CREATED:  [2017-12-23 Sat 15:16]
 :END:
  
-Init file, which loads this file.
+Init-file, which loads this file.
 
 #+begin_src emacs-lisp :tangle "~/.emacs.d/init.el"  :var el-file="~/.emacs.d/config.el"
 (setq init-flag t)
@@ -2258,7 +2258,7 @@ Do not even need terminal to interact with Git.
     (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward)))
 #+END_SRC
 
-**** Interaction with Github \ other forges
+**** Interaction with GitHub \ other forges
 :PROPERTIES:
 :ID:       b5cd6c65-f254-42aa-a423-2001c72d6dfa
 :END:
@@ -2358,7 +2358,7 @@ in my [[id:e3d02bee-a924-4808-9a2f-fe577065038d][capture templates]].
     (orgit-store-reference t)))
 #+end_src
 
-** Text highlight & colouring
+** Text highlight & coloring
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
 :END:
@@ -4758,7 +4758,7 @@ With `\\[universal-argument]', run `inspector-inspect-expression'."
   (meta-defun meta-up-element :mode inspector-mode inspector-pop))
 #+end_src
 
-** Programming & emacsing
+** Programming & "emacsing"
 :PROPERTIES:
 :ID:       e2ea50c3-b8da-433e-a5f9-74d8ef91d807
 :END:
@@ -5338,8 +5338,8 @@ me informed about my budget status - [[id:4df7a164-25a1-4106-b610-155c5b34afd8][
   :straight t)
 #+END_SRC
 
-** Pdf
-*** Compressing too large pdfs
+** PDF
+*** Compressing too large PDFs
 :PROPERTIES:
 :ID:       86adb126-19e5-4438-acab-729e58abe7d1
 :END:
@@ -5362,7 +5362,7 @@ OUTPUT=${OUTPUT:-${INPUT%.*}.pdf}
 gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$OUTPUT" "$INPUT"
 #+end_src
 
-*** Pdf view
+*** PDF view
 :PROPERTIES:
 :ID:       201475d1-64b3-4e1d-8e78-d850c6067761
 :END:
@@ -5412,7 +5412,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
     (meta-defun meta-down :mode pdf-annot-list-mode tablist-next-line)
     (meta-defun meta-up :mode pdf-annot-list-mode tablist-previous-line)))
 #+end_src
-**** Fit pdf to window
+**** Fit PDF to window
 
 #+begin_src emacs-lisp
 (use-package pdf-tools
@@ -5595,7 +5595,7 @@ When called with \\[universal-argumen], add text annotation instead."
                                 (contents . 24))))
 #+end_src
 
-**** Restore the last position in pdf
+**** Restore the last position in PDF
 :PROPERTIES:
 :CREATED:  [2019-07-22 Mon 22:25]
 :ID:       298073df-f1e0-4a57-ac78-65ab17582ead
@@ -5610,7 +5610,7 @@ When called with \\[universal-argumen], add text annotation instead."
   (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 #+end_src
 
-**** Pdf rotate
+**** PDF rotate
 :PROPERTIES:
 :ID:       0ec2a69c-4284-48f2-86cb-4bac1f0a3b3f
 :END:
@@ -5750,7 +5750,7 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
 ;;                  (window-height . 0.5))))
 #+end_src
 
-**** Shell colours
+**** Shell colors
 :PROPERTIES:
 :CREATED:  [2019-11-25 Mon 20:29]
 :ID:       0e7fd436-6b4b-43a2-932e-fd75daac32d2
@@ -5862,7 +5862,7 @@ Eterm is a much faster version of terminal for emacs since utilising emacs libra
       (call-process "make" nil nil nil))))
 #+end_src
 
-****** Extra customisation from [[id:de714e334e29b6ebfe88071cade9ecf618cfe342][tecosaur [Tecosaur.Github] (2021) Doom Emacs Configuration]]
+****** Extra customization from [[id:de714e334e29b6ebfe88071cade9ecf618cfe342][tecosaur [Tecosaur.Github] (2021) Doom Emacs Configuration]]
 :PROPERTIES:
 :ID:       1042348d-0023-483b-b3cf-be8f71d93089
 :END:
@@ -5936,12 +5936,12 @@ Viewing images in Emacs
   (meta-defun meta-up :mode image-mode image-previous-file))
 #+end_src
 
-*** Screencasting
+*** Screen-casting
 :PROPERTIES:
 :ID:       2aa3e942-e4e9-4703-9539-4be5192072d7
 :END:
 
-Record the screencast using =emacs-gif-screencast=.
+Record the screen cast using =emacs-gif-screencast=.
 Need to install =gifsicle= and =scrot=
 #+begin_src emacs-lisp
 (use-package gif-screencast
@@ -7590,7 +7590,7 @@ Despite the usual big-tech concerns, it makes a decent:
   (add-hook 'osm-mode-hook #'yant/display-all-gpx-delayed))
 #+end_src
 
-** Synchthing frontend
+** Synchthing front-end
 
 #+begin_src emacs-lisp
 (use-package syncthing
@@ -13668,23 +13668,15 @@ Inline tasks cannot be archived for now ([2017-12-29 Fri]), so, I override stand
     (goto-char org-archived-inlinetask-point)))
 #+END_SRC
 
-Sometimes, I have a small projects, where I do not want to decide whether I want to archive every single subtask or not. I tag them =:ARCHIVEALL:=.
-
-Thanks God, I do not need to open my archive file frequently - my =TODO.org_archive= is =>3Mb= and takes forever to open. I am not sure if I need to do something with it.
-****************** TODO Speed up opening large org files
-:LOGBOOK:
-- State "TODO"       from "HOLD"       [2019-05-16 Thu 11:30]
-- State "HOLD"       from "TODO"          [2017-12-22 Fri 22:01] \\
-  Consider it if it becomes annoying
-:END:
-****************** END
+Sometimes, I have a small projects, where I do not want to decide
+whether I want to archive every single subtask or not. I tag them
+=:ARCHIVEALL:=.
 
 ***** Trash attachments of archived tasks
 
-If a task being archived contains attachments, it is better to delete them.
-Otherwise, I'd rather keep the task in place to avoid hanging files.
-****************** TODO also show the attachment list when asking
-****************** END
+If a task being archived contains attachments, it is better to delete
+them.  Otherwise, I'd rather keep the task in place to avoid hanging
+files.
 
 #+begin_src emacs-lisp
 (setq org-attach-archive-delete 'query)
@@ -15859,7 +15851,7 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
   (add-hook 'org-capture-before-finalize-hook 'yant/mark-linked-email-after-todo-state-change 'append)
 #+end_src
 
-*** Use ~helm-org-ql~ as imenu replacement
+*** Use ~helm-org-ql~ as =imenu= replacement
 :PROPERTIES:
 :CREATED:  [2018-10-25 Thu 22:50]
 :ID:       72afd20b-f9c7-4c5b-84cf-a4073c62af76
@@ -18117,3 +18109,7 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
   (setq org-web-tools-pandoc-sleep-time 1.0))
 #+end_src
 
+
+# Local Variables:
+# jinx-local-words: "config emacsing"
+# End:
