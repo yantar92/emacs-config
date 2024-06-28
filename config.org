@@ -16014,22 +16014,6 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
     (add-hook 'org-babel-pre-tangle-hook #'yant/org-decrypt-for-tangle-maybe 100)))
 #+end_src
 
-**** Refresh keywords upon decryption
-:PROPERTIES:
-:ID:       f1242dcf-448a-4dc2-b3cb-5ba3c3e07cc5
-:END:
-
-#+begin_src emacs-lisp
-(use-package org-crypt
-  :config
-  (defun yant/org-refresh-org-buffer ()
-    "Refresh org buffer as if C-c C-c on a keyword line."
-    (org-set-regexps-and-options))
-  (define-advice org-decrypt-entry (:after (&rest _) refresh-org)
-    (when (member "crypt" (org-get-tags nil 'local))
-      (yant/org-refresh-org-buffer))))
-#+end_src
-
 **** Speed up saving files without encrypted headings
 :PROPERTIES:
 :ID:       00dba9c3-ee6a-4e77-97d1-0b8c2d2544c2
