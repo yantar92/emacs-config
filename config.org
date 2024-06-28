@@ -2507,10 +2507,12 @@ abort completely with `C-g'."
 - Note taken on [2024-04-11 Thu 14:48] \\
   too slow on large Org buffers. See https://github.com/minad/jinx/discussions/156
 #+begin_src emacs-lisp
-(use-package jinx
-  :straight t
-  :hook ((notmuch-message-mode org-mode text-mode) . jinx-mode)
-  :bind* (("M-h" . jinx-correct)))
+  (use-package jinx
+    :straight t
+    :custom
+    (jinx-languages "en_US uk ru")
+    :hook ((notmuch-message-mode org-mode text-mode) . jinx-mode)
+    :bind* (("M-h" . jinx-correct)))
 #+end_src
 
 **** Language tool
