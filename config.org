@@ -14780,24 +14780,24 @@ is much faster than overlay-based =org-bullets=. #pretty_symbols
                   (?❍ org-specific "\\[-\\]" (org-mode))
       		  ((yant/str-to-glyph "☠D") org-specific "\\<DEADLINE:" (org-mode))
       		  ((yant/str-to-glyph "◴S") org-specific "\\<SCHEDULED:" (org-mode))))))
-  #+end_src
-Prefer to replace default =...= by something more distinct if item is folded
+#+end_src
+
+Prefer to replace default =...= by something more distinct if item is folded.
+
 #+BEGIN_SRC emacs-lisp
 (setq org-ellipsis "  ")
 (set-face-underline 'org-ellipsis nil)
-  #+END_SRC
-blanks in items
-  #+begin_src emacs-lisp
+#+END_SRC
+
+No blanks in items and between headings
+
+#+begin_src emacs-lisp
 ;;turn off blanks in a new entries
 (setq org-blank-before-new-entry (quote ((heading . nil)
 					 (plain-list-item . nil))))
-(setq org-cycle-separator-lines 0)
-  #+end_src
-hide emphasis markers
-  #+begin_src emacs-lisp
-(setq org-hide-emphasis-markers t)
-  #+end_src
-keyword faces
+#+end_src
+
+Todo keyword faces
   #+begin_src emacs-lisp
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -14814,35 +14814,10 @@ keyword faces
               ("FROZEN" :foreground "SkyBlue" :weight bold)
 	      ("MERGED" :foreground "light green" :weight bold))))
 #+end_src
-truncation by default
-#+BEGIN_SRC emacs-lisp
-(setq org-startup-truncated t)
-#+END_SRC
-no leading stars
-#+BEGIN_SRC emacs-lisp
-(setq org-hide-leading-stars t)
-#+END_SRC
-no indentation inside entries
-#+BEGIN_SRC emacs-lisp
-(setq org-adapt-indentation nil)
-#+END_SRC
-hyphen as em-dash (from [[https://github.com/grettke/help/blob/master/help.org][here]])
-#+begin_src emacs-lisp
-(font-lock-add-keywords
- 'org-mode
- '(("^[[:space:]]*\\(-\\) "
-    0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "—")))))
-#+end_src
 
 Do not adjust tags. It does not work well in resized windows without line truncation.
 #+begin_src emacs-lisp
 (setq org-tags-column 0)
-#+end_src
-
-Always show the contents of inline tasks instead of hiding/showing it during cycling.
-
-#+begin_src emacs-lisp
-(remove-hook 'org-cycle-hook 'org-inlinetask-hide-tasks)
 #+end_src
 
 Use smaller font for inline headings without keyword 
@@ -14869,92 +14844,6 @@ Use smaller font for inline headings without keyword
           (add-text-properties (point) (line-end-position) `(face org-inlinetask-notodo font-lock-fontified t)))))))
 #+end_src
 
-Hide END part of inline tasks
-
-#+begin_src emacs-lisp
-;; (add-hook 'org-mode-hook (lambda () (cursor-intangible-mode +1)))
-;; (add-hook 'org-mode-hook (lambda () (add-to-list 'font-lock-extra-managed-props 'display)))
-
-(use-package org-inlinetask
-  :if init-flag
-  :hook (org-font-lock . yant/org-inlinetask-hide-END)
-  :config
-  (defun yant/org-inlinetask-hide-END (limit)
-    "Hide END line of inlinetasks."
-    (let* ((nstars (if org-odd-levels-only
-		       (1- (* 2 (or org-inlinetask-min-level 200)))
-		     (or org-inlinetask-min-level 200)))
-	   (re (concat "^\\(\\*\\)\\(\\*\\{"
-		       (format "%d" (- nstars 3))
-		       ",\\}\\)\\(\\*\\* END[ \t]*$\\)")))
-      (while (re-search-forward re limit t)
-	(with-silent-modifications
-          (compose-region (1- (match-beginning 0)) (match-end 0)
-			  ?🬉 'decompose-region)
-          )))))
-#+end_src
-
-Disallow user edits inside property drawers
-
-#+begin_src emacs-lisp
-;; (add-hook 'org-mode-hook (lambda () (cursor-intangible-mode +1)))
-
-;; (use-package org-inlinetask
-;;   :if init-flag
-;;   :hook (org-font-lock . yant/org-intanglible-property)
-;;   :config
-;;   (defun yant/org-intanglible-property (limit)
-;;     "Make property drawers cursor intanglible."
-;;     (while (re-search-forward org-property-drawer-re limit t)
-;;       (with-silent-modifications
-;; 	(save-excursion
-;;           (goto-char (match-beginning 0))
-;;           (forward-line)
-;;           (add-text-properties (point) (match-end 0)
-;; 			       `(cursor-intangible t)))))))
-#+end_src
-
-
-fit inline LaTeX better by increasing the image size [[[https://github.com/tecosaur/emacs-config/blob/master/config.org#latex-fragments][credit]]]
-#+begin_src emacs-lisp
-(setq org-format-latex-header "\\documentclass{article}
-\\usepackage[usenames]{color}
-
-\\usepackage[T1]{fontenc}
-\\usepackage{mathtools}
-\\usepackage{textcomp,amssymb}
-\\usepackage[makeroom]{cancel}
-
-\\pagestyle{empty}             % do not remove
-% The settings below are copied from fullpage.sty
-\\setlength{\\textwidth}{\\paperwidth}
-\\addtolength{\\textwidth}{-3cm}
-\\setlength{\\oddsidemargin}{1.5cm}
-\\addtolength{\\oddsidemargin}{-2.54cm}
-\\setlength{\\evensidemargin}{\\oddsidemargin}
-\\setlength{\\textheight}{\\paperheight}
-\\addtolength{\\textheight}{-\\headheight}
-\\addtolength{\\textheight}{-\\headsep}
-\\addtolength{\\textheight}{-\\footskip}
-\\addtolength{\\textheight}{-3cm}
-\\setlength{\\topmargin}{1.5cm}
-\\addtolength{\\topmargin}{-2.54cm}
-% my custom stuff
-\\usepackage{arev}
-\\usepackage{arevmath}")
-#+end_src
-
-****************** TODO rewrite into smaller chunks
-****************** END
-
-#+begin_src emacs-lisp :tangle no
-(use-package doom-themes
-  :if init-flag
-  :straight t
-  :config
-  (use-package doom-themes-ext-org
-    :demand t))
-#+end_src
 ***** Do not fontify done headlines
 :PROPERTIES:
 :ID:       59b7a988-381d-419b-a9ed-eb4af448d44a
