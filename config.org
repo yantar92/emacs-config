@@ -2362,20 +2362,6 @@ in my [[id:e3d02bee-a924-4808-9a2f-fe577065038d][capture templates]].
 :PROPERTIES:
 :ID:       d95f91d1-cef9-4094-9592-b38514fe2a77
 :END:
-*** Temporary highlight text in buffer
-:PROPERTIES:
-:CREATED:  [2018-03-12 Mon 14:29]
-:ID:       9c3fe725-f67e-4abb-878f-da7b45bea121
-:END:
-
-User-defined temporary highlighting.
-
-#+begin_src emacs-lisp
-(use-package hi-lock
-  :if init-flag
-  :diminish hi-lock-mode)
-#+end_src
-
 *** Spell\grammar checking
 :PROPERTIES:
 :ID:       117c5718-7a46-4a7a-ab0d-b5b347444080
@@ -14720,19 +14706,12 @@ Org src mode lighter.
 :PROPERTIES:
 :ID:       6b238696-fbbe-4206-91fb-eeebff4a032a
 :END:
-I do not want bigger items font because I tend to use items a lot
-  #+begin_src emacs-lisp
-(custom-set-faces
- '(org-level-1 ((t (:inherit outline-1 :height 1.0))))
- '(org-level-2 ((t (:inherit outline-2 :height 1.0))))
- '(org-level-3 ((t (:inherit outline-3 :height 1.0))))
- '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
- '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
- )
-  #+end_src
-Utilise =pretty-symbols= to show bullets, priorities, and keywords. It is much faster than overlay-based =org-bullets=.
- #pretty_symbols
-  #+begin_src emacs-lisp
+
+I do not want bigger items font because I tend to use items a lot.
+
+Utilise =pretty-symbols= to show bullets, priorities, and keywords. It
+is much faster than overlay-based =org-bullets=. #pretty_symbols
+#+begin_src emacs-lisp
 (use-package pretty-symbols
   :config
   (require 'org-inlinetask)
