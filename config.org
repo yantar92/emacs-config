@@ -13073,6 +13073,8 @@ For now, I avoid capturing website text directly into org. Instead, I write my o
 #+begin_src emacs-lisp
   (when init-flag
     (defvar yant/org-capture-archive-process nil)
+    (defvar yant/org-capture-archive-markers nil)
+    (org-track-markers-register 'yant/org-capture-archive-markers)
     (defun yant/org-capture-archive-resource (&optional url attach-dir marker)
       "Archive resource for capture at point/MARKER or for URL."
       (org-with-point-at marker
@@ -13094,18 +13096,25 @@ For now, I avoid capturing website text directly into org. Instead, I write my o
                      ;; buffer - set marker inside the parent buffer.
                      (when (buffer-base-buffer)
                        (move-marker mk (point) (buffer-base-buffer)))
+                     (cl-pushnew mk yant/org-capture-archive-markers)
                      mk)))
             (org-toggle-tag org-attach-auto-tag 'on)
+            (setq yant/org-capture-archive-markers
+  		(delete marker yant/org-capture-archive-markers))
             (setq yant/org-capture-archive-process
   		(if (string-match-p "youtube" url)
                       (start-process
   		     "yt-dlp" " *yt-dlp*"
   		     "yt-dlp"
-  		     url "--write-description" "-o" (file-name-concat attach-dir "%(title)s [%(id)s].%(ext)s"))
+                       "--quiet" "--no-progress" "--no-colors"
+                       "-S" "height:1080"
+  		     "--write-description"
+                       "-o" (file-name-concat attach-dir "%(title)s [%(id)s].%(ext)s")
+                       url)
   		  (start-process
   		   "Monolith" " *Monolith*"
   		   "monolith"
-  		   url "--quiet" "--no-progress"
+  		   url
                      "--output" (file-name-concat attach-dir "singlepage.html"))))))))
     (add-hook 'org-capture-before-finalize-hook #'yant/org-capture-archive-resource))
 #+end_src
