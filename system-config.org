@@ -2001,73 +2001,73 @@ return kbdlayout
      -- This should map on the top row of your keyboard, usually 1 to 9.
      tagkeys={"x","z","s","d","f"}
      for s in screen do
-	keynumber = math.min(9, math.max(#s.tags, keynumber));
+  	keynumber = math.min(9, math.max(#s.tags, keynumber));
      end
 
      for i = 1, keynumber do
-	globalkeys = awful.util.table.join(globalkeys,
-					   -- View tag only.
-					   awful.key({ modkey, "Control" }, tagkeys[i],
-					      function ()
-							local screen = awful.screen.focused()
-							local tag = screen.tags[i]
-							if tag then
-							   tag:view_only()
-							end
-						     end,
-						     {description = "view tag #"..i, group = "tag"}),
-					   -- Move client to tag.
-					   awful.key({ modkey, "Shift" }, tagkeys[i],
-					      function ()
-							if client.focus then
-							   local tag = client.focus.screen.tags[i]
-							   if tag then
-							      client.focus:move_to_tag(tag)
-							   end
-							end
-						     end,
-						     {description = "move focused client to tag #"..i, group = "tag"})
-					   -- -- Toggle tag on focused client.
-					   -- awful.key({ modkey, "Alt_L", "Shift" }, tagkeys[i],
-					   -- 	   function ()
-					   -- 	      if client.focus then
-					   -- 		 local tag = client.focus.screen.tags[i]
-					   -- 		 if tag then
-					   -- 		    client.focus:toggle_tag(tag)
-					   -- 		 end
-					   -- 	      end
-					   -- 	   end,
-					   -- 	   {description = "toggle focused client on tag #" .. i, group = "tag"})
-	)
+  	globalkeys = awful.util.table.join(globalkeys,
+  					   -- View tag only.
+  					   awful.key({ modkey, "Control" }, tagkeys[i],
+  					      function ()
+  							local screen = awful.screen.focused()
+  							local tag = screen.tags[i]
+  							if tag then
+  							   tag:view_only()
+  							end
+  						     end,
+  						     {description = "view tag #"..i, group = "tag"}),
+  					   -- Move client to tag.
+  					   awful.key({ modkey, "Shift" }, tagkeys[i],
+  					      function ()
+  							if client.focus then
+  							   local tag = client.focus.screen.tags[i]
+  							   if tag then
+  							      client.focus:move_to_tag(tag)
+  							   end
+  							end
+  						     end,
+  						     {description = "move focused client to tag #"..i, group = "tag"})
+  					   -- -- Toggle tag on focused client.
+  					   -- awful.key({ modkey, "Alt_L", "Shift" }, tagkeys[i],
+  					   -- 	   function ()
+  					   -- 	      if client.focus then
+  					   -- 		 local tag = client.focus.screen.tags[i]
+  					   -- 		 if tag then
+  					   -- 		    client.focus:toggle_tag(tag)
+  					   -- 		 end
+  					   -- 	      end
+  					   -- 	   end,
+  					   -- 	   {description = "toggle focused client on tag #" .. i, group = "tag"})
+  	)
      end
   end
 
   globalkeys = awful.util.table.join(
      awful.key({ modkey}, "j",
-	function ()
-		  awful.client.focus.byidx( 1)
-		  if client.focus then client.focus:raise() end
-	       end),
+  	function ()
+  		  awful.client.focus.byidx( 1)
+  		  if client.focus then client.focus:raise() end
+  	       end),
      awful.key({ modkey }, "k",
-	function ()
-		  awful.client.focus.byidx(-1)
-		  if client.focus then client.focus:raise() end
-	       end),
+  	function ()
+  		  awful.client.focus.byidx(-1)
+  		  if client.focus then client.focus:raise() end
+  	       end),
      awful.key({ modkey}, "w", function () awful.spawn("bash -c 'nice -n 17 show-menu'") end),
      -- Layout manipulation
      awful.key({ modkey, "Shift" }, "j", function () awful.client.swap.byidx( 1) awful.client.focus.byidx(-1) end),
      awful.key({ modkey, "Shift" }, "k", function () awful.client.swap.byidx(-1) awful.client.focus.byidx( 1) end),
      awful.key({ modkey,           }, "Tab",
-	function (t)
-		  awful.tag.history.restore(awful.tag.getscreen(t))
-	       end),
+  	function (t)
+  		  awful.tag.history.restore(awful.tag.getscreen(t))
+  	       end),
      awful.key({ modkey,          }, "q",
-	function (t)
-		  awful.client.focus.history.previous()
-		  if client.focus then
-		     client.focus:raise()
-		  end
-	       end),
+  	function (t)
+  		  awful.client.focus.history.previous()
+  		  if client.focus then
+  		     client.focus:raise()
+  		  end
+  	       end),
      -- Standard program
      awful.key({ modkey         }, "Return", function() awful.spawn("bash -c \"trackball-toggle.sh enable && xtrlock && trackball-toggle.sh disable\"") end),
      awful.key({ modkey},"r", function() awful.spawn("bash -c 'PATH=\"/home/yantar92/.local/bin:$PATH\" nice -n 17 emacs-helm-menu'") end),
@@ -2117,25 +2117,25 @@ return kbdlayout
      awful.key({ modkey,           }, "space", function () awful.layout.inc(awful.layout.layouts,  1) end),
      awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(awful.layout.layouts, -1) end),
      awful.key({ modkey}, "BackSpace", function ()
-		  for s in pairs(naughty.notifications) do
-		     for p in pairs(naughty.notifications[s]) do
-			for i,notification in pairs(naughty.notifications[s][p]) do
-			   if notification then
-			      naughty.destroy(notification)
-			      return notification
-			   end
-			end
-		     end
-		  end
-				       end),
+  		  for s in pairs(naughty.notifications) do
+  		     for p in pairs(naughty.notifications[s]) do
+  			for i,notification in pairs(naughty.notifications[s][p]) do
+  			   if notification then
+  			      naughty.destroy(notification)
+  			      return notification
+  			   end
+  			end
+  		     end
+  		  end
+  				       end),
      awful.key({ modkey, "Control", "Shift" }, "n", function()
-		  c=awful.client.restore()
-		  if c==nil then return end
-		  client.focus=c
-		  if client.focus then
-		     client.focus:raise()
-		  end
-						    end),
+  		  c=awful.client.restore()
+  		  if c==nil then return end
+  		  client.focus=c
+  		  if client.focus then
+  		     client.focus:raise()
+  		  end
+  						    end),
      -- Prompt
      awful.key({}, "F11", function() raise_conky() end, function() lower_conky() end)
      -- awful.key({ modkey, "Shift", "Control" }, "n",
@@ -2179,25 +2179,25 @@ return kbdlayout
      awful.key({ modkey, "Control"   }, "m",      function (c) c.fullscreen = not c.fullscreen  end),
      awful.key({ modkey, "Shift"   }, "'",      function (c) c:kill()                         end),
      awful.key({ modkey, "Shift"   }, "q",      function (c)
-		  for _,c2 in pairs(c.screen.clients) do
-		     if c2 ~= c then
-			c2:kill()
-		     end
-		  end
-						end),
+  		  for _,c2 in pairs(c.screen.clients) do
+  		     if c2 ~= c then
+  			c2:kill()
+  		     end
+  		  end
+  						end),
      awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ),
      awful.key({ modkey, "Shift"   }, "o",      awful.client.movetoscreen                        ),
      awful.key({ modkey, "Control", "Shift" }, "t",      function (c) c.ontop = not c.ontop            end),
      -- awful.key({ modkey,           }, "u", function (c) c.marked = not c.marked end ),
      awful.key({ modkey, "Control"}, "n",
-	       function (c)
-		  c.minimized = true
-	       end),
+  	       function (c)
+  		  c.minimized = true
+  	       end),
      awful.key({ modkey }, "m",
-	       function (c)
-		  c.maximized_horizontal = not c.maximized_horizontal
-		  c.maximized_vertical   = not c.maximized_vertical
-	       end)
+  	       function (c)
+  		  c.maximized_horizontal = not c.maximized_horizontal
+  		  c.maximized_vertical   = not c.maximized_vertical
+  	       end)
   )
 
 

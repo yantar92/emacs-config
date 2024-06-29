@@ -2,7 +2,6 @@
 :PROPERTIES:
 :ID:       922b85aa-b01d-47ac-b34e-99201b7f9abf
 :END:
-#+SETUPFILE: ~/Org/common.setup
 #+AUTHOR: Ihor Radchenko
 #+EMAIL: yantar92@posteo.net
 #+PROPERTY: header-args+ :tangle "~/.emacs.d/config.el" :comments no
@@ -13119,7 +13118,6 @@ For now, I avoid capturing website text directly into org. Instead, I write my o
     (add-hook 'org-capture-before-finalize-hook #'yant/org-capture-archive-resource))
 #+end_src
 
-
 **** Refile
 :PROPERTIES:
 :ID:       c048269c-57b9-434a-a19b-6da8d70e5e0f
@@ -13981,6 +13979,7 @@ Leaving the code below for reference.
     :config
     (setf (alist-get :results org-babel-default-header-args:shell) "output"))
 #+END_SRC
+
 - Show stderr in the shell output ([[https://github.com/novoid/dot-emacs/blob/master/config.org][Source]])
 #+BEGIN_SRC emacs-lisp
   (use-package ob-shell
@@ -14234,13 +14233,16 @@ The list is saved between Emacs sessions.")
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 15:47]
 :END:
-Frequently, I run heavy analytical code as a part of my project. I it totally inconvenient to run these hour longing codes during export. Hence, I [[id:27e1a878-35c8-4023-8881-645393db0274][disable]] babel evaluation on export by default.
+
+Frequently, I run heavy analytical code as a part of my project. I it
+totally inconvenient to run these hour longing codes during
+export. Hence, I [[id:27e1a878-35c8-4023-8881-645393db0274][disable]] babel evaluation on export by default.
+
 ***** Library of babel
 :PROPERTIES:
 :CREATED:  [2019-11-18 Mon 21:53]
 :ID:       301b1c19-8474-444e-b840-06bb8b3ddb69
 :END:
-
 
 https://kdr2.com/tech/emacs/1805-approach-org-ref-code-to-text.html
 In addition to lisp code in =init.el=, it is also possible to define globally available babel functions defined, for example. in this file
@@ -14785,8 +14787,8 @@ is much faster than overlay-based =org-bullets=. #pretty_symbols
 Prefer to replace default =...= by something more distinct if item is folded.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-ellipsis "  ")
-(set-face-underline 'org-ellipsis nil)
+  (setq org-ellipsis "  ")
+  (set-face-underline 'org-ellipsis nil)
 #+END_SRC
 
 No blanks in items and between headings
