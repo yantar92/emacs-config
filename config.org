@@ -13941,15 +13941,17 @@ Library of babel function definition:
 ****************** TODO it should better be supported natively
 ****************** END
 
-Also, it make sense to show inline images, which I frequently generate via Gnuplot after the evaluation
+Also, it make sense to show inline images, which I frequently generate
+via Gnuplot after the evaluation
 #+BEGIN_SRC emacs-lisp
-(add-hook
- 'org-babel-after-execute-hook
- (lambda ()
-   (unless (eq this-command 'org-babel-tangle)
-     (org-display-inline-images nil nil
-				(save-excursion (org-back-to-heading-or-point-min t) (point))
-				(save-excursion (or (outline-next-heading) (point-max)))))))
+  (add-hook
+   'org-babel-after-execute-hook
+   (lambda ()
+     (unless (eq this-command 'org-babel-tangle)
+       (org-display-inline-images
+        nil nil
+        (save-excursion (org-back-to-heading-or-point-min t) (point))
+        (save-excursion (or (outline-next-heading) (point-max)))))))
 #+END_SRC
 ****** TODO Gnuplot
 :PROPERTIES:
