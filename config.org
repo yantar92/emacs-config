@@ -13810,28 +13810,14 @@ Unarchive when UNARCHIVE is non-nil."
 :ID:       b11124c4-3bad-445e-b8d1-8f2a61471da5
 :END:
 
-Babel is a great way to combine source code and text.
-The source code editing is usually done in a new buffer. However, I do not like the default binding =C-c C-'=. I use =C-c C-b= instead.
+Babel is a great way to combine source code and text.  The source code
+editing is usually done in a new buffer. However, I do not like the
+default binding =C-c C-'=. I use =C-c C-b= instead.
 
 #+begin_src emacs-lisp
   (when init-flag
     (bind-key "C-c C-b" 'org-edit-special org-mode-map)
-    (bind-key "C-c C-b" 'org-edit-src-exit org-src-mode-map)
-    (use-package poly-org
-      :defer t
-      :after polymode
-      :config
-      (defun poly-org-edit-special ()
-	"Run `org-edit-special' from poly-org."
-	(interactive)
-	(polymode-with-current-base-buffer #'funcall-interactively #'org-edit-special))
-      (bind-key "C-c C-b" #'polymode-toggle-chunk-narrowing poly-org-mode-map)))
-#+end_src
-
-For convenience, add =header-args= property to completion
-
-#+begin_src emacs-lisp
-  (add-to-list 'org-default-properties "header-args")
+    (bind-key "C-c C-b" 'org-edit-src-exit org-src-mode-map))
 #+end_src
 
 ***** Structure templates
@@ -13853,124 +13839,49 @@ It can be done using =org-tempo=.
   (push (cons "jp" "src jupyter-python") org-structure-template-alist))
 #+end_src
 
-***** TODO COMMENT Change major mode in the source blocks
-:PROPERTIES:
-:CREATED:  [2018-10-24 Wed 17:28]
-:ID:       b9c7a2cd-ef10-4add-aefd-ecc1987ecc69
-:END:
-:LOGBOOK:
-- State "TODO"       from "TODO"       [2018-10-24 Wed 18:18]
-- State "TODO"       from              [2018-10-24 Wed 18:17]
-:END:
-It is always annoying that I need switch to separate window to edit source blocks even when it is a one liner.
-
-=Polymode= allows having multiple major modes depending on cursor position in the buffer.
-I use it to activate alternative major modes in source blocks.
-
-#+begin_src emacs-lisp
-  (use-package polymode
-    :if init-flag
-    :straight t
-    :init
-    (use-package poly-org
-      :straight t
-      :magic "\\.org"  
-      :init
-      (setq poly-lock-allow-fontification nil)
-      (defun org-source-block-major-mode ()
-	"Return the name of major mode for the org source block at point."
-	(when (re-search-forward "#\\+begin_src +\\([^ \t\n]+\\)")
-	  (if (string-match "\\(bash\\|sh\\|shell\\)" (match-string 1))
-	      "sh"
-	    (format "%s" (match-string 1)))))
-      (setq pm-inner/org
-	    (pm-inner-auto-chunkmode :name "org"
-				     :mode 'host
-				     :head-mode 'host
-				     :tail-mode 'host
-				     :head-matcher "^[ \t]*#\\+begin_src .*\n"
-				     :tail-matcher "^[ \t]*#\\+end_src"
-				     :head-adjust-face nil
-				     :mode-matcher #'org-source-block-major-mode
-				   :indent-offset org-edit-src-content-indentation))))
-#+end_src
-
-=mmm-mode= also allows having multiple major modes depending on cursor position in the buffer.
-However, it does not fully replace major mode locally.
-This mode is only taking care about keymap, menu, local variables, font-lock, and indentation.
-It does not really take care about the minor modes and does not run the =submode= hooks either.
-It is not acceptable for me and it is not easy to re-implement by myself.
-Leaving the code below for reference.
-
-#+begin_src emacs-lisp :tangle no
-  (use-package mmm-mode
-    :if init-flag
-    :straight t
-    :disabled
-    :init
-    (setq mmm-global-mode 'auto
-	  mmm-submode-decoration-level 2)
-    (custom-set-faces '(mmm-declaration-submode-face ((t :background "#D1D4D9"))))
-    :config
-    (defun mmm-here-org-block-get-mode (heading)
-      "Detect the submode to be used with the current org source block."
-      (string-match "%\\#\\+begin_src +\\([^ ]+\\)" heading)
-      (let ((lang (match-string-no-properties 1)))
-	(if lang
-	    (org-src--get-lang-mode lang)
-	  (signal 'mmm-no-matching-submode nil))))
-
-    (mmm-add-classes '((org-mode-block
-			:face mmm-declaration-submode-face
-			:front "^\\#\\+begin_src +\\([a-zA-Z-]+\\).*$"
-			:front-offset (end-of-line 1)
-			:back "^\\#\\+end_src$"
-			:back-offset (beginning-of-line)
-			:match-submode mmm-here-org-block-get-mode
-			:delimiter-mode nil
-			)))
-    (mmm-add-mode-ext-class 'org-mode nil 'org-mode-block))
-#+end_src
-
 ***** Backends
 :PROPERTIES:
 :ID:       397b6a12-0a2f-4d05-9c76-9735314434fa
 :END:
-#+begin_src emacs-lisp
-(setq org-ditaa-jar-path "~/.emacs.d/site-lisp/ditaa.jar")
-(use-package ob-mathematica
-  :straight t
-  :init
-  (setq org-babel-mathematica-command "wolfram -script"))
 
-(org-babel-do-load-languages 'org-babel-load-languages
-			     '(
-			       (shell .t)
-			       (emacs-lisp . t)
-			       (org . t)
-			       (perl . t)
-			       (python .t)
-			       (C . t)
-			       (ditaa . t)
-			       (gnuplot . t)
-			       (calc . t)
-			       (dot . t)
-			       (latex . t)
-			       (plantuml . t)
-			       ;;(mathematica . t)
-			       ))
-(use-package wolfram-mode
-  :if init-flag
-  :defer t
-  :init
-  (add-to-list 'org-src-lang-modes '("mathematica" . "wolfram")))
+#+begin_src emacs-lisp
+  (setq org-ditaa-jar-path "~/.emacs.d/site-lisp/ditaa.jar")
+  (use-package ob-mathematica
+    :straight t
+    :init
+    (setq org-babel-mathematica-command "wolfram -script"))
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '(
+     (shell .t)
+     (emacs-lisp . t)
+     (org . t)
+     (perl . t)
+     (python .t)
+     (C . t)
+     (ditaa . t)
+     (gnuplot . t)
+     (calc . t)
+     (dot . t)
+     (latex . t)
+     (plantuml . t)
+     ;;(mathematica . t)
+     ))
+  (use-package wolfram-mode
+    :if init-flag
+    :defer t
+    :init
+    (add-to-list 'org-src-lang-modes '("mathematica" . "wolfram")))
 #+end_src
 ***** Default arguments
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 15:58]
 :ID:       27e1a878-35c8-4023-8881-645393db0274
 :END:
-- =Noweb= is useful, I'd rather enable it everywhere than set it every time to run the code
+- =Noweb= is useful, I'd rather enable it everywhere than set it every
+  time to run the code
+
 #+BEGIN_SRC emacs-lisp
   (use-package ob-core
     :config
@@ -14124,26 +14035,18 @@ I had to modify =org-babel-expand-body:gnuplot= to make it respect =:dir= proper
     body))
 #+END_SRC
 
-****** COMMENT Async evaluation
-:PROPERTIES:
-:CREATED:  [2018-10-23 Tue 21:10]
-:ID:       11a37f26-ef17-43ec-bb9b-43155f9fc9ec
-:SUMMARY:  not compatible with native async support
-:END:
-- Note taken on [2023-03-24 Fri 10:13] \\
-  not compatible with native async support
-#+begin_src emacs-lisp
-(use-package ob-async
-  :straight t
-  )
-#+end_src
 ***** TODO Tangle
 :PROPERTIES:
 :ID:       6e72e3ca-4679-4caf-9af4-2291096eab58
 :END:
 
-I have a lot of small scripts and programs written at some point for some purpose I do not remember anymore. Hence, I prefer to use org files instead of all kinds of script files in the system. There are few things, which I need to make it work comfortably:
-- make sure that the script are tangled when I save org file, because it is easy to forget tangling of some files after editing.
+I have a lot of small scripts and programs written at some point for
+some purpose I do not remember anymore. Hence, I prefer to use org
+files instead of all kinds of script files in the system. There are
+few things, which I need to make it work comfortably:
+
+- make sure that the script are tangled when I save org file, because
+  it is easy to forget tangling of some files after editing.
 
 ****************** TODO rewrite using threads
 ****************** END
@@ -14282,25 +14185,6 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
   :defer t
   :custom
   (org-plantuml-exec-mode 'plantuml))
-#+end_src
-
-**** COMMENT Alerts - system notifications
-:PROPERTIES:
-:CREATED:  [2020-04-28 Tue 23:25]
-:ID:       367dc473-1a68-48b0-a462-8d77f2894689
-:END:
-
-Alert for upcoming scheduled or agenda entries or agenda entries containing deadline.
-****************** TODO this does not work because of my agenda prefix customisation
-****************** END
-
-#+begin_src emacs-lisp
-(use-package org-alert
-  :straight t
-  :after org
-  :config
-  (setq alert-default-style 'libnotify)
-  (org-alert-enable))
 #+end_src
 
 **** COMMENT Distraction-free browsing
