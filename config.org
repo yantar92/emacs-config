@@ -14494,6 +14494,11 @@ You can use this to set \\mathversion{bold} for example to make it bolder."
 #+end_src
 
 *** Appearance
+**** Initial folding state
+#+begin_src emacs-lisp
+  (use-package org
+    :custom (org-startup-folded 'contents))
+#+end_src
 **** Lighter
 :PROPERTIES:
 :CREATED:  [2020-04-21 Tue 11:28]
@@ -14766,6 +14771,11 @@ Use smaller font for inline headings without keyword
 	(add-text-properties (match-beginning 1) (match-end 1) `(face yant/org-agenda-highlight-face font-lock-fontified t))))))
 #+end_src
 
+***** Do not display leadings stars in headings
+#+begin_src emacs-lisp
+  (use-package org
+    :custom (org-hide-leading-stars t))
+#+end_src
 **** COMMENT =org-appear=: Reveal hidden parts of links/emphasis when cursor enters them
 :PROPERTIES:
 :ID:       0db1cf24-d4f8-41bd-89e8-b91d3f869b08
