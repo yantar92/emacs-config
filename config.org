@@ -11541,14 +11541,11 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 :END:
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-contacts
-  :after org
-  :straight (org-contacts :repo "https://repo.or.cz/org-contacts.git")
-  :init
-  (setq org-contacts-files '("/home/yantar92/Org/contacts.org"))
-  :config
-  (use-package helm-org-contacts
-    :straight (helm-org-contacts :host github :repo "tmalsburg/helm-org-contacts")))
+  (use-package org-contacts
+    :after org
+    :straight (org-contacts :repo "https://repo.or.cz/org-contacts.git")
+    :init
+    (setq org-contacts-files '("/home/yantar92/Org/contacts.org")))
 #+END_SRC
 
 ****************** TODO make proper contacts link type
