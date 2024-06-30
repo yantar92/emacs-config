@@ -13837,18 +13837,16 @@ It can be done using =org-tempo=.
   (push (cons "jp" "src jupyter-python") org-structure-template-alist))
 #+end_src
 
-***** Backends
+***** TODO Backends
 :PROPERTIES:
 :ID:       397b6a12-0a2f-4d05-9c76-9735314434fa
 :END:
 
-#+begin_src emacs-lisp
-  (setq org-ditaa-jar-path "~/.emacs.d/site-lisp/ditaa.jar")
-  (use-package ob-mathematica
-    :straight t
-    :init
-    (setq org-babel-mathematica-command "wolfram -script"))
+****************** TODO eventually, Org babel should auto-load backends as needed, by itself
+****************** END
 
+
+#+begin_src emacs-lisp
   (org-babel-do-load-languages
    'org-babel-load-languages
    '(
