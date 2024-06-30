@@ -13808,6 +13808,8 @@ Unarchive when UNARCHIVE is non-nil."
 :ID:       b11124c4-3bad-445e-b8d1-8f2a61471da5
 :END:
 
+***** Use =C-c C-b= to switch to src editing buffer
+
 Babel is a great way to combine source code and text.  The source code
 editing is usually done in a new buffer. However, I do not like the
 default binding =C-c C-'=. I use =C-c C-b= instead.
@@ -13869,27 +13871,46 @@ It can be done using =org-tempo=.
 :CREATED:  [2017-12-28 Thu 15:58]
 :ID:       27e1a878-35c8-4023-8881-645393db0274
 :END:
-- =Noweb= is useful, I'd rather enable it everywhere than set it every
-  time to run the code
+
+****** Enable noweb by default
+
+=Noweb= is useful, I'd rather enable it everywhere than set it every
+time to run the code.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ob-core
     :config
-    (setf (alist-get :comments org-babel-default-header-args) "link")
     (setf (alist-get :noweb org-babel-default-header-args) "yes"))
+#+END_SRC
+
+****** Tangle with backlinks
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ob-core
+    :config
+    (setf (alist-get :comments org-babel-default-header-args) "link"))
+#+END_SRC
+
+****** Tweak default shell block output
+
+Put shell output into results by default
+
+#+BEGIN_SRC emacs-lisp
   (use-package ob-shell
     :config
     (setf (alist-get :results org-babel-default-header-args:shell) "output"))
 #+END_SRC
 
-- Show stderr in the shell output ([[https://github.com/novoid/dot-emacs/blob/master/config.org][Source]])
+Show stderr in the shell output ([[https://github.com/novoid/dot-emacs/blob/master/config.org][Source]])
+
 #+BEGIN_SRC emacs-lisp
   (use-package ob-shell
     :config
     (setf (alist-get :prologue org-babel-default-header-args:sh) "exec 2>&1")
     (setf (alist-get :epilogue org-babel-default-header-args:sh) ":"))
 #+END_SRC
-***** SOMEDAY Evaluation :SKIP_PROJECT_REVIEW:SOMEDAY:
+
+***** TODO Evaluation
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 18:03]
 :ID:       49900f8e-cde9-4e41-944a-904852ad92b9
@@ -13897,11 +13918,12 @@ It can be done using =org-tempo=.
 :LOGBOOK:
 - State "TODO"       from              [2018-07-11 Wed 09:19]
 :END:
+
 #+BEGIN_SRC emacs-lisp
 (setq org-confirm-babel-evaluate nil)
 #+END_SRC
 
-Allow passing file: links as variables to src blocks
+Allow passing file: links as variables to src blocks.
 
 #+begin_src emacs-lisp
 (defun org-expand-link (link-string)
