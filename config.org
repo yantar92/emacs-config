@@ -13071,7 +13071,8 @@ For now, I avoid capturing website text directly into org. Instead, I write my o
   (when init-flag
     (defvar yant/org-capture-archive-process nil)
     (defvar yant/org-capture-archive-markers nil)
-    (org-track-markers-register 'yant/org-capture-archive-markers)
+    (when (fboundp 'org-track-markers-register)
+      (org-track-markers-register 'yant/org-capture-archive-markers))
     (defun yant/org-capture-archive-resource (&optional url attach-dir marker)
       "Archive resource for capture at point/MARKER or for URL."
       (org-with-point-at marker
