@@ -13861,15 +13861,9 @@ It can be done using =org-tempo=.
      (calc . t)
      (dot . t)
      (latex . t)
-     (plantuml . t)
-     ;;(mathematica . t)
-     ))
-  (use-package wolfram-mode
-    :if init-flag
-    :defer t
-    :init
-    (add-to-list 'org-src-lang-modes '("mathematica" . "wolfram")))
+     (plantuml . t)))
 #+end_src
+
 ***** Default arguments
 :PROPERTIES:
 :CREATED:  [2017-12-28 Thu 15:58]
