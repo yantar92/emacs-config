@@ -8268,7 +8268,7 @@ Sometimes, I can even mark sub-projects with this tag if the sub-projects are im
         (find-file "~/Org/notes.org")))
   #+end_src
 - rss.org :: rss entries for [[id:9bc385e2-0ed2-460b-875e-be9ad19144a3][Elfeed]]
-- *contacts.org* :: my contacts /via/ =org-contacts=
+- *contacts.org* :: my contacts
 - schedule.org :: appointments
 - all of it is in =~/Org/agenda_files=
 
@@ -11989,209 +11989,209 @@ This idea is not applicable for my work though. Research is often not regularly 
 
 
 #+begin_src emacs-lisp
-(defvar org-time-balance nil
-  "Weighted time spent for all the tasks in agenda files.")
-(defvar org-time-balance-persistant-p t
-  "Non nil means that `org-time-balance' is saved between emacs sessions.")
-(defvar org-time-balance-save-time nil
-  "Time of the last save of `org-time-balance'.")
-(defvar org-time-balance-update-time nil
-  "Time of the last update of `org-time-balance'.")
-(defvar org-time-balance-storage (concat user-emacs-directory ".org-time-balance")
-  "File used to store time balance between sessions.")
-(use-package no-littering
-  :config
-  (setq org-time-balance-storage (concat no-littering-var-directory "org-time-balance-storage.el")))
+  (defvar org-time-balance nil
+    "Weighted time spent for all the tasks in agenda files.")
+  (defvar org-time-balance-persistant-p t
+    "Non nil means that `org-time-balance' is saved between emacs sessions.")
+  (defvar org-time-balance-save-time nil
+    "Time of the last save of `org-time-balance'.")
+  (defvar org-time-balance-update-time nil
+    "Time of the last update of `org-time-balance'.")
+  (defvar org-time-balance-storage (concat user-emacs-directory ".org-time-balance")
+    "File used to store time balance between sessions.")
+  (use-package no-littering
+    :config
+    (setq org-time-balance-storage (concat no-littering-var-directory "org-time-balance-storage.el")))
 
-(defvar org-time-balance-lower-bound (* 60 4 -1) ; -4 hours
-  "Lower bound of possible value of time balance.")
-(defvar org-time-balance-lossage nil
-  "Time lossage accumulating when `org-time-balance' reaches `org-time-balance-lower-bound'.")
-(defvar org-time-balance-upper-bound (* 60 10) ; 10 hours
-  "Upper bound of possible value of time balance when `org-time-balance-lossage' is positive.
-Growing time balance will be reducing `org-time-balance-lossage' when
-`org-time-balance' exceeds this value and `org-time-balance-lossage'
-is positive.")
-(defvar org-time-balance-upper-bound-rigid (* 60 30) ; 30 hours
-  "Rigit upper bound of possible value of time balance.
-Growing time balance will be reducing `org-time-balance-lossage' when
-`org-time-balance' exceeds this value.")
+  (defvar org-time-balance-lower-bound (* 60 4 -1) ; -4 hours
+    "Lower bound of possible value of time balance.")
+  (defvar org-time-balance-lossage nil
+    "Time lossage accumulating when `org-time-balance' reaches `org-time-balance-lower-bound'.")
+  (defvar org-time-balance-upper-bound (* 60 10) ; 10 hours
+    "Upper bound of possible value of time balance when `org-time-balance-lossage' is positive.
+  Growing time balance will be reducing `org-time-balance-lossage' when
+  `org-time-balance' exceeds this value and `org-time-balance-lossage'
+  is positive.")
+  (defvar org-time-balance-upper-bound-rigid (* 60 30) ; 30 hours
+    "Rigit upper bound of possible value of time balance.
+  Growing time balance will be reducing `org-time-balance-lossage' when
+  `org-time-balance' exceeds this value.")
 
-(defun org-load-time-balance-session ()
-  "Load the current org-time-balance if `org-time-balance-persistant-p' is non nil."
-  (if (not org-time-balance-persistant-p)
-      (setq org-time-balance 0
-	    org-time-balance-lossage 0)
-    (load org-time-balance-storage)
-    (unless org-time-balance (setq org-time-balance 0))
-    (unless org-time-balance-lossage (setq org-time-balance-lossage 0))
-    (message "Loading time-balance... %d hours" (/ org-time-balance 60))))
+  (defun org-load-time-balance-session ()
+    "Load the current org-time-balance if `org-time-balance-persistant-p' is non nil."
+    (if (not org-time-balance-persistant-p)
+        (setq org-time-balance 0
+  	    org-time-balance-lossage 0)
+      (load org-time-balance-storage)
+      (unless org-time-balance (setq org-time-balance 0))
+      (unless org-time-balance-lossage (setq org-time-balance-lossage 0))
+      (message "Loading time-balance... %d hours" (/ org-time-balance 60))))
 
-(defun org-save-time-balance-session ()
-  "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
-  (when (and org-time-balance-persistant-p
-	     org-time-balance)
-    (setq org-time-balance-save-time (or org-time-balance-update-time (current-time)))
-    (with-temp-file org-time-balance-storage
-      (insert "(setq org-time-balance " (prin1-to-string org-time-balance) ")" "\n")
-      (insert "(setq org-time-balance-lossage " (prin1-to-string org-time-balance-lossage) ")" "\n")
-      (insert "(setq org-time-balance-save-time '" (prin1-to-string org-time-balance-save-time) ")"))))
+  (defun org-save-time-balance-session ()
+    "Save the current org-time-balance if `org-time-balance-persistant-p' is non nil."
+    (when (and org-time-balance-persistant-p
+  	     org-time-balance)
+      (setq org-time-balance-save-time (or org-time-balance-update-time (current-time)))
+      (with-temp-file org-time-balance-storage
+        (insert "(setq org-time-balance " (prin1-to-string org-time-balance) ")" "\n")
+        (insert "(setq org-time-balance-lossage " (prin1-to-string org-time-balance-lossage) ")" "\n")
+        (insert "(setq org-time-balance-save-time '" (prin1-to-string org-time-balance-save-time) ")"))))
 
-(defun org-get-time-balance-multiplier-at-point ()
-  "Get value of :ORG-TIME-BALANCE-MULTIPLIER property of an item at point or return 1."
-  (save-excursion
-    (save-restriction
-      (org-with-point-at-org-buffer
-       (let  ((multiplier (org-entry-get (point) "ORG-TIME-BALANCE-MULTIPLIER" 'inherit)))
-	 (if (seq-empty-p multiplier)
-	     1
-	   (string-to-number multiplier)))))))
-
-(defun org-get-org-time-bonus-on-done-at-point ()
-  "Get value of :ORG-TIME-BONUS-ON-DONE: property of an item at point or return 0."
-  (save-excursion
-    (save-restriction
-      (org-with-point-at-org-buffer
-       (let  ((bonus (org-entry-get (point) "ORG-TIME-BONUS-ON-DONE")))
-	 (if (seq-empty-p bonus)
-	     0
-	   (string-to-number bonus)))))))
-
-(defun org-get-org-time-bonus-at-point ()
-  "Get time bonus on done for an item at point.
-Return the value of :ORG-TIME-BONUS: property and,
-if the item has DONE keyword, add :ORG-TIME-BONUS-ON-DONE:.
-Increment :ORG-TIME-BONUS: for habits, if nesessary."
-  (save-excursion
-    (save-restriction
-      (let*  ((bonus (org-entry-get (point) "ORG-TIME-BONUS"))
-	      (bonus (if (seq-empty-p bonus)
-			 0
-		       (string-to-number bonus)))
-              (extra (if (string= (org-get-todo-state) "DONE")
-			 (org-get-org-time-bonus-on-done-at-point)
-                       0)))
-	(+ bonus extra)))))
-
-(defun org-clock-sum-current-entry-only (&optional tstart)
-  "Return time, clocked on current item in total. Exclude subitems."
-  (save-excursion
-    (save-restriction
-      (if (or (org-inlinetask-at-task-p)
-	      (org-inlinetask-in-task-p))
-	  (narrow-to-region (save-excursion (org-inlinetask-goto-beginning) (point))
-			    (save-excursion (org-inlinetask-goto-end) (point)))
-	(org-narrow-to-subtree)
-	(goto-char (point-min))
-	(outline-next-heading)
-	(narrow-to-region (point-min) (point)))
-      (org-clock-sum tstart)
-      org-clock-file-total-minutes)))
-
-(defun org-time-balance-update-lossage ()
-  "Update `org-time-balance-lossage'."
-  (when (< org-time-balance org-time-balance-lower-bound)
-    (setq org-time-balance-lossage (+ org-time-balance-lossage (- org-time-balance-lower-bound org-time-balance)))
-    (setq org-time-balance org-time-balance-lower-bound))
-  (when (and (> org-time-balance-lossage 0)
-	     (> org-time-balance org-time-balance-upper-bound))
-    (setq org-time-balance-lossage (- org-time-balance-lossage (- org-time-balance org-time-balance-upper-bound)))
-    (setq org-time-balance org-time-balance-upper-bound))
-  (when (> org-time-balance org-time-balance-upper-bound-rigid)
-    (setq org-time-balance-lossage (- org-time-balance-lossage (- org-time-balance org-time-balance-upper-bound-rigid)))
-    (setq org-time-balance org-time-balance-upper-bound-rigid)))
-
-(defun org-accumulate-weighted-time (&optional return)
-  "Aggregate `org-time-balance' counter at point from the last save or for all the time.
-Use :ORG-TIME-BALANCE-MULTIPLIER: property to set the weight.
-Just return the value at point if RETURN is not nil."
-  (when org-time-balance
-    (let* ((value-at-point (* (org-clock-sum-current-entry-only org-time-balance-update-time)
-                              (org-get-time-balance-multiplier-at-point))))
-      (setq value-at-point (+ value-at-point (org-get-org-time-bonus-at-point)))
-      (if return
-	  value-at-point
-	(setq org-time-balance (+ org-time-balance value-at-point))
-        (org-time-balance-update-lossage)))))
-
-(defun org-get-total-weighted-time (&optional force)
-  "Calculate total weighted time clocked in all agenda files.
-Ignore current value of `org-time-balance' if FORCE is not nil.
-If FORCE is non nil recalculate the time in all the agenda files
-ignoring the previously saved values."
-  (when (or force (not org-time-balance))
-    (message "Updating org-time-balance...")
-    (setq org-time-balance 0)
-    (setq org-time-balance-save-time nil)
-    (unless force (org-load-time-balance-session))
-    (when (not org-time-balance-save-time) ;; FIXME: temporary fix to avoid accumulating bonus time after loading saved balance
-      (cl-loop for file in (org-agenda-files 'unrestricted t) do
-	       (with-current-buffer (find-file-noselect file)
-		 (goto-char (point-min))
-		 (cl-loop until (eobp)
-			  do (when (outline-next-heading)
-			       (org-accumulate-weighted-time))))))
-    (message "Updating org-time-balance... %d hours" (/ org-time-balance 60))
-    (setq org-time-balance-update-time (current-time)))
-  org-time-balance)
-
-(define-advice org-clock-out (:around (OLDFUN &rest args) yant/org-increment-weighted-time)
-  "Add the current clock time to `org-time-balance'."
-  (unless org-time-balance
-    (setq org-time-balance (org-get-total-weighted-time))
-    (org-time-balance-update-lossage))
-  (when (org-clocking-buffer)
-    (save-excursion ; Do not replace this with `with-current-buffer'.
-      (with-no-warnings (set-buffer (org-clocking-buffer)))
+  (defun org-get-time-balance-multiplier-at-point ()
+    "Get value of :ORG-TIME-BALANCE-MULTIPLIER property of an item at point or return 1."
+    (save-excursion
       (save-restriction
-	(widen)
-	(use-package org-clock)
-	(goto-char org-clock-marker)
-	(let ((old-time-at-point (org-accumulate-weighted-time 'return))
-	      (old-org-time-balance org-time-balance))
-	  (apply OLDFUN args)
-	  ;; (setq org-time-balance-update-time (current-time))
-	  (setq org-time-balance (+ old-org-time-balance
-				    (- (org-accumulate-weighted-time 'return)
-                                       old-time-at-point)))
-          (org-time-balance-update-lossage))))))
+        (org-with-point-at-org-buffer
+         (let  ((multiplier (org-entry-get (point) "ORG-TIME-BALANCE-MULTIPLIER" 'inherit)))
+  	 (if (seq-empty-p multiplier)
+  	     1
+  	   (string-to-number multiplier)))))))
 
-(define-advice org-todo (:around (OLDFUN &optional arg) yant/org-increment-weighted-time)
-  "Probably add the current item time bonus to `org-time-balance'."
-  (unless org-time-balance
-    (setq org-time-balance (org-get-total-weighted-time))
-    (org-time-balance-update-lossage))
-  (org-with-point-at-org-buffer
-   (let ((old-time-at-point (org-accumulate-weighted-time 'return))
-	 (old-org-time-balance org-time-balance))
-     (when (and (string= (org-entry-get (point) "STYLE") "habit")
-		(string= (format "%s" arg) (org-entry-get (point) "REPEAT_TO_STATE"))
-		(string= "DONE" (org-get-todo-state))
-		(org-set-property "ORG-TIME-BONUS" (format "%s" (org-get-org-time-bonus-at-point)))))
-     (apply OLDFUN (list arg))
-     ;; (setq org-time-balance-update-time (current-time))
-     (setq org-time-balance (+ old-org-time-balance
-			       (- (org-accumulate-weighted-time 'return)
-				  old-time-at-point)))
-     (org-time-balance-update-lossage))
-   (yant/save-clocked)))
+  (defun org-get-org-time-bonus-on-done-at-point ()
+    "Get value of :ORG-TIME-BONUS-ON-DONE: property of an item at point or return 0."
+    (save-excursion
+      (save-restriction
+        (org-with-point-at-org-buffer
+         (let  ((bonus (org-entry-get (point) "ORG-TIME-BONUS-ON-DONE")))
+  	 (if (seq-empty-p bonus)
+  	     0
+  	   (string-to-number bonus)))))))
+
+  (defun org-get-org-time-bonus-at-point ()
+    "Get time bonus on done for an item at point.
+  Return the value of :ORG-TIME-BONUS: property and,
+  if the item has DONE keyword, add :ORG-TIME-BONUS-ON-DONE:.
+  Increment :ORG-TIME-BONUS: for habits, if nesessary."
+    (save-excursion
+      (save-restriction
+        (let*  ((bonus (org-entry-get (point) "ORG-TIME-BONUS"))
+  	      (bonus (if (seq-empty-p bonus)
+  			 0
+  		       (string-to-number bonus)))
+                (extra (if (string= (org-get-todo-state) "DONE")
+  			 (org-get-org-time-bonus-on-done-at-point)
+                         0)))
+  	(+ bonus extra)))))
+
+  (defun org-clock-sum-current-entry-only (&optional tstart)
+    "Return time, clocked on current item in total. Exclude subitems."
+    (save-excursion
+      (save-restriction
+        (if (or (org-inlinetask-at-task-p)
+  	      (org-inlinetask-in-task-p))
+  	  (narrow-to-region (save-excursion (org-inlinetask-goto-beginning) (point))
+  			    (save-excursion (org-inlinetask-goto-end) (point)))
+  	(org-narrow-to-subtree)
+  	(goto-char (point-min))
+  	(outline-next-heading)
+  	(narrow-to-region (point-min) (point)))
+        (org-clock-sum tstart)
+        org-clock-file-total-minutes)))
+
+  (defun org-time-balance-update-lossage ()
+    "Update `org-time-balance-lossage'."
+    (when (< org-time-balance org-time-balance-lower-bound)
+      (setq org-time-balance-lossage (+ org-time-balance-lossage (- org-time-balance-lower-bound org-time-balance)))
+      (setq org-time-balance org-time-balance-lower-bound))
+    (when (and (> org-time-balance-lossage 0)
+  	     (> org-time-balance org-time-balance-upper-bound))
+      (setq org-time-balance-lossage (- org-time-balance-lossage (- org-time-balance org-time-balance-upper-bound)))
+      (setq org-time-balance org-time-balance-upper-bound))
+    (when (> org-time-balance org-time-balance-upper-bound-rigid)
+      (setq org-time-balance-lossage (- org-time-balance-lossage (- org-time-balance org-time-balance-upper-bound-rigid)))
+      (setq org-time-balance org-time-balance-upper-bound-rigid)))
+
+  (defun org-accumulate-weighted-time (&optional return)
+    "Aggregate `org-time-balance' counter at point from the last save or for all the time.
+  Use :ORG-TIME-BALANCE-MULTIPLIER: property to set the weight.
+  Just return the value at point if RETURN is not nil."
+    (when org-time-balance
+      (let* ((value-at-point (* (org-clock-sum-current-entry-only org-time-balance-update-time)
+                                (org-get-time-balance-multiplier-at-point))))
+        (setq value-at-point (+ value-at-point (org-get-org-time-bonus-at-point)))
+        (if return
+  	  value-at-point
+  	(setq org-time-balance (+ org-time-balance value-at-point))
+          (org-time-balance-update-lossage)))))
+
+  (defun org-get-total-weighted-time (&optional force)
+    "Calculate total weighted time clocked in all agenda files.
+  Ignore current value of `org-time-balance' if FORCE is not nil.
+  If FORCE is non nil recalculate the time in all the agenda files
+  ignoring the previously saved values."
+    (when (or force (not org-time-balance))
+      (message "Updating org-time-balance...")
+      (setq org-time-balance 0)
+      (setq org-time-balance-save-time nil)
+      (unless force (org-load-time-balance-session))
+      (when (not org-time-balance-save-time) ;; FIXME: temporary fix to avoid accumulating bonus time after loading saved balance
+        (cl-loop for file in (org-agenda-files 'unrestricted t) do
+  	       (with-current-buffer (find-file-noselect file)
+  		 (goto-char (point-min))
+  		 (cl-loop until (eobp)
+  			  do (when (outline-next-heading)
+  			       (org-accumulate-weighted-time))))))
+      (message "Updating org-time-balance... %d hours" (/ org-time-balance 60))
+      (setq org-time-balance-update-time (current-time)))
+    org-time-balance)
+
+  (define-advice org-clock-out (:around (OLDFUN &rest args) yant/org-increment-weighted-time)
+    "Add the current clock time to `org-time-balance'."
+    (unless org-time-balance
+      (setq org-time-balance (org-get-total-weighted-time))
+      (org-time-balance-update-lossage))
+    (when (org-clocking-buffer)
+      (save-excursion ; Do not replace this with `with-current-buffer'.
+        (with-no-warnings (set-buffer (org-clocking-buffer)))
+        (save-restriction
+  	(widen)
+  	(use-package org-clock)
+  	(goto-char org-clock-marker)
+  	(let ((old-time-at-point (org-accumulate-weighted-time 'return))
+  	      (old-org-time-balance org-time-balance))
+  	  (apply OLDFUN args)
+  	  ;; (setq org-time-balance-update-time (current-time))
+  	  (setq org-time-balance (+ old-org-time-balance
+  				    (- (org-accumulate-weighted-time 'return)
+                                         old-time-at-point)))
+            (org-time-balance-update-lossage))))))
+
+  (define-advice org-todo (:around (OLDFUN &optional arg) yant/org-increment-weighted-time)
+    "Probably add the current item time bonus to `org-time-balance'."
+    (unless org-time-balance
+      (setq org-time-balance (org-get-total-weighted-time))
+      (org-time-balance-update-lossage))
+    (org-with-point-at-org-buffer
+     (let ((old-time-at-point (org-accumulate-weighted-time 'return))
+  	 (old-org-time-balance org-time-balance))
+       (when (and (string= (org-entry-get (point) "STYLE") "habit")
+  		(string= (format "%s" arg) (org-entry-get (point) "REPEAT_TO_STATE"))
+  		(string= "DONE" (org-get-todo-state))
+  		(org-set-property "ORG-TIME-BONUS" (format "%s" (org-get-org-time-bonus-at-point)))))
+       (apply OLDFUN (list arg))
+       ;; (setq org-time-balance-update-time (current-time))
+       (setq org-time-balance (+ old-org-time-balance
+  			       (- (org-accumulate-weighted-time 'return)
+  				  old-time-at-point)))
+       (org-time-balance-update-lossage))
+     (yant/save-clocked)))
 
 
-(defvar org-clock-multiplier 0
-  "Multiplier of the currently clocked entry.")
+  (defvar org-clock-multiplier 0
+    "Multiplier of the currently clocked entry.")
 
-(defun org-clock-save-clock-multiplier ()
-  "Save value of :ORG-TIME-BALANCE-MULTIPLIER: of the item at point to `org-clock-multiplier'."
-  (org-with-wide-buffer
-   (org-get-total-weighted-time)
-   (setq org-clock-multiplier (or (org-entry-get (point) "ORG-TIME-BALANCE-MULTIPLIER" 'inherit)
-				  1))))
+  (defun org-clock-save-clock-multiplier ()
+    "Save value of :ORG-TIME-BALANCE-MULTIPLIER: of the item at point to `org-clock-multiplier'."
+    (org-with-wide-buffer
+     (org-get-total-weighted-time)
+     (setq org-clock-multiplier (or (org-entry-get (point) "ORG-TIME-BALANCE-MULTIPLIER" 'inherit)
+  				  1))))
 
-(add-hook 'org-clock-in-hook #'org-clock-save-clock-multiplier)
-(add-hook 'org-clock-in-hook #'org-save-time-balance-session)
+  (add-hook 'org-clock-in-hook #'org-clock-save-clock-multiplier)
+  (add-hook 'org-clock-in-hook #'org-save-time-balance-session)
 
-(add-to-list 'org-default-properties "ORG-TIME-BALANCE-MULTIPLIER")
-(add-to-list 'org-default-properties "ORG-TIME-BONUS-ON-DONE")
+  (add-to-list 'org-default-properties "ORG-TIME-BALANCE-MULTIPLIER")
+  (add-to-list 'org-default-properties "ORG-TIME-BONUS-ON-DONE")
 #+end_src
 ***** Clocked time visualisation
 :PROPERTIES:
