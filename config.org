@@ -11534,23 +11534,6 @@ One of the bottlenecks for my agenda generation is getting inherited properties.
 (setq org-agenda-fontify-priorities nil)
 #+end_src
 
-**** TODO Contacts
-:PROPERTIES:
-:CREATED:  [2018-09-05 Wed 06:39]
-:ID:       8074623d-bc14-43c7-908c-28213b2b6149
-:END:
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-contacts
-    :after org
-    :straight (org-contacts :repo "https://repo.or.cz/org-contacts.git")
-    :init
-    (setq org-contacts-files '("/home/yantar92/Org/contacts.org")))
-#+END_SRC
-
-****************** TODO make proper contacts link type
-****************** END
-
 **** TODO Column mode
 :PROPERTIES:
 :ID:       0d6d40dd-e4cb-4297-8695-6b66f2a1a706
@@ -12875,17 +12858,17 @@ A large task that needs to be studied systematically. It has to have a concrete 
 :ID:       a87ca6dc-eb7a-45ff-bd7a-0ae81aaaaf55
 :END:
 #+begin_src emacs-lisp
-(setf (alist-get "C" org-capture-templates nil nil #'equal)
-      (cdar  (doct '("Contact"
-		     :keys "C"
-		     :type entry
-		     :file "~/Org/contacts.org"
-		     :template
-		     ("* %(org-contacts-template-name) %?"
-		      ":PROPERTIES:"
-		      ":CREATED: %U"
-		      ":EMAIL: %(org-contacts-template-email)"
-		      ":END:")))))
+  (setf (alist-get "C" org-capture-templates nil nil #'equal)
+        (cdar  (doct '("Contact"
+  		     :keys "C"
+  		     :type entry
+  		     :file "~/Org/contacts.org"
+  		     :template
+  		     ("* %^{Name} %?"
+  		      ":PROPERTIES:"
+  		      ":CREATED: %U"
+  		      ":EMAIL: %^{Email}"
+  		      ":END:")))))
 #+end_src
 ****** Experimental note 
 :PROPERTIES:
