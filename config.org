@@ -7575,16 +7575,6 @@ Despite the usual big-tech concerns, it makes a decent:
   (add-hook 'osm-mode-hook #'yant/display-all-gpx-delayed))
 #+end_src
 
-** Synchthing front-end
-
-#+begin_src emacs-lisp
-(use-package syncthing
-  :if init-flag
-  :straight '(emacs-syncthing :host github :repo "KeyWeeUsr/emacs-syncthing")
-  ;; `syncthing-default-server-token' is set in private config.
-  )
-#+end_src
-
 ** COMMENT Browser
    :PROPERTIES:
    :ID:       ef9c93cd-e760-407c-82cf-2aeffa7a11ad
