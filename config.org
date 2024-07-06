@@ -14640,7 +14640,8 @@ Do not highlight line below mouse
 	  #'yant/remove-mouse-highlight)
   #+end_src
 
-Modify prefix for the entries to show if the entry is repeatable and the time [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time balance multiplier]].
+Modify prefix for the entries to show if the entry is repeatable and
+the time [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time balance multiplier]].
   #+begin_src emacs-lisp
 (setq org-agenda-scheduled-leaders '("* today" "* %2d d. ago"))
 (defun yant/format-summary-for-agenda ()
@@ -15187,14 +15188,14 @@ Dim keywords and use smaller font size as in [[id:af30c834-3dbe-4df9-a287-c9c72f
 :ID:       aae027ae-a2b7-42b6-a833-cf038edcad3a
 :END:
 
-Use UTF symbols for entities
+Use UTF symbols for entities.
 
 #+begin_src emacs-lisp
 (setq org-pretty-entities t)
 (setq org-pretty-entities-include-sub-superscripts t)
 #+end_src
 
-*Only* use curly brackets to identify sub/superscripts (from [[https://github.com/grettke/help/blob/master/help.org][here]])
+ *Only* use curly brackets to identify sub/superscripts (from [[https://github.com/grettke/help/blob/master/help.org][here]])
 
 #+begin_src emacs-lisp
 (setq org-use-sub-superscripts '{})
@@ -15666,9 +15667,13 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 :ID:       00dba9c3-ee6a-4e77-97d1-0b8c2d2544c2
 :END:
 
-By default, org-crypt uses slow =org-scan-tags= to match headings to be encrypted before save. However, it is very too slow on large files and takes time even when those files do not even contain encrypted headings.
+By default, org-crypt uses slow =org-scan-tags= to match headings to
+be encrypted before save. However, it is very too slow on large files
+and takes time even when those files do not even contain encrypted
+headings.
 
-Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tags.
+Advising =org-encrypt-entries= to skip files without
+=org-crypt-tag-matcher= tags.
 
 #+begin_src emacs-lisp
 (use-package org-crypt
@@ -15683,6 +15688,7 @@ Advising =org-encrypt-entries= to skip files without =org-crypt-tag-matcher= tag
          (org-encrypt-entry)
          (outline-next-heading))))))
 #+end_src
+
 *** Blog publishing
 **** =org-page=
 
