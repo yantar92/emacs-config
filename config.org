@@ -14297,29 +14297,6 @@ You can use this to set \\mathversion{bold} for example to make it bolder."
 #+end_src
 
 *** Appearance
-**** Lighter
-:PROPERTIES:
-:CREATED:  [2020-04-21 Tue 11:28]
-:ID:       062a0aaf-3f3b-4eef-b8cf-a19da865e51c
-:END:
-
-Org-capture mode lighter.
-
-#+begin_src emacs-lisp
-  (use-package org-capture
-    :if init-flag
-    :config
-    (diminish
-     'org-capture-mode
-     (concat " "
-  	   (propertize
-              (all-the-icons-material "note_add" 
-  				    :v-adjust 0.04)
-  	    'face `(( :family "Material Icons"
-  		      :foreground "red"
-                        :height 1.4))))))
-#+end_src
-
 **** Text
 :PROPERTIES:
 :CREATED:  [2020-04-27 Mon 13:25]
