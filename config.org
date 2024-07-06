@@ -14629,6 +14629,11 @@ Use smaller font for inline headings without keyword
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
 :END:
 
+Do not dim blocked taks, like tasks with checkboxes.
+#+begin_src emacs-lisp
+(use-package org-agenda
+  :custom (org-agenda-dim-blocked-tasks nil))
+#+end_src
 Do not highlight line below mouse
   #+begin_src emacs-lisp
 (defun yant/remove-mouse-highlight ()
