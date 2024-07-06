@@ -14460,12 +14460,6 @@ Prefer to replace default =...= by something more distinct if item is folded.
 
 No blanks in items and between headings
 
-#+begin_src emacs-lisp
-;;turn off blanks in a new entries
-(setq org-blank-before-new-entry (quote ((heading . nil)
-					 (plain-list-item . nil))))
-#+end_src
-
 Todo keyword faces
   #+begin_src emacs-lisp
 (setq org-todo-keyword-faces
