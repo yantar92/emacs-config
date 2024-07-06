@@ -14571,71 +14571,63 @@ Use smaller font for inline headings without keyword
 ****************** END
 
 #+begin_src emacs-lisp
-(use-package org
-  :if init-flag
-  :custom
-  (org-auto-align-tags nil)
-  :config
-  (defvar yant/prefix-strings (make-hash-table))
-  (defun org-adaptive-fill-function ()
-    "Fill headlines to the beginning of headline in org."
-    (save-excursion
-      (cond
-       ((org-at-heading-p)
-	(beginning-of-line)
-        (looking-at org-complex-heading-regexp)
-        (goto-char (or (match-beginning 4) (match-end 0))) ;; at headline
-        (or (gethash (current-column) yant/prefix-strings)
-            (puthash (current-column) (make-string (current-column) ?\ ) yant/prefix-strings)))
-       ((org-at-item-p)
-        (beginning-of-line)
-        (looking-at org-list-full-item-re)
-        (goto-char (or (match-beginning 4) (match-end 3) (match-end 2) (match-end 1)))
-        (skip-chars-forward " \t")
-        (or (gethash (current-column) yant/prefix-strings)
-            (puthash (current-column) (make-string (current-column) ?\ ) yant/prefix-strings))))))
-  (add-hook
-   'org-mode-hook
-   (lambda () (setq-local adaptive-fill-function #'org-adaptive-fill-function)))
-  (defun yant/org-align-tags (limit &optional force)
-    "Align all the tags in org buffer."
-    (save-match-data
-      (when (eq major-mode 'org-mode)
-	(while (re-search-forward "^\\*+ \\(.+?\\)\\([ \t]+\\)\\(:\\(?:[^ \n]+:\\)+\\)$" limit t)
-	  (when (and (match-string 2)
-		     (or force
-			 (not (get-text-property (match-beginning 2) 'org-tag-aligned))))
-	    (with-silent-modifications
-              (put-text-property (match-beginning 2) (match-end 2) 'org-tag-aligned t)
-	      (put-text-property (if (>= 2 (- (match-end 2) (match-beginning 2)))
-				     (match-beginning 2)
-				   ;; multiple whitespaces may mean that we are in process of typing
-				   (1+ (match-beginning 2)))
-				 (match-end 2)
-				 'display
-				 `(space . (:align-to (- right
-							 (,(+ (string-display-pixel-width org-ellipsis)
-							      (string-display-pixel-width (or (match-string 3)
-											      ""))))))))))))))
-  ;; (add-hook 'pretty-symbols-mode-hook (lambda () (save-excursion (goto-char (point-min)) (yant/org-align-tags (point-max) t))))
-  ;; (add-hook 'org-mode-hook (lambda () (save-excursion (goto-char (point-min)) (yant/org-align-tags (point-max) t))) 90)
-  ;; (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords 'org-mode '(yant/org-align-tags) t)))
-  ;; (add-hook 'org-mode-hook (lambda () (add-to-list 'font-lock-extra-managed-props 'org-tag-aligned)))
-  )
+  (use-package org
+    :if init-flag
+    :custom
+    (org-auto-align-tags nil)
+    :config
+    (defvar yant/prefix-strings (make-hash-table))
+    (defun org-adaptive-fill-function ()
+      "Fill headlines to the beginning of headline in org."
+      (save-excursion
+        (cond
+         ((org-at-heading-p)
+  	(beginning-of-line)
+          (looking-at org-complex-heading-regexp)
+          (goto-char (or (match-beginning 4) (match-end 0))) ;; at headline
+          (or (gethash (current-column) yant/prefix-strings)
+              (puthash (current-column) (make-string (current-column) ?\ ) yant/prefix-strings)))
+         ((org-at-item-p)
+          (beginning-of-line)
+          (looking-at org-list-full-item-re)
+          (goto-char (or (match-beginning 4) (match-end 3) (match-end 2) (match-end 1)))
+          (skip-chars-forward " \t")
+          (or (gethash (current-column) yant/prefix-strings)
+              (puthash (current-column) (make-string (current-column) ?\ ) yant/prefix-strings))))))
+    (add-hook
+     'org-mode-hook
+     (lambda () (setq-local adaptive-fill-function #'org-adaptive-fill-function)))
+    ;; (defun yant/org-align-tags (limit &optional force)
+    ;;   "Align all the tags in org buffer."
+    ;;   (save-match-data
+    ;;     (when (eq major-mode 'org-mode)
+    ;; 	(while (re-search-forward "^\\*+ \\(.+?\\)\\([ \t]+\\)\\(:\\(?:[^ \n]+:\\)+\\)$" limit t)
+    ;; 	  (when (and (match-string 2)
+    ;; 		     (or force
+    ;; 			 (not (get-text-property (match-beginning 2) 'org-tag-aligned))))
+    ;; 	    (with-silent-modifications
+    ;;             (put-text-property (match-beginning 2) (match-end 2) 'org-tag-aligned t)
+    ;; 	      (put-text-property (if (>= 2 (- (match-end 2) (match-beginning 2)))
+    ;; 				     (match-beginning 2)
+    ;; 				   ;; multiple whitespaces may mean that we are in process of typing
+    ;; 				   (1+ (match-beginning 2)))
+    ;; 				 (match-end 2)
+    ;; 				 'display
+    ;; 				 `(space . (:align-to (- right
+    ;; 							 (,(+ (string-display-pixel-width org-ellipsis)
+    ;; 							      (string-display-pixel-width (or (match-string 3)
+    ;; 											      ""))))))))))))))
+    ;; (add-hook 'pretty-symbols-mode-hook (lambda () (save-excursion (goto-char (point-min)) (yant/org-align-tags (point-max) t))))
+    ;; (add-hook 'org-mode-hook (lambda () (save-excursion (goto-char (point-min)) (yant/org-align-tags (point-max) t))) 90)
+    ;; (add-hook 'org-mode-hook (lambda () (font-lock-add-keywords 'org-mode '(yant/org-align-tags) t)))
+    ;; (add-hook 'org-mode-hook (lambda () (add-to-list 'font-lock-extra-managed-props 'org-tag-aligned)))
+    )
 #+end_src
 
 **** Agenda
 :PROPERTIES:
 :ID:       1c3c3255-10b3-401c-99cf-3edd91427475
 :END:
-
-[2020-04-10 Fri] Strange bug causing infinite loop in org-agenda-dim-blocked-tasks when I clock in a dimmed task.
-****************** SOMEDAY investigate this
-****************** END
-#+begin_src emacs-lisp
-(use-package org-agenda
-  :custom (org-agenda-dim-blocked-tasks nil))
-#+end_src
 
 Do not highlight line below mouse
   #+begin_src emacs-lisp
@@ -14725,7 +14717,7 @@ In order to make the remainder consistent, the multi-byte characters are conside
 
 In addition use =:align-to= ='display= spec to align tags to right border of the window.
  #align #agenda
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defun string-display-width (string &optional mode)
   "Calculate diplayed column width of STRING.
 Optional MODE specifies major mode used for display."
@@ -14995,7 +14987,7 @@ the same tree node, and the headline of the tree node in the Org file."
 	 (org-agenda-mark-clocking-task))))))
 #+end_src
 
-***** Do not show tooltips in agenda
+***** COMMENT Do not show tooltips in agenda
 :PROPERTIES:
 :CREATED:  [2020-04-16 Thu 21:14]
 :ID:       00fad7c6-98c6-45f6-a8ac-719c80cf4ba1
@@ -15109,7 +15101,7 @@ Hide all blocks on startup [[[https://github.com/weirdNox/dotfiles/blob/master/c
   (org-drawer ((t (:foreground "Blue1" :height 0.8)))))
 #+end_src
 
-***** Hide property drawers if they are empty or contain only invisible =org-custom-properties=.
+***** COMMENT Hide property drawers if they are empty or contain only invisible =org-custom-properties=.
 
 Also hide the logbooks containing only state changes and clocking.
 
@@ -15220,23 +15212,10 @@ Use UTF symbols for entities
   :demand t)
 #+end_src
 
-**** TODO Optimize fontification of priorities
-:PROPERTIES:
-:CREATED:  [2020-07-28 Tue 07:30]
-:END:
-
-To my horror, a single =org-font-lock-add-priority-faces= takes 98% of the whole font-locking makeing the opening take of huge (2M, thousands of headlines) org file several minutes.
-[2020-07-28 Tue] Apparently the reason is because default regex can match too many things in my files. For now, just removed those long lines causing regexp search to be extremely slow.
 *** Misc
 :PROPERTIES:
 :ID:       b195d9ea-e3e0-476e-b898-43b69fbd365d
 :END:
-**** Display lineage when jumping to heading from agenda
-#+begin_src emacs-lisp
-  (use-package org-fold
-    :config
-    (setf (alist-get 'agenda org-fold-show-context-detail) 'lineage))
-#+end_src
 **** Org element cache
 :PROPERTIES:
 :CREATED:  [2018-11-18 Sun 13:04]
@@ -15569,7 +15548,7 @@ the trivial changes.
                  ,(format-time-string "Autoupdate %Y-%m-%d" (current-time))))))))))
 #+end_src
 
-*** Spell checking
+*** COMMENT Spell checking
 :PROPERTIES:
 :CREATED:  [2019-09-17 Tue 00:16]
 :ID:       0ff33f97-adf2-4195-adba-0b92040950e5
