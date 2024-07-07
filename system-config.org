@@ -8262,7 +8262,6 @@ dev-python/numpy
 dev-python/numpy doc
 #+end_src
 
-
 ** Games
 *** COMMENT =steam=
 :PROPERTIES:
@@ -8531,7 +8530,6 @@ media-gfx/plantuml
 dev-lang/clojure
 dev-java/leiningen-bin
 #+end_src
-
 
 * Archived
 

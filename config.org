@@ -2501,6 +2501,7 @@ abort completely with `C-g'."
 **** =jinx= - spell checker
 :PROPERTIES:
 :SUMMARY:  too slow on large Org buffers. See https://github.com/minad/jinx/discussions/156
+:ID:       d644950a-a361-49ab-8662-a7f201fe65f3
 :END:
 
 - Note taken on [2024-04-11 Thu 14:48] \\
