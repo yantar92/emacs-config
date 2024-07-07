@@ -5731,6 +5731,12 @@ app-text/aspell
 app-text/hunspell
 #+end_src
 
+*** Spell checking enchant (for Emacs [[id:d644950a-a361-49ab-8662-a7f201fe65f3][=jinx= - spell checker]])
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+app-text/enchant
+#+end_src
+
 *** w3m browser for rendering
 :PROPERTIES:
 :ID:       66a5989e-9d17-40af-b680-494ef978198b
