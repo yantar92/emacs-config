@@ -108,7 +108,6 @@ Every instance of ~org-ql-defpred~ in the configuration must set
      (org-ql--def-query-string-to-sexp-fn (reverse org-ql-predicates)))))
 #+end_src
 
-
 ** External dependencies
 :PROPERTIES:
 :ID:       c9c15be6-0c5e-44a8-aa9c-17893fb904e7
@@ -1600,7 +1599,6 @@ For example, when working with logs copied from clipboard.
 
 (setq-default major-mode 'text-mode)
 #+end_src
-
 
 ** Completion
 :PROPERTIES:
@@ -5196,7 +5194,6 @@ It warns me if the original definition changes from what I expect.
   :init
   (add-hook 'Info-selection-hook 'info-colors-fontify-node))
 #+end_src
-
 
 ** LaTeX
 :PROPERTIES:
