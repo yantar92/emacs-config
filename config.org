@@ -11683,37 +11683,25 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
   (add-hook 'org-clock-out-hook 'yant/clock-out-maybe 'append))
      #+end_src
 
-Once I keep all my time tracked, I can calculate the estimated balance of my time. The idea is that I assign the weight to each task/project (=:ORG-TIME-BALANCE-MULTIPLIER:=), which is positive for useful tasks I do not want to do, and negative for fun tasks (they may be useful, but the purpose is to force myself doing what I do not like to do). All I need to do now, is to keep this balance positive.
+Once I keep all my time tracked, I can calculate the estimated balance
+of my time. The idea is that I assign the weight to each task/project
+(=:ORG-TIME-BALANCE-MULTIPLIER:=), which is positive for useful tasks
+I do not want to do, and negative for fun tasks (they may be useful,
+but the purpose is to force myself doing what I do not like to
+do). All I need to do now, is to keep this balance positive.
 
-***** Agenda log mode & clock report
-:PROPERTIES:
-:ID:       104927a5-4dea-4ee0-91d7-36afc6b15c7f
-:END:
-Reviewing previously clocked task is important to keep track of mistakes and clashes during clocking. I do it once per week.
-#+begin_src emacs-lisp
-(setq org-clock-report-include-clocking-task t)
-(setq org-agenda-log-mode-items (quote (closed state)))
-#+end_src
-- set up consistency checks (do not show too short clocking gaps)
-  #+begin_src emacs-lisp
-(setq org-agenda-clock-consistency-checks
-      (plist-put org-agenda-clock-consistency-checks
-		 :max-gap "2:00"))
-  #+end_src
 ***** Logging
 :PROPERTIES:
 :ID:       973d6eff-3d91-48f0-a3b5-b438feccf28f
 :END:
+
 #+begin_src emacs-lisp
 (setq org-log-into-drawer t
       org-log-state-notes-insert-after-drawers t
       org-log-done 'time
-      org-log-done-with-time t
-      org-log-note-clock-out nil
-      org-log-refile 'time
-      org-log-reschedule nil)
-(setq org-clock-into-drawer t)
+      org-log-refile 'time)
 #+end_src
+
 - Do not create empty drawers
   #+begin_src emacs-lisp
 (defun bh/remove-empty-drawer-on-clock-out ()
@@ -11723,7 +11711,8 @@ Reviewing previously clocked task is important to keep track of mistakes and cla
     (org-remove-empty-drawer-at (point))))
 (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
   #+end_src
-  - Relative to my [[id:d38441a2-1431-44db-b831-8cdec011b1dc][todo keyword structure]], it make sense that clocked task is always =NEXT= and scheduled
+  - Relative to my [[id:d38441a2-1431-44db-b831-8cdec011b1dc][todo keyword structure]], it make sense that clocked
+    task is always =NEXT= and scheduled
   #+begin_src emacs-lisp
 (defun bh/clock-in-to-next (kw)
   "Switch a task from TODO to NEXT when clocking in.
@@ -11765,9 +11754,13 @@ Unlike automatically recorded notes about clocking or state changes, I prefer to
 :PROPERTIES:
 :ID:       13012cf7-322e-4433-a22c-e81b7c5feda1
 :END:
-I do not show current task in Emacs, instead I use =awesome wm= widget. 
-Hence, need to save current task in file. 
-The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] Project/Subproject/Subsubproject/.../task=) or =[hh:mm] Capturing ...= for capturing (the title is being edited there and it does not make sense to keep that updated in widget as well).
+
+I do not show current task in Emacs, instead I use =awesome wm=
+widget.  Hence, need to save current task in file.  The widget shows
+clocked time and full path to the clocked tasks (i.e. =[hh:mm]
+Project/Subproject/Subsubproject/.../task=) or =[hh:mm] Capturing ...= for
+capturing (the title is being edited there and it does not make sense
+to keep that updated in widget as well).
 
 #+begin_src emacs-lisp
 (setq org-clock-mode-line-total (quote today))
@@ -11816,8 +11809,6 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
 (add-hook 'org-clock-out-hook 'yant/save-clocked 'append)
 (add-hook 'org-clock-cancel-hook 'yant/save-clocked 'append)
 #+end_src
-****************** TODO Do not need async-start-process here
-****************** END
 ***** Efforts
 :PROPERTIES:
 :CREATED:  [2020-05-04 Mon 17:57]
@@ -11827,14 +11818,48 @@ The widget shows clocked time and full path to the clocked tasks (i.e. =[hh:mm] 
 For a long time, I did not find any use for effort estimates.
 However, they do have uses in my workflow.
 
-A frequent statement about effort estimates is that if you think that estimate is too much, you just split the task. However, even just the process of splitting generally takes unpredictable time when the task is an exploratory task. For me, as a researcher, such tasks are pretty common. I sometimes have a very rough idea about what should be done and cannot predict how much time each step of a research project is going to take. Things in research fail more often than not and a trivial task may turn out to take 10 times more time that expected. An alternative approach to setting efforts is coming from timeboxing approach when a task is expected to be worked on for a certain period of time per day. However, working on some tasks in research, I can often get a momentum and work on a single task for a single day. Notifications for exceeding the effort are unwanted in such scenario. On the other hand, some tasks may be very difficult to start and not having any time estimate on the task may be discouraging (if there was an effort, at least one can convince himself to work on such task for *some* time). Hence, setting *some* effort estimate on stale tasks is useful.
+A frequent statement about effort estimates is that if you think that
+estimate is too much, you just split the task. However, even just the
+process of splitting generally takes unpredictable time when the task
+is an exploratory task. For me, as a researcher, such tasks are pretty
+common. I sometimes have a very rough idea about what should be done
+and cannot predict how much time each step of a research project is
+going to take. Things in research fail more often than not and a
+trivial task may turn out to take 10 times more time that expected. An
+alternative approach to setting efforts is coming from timeboxing
+approach when a task is expected to be worked on for a certain period
+of time per day. However, working on some tasks in research, I can
+often get a momentum and work on a single task for a single
+day. Notifications for exceeding the effort are unwanted in such
+scenario. On the other hand, some tasks may be very difficult to start
+and not having any time estimate on the task may be discouraging (if
+there was an effort, at least one can convince himself to work on such
+task for *some* time). Hence, setting *some* effort estimate on stale
+tasks is useful.
 
-1. When a task is very large, but cannot be splitted, it is useful to dedicate certain time I plan to spend working on the task. Having this time really helps to start working on the task since I am not demoralised by size of the task. Such tasks are marked with =DOING= todo keyword (see [[id:66396995-13e9-4dfa-854e-476c71a4faa9][#todo_keyword #DOING]]). This can also be used to establish hard habits [[id:cf61cb2670daec785acaf2f7bdd26417c33b36f4][Christine Carter [TED] (2021) The 1-minute secret to forming a new habit]].
+1. When a task is very large, but cannot be splitted, it is useful to
+   dedicate certain time I plan to spend working on the task. Having
+   this time really helps to start working on the task since I am not
+   demoralised by size of the task. Such tasks are marked with =DOING=
+   todo keyword (see [[id:66396995-13e9-4dfa-854e-476c71a4faa9][#todo_keyword #DOING]]). This can also be used to
+   establish hard habits [[id:cf61cb2670daec785acaf2f7bdd26417c33b36f4][Christine Carter [TED] (2021) The 1-minute
+   secret to forming a new habit]].
 
-2. Because of structure of my agenda (see [[id:a6054643-449e-48d7-afff-4155465efc19][Focused daily agenda]]), I often arrive to my list of NEXT tasks late in the evening. However, many of those tasks are not quite easy to do and I am too tired to start them. In these cases, it is useful to filter the agenda showing NEXT tasks only to "easy" tasks, which do not take too much time/effort. Effort estimates can be used in such scenario to mark tasks, which will take a long time (1 hour of longer). I can then simply filter agenda by effort less than one hour to quickly get the tasks I can do when I am tired (but not tired enough to not do anything).
+2. Because of structure of my agenda (see [[id:a6054643-449e-48d7-afff-4155465efc19][Focused daily agenda]]), I
+   often arrive to my list of NEXT tasks late in the evening. However,
+   many of those tasks are not quite easy to do and I am too tired to
+   start them. In these cases, it is useful to filter the agenda
+   showing NEXT tasks only to "easy" tasks, which do not take too much
+   time/effort. Effort estimates can be used in such scenario to mark
+   tasks, which will take a long time (1 hour of longer). I can then
+   simply filter agenda by effort less than one hour to quickly get
+   the tasks I can do when I am tired (but not tired enough to not do
+   anything).
 
-I would like to highlight that this second use-case is extremely important to avoid spending time mindlessly browsing websites like YouTube or reddit. I'd better do something easy yet potentially useful than spend time in completely useless manner.
-
+I would like to highlight that this second use-case is extremely
+important to avoid spending time mindlessly browsing websites like
+YouTube or reddit. I'd better do something easy yet potentially useful
+than spend time in completely useless manner.
 
 ****** Notify when clocked in time exceeds effort estimate
 :PROPERTIES:
@@ -11860,7 +11885,7 @@ I would like to highlight that this second use-case is extremely important to av
   ;; this is not a default value, 't will still trigger notification
   ;; when clocked in time exceeds effort estimate, while not triggering
   ;; showing the current task in modeline or frame title.
-  (setq org-clock-clocked-in-display 't))
+  (setq org-clock-clocked-in-display t))
 #+end_src
 
 ****** Effort filtering in agenda views
@@ -11873,7 +11898,6 @@ By default, no effort is considered as very difficult by agenda. However, most o
 #+begin_src emacs-lisp
 (setq org-agenda-sort-noeffort-is-high nil)
 #+end_src
-
 
 ***** Clocking history
 :PROPERTIES:
