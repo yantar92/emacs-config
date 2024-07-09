@@ -2907,6 +2907,13 @@ former is not maintained.
 #+begin_src emacs-lisp
 (when init-flag (setq next-error-message-highlight t))
 #+end_src
+*** Highlight color names with the respective colors
+#+begin_src emacs-lisp
+  (use-package colorful-mode
+    :if init-flag
+    :straight t
+    :hook (prog-mode text-mode))
+#+end_src
 
 ** Fold & narrow
 :PROPERTIES:
