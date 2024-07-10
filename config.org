@@ -11590,10 +11590,13 @@ However, I do not find it comfortable to look into notes (which are stored in dr
 #+begin_src emacs-lisp
 )
 #+end_src
-**** TODO Auto sort
+**** Auto sort
 :PROPERTIES:
 :ID:       aa092c63-f695-4c03-8639-b34fa262d5fe
 :END:
+
+Custom sorting of entries in subtrees using per-subtree/global ordering.
+
 #+begin_src emacs-lisp
 (use-package org-autosort
   :after org
@@ -11620,20 +11623,14 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
 - Organisation :: related to work, general
 - Check =TORead= ... :: related to home, browsing, reading fiction, etc I start the activity from clocking in one of these tasks. Later, I clock in the task, which I am doing at the moment. Once it's done, clocking automatically comes back to higher level task or to one of the tasks above when I clocked out top level project.
      Captures are also clocked, but once done, clocking comes back to previously active task, if any, or to default task otherwise.
-****************** TODO The default task is not being saved if I restart emacs
-****************** END
-****************** TODO Clock out from subtask from home is wrongly activating home task
-****************** END
 #+begin_src emacs-lisp
 (use-package org-clock
   :after org
   :config
-  (setq org-duration-format '(("h" . h:mm) ("min" . h:mm)))
   (setq org-clock-out-remove-zero-time-clocks t)
   (setq org-clock-out-when-done t)
   (setq org-clock-in-resume t)
   (setq org-clock-persist t)
-  (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
   (setq org-clock-persist-query-resume nil)
   (org-clock-persistence-insinuate)
   (defvar bh/keep-clock-running nil
