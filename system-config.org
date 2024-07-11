@@ -7327,6 +7327,7 @@ audio-file-auto=fuzzy                   # external audio doesn't have to match t
 
 #+begin_src conf
   script-opts=ytdl_hook-ytdl_path=/usr/bin/yt-dlp
+  ytdl-format=bestvideo[height<=720]+bestaudio
 #+END_SRC
 
 #+BEGIN_SRC conf  
