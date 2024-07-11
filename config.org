@@ -1727,23 +1727,23 @@ This requires some customized key bindings.
 3. Insert selected completion candidate into minibuffer
 
    #+begin_src emacs-lisp
-(use-package mct
-  :config
-  (defun yant/complete-minibuffer-selection-no-exit ()
-    "Insert selected or first completion into minibuffer.
-When completion window is not displayed, perform partial completion."
-    (interactive)
-    (let ((completions-window (get-buffer-window "*Completions*" 0)))
-      (if completions-window
-          (with-selected-window completions-window
-	    (condition-case _
-		(mct-choose-completion-no-exit)
-	      (error
-	       (first-completion)
-	       (mct-choose-completion-no-exit))))
-	(minibuffer-complete))))
-  (bind-key "M-l" #'yant/complete-minibuffer-selection-no-exit minibuffer-local-must-match-map)
-  (bind-key "M-l" #'yant/complete-minibuffer-selection-no-exit minibuffer-local-map))
+     (use-package mct
+       :config
+       (defun yant/complete-minibuffer-selection-no-exit ()
+         "Insert selected or first completion into minibuffer.
+     When completion window is not displayed, perform partial completion."
+         (interactive)
+         (let ((completions-window (get-buffer-window "*Completions*" 0)))
+           (if completions-window
+               (with-selected-window completions-window
+     	    (condition-case _
+     		(mct-choose-completion-no-exit)
+     	      (error
+     	       (first-completion)
+     	       (mct-choose-completion-no-exit))))
+     	(minibuffer-complete))))
+       (bind-key "M-l" #'yant/complete-minibuffer-selection-no-exit minibuffer-local-must-match-map)
+       (bind-key "M-l" #'yant/complete-minibuffer-selection-no-exit minibuffer-local-map))
    #+end_src
 
 4. Provide command to delete the current segment of multi-stage completion
@@ -3362,15 +3362,14 @@ The definition of previous/next buffer may depend on the major mode though.
 :END:
 
 #+begin_src emacs-lisp
-(use-package consult
-  :if init-flag
-  :config
-  (consult-customize consult-buffer :preview-key nil)
-  :bind (:map boon-forward-search-map
-	      ("b" . consult-buffer)
-	      :map boon-backward-search-map
-	      ("b" . consult-buffer))
-  :after boon)
+  (use-package consult
+    :if init-flag
+    :config
+    :bind (:map boon-forward-search-map
+  	      ("b" . consult-buffer)
+  	      :map boon-backward-search-map
+  	      ("b" . consult-buffer))
+    :after boon)
 #+end_src
 
 ***** Skip some uninteresting buffers when switching to next/previous buffer
@@ -4300,20 +4299,20 @@ Meta-versions of return/return-dwim commands.
 Mostly intended to use with org.
 
 #+begin_src emacs-lisp
-(define-key key-translation-map (kbd "C-j") (kbd "<RET>"))
+  (define-key key-translation-map (kbd "C-j") (kbd "<RET>"))
 
-(use-package meta-functions
-  :if init-flag
-  :config
-  (use-package boon
-    :bind (:map boon-command-map
-		("<RET>" . meta-new-line)
-                ("C-M-j" . meta-insert-enclosure-new-line)
-                ("C-J" . meta-insert-active-enclosure-new-line)
-                :map boon-insert-map
-		("<RET>" . meta-new-line)
-                ("C-M-j" . meta-insert-enclosure-new-line)
-                ("C-J" . meta-insert-active-enclosure-new-line))))
+  (use-package meta-functions
+    :if init-flag
+    :config
+    (use-package boon
+      :bind (:map boon-command-map
+  		("<RET>" . meta-new-line)
+                  ("C-M-j" . meta-insert-enclosure-new-line)
+                  ("C-J" . meta-insert-active-enclosure-new-line)
+                  :map boon-insert-map
+  		("<RET>" . meta-new-line)
+                  ("C-M-j" . meta-insert-enclosure-new-line)
+                  ("C-J" . meta-insert-active-enclosure-new-line))))
 #+end_src
 
 *** Move lines, elements around
