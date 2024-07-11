@@ -9665,6 +9665,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     				 (or (project) (area))
                                      (not (goal))
     				 (not (todo "SOMEDAY" "TODO"))
+                                     (not (done))
     				 (or (todo "NEXT" "REVIEW" "DOING")
     				     (not (subproject)))
     				 (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
@@ -9733,6 +9734,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     				 (or (project) (area))
                                      (not (goal))
     				 (not (todo "SOMEDAY" "TODO"))
+                                     (not (done))
     				 (or (todo "NEXT" "REVIEW" "DOING")
     				     (not (subproject)))
     				 (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
@@ -9823,8 +9825,8 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     							(quote (and (tags-local "AREA")
     								    (not (tags-inherited "SOMEDAY"))
     								    (not (descendants
-    									(and (tags-local "AREA")
-    									     (todo "NEXT"))))))))
+    									  (and (tags-local "AREA")
+    									       (todo "NEXT"))))))))
     			    (org-agenda-sorting-strategy
     			     '(todo-state-down effort-up category-keep))))
     		(tags-todo "/"
