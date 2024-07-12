@@ -11627,60 +11627,61 @@ A lot of time, the task I am doing is not useful to add to my org files explicit
 - Check =TORead= ... :: related to home, browsing, reading fiction, etc I start the activity from clocking in one of these tasks. Later, I clock in the task, which I am doing at the moment. Once it's done, clocking automatically comes back to higher level task or to one of the tasks above when I clocked out top level project.
      Captures are also clocked, but once done, clocking comes back to previously active task, if any, or to default task otherwise.
 #+begin_src emacs-lisp
-(use-package org-clock
-  :after org
-  :config
-  (setq org-clock-out-remove-zero-time-clocks t)
-  (setq org-clock-out-when-done t)
-  (setq org-clock-in-resume t)
-  (setq org-clock-persist t)
-  (setq org-clock-persist-query-resume nil)
-  (org-clock-persistence-insinuate)
-  (defvar bh/keep-clock-running nil
-    "Continue in default task if no task is clocked in.")
-  (defvar bh/organization-task-id "Organization"
-    "ID of default usefull work task.")
-  (defvar yant/home-task-id "Homedef"
-    "ID of default useless activity task.")
+  (use-package org-clock
+    :after org
+    :config
+    (setq org-duration-format '(("h" . h:mm) ("min" . h:mm)))
+    (setq org-clock-out-remove-zero-time-clocks t)
+    (setq org-clock-out-when-done t)
+    (setq org-clock-in-resume t)
+    (setq org-clock-persist t)
+    (setq org-clock-persist-query-resume nil)
+    (org-clock-persistence-insinuate)
+    (defvar bh/keep-clock-running nil
+      "Continue in default task if no task is clocked in.")
+    (defvar bh/organization-task-id "Organization"
+      "ID of default usefull work task.")
+    (defvar yant/home-task-id "Homedef"
+      "ID of default useless activity task.")
 
-  (defun yant/punch-in-organization ()
-    "Clock in Organization task."
-    (interactive)
-    (setq bh/keep-clock-running 'yant/punch-in-organization)
-    (org-with-point-at (org-id-find bh/organization-task-id
-				    'marker)
-      (org-clock-in '(16))))
+    (defun yant/punch-in-organization ()
+      "Clock in Organization task."
+      (interactive)
+      (setq bh/keep-clock-running 'yant/punch-in-organization)
+      (org-with-point-at (org-id-find bh/organization-task-id
+  				    'marker)
+        (org-clock-in '(16))))
 
-  (defun yant/punch-in-home ()
-    "Clock in home (random activity) task."
-    (interactive)
-    (setq bh/keep-clock-running 'yant/punch-in-home)
-    (org-with-point-at (org-id-find yant/home-task-id
-				    'marker)
-      (org-clock-in '(16))))
+    (defun yant/punch-in-home ()
+      "Clock in home (random activity) task."
+      (interactive)
+      (setq bh/keep-clock-running 'yant/punch-in-home)
+      (org-with-point-at (org-id-find yant/home-task-id
+  				    'marker)
+        (org-clock-in '(16))))
 
-  (defun yant/punch-out nil
-    "Set `org-clock-default-task' to nil and clock out."
-    (save-excursion
-      (setq bh/keep-clock-running nil)
-      (when (org-clock-is-active)
-	(org-clock-out))))
+    (defun yant/punch-out nil
+      "Set `org-clock-default-task' to nil and clock out."
+      (save-excursion
+        (setq bh/keep-clock-running nil)
+        (when (org-clock-is-active)
+  	(org-clock-out))))
 
-  (defun bh/clock-in-default-task ()
-    (save-excursion
-      (org-with-point-at org-clock-default-task
-	(org-clock-in))))
+    (defun bh/clock-in-default-task ()
+      (save-excursion
+        (org-with-point-at org-clock-default-task
+  	(org-clock-in))))
 
-  (defun yant/clock-out-maybe nil
-    "Clock out and clock in to default task if `bh/keep-clock-running' is not nil."
-    (when (and bh/keep-clock-running
-	       (not org-clock-clocking-in)
-	       (marker-buffer org-clock-default-task)
-	       (not org-clock-resolving-clocks-due-to-idleness)
-               (= 0 (org-emacs-idle-seconds)))
-      (bh/clock-in-default-task)))
+    (defun yant/clock-out-maybe nil
+      "Clock out and clock in to default task if `bh/keep-clock-running' is not nil."
+      (when (and bh/keep-clock-running
+  	       (not org-clock-clocking-in)
+  	       (marker-buffer org-clock-default-task)
+  	       (not org-clock-resolving-clocks-due-to-idleness)
+                 (= 0 (org-emacs-idle-seconds)))
+        (bh/clock-in-default-task)))
 
-  (add-hook 'org-clock-out-hook 'yant/clock-out-maybe 'append))
+    (add-hook 'org-clock-out-hook 'yant/clock-out-maybe 'append))
      #+end_src
 
 Once I keep all my time tracked, I can calculate the estimated balance
