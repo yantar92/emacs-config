@@ -10827,6 +10827,7 @@ instead."
                  ((pred (string= "A")) (tags-local "AREA"))
                  ((pred (string= "p")) (tags-local "project"))
                  ((pred (string= "a")) (tags-local "article"))
+                 ((pred (string= "c")) (tags-local "contact"))
                  ((pred (string= "b")) (tags-local "book"))
                  ((pred (string= "n")) (tags-local "note"))
                  ((pred (string= "m")) (tags-local "BOOKMARK"))
@@ -10888,6 +10889,7 @@ instead."
                                  ((pred (string= "p")) "project")
                                  ((pred (string= "a")) "article")
                                  ((pred (string= "b")) "book")
+                                 ((pred (string= "a")) "contact")
                                  ((pred (string= "n")) "note")
                                  ((pred (string= "m")) "BOOKMARK")
                                  ((pred (string= "f")) "FLAGGED")
@@ -12880,7 +12882,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
   		     :type entry
   		     :file "~/Org/contacts.org"
   		     :template
-  		     ("* %^{Name} %?"
+  		     ("* %^{Name} %? :contact:"
   		      ":PROPERTIES:"
   		      ":CREATED: %U"
   		      ":EMAIL: %^{Email}"
