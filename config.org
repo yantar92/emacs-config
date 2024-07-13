@@ -13645,46 +13645,49 @@ whether I want to archive every single subtask or not. I tag them
 =:ARCHIVEALL:=.
 
 ***** Trash attachments of archived tasks
+:PROPERTIES:
+:ID:       7d9c2586-a55c-4d96-99dd-73f8b2706f92
+:END:
 
 If a task being archived contains attachments, it is better to delete
 them.  Otherwise, I'd rather keep the task in place to avoid hanging
 files.
 
 #+begin_src emacs-lisp
-(setq org-attach-archive-delete 'query)
+  (setq org-attach-archive-delete 'query)
 
-;; redefining to show the list of attachments in the query
-(defun org-attach-archive-delete-maybe ()
-  "Maybe delete subtree attachments when archiving.
-This function is called by `org-archive-hook'.  The option
-`org-attach-archive-delete' controls its behavior."
-  (org-with-point-at-org-buffer
-   (when (org-at-heading-p)
-     (org-back-to-heading t)
-     (let ((limit (save-excursion (org-end-of-subtree t) (point))))
-       (while (and (< (point) limit) (re-search-forward org-attach-auto-tag limit t))
-         (when (and (org-at-heading-p) (member org-attach-auto-tag (org-get-tags nil t)));; do not ask if no attachments
-           (let ((heading (org-get-heading nil nil 'norpiority 'nocomment))
-                 (source (org-entry-get (point) "URL")))
-             (when (and
-		    (org-attach-dir)
-		    (if (eq org-attach-archive-delete 'query)
-			(let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
-										(interactive)
-										(dired-noselect dir nil) )))
-					    (org-attach-reveal-in-emacs))))
-                          (save-window-excursion
-			    (pop-to-buffer dired-buf)
-			    (revert-buffer)
-			    (select-window (old-selected-window))
-			    (prog1
-				(or
-                                 (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html") ("." "..")))
-			         (yes-or-no-p (format "%s: Delete all attachments? "
-						      heading)))
-			      (kill-buffer dired-buf))))
-		      org-attach-archive-delete))
-	       (org-attach-delete-all t)))))))))
+  ;; redefining to show the list of attachments in the query
+  (defun org-attach-archive-delete-maybe ()
+    "Maybe delete subtree attachments when archiving.
+  This function is called by `org-archive-hook'.  The option
+  `org-attach-archive-delete' controls its behavior."
+    (org-with-point-at-org-buffer
+     (when (org-at-heading-p)
+       (org-back-to-heading t)
+       (let ((limit (save-excursion (org-end-of-subtree t) (point))))
+         (while (and (< (point) limit) (re-search-forward org-attach-auto-tag limit t))
+           (when (and (org-at-heading-p) (member org-attach-auto-tag (org-get-tags nil t)));; do not ask if no attachments
+             (let ((heading (org-get-heading nil nil 'norpiority 'nocomment))
+                   (source (org-entry-get (point) "URL")))
+               (when (and
+  		    (org-attach-dir)
+  		    (if (eq org-attach-archive-delete 'query)
+  			(let* ((dired-buf (cl-letf (((symbol-function 'dired) (lambda (dir)
+  										(interactive)
+  										(dired-noselect dir nil) )))
+  					    (org-attach-reveal-in-emacs))))
+                            (save-window-excursion
+  			    (pop-to-buffer dired-buf)
+  			    (revert-buffer)
+  			    (select-window (old-selected-window))
+  			    (prog1
+  				(or
+                                   (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html") ("." "..")))
+  			         (yes-or-no-p (format "%s: Delete all attachments? "
+  						      heading)))
+  			      (kill-buffer dired-buf))))
+  		      org-attach-archive-delete))
+  	       (org-attach-delete-all t)))))))))
 #+end_src
 
 ***** Move attachments of tasks with =ARCHIVE= tag to backup folder
