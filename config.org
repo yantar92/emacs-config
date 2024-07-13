@@ -9468,6 +9468,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     							(quote (and (not (tags-local "SKIP_PROJECT_REVIEW"))
     								    (not (tags "SOMEDAY" "HOLD" "WAITING" "CANCELLED" "NODEADLINE"))
     								    (not (todo "TODO"))
+                                                                        (not (done))
     								    (not (area))
     								    (not (goal))
     								    (project)
