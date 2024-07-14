@@ -8370,7 +8370,7 @@ app-dicts/wordnet
 :END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-app-office/libreoffice
+app-office/libreoffice-bin
 #+end_src
 
 ** Firefox (needed for jitsi that does not work well with [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]])
