@@ -8006,8 +8006,13 @@ should be removed once done and placed into notes when archiving.
 :LOGBOOK:
 - State "TODO"       from              [2018-03-12 Mon 17:59]
 :END:
-Some of the tasks cannot be done until some condition is met. Before that, it does not make too much sense to show it in agenda.
-I use [[http://www.nongnu.org/org-edna-el/][org-edna]] for managing dependencies. On top of blocked tasks management, it allows to schedule tasks on trigger. It introduces two new properties: =TRIGGER= and =BLOCKER= (see [[id:598c2b16-2eb8-404a-b7e9-00969a1c4d72][Properties]] for details)
+
+Some of the tasks cannot be done until some condition is met. Before
+that, it does not make too much sense to show it in agenda.  I use
+[[http://www.nongnu.org/org-edna-el/][org-edna]] for managing dependencies. On top of blocked tasks
+management, it allows to schedule tasks on trigger. It introduces two
+new properties: =TRIGGER= and =BLOCKER= (see [[id:598c2b16-2eb8-404a-b7e9-00969a1c4d72][Properties]] for details)
+
 #+BEGIN_SRC emacs-lisp
 (use-package org-edna
   :straight t
@@ -8017,12 +8022,9 @@ I use [[http://www.nongnu.org/org-edna-el/][org-edna]] for managing dependencies
   (org-edna-mode))
 #+END_SRC
 
-****************** TODO rewrite using org-depend, as suggested in https://www.reddit.com/r/orgmode/comments/hljpl3/any_one_uses_org_edna/fwzhldp/
-****************** END
-
-This can be useful, for example, when watching a series.
-I may add multiple TODOs for different series, but it usually make sense to watch them in sequence.
-I can do it using =org-edna=
+This can be useful, for example, when watching a series.  I may add
+multiple TODOs for different series, but it usually make sense to
+watch them in sequence.  I can do it using =org-edna=
 #+begin_src emacs-lisp
 (use-package org-edna
   :after org
@@ -8055,14 +8057,18 @@ Also, the projects require all the children to be done by default.
 #+begin_src emacs-lisp
 (setq org-enforce-todo-dependencies t)
 #+end_src
-In addition, I force all the check-boxes to be checked before a task can be marked done. 
-Otherwise, there is not much point in check-boxes for me.
+
+In addition, I force all the check-boxes to be checked before a task
+can be marked done.  Otherwise, there is not much point in check-boxes
+for me.
+
 #+begin_src emacs-lisp
 (use-package org
   :defer t  
   :custom
   (org-enforce-todo-checkbox-dependencies t))
 #+end_src
+
 ***** Repeating tasks
 :PROPERTIES:
 :ID:       77ef2ede-fbb7-481d-a836-9453d7310c02
