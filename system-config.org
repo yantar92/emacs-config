@@ -7441,25 +7441,17 @@ quality_strings=[ {"4320p" : "bestvideo[height<=?4320p]+bestaudio/best"}, {"2160
 net-misc/yt-dlp
 #+end_src
 
-** COMMENT Wine
+** Wine
 :PROPERTIES:
 :ID:       e509984f-3715-43a3-8d73-2bf99a82db2d
 :END:
 
-- use latest version
-#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/wine
-app-emulation/wine-proton ~amd64
-app-emulation/wine-staging ~amd64
-#+end_src
-
 - install samba with =winbind= =useflag= - needed for some programs
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-net-fs/samba
-app-emulation/wine-proton
-app-emulation/wine-staging
-app-emulation/dxvk
-app-emulation/vkd3d-proton
+  virtual/wine
+  app-emulation/dxvk
+  app-emulation/vkd3d-proton
 #+end_src
 
 #+begin_src bash :tangle no :eval no
@@ -7467,8 +7459,9 @@ setup_dxvk.sh install --symlink
 setup_vkd3d_proton.sh install --symlink
 #+end_src
 
-#+begin_src conf :tangle /sudo::/etc/portage/package.use/samba
+#+begin_src conf :tangle /sudo::/etc/portage/package.use/wine
 net-fs/samba winbind
+virtual/wine proton
 #+end_src
 
 ** Scientific image manipulation: Fiji \ [[id:5aa36a1d631ea6266284bbc74d3591217237a36a][[Imagej] ImageJ]]
