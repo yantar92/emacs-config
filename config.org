@@ -13499,41 +13499,43 @@ In the past I only archived the tasks, which where done before the past month, b
   (advice-add 'org-agenda-get-blocks :before #'org-agenda@reset-skip-cache)
   (advice-add 'org-agenda-get-todos :before #'org-agenda@reset-skip-cache)
 
-  (defun yant/org-agenda-skip-org-ql (query &optional force)
-    "Construct skip function using org-ql QUERY.
+  (use-package org-ql
+    :demand t
+    :config
+    (defun yant/org-agenda-skip-org-ql (query &optional force)
+      "Construct skip function using org-ql QUERY.
   Do not use cache when FORCE is non-nil."
-    (require 'org-ql)
-    (let ((match-list
-           (if (and (cdr prev-match-cdr)
-                    (equal query prev-query)
-                    (equal prev-buffer (current-buffer))
-                    (not force))
-               prev-match-cdr
-             (sort (org-ql-select (list (current-buffer))
-                     query
-                     :narrow t
-                     :action (lambda (&optional el)
-                               (if el
-                                   (org-element-property :begin (org-element-lineage el '(headline inlinetask) t))
-                                 (org-element-property :begin (org-element-lineage (org-element-at-point) '(headline inlinetask) t)))))
-                   #'<)))
-          (cur-point (save-excursion
-                       (org-back-to-heading t)
-                       (point))))
-      (if (not match-list)
-          (point-max)
-        (catch :exit
-          (unless (eq prev-match-cdr match-list)
-            (setq prev-match-cdr match-list
-                  prev-query query
-                  prev-buffer (current-buffer)))
-          (while prev-match-cdr
-            (when (= cur-point (car prev-match-cdr))
-              (throw :exit nil))
-            (when (< cur-point (car prev-match-cdr))
-              (throw :exit (car prev-match-cdr)))
-            (setq prev-match-cdr (cdr prev-match-cdr)))
-          (point-max)))))
+      (let ((match-list
+             (if (and (cdr prev-match-cdr)
+                      (equal query prev-query)
+                      (equal prev-buffer (current-buffer))
+                      (not force))
+                 prev-match-cdr
+               (sort (org-ql-select (list (current-buffer))
+                       query
+                       :narrow t
+                       :action (lambda (&optional el)
+                                 (if el
+                                     (org-element-property :begin (org-element-lineage el '(headline inlinetask) t))
+  				 (org-element-property :begin (org-element-lineage (org-element-at-point) '(headline inlinetask) t)))))
+                     #'<)))
+            (cur-point (save-excursion
+                         (org-back-to-heading t)
+                         (point))))
+        (if (not match-list)
+            (point-max)
+  	(catch :exit
+            (unless (eq prev-match-cdr match-list)
+              (setq prev-match-cdr match-list
+                    prev-query query
+                    prev-buffer (current-buffer)))
+            (while prev-match-cdr
+              (when (= cur-point (car prev-match-cdr))
+                (throw :exit nil))
+              (when (< cur-point (car prev-match-cdr))
+                (throw :exit (car prev-match-cdr)))
+              (setq prev-match-cdr (cdr prev-match-cdr)))
+            (point-max))))))
 
   (defun yant/skip-non-archivable-tasks ()
     "Skip trees that are not available for archiving."
