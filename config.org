@@ -4386,18 +4386,23 @@ Mostly intended to use with org.
 #+begin_src emacs-lisp
   (use-package meta-functions
     :config
-    (meta-defun meta-move-line-down
-      :mode minibuffer-mode
-      (with-minibuffer-completions-window
-        (call-interactively #'next-completion)
-        (run-hooks 'post-command-hook)))
+    (require 'mct)
+    (defun yant/switch-to-completions-top-next ()
+      "Like `mct-switch-to-completions-top', but never go to selected completion."
+      (interactive)
+      (mct-switch-to-completions-top)
+      (when (<= (overlay-start mct--highlight-overlay) (point) (overlay-end mct--highlight-overlay))
+        (next-completion 1)))
+    (meta-defun meta-move-line-down :mode minibuffer-mode yant/switch-to-completions-top-next)
     (meta-defun meta-move-line-down :mode completion-list-mode mct-next-completion-or-mini)
-    (meta-defun meta-move-line-up
-      :mode minibuffer-mode
-      (with-minibuffer-completions-window
-        (call-interactively #'previous-completion)
-        (run-hooks 'post-command-hook)))
-    (meta-defun meta-move-line-up :mode completion-list-mode mct-previous-completion-or-mini))
+    (defun yant/switch-to-completions-bottom-previous ()
+      "Like `mct-switch-to-completions-bottom', but never go to selected completion."
+      (interactive)
+      (mct-switch-to-completions-bottom)
+      (when (<= (overlay-start mct--highlight-overlay) (point) (overlay-end mct--highlight-overlay))
+        (previous-completion 1)))
+    (meta-defun meta-move-line-up :mode completion-list-mode mct-previous-completion-or-mini)
+    (meta-defun meta-move-line-up :mode minibuffer-mode yant/switch-to-completions-bottom-previous))
 #+end_src
 
 *** =Yasnippet=
