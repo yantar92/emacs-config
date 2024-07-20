@@ -1873,8 +1873,12 @@ string distance + `string-lessp' first rather than using only
 **** Live preview in completions
 
 #+begin_src emacs-lisp
-(use-package consult
-  :straight t)
+  (use-package consult
+    :straight t
+    :config
+    (use-package mct
+      :config
+      (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)))
 #+end_src
 
 *** In-buffer completion menu =corfu=
