@@ -1775,6 +1775,28 @@ This requires some customized key bindings.
   (unbind-key "C-l" mct-minibuffer-local-completion-map))
    #+end_src
    
+**** When typing in completions buffer, automatically switch to the minibuffer for input
+
+#+begin_src emacs-lisp
+  (use-package mct
+    :config
+    (add-hook 'completion-list-mode-hook (lambda () (boon-local-mode -1)) 50)
+    ;; First, force `self-insert-command' to work
+    (dolist (key (mapcar #'char-to-string (string-to-list "znpghq")))
+      (define-key completion-list-mode-map key 'self-insert-command))
+    ;; Second, remap `self-insert-command' to custom command.
+    (defun yant/switch-to-minibuffer-and-self-insert (n &optional c)
+      "Switch to minibuffer and insert the typed key."
+      (interactive "p")
+      (switch-to-minibuffer)
+      (funcall-interactively #'self-insert-command n c))
+    (define-key completion-list-mode-map [remap self-insert-command]
+  	      #'yant/switch-to-minibuffer-and-self-insert)
+    (bind-key "M-k" #'meta-move-line-up completion-list-mode-map)
+    (bind-key "M-j" #'meta-move-line-down completion-list-mode-map)
+    (bind-key "M-l" #'yant/complete-minibuffer-selection-no-exit completion-list-mode-map))
+#+end_src
+
 **** Provide icons in completion buffer
 
 #+begin_src emacs-lisp
