@@ -14757,147 +14757,147 @@ In order to make the remainder consistent, the multi-byte characters are conside
 In addition use =:align-to= ='display= spec to align tags to right border of the window.
  #align #agenda
 #+begin_src emacs-lisp :tangle no
-(defun string-display-width (string &optional mode)
-  "Calculate diplayed column width of STRING.
-Optional MODE specifies major mode used for display."
-  (with-temp-buffer
-    (with-silent-modifications
-      (erase-buffer)
-      (insert string))
-    (when (fboundp mode)
-      (funcall mode)
-      (font-lock-fontify-buffer))
-    (current-column)))
-
-(defun string-display-truncate (string num &optional mode hide-p ellipsis)
-  "Trim displayed STRING to NUM columns.
-Optional MODE specifies major mode used for display.
-Non-nil HIDE-P means that the string should be trimmed by hiding the trailing part with text properties.
-Optional ELLIPSIS string is shown in place of the hidden/deleted part of the string."
-  (let ((char-property-alias-alist-buffer char-property-alias-alist))
+  (defun string-display-width (string &optional mode)
+    "Calculate diplayed column width of STRING.
+  Optional MODE specifies major mode used for display."
     (with-temp-buffer
-      (setq-local char-property-alias-alist char-property-alias-alist-buffer)
       (with-silent-modifications
-	(erase-buffer)
+        (erase-buffer)
         (insert string))
       (when (fboundp mode)
         (funcall mode)
         (font-lock-fontify-buffer))
-      (when (> (current-column) num)
-        (move-to-column num)
+      (current-column)))
+
+  (defun string-display-truncate (string num &optional mode hide-p ellipsis)
+    "Trim displayed STRING to NUM columns.
+  Optional MODE specifies major mode used for display.
+  Non-nil HIDE-P means that the string should be trimmed by hiding the trailing part with text properties.
+  Optional ELLIPSIS string is shown in place of the hidden/deleted part of the string."
+    (let ((char-property-alias-alist-buffer char-property-alias-alist))
+      (with-temp-buffer
+        (setq-local char-property-alias-alist char-property-alias-alist-buffer)
         (with-silent-modifications
-	  (if hide-p
-	      (progn
-	        (if (stringp ellipsis)
-		    (put-text-property (point) (point-max) 'display ellipsis)
-		  (put-text-property (point) (point-max) 'invisible t))
-                (put-text-property (point) (point-max) 'truncated t))
-	    (kill-line)
-            (when (stringp ellipsis) (insert ellipsis)))))
-      (buffer-string))))
+  	(erase-buffer)
+          (insert string))
+        (when (fboundp mode)
+          (funcall mode)
+          (font-lock-fontify-buffer))
+        (when (> (current-column) num)
+          (move-to-column num)
+          (with-silent-modifications
+  	  (if hide-p
+  	      (progn
+  	        (if (stringp ellipsis)
+  		    (put-text-property (point) (point-max) 'display ellipsis)
+  		  (put-text-property (point) (point-max) 'invisible t))
+                  (put-text-property (point) (point-max) 'truncated t))
+  	    (kill-line)
+              (when (stringp ellipsis) (insert ellipsis)))))
+        (buffer-string))))
 
-(defun string-display-pixel-width (string &optional mode)
-  "Calculate pixel width of STRING.
-Optional MODE specifies major mode used for display."
-  (let (wrap-prefix display-line-numbers)
-    (with-temp-buffer
-      (with-silent-modifications
-	(erase-buffer)
-        (insert string))
-      (when (fboundp mode)
-        (funcall mode)
-        (font-lock-fontify-buffer))
-      (if (get-buffer-window (current-buffer))
-	  (car (window-text-pixel-size nil (line-beginning-position) (point)))
-        (set-window-buffer nil (current-buffer))
-        (car (window-text-pixel-size nil (line-beginning-position) (point)))))))
+  (defun string-display-pixel-width (string &optional mode)
+    "Calculate pixel width of STRING.
+  Optional MODE specifies major mode used for display."
+    (let (wrap-prefix display-line-numbers)
+      (with-temp-buffer
+        (with-silent-modifications
+  	(erase-buffer)
+          (insert string))
+        (when (fboundp mode)
+          (funcall mode)
+          (font-lock-fontify-buffer))
+        (if (get-buffer-window (current-buffer))
+  	  (car (window-text-pixel-size nil (line-beginning-position) (point)))
+          (set-window-buffer nil (current-buffer))
+          (car (window-text-pixel-size nil (line-beginning-position) (point)))))))
 
-;; (defun org-agenda-fix-tag-alignment ()
-;;   "Use 'display :align-to instead of spaces in agenda."
-;;   (save-match-data
-;;     (goto-char (point-min))
-;;     (setq-local word-wrap nil) ; tags would be moved to next line if `word-wrap'` is non-nil and `truncate-lines' is nil
-;;     (while (re-search-forward org-tag-group-re nil 'noerror)
-;;       (put-text-property (match-beginning 0)
-;; 			 (match-beginning 1)
-;;                          'display
-;;                          `(space . (:align-to (- right
-;; 						 (,(string-display-pixel-width (match-string 1) 'org-mode))
-;;                                                  1)))))))
+  ;; (defun org-agenda-fix-tag-alignment ()
+  ;;   "Use 'display :align-to instead of spaces in agenda."
+  ;;   (save-match-data
+  ;;     (goto-char (point-min))
+  ;;     (setq-local word-wrap nil) ; tags would be moved to next line if `word-wrap'` is non-nil and `truncate-lines' is nil
+  ;;     (while (re-search-forward org-tag-group-re nil 'noerror)
+  ;;       (put-text-property (match-beginning 0)
+  ;; 			 (match-beginning 1)
+  ;;                          'display
+  ;;                          `(space . (:align-to (- right
+  ;; 						 (,(string-display-pixel-width (match-string 1) 'org-mode))
+  ;;                                                  1)))))))
 
-(defun org-agenda-adaptive-fill-function ()
-  "Fill to the beginning of headline in agenda."
-  (save-excursion
-    (when-let ((txt (get-text-property (line-beginning-position) 'txt)))
-      (search-forward (substring txt 0 10))
-      (goto-char (match-beginning 0))
-      (when-let ((re (get-text-property (line-beginning-position) 'org-todo-regexp)))
-	(re-search-forward re (line-end-position) 't)
-        (re-search-forward org-priority-regexp (line-end-position) 't))
-      (make-string (1+ (current-column)) ?\ ))))
+  (defun org-agenda-adaptive-fill-function ()
+    "Fill to the beginning of headline in agenda."
+    (save-excursion
+      (when-let ((txt (get-text-property (line-beginning-position) 'txt)))
+        (search-forward (substring txt 0 10))
+        (goto-char (match-beginning 0))
+        (when-let ((re (get-text-property (line-beginning-position) 'org-todo-regexp)))
+  	(re-search-forward re (line-end-position) 't)
+          (re-search-forward org-priority-regexp (line-end-position) 't))
+        (make-string (1+ (current-column)) ?\ ))))
 
-(defun org-agenda-truncate-headings (&rest _)
-  "Truncate agenda headings to fit the WINDOW width."
-  (with-silent-modifications
-    (when (and (eq major-mode 'org-agenda-mode)
-	       (not org-agenda-columns-active))
-      (save-excursion
-	;; indent wrapped lines to the position below the begining of the heading string
-	(setq-local adaptive-fill-function #'org-agenda-adaptive-fill-function)
+  (defun org-agenda-truncate-headings (&rest _)
+    "Truncate agenda headings to fit the WINDOW width."
+    (with-silent-modifications
+      (when (and (eq major-mode 'org-agenda-mode)
+  	       (not org-agenda-columns-active))
+        (save-excursion
+  	;; indent wrapped lines to the position below the begining of the heading string
+  	(setq-local adaptive-fill-function #'org-agenda-adaptive-fill-function)
 
-	;; (setq-local truncate-lines nil)
-	;; (adaptive-wrap-prefix-mode +1)
+  	;; (setq-local truncate-lines nil)
+  	;; (adaptive-wrap-prefix-mode +1)
 
-	;; cleanup earlier truncation
-	(let ((pos (point-min))
-	      next)
-	  (while (and (setq pos (next-single-char-property-change pos 'truncated nil (point-max)))
-		      (setq next (next-single-char-property-change pos 'truncated nil (point-max)))
-		      (get-text-property pos 'truncated))
-	    (remove-text-properties pos next '(truncated nil invisible nil display nil))))
+  	;; cleanup earlier truncation
+  	(let ((pos (point-min))
+  	      next)
+  	  (while (and (setq pos (next-single-char-property-change pos 'truncated nil (point-max)))
+  		      (setq next (next-single-char-property-change pos 'truncated nil (point-max)))
+  		      (get-text-property pos 'truncated))
+  	    (remove-text-properties pos next '(truncated nil invisible nil display nil))))
 
-	(let ((pos (point-min))
-	      next)
-	  (while (and (setq pos (next-single-char-property-change pos 'org-agenda-afterline nil (point-max)))
-		      (setq next (next-single-char-property-change pos 'org-agenda-afterline nil (point-max)))
-		      (get-text-property pos 'org-agenda-afterline))
-            (delete-region pos next)))
+  	(let ((pos (point-min))
+  	      next)
+  	  (while (and (setq pos (next-single-char-property-change pos 'org-agenda-afterline nil (point-max)))
+  		      (setq next (next-single-char-property-change pos 'org-agenda-afterline nil (point-max)))
+  		      (get-text-property pos 'org-agenda-afterline))
+              (delete-region pos next)))
 
-	(goto-char (point-min))
-	(let ((window-width (window-width))
-	      (ellipsis "…")
-	      (gap "  "))
-	  (while (and (goto-char (next-single-char-property-change (point) 'org-hd-marker nil (point-max)))
-		      (< (point) (point-max)))
-	    (let* ((tag-width (when (re-search-forward org-tag-group-re (point-at-eol) 'noerror)
-				(string-display-width (match-string 1))))
-		   (beg (point-at-bol))
-		   (end (if tag-width (match-beginning 0) (point-at-eol))))
-              (when tag-width
-		(save-excursion
-                  (let ((truncated (string-display-truncate
-				    (buffer-substring beg end)
-				    (- window-width
-				       tag-width
-				       (string-display-width (concat ellipsis gap)))
-				    nil 'hide ellipsis)))
-                    (delete-region beg end)
-                    (goto-char beg)
-                    (insert truncated)))
-	        (goto-char (next-single-char-property-change (point-at-bol) 'truncated nil (point-at-eol)))
-	        (let ((truncated-string (buffer-substring (point) (next-single-char-property-change (point) 'truncated nil (point-at-eol)))))
-		  (unless (seq-empty-p truncated-string)
-		    (remove-text-properties 0 (length truncated-string) '(truncated nil invisible nil display nil) truncated-string)
-		    (add-text-properties 0 (length truncated-string) '(org-agenda-afterline t) truncated-string)
-		    (end-of-line)
-		    (insert (apply #'propertize ellipsis
-				   (text-properties-at 0 truncated-string)))
-		    (insert truncated-string))))
-              (end-of-line))))))))
+  	(goto-char (point-min))
+  	(let ((window-width (window-width))
+  	      (ellipsis "…")
+  	      (gap "  "))
+  	  (while (and (goto-char (next-single-char-property-change (point) 'org-hd-marker nil (point-max)))
+  		      (< (point) (point-max)))
+  	    (let* ((tag-width (when (re-search-forward org-tag-group-re (point-at-eol) 'noerror)
+  				(string-display-width (match-string 1))))
+  		   (beg (point-at-bol))
+  		   (end (if tag-width (match-beginning 0) (point-at-eol))))
+                (when tag-width
+  		(save-excursion
+                    (let ((truncated (string-display-truncate
+  				    (buffer-substring beg end)
+  				    (- window-width
+  				       tag-width
+  				       (string-display-width (concat ellipsis gap)))
+  				    nil 'hide ellipsis)))
+                      (delete-region beg end)
+                      (goto-char beg)
+                      (insert truncated)))
+  	        (goto-char (next-single-char-property-change (point-at-bol) 'truncated nil (point-at-eol)))
+  	        (let ((truncated-string (buffer-substring (point) (next-single-char-property-change (point) 'truncated nil (point-at-eol)))))
+  		  (unless (seq-empty-p truncated-string)
+  		    (remove-text-properties 0 (length truncated-string) '(truncated nil invisible nil display nil) truncated-string)
+  		    (add-text-properties 0 (length truncated-string) '(org-agenda-afterline t) truncated-string)
+  		    (end-of-line)
+  		    (insert (apply #'propertize ellipsis
+  				   (text-properties-at 0 truncated-string)))
+  		    (insert truncated-string))))
+                (end-of-line))))))))
 
-;; (add-hook 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
-(add-hook 'org-agenda-finalize-hook #'org-agenda-truncate-headings 90)
-;; (add-hook 'org-agenda-finalize-hook (lambda () (add-hook 'window-configuration-change-hook #'org-agenda-truncate-headings nil 'local)))
+  ;; (add-hook 'org-agenda-finalize-hook #'org-agenda-fix-tag-alignment)
+  (add-hook 'org-agenda-finalize-hook #'org-agenda-truncate-headings 90)
+  ;; (add-hook 'org-agenda-finalize-hook (lambda () (add-hook 'window-configuration-change-hook #'org-agenda-truncate-headings nil 'local)))
 #+END_SRC
 
 
