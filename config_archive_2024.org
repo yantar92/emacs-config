@@ -1513,4 +1513,29 @@ With =org-webtools=, I can download and attach web pages to an entry or even ins
   (setq org-web-tools-pandoc-sleep-time 1.0))
 #+end_src
 
+*** 2024-07-22 Monday
+**** Archived Tasks
+***** Chinese input
+:PROPERTIES:
+:CREATED:  [2019-08-03 Sat 17:01]
+:ID:       c822d425-3cfa-4cb7-bf1e-9ea893fbee5c
+:ARCHIVE_TIME: 2024-07-22 Mon 11:56
+:ARCHIVE_FILE: ~/Git/emacs-config/config.org
+:ARCHIVE_OLPATH: Emacs configuration/Command loop
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_ITAGS: EMACS COMMON SOMEDAY
+:END:
+
+#+begin_src emacs-lisp
+  (use-package pyim 
+    :if init-flag
+    :straight t
+    :demand t
+    :config
+    (setq default-input-method "pyim")
+    (setq-default pyim-english-input-switch-functions
+		  '(pyim-probe-isearch-mode
+		    pyim-probe-program-mode
+		    pyim-probe-org-structure-template)))
+#+end_src
 

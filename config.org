@@ -1562,25 +1562,6 @@ Credit: [[id:clemera2020_with_emacs_quit_curren_contex][clemera [with-emacs] (20
   (bind-key* "C-S-g" #'exit-recursive-edit))
 #+end_src
 
-*** Chinese input
-:PROPERTIES:
-:CREATED:  [2019-08-03 Sat 17:01]
-:ID:       c822d425-3cfa-4cb7-bf1e-9ea893fbee5c
-:END:
-
-#+begin_src emacs-lisp
-  (use-package pyim 
-    :if init-flag
-    :straight t
-    :demand t
-    :config
-    (setq default-input-method "pyim")
-    (setq-default pyim-english-input-switch-functions
-		  '(pyim-probe-isearch-mode
-		    pyim-probe-program-mode
-		    pyim-probe-org-structure-template)))
-#+end_src
-
 *** Default major mode
 :PROPERTIES:
 :CREATED:  [2019-08-11 Sun 14:57]
