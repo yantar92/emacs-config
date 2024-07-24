@@ -15087,17 +15087,6 @@ Patching the relevant function to not put that tooltip into the overlay.
 				 "The clock is running in this item")))))))))))
 #+end_src
 
-***** Main face
-:PROPERTIES:
-:ID:       cad750df-6aa6-4852-9d78-de9963b09692
-:END:
-
-Use normal colour for the default agenda face
-#+begin_src emacs-lisp
-(set-face-attribute 'org-agenda-structure nil
-		    :foreground (face-foreground 'default))
-#+end_src
-
 ***** Highlight items with =:FLAGGED:= tag
 :PROPERTIES:
 :ID:       2f6359c2-9cdd-4bcb-a7f3-e9d0d26c8aa0
