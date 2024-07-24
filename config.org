@@ -7494,7 +7494,7 @@ Make Emacs ERC automatically re-connect when it looses server connection.
   (ement-notify-sound "message-new-instant"))
 #+end_src
 
-** Mastodon client =mastodon.el=
+** COMMENT Mastodon client =mastodon.el=
 
 #+begin_src emacs-lisp
 (use-package mastodon
