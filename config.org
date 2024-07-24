@@ -14347,7 +14347,6 @@ You can use this to set \\mathversion{bold} for example to make it bolder."
 :CREATED:  [2020-04-27 Mon 13:25]
 :ID:       84e7aa2b-c488-4dfd-a794-16b5059f4082
 :END:
-
 ***** Extra entities
 
 #+begin_src emacs-lisp
