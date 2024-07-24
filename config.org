@@ -15255,37 +15255,6 @@ Use UTF symbols for entities.
 :PROPERTIES:
 :ID:       b195d9ea-e3e0-476e-b898-43b69fbd365d
 :END:
-**** Org element cache
-:PROPERTIES:
-:CREATED:  [2018-11-18 Sun 13:04]
-:ID:       7c1c828b-3a77-4e79-b07a-4ad173a5f87a
-:END:
-
-:BACKLOG:
-[2019-08-27 Tue] Disabling cache for now due to strange errors. Most commonly "Wrong side of point"
-[2020-05-25 Mon] Trying again
-[2020-07-15 Wed] Again getting strange errors. Probably related to native-comp
-[2020-08-02 Sun] Retrying again
-[2020-08-27 Thu] Disabling because of strange hangs
-[2021-02-13 Sat] Trying again
-[2021-03-13 Sat] Disabling. It hangs Emacs when syncing cache in inbox buffer after multiple refiles (deletions) from the buffer.
-[2021-05-05 Wed] Trying again
-[2021-08-15 Sun] Trying again
-[2021-08-16 Mon] Disabling until I fix tests and issue with incorrectly found IDs during tangle
-[2021-09-19 Sun] [[notmuch:id:87bl4p6n0m.fsf@localhost][Email to emacs-orgmode@gnu.org: [feature proposal] Headline caching via org-element-cache = up to 2.5x performance boost]]. Let's solve it once and for all!
-[2024-06-22 Sat] The cache is now enabled for all Org users
-:END:
-
-#+begin_src emacs-lisp
-  (use-package org-element
-    :config
-    (setq org-element-use-cache t)
-    (setq org-element--cache-self-verify nil)
-    ;; (setq org-element--cache-diagnostics-level 3)
-    (setq org-element--cache-diagnostics-ring-size 200000)
-    (setq org-element--cache-self-verify-frequency 0.05))
-#+end_src
-
 **** Org mode editing
 :PROPERTIES:
 :CREATED:  [2018-10-23 Tue 18:45]
