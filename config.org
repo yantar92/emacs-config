@@ -14602,7 +14602,7 @@ Use smaller font for inline headings without keyword
   :hook (org-mode . org-appear-mode))
 #+end_src
 
-**** Align tags to right, even when the window size changes
+**** COMMENT Align tags to right, even when the window size changes
 :PROPERTIES:
 :CREATED:  [2020-07-17 Fri 15:21]
 :ID:       d5a3c2c8-c6b1-4f21-a548-f6bb8bf85949
