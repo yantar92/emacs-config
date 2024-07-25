@@ -492,6 +492,7 @@ Understanding how to set ~display-buffer-alist~ is not intuitive,
 unfortunately. After digging the documentation it is making a lot of
 sense though. I also recommend [[id:demystifying-emacss-window-manager-6a0][[Mastering Emacs] Demystifying Emacs's
 Window Manager]].
+
 ***** Display =*Warnings*= at the bottom
 
 Since Emacs got native compilation, it really sped things up.
@@ -516,8 +517,7 @@ of Emacs session).
 	'(display-buffer-at-bottom (window-height . 0.3))))
 #+end_src
 
-
-***** Force displaying Org mode's =*Select link*= buffer at the bottom
+***** Display Org mode's =*Select link*= buffer in posframe
 
 #+begin_src emacs-lisp
 (when init-flag
@@ -547,7 +547,6 @@ ALIST may have non-standard elements `poshandler', `foreground-color',
             (internal-border-color . ,(face-background 'highlight))
             (internal-border-width . 20)))))
 #+end_src
-
 
 **** Centered text in window
 :PROPERTIES:
@@ -616,8 +615,7 @@ the beginning/end of the buffer in emacs.
 Match default face background
 
 #+begin_src emacs-lisp
-(set-face-attribute 'fringe nil
-		    :background (face-background 'default))
+  (when init-flag (set-face-attribute 'fringe nil :background (face-background 'default)))
 #+end_src
 
 **** Smooth scrolling
@@ -710,7 +708,6 @@ Use smooth page-up/down, but do it quickly to not trade visuals for work efficie
   (setq pixel-scroll-precision-interpolate-page t
         pixel-scroll-precision-interpolation-total-time 0.07))
 #+end_src
-
 
 *** Buffer
 
