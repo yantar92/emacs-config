@@ -15652,7 +15652,7 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
     (add-hook 'org-babel-pre-tangle-hook #'yant/org-decrypt-for-tangle-maybe 100)))
 #+end_src
 
-**** Speed up saving files without encrypted headings
+**** COMMENT Speed up saving files without encrypted headings
 :PROPERTIES:
 :ID:       00dba9c3-ee6a-4e77-97d1-0b8c2d2544c2
 :END:
