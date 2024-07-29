@@ -1578,6 +1578,309 @@ For example, when working with logs copied from clipboard.
 (setq-default major-mode 'text-mode)
 #+end_src
 
+** TODO Custom input method
+
+It is well-known that the default "qwerty" keyboard layout is not the
+most optimal.  There are alternatives like "dvorak"
+(https://en.wikipedia.org/wiki/Dvorak_keyboard_layout) or "programmer
+dvorak" (https://www.kaufmann.no/roland/dvorak/) that put less strain
+onto fingers.
+
+However, all the generic layouts are optimized based on the
+non-specialized English texts.  We can do much better if the
+optimization is performed on personal notes, generating personalized
+keyboard layout.
+
+The layout is not for key bindings, only for typing - Emacs key
+bindings can be optimized separately, using normal Emacs means.
+
+I based the layout on programmer dvorak, but with modifications
+tailored for better experience with Elisp:
+- Number row is inverted to put numbers as first non-shifted option to
+  make things easier with my laptop keyboard that does not have a numpad.
+
+Then, I passed the modified programmer dvorak through ~carpalx~ using
+my personal notes (cleaned up Org files), and Org mode Elisp code +
+docs. I only optimized the non-number bindings - optimizing numbers is
+a questionable endaevour in terms of complying with my personal notes.
+
+Corpus cleanup:
+#+begin_src bash :tangle no
+  cat yantar92.txt | sed -E '/^#\+.+/d' | sed -E '/^[ \t]*:[^:]+: .+/d'\
+      | sed -E '/:PROPERTIES:/d' | sed -E '/:END:/d' | sed -E '/SCHEDULED:/d'\
+      | sed -E '/:LOGBOOK:/d' | sed -E '/Refiled on/d' | sed -E '/CLOCK: /d'\
+      | sed -E '/DEADLINE:/d' | sed -E '/- State.+from/d' | sed -E 's/^\*+ //'\
+      | sed -E '/^$/d' | sed -E '/CLOSED: /d' | sed -E '/- Following up ::/d'\
+      | sed -E '/- Note taken on/d' | sed -E 's/\[\[[^]]+\]//'\
+      | sed -E 's/\[[0-9]+[^]]\]//g' | sed -E '/howpublished/d'\
+      | sed -E '/check citing articles/d' | sed -E '/Consider subscribing/d'\
+      | sed -E '/downlaod and/d'  | sed -E '/check related articles/d'\
+      | sed -E '/check if bibtex entry/d' | sed -E '/read paper capturing/d'\
+      | sed -E '/download and attach pdf/d' | sed -E '/author =/d'\
+      | sed -E '/note =/d' | sed -E '/title =/d'\
+      | sed -E '/keywords =/d' | sed -E '/url =/d' | sed -E '/year =/d'\
+      | sed -E '/^[ ]*\}[ ]*$/d' | sed -E '/:BIBTEX:/d' | sed -E '/@misc\{/d'\
+      | sed -E '/Following up:/d' | sed -E 's/\[[0-9]+[^]]+\]//g'\
+      | sed -E 's/<[0-9]+[^>]+>//g' | sed -E '/the following bibtex entry should/d'\
+      | sed -E '/DATE_ADDED =/d' | sed -E '/^[ \t]*Source:/d'\
+  				     > yantar92-clean.txt
+#+end_src
+
+Here is the input for optimization.
+I also modified the default finger placement to reflect my de-facto
+typing habits.
+
+:optimization_input:
+#+begin_src conf :tangle no
+  #  01234  56789         :  = pinky
+  #  :|||/  \|||:         |  = middle fingers
+  #  left   right        / \ = thumbs
+  #  hand   hand
+
+  <keyboard>
+
+  <row 1>
+  keys    = `~  &% 7[ 5{ 3} 1< 9= 0* 2> 4+ 6] 8! \#$
+  fingers = 1   1  2  3  3  3  6  6  7  8  8  8  8
+  </row>
+
+  <row 2>
+  keys    = "' ,( .) p y f g c r l /? @^ \|
+  fingers = 1  1  2  3 3 6 6 7 8 8 8  8  9
+  </row>
+
+  <row 3>
+  keys    = a o e u i d h t n s -_
+  fingers = 1 1 2 3 3 6 6 7 8 9 9
+  </row>
+
+  <row 4>
+  keys    = ;: q j k x b m w v z
+  fingers = 1  2 3 3 6 6 6 7 8 9
+  </row>
+
+  </keyboard>
+#+end_src
+
+#+begin_src conf :tangle no
+  # All non-number keys are subject to optimization.
+
+  #      $  & [ { } < = * > + ] ! \#
+  <mask_row 1>
+  mask = 1 1 0 0 0 0 0 0 0 0 0 0 1
+  </mask_row>
+
+  #      ; , . p y f g c r l / @ \
+  <mask_row 2>
+  mask = 1 1 1 1 1 1 1 1 1 1 1 1 1
+  </mask_row>
+
+  #      a o e u i d h t n s -
+  <mask_row 3>
+  mask = 1 1 1 1 1 1 1 1 1 1 1
+  </mask_row>
+
+  #      ' q j k x b m w v z
+  <mask_row 4>
+  mask = 1 1 1 1 1 1 1 1 1 1
+  </mask_row>
+
+#+end_src
+
+#+begin_src conf :tangle no
+runid = __join("", map { chr(97+rand(26)) } (0..5))__
+
+# see etc/carpalx.conf for detailed parameter and section comments
+
+# this is what to do
+
+action  = loadkeyboard,loadtriads,drawinputkeyboard,reporteffortverybrief,optimize,drawoutputkeyboard,reporteffortverybrief,quit
+
+# this is the training set used to generate triads
+corpus  = ../corpus/yantar92-clean.txt
+mode    = english
+#triads_max_num  = 10000
+triads_overlap  = yes
+triads_min_freq = 10
+
+# this is the word list for statistics
+
+# words      = ../corpus/words.480k.txt
+# wordlength = 6-10
+
+# this is the input keyboard to use
+keyboard_input  = keyboards/programmers-dvorak-yantar92.conf
+keyboard_output = out/tutorials/00/yantar92-tmp-__$CONF{runid}__.conf
+keyboard_output_show_parameters = current,annealing
+
+# this imports parametrization of the typing model
+
+<effort_model>
+<<include effort/01.conf>>
+</effort_model>
+
+<annealing>
+action     = minimize
+iterations = 20000
+t0         = 10
+p0         = 1       # p0 = 0 to avoid transitions to layouts with higher effort 
+k          = 10
+minswaps   = 1
+maxswaps   = 2
+onestep    = no      # each layout perturbation taken from original layout (no cumulative changes)
+</annealing>
+
+stdout_period = 1
+stdout_filter = all
+
+report_period = 1
+report_filter = all # all | lower | lower_monotonic | update | none
+
+draw_period   = 1
+draw_filter   = none # all | lower | lower_monotonic | update | none
+
+<<include png/colors.conf>>
+
+font         = fonts/lucon.ttf
+fontc        = fonts/MINIC___.TTF
+
+pngfile_keyboard_input  = out/tutorials/00/input-__$CONF{runid}__.png
+pngfile_keyboard_output = out/tutorials/00/output-__$CONF{runid}__.png
+
+imagedetaillevel = 2  # use block named 1 for detail level
+imageparamset    = 2  # use block named 1 for image parameters
+
+<imageparamsetdef 1>
+keysize      = 35
+fontsize     = 11
+xshift       = 4
+ucyshift     = 14
+lcyshift     = 16
+keyspacing   = 0.2
+shadowsize   = 1
+bottommargin = 30
+
+<color>
+imageborder = grey
+keyshadow   = grey
+background  = white
+effort_color_i = lred
+effort_color_f = lgreen
+key         = white
+keyborder   = black
+</color>
+
+</imageparamsetdef>
+
+<imageparamsetdef 2>
+keysize      = 23
+fontsize     = 8
+xshift       = 3
+ucyshift     = 11
+lcyshift     = 9
+keyspacing   = 0.2
+shadowsize   = 1
+bottommargin = 15
+
+<color>
+imageborder = grey
+keyshadow   = black
+background  = white
+effort_color_i = lred
+effort_color_f = lgreen
+key         = white
+keyborder   = dgrey
+</color>
+
+</imageparamsetdef>
+
+<imagedetaildef 1>
+keyshadow   = yes
+upcase      = some
+lowcase     = yes
+effortcolor = yes
+fillkey     = yes
+keyborder   = yes
+finger      = yes
+effort      = yes
+hand        = yes
+imageborder = yes
+parameters  = yes
+</imagedetaildef>
+
+<imagedetaildef 2>
+keyshadow   = yes
+upcase      = some
+lowcase     = yes
+capitalize  = yes
+effortcolor = no
+fillkey     = yes
+keyborder   = yes
+finger      = no
+effort      = no
+hand        = no
+imageborder = no
+parameters  = no
+</imagedetaildef>
+
+<<include mask/dvorak-2.conf>>
+<<include modes/mode.conf>>
+#+end_src
+:end:
+
+Optimized layout:
+
+: & ; 7 5 3 1 9 0 2 4 6 8 @     % : [ { } < = * > + ] ! ^
+: . - m u f g d l j x ` \ "     ) _ M U F G D L J X ~ | '
+: r s i a t n e o c h q         R S I A T N E O C H Q
+: # k w p , b y v z /           $ K W P ( B Y V Z ?
+
+#+begin_src emacs-lisp
+  (when init-flag
+    (require 'quail)
+
+    (quail-define-package
+     "yantar92" "English" "YNT@" t
+     "yantar92's custom layout"
+     nil t t t t nil nil nil nil nil t)
+
+    (quail-define-rules
+     ("`" ?&) ("1" ?\;) ("2" ?7) ("3" ?5) ("4" ?3) ("5" ?1) ("6" ?9) ("7" ?0) ("8" ?2) ("9" ?4) ("0" ?6) ("-" ?8) ("=" ?@)
+     ("q" ?.) ("w" ?-) ("e" ?m) ("r" ?u) ("t" ?f) ("y" ?g) ("u" ?d) ("i" ?l) ("o" ?j) ("p" ?x) ("[" ?`) ("]" ?\\)
+     ("a" ?r) ("s" ?s) ("d" ?i) ("f" ?a) ("g" ?t) ("h" ?n) ("j" ?e) ("k" ?o) ("l" ?c) (";" ?h) ("'" ?q) ("\\" ?\")
+     ("z" ?#) ("x" ?k) ("c" ?w) ("v" ?p) ("b" ?,) ("n" ?b) ("m" ?y) ("," ?v) ("." ?z) ("/" ?/)
+
+     ("~" ?%) ("!" ?:) ("@" ?\[) ("#" ?{) ("$" ?}) ("%" ?<) ("^" ?=) ("&" ?*) ("*" ?>) ("(" ?+) (")" ?\]) ("_" ?!) ("+" ?^)
+     ("Q" ?\)) ("W" ?_) ("E" ?M) ("R" ?U) ("T" ?F) ("Y" ?G) ("U" ?D) ("I" ?L) ("O" ?J) ("P" ?X) ("{" ?~) ("}" ?|)
+     ("A" ?R) ("S" ?S) ("D" ?I) ("F" ?A) ("G" ?T) ("H" ?N) ("J" ?E) ("K" ?O) ("L" ?C) (":" ?H) ("\"" ?Q) ("|" ?')
+     ("Z" ?$) ("X" ?K) ("C" ?W) ("V" ?P) ("B" ?\() ("N" ?B) ("M" ?Y) ("<" ?V) (">" ?Z) ("?" ??)))
+#+end_src
+
+
+
+#+begin_src emacs-lisp
+  (when init-flag
+    (defvar yant/custom-input-method-enabled t
+      "When non-nil, enable custom input method.")
+    (defun yant/toggle-custom-input-method ()
+      "Toggle custom input method."
+      (interactive)
+      (setq yant/custom-input-method-enabled
+  	  (not yant/custom-input-method-enabled)))
+    (use-package boon
+      :config
+      (define-advice boon-set-insert-state (:after () set-input-method)
+        (when yant/custom-input-method-enabled (set-input-method "yantar92"))))
+    (add-hook
+     'minibuffer-setup-hook
+     (lambda () (when yant/custom-input-method-enabled
+  	   (set-input-method "yantar92"))))
+    (add-hook
+     'isearch-mode-hook
+     (lambda () (when yant/custom-input-method-enabled
+  	   (set-input-method "yantar92")))))
+#+end_src
+
 ** Completion
 :PROPERTIES:
 :ID:       f78e9123-ed35-4c76-a5fd-5549cc8f8210
