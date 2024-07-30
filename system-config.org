@@ -8855,61 +8855,6 @@ SELINUXTYPE=strict
 [2020-12-13 Sun] The current version of Gentoo Wiki does not show how to enable SELinux in newer kernels (5.4.80). I found [[id:0dd53ee83c9bfbb28c750acc10c432a771455a9b][torvalds [Github] LSM: Revive CONFIG_DEFAULT_SECURITY_* for "make oldconfig"]] showing that default value of "A comma-separated list of LSMs, in initialization order" should be changed when setting SELinux.
 
 
-** COMMENT VPN service - old :COMMON:crypt:TANGLE:
-:PROPERTIES:
-:ID:       c9763353-b69f-44f9-800d-c4c1dd79c095
-:ARCHIVE_TIME: 2023-01-20 Fri 16:44
-:ARCHIVE_FILE: ~/Org/system-config.org
-:ARCHIVE_OLPATH: System: Gentoo Linux/Basic toolchain/Network/VPN
-:ARCHIVE_CATEGORY: system-config
-:ARCHIVE_ITAGS: COMMON @home HOLD
-:END:
-
------BEGIN PGP MESSAGE-----
-
-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
-goQRkeIYtepIt9oVaDW94pHKzw==
-=BJrx
------END PGP MESSAGE-----
-
 ** COMMENT pantalaimon: end-to-end encryption server for matrix :COMMON:HOLD:
 :PROPERTIES:
 :ID:       871f0af1-da9b-4fc0-8275-24f59dd6318e
