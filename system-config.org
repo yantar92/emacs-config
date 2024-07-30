@@ -8244,12 +8244,17 @@ dev-python/pandas doc
 :ID:       3a7e9dff-dc15-44f9-ae56-0b2fbcf7607a
 :END:
 
+[2024-07-29 Mon] numpy >=2 is a breaking change. Not yet installing to avoid issues with pymatgen
+
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-python/numpy
 #+end_src
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/numpy
 dev-python/numpy doc
+#+end_src
+#+begin_src conf :tangle /sudo::/etc/portage/package.mask/numpy
+>=dev-python/numpy-2.0.0
 #+end_src
 
 ** Games
@@ -8520,6 +8525,40 @@ media-gfx/plantuml
 dev-lang/clojure
 dev-java/leiningen-bin
 #+end_src
+** Python environments: =pipenv=
+
+  #+begin_src conf :tangle /sudo::/var/lib/portage/world
+    dev-python/pipenv
+  #+end_src
+
+** Vesta
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/vesta-bin
+sci-chemistry/vesta-bin::guru
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.license/vesta-bin
+sci-chemistry/vesta-bin VESTA
+#+end_src
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+  sci-chemistry/vesta-bin
+#+end_src
+
+** TODO Guix setup
+
+- It looks like custom installation from root is the way
+- Initial setup
+  #+begin_src bash
+    guix install glibc-locales
+    export GUIX_LOCPATH=$HOME/.guix-profile/lib/locale
+  #+end_src
+- nscd
+  #+begin_src conf :tangle /sudo::/var/lib/portage/world
+    sys-apps/unscd
+  #+end_src
+- https://guix.gnu.org/manual/en/html_node/Application-Setup.html
+
 
 * Archived
 
