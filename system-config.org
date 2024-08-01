@@ -8525,13 +8525,16 @@ media-gfx/plantuml
 dev-lang/clojure
 dev-java/leiningen-bin
 #+end_src
-** Python environments: =pipenv=
+** Python for research
+*** Python LSP
 
-  #+begin_src conf :tangle /sudo::/var/lib/portage/world
-    dev-python/pipenv
-  #+end_src
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+  dev-python/python-lsp-server
+  dev-python/python-lsp-black
+#+end_src
 
-** Vesta
+
+*** Vesta
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.unmask/vesta-bin
 sci-chemistry/vesta-bin::guru

@@ -5259,7 +5259,7 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
                  ("h t" . helm-info-texinfo))))
 #+end_src
 
-*** COMMENT Python
+*** Python
 **** Do not inform me every time Python guesses indentation offset
 
 #+begin_src emacs-lisp
@@ -5269,43 +5269,93 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   (python-indent-guess-indent-offset-verbose nil))
 #+end_src
 
-**** =Elpy= python development environment
+**** COMMENT =Elpy= python development environment
 
 #+begin_src emacs-lisp
 (use-package elpy
   :if init-flag
   :straight t
   :defer 10
-  :custom
-  (elpy-rpc-backend "jedi")
   :config
   (elpy-enable)
   (meta-defun meta-down-element :mode python-mode elpy-nav-forward-block)
   (meta-defun meta-up-element :mode python-mode elpy-nav-backward-block))
 #+end_src
 
-**** Jedi
+**** COMMENT Jedi
 
 #+begin_src emacs-lisp
-(use-package jedi
-  :straight t
-  :if init-flag
-  :init
-  (add-hook 'python-mode-hook #'jedi-mode))
+  (use-package jedi
+    :straight t
+    :if init-flag
+    :init
+    (add-hook 'python-mode-hook #'jedi-mode))
 #+end_src
 
-Use company backend instead of main jedi that uses auto-completion
+**** Use eglot for pyhon
 
 #+begin_src emacs-lisp
-(use-package company-jedi
-  :straight t
-  :if init-flag
-  :after company
-  :init
-  (defun yant/python-mode-hook ()
-    (add-to-list 'company-backends 'company-jedi))
-  (add-hook 'python-mode-hook #'yant/python-mode-hook))
+  (use-package eglot
+    :config
+    (add-hook 'python-mode-hook #'eglot-ensure)
+    ;; (add-hook 'python-mode-hook #'eglot-inlay-hints-mode)
+    (use-package corfu
+      :config
+      (setq completion-category-overrides
+  	  '((eglot (styles orderless))
+  	    (eglot-capf (styles orderless))))
+      ;; As per readme
+      (straight-use-package 'cape)
+      (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)))
 #+end_src
+
+***** Bindings
+
+#+begin_src emacs-lisp
+  (use-package eglot
+    :bind (:map eglot-mode-map
+                ("C-c C-d" . eldoc)
+                ("C-c C-e" . eglot-rename)
+                ("C-c C-f" . eglot-format-buffer)))
+#+end_src
+
+***** Workspace config
+https://www.adventuresinwhy.com/post/eglot/
+
+#+begin_src emacs-lisp
+  (use-package eglot
+    :config
+    (setq-default
+     eglot-workspace-configuration
+     '((:pylsp .
+  	     (:configurationSources
+  	      ["flake8"]
+  	      :plugins
+                ( :pycodestyle (:enabled :json-false)
+  		:mccabe (:enabled :json-false)
+  		:pyflakes (:enabled :json-false)
+  		:flake8 ( :enabled :json-false
+  			  :maxLineLength 88)
+  		;; :ruff ( :enabled t
+  		;; 	:lineLength 88)
+  		:pydocstyle ( :enabled t
+  			      :convention "numpy")
+  		:yapf (:enabled :json-false)
+  		:autopep8 (:enabled :json-false)
+  		:black ( :enabled t
+  			 :line_length 88
+  			 :cache_config t)))))))
+#+end_src
+
+**** Python REPL
+***** Meta bindings
+#+begin_src emacs-lisp
+  (use-package meta-functions
+    :after python
+    :config
+    (meta-defun meta-new-line :mode inferior-python-mode comint-send-input))
+#+end_src
+
 *** Elisp coding
 :PROPERTIES:
 :CREATED:  [2019-07-08 Mon 20:50]
