@@ -8244,17 +8244,12 @@ dev-python/pandas doc
 :ID:       3a7e9dff-dc15-44f9-ae56-0b2fbcf7607a
 :END:
 
-[2024-07-29 Mon] numpy >=2 is a breaking change. Not yet installing to avoid issues with pymatgen
-
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-python/numpy
 #+end_src
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/numpy
 dev-python/numpy doc
-#+end_src
-#+begin_src conf :tangle /sudo::/etc/portage/package.mask/numpy
->=dev-python/numpy-2.0.0
 #+end_src
 
 ** Games
@@ -8546,6 +8541,12 @@ sci-chemistry/vesta-bin VESTA
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
   sci-chemistry/vesta-bin
+#+end_src
+
+*** Tkinter GUI
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.use/python
+dev-lang/python tk
 #+end_src
 
 ** TODO Guix setup
