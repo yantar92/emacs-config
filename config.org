@@ -4701,12 +4701,13 @@ There is also built-in skeleton mode, but =yasnippet= allows more visual
 interactive editing style without prompts.
 
 #+begin_src emacs-lisp
-(use-package yasnippet
-  :if init-flag
-  :straight t
-  :hook ((org-mode latex-mode markdown-mode prog-mode lisp-interaction-mode) . yas-minor-mode)
-  :config
-  (yas-reload-all))
+  (use-package yasnippet
+    :if init-flag
+    :straight t
+    :hook ((org-mode latex-mode markdown-mode prog-mode lisp-interaction-mode) . yas-minor-mode)
+    :config
+    (bind-key "M-<tab>" #'yas-expand yas-minor-mode-map)
+    (yas-reload-all))
 #+end_src
 
 **** Auto-expand snippets without a need to type trigger command
@@ -4720,16 +4721,16 @@ Note that =auto= is important here as some snippets would be too aggressive.
 I also added =self-insert-command= check to avoid calling, say, on movement commands.
 
 #+begin_src emacs-lisp
-(use-package yasnippet
-  :if init-flag
-  :after yasnippet
-  :config
-  (defun my-yas-try-expanding-auto-snippets ()
-    (when (and (boundp 'yas-minor-mode) yas-minor-mode)
-      (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
-        (when (eq this-command 'self-insert-command)
-          (yas-expand)))))
-  (add-hook 'post-command-hook #'my-yas-try-expanding-auto-snippets))
+  (use-package yasnippet
+    :if init-flag
+    :after yasnippet
+    :config
+    (defun my-yas-try-expanding-auto-snippets ()
+      (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+        (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
+          (when (eq this-command 'self-insert-command)
+            (yas-expand)))))
+    (add-hook 'post-command-hook #'my-yas-try-expanding-auto-snippets))
 #+end_src
 
 **** Org mode snippets
@@ -4746,6 +4747,13 @@ I also added =self-insert-command= check to avoid calling, say, on movement comm
 $0
 \end{equation}
 #+end_src
+**** Extra snippets
+#+begin_src emacs-lisp
+  (use-package yasnippet-snippets
+    :if init-flag
+    :straight t)
+#+end_src
+
 
 *** Undo
 **** Undo displayed as a graph
