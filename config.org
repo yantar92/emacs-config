@@ -14046,16 +14046,17 @@ files.
   										(interactive)
   										(dired-noselect dir nil) )))
   					    (org-attach-reveal-in-emacs))))
-                            (save-window-excursion
-  			    (pop-to-buffer dired-buf)
-  			    (revert-buffer)
-  			    (select-window (old-selected-window))
-  			    (prog1
-  				(or
-                                   (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html") ("." "..")))
-  			         (yes-or-no-p (format "%s: Delete all attachments? "
-  						      heading)))
-  			      (kill-buffer dired-buf))))
+                            (save-excursion
+                              (save-window-excursion
+  			      (pop-to-buffer dired-buf)
+  			      (revert-buffer)
+  			      (select-window (old-selected-window))
+  			      (prog1
+  				  (or
+                                     (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html") ("." "..")))
+  			           (yes-or-no-p (format "%s: Delete all attachments? "
+  							heading)))
+  				(kill-buffer dired-buf)))))
   		      org-attach-archive-delete))
   	       (org-attach-delete-all t)))))))))
 #+end_src
