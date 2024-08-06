@@ -9394,6 +9394,11 @@ CLOCK: [2019-04-24 Wed 15:43]--[2019-04-24 Wed 15:46] =>  0:03
   :after org
   :config
 #+end_src
+
+#+begin_src emacs-lisp
+  (add-to-list 'org-use-property-inheritance "DIR")
+#+end_src
+
 ***** Default attachment directory + multi-selection for attach
 :PROPERTIES:
 :CREATED:  [2018-09-28 Fri 16:12]
