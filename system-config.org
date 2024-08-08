@@ -8520,6 +8520,12 @@ dev-lang/clojure
 dev-java/leiningen-bin
 #+end_src
 ** Python for research
+*** Poetry
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+  dev-python/poetry
+#+end_src
+
 *** Python LSP
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
