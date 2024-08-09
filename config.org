@@ -5432,6 +5432,22 @@ This is according to Corfu README.
          (:enabled t))))))
 #+end_src
 
+**** Disable =aggressive-indent-mode= in Python buffers
+
+I usually use =aggressive-indent-mode= for auto-indentation, but for
+Python specifically it often annoyingly re-indents unrelated code
+after expressions.  Disable.
+
+#+begin_src emacs-lisp
+  (use-package aggressive-indent
+    :if init-flag
+    :defer t
+    :config
+    (defun yant/disable-aggressive-indent ()
+      (aggressive-indent-mode -1))
+    (add-hook 'python-mode-hook #'yant/disable-aggressive-indent))
+#+end_src
+
 **** Python REPL
 ***** Meta bindings
 #+begin_src emacs-lisp
