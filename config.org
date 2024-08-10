@@ -4751,6 +4751,7 @@ $0
 #+begin_src emacs-lisp
   (use-package yasnippet-snippets
     :if init-flag
+    :after yasnippet
     :straight t)
 #+end_src
 
