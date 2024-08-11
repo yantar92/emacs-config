@@ -2792,20 +2792,6 @@ done
 media-sound/pavucontrol-qt
 #+end_src
 
-**** Webcam control: v4l-utils (qv4l2)
-:PROPERTIES:
-:ID:       99aea26f-097f-4c07-9a82-fde5a4e4f150
-:END:
-
-#+begin_src conf :tangle /sudo::/var/lib/portage/world
-media-tv/v4l-utils
-#+end_src
-
-Need to enable gui
-#+begin_src conf :tangle /sudo::/etc/portage/package.use/v4l-utils
-media-tv/v4l-utils qt5
-#+end_src
-
 **** Read key evens (xev)
 :PROPERTIES:
 :ID:       4af366b8-d9a1-4e6c-9749-cdde75f46091
