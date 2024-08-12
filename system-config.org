@@ -8506,10 +8506,13 @@ dev-lang/clojure
 dev-java/leiningen-bin
 #+end_src
 ** Python for research
-*** Poetry
+*** Pyton linters
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-  dev-python/poetry
+  dev-python/yapf
+  dev-python/rope
+  dev-python/flake8
+  dev-python/pylint
 #+end_src
 
 *** Python LSP
