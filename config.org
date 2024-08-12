@@ -12435,28 +12435,44 @@ About: [[https://habrahabr.ru/post/323576/][habr]]
 :CREATED:  [2018-07-21 Sat 16:40]
 :ID:       38d9103d-a969-4c69-ae0e-a9a50912fba0
 :END:
-The idea is to assign time bonus/penalty during working on different tasks, so that the total balanced time spent under all the tasks (=org-time-balance=) is kept positive.
-Similar concept is described [[id:8a2ae3c3-69b0-495b-b796-9c9916dc40c6][here]].
 
-I calculate the effective time by setting =ORG-TIME-BALANCE-MULTIPLIER= property for various tasks.
-If the value is positive then the task is useful. Otherwise, it is negative and I do not want to spend too much time doing such tasks.
-The property can be different for various classes of tasks allowing to avoid/promote doing various tasks.
-Setting =ORG-TIME-BALANCE-MULTIPLIER= for every single task is annoying, so I make it inherited during calculation.
+ #org_time_balance
 
-It does not make sense to set =ORG-TIME-BALANCE-MULTIPLIER= for tasks like buying something in the shop.
-I just do not clock them in.
-Instead, I use =ORG-TIME-BONUS-ON-DONE= property to add fixed extra time for finishing the task (only =DONE= keyword is considered).
+The idea is to assign time bonus/penalty during working on different
+tasks, so that the total balanced time spent under all the tasks
+(=org-time-balance=) is kept positive.  Similar concept is described
+[[id:8a2ae3c3-69b0-495b-b796-9c9916dc40c6][here]].
 
-Also, during exceptionally procrastinated days time balance may go overboard and become terribly negative. If the balance becomes too negative, it is infuriating to see how much I need to makeup. The solution is introducing the idea of /lossage/. When time balance becomes too negative, it is no longer decreased, but the lossage is increased. Later, when the time balance becomes large and positive, it stops growing until the lossage is back to 0.
+I calculate the effective time by setting
+=ORG-TIME-BALANCE-MULTIPLIER= property for various tasks.  If the
+value is positive then the task is useful. Otherwise, it is negative
+and I do not want to spend too much time doing such tasks.  The
+property can be different for various classes of tasks allowing to
+avoid/promote doing various tasks.  Setting
+=ORG-TIME-BALANCE-MULTIPLIER= for every single task is annoying, so I
+make it inherited during calculation.
 
-Similar idea is used by John Wiegley in [[id:4dda6631-cace-441d-bc4c-a3d778a09d30][Emacs SF: 2019-07-24: All Things Org-Mode - Multiple Speakers]]
-He tracks his clocking time daily to have an idea how long he worked relative to his daily goal (8 hours).
-This idea is not applicable for my work though. Research is often not regularly structured - I can work during weekdays, weekends, at night time when I suddenly get some idea, etc. In such a way, it is important for me to maintain some average work/leisure balance rather than work certain number of hours every workday.
+It does not make sense to set =ORG-TIME-BALANCE-MULTIPLIER= for tasks
+like buying something in the shop.  I just do not clock them in.
+Instead, I use =ORG-TIME-BONUS-ON-DONE= property to add fixed extra
+time for finishing the task (only =DONE= keyword is considered).
 
-****************** TODO the bonus cannot be correctly handled when we need to update the time after certain point
-****************** END
+Also, during exceptionally procrastinated days time balance may go
+overboard and become terribly negative. If the balance becomes too
+negative, it is infuriating to see how much I need to makeup. The
+solution is introducing the idea of /lossage/. When time balance
+becomes too negative, it is no longer decreased, but the lossage is
+increased. Later, when the time balance becomes large and positive, it
+stops growing until the lossage is back to 0.
 
-
+Similar idea is used by John Wiegley in [[id:4dda6631-cace-441d-bc4c-a3d778a09d30][Emacs SF: 2019-07-24: All
+Things Org-Mode - Multiple Speakers]] He tracks his clocking time daily
+to have an idea how long he worked relative to his daily goal (8
+hours).  This idea is not applicable for my work though. Research is
+often not regularly structured - I can work during weekdays, weekends,
+at night time when I suddenly get some idea, etc. In such a way, it is
+important for me to maintain some average work/leisure balance rather
+than work certain number of hours every workday.
 
 #+begin_src emacs-lisp
   (defvar org-time-balance nil
