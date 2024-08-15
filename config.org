@@ -4803,6 +4803,15 @@ Interactive fill/unfill paragraph at point.
 		("M-q" . endless/fill-or-unfill))))
 #+end_src
 
+*** Scratch buffers for arbitrary major modes
+
+#+begin_src emacs-lisp
+  (use-package scratch
+    :if init-flag
+    :straight t
+    :bind ("C-c s" . scratch))
+#+end_src
+
 ** Debugging
 :PROPERTIES:
 :ID:       749e7414-827f-45cb-9ee0-19637eb2274e
