@@ -4755,7 +4755,6 @@ $0
     :straight t)
 #+end_src
 
-
 *** Undo
 **** Undo displayed as a graph
 
@@ -7160,7 +7159,7 @@ Using [[id:github_aperezdc_aperez_notmuc_addrl_c_addres][aperezdc [Github] Apere
   :after notmuch
   :if init-flag
   :config
-  (setq notmuch-address-command "~/bin/notmuch-addrlookup"))
+  (setq notmuch-address-command "notmuch-addrlookup"))
 #+end_src
 
 **** Appearance
@@ -9435,28 +9434,28 @@ I try to store every possibe file in an attachment dir.
 The new files are usually coming from my Downloads (=yant/org-attach-default-source)= directory.
 
 #+BEGIN_SRC emacs-lisp
-(defvar yant/org-attach-default-source "~/Downloads/"
-  "Default directory to attach the files from.")
+  (defvar yant/org-attach-default-source "~/Downloads/"
+    "Default directory to attach the files from.")
 
-(define-advice org-attach-attach (:around (oldfun files &rest args) start-from-default-directory)
-  "Look for new attachments from `yant/org-attach-default-source' directory instead of `default-directory'."
-  (interactive
-   (list
-    (mapcar #'directory-file-name
-	    (helm-read-file-name
-             "File to keep as an attachment:"
-	     :initial-input
-             (or (progn
-		   (require 'dired-aux)
-		   (dired-dwim-target-directory))
-		 (and yant/org-attach-default-source
-		      (file-name-as-directory yant/org-attach-default-source))
-		 default-directory)
-	     :marked-candidates t))
-    current-prefix-arg
-    nil))
-  (unless (listp files) (setq files (list files)))
-  (mapc (lambda (file) (apply oldfun file args)) files))
+  (define-advice org-attach-attach (:around (oldfun files &rest args) start-from-default-directory)
+    "Look for new attachments from `yant/org-attach-default-source' directory instead of `default-directory'."
+    (interactive
+     (list
+      (mapcar #'directory-file-name
+  	    (helm-read-file-name
+               "File to keep as an attachment:"
+  	     :initial-input
+               (or (progn
+  		   (require 'dired-aux)
+  		   (dired-dwim-target-directory))
+  		 (and yant/org-attach-default-source
+  		      (file-name-as-directory yant/org-attach-default-source))
+  		 default-directory)
+  	     :marked-candidates t))
+      current-prefix-arg
+      nil))
+    (unless (listp files) (setq files (list files)))
+    (mapc (lambda (file) (apply oldfun file args)) files))
 #+END_SRC
 
 ***** Make it possible to attach directories (not only files)
