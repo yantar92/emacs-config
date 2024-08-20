@@ -15755,6 +15755,14 @@ Use UTF symbols for entities.
   (bind-key "S" #'meta-split boon-command-map))
 #+end_src
 
+***** Do not add blank spaces between list items
+
+#+begin_src emacs-lisp
+  (use-package org
+    :config
+    (setf (alist-get 'plain-list-item org-blank-before-new-entry) nil))
+#+end_src
+
 **** Do not recenter window after folding/unfolding
 
 #+begin_src emacs-lisp
