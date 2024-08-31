@@ -278,7 +278,7 @@ GENTOO_MIRRORS="https://mirror.yandex.ru/gentoo-distfiles/ http://gentoo.aditsu.
 
 #+BEGIN_SRC conf  :tangle /sudo::/etc/portage/make.conf
 LINGUAS="en ru uk zh-CN"
-L10N="en-US ru uk zh-CN ar zh de es fr"
+L10N="en-US ru uk zh-CN ar zh de es fr en"
 #+end_src
 **** =eclean-kernel= : Clean old kernel dirs
 :PROPERTIES:
