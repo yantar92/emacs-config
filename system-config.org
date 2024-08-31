@@ -8556,6 +8556,17 @@ dev-lang/python tk
   #+end_src
 - https://guix.gnu.org/manual/en/html_node/Application-Setup.html
 
+** Recoll - file system indexer
+
+Searching across own notes is excellent, but it is sometimes also
+useful to index all the data, including pdfs and local web page
+snapshots when looking to some rarely accessed data.
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+  app-misc/recoll
+#+end_src
+
+
 * Archived
 
 ** COMMENT Compositor (compton) :COMMON:
