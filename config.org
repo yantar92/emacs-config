@@ -5319,10 +5319,22 @@ This is according to Corfu README.
 :END:
 
 #+begin_src emacs-lisp
-  (use-package auto-virtualenv
-    :if init-flag
+  ;; (use-package auto-virtualenv
+  ;;   :if init-flag
+  ;;   :straight t
+  ;;   :custom (auto-virtualenv-verbose t)
+  ;;   :config (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv))
+  (use-package pet
     :straight t
-    :config (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv))
+    :config
+    ;; FIXME: Report upstream?
+    (defun yant/disable-pet-flycheck-project-root-override ()
+      "Disable `pet-mode' advicing `flycheck-python-find-project-root'.
+  This is necessary when virtual environment file is not the same with
+  git repo."
+      (advice-remove 'flycheck-python-find-project-root #'pet-flycheck-python-find-project-root-advice))
+    (add-hook 'python-base-mode-hook #'pet-mode -10)
+    (add-hook 'pet-mode-hook #'yant/disable-pet-flycheck-project-root-override))
 #+end_src
 
 ***** COMMENT Add =venv= dirs to =PYTHONPATH=, so that LSP server can find their definitions
