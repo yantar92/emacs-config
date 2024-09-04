@@ -6152,6 +6152,125 @@ MimeType=x-scheme-handler/mailto;
 :PROPERTIES:
 :ID:       4e873d8d-9be8-4abb-ad40-46d8e912701d
 :END:
+*** Davmail server for Exchange servers (Office365) :COMMON:
+:PROPERTIES:
+:ID:       9870b79e-4ca8-4ab8-a841-4d29dd014755
+:END:
+
+[2024-09-03 Tue] Need this for Email in new place.
+
+[2023-01-08 Sun] SUTD disabled my last means to send email using my
+client. Falling back to redirect + manual WEB interface when
+necessary. No other options left.
+
+I need to use Microsoft Exchange protocol (everything else was disabled) to access SUTD mail [[notmuch:id:SG2PR03MB322660872358C604CB3537EFADCF0@SG2PR03MB3226.apcprd03.prod.outlook.com][Email from IT Service Desk: RE: IMAP settings for the email server]]
+
+The best option seems to be Davmail
+[[id:e8384cfa2557dcfe939e1cf4c3ae80d5b4ae937f][[Reddit] Anyone knows a Mailbox synchronizer supporting Microsoft Exchange protocol? : Gentoo]]
+
+It is not available in Gentoo by default, but I can use =pentoo= overlay:
+#+begin_src bash :tangle no :dir /sudo::/ :results output
+eselect repository enable pentoo
+#+end_src
+Do not enable any other packages from the overlay
+#+begin_src conf :tangle /sudo::/etc/portage/package.mask/pentoo-repo
+,*/*::pentoo
+#+end_src
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/davmail-bin
+net-mail/davmail-bin::pentoo
+acct-user/davmail::pentoo
+acct-group/davmail::pentoo
+#+end_src
+
+Run as server system-wide
+#+begin_src conf :tangle /sudo::/etc/portage/package.use/davmail-bin
+net-mail/davmail-bin server
+#+end_src
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+net-mail/davmail-bin
+#+end_src
+
+#+begin_src bash :tangle no :dir /sudo::/
+rc-update add davmail default
+#+end_src
+
+I will use IMAP Port 10043 in my config.
+Other important settings:
+davmail.server=true and davmail.allowRemote=true
+
+[2021-04-14 Wed] [[notmuch:id:SG2PR03MB3226925B2E536A18D77C9507AD4E9@SG2PR03MB3226.apcprd03.prod.outlook.com][Email from IT Service Desk: Re: Case ID: 77322 - Assist on EASE enrolment]]
+The new two-factor authentication requires MFA authentication: =davmail.mode=O365Modern=
+Details on configuration: [[id:Davmail.Sourceforge_guessantdavmail_pop_imap_smtp_caldav858][Mickael Guessant [Davmail.Sourceforge] DavMail POP/IMAP/SMTP/Caldav/Carddav/LDAP Exchange Gateway - Frequently asked questions]]
+
+#+begin_src conf :tangle /sudo::/etc/davmail.properties
+  davmail.ssl.keystoreType=
+  davmail.ssl.keystorePass=
+  davmail.proxyPassword=
+  davmail.oauth.tenantId=
+  davmail.oauth.clientId=
+  davmail.enableKerberos=false
+  davmail.smtpPort=1025
+  davmail.folderSizeLimit=
+  davmail.forceActiveSyncUpdate=false
+  davmail.imapAutoExpunge=true
+  davmail.useSystemProxies=false
+  davmail.proxyUser=
+  davmail.caldavEditNotifications=false
+  davmail.ssl.nosecuresmtp=false
+  davmail.caldavPastDelay=0
+  davmail.ssl.keyPass=
+  log4j.logger.httpclient.wire=WARN
+  davmail.noProxyFor=
+  log4j.logger.org.apache.commons.httpclient=WARN
+  davmail.server=true
+  davmail.popMarkReadOnRetr=false
+  davmail.ssl.nosecureimap=false
+  davmail.disableTrayActivitySwitch=false
+  davmail.caldavAutoSchedule=true
+  davmail.enableProxy=false
+  davmail.proxyPort=
+  davmail.logFileSize=
+  davmail.mode=O365Modern
+  davmail.smtpSaveInSent=true
+  davmail.bindAddress=
+  davmail.ssl.nosecurepop=false
+  davmail.ssl.pkcs11Library=
+  log4j.rootLogger=WARN
+  davmail.ssl.keystoreFile=
+  log4j.logger.davmail=DEBUG
+  davmail.ssl.clientKeystoreType=
+  davmail.clientSoTimeout=
+  davmail.ssl.pkcs11Config=
+  davmail.ssl.clientKeystorePass=
+  davmail.imapPort=10043
+  davmail.url=https://outlook.office365.com/EWS/Exchange.asmx
+  davmail.sentKeepDelay=0
+  davmail.ssl.nosecureldap=false
+  davmail.imapAlwaysApproxMsgSize=false
+  davmail.ssl.nosecurecaldav=false
+  davmail.popPort=1110
+  davmail.defaultDomain=
+  davmail.showStartupBanner=true
+  davmail.proxyHost=
+  davmail.ldapPort=1389
+  log4j.logger.org.apache.http.wire=WARN
+  davmail.disableGuiNotifications=false
+  davmail.server.certificate.hash=
+  davmail.imapIdleDelay=
+  davmail.allowRemote=true
+  davmail.disableUpdateCheck=false
+  log4j.logger.org.apache.http=WARN
+  davmail.caldavPort=1080
+  davmail.enableKeepAlive=false
+  davmail.ssl.clientKeystoreFile=
+  davmail.logFilePath=/var/log/davmail.log
+  davmail.carddavReadPhoto=true
+  davmail.keepDelay=30
+  davmail.oauth.redirectUri=
+  davmail.caldavAlarmSound=
+#+end_src
+
 *** Configuration :crypt:TANGLE:
 :PROPERTIES:
 :ID:       c80dbc40-d8a9-4991-8f5c-556c2d2f9699
@@ -9066,121 +9185,6 @@ make dev
 **** TODO Package into docker
 **** TODO Intercept annotation calls to raise capture template, add captured annotation, and push it to the hyposes.is server
 **** TODO Push changes annotations from org to h-server
-
-** COMMENT Davmail server for Exchange forced by SUTD mail server :COMMON:HOLD:
-:PROPERTIES:
-:ID:       9870b79e-4ca8-4ab8-a841-4d29dd014755
-:ARCHIVE_TIME: 2024-04-26 Fri 14:11
-:ARCHIVE_FILE: ~/Git/emacs-config/system-config.org
-:ARCHIVE_OLPATH: System: Gentoo Linux/Email sync client (mbsync from net-mail/isync)
-:ARCHIVE_CATEGORY: system-config
-:ARCHIVE_ITAGS: COMMON HOLD
-:END:
-
-[2023-01-08 Sun] SUTD disabled my last means to send email using my client. Falling back to redirect + manual WEB interface when necessary. No other options left.
-
-I need to use Microsoft Exchange protocol (everything else was disabled) to access SUTD mail [[notmuch:id:SG2PR03MB322660872358C604CB3537EFADCF0@SG2PR03MB3226.apcprd03.prod.outlook.com][Email from IT Service Desk: RE: IMAP settings for the email server]]
-
-The best option seems to be Davmail
-[[id:e8384cfa2557dcfe939e1cf4c3ae80d5b4ae937f][[Reddit] Anyone knows a Mailbox synchronizer supporting Microsoft Exchange protocol? : Gentoo]]
-
-It is not available in Gentoo by default, but I can use =pentoo= overlay:
-#+begin_src bash :tangle no :dir /sudo::/ :results output
-eselect repository enable pentoo
-#+end_src
-Do not enable any other packages from the overlay
-#+begin_src conf :tangle /sudo::/etc/portage/package.mask/pentoo-repo
-,*/*::pentoo
-#+end_src
-#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/davmail-bin
-net-mail/davmail-bin::pentoo
-acct-user/davmail::pentoo
-acct-group/davmail::pentoo
-#+end_src
-
-Run as server system-wide
-#+begin_src conf :tangle /sudo::/etc/portage/package.use/davmail-bin
-net-mail/davmail-bin server
-#+end_src
-#+begin_src bash :tangle no :dir /sudo::/
-rc-update add davmail default
-#+end_src
-
-I will use IMAP Port 10043 in my config.
-Other important settings:
-davmail.server=true and davmail.allowRemote=true
-
-[2021-04-14 Wed] [[notmuch:id:SG2PR03MB3226925B2E536A18D77C9507AD4E9@SG2PR03MB3226.apcprd03.prod.outlook.com][Email from IT Service Desk: Re: Case ID: 77322 - Assist on EASE enrolment]]
-The new two-factor authentication requires MFA authentication: =davmail.mode=O365Modern=
-Details on configuration: [[id:Davmail.Sourceforge_guessantdavmail_pop_imap_smtp_caldav858][Mickael Guessant [Davmail.Sourceforge] DavMail POP/IMAP/SMTP/Caldav/Carddav/LDAP Exchange Gateway - Frequently asked questions]]
-
-#+begin_src conf :tangle /sudo::/etc/davmail.properties
-davmail.ssl.keystoreType=
-davmail.ssl.keystorePass=
-davmail.proxyPassword=
-davmail.oauth.tenantId=
-davmail.oauth.clientId=
-davmail.enableKerberos=false
-davmail.smtpPort=1025
-davmail.folderSizeLimit=
-davmail.forceActiveSyncUpdate=false
-davmail.imapAutoExpunge=true
-davmail.useSystemProxies=false
-davmail.proxyUser=
-davmail.caldavEditNotifications=false
-davmail.ssl.nosecuresmtp=false
-davmail.caldavPastDelay=0
-davmail.ssl.keyPass=
-log4j.logger.httpclient.wire=WARN
-davmail.noProxyFor=
-log4j.logger.org.apache.commons.httpclient=WARN
-davmail.server=true
-davmail.popMarkReadOnRetr=false
-davmail.ssl.nosecureimap=false
-davmail.disableTrayActivitySwitch=false
-davmail.caldavAutoSchedule=true
-davmail.enableProxy=false
-davmail.proxyPort=
-davmail.logFileSize=
-davmail.mode=O365Modern
-davmail.smtpSaveInSent=true
-davmail.bindAddress=
-davmail.ssl.nosecurepop=false
-davmail.ssl.pkcs11Library=
-log4j.rootLogger=WARN
-davmail.ssl.keystoreFile=
-log4j.logger.davmail=DEBUG
-davmail.ssl.clientKeystoreType=
-davmail.clientSoTimeout=
-davmail.ssl.pkcs11Config=
-davmail.ssl.clientKeystorePass=
-davmail.imapPort=10043
-davmail.url=https://outlook.office365.com/EWS/Exchange.asmx
-davmail.sentKeepDelay=0
-davmail.ssl.nosecureldap=false
-davmail.imapAlwaysApproxMsgSize=false
-davmail.ssl.nosecurecaldav=false
-davmail.popPort=1110
-davmail.defaultDomain=
-davmail.showStartupBanner=true
-davmail.proxyHost=
-davmail.ldapPort=1389
-log4j.logger.org.apache.http.wire=WARN
-davmail.disableGuiNotifications=false
-davmail.server.certificate.hash=
-davmail.imapIdleDelay=
-davmail.allowRemote=true
-davmail.disableUpdateCheck=false
-log4j.logger.org.apache.http=WARN
-davmail.caldavPort=1080
-davmail.enableKeepAlive=false
-davmail.ssl.clientKeystoreFile=
-davmail.logFilePath=/var/log/davmail.log
-davmail.carddavReadPhoto=true
-davmail.keepDelay=30
-davmail.oauth.redirectUri=
-davmail.caldavAlarmSound=
-#+end_src
 
 ** COMMENT Archivebox :COMMON:HOLD:
 :PROPERTIES:
