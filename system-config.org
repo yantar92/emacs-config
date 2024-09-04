@@ -6337,25 +6337,26 @@ while true; do mail-monitor.sh; sleep 100; done &
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/mail-monitor-logger.sh :shebang #!/bin/bash
-while read x; do
-    [[ "$x" == "No working address found for" ]] && continue
-    [[ "$x" == *"Cannot connect to"* ]] && continue
-    [[ "$x" == *"Socket error on"* ]] && continue
-    [[ "$x" == *"Temporary failure in name resolution"* ]] && continue
-    [[ "$x" == *"Error from IMAP server"* ]] && continue
-    [[ "$x" == *"IMAP error: bogus greeting response BAD"* ]] && continue
-    [[ "$x" == *"Network is unreachable"* ]] && continue
-    [[ "$x" == *"IMAP error: unexpected EOF"* ]] && continue
-    [[ "$x" == *"Maildir notice: sleeping due to recent directory modification"* ]] && continue
-    [[ "$x" == *"No working address found"* ]] && continue
-    [[ "$x" == *"No working address found for 127.0.0.1"* ]] && notify-send "Davmail not working" && continue
-    [[ "$x" == *"NO LOGIN failed"* ]] && notify-send "Office365 or Hotmail account blocked. Update password via re-login in browser" && continue
-    [[ "$x" == *"Account is blocked. Login to your account via a web browser to verify your identity."* ]] && notify-send "Hotmail account blocked. Login from browser" && continue
-    [[ "$x" == *"error"* ]] && notify-send "Unclassified mail checker error: $x" && continue
-    [[ "$x" == "" ]] && continue
-    notify-send "mail-monitor: $x"
-    echo $(date): $x >> ~/.log/mail-monitor.log
-done
+  while read x; do
+      [[ "$x" == "No working address found for" ]] && continue
+      [[ "$x" == *"Cannot connect to"* ]] && continue
+      [[ "$x" == *"Socket error on"* ]] && continue
+      [[ "$x" == *"Temporary failure in name resolution"* ]] && continue
+      [[ "$x" == *"Error from IMAP server"* ]] && continue
+      [[ "$x" == *"Password is being sent in the clear"* ]] && continue
+      [[ "$x" == *"IMAP error: bogus greeting response BAD"* ]] && continue
+      [[ "$x" == *"Network is unreachable"* ]] && continue
+      [[ "$x" == *"IMAP error: unexpected EOF"* ]] && continue
+      [[ "$x" == *"Maildir notice: sleeping due to recent directory modification"* ]] && continue
+      [[ "$x" == *"No working address found"* ]] && continue
+      [[ "$x" == *"No working address found for 127.0.0.1"* ]] && notify-send "Davmail not working" && continue
+      [[ "$x" == *"NO LOGIN failed"* ]] && notify-send "Office365 or Hotmail account blocked. Update password via re-login in browser" && continue
+      [[ "$x" == *"Account is blocked. Login to your account via a web browser to verify your identity."* ]] && notify-send "Hotmail account blocked. Login from browser" && continue
+      [[ "$x" == *"error"* ]] && notify-send "Unclassified mail checker error: $x" && continue
+      [[ "$x" == "" ]] && continue
+      notify-send "mail-monitor: $x"
+      echo $(date): $x >> ~/.log/mail-monitor.log
+  done
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/mail-monitor.sh :shebang #!/bin/bash
