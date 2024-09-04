@@ -6911,50 +6911,54 @@ the notmuch-tree buffer if it appears after closing the message."
 :END:
 - multiple accounts
   #+begin_src emacs-lisp
-(setq send-mail-function 'sendmail-send-it)
-;;autochoose account name for msmtp
-(defun cg-feed-msmtp ()
-  (if (message-mail-p)
-      (save-excursion
-	(let* ((from (save-restriction
-		       (message-narrow-to-headers)
-		       (message-fetch-field "from")))
-	       (account (cond
-			 ;; I use email address as account label in ~/.msmtprc
-                         ((string-match "yantar92@posteo.net" from) "yantar92@posteo.net")
-			 ((string-match "yantar92@gmail.com" from) "yantar92@gmail.com")
-			 ((string-match "ihor_radchenko@alumni.sutd.edu.sg" from) "ihor_radchenko@alumni.sutd.edu.sg"))))
-	  (setq message-sendmail-extra-arguments (list '"-a" account)))))) ; the original form of this script did not have the ' before "a" which causes a very difficult to track bug --frozencemetery
-(add-hook 'message-send-mail-hook 'cg-feed-msmtp)
-(setq message-sendmail-envelope-from 'header)
-(setq mail-specify-envelope-from 't)
-(setq mail-envelope-from 'header)
-(setq message-make-forward-subject-function 'message-forward-subject-fwd)
-(setq notmuch-fcc-dirs '(("ihor_radchenko@alumni.sutd.edu.sg" . "Office365/Sent +sent -unread")
-			 ("yantar92@gmail.com" . "Gmail/Sent +sent -unread")
-                         ("yantar92@posteo.net" . "Posteo/Sent +sent -unread")))
+    (setq send-mail-function 'sendmail-send-it)
+    ;;autochoose account name for msmtp
+    (defun cg-feed-msmtp ()
+      (if (message-mail-p)
+          (save-excursion
+    	(let* ((from (save-restriction
+    		       (message-narrow-to-headers)
+    		       (message-fetch-field "from")))
+    	       (account (cond
+    			 ;; I use email address as account label in ~/.msmtprc
+                             ((string-match "yantar92@posteo.net" from) "yantar92@posteo.net")
+    			 ((string-match "yantar92@gmail.com" from) "yantar92@gmail.com")
+    			 ((string-match "ihor_radchenko@alumni.sutd.edu.sg" from) "ihor_radchenko@alumni.sutd.edu.sg")
+                             ((string-match "ihor.radchenko@ensemble3.eu" from) "ihor.radchenko@ensemble3.eu"))))
+    	  (setq message-sendmail-extra-arguments (list '"-a" account)))))) ; the original form of this script did not have the ' before "a" which causes a very difficult to track bug --frozencemetery
+    (add-hook 'message-send-mail-hook 'cg-feed-msmtp)
+    (setq message-sendmail-envelope-from 'header)
+    (setq mail-specify-envelope-from 't)
+    (setq mail-envelope-from 'header)
+    (setq message-make-forward-subject-function 'message-forward-subject-fwd)
+    (setq notmuch-fcc-dirs '(("ihor_radchenko@alumni.sutd.edu.sg" . "Office365/Sent +sent -unread")
+    			 ("yantar92@gmail.com" . "Gmail/Sent +sent -unread")
+                             ("yantar92@posteo.net" . "Posteo/Sent +sent -unread")))
   #+end_src
+
 - automatic email signing
   I have to skip signing for some email accounts, because the server
   appends some text to messages. Even though the resulting message is
   correct, but some email clients are not able to open these messages
   properly. They show the appended text and unreadable attachment.
   #+begin_src emacs-lisp
-(setq mml-default-sign-method "pgp")
-(setq notmuch-crypto-process-mime t)
+    (setq mml-default-sign-method "pgp")
+    (setq notmuch-crypto-process-mime t)
 
-(defvar yant/mml-do-not-sign-accounts-list '("ihor_radchenko@alumni.sutd.edu.sg" "yantar92@gmail.com" "yantar92@posteo.net")
-  "List of accounts, where the messaged should not be signed.")
+    (defvar yant/mml-do-not-sign-accounts-list
+      '("ihor_radchenko@alumni.sutd.edu.sg" "yantar92@gmail.com" "yantar92@posteo.net"
+        "ihor.radchenko@ensemble3.eu")
+      "List of accounts, where the messaged should not be signed.")
 
-(defun yant/mml-secure-message-sign-pgpmime-maybe ()
-  "Sign the message unless the sending account is in `yant/mml-do-not-sign-accounts-list'."
-  (let ((from (save-restriction
-		(message-narrow-to-headers)
-                (message-fetch-field "from"))))
-    (unless (-first (lambda (el) (string-match el from)) yant/mml-do-not-sign-accounts-list)
-      (mml-secure-message-sign-pgpmime))))
+    (defun yant/mml-secure-message-sign-pgpmime-maybe ()
+      "Sign the message unless the sending account is in `yant/mml-do-not-sign-accounts-list'."
+      (let ((from (save-restriction
+    		(message-narrow-to-headers)
+                    (message-fetch-field "from"))))
+        (unless (-first (lambda (el) (string-match el from)) yant/mml-do-not-sign-accounts-list)
+          (mml-secure-message-sign-pgpmime))))
 
-(add-hook 'message-send-hook #'yant/mml-secure-message-sign-pgpmime-maybe)
+    (add-hook 'message-send-hook #'yant/mml-secure-message-sign-pgpmime-maybe)
   #+end_src
 
 **** Tagging of sent messages
