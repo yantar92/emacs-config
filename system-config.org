@@ -8692,6 +8692,13 @@ snapshots when looking to some rarely accessed data.
 #+end_src
 
 
+** Zotero - collaboration
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+  app-text/zotero-bin
+#+end_src
+
+
 * Archived
 
 ** COMMENT Compositor (compton) :COMMON:
