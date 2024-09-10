@@ -6354,6 +6354,7 @@ while true; do mail-monitor.sh; sleep 100; done &
       [[ "$x" == *"Account is blocked. Login to your account via a web browser to verify your identity."* ]] && notify-send "Hotmail account blocked. Login from browser" && continue
       [[ "$x" == *"error"* ]] && notify-send "Unclassified mail checker error: $x" && continue
       [[ "$x" == "" ]] && continue
+      [[ "$x" == *"Name or service not known"* ]] && notify-send "$x" && continue
       notify-send "mail-monitor: $x"
       echo $(date): $x >> ~/.log/mail-monitor.log
   done
