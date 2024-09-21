@@ -7974,19 +7974,22 @@ Make Emacs ERC automatically re-connect when it looses server connection.
   (ement-notify-sound "message-new-instant"))
 #+end_src
 
-** COMMENT Mastodon client =mastodon.el=
+** Mastodon client =mastodon.el=
 
 #+begin_src emacs-lisp
-(use-package mastodon
-  :if init-flag
-  :straight t
-  :custom
-  (mastodon-instance-url "https://emacs.ch")
-  (mastodon-active-user "yantar92")
-  :config
-  (meta-defun meta-down-element :mode mastodon-mode mastodon-tl--goto-next-item)
-  (meta-defun meta-up-element :mode mastodon-mode mastodon-tl--goto-prev-item)
-  (meta-defun meta-new-line :mode mastodon-mode mastodon-tl--do-link-action-at-point))
+  (use-package mastodon
+    :if init-flag
+    :straight t
+    :init
+    (use-package persist :straight t)
+    (require 'multisession) ;; FIXME
+    :custom
+    (mastodon-instance-url "https://fosstodon.org")
+    (mastodon-active-user "yantar92")
+    :config
+    (meta-defun meta-down-element :mode mastodon-mode mastodon-tl--goto-next-item)
+    (meta-defun meta-up-element :mode mastodon-mode mastodon-tl--goto-prev-item)
+    (meta-defun meta-new-line :mode mastodon-mode mastodon-tl--do-link-action-at-point))
 #+end_src
 
 *** Use =mastodon.el= to open Mastodon links
