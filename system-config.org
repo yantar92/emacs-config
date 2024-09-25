@@ -5343,31 +5343,31 @@ Use [[id:db6f9fac-dc50-4668-a0c4-e5ff185ec436][mpv]] for videos or [[id:269904a8
 The script uses scripts defined in [[id:269904a8-3bb6-4e9e-a385-2e2b2c980879][Archivebox]].
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/qutebrowser-call.sh :shebang #!/bin/bash
-URL="$1"
+  URL="$1"
 
-case "$URL" in
-    ,*ted.com/talks*|*bilibili.com*|*youtube.com*)
-	mpv "$URL" && exit
-	;;
-esac
+  case "$URL" in
+      ,*ted.com/talks*|*bilibili.com*|*youtube.com*)
+  	mpv "$URL" && exit
+  	;;
+  esac
 
-grep "$URL" ~/.data/web-mirror/sources/* >/dev/null 2>&1 &&\
-    ARCHIVE_ID=$(grep "$URL" ~/.data/web-mirror/sources/* | cut -f1 -d: | cut -d- -f2 | cut -d/ -f3) &&\
-    ARCHIVE_FILE=$(find ~/.data/web-mirror/archive/ | grep $ARCHIVE_ID | grep singlefile.html | tail -n1)
+  grep "$URL" ~/.data/web-mirror/sources/* >/dev/null 2>&1 &&\
+      ARCHIVE_ID=$(grep "$URL" ~/.data/web-mirror/sources/* | cut -f1 -d: | cut -d- -f2 | cut -d/ -f3) &&\
+      ARCHIVE_FILE=$(find ~/.data/web-mirror/archive/ | grep $ARCHIVE_ID | grep singlefile.html | tail -n1)
 
-if [[ ! -z "$ARCHIVE_FILE" ]]; then
-    URL="${ARCHIVE_FILE}"
-fi
+  if [[ ! -z "$ARCHIVE_FILE" ]]; then
+      URL="${ARCHIVE_FILE}"
+  fi
 
-# # fi
-# echo "local awful = require('awful'); local screen = awful.screen.focused(); local tag = screen.tags[2]  if tag then tag:view_only() end" | awesome-client
+  # # fi
+  # echo "local awful = require('awful'); local screen = awful.screen.focused(); local tag = screen.tags[2]  if tag then tag:view_only() end" | awesome-client
 
-#from https://github.com/qutebrowser/qutebrowser/blob/master/scripts/open_url_in_instance.sh
-_url="$URL"
+  #from https://github.com/qutebrowser/qutebrowser/blob/master/scripts/open_url_in_instance.sh
+  _url="$URL"
 
-qutebrowser ":open -t ${_url}"
+  qutebrowser ":open -t ${_url}"
 
-# emacsclient -c -e "(eaf-open-browser \"$URL\")"
+  # emacsclient -c -e "(eaf-open-browser \"$URL\")"
 #+end_src
 
 *** Adblocking
