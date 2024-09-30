@@ -5928,150 +5928,152 @@ The idea of the script is regular reminder to not spend too much money on certai
 ****************** TODO note how I calculate retirement account
 ****************** END
 #+begin_src bash :tangle /home/yantar92/.local/bin/balance-monitor.sh :shebang #!/bin/bash :noweb tangle
-# export DBUS_SESSION_BUS_ADDRESS environment variable
-PID=$(pgrep awesome | head -n1)
-[[ -z "$PID" && -d "/proc/$PID" ]] && export DBUS_SESSION_BUS_ADDRESS="$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ | tr '\0' '\n' | cut -d= -f2-)"
+  # export DBUS_SESSION_BUS_ADDRESS environment variable
+  PID=$(pgrep awesome | head -n1)
+  [[ -z "$PID" && -d "/proc/$PID" ]] && export DBUS_SESSION_BUS_ADDRESS="$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ | tr '\0' '\n' | cut -d= -f2-)"
 
-UNCONVERTED_CURRENCIES="$(ledger -X  <<ledger-main-currency()>> bal Expenses | sed -E '/<<ledger-main-currency()>>|----+/d')"
+  UNCONVERTED_CURRENCIES="$(ledger -X  <<ledger-main-currency()>> bal Expenses | sed -E '/<<ledger-main-currency()>>|----+/d')"
 
-if [[ ! -z "$UNCONVERTED_CURRENCIES" ]]; then
-    [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ <span color=\"#FF0000\"><b>Ledger error</b></span>༼ <span color=\"#FF0000\">Not all currencies convertable</span>༼ '" | awesome-client;
-    exit;
-fi
+  if [[ ! -z "$UNCONVERTED_CURRENCIES" ]]; then
+      [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ <span color=\"#FF0000\"><b>Ledger error</b></span>༼ <span color=\"#FF0000\">Not all currencies convertable</span>༼ '" | awesome-client;
+      exit;
+  fi
 
-BAL_RENT="$(ledger bal --budget -X <<ledger-main-currency()>> Expenses:Personal:Rental -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//'  | sed -r 's/,//g')";
-[[ -z "$BAL_RENT" ]] && BAL_RENT="0"
-BAL_RENT="$(echo "${BAL_RENT}*(-1)" | bc -l)";
-under_0=$(echo "$BAL_RENT < 0" | bc -l)
-if [[ "$under_0" == "1" ]]; then
-    BAL_RENT="<span color=\"#FF0000\">⏺</span>"
-else
-    BAL_RENT="<span color=\"#00FF00\">⏺</span>"
-fi
-
-
-BAL_ENTERTAINMENT="$(ledger bal --budget -X <<ledger-main-currency()>> Entertainment  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//'  | tail -n1 | sed -r 's/,//g')";
-TODAY_BAL_FOOD="$(ledger bal -X <<ledger-food-currency()>> -b `date +%F` Food | tail -n1 | sed -r 's/[^0-9-]+//'  | cut -d' ' -f 1 | sed -r 's/,//g')"
-[[ -z "$TODAY_BAL_FOOD" ]] && TODAY_BAL_FOOD="0"
-MAX_BAL_FOOD="<<max-balance-food()>>"
-NORMAL_BAL_FOOD="<<normal-balance-food()>>"
-MIN_BAL_FOOD="<<min-balance-food()>>"
-under_limit="0"
-
-BAL_FOOD="$(ledger bal --budget -X <<ledger-food-currency()>> Food -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' | tail -n1 | sed -r 's/,//g')";
-if [[ -n "$BAL_FOOD" ]]; then
-    BAL_FOOD="$(echo "${BAL_FOOD}*(-1)" | bc -l)";
-    res="$(echo "$BAL_FOOD + $TODAY_BAL_FOOD > $MAX_BAL_FOOD" | bc -l)";
-    [[ "$res" == "1" ]] && BAL_FOOD=$(echo "$MAX_BAL_FOOD - $TODAY_BAL_FOOD" | bc -l);
-    under_limit=$(echo "$BAL_FOOD < $MIN_BAL_FOOD" | bc -l);
-    [[ "$under_limit" == "1" ]] && BAL_FOOD="$MIN_BAL_FOOD";
-else
-    BAL_FOOD="N/A";
-fi
-under_limit=$(echo "$BAL_FOOD < $NORMAL_BAL_FOOD" | bc -l)
-under_0=$(echo "$BAL_FOOD < 0" | bc -l)
-BAL_FOOD=$(echo "$BAL_FOOD" | sed -r 's/^\./0./')
-BAL_FOOD=$(echo "$BAL_FOOD" | sed -r 's/^-\./-0./')
-if [[ "$under_0" == "1" ]]; then
-    BAL_FOOD="<span color=\"#FF0000\"><<ledger-food-currency-symbol()>>$BAL_FOOD milk\!</span>"
-elif [[ "$under_limit" == "1" ]]; then
-    BAL_FOOD="<span color=\"#FF0000\"><<ledger-food-currency-symbol()>>$BAL_FOOD canteen\!</span>"
-else
-    BAL_FOOD="<<ledger-food-currency-symbol()>>$BAL_FOOD"
-fi
-
-# BAL_ENTERTAINMENT_SHORT="$(echo "$BAL_ENTERTAINMENT/1000.0*(-1)" | bc -l | grep -oE '^-?[0-9]*\.?[0-9]{0,2}')k"
-# BAL_ENTERTAINMENT_SHORT="$(echo $BAL_ENTERTAINMENT_SHORT | sed -r 's/^(-?)\./\10\./')"
-BAL_ENTERTAINMENT_SHORT="$(echo "$BAL_ENTERTAINMENT*(-1)" | bc -l | grep -oE '^-?[0-9]*')"
-[[ "$(echo "$BAL_ENTERTAINMENT > 0" | bc -l)" == "1" ]] && BAL_ENTERTAINMENT_SHORT="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT</span>" || BAL_ENTERTAINMENT_SHORT="<<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT"
-
-WEEKLY_INCOME_AVG="$(ledger r -X <<ledger-main-currency()>> Income -W -n -A -p "from last year until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income from the beginning of the year
-[[ -z "$WEEKLY_INCOME_AVG" ]] && WEEKLY_INCOME_AVG="0"
-MONTHLY_INCOME_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_INCOME_AVG" | bc -l)"
-# https://www.wisebread.com/figuring-the-size-of-your-emergency-fund
-WEEKLY_SPENDING_AVG="$(ledger r -X <<ledger-main-currency()>> Expenses and not Work and not Gifts -W -n -A -p "from last year until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/,//')" # average expenses from beginning last year in <<ledger-main-currency()>>
-[[ -z "$WEEKLY_SPENDING_AVG" ]] && WEEKLY_SPENDING_AVG="0"
-MONTHLY_SPENDING_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_SPENDING_AVG" | bc -l)"
-
-INCOME_RATIO="$(echo "100.0 * $WEEKLY_INCOME_AVG / $WEEKLY_SPENDING_AVG" | bc -l | sed -r 's/\..*//')"
-if [[ "1" == "$(echo "$INCOME_RATIO < 100" | bc -l)" ]]; then
-    INCOME_RATIO="<span color=\"#FF0000\">"$INCOME_RATIO"%</span>"
-else
-    if [[ "1" == "$(echo "$INCOME_RATIO < 200" | bc -l)" ]]; then
-	INCOME_RATIO="<span color=\"#FFFF00\">"$INCOME_RATIO"%</span>"
-    else
-	INCOME_RATIO="<span color=\"#00FF00\">"$INCOME_RATIO"%</span>"
-    fi
-fi
-
-EMERGENCY_FUND="$(echo "$MONTHLY_SPENDING_AVG * <<emergency-fund-months()>>" | bc -l)"
-BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledger-checking-account()>> -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
- if [[ "1" == "$(echo "$EMERGENCY_FUND > $BAL_EMERGENCY" | bc -l)" ]]; then
-     BAL_EMERGENCY="<span color=\"#FF0000\">$(echo "($BAL_EMERGENCY - $EMERGENCY_FUND)/$MONTHLY_INCOME_AVG" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')m</span>"
- else
-     if [[ "0" == "$EMERGENCY_FUND" ]]; then
-	 BAL_EMERGENCY="<span color=\"#FFFF00\">N/A</span>"
-     else
-	 BAL_EMERGENCY="<span color=\"#00FF00\">ok</span>"
-     fi
- fi
+  BAL_RENT="$(ledger bal --budget -X <<ledger-main-currency()>> Expenses:Personal:Rental -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//'  | sed -r 's/,//g')";
+  [[ -z "$BAL_RENT" ]] && BAL_RENT="0"
+  BAL_RENT="$(echo "${BAL_RENT}*(-1)" | bc -l)";
+  under_0=$(echo "$BAL_RENT < 0" | bc -l)
+  if [[ "$under_0" == "1" ]]; then
+      BAL_RENT="<span color=\"#FF0000\">⏺</span>"
+  else
+      BAL_RENT="<span color=\"#00FF00\">⏺</span>"
+  fi
 
 
- BAL_CHECKING="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking:<<ledger-checking-account()>> -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
- CHECKING_EXTRA="$(echo $BAL_CHECKING - ${MONTHLY_SPENDING_AVG} - ${EMERGENCY_FUND} | bc -l)" # extra one month
+  BAL_ENTERTAINMENT="$(ledger bal --budget -X <<ledger-main-currency()>> Entertainment  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//'  | tail -n1 | sed -r 's/,//g')";
+  TODAY_BAL_FOOD="$(ledger bal -X <<ledger-food-currency()>> -b `date +%F` Food | tail -n1 | sed -r 's/[^0-9-]+//'  | cut -d' ' -f 1 | sed -r 's/,//g')"
+  [[ -z "$TODAY_BAL_FOOD" ]] && TODAY_BAL_FOOD="0"
+  MAX_BAL_FOOD="<<max-balance-food()>>"
+  NORMAL_BAL_FOOD="<<normal-balance-food()>>"
+  MIN_BAL_FOOD="<<min-balance-food()>>"
+  under_limit="0"
 
- if [[ "1" == "$(echo "$CHECKING_EXTRA > 0" | bc -l)" ]]; then
-     if [[ "0" == "$MONTHLY_SPENDING_AVG" ]]; then
-	 EXTRA="<span color=\"#FFFF00\">N/A</span>"
-     else
-	 if [[ "1" == "$(echo "$CHECKING_EXTRA > $MONTHLY_SPENDING_AVG" | bc -l)" ]]; then
-	     EXTRA="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$(echo "$CHECKING_EXTRA/1000.0" | bc -l | grep -oE '^-?[0-9]*\.?[0-9]{0,1}')k</span>"
-	 else
-	     EXTRA="<<ledger-main-currency-symbol()>>$(echo "$CHECKING_EXTRA/1000.0" | bc -l | grep -oE '^-?[0-9]*\.?[0-9]{0,1}')k"
-	 fi
-     fi
- else
-     EXTRA="no"
- fi
+  BAL_FOOD="$(ledger bal --budget -X <<ledger-food-currency()>> Food -p 'until tomorrow' | awk '{print $1}' | sed -r 's/[^0-9-]+//' | tail -n1 | sed -r 's/,//g')";
+  if [[ -n "$BAL_FOOD" ]]; then
+      BAL_FOOD="$(echo "${BAL_FOOD}*(-1)" | bc -l)";
+      res="$(echo "$BAL_FOOD + $TODAY_BAL_FOOD > $MAX_BAL_FOOD" | bc -l)";
+      [[ "$res" == "1" ]] && BAL_FOOD=$(echo "$MAX_BAL_FOOD - $TODAY_BAL_FOOD" | bc -l);
+      under_limit=$(echo "$BAL_FOOD < $MIN_BAL_FOOD" | bc -l);
+      [[ "$under_limit" == "1" ]] && BAL_FOOD="$MIN_BAL_FOOD";
+  else
+      BAL_FOOD="N/A";
+  fi
+  under_limit=$(echo "$BAL_FOOD < $NORMAL_BAL_FOOD" | bc -l)
+  under_0=$(echo "$BAL_FOOD < 0" | bc -l)
+  BAL_FOOD=$(echo "$BAL_FOOD" | sed -r 's/^\./0./')
+  BAL_FOOD=$(echo "$BAL_FOOD" | sed -r 's/^-\./-0./')
+  if [[ "$under_0" == "1" ]]; then
+      BAL_FOOD="<span color=\"#FF0000\"><<ledger-food-currency-symbol()>>$BAL_FOOD milk\!</span>"
+  elif [[ "$under_limit" == "1" ]]; then
+      BAL_FOOD="<span color=\"#FF0000\"><<ledger-food-currency-symbol()>>$BAL_FOOD canteen\!</span>"
+  else
+      BAL_FOOD="<<ledger-food-currency-symbol()>>$BAL_FOOD"
+  fi
 
- BAL_PROJECTION_YEAR=$(echo "($WEEKLY_SPENDING_AVG - $WEEKLY_INCOME_AVG) * 52" | bc -l)
- if [[ "1" == "$(echo "$BAL_PROJECTION_YEAR > 0" | bc -l)" ]]; then
-     YEARS_LEFT=$(echo "$BAL_CHECKING / $BAL_PROJECTION_YEAR" | bc -l | sed -r 's/(\..{1}).+/\1/');
-     if [[ "1" == "$(echo "$YEARS_LEFT < 5" | bc -l)" ]]; then
-	 YEARS_LEFT="<span color=\"#FF0000\">+${YEARS_LEFT}y</span>";
-     else
-	 YEARS_LEFT="<span color=\"#FFFF00\">+${YEARS_LEFT}y</span>";
-     fi
- else
-     YEARS_LEFT="<span color=\"#FFFF00\">+∞y</span>";
- fi
+  # BAL_ENTERTAINMENT_SHORT="$(echo "$BAL_ENTERTAINMENT/1000.0*(-1)" | bc -l | grep -oE '^-?[0-9]*\.?[0-9]{0,2}')k"
+  # BAL_ENTERTAINMENT_SHORT="$(echo $BAL_ENTERTAINMENT_SHORT | sed -r 's/^(-?)\./\10\./')"
+  BAL_ENTERTAINMENT_SHORT="$(echo "$BAL_ENTERTAINMENT*(-1)" | bc -l | grep -oE '^-?[0-9]*')"
+  [[ "$(echo "$BAL_ENTERTAINMENT > 0" | bc -l)" == "1" ]] && BAL_ENTERTAINMENT_SHORT="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT</span>" || BAL_ENTERTAINMENT_SHORT="<<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT"
 
- RETIREMENT="$(ledger b -X <<ledger-main-currency()>> "Retirement Savings" -n -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//g')"
- [[ -z "$RETIREMENT" ]] && RETIREMENT="0"
- ASSETS="$(ledger bal -X <<ledger-main-currency()>> "Assets" and not Reimbursements -n  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
- if [[ "1" == "$(echo "$RETIREMENT > $ASSETS" | bc -l)" ]]; then
-     RETIREMENT="<span color=\"#FF0000\">$(echo "($ASSETS - $RETIREMENT)/$MONTHLY_INCOME_AVG" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')m</span>"
- else
-     RETIREMENT="<span color=\"#00FF00\">ok</span>"
- fi
+  WEEKLY_INCOME_AVG="$(ledger r -X <<ledger-main-currency()>> Income -W -n -A -p "from last year until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income from the beginning of the year
+  [[ -z "$WEEKLY_INCOME_AVG" ]] && WEEKLY_INCOME_AVG="0"
+  WEEKLY_INCOME_AVG_NO_SALARY="$(ledger r -X <<ledger-main-currency()>> Income and not Salary -W -n -A -p "from last year until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
+  [[ -z "$WEEKLY_INCOME_AVG_NO_SALARY" ]] && WEEKLY_INCOME_AVG_NO_SALARY="0"
+  MONTHLY_INCOME_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_INCOME_AVG" | bc -l)"
+  # https://www.wisebread.com/figuring-the-size-of-your-emergency-fund
+  WEEKLY_SPENDING_AVG="$(ledger r -X <<ledger-main-currency()>> Expenses and not Work and not Gifts -W -n -A -p "from last year until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/,//')" # average expenses from beginning last year in <<ledger-main-currency()>>
+  [[ -z "$WEEKLY_SPENDING_AVG" ]] && WEEKLY_SPENDING_AVG="0"
+  MONTHLY_SPENDING_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_SPENDING_AVG" | bc -l)"
 
- OTHER="$(ledger budget Expenses:Personal:Other -X <<ledger-main-currency()>> -p "from last year until tomorrow" | tail -n1 | awk '{print $3}' | sed -r 's/<<ledger-main-currency()>>//')"
- # OTHER="$(echo "$OTHER * -1 / 1000" | bc -l)"
- # OTHER_SHORT="$(echo $OTHER | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')k"
- OTHER="$(echo "$OTHER * -1" | bc -l)"
- OTHER_SHORT="$(echo $OTHER | sed -r 's/(\..{1}).+/\1/')"
- if [[ "1" == "$(echo "$OTHER < 0" | bc -l)" ]]; then
-     OTHER="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$OTHER_SHORT</span>"
- else
-     OTHER="<span color=\"#00FF00\"><<ledger-main-currency-symbol()>>$OTHER_SHORT</span>"
- fi
+  INCOME_RATIO="$(echo "100.0 * $WEEKLY_INCOME_AVG / $WEEKLY_SPENDING_AVG" | bc -l | sed -r 's/\..*//')"
+  if [[ "1" == "$(echo "$INCOME_RATIO < 100" | bc -l)" ]]; then
+      INCOME_RATIO="<span color=\"#FF0000\">"$INCOME_RATIO"%</span>"
+  else
+      if [[ "1" == "$(echo "$INCOME_RATIO < 200" | bc -l)" ]]; then
+  	INCOME_RATIO="<span color=\"#FFFF00\">"$INCOME_RATIO"%</span>"
+      else
+  	INCOME_RATIO="<span color=\"#00FF00\">"$INCOME_RATIO"%</span>"
+      fi
+  fi
 
- BAL_TIME=$(org-clocked-in.sh balance)
- PROJECTING="0"
- if [[ -f ~/.log/projecting ]]; then
-     [[ "$(cat ~/.log/projecting)" == "true" ]] && PROJECTING="1";
- fi
- [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ Time:${BAL_TIME} ༼ Food:$BAL_FOOD ༼ Rental:$BAL_RENT ༼ Other:$OTHER ༼ Fun:$BAL_ENTERTAINMENT_SHORT ༼ Retirement:$RETIREMENT ༼ Emergency:$BAL_EMERGENCY ༼ Extra:$EXTRA ༼ ⚖:$INCOME_RATIO$YEARS_LEFT'" | awesome-client
+  EMERGENCY_FUND="$(echo "$MONTHLY_SPENDING_AVG * <<emergency-fund-months()>>" | bc -l)"
+  BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g' | tail -n1)"
+   if [[ "1" == "$(echo "$EMERGENCY_FUND > $BAL_EMERGENCY" | bc -l)" ]]; then
+       BAL_EMERGENCY="<span color=\"#FF0000\">$(echo "($BAL_EMERGENCY - $EMERGENCY_FUND)/$MONTHLY_INCOME_AVG" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')m</span>"
+   else
+       if [[ "0" == "$EMERGENCY_FUND" ]]; then
+  	 BAL_EMERGENCY="<span color=\"#FFFF00\">N/A</span>"
+       else
+  	 BAL_EMERGENCY="<span color=\"#00FF00\">ok</span>"
+       fi
+   fi
+
+
+   BAL_CHECKING="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g' | tail -n1)"
+   CHECKING_EXTRA="$(echo $BAL_CHECKING - ${MONTHLY_SPENDING_AVG} - ${EMERGENCY_FUND} | bc -l)" # extra one month
+
+   if [[ "1" == "$(echo "$CHECKING_EXTRA > 0" | bc -l)" ]]; then
+       if [[ "0" == "$MONTHLY_SPENDING_AVG" ]]; then
+  	 EXTRA="<span color=\"#FFFF00\">N/A</span>"
+       else
+  	 if [[ "1" == "$(echo "$CHECKING_EXTRA > $MONTHLY_SPENDING_AVG" | bc -l)" ]]; then
+  	     EXTRA="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$(echo "$CHECKING_EXTRA/1000.0" | bc -l | grep -oE '^-?[0-9]*\.?[0-9]{0,1}')k</span>"
+  	 else
+  	     EXTRA="<<ledger-main-currency-symbol()>>$(echo "$CHECKING_EXTRA/1000.0" | bc -l | grep -oE '^-?[0-9]*\.?[0-9]{0,1}')k"
+  	 fi
+       fi
+   else
+       EXTRA="no"
+   fi
+
+   BAL_PROJECTION_YEAR=$(echo "($WEEKLY_SPENDING_AVG - $WEEKLY_INCOME_AVG_NO_SALARY) * 52" | bc -l)
+   if [[ "1" == "$(echo "$BAL_PROJECTION_YEAR > 0" | bc -l)" ]]; then
+       YEARS_LEFT=$(echo "$BAL_CHECKING / $BAL_PROJECTION_YEAR" | bc -l | sed -r 's/(\..{1}).+/\1/');
+       if [[ "1" == "$(echo "$YEARS_LEFT < 5" | bc -l)" ]]; then
+  	 YEARS_LEFT="<span color=\"#FF0000\">+${YEARS_LEFT}y</span>";
+       else
+  	 YEARS_LEFT="<span color=\"#FFFF00\">+${YEARS_LEFT}y</span>";
+       fi
+   else
+       YEARS_LEFT="<span color=\"#FFFF00\">+∞y</span>";
+   fi
+
+   RETIREMENT="$(ledger b -X <<ledger-main-currency()>> "Retirement Savings" -n -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//g')"
+   [[ -z "$RETIREMENT" ]] && RETIREMENT="0"
+   ASSETS="$(ledger bal -X <<ledger-main-currency()>> "Assets" and not Reimbursements -n  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
+   if [[ "1" == "$(echo "$RETIREMENT > $ASSETS" | bc -l)" ]]; then
+       RETIREMENT="<span color=\"#FF0000\">$(echo "($ASSETS - $RETIREMENT)/$MONTHLY_INCOME_AVG" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')m</span>"
+   else
+       RETIREMENT="<span color=\"#00FF00\">ok</span>"
+   fi
+
+   OTHER="$(ledger budget Expenses:Personal:Other -X <<ledger-main-currency()>> -p "from last year until tomorrow" | tail -n1 | awk '{print $3}' | sed -r 's/<<ledger-main-currency()>>//')"
+   # OTHER="$(echo "$OTHER * -1 / 1000" | bc -l)"
+   # OTHER_SHORT="$(echo $OTHER | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')k"
+   OTHER="$(echo "$OTHER * -1" | bc -l)"
+   OTHER_SHORT="$(echo $OTHER | sed -r 's/(\..{1}).+/\1/')"
+   if [[ "1" == "$(echo "$OTHER < 0" | bc -l)" ]]; then
+       OTHER="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$OTHER_SHORT</span>"
+   else
+       OTHER="<span color=\"#00FF00\"><<ledger-main-currency-symbol()>>$OTHER_SHORT</span>"
+   fi
+
+   BAL_TIME=$(org-clocked-in.sh balance)
+   PROJECTING="0"
+   if [[ -f ~/.log/projecting ]]; then
+       [[ "$(cat ~/.log/projecting)" == "true" ]] && PROJECTING="1";
+   fi
+   [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ Time:${BAL_TIME} ༼ Food:$BAL_FOOD ༼ Rental:$BAL_RENT ༼ Other:$OTHER ༼ Fun:$BAL_ENTERTAINMENT_SHORT ༼ Retirement:$RETIREMENT ༼ Emergency:$BAL_EMERGENCY ༼ Extra:$EXTRA ༼ ⚖:$INCOME_RATIO$YEARS_LEFT'" | awesome-client
 #+end_src
 
 The script is ran regularly
