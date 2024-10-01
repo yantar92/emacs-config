@@ -2564,7 +2564,7 @@ Do not even need terminal to interact with Git.
     (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward)))
 #+END_SRC
 
-**** Interaction with GitHub \ other forges
+**** COMMENT Interaction with GitHub \ other forges
 :PROPERTIES:
 :ID:       b5cd6c65-f254-42aa-a423-2001c72d6dfa
 :END:
