@@ -11556,240 +11556,251 @@ instead."
 :END:
 
 #+begin_src emacs-lisp
-(use-package helm-org-ql
-  :if init-flag
-  :after org-ql
-  :after helm-org
-  :init
-  (defun yant/helm-org-ql-set-preceding-task (marker)
-    "Make task at point follow other (selected) task.
+  (use-package helm-org-ql
+    :if init-flag
+    :after org-ql
+    :after helm-org
+    :init
+    (defun yant/helm-org-ql-set-preceding-task (marker)
+      "Make task at point follow other (selected) task.
 
-The current task will be marked WAITING and cannot be marked DONE
-until the other task is completed.
-Its :SUMMARY: property will contain the information about the blocker
-Completing the other (selected) task will automatically set the
-current task to NEXT and schedule it the same day."
-    (let ((uuid (org-with-point-at marker (org-id-get-create)))
-	  (cur-uuid (org-id-get-create)))
-      (unless uuid (user-error "Did not get a uuid"))
-      (org-todo "WAITING")
-      (org-set-property "BLOCKER" (format "ids(%s)" uuid))
-      (org-set-property "SUMMARY" (format "Blocked by %s" (org-with-point-at (org-id-find uuid 'marker) (org-get-heading t t t t))))
-      (org-set-tags (cl-adjoin "TRACK" (org-get-tags nil 'local)))
-      (org-with-point-at marker
-	(org-set-property "TRIGGER" (format "%s ids(\"%s\") todo!(NEXT) scheduled!(\".\") delete-property!(\"SUMMARY\")"
-                                            (or (org-entry-get nil "TRIGGER") "")
-                                            cur-uuid)))))
-  (defun yant/helm-org-ql-create-link (marker)
-    "Insert link to MARKER at point."
-    (insert (org-with-point-at marker
-              (if (and (org-entry-get (point) "AUTHOR")
-                       (org-entry-get (point) "YEAR")
-                       (org-entry-get (point) "JOURNAL"))
-                  (let ((heading (org-get-heading t t t t)))
-                    (format "[[id:%s][%s]]"
-                            (org-id-get-create)
-                            (--> heading
-                                 (replace-regexp-in-string ").+" "" it)
-                                 (replace-regexp-in-string "\\[" "" it)
-                                 (replace-regexp-in-string "\\]" "" it)
-                                 (replace-regexp-in-string "(" "" it))))
-                (org-store-link nil)))))
-  (defun yant/helm-org-ql-insert-url (marker)
-    "Insert URL from link at point."
-    (let ((link (or (org-entry-get marker "Source")
-                    (org-entry-get marker "URL"))))
-      (cond
-       (link
-        (save-match-data
-          (string-match "^\\(?:\\[\\[\\)?\\([^]]+\\)" link)
-          (insert (match-string 1 link))))
-       ((and (org-entry-get marker "LINK")
-             (or (string= "ML:Org mode" (org-entry-get marker "HOWPUBLISHED"))
-                 (string= "ML:Emacs devel" (org-entry-get marker "HOWPUBLISHED"))))
-        (setq link (org-entry-get marker "LINK"))
-        (let ((list-url
-               (pcase (org-entry-get marker "HOWPUBLISHED")
-                 ("ML:Org mode" "https://orgmode.org/list/")
-                 ("ML:Emacs devel" "https://yhetil.org/emacs-devel/"))))
+  The current task will be marked WAITING and cannot be marked DONE
+  until the other task is completed.
+  Its :SUMMARY: property will contain the information about the blocker
+  Completing the other (selected) task will automatically set the
+  current task to NEXT and schedule it the same day."
+      (let ((uuid (org-with-point-at marker (org-id-get-create)))
+  	  (cur-uuid (org-id-get-create)))
+        (unless uuid (user-error "Did not get a uuid"))
+        (org-todo "WAITING")
+        (org-set-property "BLOCKER" (format "ids(%s)" uuid))
+        (org-set-property "SUMMARY" (format "Blocked by %s" (org-with-point-at (org-id-find uuid 'marker) (org-get-heading t t t t))))
+        (org-set-tags (cl-adjoin "TRACK" (org-get-tags nil 'local)))
+        (org-with-point-at marker
+  	(org-set-property "TRIGGER" (format "%s ids(\"%s\") todo!(NEXT) scheduled!(\".\") delete-property!(\"SUMMARY\")"
+                                              (or (org-entry-get nil "TRIGGER") "")
+                                              cur-uuid)))))
+    (defun yant/helm-org-ql-create-link (marker)
+      "Insert link to MARKER at point."
+      (insert (org-with-point-at marker
+                (if (and (org-entry-get (point) "AUTHOR")
+                         (org-entry-get (point) "YEAR")
+                         (org-entry-get (point) "JOURNAL"))
+                    (let ((heading (org-get-heading t t t t)))
+                      (format "[[id:%s][%s]]"
+                              (org-id-get-create)
+                              (--> heading
+                                   (replace-regexp-in-string ").+" "" it)
+                                   (replace-regexp-in-string "\\[" "" it)
+                                   (replace-regexp-in-string "\\]" "" it)
+                                   (replace-regexp-in-string "(" "" it))))
+                  (org-store-link nil)))))
+    (defun yant/helm-org-ql-insert-url (marker &optional with-title)
+      "Insert URL from link at point.
+  When optional argument WITH-TITLE is non-nil, insert link title as
+  description as well."
+      (let ((link (or (org-entry-get marker "Source")
+                      (org-entry-get marker "URL")))
+            (title (and with-title (org-element-property :title (org-element-at-point marker)))))
+        (cond
+         (link
           (save-match-data
-            (cond
-             ((string-match "^notmuch:id:\\(.+\\)" link)
-              (insert (format "%s%s" list-url (match-string 1 link))))
-             ((string-match "^notmuch:thread:\\(.+\\)" link)
-              (let ((msgid (symbol-name (notmuch-call-notmuch-sexp "search" "--output=messages" (match-string 1 link)))))
-                (string-match "^id:\\(.+\\)" msgid)
-                (insert (format "%s%s" list-url (match-string 1 msgid)))))
-             )))))))
-  (defun yant/helm-org-ql-open-url (marker)
-    "Open URL from link"
-    ;; Indicate that we do not need to stay in current frame.
-    ;; (setq helm-exit-status 1)
-    (org-with-point-at marker
-      (if (and (org-attach-dir) (org-attach-file-list (org-attach-dir)))
-          (org-attach-open)
-        (let ((link (or (org-entry-get marker "Source")
-                        (org-entry-get marker "URL"))))
-          (if link (org-open-link-from-string link)
-            ;; Offer standard selection
-            (org-open-at-point))))))
-  (defun yant/helm-org-ql-show-in-agenda (markers)
-    "Show agenda view with all the matches."
-    (let ((org-agenda-skip-function `(lambda ()
-                                       (org-back-to-heading t)
-                                       (let ((markerhere (point-marker))
-                                             (markers ',(helm-marked-candidates)))
-                                         (setq markers (-filter (lambda (marker) (eq (current-buffer) (marker-buffer marker))) markers))
-                                         (if (member (point-marker) markers)
-                                             nil
-                                           (while (and markers
-                                                       (> markerhere (car markers)))
-                                             (setq markers (cdr markers)))
-                                           (if (car markers)
-                                               (goto-char (car markers))
-                                             (goto-char (point-max)))))))
-          (org-agenda-skip-location-context t)
-          (org-agenda-sticky nil))
-      (org-tags-view nil "!")))
-  (defun yant/helm-org-ql-show-marker (marker)
-    "Show heading at MARKER"
-    (interactive)
-    (when marker
-      (if helm-full-frame
-          (switch-to-buffer (marker-buffer marker))
-        (pop-to-buffer (marker-buffer marker)))
-      (widen)
-      (goto-char marker)
-      (org-show-set-visibility 'ancestors)
-      ;; (org-fold-heading nil t)
-      (if (fboundp 'org-fold-show-children)
-          (org-fold-show-children)
-        (org-show-children))
-      (org-cycle-hide-drawers 'children)
-      ;; (org-fold-show-children)
-      (recenter 2)))
-  (defvar yant/helm-org-ql--refile-history nil)
-  (defun yant/helm-org-ql-refile-to (&optional marker)
-    "Refile heading at point to selected heading at MARKER."
-    (require 'org-macs)
-    (when marker
-      (let* ((buffer (marker-buffer marker))
-             (filename (or (buffer-file-name buffer) (buffer-file-name (buffer-base-buffer buffer))))
-             ;; get the heading we refile to so org doesn't
-             ;; output 'Refile to "nil" in file ...'
-             (heading (org-with-point-at marker (org-get-heading :no-tags :no-todo :no-priority :no-comment)))
-	     (rfloc (list heading filename nil marker)))
-        ;; Probably best to check that everything returned a value
-        (when (and buffer filename rfloc)
-          (push marker yant/helm-org-ql--refile-history)
-          (setq yant/helm-org-ql--refile-history (delete-dups yant/helm-org-ql--refile-history))
-          (org-with-point-at-org-buffer
-           (when-let ((org-agenda-buffer-name (and (boundp 'agenda-buffer) agenda-buffer)))
-	     (org-remove-subtree-entries-from-agenda))
-           (org-refile nil nil rfloc))))))
-  (defun yant/helm-org-ql-yank-selection ()
-    "Yank search exp matching selected heading's children."
-    (interactive)
-    ;; (with-helm-buffer
-    ;;   (setq-local helm-org-ql-filter `(ancestor (property "ID" ,(org-with-point-at (helm-get-selection) (org-id-get-create))))))
-    (with-current-buffer (marker-buffer (helm-get-selection))
-      (widen)
-      (goto-char (helm-get-selection))
-      (org-narrow-to-subtree)
-      (narrow-to-region (or (outline-next-heading) (point-min)) (point-max))
-      (let ((beg (point-min))
-            (end (point-max)))
-        (with-helm-buffer
-          (helm-attrset
-           :cleanup
-           (if-let ((cleanfunc (helm-attr :cleanup)))
-               `(lambda ()
-                  (funcall ,cleanfunc)
-                  (with-current-buffer ,(marker-buffer (helm-get-selection)) (widen)))
-             `(lambda () (with-current-buffer ,(marker-buffer (helm-get-selection)) (widen)))))
-          (setq-local helm-org-ql-buffers-files (marker-buffer (helm-get-selection)))
-          (setq-local helm-org-ql-narrow t)
-          (helm-attrset 'name (helm-get-selection nil t))
-          (setq-local helm-org-ql-filter (or helm-org-ql-filter t)))))
-    (helm-set-pattern ""))
-  (defun yant/helm-org-ql-refile (arg)
-    "Helmified version of `org-refile' using `helm-org-ql'."
-    (interactive "P")
-    (catch 'exit
-      (setq yant/helm-org-ql--refile-history
-            (seq-filter
-             (lambda (el) (and (buffer-live-p (marker-buffer el))
-                               (org-with-point-at el (org-at-heading-p))))
-             yant/helm-org-ql--refile-history))
-      (let ((helm-org-ql-actions (pcase arg
-                                   ('(4) '(("Go to heading" . yant/helm-org-ql-show-marker)
-                                           ("Refile heading at point to selected heading" . yant/helm-org-ql-refile-to)))
-                                   ('(16)
-                                    (yant/helm-org-ql-show-marker (car yant/helm-org-ql--refile-history))
-                                    (throw 'exit t))
-                                   (2
-                                    (when (org-clock-is-active)
-                                      (yant/helm-org-ql-refile-to org-clock-marker)
-                                      (throw 'exit t)))
-                                   (`bulk-agenda-command
-                                    ;; Return marker to serve as argument for `org-agenda-bulk-custom-functions'.
-                                    ;; The return argument will be applied using
-                                    ;; (apply #'yant/helm-org-ql-refile-to return)
-                                    '(("Refile bulk agenda selection to selected heading" . list)))
-                                   (_ '(("Refile heading at point to selected heading" . yant/helm-org-ql-refile-to)
-                                        ("Go to heading" . yant/helm-org-ql-show-marker)))))
-            (org-refile-keep (and arg (equal arg 3)))
-            (helm-org-ql-show-paths
-             (lambda (width)
-               (let ((full-path (org-get-outline-path t t)))
-                 (save-excursion
-                   (save-restriction
-                     (while (and (not (member "project" (org-get-tags nil t)))
-                                 (org-up-heading-or-point-min)))
-                     (when (and (org-at-heading-p)
-                                (member "project" (org-get-tags nil t)))
-                       (setq full-path (-difference full-path (org-get-outline-path nil t))))
-                     (org-format-outline-path full-path width nil "\\"))))))
-            (helm-org-ql-reverse-paths nil))
-        (helm-org-ql (org-agenda-files t)
-                     :name "Refile to"
-                     :history yant/helm-org-ql--refile-history
-                     :filter
-                     '(and (not (path "rss.org" "schedule.org"))
-                           ;; (todo)
-                           (not (tags-local "NOREFILE"))
-                           (tags-local "REFILE" "goal")
-                           )))))
-  (defun yant/helm-org-ql-toggle-archives ()
-    "Toggle searching across archive files."
-    (interactive)
-    (with-helm-buffer
-      (cond
-       ((equal helm-org-ql-buffers-files (org-agenda-files t))
-        (helm-set-attr 'name "Org Agenda Files and Archives")
-        (setq-local helm-org-ql-buffers-files (org-agenda-files t t))
-        (helm-update))
-       ((equal helm-org-ql-buffers-files (org-agenda-files t t))
-        (helm-set-attr 'name "Org Agenda Files")
-        (setq-local helm-org-ql-buffers-files (org-agenda-files t))
-        (helm-update))
-       (t nil))))
-  :config
-  (bind-key "C-M-l" #'yant/helm-org-ql-yank-selection helm-org-ql-map)
-  (bind-key "C-c C-w" #'yant/helm-org-ql-refile org-mode-map)
-  (bind-key "C-c C-w" #'yant/helm-org-ql-refile org-agenda-mode-map)
-  (bind-key "C-c C-u" #'yant/helm-org-ql-toggle-archives helm-org-ql-map)
-  (add-to-list 'org-agenda-bulk-custom-functions `(?R yant/helm-org-ql-refile-to ,(apply-partially #'yant/helm-org-ql-refile 'bulk-agenda-command)))
-  :custom
-  (helm-org-ql-actions '(("Go to heading" . yant/helm-org-ql-show-marker)
-                         ("Open heading source" . yant/helm-org-ql-open-url)
-                         ("Insert link to heading" . yant/helm-org-ql-create-link)
-                         ("Insert URL of heading" . yant/helm-org-ql-insert-url)
-                         ("Refile heading(s) to heading at point" . helm-org--refile-heading-here)
-                         ("Refile heading at point to selected heading" . yant/helm-org-ql-refile-to)
-                         ("Set as blocker for heading at point" . yant/helm-org-ql-set-preceding-task)
-                         ("Show in agenda" . yant/helm-org-ql-show-in-agenda)))
-  )
+            (string-match "^\\(?:\\[\\[\\)?\\([^]]+\\)" link)
+            (org-insert-link nil (match-string 1 link) title)
+            ;; (insert (match-string 1 link))
+  	  ))
+         ((and (org-entry-get marker "LINK")
+               (or (string= "ML:Org mode" (org-entry-get marker "HOWPUBLISHED"))
+                   (string= "ML:Emacs devel" (org-entry-get marker "HOWPUBLISHED"))))
+          (setq link (org-entry-get marker "LINK"))
+          (let ((list-url
+                 (pcase (org-entry-get marker "HOWPUBLISHED")
+                   ("ML:Org mode" "https://orgmode.org/list/")
+                   ("ML:Emacs devel" "https://yhetil.org/emacs-devel/")))
+                full-url)
+            (save-match-data
+              (setq
+               full-url
+  	     (cond
+  	      ((string-match "^notmuch:id:\\(.+\\)" link)
+  	       (format "%s%s" list-url (match-string 1 link)))
+  	      ((string-match "^notmuch:thread:\\(.+\\)" link)
+  	       (let ((msgid (symbol-name (notmuch-call-notmuch-sexp "search" "--output=messages" (match-string 1 link)))))
+                   (string-match "^id:\\(.+\\)" msgid)
+                   (format "%s%s" list-url (match-string 1 msgid))))))
+              (org-insert-link nil full-url title)))))))
+    (defun yant/helm-org-ql-insert-url-w-title (marker)
+      "Insert URL link with title from link at point."
+      (yant/helm-org-ql-insert-url marker t))
+    (defun yant/helm-org-ql-open-url (marker)
+      "Open URL from link"
+      ;; Indicate that we do not need to stay in current frame.
+      ;; (setq helm-exit-status 1)
+      (org-with-point-at marker
+        (if (and (org-attach-dir) (org-attach-file-list (org-attach-dir)))
+            (org-attach-open)
+          (let ((link (or (org-entry-get marker "Source")
+                          (org-entry-get marker "URL"))))
+            (if link (org-open-link-from-string link)
+              ;; Offer standard selection
+              (org-open-at-point))))))
+    (defun yant/helm-org-ql-show-in-agenda (markers)
+      "Show agenda view with all the matches."
+      (let ((org-agenda-skip-function `(lambda ()
+                                         (org-back-to-heading t)
+                                         (let ((markerhere (point-marker))
+                                               (markers ',(helm-marked-candidates)))
+                                           (setq markers (-filter (lambda (marker) (eq (current-buffer) (marker-buffer marker))) markers))
+                                           (if (member (point-marker) markers)
+                                               nil
+                                             (while (and markers
+                                                         (> markerhere (car markers)))
+                                               (setq markers (cdr markers)))
+                                             (if (car markers)
+                                                 (goto-char (car markers))
+                                               (goto-char (point-max)))))))
+            (org-agenda-skip-location-context t)
+            (org-agenda-sticky nil))
+        (org-tags-view nil "!")))
+    (defun yant/helm-org-ql-show-marker (marker)
+      "Show heading at MARKER"
+      (interactive)
+      (when marker
+        (if helm-full-frame
+            (switch-to-buffer (marker-buffer marker))
+          (pop-to-buffer (marker-buffer marker)))
+        (widen)
+        (goto-char marker)
+        (org-show-set-visibility 'ancestors)
+        ;; (org-fold-heading nil t)
+        (if (fboundp 'org-fold-show-children)
+            (org-fold-show-children)
+          (org-show-children))
+        (org-cycle-hide-drawers 'children)
+        ;; (org-fold-show-children)
+        (recenter 2)))
+    (defvar yant/helm-org-ql--refile-history nil)
+    (defun yant/helm-org-ql-refile-to (&optional marker)
+      "Refile heading at point to selected heading at MARKER."
+      (require 'org-macs)
+      (when marker
+        (let* ((buffer (marker-buffer marker))
+               (filename (or (buffer-file-name buffer) (buffer-file-name (buffer-base-buffer buffer))))
+               ;; get the heading we refile to so org doesn't
+               ;; output 'Refile to "nil" in file ...'
+               (heading (org-with-point-at marker (org-get-heading :no-tags :no-todo :no-priority :no-comment)))
+  	     (rfloc (list heading filename nil marker)))
+          ;; Probably best to check that everything returned a value
+          (when (and buffer filename rfloc)
+            (push marker yant/helm-org-ql--refile-history)
+            (setq yant/helm-org-ql--refile-history (delete-dups yant/helm-org-ql--refile-history))
+            (org-with-point-at-org-buffer
+             (when-let ((org-agenda-buffer-name (and (boundp 'agenda-buffer) agenda-buffer)))
+  	     (org-remove-subtree-entries-from-agenda))
+             (org-refile nil nil rfloc))))))
+    (defun yant/helm-org-ql-yank-selection ()
+      "Yank search exp matching selected heading's children."
+      (interactive)
+      ;; (with-helm-buffer
+      ;;   (setq-local helm-org-ql-filter `(ancestor (property "ID" ,(org-with-point-at (helm-get-selection) (org-id-get-create))))))
+      (with-current-buffer (marker-buffer (helm-get-selection))
+        (widen)
+        (goto-char (helm-get-selection))
+        (org-narrow-to-subtree)
+        (narrow-to-region (or (outline-next-heading) (point-min)) (point-max))
+        (let ((beg (point-min))
+              (end (point-max)))
+          (with-helm-buffer
+            (helm-attrset
+             :cleanup
+             (if-let ((cleanfunc (helm-attr :cleanup)))
+                 `(lambda ()
+                    (funcall ,cleanfunc)
+                    (with-current-buffer ,(marker-buffer (helm-get-selection)) (widen)))
+               `(lambda () (with-current-buffer ,(marker-buffer (helm-get-selection)) (widen)))))
+            (setq-local helm-org-ql-buffers-files (marker-buffer (helm-get-selection)))
+            (setq-local helm-org-ql-narrow t)
+            (helm-attrset 'name (helm-get-selection nil t))
+            (setq-local helm-org-ql-filter (or helm-org-ql-filter t)))))
+      (helm-set-pattern ""))
+    (defun yant/helm-org-ql-refile (arg)
+      "Helmified version of `org-refile' using `helm-org-ql'."
+      (interactive "P")
+      (catch 'exit
+        (setq yant/helm-org-ql--refile-history
+              (seq-filter
+               (lambda (el) (and (buffer-live-p (marker-buffer el))
+                                 (org-with-point-at el (org-at-heading-p))))
+               yant/helm-org-ql--refile-history))
+        (let ((helm-org-ql-actions (pcase arg
+                                     ('(4) '(("Go to heading" . yant/helm-org-ql-show-marker)
+                                             ("Refile heading at point to selected heading" . yant/helm-org-ql-refile-to)))
+                                     ('(16)
+                                      (yant/helm-org-ql-show-marker (car yant/helm-org-ql--refile-history))
+                                      (throw 'exit t))
+                                     (2
+                                      (when (org-clock-is-active)
+                                        (yant/helm-org-ql-refile-to org-clock-marker)
+                                        (throw 'exit t)))
+                                     (`bulk-agenda-command
+                                      ;; Return marker to serve as argument for `org-agenda-bulk-custom-functions'.
+                                      ;; The return argument will be applied using
+                                      ;; (apply #'yant/helm-org-ql-refile-to return)
+                                      '(("Refile bulk agenda selection to selected heading" . list)))
+                                     (_ '(("Refile heading at point to selected heading" . yant/helm-org-ql-refile-to)
+                                          ("Go to heading" . yant/helm-org-ql-show-marker)))))
+              (org-refile-keep (and arg (equal arg 3)))
+              (helm-org-ql-show-paths
+               (lambda (width)
+                 (let ((full-path (org-get-outline-path t t)))
+                   (save-excursion
+                     (save-restriction
+                       (while (and (not (member "project" (org-get-tags nil t)))
+                                   (org-up-heading-or-point-min)))
+                       (when (and (org-at-heading-p)
+                                  (member "project" (org-get-tags nil t)))
+                         (setq full-path (-difference full-path (org-get-outline-path nil t))))
+                       (org-format-outline-path full-path width nil "\\"))))))
+              (helm-org-ql-reverse-paths nil))
+          (helm-org-ql (org-agenda-files t)
+                       :name "Refile to"
+                       :history yant/helm-org-ql--refile-history
+                       :filter
+                       '(and (not (path "rss.org" "schedule.org"))
+                             ;; (todo)
+                             (not (tags-local "NOREFILE"))
+                             (tags-local "REFILE" "goal")
+                             )))))
+    (defun yant/helm-org-ql-toggle-archives ()
+      "Toggle searching across archive files."
+      (interactive)
+      (with-helm-buffer
+        (cond
+         ((equal helm-org-ql-buffers-files (org-agenda-files t))
+          (helm-set-attr 'name "Org Agenda Files and Archives")
+          (setq-local helm-org-ql-buffers-files (org-agenda-files t t))
+          (helm-update))
+         ((equal helm-org-ql-buffers-files (org-agenda-files t t))
+          (helm-set-attr 'name "Org Agenda Files")
+          (setq-local helm-org-ql-buffers-files (org-agenda-files t))
+          (helm-update))
+         (t nil))))
+    :config
+    (bind-key "C-M-l" #'yant/helm-org-ql-yank-selection helm-org-ql-map)
+    (bind-key "C-c C-w" #'yant/helm-org-ql-refile org-mode-map)
+    (bind-key "C-c C-w" #'yant/helm-org-ql-refile org-agenda-mode-map)
+    (bind-key "C-c C-u" #'yant/helm-org-ql-toggle-archives helm-org-ql-map)
+    (add-to-list 'org-agenda-bulk-custom-functions `(?R yant/helm-org-ql-refile-to ,(apply-partially #'yant/helm-org-ql-refile 'bulk-agenda-command)))
+    :custom
+    (helm-org-ql-actions '(("Go to heading" . yant/helm-org-ql-show-marker)
+                           ("Open heading source" . yant/helm-org-ql-open-url)
+                           ("Insert link to heading" . yant/helm-org-ql-create-link)
+                           ("Insert URL of heading" . yant/helm-org-ql-insert-url)
+                           ("Refile heading(s) to heading at point" . helm-org--refile-heading-here)
+                           ("Insert URL link w title of heading" . yant/helm-org-ql-insert-url-w-title)
+                           ("Refile heading at point to selected heading" . yant/helm-org-ql-refile-to)
+                           ("Set as blocker for heading at point" . yant/helm-org-ql-set-preceding-task)
+                           ("Show in agenda" . yant/helm-org-ql-show-in-agenda))))
 #+end_src
 
 ***** Live (=helm-org-ql=) search in org
