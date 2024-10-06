@@ -6021,6 +6021,7 @@ The idea of the script is regular reminder to not spend too much money on certai
 
 
    BAL_CHECKING="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g' | tail -n1)"
+   BAL_ASSETS="$(ledger bal -X <<ledger-main-currency()>> Assets -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g' | tail -n1)"
    CHECKING_EXTRA="$(echo $BAL_CHECKING - ${MONTHLY_SPENDING_AVG} - ${EMERGENCY_FUND} | bc -l)" # extra one month
 
    if [[ "1" == "$(echo "$CHECKING_EXTRA > 0" | bc -l)" ]]; then
@@ -6039,7 +6040,7 @@ The idea of the script is regular reminder to not spend too much money on certai
 
    BAL_PROJECTION_YEAR=$(echo "($WEEKLY_SPENDING_AVG - $WEEKLY_INCOME_AVG_NO_SALARY) * 52" | bc -l)
    if [[ "1" == "$(echo "$BAL_PROJECTION_YEAR > 0" | bc -l)" ]]; then
-       YEARS_LEFT=$(echo "$BAL_CHECKING / $BAL_PROJECTION_YEAR" | bc -l | sed -r 's/(\..{1}).+/\1/');
+       YEARS_LEFT=$(echo "$BAL_ASSETS / $BAL_PROJECTION_YEAR" | bc -l | sed -r 's/(\..{1}).+/\1/');
        if [[ "1" == "$(echo "$YEARS_LEFT < 5" | bc -l)" ]]; then
   	 YEARS_LEFT="<span color=\"#FF0000\">+${YEARS_LEFT}y</span>";
        else
