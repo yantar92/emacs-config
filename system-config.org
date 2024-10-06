@@ -5831,7 +5831,6 @@ yant/ledger-file
 --explicit
 --file <<ledger-file()>>
 --effective
---exchange <<ledger-main-currency()>>
 #+end_src
 *** Weekly expenses script
 :PROPERTIES:
