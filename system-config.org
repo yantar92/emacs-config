@@ -6565,6 +6565,32 @@ done
 net-nntp/slrn
 #+end_src
 
+** Importing mbox files into maildir
+
+Inspired by https://superuser.com/questions/1169371/how-to-convert-mbox-mail-files-as-found-in-thunderbird-dir-to-maildir
+Requires notmuch.
+
+#+begin_src python :tangle /home/yantar92/.local/bin/mbox-import.py :shebang "#!/bin/env python3"
+  import mailbox
+  import argparse
+
+  argparser = argparse.ArgumentParser(
+      description="Import mbox file to Maildir",
+      epilog="""Author: Ihor Radchenko""",
+  )
+
+  argparser.add_argument(
+      "mbox_file", help="mbox file (not archived)")
+  argparser.add_argument(
+      "maildir", help="existing Maildir root")
+  args = argparser.parse_args()
+
+  mbox = mailbox.mbox(args.mbox_file, create=False)
+  mdir = mailbox.Maildir(args.maildir, create=False)
+  for x in mbox:
+      mdir.add(x)
+#+end_src
+
 ** RSS sync client for websites not providing RSS natively (RSSHub)
 :PROPERTIES:
 :ID:       2242c473-3c03-459f-b0d4-9f916850dc6e
