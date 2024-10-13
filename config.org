@@ -7669,59 +7669,59 @@ I automated the check by examining WORG repository directly and checking the ~gi
 When reading long and entangled public mailing list threads, many people can participate and it is sometimes difficult to notice emails from important people I know (maintainers, friends, etc). A clear color indication of emails from significant people is helpful in such scenarios.
 
 #+begin_src emacs-lisp
-(use-package notmuch
-  :if init-flag
-  :after org-ql
-  :init
-  (defun yant/notmuch-show-highlight-contact-info ()
-    "Overlay contact info for sender.
-This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
-    (goto-char (point-min))
-    (let ((sender (condition-case nil
-		      (or (notmuch-show-get-header :Reply-To)
-			  (notmuch-show-get-from))
-                    (error
-                     (goto-char (point-min))
-                     (org-with-wide-buffer
-                      (replace-regexp-in-string
-                       " *(.+" ""
-                       (buffer-substring
-			(line-beginning-position 0)
-			(line-end-position 0)))))))
-          name)
-      (setq name sender)
-      (when (string-match "\\(.+?\\) *<\\([^ ]+@[^ >]+\\)" sender)
-	(setq name (match-string 1 sender))
-        ;; Too short names cause false-positive matches.
-        (when (length< name 6) (setq name sender))
-	(setq sender (match-string 2 sender)))
-      (setq name (replace-regexp-in-string " via \"Bug reports for GNU Emacs, the Swiss army knife of text editors\"" "" name))
-      (let ((contact-title
-	     (car
-	      (org-ql-query
-		:from "~/Org/contacts.org"
-		:where `(or (regexp ,sender)
-			    (regexp ,name))
-		:select
-		(lambda (el)
-		  (org-element-interpret-data
-		   (org-element-property :title el)))))))
-        (unless (or (equal user-full-name contact-title) ; do not highlight my own messages.
-		    (equal "builds@sr.ht" sender))
-	  (put-text-property
-	   (point-min) (1+ (point-min))
-	   'display
-	   (concat
-	    (if contact-title
-		;; Known contact.
-		(propertize contact-title 'face 'modus-themes-refine-green)
-	      ;; Unknown contact
-	      (propertize "--> Unknown contact <--" 'face 'dired-flagged))
-	    "\n"
-	    (or (get-text-property (point-min) 'display)
-		(buffer-substring (point-min) (1+ (point-min))))))))))
+  (use-package notmuch
+    :if init-flag
+    :after org-ql
+    :init
+    (defun yant/notmuch-show-highlight-contact-info ()
+      "Overlay contact info for sender.
+  This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
+      (goto-char (point-min))
+      (let ((sender (condition-case nil
+  		      (or (notmuch-show-get-header :Reply-To)
+  			  (notmuch-show-get-from))
+                      (error
+                       (goto-char (point-min))
+                       (org-with-wide-buffer
+                        (replace-regexp-in-string
+                         " *(.+" ""
+                         (buffer-substring
+  			(line-beginning-position 0)
+  			(line-end-position 0)))))))
+            name)
+        (setq name sender)
+        (when (string-match "\\(.+?\\) *<\\([^ ]+@[^ >]+\\)" sender)
+  	(setq name (match-string 1 sender))
+          ;; Too short names cause false-positive matches.
+          (when (length< name 6) (setq name sender))
+  	(setq sender (match-string 2 sender)))
+        (setq name (replace-regexp-in-string " via \"Bug reports for GNU Emacs, the Swiss army knife of text editors\"" "" name))
+        (let ((contact-title
+  	     (car
+  	      (org-ql-query
+  		:from "~/Org/contacts.org"
+  		:where `(or (regexp ,sender)
+  			    (regexp ,name))
+  		:select
+  		(lambda (el)
+  		  (org-element-interpret-data
+  		   (org-element-property :title el)))))))
+          (unless (or (equal user-full-name contact-title) ; do not highlight my own messages.
+  		    (equal "builds@sr.ht" sender))
+  	  (put-text-property
+  	   (point-min) (1+ (point-min))
+  	   'display
+  	   (concat
+  	    (if contact-title
+  		;; Known contact.
+  		(propertize contact-title 'face 'modus-themes-refine-green)
+  	      ;; Unknown contact
+  	      (propertize "--> Unknown contact <--" 'face 'dired-flagged))
+  	    "\n"
+  	    (or (get-text-property (point-min) 'display)
+  		(buffer-substring (point-min) (1+ (point-min))))))))))
 
-  (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contact-info))
+    (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contact-info))
 #+end_src
 
 
