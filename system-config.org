@@ -75,7 +75,7 @@ but also mixing it with some parts of Sakaki guide.
 #+begin_src conf :tangle /sudo::/etc/fstab
   UUID=ea7aa879-3483-45c2-81cd-ecf40b49fb15		/				btrfs		defaults,noatime,discard			0 1
   UUID=adfc4270-9b46-4fc3-b097-6882e910b37f		none				swap		defaults,noatime,discard			0 0
-  UUID=36c44c8d-3406-4287-b48a-40c6dd2e176c		/home				btrfs		defaults,noatime,discard			0 2
+  UUID=d8bb8479-30b3-4b6b-acaa-43a735ddd020		/home				btrfs		defaults,noatime,discard			0 2
   efivarfs						/sys/firmware/efi/efivars	efivarfs	rw,nosuid,nodev,noexec,relatime			0 0
   UUID=3244-9D07						/boot				vfat		noauto,noatime					1 2
 #+end_src
