@@ -5938,6 +5938,8 @@ The idea of the script is regular reminder to not spend too much money on certai
 
   UNCONVERTED_CURRENCIES="$(ledger -X  <<ledger-main-currency()>> bal Expenses | sed -E '/<<ledger-main-currency()>>|----+/d')"
 
+  BUDGET_CUTOFF="from this year"
+
   if [[ ! -z "$UNCONVERTED_CURRENCIES" ]]; then
       [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ <span color=\"#FF0000\"><b>Ledger error</b></span>༼ <span color=\"#FF0000\">Not all currencies convertable</span>༼ '" | awesome-client;
       exit;
@@ -5989,26 +5991,42 @@ The idea of the script is regular reminder to not spend too much money on certai
   BAL_ENTERTAINMENT_SHORT="$(echo "$BAL_ENTERTAINMENT*(-1)" | bc -l | grep -oE '^-?[0-9]*')"
   [[ "$(echo "$BAL_ENTERTAINMENT > 0" | bc -l)" == "1" ]] && BAL_ENTERTAINMENT_SHORT="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT</span>" || BAL_ENTERTAINMENT_SHORT="<<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT"
 
-  WEEKLY_INCOME_AVG="$(ledger r -X <<ledger-main-currency()>> Income -W -n -A -p "from last year until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income from the beginning of the year
+  WEEKLY_INCOME_AVG="$(ledger r -X <<ledger-main-currency()>> Income -W -n -A -p "${BUDGET_CUTOFF} until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income from the beginning of the year
   [[ -z "$WEEKLY_INCOME_AVG" ]] && WEEKLY_INCOME_AVG="0"
-  WEEKLY_INCOME_AVG_NO_SALARY="$(ledger r -X <<ledger-main-currency()>> Income and not Salary -W -n -A -p "from last year until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
+  WEEKLY_INCOME_AVG_NO_SALARY="$(ledger r -X <<ledger-main-currency()>> Income and not Salary -W -n -A -p "${BUDGET_CUTOFF} until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
   [[ -z "$WEEKLY_INCOME_AVG_NO_SALARY" ]] && WEEKLY_INCOME_AVG_NO_SALARY="0"
+  WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS="$(ledger r -X <<ledger-main-currency()>> Income and not Salary and not Gifts -W -n -A -p "${BUDGET_CUTOFF} until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
+  [[ -z "$WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS" ]] && WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS="0"
+
+
   MONTHLY_INCOME_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_INCOME_AVG" | bc -l)"
   # https://www.wisebread.com/figuring-the-size-of-your-emergency-fund
-  WEEKLY_SPENDING_AVG="$(ledger r -X <<ledger-main-currency()>> Expenses and not Work and not Gifts -W -n -A -p "from last year until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/,//')" # average expenses from beginning last year in <<ledger-main-currency()>>
+  WEEKLY_SPENDING_AVG="$(ledger r -X <<ledger-main-currency()>> Expenses and not Work and not Gifts -W -n -A -p "${BUDGET_CUTOFF} until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/,//')" # average expenses from beginning last year in <<ledger-main-currency()>>
   [[ -z "$WEEKLY_SPENDING_AVG" ]] && WEEKLY_SPENDING_AVG="0"
   MONTHLY_SPENDING_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_SPENDING_AVG" | bc -l)"
 
   INCOME_RATIO="$(echo "100.0 * $WEEKLY_INCOME_AVG / $WEEKLY_SPENDING_AVG" | bc -l | sed -r 's/\..*//')"
-  if [[ "1" == "$(echo "$INCOME_RATIO < 100" | bc -l)" ]]; then
-      INCOME_RATIO="<span color=\"#FF0000\">"$INCOME_RATIO"%</span>"
-  else
-      if [[ "1" == "$(echo "$INCOME_RATIO < 200" | bc -l)" ]]; then
-  	INCOME_RATIO="<span color=\"#FFFF00\">"$INCOME_RATIO"%</span>"
+  INCOME_RATIO_NO_SALARY="$(echo "100.0 * $WEEKLY_INCOME_AVG_NO_SALARY / $WEEKLY_SPENDING_AVG" | bc -l | sed -r 's/\..*//')"
+  INCOME_RATIO_NO_SALARY_NO_GIFTS="$(echo "100.0 * $WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS / $WEEKLY_SPENDING_AVG" | bc -l | sed -r 's/\..*//')"
+
+  # args: INCOME_RATIO
+  colorize_ratio () {
+      local INCOME_RATIO="$1"
+      if [[ "1" == "$(echo "$INCOME_RATIO < 100" | bc -l)" ]]; then
+  	INCOME_RATIO="<span color=\"#FF0000\">"$INCOME_RATIO"%</span>"
       else
-  	INCOME_RATIO="<span color=\"#00FF00\">"$INCOME_RATIO"%</span>"
+  	if [[ "1" == "$(echo "$INCOME_RATIO < 200" | bc -l)" ]]; then
+  	    INCOME_RATIO="<span color=\"#FFFF00\">"$INCOME_RATIO"%</span>"
+  	else
+  	    INCOME_RATIO="<span color=\"#00FF00\">"$INCOME_RATIO"%</span>"
+  	fi
       fi
-  fi
+      echo "$INCOME_RATIO"
+  }
+
+  INCOME_RATIO=$(colorize_ratio "$INCOME_RATIO")
+  INCOME_RATIO_NO_SALARY=$(colorize_ratio "$INCOME_RATIO_NO_SALARY")
+  INCOME_RATIO_NO_SALARY_NO_GIFTS=$(colorize_ratio "$INCOME_RATIO_NO_SALARY_NO_GIFTS")
 
   EMERGENCY_FUND="$(echo "$MONTHLY_SPENDING_AVG * <<emergency-fund-months()>>" | bc -l)"
   BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g' | tail -n1)"
@@ -6041,18 +6059,41 @@ The idea of the script is regular reminder to not spend too much money on certai
        EXTRA="no"
    fi
 
-   BAL_PROJECTION_YEAR=$(echo "($WEEKLY_SPENDING_AVG - $WEEKLY_INCOME_AVG_NO_SALARY) * 52" | bc -l)
-   if [[ "1" == "$(echo "$BAL_PROJECTION_YEAR > 0" | bc -l)" ]]; then
-       YEARS_LEFT=$(echo "$BAL_ASSETS / $BAL_PROJECTION_YEAR" | bc -l | sed -r 's/(\..{1}).+/\1/');
-       if [[ "1" == "$(echo "$YEARS_LEFT < 5" | bc -l)" ]]; then
-  	 YEARS_LEFT="<span color=\"#FF0000\">+${YEARS_LEFT}y</span>";
+   # args: BAL_PROJECTION_YEAR
+   years_left () {
+       local BAL_PROJECTION_YEAR="$1"
+       local YEARS_LEFT=""
+       if [[ "1" == "$(echo "$BAL_PROJECTION_YEAR > 0" | bc -l)" ]]; then
+  	 YEARS_LEFT=$(echo "$BAL_ASSETS / $BAL_PROJECTION_YEAR" | bc -l | sed -r 's/(\..{1}).+/\1/');
+  	 if [[ "1" == "$(echo "$YEARS_LEFT < 5" | bc -l)" ]]; then
+  	     YEARS_LEFT="<span font=\"12\" color=\"#FF0000\">+${YEARS_LEFT}y</span>";
+  	 else
+  	     YEARS_LEFT="<span font=\"12\" color=\"#FFFF00\">+${YEARS_LEFT}y</span>";
+  	 fi
        else
-  	 YEARS_LEFT="<span color=\"#FFFF00\">+${YEARS_LEFT}y</span>";
+  	 YEARS_LEFT="<span font=\"12\" color=\"#00FF00\">+∞y</span>";
        fi
-   else
-       YEARS_LEFT="<span color=\"#FFFF00\">+∞y</span>";
+       echo "$YEARS_LEFT"
+   }    
+
+   BAL_PROJECTION_YEAR=$(echo "($WEEKLY_SPENDING_AVG - $WEEKLY_INCOME_AVG) * 52" | bc -l)
+   BAL_PROJECTION_YEAR_NO_SALARY=$(echo "($WEEKLY_SPENDING_AVG - $WEEKLY_INCOME_AVG_NO_SALARY) * 52" | bc -l)
+   BAL_PROJECTION_YEAR_NO_SALARY_NO_GIFTS=$(echo "($WEEKLY_SPENDING_AVG - $WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS) * 52" | bc -l)
+
+   YEARS_LEFT="$(years_left "$BAL_PROJECTION_YEAR")"
+   YEARS_LEFT_NO_SALARY="$(years_left "$BAL_PROJECTION_YEAR_NO_SALARY")"
+   YEARS_LEFT_NO_SALARY_NO_GIFTS="$(years_left "$BAL_PROJECTION_YEAR_NO_SALARY_NO_GIFTS")"
+
+   if [ "$INCOME_RATIO" == "$INCOME_RATIO_NO_SALARY" ] ; then
+       INCOME_RATIO=""
+       YEARS_LEFT=""
+   fi
+   if [ "$INCOME_RATIO_NO_SALARY" == "$INCOME_RATIO_NO_SALARY_NO_GIFTS" ] ; then
+       INCOME_RATIO_NO_SALARY=""
+       YEARS_LEFT_NO_SALARY=""
    fi
 
+   
    RETIREMENT="$(ledger b -X <<ledger-main-currency()>> "Retirement Savings" -n -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//g')"
    [[ -z "$RETIREMENT" ]] && RETIREMENT="0"
    ASSETS="$(ledger bal -X <<ledger-main-currency()>> "Assets" and not Reimbursements -n  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
@@ -6062,7 +6103,7 @@ The idea of the script is regular reminder to not spend too much money on certai
        RETIREMENT="<span color=\"#00FF00\">ok</span>"
    fi
 
-   OTHER="$(ledger budget Expenses:Personal:Other -X <<ledger-main-currency()>> -p "from last year until tomorrow" | tail -n1 | awk '{print $3}' | sed -r 's/<<ledger-main-currency()>>//')"
+   OTHER="$(ledger budget Expenses:Personal:Other -X <<ledger-main-currency()>> -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | awk '{print $3}' | sed -r 's/<<ledger-main-currency()>>//')"
    # OTHER="$(echo "$OTHER * -1 / 1000" | bc -l)"
    # OTHER_SHORT="$(echo $OTHER | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')k"
    OTHER="$(echo "$OTHER * -1" | bc -l)"
@@ -6078,7 +6119,7 @@ The idea of the script is regular reminder to not spend too much money on certai
    if [[ -f ~/.log/projecting ]]; then
        [[ "$(cat ~/.log/projecting)" == "true" ]] && PROJECTING="1";
    fi
-   [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ Time:${BAL_TIME} ༼ Food:$BAL_FOOD ༼ Rental:$BAL_RENT ༼ Other:$OTHER ༼ Fun:$BAL_ENTERTAINMENT_SHORT ༼ Retirement:$RETIREMENT ༼ Emergency:$BAL_EMERGENCY ༼ Extra:$EXTRA ༼ ⚖:$INCOME_RATIO$YEARS_LEFT'" | awesome-client
+   [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ Time:${BAL_TIME} ༼ Food:$BAL_FOOD ༼ Rent:$BAL_RENT ༼ Othr:$OTHER ༼ Fun:$BAL_ENTERTAINMENT_SHORT ༼ Retire:$RETIREMENT ༼ Emergency:$BAL_EMERGENCY ༼ Extra:$EXTRA ༼ ⚖:${INCOME_RATIO}$YEARS_LEFT ${INCOME_RATIO_NO_SALARY}$YEARS_LEFT_NO_SALARY ${INCOME_RATIO_NO_SALARY_NO_GIFTS}$YEARS_LEFT_NO_SALARY_NO_GIFTS'" | awesome-client
 #+end_src
 
 The script is ran regularly
