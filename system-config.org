@@ -8115,15 +8115,31 @@ done
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/backup-archive-to-remote.sh :shebang #!/bin/bash :noweb tangle
-# Upload local archive to remote
-while true; do
-    read -p "Copy archive to remote backup? " yn
-    case $yn in
-        [Yy]* ) rclone copy --progress /mnt/Backup/Archive/ archive:; break;;
-        [Nn]* ) break;;
-        ,* ) echo "Please answer yes or no.";;
-    esac
-done
+  # Upload local archive to remote
+  while true; do
+      read -p "Backup archive to remote backup? " yn
+      case $yn in
+          [Yy]* ) restic -r rclone:backup:Archive --password-command "gpg -q  --for-your-eyes-only -d /home/yantar92/.password-store/restic-remote.gpg" backup /mnt/Backup/Archive/; break;;
+          [Nn]* ) break;;
+          ,,* ) echo "Please answer yes or no.";;
+      esac
+  done
+  while true; do
+      read -p "Check integrity of the remote repository? " yn
+      case $yn in
+          [Yy]* ) restic -r rclone:backup:Archive --password-command "gpg -q  --for-your-eyes-only -d /home/yantar92/.password-store/restic-remote.gpg" check; break;;
+          [Nn]* ) break;;
+          ,,* ) echo "Please answer yes or no.";;
+      esac
+  done
+  # while true; do
+  #     read -p "Copy archive to remote backup? " yn
+  #     case $yn in
+  #         [Yy]* ) rclone copy --progress /mnt/Backup/Archive/ archive:; break;;
+  #         [Nn]* ) break;;
+  #         * ) echo "Please answer yes or no.";;
+  #     esac
+  # done
 #+end_src
 
 
