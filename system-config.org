@@ -4114,7 +4114,8 @@ dev-libs/jemalloc
       [[ "$x" == *"libpng warning:"* ]] && continue
       [[ "$x" == *"Fontconfig error: Cannot load default config file: No such file: (null)"* ]] && continue
       [[ "$x" == *"handshake failed; returned -1, SSL error code 1"* ]] && continue
-      [[ "$x" == *"Message [0-9] rejected by interface"* ]] && continue
+      [[ "$x" == *"Message 4 rejected by interface"* ]] && continue
+      [[ "$x" == *"Message 5 rejected by interface"* ]] && continue
       [[ "$x" == *"org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files"* ]] && continue
       [[ "$x" == "" ]] && continue
       notify-send "Qutebrowser: $x"
