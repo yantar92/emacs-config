@@ -6097,9 +6097,10 @@ The idea of the script is regular reminder to not spend too much money on certai
    
    RETIREMENT="$(ledger b -X <<ledger-main-currency()>> "Retirement Savings" -n -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//g')"
    [[ -z "$RETIREMENT" ]] && RETIREMENT="0"
-   ASSETS="$(ledger bal -X <<ledger-main-currency()>> "Assets" and not Reimbursements -n  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
-   if [[ "1" == "$(echo "$RETIREMENT > $ASSETS" | bc -l)" ]]; then
-       RETIREMENT="<span color=\"#FF0000\">$(echo "($ASSETS - $RETIREMENT)/$MONTHLY_INCOME_AVG" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')m</span>"
+   ASSETS="$(ledger bal -X <<ledger-main-currency()>> Assets -n  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
+   EQUITY="$(ledger bal -X <<ledger-main-currency()>> Equity -n  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
+   if [[ "1" == "$(echo "$RETIREMENT > ($ASSETS + $EQUITY)" | bc -l)" ]]; then
+       RETIREMENT="<span color=\"#FF0000\">$(echo "($ASSETS + $EQUITY - $RETIREMENT)/$MONTHLY_INCOME_AVG" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')m</span>"
    else
        RETIREMENT="<span color=\"#00FF00\">ok</span>"
    fi
