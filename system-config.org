@@ -5843,18 +5843,26 @@ yant/ledger-file
 :END:
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses.sh :shebang #!/bin/bash
-ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Expenses and not Work and not Gifts and not Medical -W -n -A -b "last year"
+  _LAST_YEAR=$(echo $(date +%Y) - 1 | bc -l)
+  BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Expenses and not Work and not Gifts and not Medical -W -n -A -b "${BUDGET_CUTOFF}"
 #+end_src
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-income.sh :shebang #!/bin/bash
-ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Income -W -n -A -b "last year"
+  _LAST_YEAR=$(echo $(date +%Y) - 1 | bc -l)
+  BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Income -W -n -A -b "${BUDGET_CUTOFF}"
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses-USD.sh :shebang #!/bin/bash
-ledger --no-pager -f <<ledger-file()>>  reg -X $ Expenses and not Work and not Gifts and not Medical -W -n -A -b "last year"
+    _LAST_YEAR=$(echo $(date +%Y) - 1 | bc -l)
+    BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+    ledger --no-pager -f <<ledger-file()>>  reg -X $ Expenses and not Work and not Gifts and not Medical -W -n -A -b "${BUDGET_CUTOFF}"
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses-EUR.sh :shebang #!/bin/bash
-ledger --no-pager -f <<ledger-file()>>  reg -X EUR Expenses and not Work and not Gifts and not Medical -W -n -A -b "last year"
+    _LAST_YEAR=$(echo $(date +%Y) - 1 | bc -l)
+    BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+    ledger --no-pager -f <<ledger-file()>>  reg -X EUR Expenses and not Work and not Gifts and not Medical -W -n -A -b "${BUDGET_CUTOFF}"
 #+end_src
 
 *** Food status script
@@ -5863,7 +5871,9 @@ ledger --no-pager -f <<ledger-file()>>  reg -X EUR Expenses and not Work and not
 :END:
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-food-status.sh :shebang #!/bin/bash
-ledger --no-pager -f <<ledger-file()>>  reg --budget -X <<ledger-main-currency()>> Food  -U -p 'until tomorrow'
+  _LAST_YEAR=$(echo $(date +%Y) - 1 | bc -l)
+  BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  ledger --no-pager -f <<ledger-file()>>  reg --budget -X <<ledger-main-currency()>> Food  -U -p "${BUDGET_CUTOFF} until tomorrow"
 #+end_src
 
 *** Continuous monitoring of budget
@@ -5939,7 +5949,8 @@ The idea of the script is regular reminder to not spend too much money on certai
 
   UNCONVERTED_CURRENCIES="$(ledger -X  <<ledger-main-currency()>> bal Expenses | sed -E '/<<ledger-main-currency()>>|----+/d')"
 
-  BUDGET_CUTOFF="from this year"
+  _LAST_YEAR=$(echo $(date +%Y) - 1 | bc -l)
+  BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
 
   if [[ ! -z "$UNCONVERTED_CURRENCIES" ]]; then
       [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ <span color=\"#FF0000\"><b>Ledger error</b></span>༼ <span color=\"#FF0000\">Not all currencies convertable</span>༼ '" | awesome-client;
