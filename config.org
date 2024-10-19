@@ -10232,6 +10232,21 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     		       (org-agenda-skip-function 'yant/skip-non-archivable-tasks)
     		       (org-tags-match-list-sublevels nil)))
     		(tags-todo "/"
+    			   ((org-agenda-overriding-header (concat "Waiting and Hold Tasks" ""))
+    			    (org-agenda-prefix-format "%-12:c\t%?-12t %(yant/format-summary-for-agenda)")
+                                (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
+                                                            (quote (and (not (scheduled))
+    								    (not (org-agenda-skip-before-SHOWFROMDATE-property))
+                                                                        (or (tags-local "HOLD")
+                                                                            (and (tags-local "WAITING")
+                                                                                 (not (tags-local "TRACK"))))
+                                                                        (not (tags-inherited "HOLD" "WAITING"))
+                                                                        (not (tags "CANCELLED" "SOMEDAY"))
+                                                                        (task)))))
+    			    (org-tags-match-list-sublevels nil)
+    			    (org-agenda-sorting-strategy
+    			     '(todo-state-down))))
+                    (tags-todo "/"
     			   ((org-agenda-overriding-header "Stuck Projects")
     			    (org-agenda-dim-blocked-tasks nil)
     			    (org-agenda-prefix-format "%-12:c\t%?-12t")
@@ -10258,21 +10273,6 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     			    (org-agenda-todo-ignore-scheduled t)
     			    (org-agenda-sorting-strategy
     			     '(category-keep))))
-    		(tags-todo "/"
-    			   ((org-agenda-overriding-header (concat "Waiting and Hold Tasks" ""))
-    			    (org-agenda-prefix-format "%-12:c\t%?-12t %(yant/format-summary-for-agenda)")
-                                (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
-                                                            (quote (and (not (scheduled))
-    								    (not (org-agenda-skip-before-SHOWFROMDATE-property))
-                                                                        (or (tags-local "HOLD")
-                                                                            (and (tags-local "WAITING")
-                                                                                 (not (tags-local "TRACK"))))
-                                                                        (not (tags-inherited "HOLD" "WAITING"))
-                                                                        (not (tags "CANCELLED" "SOMEDAY"))
-                                                                        (task)))))
-    			    (org-tags-match-list-sublevels nil)
-    			    (org-agenda-sorting-strategy
-    			     '(todo-state-down))))
     		(tags-todo "/"
     			   ((org-agenda-overriding-header "Project Next Tasks")
     			    (org-agenda-prefix-format "[%(yant/get-clocked-time-today-for-agenda)%e] %-12:c\t%?-12t")
