@@ -6447,114 +6447,115 @@ yant/email-flagged
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/notmuch-new-messages-list.sh :shebang #!/bin/bash  :noweb tangle
-#if no new messages - exit
-MESSAGES="$(notmuch search --output=messages tag:new)"
-[[ -z "$MESSAGES" ]] && exit
+  #if no new messages - exit
+  MESSAGES="$(notmuch search --output=messages tag:new)"
+  [[ -z "$MESSAGES" ]] && exit
 
-#echo "`date`"
+  #echo "`date`"
 
-#delete and ignore in count all "Retrieval using the IMAP4 protocol failed for the following message:"
-COUNT_IMAP4="$(notmuch count tag:inbox and \"Retrieval using the IMAP4 protocol failed for the following message:\")"
-[[ "$COUNT_IMAP4" == "0" ]] || >&2 echo "Found $COUNT_IMAP4 IMAP4 fail messages"
-[[ "$COUNT_IMAP4" == "0" ]] || notmuch tag +deleted -- tag:inbox and "Retrieval using the IMAP4 protocol failed for the following message:"
+  #delete and ignore in count all "Retrieval using the IMAP4 protocol failed for the following message:"
+  COUNT_IMAP4="$(notmuch count tag:inbox and \"Retrieval using the IMAP4 protocol failed for the following message:\")"
+  [[ "$COUNT_IMAP4" == "0" ]] || >&2 echo "Found $COUNT_IMAP4 IMAP4 fail messages"
+  [[ "$COUNT_IMAP4" == "0" ]] || notmuch tag +deleted -- tag:inbox and "Retrieval using the IMAP4 protocol failed for the following message:"
 
-# clear spam
-notmuch-clear-spam.sh
+  # clear spam
+  notmuch-clear-spam.sh
 
-#add tags to the new message in thread
-echo "$MESSAGES" | while read x; do
-    if [ ! -z "$x" ]; then
-	THREAD="`notmuch search --output=threads $x`";
-	[[ -z "$THREAD" ]] || TAGS="`notmuch search --output=tags $THREAD`";
-	TAGS="`echo $TAGS | sed -e 's/listinbox//g' | sed -e 's/flagged//g' | sed -e 's/draft//g' | sed -e 's/attachment//g' | sed -e 's/signed//g' | sed -e 's/sent//g' | sed -e 's/[0-9]{4}//g' | sed -e 's/forwarded//g'  | sed -e 's/replied//g'`"
-	[[ -z "$TAGS" ]] || notmuch tag `echo +\`echo $TAGS | sed -r 's/^[ ]*//'\` | sed -r 's/ / +/g'` +`date | awk '{print $NF}'` -- $x
-#	notmuch tag -listinbox -- tag:inbox and $x
-    fi
-done
+  #add tags to the new message in thread
+  echo "$MESSAGES" | while read x; do
+      if [ ! -z "$x" ]; then
+  	THREAD="`notmuch search --output=threads $x`";
+  	[[ -z "$THREAD" ]] || TAGS="`notmuch search --output=tags $THREAD`";
+  	TAGS="`echo $TAGS | sed -e 's/listinbox//g' | sed -e 's/flagged//g' | sed -e 's/draft//g' | sed -e 's/attachment//g' | sed -e 's/signed//g' | sed -e 's/sent//g' | sed -e 's/[0-9]{4}//g' | sed -e 's/forwarded//g'  | sed -e 's/replied//g'`"
+  	[[ -z "$TAGS" ]] || notmuch tag `echo +\`echo $TAGS | sed -r 's/^[ ]*//'\` | sed -r 's/ / +/g'` +`date | awk '{print $NF}'` -- $x
+  #	notmuch tag -listinbox -- tag:inbox and $x
+      fi
+  done
 
-#tag usenet group emails
-notmuch search --output=messages tag:new | while read message; do
-    if [ ! -z "$message" ]; then
-	message_file="$(notmuch search --output=files $message)"
-	cur_group=$(cat $message_file | grep Newsgroups | cut -d: -f2 | sed -r 's/^ +//');
-	if [[ ! -z "$cur_group" ]]; then
-	    cur_group="+$(echo $cur_group | sed -r 's/,/ +/g')"
-	    # echo "notmuch tag +usenet $cur_group -- $message"
-	    notmuch tag +usenet +listinbox -inbox $cur_group -- $message
-	    notmuch tag -listinbox +inbox -- $message and tag:nolist
-            notmuch tag -inbox -- $message and tag:track
-	    THREAD="`notmuch search --output=threads $message`";
-	    [[ -z "$THREAD" ]] || THREAD_TAGS="`notmuch search --output=tags tag:deleted and $THREAD`";
-	    echo "$THREAD_TAGS" | grep "deleted" && notmuch tag +deleted -- $message
-	fi
-    fi
-done
+  #tag usenet group emails
+  notmuch search --output=messages tag:new | while read message; do
+      if [ ! -z "$message" ]; then
+  	message_file="$(notmuch search --output=files $message)"
+  	cur_group=$(cat $message_file | grep Newsgroups | cut -d: -f2 | sed -r 's/^ +//');
+  	if [[ ! -z "$cur_group" ]]; then
+  	    cur_group="+$(echo $cur_group | sed -r 's/,/ +/g')"
+  	    # echo "notmuch tag +usenet $cur_group -- $message"
+  	    notmuch tag +usenet +listinbox -inbox $cur_group -- $message
+  	    notmuch tag -listinbox +inbox -- $message and tag:nolist
+              notmuch tag -inbox -- $message and tag:track
+  	    THREAD="`notmuch search --output=threads $message`";
+  	    [[ -z "$THREAD" ]] || THREAD_TAGS="`notmuch search --output=tags tag:deleted and $THREAD`";
+  	    echo "$THREAD_TAGS" | grep "deleted" && notmuch tag +deleted -- $message
+  	fi
+      fi
+  done
 
-#tag mailing list emacs
-notmuch search --output=messages tag:new | while read message; do
-    if [ ! -z "$message" ]; then
-	message_file="$(notmuch search --output=files $message)"
-	cur_maillist="$(cat $message_file | grep -A1 -i List-Id  | grep '<' | sed -r 's/.*<(.*)>.*/\1/' | head -n1)";
-	if [[ ! -z "$cur_maillist" ]]; then
-	    # echo "notmuch tag +usenet $cur_maillist -- $message"
-	    notmuch tag +maillist +listinbox -inbox +$cur_maillist -- $message
-            notmuch tag -listinbox +inbox -- $message and tag:nolist
-            notmuch tag -inbox -listinbox -- $message and tag:track
-	    THREAD="`notmuch search --output=threads $message`";
-	    [[ -z "$THREAD" ]] || THREAD_TAGS="`notmuch search --output=tags tag:deleted and $THREAD`";
-	    echo "$THREAD_TAGS" | grep "deleted" >/dev/null && notmuch tag +deleted -- $message
-	fi
-    fi
-done
+  #tag mailing list emacs
+  notmuch search --output=messages tag:new | while read message; do
+      if [ ! -z "$message" ]; then
+  	message_file="$(notmuch search --output=files $message)"
+  	cur_maillist="$(cat $message_file | grep -A1 -i List-Id  | grep '<' | sed -r 's/.*<(.*)>.*/\1/' | head -n1)";
+  	if [[ ! -z "$cur_maillist" ]]; then
+  	    # echo "notmuch tag +usenet $cur_maillist -- $message"
+  	    notmuch tag +maillist +listinbox -inbox +$cur_maillist -- $message
+              notmuch tag -listinbox +inbox -- $message and tag:nolist
+              notmuch tag -inbox -listinbox -- $message and tag:track
+  	    THREAD="`notmuch search --output=threads $message`";
+  	    [[ -z "$THREAD" ]] || THREAD_TAGS="`notmuch search --output=tags tag:deleted and $THREAD`";
+  	    echo "$THREAD_TAGS" | grep "deleted" >/dev/null && notmuch tag +deleted -- $message
+  	fi
+      fi
+  done
 
-#Tag flagged
-echo "\
-<<email-flaglist()>>" | while read x; do
-    notmuch tag +inbox +todo +flagged -- $x and tag:new
-done
+  #Tag flagged
+  echo "\
+  <<email-flaglist()>>" | while read x; do
+      notmuch tag +inbox +todo +flagged -- $x and tag:new
+  done
 
-#ARCHIVE some maillists
-# ARCHIVE_TAGS="bug-gnu-emacs.gnu.org"
-ARCHIVE_TAGS=""
+  #ARCHIVE some maillists
+  # ARCHIVE_TAGS="bug-gnu-emacs.gnu.org"
+  ARCHIVE_TAGS=""
 
-echo "$ARCHIVE_TAGS" | while read x; do
-    if [ ! -z "$x" ]; then
-	notmuch tag -listinbox -inbox -todo -- tag:$x and tag:new
-    fi
-done
+  echo "$ARCHIVE_TAGS" | while read x; do
+      if [ ! -z "$x" ]; then
+  	notmuch tag -listinbox -inbox -todo -- tag:$x and tag:new
+      fi
+  done
 
-#Tag messages that must directly go to inbox
-notmuch tag +inbox +todo -listinbox -- tag:"/^.+.yantar92.github.com$/" and tag:new
-notmuch tag +inbox +todo -listinbox -- tag:emacs-gc-stats.gnu.org and tag:new
-notmuch tag +inbox +todo -listinbox -- tag:emacs-orgmode.gnu.org and tag:new and not tag:track
-notmuch tag +inbox +todo -listinbox -- tag:~bzg/org-build-failures.lists.sr.ht and tag:new and not tag:track
-notmuch tag +inbox +todo -listinbox -- to:yantar92 and tag:new
-notmuch tag +inbox +todo -listinbox -- to:Radchenko and tag:new
-notmuch tag +inbox +todo -listinbox -- to:Ihor and tag:new
+  #Tag messages that must directly go to inbox
+  notmuch tag +inbox +todo -listinbox -- tag:"/^.+.yantar92.github.com$/" and tag:new
+  notmuch tag +inbox +todo -listinbox -- tag:emacs-gc-stats.gnu.org and tag:new
+  notmuch tag +inbox +todo -listinbox -- tag:emacs-orgmode.gnu.org and tag:new and not tag:track
+  notmuch tag +inbox +todo -listinbox -- tag:~bzg/org-build-failures.lists.sr.ht and tag:new and not tag:track
+  notmuch tag +inbox +todo -listinbox -- to:yantar92 and tag:new
+  notmuch tag +inbox +todo -listinbox -- to:Radchenko and tag:new
+  notmuch tag +inbox +todo -listinbox -- to:Ihor and tag:new
 
-MESSAGES_MAIN="$(notmuch search --output=messages tag:new and not tag:sent and tag:inbox and tag:flagged)"
-echo $(notmuch search --output=messages tag:new and not tag:sent and not tag:flagged) | while read message; do
-    if [[ ! -z "${MESSAGE}" ]]; then
-	THREAD="`notmuch search --output=threads $message`";
-	if [[ ! -z "${THREAD}" ]]; then
-	    [[ -z "$(notmuch search tag:flagged and $THREAD)" ]] || MESSAGES_MAIN="$MESSAGES_MAIN\n$message";
-	fi
-    fi
-done
+  MESSAGES_MAIN="$(notmuch search --output=messages tag:new and not tag:sent and tag:inbox and tag:flagged)"
+  echo $(notmuch search --output=messages tag:new and not tag:sent and not tag:flagged) | while read message; do
+      if [[ ! -z "${MESSAGE}" ]]; then
+  	THREAD="`notmuch search --output=threads $message`";
+  	if [[ ! -z "${THREAD}" ]]; then
+  	    [[ -z "$(notmuch search tag:flagged and $THREAD)" ]] || MESSAGES_MAIN="$MESSAGES_MAIN\n$message";
+  	fi
+      fi
+  done
 
-#done with initial tagging
-notmuch tag -new -- tag:new
+  #done with initial tagging
+  notmuch tag -new -- tag:new
 
-[[ -z "$MESSAGES_MAIN" ]] && exit
-MESSAGES_NOTIFICATION="$(notmuch search $MESSAGES_MAIN | cut -d' ' -f2- | sed -r 's/^[ ]*//')"
-NOTIFICATION="$MESSAGES_NOTIFICATION"
-# [[ -z "$MESSAGES_NOTIFICATION" ]] && NOTIFICATION="Usenet:   $COUNT_USENET new messages\nMaillist: $COUNT_MAILLIST new messages" ||\
-    # 	NOTIFICATION="Usenet:   $COUNT_USENET new messages\nMaillist: $COUNT_MAILLIST new messages\n"
+  [[ -z "$MESSAGES_MAIN" ]] && exit
+  MESSAGES_NOTIFICATION="$(notmuch search $MESSAGES_MAIN | cut -d' ' -f2- | sed -r 's/^[ ]*//')"
+  NOTIFICATION="$MESSAGES_NOTIFICATION"
+  NOTIFICATION=$(echo $NOTIFICATION | sed -E 's/"/\"/g' | sed -E "s/'/\\'/g")
+  # [[ -z "$MESSAGES_NOTIFICATION" ]] && NOTIFICATION="Usenet:   $COUNT_USENET new messages\nMaillist: $COUNT_MAILLIST new messages" ||\
+      # 	NOTIFICATION="Usenet:   $COUNT_USENET new messages\nMaillist: $COUNT_MAILLIST new messages\n"
 
-# PID="$(pgrep awesome | head -n1)"
-# [[ -z "$PID" && -d "/proc/$PID" ]] && export DBUS_SESSION_BUS_ADDRESS="$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ | tr '\0' '\n' | cut -d= -f2-)"
-touch ~/.log/projecting
-[[ "$1" == "--silent" || "$(cat ~/.log/projecting)" == "true" ]] ||  echo "naughty.notify({ title = \"New mail\", text =\"$NOTIFICATION\", timeout = 0, preset = naughty.config.presets.critical})" | awesome-client
+  # PID="$(pgrep awesome | head -n1)"
+  # [[ -z "$PID" && -d "/proc/$PID" ]] && export DBUS_SESSION_BUS_ADDRESS="$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ | tr '\0' '\n' | cut -d= -f2-)"
+  touch ~/.log/projecting
+  [[ "$1" == "--silent" || "$(cat ~/.log/projecting)" == "true" ]] ||  echo "naughty.notify({ title = \"New mail\", text =\"$NOTIFICATION\", timeout = 0, preset = naughty.config.presets.critical})" | awesome-client
 #+end_src
 
 #+name: email-whitelist
