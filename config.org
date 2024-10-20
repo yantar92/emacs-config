@@ -4178,7 +4178,7 @@ Using trash is safer.
         ("Images"
          (extension "png" "jpg" "jpeg" "tiff" "tif" "svg"))
         ("Videos"
-         (extension "avi" "mpeg" "mp4" "mkv"))
+         (extension "avi" "mpeg" "mp4" "mkv" "webm"))
         )))
     :hook (dired-mode . dired-filter-group-mode))
 #+END_SRC
