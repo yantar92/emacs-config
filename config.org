@@ -7652,15 +7652,18 @@ I automated the check by examining WORG repository directly and checking the ~gi
                           (line-end-position 0))))))))
         (while (looking-at "^ *[A-Za-z][-A-Za-z0-9]*:")
           (forward-line))
-        (when (save-excursion (re-search-backward (regexp-opt '("emacs-orgmode@gnu.org")) nil t))
-          (put-text-property
-           (1- (point)) (point)
-           'display
-           (concat
-            "\n"
-            indentation (yant/org-devel-get-notmuch-sender-FSF-status sender) "\n"
-            indentation (yant/org-devel-get-notmuch-sender-ML-status sender) "\n"
-            indentation (yant/org-devel-get-maintainer-status sender) "\n")))))
+        ;; FIXME: when there is a message included inside message, the
+        ;; above code may return message mime name instead of the sender.
+        (unless (string-match-p "\\[[^]]+\\]" sender)
+  	(when (save-excursion (re-search-backward (regexp-opt '("emacs-orgmode@gnu.org")) nil t))
+            (put-text-property
+             (1- (point)) (point)
+             'display
+             (concat
+              "\n"
+              indentation (yant/org-devel-get-notmuch-sender-FSF-status sender) "\n"
+              indentation (yant/org-devel-get-notmuch-sender-ML-status sender) "\n"
+              indentation (yant/org-devel-get-maintainer-status sender) "\n"))))))
 
     (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contribution-status))
 #+end_src
