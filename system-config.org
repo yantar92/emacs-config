@@ -6548,7 +6548,7 @@ yant/email-flagged
   [[ -z "$MESSAGES_MAIN" ]] && exit
   MESSAGES_NOTIFICATION="$(notmuch search $MESSAGES_MAIN | cut -d' ' -f2- | sed -r 's/^[ ]*//')"
   NOTIFICATION="$MESSAGES_NOTIFICATION"
-  NOTIFICATION=$(echo $NOTIFICATION | sed -E 's/"/\"/g' | sed -E "s/'/\\'/g")
+  NOTIFICATION=$(echo $NOTIFICATION | sed -E 's/"/\\"/g' | sed -E "s/'/\\\\'/g")
   # [[ -z "$MESSAGES_NOTIFICATION" ]] && NOTIFICATION="Usenet:   $COUNT_USENET new messages\nMaillist: $COUNT_MAILLIST new messages" ||\
       # 	NOTIFICATION="Usenet:   $COUNT_USENET new messages\nMaillist: $COUNT_MAILLIST new messages\n"
 
