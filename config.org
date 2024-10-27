@@ -16153,12 +16153,15 @@ Partially stolen from https://github.com/grettke/help/blob/master/help.org:
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-crypt
-  :after org
-  :custom
-  (org-crypt-key "Ihor Radchenko")
-  :config
-  (org-crypt-use-before-save-magic))
+  (use-package org-crypt
+    :after org
+    :custom
+    (org-crypt-key "Ihor Radchenko")
+    :config
+    
+    (if (boundp 'org-crypt-encrypt-on-save)
+        (setq org-crypt-disable-auto-save 'encrypt)
+      (org-crypt-use-before-save-magic)))
 #+end_src
 
 **** Allow tangling encrypted files
