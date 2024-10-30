@@ -1580,7 +1580,7 @@ For example, when working with logs copied from clipboard.
 (setq-default major-mode 'text-mode)
 #+end_src
 
-** TODO Custom input method
+** TODO COMMENT Custom input method
 
 It is well-known that the default "qwerty" keyboard layout is not the
 most optimal.  There are alternatives like "dvorak"
