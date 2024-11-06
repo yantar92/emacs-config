@@ -5874,9 +5874,7 @@ yant/ledger-file
 :END:
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-food-status.sh :shebang #!/bin/bash
-  _LAST_YEAR=$(echo $(date +%Y) - 1 | bc -l)
-  BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
-  ledger --no-pager -f <<ledger-file()>>  reg --budget -X <<ledger-main-currency()>> Food  -U -p "${BUDGET_CUTOFF} until tomorrow"
+  ledger --no-pager -f <<ledger-file()>>  reg --budget -X <<ledger-main-currency()>> Food  -U -p "until tomorrow"
 #+end_src
 
 *** Continuous monitoring of budget
