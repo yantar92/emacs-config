@@ -6411,6 +6411,9 @@ while true; do mail-monitor.sh; sleep 100; done &
       [[ "$x" == *"IMAP error: bogus greeting response BAD"* ]] && continue
       [[ "$x" == *"Network is unreachable"* ]] && continue
       [[ "$x" == *"IMAP error: unexpected EOF"* ]] && continue
+      [[ "$x" == *"Processed"* ]] && continue
+      [[ "$x" == *"pulled"* ]] && continue
+      [[ "$x" == *"expunged"* ]] && continue
       [[ "$x" == *"Maildir notice: sleeping due to recent directory modification"* ]] && continue
       [[ "$x" == *"No working address found"* ]] && continue
       [[ "$x" == *"No working address found for 127.0.0.1"* ]] && notify-send "Davmail not working" && continue
