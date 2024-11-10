@@ -6019,8 +6019,11 @@ The idea of the script is regular reminder to not spend too much money on certai
   MONTHLY_SPENDING_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_SPENDING_AVG" | bc -l)"
 
   INCOME_RATIO="$(echo "100.0 * $WEEKLY_INCOME_AVG / $WEEKLY_SPENDING_AVG" | bc -l | sed -r 's/\..*//')"
+  [[ -z "$INCOME_RATIO" ]] && INCOME_RATIO="0"
   INCOME_RATIO_NO_SALARY="$(echo "100.0 * $WEEKLY_INCOME_AVG_NO_SALARY / $WEEKLY_SPENDING_AVG" | bc -l | sed -r 's/\..*//')"
+  [[ -z "$INCOME_RATIO_NO_SALARY" ]] && INCOME_RATIO_NO_SALARY="0"
   INCOME_RATIO_NO_SALARY_NO_GIFTS="$(echo "100.0 * $WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS / $WEEKLY_SPENDING_AVG" | bc -l | sed -r 's/\..*//')"
+  [[ -z "$INCOME_RATIO_NO_SALARY_NO_GIFTS" ]] && INCOME_RATIO_NO_SALARY_NO_GIFTS="0"
 
   # args: INCOME_RATIO
   colorize_ratio () {
