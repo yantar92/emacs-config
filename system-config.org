@@ -802,6 +802,13 @@ I need to copy over my ssh key id_rsa and id_rsa.pub
 ****************** TODO store them in safe place
 ****************** END
 
+*** sshfs: Mount remove ssh as a folder
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+net-fs/sshfs
+#+end_src
+
+
 *** lsof
 :PROPERTIES:
 :ID:       5bd3a13e-a1ad-4ee7-a653-3647f6ff2237
