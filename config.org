@@ -9900,7 +9900,7 @@ CLOSED: [2020-08-11 Tue 22:10]
 (setq org-agenda-files "~/Org/agenda_files")
 (setq org-deadline-warning-days 30)
 (setq org-agenda-span 'day)
-(setq org-agenda-sorting-strategy '((agenda deadline-down time-up habit-up priority-down timestamp-down category-keep)
+(setq org-agenda-sorting-strategy '((agenda deadline-down time-up habit-up priority-down timestamp-up category-keep)
 				    (todo priority-down category-keep)
 				    (tags priority-down category-keep)
 				    (search category-keep)))
