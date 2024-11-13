@@ -8477,6 +8477,11 @@ dev-python/numpy
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/numpy
 dev-python/numpy doc
 #+end_src
+*** =matplotlib=
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-python/matplotlib
+#+end_src
 
 ** Games
 *** COMMENT =steam=
