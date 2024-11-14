@@ -13037,59 +13037,59 @@ Scheduled event. It is saved to =org-gcal= org file.
 An area of knowledge I am interested in. Unlike project, this does not have a concrete outcome, but can be infinite depending on my interest in the topic.
 
 #+begin_src emacs-lisp
-(setf (alist-get "R" org-capture-templates nil nil #'equal)
-      (cdar  (doct '("Area of interest"
-		     :keys "R"
-		     :type entry
-		     :file "~/Org/inbox.org"
-		     :clock-in t
-		     :clock-resume t
-                     :category
-                     (lambda () (or (plist-get (plist-get org-capture-plist :doct-custom) :category-string)
-			       (progn
-				 (setf (plist-get (plist-get org-capture-plist :doct-custom)
-						  :category-string)
-				       (completing-read
-					"Category: "
-					(org-ql-select (org-agenda-files t t)
-					  '(property "CATEGORY")
-					  :action (lambda () (substring-no-properties (org-entry-get (point) "CATEGORY"))))))
-				 (plist-get (plist-get org-capture-plist :doct-custom)
-                                            :category-string))))
-                     :area-title
-                     (lambda () (or (plist-get (plist-get org-capture-plist :doct-custom) :title-string)
-			       (progn
-				 (setf (plist-get (plist-get org-capture-plist :doct-custom)
-						  :title-string)
-				       (completing-read
-					"Area title: "
-					(org-ql-select (org-agenda-files t t)
-					  '(tags-local "AREA" "project")
-					  :action (lambda () (substring-no-properties (org-get-heading t t t t))))))
-				 (plist-get (plist-get org-capture-plist :doct-custom)
-                                            :title-string))))
-		     :template
-		     ("* TODO %{area-title} :AREA:NOREFILE:"
-		      ":PROPERTIES:"
-		      ":CREATED: %U"
-		      ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
-                      ":CATEGORY: %{category}[T]"
-		      ":END:"
-                      "# Summary note about the area. Should be updated regularly."
-                      "\n%?"
-                      ""
-                      "** NEXT Refile relevant bookmarks/tasks to new area %{area-title}"
-                      "** Notes :REFILE:"
-                      "# Notes about what I think about the topic\n"
-                      "** Bookmarks \ references :NOARCHIVE:REFILE:"
-                      "# Notes about what is known about the topic\n"
-                      "** No deadline :NODEADLINE:SKIP:REFILE:"
-                      ":PROPERTIES:"
-                      ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
-                      ":CATEGORY: %{category}[D]"
-                      ":END:"
-                      "*** NEXT Refile relevant tasks from more generic topics into %{area-title}"
-                      )))))
+  (setf (alist-get "R" org-capture-templates nil nil #'equal)
+        (cdar  (doct '("Area of interest"
+  		     :keys "R"
+  		     :type entry
+  		     :file "~/Org/inbox.org"
+  		     :clock-in t
+  		     :clock-resume t
+                       :category
+                       (lambda () (or (plist-get (plist-get org-capture-plist :doct-custom) :category-string)
+  			       (progn
+  				 (setf (plist-get (plist-get org-capture-plist :doct-custom)
+  						  :category-string)
+  				       (completing-read
+  					"Category: "
+  					(org-ql-select (org-agenda-files t t)
+  					  '(property "CATEGORY")
+  					  :action (lambda () (substring-no-properties (org-entry-get (point) "CATEGORY"))))))
+  				 (plist-get (plist-get org-capture-plist :doct-custom)
+                                              :category-string))))
+                       :area-title
+                       (lambda () (or (plist-get (plist-get org-capture-plist :doct-custom) :title-string)
+  			       (progn
+  				 (setf (plist-get (plist-get org-capture-plist :doct-custom)
+  						  :title-string)
+  				       (completing-read
+  					"Area title: "
+  					(org-ql-select (org-agenda-files t t)
+  					  '(tags-local "AREA" "project")
+  					  :action (lambda () (substring-no-properties (org-get-heading t t t t))))))
+  				 (plist-get (plist-get org-capture-plist :doct-custom)
+                                              :title-string))))
+  		     :template
+  		     ("* TODO %{area-title} :AREA:NOREFILE:"
+  		      ":PROPERTIES:"
+  		      ":CREATED: %U"
+  		      ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
+                        ":CATEGORY: %{category}[T]"
+  		      ":END:"
+                        "# Summary note about the area. Should be updated regularly."
+                        "\n%?"
+                        ""
+                        "** NEXT Refile relevant bookmarks/tasks to new area %{area-title}"
+                        "** Notes :REFILE:"
+                        "# Notes about what I think about the topic\n"
+                        "** Bookmarks \ references :NOARCHIVE:REFILE:"
+                        "# Notes about what is known about the topic\n"
+                        "** No deadline :NODEADLINE:SKIP:REFILE:"
+                        ":PROPERTIES:"
+                        ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
+                        ":CATEGORY: %{category}[D]"
+                        ":END:"
+                        "*** NEXT Refile relevant tasks from more generic topics into %{area-title}"
+                        )))))
 #+end_src
 ****** Project
 :PROPERTIES:
@@ -14925,95 +14925,95 @@ I do not want bigger items font because I tend to use items a lot.
 Utilise =pretty-symbols= to show bullets, priorities, and keywords. It
 is much faster than overlay-based =org-bullets=. #pretty_symbols
 #+begin_src emacs-lisp
-(use-package pretty-symbols
-  :config
-  (require 'org-inlinetask)
-  (setq pretty-symbol-patterns
-	(append pretty-symbol-patterns
-		`(;;(?▤ org-specific ":LOGBOOK:" (org-mode))
-      		  ;;(?⚙ org-specific ":PROPERTIES:" (org-mode))
-      		  ;;(?⏏ org-specific ":END:" (org-mode))
-                  (?— org-specific "\\b---\\b" (org-mode))
-      		  ;; (?★ org-specific "\\[#A\\]" (org-mode))
-                  (?🅰 org-specific "\\[#A\\]" (org-mode))
-      		  (?🄲 org-specific "\\[#C\\]" (org-mode))
-                  (?■ org-specific "\\(^\\*\\)[^*]" (org-mode) 1)
-                  (?• org-specific "^\\(?:\\*\\{1\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
-                  (?⊢ org-specific "^\\(?:\\*\\{2\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
-                  (?⋮ org-specific "^\\(?:\\*\\{3\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
-                  (?⋱ org-specific "^\\(?:\\*\\{4\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
-                  (?⋮ org-specific "^\\(?:\\*\\{5\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
-                  (?⋱ org-specific "^\\(?:\\*\\{6\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
-                  (?⋮ org-specific "^\\(?:\\*\\{7\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
-                  (?⋱ org-specific ,(format  "^\\(?:\\*\\{8,%d\\}\\)\\(\\*\\)[^*]" (- org-inlinetask-min-level 2)) (org-mode) 1)
-                  ((yant/str-to-glyph " ") org-specific ,(format  "^\\(\\*\\{%d,%d\\}\\)\\*[^*]" (1- org-inlinetask-min-level) (1- org-inlinetask-max-level)) (org-mode) 1)
-                  ((yant/str-to-glyph "⇒⇒⇒") org-specific ,(format  "^\\(\\*\\{%d,%d\\}\\)\\(\\*\\)[^*]" (1- org-inlinetask-min-level) (1- org-inlinetask-max-level)) (org-mode) 2)
-                  (?╭ org-specific "^[ ]*\\(#[+]NAME\\)" (org-mode) 1)
-                  (?╭ org-specific "^[ ]*\\(#[+]name\\)" (org-mode) 1)
-                  (?├ org-specific "[ ]*\\(#[+]begin_src\\)" (org-mode) 1)
-                  (?├ org-specific "[ ]*\\(#[+]BEGIN_SRC\\)" (org-mode) 1)
-                  (?╰ org-specific "[ ]*\\(#[+]end_src\\)" (org-mode) 1)
-                  (?╰ org-specific "[ ]*\\(#[+]END_SRC\\)" (org-mode) 1)
-                  (?╞ org-specific "[ ]*\\(#[+]TBLFM\\)" (org-mode) 1)
-                  (?🗣 org-specific "[ ]*\\(#[+]begin_quote\\)" (org-mode) 1)
-                  (?🗣 org-specific "[ ]*\\(#[+]end_quote\\)" (org-mode) 1)
-                  (?🗣 org-specific "[ ]*\\(#[+]BEGIN_QUOTE\\)" (org-mode) 1)
-                  (?🗣 org-specific "[ ]*\\(#[+]END_QUOTE\\)" (org-mode) 1)
-                  (?💡 org-specific "[ ]*\\(#[+]begin_example\\)" (org-mode) 1)
-                  (?💡 org-specific "[ ]*\\(#[+]end_example\\)" (org-mode) 1)
-                  (?💡 org-specific "[ ]*\\(#[+]BEGIN_EXAMPLE\\)" (org-mode) 1)
-                  (?💡 org-specific "[ ]*\\(#[+]END_EXAMPLE\\)" (org-mode) 1)
-                  (?⏎ org-specific "[ ]*\\(#[+]RESULTS\\)" (org-mode) 1)
-                  (?⫘ org-specific "[ ]*\\(#[+]SETUPFILE\\)" (org-mode) 1)
-                  (?👨 org-specific "[ ]*\\(#[+]AUTHOR\\)" (org-mode) 1)
-                  (?🖂 org-specific "[ ]*\\(#[+]EMAIL\\)" (org-mode) 1)
-                  (?⚙ org-specific "[ ]*\\(#[+]PROPERTY\\)" (org-mode) 1)
-                  (?⏣ org-specific "[ ]*\\(#[+]OPTIONS\\)" (org-mode) 1)
-                  (?🔗 org-specific ":\\(BOOKMARK\\):" (org-mode) 1)
-                  (?🖬 org-specific ":\\(ARCHIVED\\):" (org-mode) 1)
-                  (?📎 org-specific ":\\(ATTACH\\):" (org-mode) 1)
-                  (?🔧 org-specific ":\\(PhD\\):" (org-mode) 1)
-                  ;; (?🖳 org-specific ":\\(PhD\\):" (org-mode) 1)
-                  (?🏠 org-specific ":\\(COMMON\\):" (org-mode) 1)
-                  (?🖂 org-specific ":\\(EMAIL\\):" (org-mode) 1)
-                  (?🕮 org-specific ":\\(book\\):" (org-mode) 1)
-                  (?🎬 org-specific ":\\(video\\):" (org-mode) 1)
-                  (? org-specific ":\\(TRACK\\):" (org-mode) 1)
-                  (?🖇 org-specific ":\\(misc\\):" (org-mode) 1)
-                  (?🖂 org-specific ":\\(email\\):" (org-mode) 1)
-                  (?📥 org-specific ":\\(INBOX\\):" (org-mode) 1)
-                  (?📦 org-specific ":\\(ARCHIVE\\):" (org-mode) 1)
-                  ('(?📦 (cc . cc) ?🚫) org-specific ":\\(NOARCHIVE\\):" (org-mode) 1)
-                  (?🔐 org-specific ":\\(CRYPT\\):" (org-mode) 1)
-                  (?📜 org-specific ":\\(article\\):" (org-mode) 1)
-                  (?⤋ org-specific ":\\(REFILE\\):" (org-mode) 1)
-                  ('(?⤋ (cc . cc) ?🚫) org-specific ":\\(NOREFILE\\):" (org-mode) 1)
-                  (?✎ org-specific ":\\(note\\):" (org-mode) 1)
-                  (?🏁 org-specific ":\\(GOAL\\|goal\\):" (org-mode) 1)
-                  (?📚 org-specific ":\\(area\\|AREA\\):" (org-mode) 1)
-                  (?🔔 org-specific ":\\(FLAGGED\\|flagged\\):" (org-mode) 1)
-      		  (?☐ org-specific "\\(?:^*+ +\\)\\(\\<TODO\\>\\)" (org-mode) 1)
-                  (?⯑ org-specific "\\(?:^*+ +\\)\\(\\<SOMEDAY\\>\\)" (org-mode) 1)
-                  (?⯑ org-specific ":\\(SOMEDAY\\):" (org-mode) 1)
-      		  (?☑ org-specific "\\(?:^*+ +\\)\\(\\<DONE\\>\\)" (org-mode) 1)
-      		  (?✘ org-specific "\\(?:^*+ +\\)\\(\\<FAILED\\>\\)" (org-mode) 1)
-      		  (?✘ org-specific "\\(?:^*+ +\\)\\(\\<CANCELLED\\>\\)" (org-mode) 1)
-      		  (?▶ org-specific "\\(?:^*+ +\\)\\(\\<NEXT\\>\\)" (org-mode) 1)
-      		  (?👁 org-specific "\\(?:^*+ +\\)\\(\\<TICKLER\\>\\)" (org-mode) 1)
-      		  (?👁 org-specific ":\\(TICKLER\\):" (org-mode) 1)
-                  (?🔁 org-specific "\\(?:^*+ +\\)\\(\\<MERGED\\>\\)" (org-mode) 1)
-      		  (?⌛ org-specific "\\(?:^*+ +\\)\\(\\<WAITING\\>\\)" (org-mode) 1)
-                  (?⌛ org-specific ":\\(WAITING\\):" (org-mode) 1)
-                  (?⏩ org-specific "\\(?:^*+ +\\)\\(\\<DOING\\>\\)" (org-mode) 1)
-      		  (?⏸ org-specific "\\(?:^*+ +\\)\\(\\<HOLD\\>\\)" (org-mode) 1)
-                  (?⏸ org-specific ":\\(HOLD\\):" (org-mode) 1)
-                  (?❄ org-specific "\\(?:^*+ +\\)\\(\\<FROZEN\\>\\)" (org-mode) 1)
-                  (?🖹 org-specific "\\(?:^*+ +\\)\\(\\<REVIEW\\>\\)" (org-mode) 1)
-                  (?☐ org-specific "\\[ \\]" (org-mode))
-                  (?☑ org-specific "\\[X\\]" (org-mode))
-                  (?❍ org-specific "\\[-\\]" (org-mode))
-      		  ((yant/str-to-glyph "☠D") org-specific "\\<DEADLINE:" (org-mode))
-      		  ((yant/str-to-glyph "◴S") org-specific "\\<SCHEDULED:" (org-mode))))))
+  (use-package pretty-symbols
+    :config
+    (require 'org-inlinetask)
+    (setq pretty-symbol-patterns
+  	(append pretty-symbol-patterns
+  		`(;;(?▤ org-specific ":LOGBOOK:" (org-mode))
+        		  ;;(?⚙ org-specific ":PROPERTIES:" (org-mode))
+        		  ;;(?⏏ org-specific ":END:" (org-mode))
+                    (?— org-specific "\\b---\\b" (org-mode))
+        		  ;; (?★ org-specific "\\[#A\\]" (org-mode))
+                    (?🅰 org-specific "\\[#A\\]" (org-mode))
+        		  (?🄲 org-specific "\\[#C\\]" (org-mode))
+                    (?■ org-specific "\\(^\\*\\)[^*]" (org-mode) 1)
+                    (?• org-specific "^\\(?:\\*\\{1\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+                    (?⊢ org-specific "^\\(?:\\*\\{2\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+                    (?⋮ org-specific "^\\(?:\\*\\{3\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+                    (?⋱ org-specific "^\\(?:\\*\\{4\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+                    (?⋮ org-specific "^\\(?:\\*\\{5\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+                    (?⋱ org-specific "^\\(?:\\*\\{6\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+                    (?⋮ org-specific "^\\(?:\\*\\{7\\}\\)\\(\\*\\)[^*]" (org-mode) 1)
+                    (?⋱ org-specific ,(format  "^\\(?:\\*\\{8,%d\\}\\)\\(\\*\\)[^*]" (- org-inlinetask-min-level 2)) (org-mode) 1)
+                    ((yant/str-to-glyph " ") org-specific ,(format  "^\\(\\*\\{%d,%d\\}\\)\\*[^*]" (1- org-inlinetask-min-level) (1- org-inlinetask-max-level)) (org-mode) 1)
+                    ((yant/str-to-glyph "⇒⇒⇒") org-specific ,(format  "^\\(\\*\\{%d,%d\\}\\)\\(\\*\\)[^*]" (1- org-inlinetask-min-level) (1- org-inlinetask-max-level)) (org-mode) 2)
+                    (?╭ org-specific "^[ ]*\\(#[+]NAME\\)" (org-mode) 1)
+                    (?╭ org-specific "^[ ]*\\(#[+]name\\)" (org-mode) 1)
+                    (?├ org-specific "[ ]*\\(#[+]begin_src\\)" (org-mode) 1)
+                    (?├ org-specific "[ ]*\\(#[+]BEGIN_SRC\\)" (org-mode) 1)
+                    (?╰ org-specific "[ ]*\\(#[+]end_src\\)" (org-mode) 1)
+                    (?╰ org-specific "[ ]*\\(#[+]END_SRC\\)" (org-mode) 1)
+                    (?╞ org-specific "[ ]*\\(#[+]TBLFM\\)" (org-mode) 1)
+                    (?🗣 org-specific "[ ]*\\(#[+]begin_quote\\)" (org-mode) 1)
+                    (?🗣 org-specific "[ ]*\\(#[+]end_quote\\)" (org-mode) 1)
+                    (?🗣 org-specific "[ ]*\\(#[+]BEGIN_QUOTE\\)" (org-mode) 1)
+                    (?🗣 org-specific "[ ]*\\(#[+]END_QUOTE\\)" (org-mode) 1)
+                    (?💡 org-specific "[ ]*\\(#[+]begin_example\\)" (org-mode) 1)
+                    (?💡 org-specific "[ ]*\\(#[+]end_example\\)" (org-mode) 1)
+                    (?💡 org-specific "[ ]*\\(#[+]BEGIN_EXAMPLE\\)" (org-mode) 1)
+                    (?💡 org-specific "[ ]*\\(#[+]END_EXAMPLE\\)" (org-mode) 1)
+                    (?⏎ org-specific "[ ]*\\(#[+]RESULTS\\)" (org-mode) 1)
+                    (?⫘ org-specific "[ ]*\\(#[+]SETUPFILE\\)" (org-mode) 1)
+                    (?👨 org-specific "[ ]*\\(#[+]AUTHOR\\)" (org-mode) 1)
+                    (?🖂 org-specific "[ ]*\\(#[+]EMAIL\\)" (org-mode) 1)
+                    (?⚙ org-specific "[ ]*\\(#[+]PROPERTY\\)" (org-mode) 1)
+                    (?⏣ org-specific "[ ]*\\(#[+]OPTIONS\\)" (org-mode) 1)
+                    (?🔗 org-specific ":\\(BOOKMARK\\):" (org-mode) 1)
+                    (?🖬 org-specific ":\\(ARCHIVED\\):" (org-mode) 1)
+                    (?📎 org-specific ":\\(ATTACH\\):" (org-mode) 1)
+                    (?🔧 org-specific ":\\(PhD\\):" (org-mode) 1)
+                    ;; (?🖳 org-specific ":\\(PhD\\):" (org-mode) 1)
+                    (?🏠 org-specific ":\\(COMMON\\):" (org-mode) 1)
+                    (?🖂 org-specific ":\\(EMAIL\\):" (org-mode) 1)
+                    (?🕮 org-specific ":\\(book\\):" (org-mode) 1)
+                    (?🎬 org-specific ":\\(video\\):" (org-mode) 1)
+                    (? org-specific ":\\(TRACK\\):" (org-mode) 1)
+                    (?🖇 org-specific ":\\(misc\\):" (org-mode) 1)
+                    (?🖂 org-specific ":\\(email\\):" (org-mode) 1)
+                    (?📥 org-specific ":\\(INBOX\\):" (org-mode) 1)
+                    (?📦 org-specific ":\\(ARCHIVE\\):" (org-mode) 1)
+                    ('(?📦 (cc . cc) ?🚫) org-specific ":\\(NOARCHIVE\\):" (org-mode) 1)
+                    (?🔐 org-specific ":\\(CRYPT\\):" (org-mode) 1)
+                    (?📜 org-specific ":\\(article\\):" (org-mode) 1)
+                    (?⤋ org-specific ":\\(REFILE\\):" (org-mode) 1)
+                    ('(?⤋ (cc . cc) ?🚫) org-specific ":\\(NOREFILE\\):" (org-mode) 1)
+                    (?✎ org-specific ":\\(note\\):" (org-mode) 1)
+                    (?🏁 org-specific ":\\(GOAL\\|goal\\):" (org-mode) 1)
+                    (?📚 org-specific ":\\(area\\|AREA\\):" (org-mode) 1)
+                    (?🔔 org-specific ":\\(FLAGGED\\|flagged\\):" (org-mode) 1)
+        		  (?☐ org-specific "\\(?:^*+ +\\)\\(\\<TODO\\>\\)" (org-mode) 1)
+                    (?⯑ org-specific "\\(?:^*+ +\\)\\(\\<SOMEDAY\\>\\)" (org-mode) 1)
+                    (?⯑ org-specific ":\\(SOMEDAY\\):" (org-mode) 1)
+        		  (?☑ org-specific "\\(?:^*+ +\\)\\(\\<DONE\\>\\)" (org-mode) 1)
+        		  (?✘ org-specific "\\(?:^*+ +\\)\\(\\<FAILED\\>\\)" (org-mode) 1)
+        		  (?✘ org-specific "\\(?:^*+ +\\)\\(\\<CANCELLED\\>\\)" (org-mode) 1)
+        		  (?▶ org-specific "\\(?:^*+ +\\)\\(\\<NEXT\\>\\)" (org-mode) 1)
+        		  (?👁 org-specific "\\(?:^*+ +\\)\\(\\<TICKLER\\>\\)" (org-mode) 1)
+        		  (?👁 org-specific ":\\(TICKLER\\):" (org-mode) 1)
+                    (?🔁 org-specific "\\(?:^*+ +\\)\\(\\<MERGED\\>\\)" (org-mode) 1)
+        		  (?⌛ org-specific "\\(?:^*+ +\\)\\(\\<WAITING\\>\\)" (org-mode) 1)
+                    (?⌛ org-specific ":\\(WAITING\\):" (org-mode) 1)
+                    (?⏩ org-specific "\\(?:^*+ +\\)\\(\\<DOING\\>\\)" (org-mode) 1)
+        		  (?⏸ org-specific "\\(?:^*+ +\\)\\(\\<HOLD\\>\\)" (org-mode) 1)
+                    (?⏸ org-specific ":\\(HOLD\\):" (org-mode) 1)
+                    (?❄ org-specific "\\(?:^*+ +\\)\\(\\<FROZEN\\>\\)" (org-mode) 1)
+                    (?🖹 org-specific "\\(?:^*+ +\\)\\(\\<REVIEW\\>\\)" (org-mode) 1)
+                    (?☐ org-specific "\\[ \\]" (org-mode))
+                    (?☑ org-specific "\\[X\\]" (org-mode))
+                    (?❍ org-specific "\\[-\\]" (org-mode))
+        		  ((yant/str-to-glyph "☠D") org-specific "\\<DEADLINE:" (org-mode))
+        		  ((yant/str-to-glyph "◴S") org-specific "\\<SCHEDULED:" (org-mode))))))
 #+end_src
 
 Prefer to replace default =...= by something more distinct if item is folded.
