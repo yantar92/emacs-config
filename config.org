@@ -9893,27 +9893,28 @@ CLOSED: [2020-08-11 Tue 22:10]
 :ID:       ff70b03f-3876-4b2b-9aab-c3209bd31cb8
 :END:
 #+begin_src emacs-lisp
-(require 'org-agenda)
-(setq org-agenda-skip-scheduled-delay-if-deadline t)
-(setq org-agenda-restore-windows-after-quit t)
-(setq org-agenda-window-setup 'only-window)
-(setq org-agenda-todo-list-sublevels t)
-(setq org-agenda-show-inherited-tags t)
-(setq org-agenda-search-headline-for-time nil)
-(setq org-agenda-use-time-grid nil)
-(setq org-directory "~/Org")
-(setq org-agenda-files "~/Org/agenda_files")
-(setq org-deadline-warning-days 30)
-(setq org-agenda-span 'day)
-(setq org-agenda-sorting-strategy '((agenda deadline-down time-up habit-up priority-down timestamp-up category-keep)
-				    (todo priority-down category-keep)
-				    (tags priority-down category-keep)
-				    (search category-keep)))
-(setq org-agenda-tags-todo-honor-ignore-options t)
-(setf org-agenda-sticky t)
-(setq org-agenda-skip-scheduled-if-deadline-is-shown t
-      org-agenda-skip-deadline-prewarning-if-scheduled nil)
-(setq org-habit-show-habits-only-for-today t) ; do not show habits in future if scheduled withing agenda time range. E.g. do not show future habits in week view/calendar
+  (require 'org-agenda)
+  (setq org-agenda-skip-scheduled-delay-if-deadline t)
+  (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+  (setq org-agenda-restore-windows-after-quit t)
+  (setq org-agenda-window-setup 'only-window)
+  (setq org-agenda-todo-list-sublevels t)
+  (setq org-agenda-show-inherited-tags t)
+  (setq org-agenda-search-headline-for-time nil)
+  (setq org-agenda-use-time-grid nil)
+  (setq org-directory "~/Org")
+  (setq org-agenda-files "~/Org/agenda_files")
+  (setq org-deadline-warning-days 30)
+  (setq org-agenda-span 'day)
+  (setq org-agenda-sorting-strategy '((agenda deadline-down time-up habit-up priority-down timestamp-up category-keep)
+  				    (todo priority-down category-keep)
+  				    (tags priority-down category-keep)
+  				    (search category-keep)))
+  (setq org-agenda-tags-todo-honor-ignore-options t)
+  (setf org-agenda-sticky t)
+  (setq org-agenda-skip-scheduled-if-deadline-is-shown t
+        org-agenda-skip-deadline-prewarning-if-scheduled nil)
+  (setq org-habit-show-habits-only-for-today t) ; do not show habits in future if scheduled withing agenda time range. E.g. do not show future habits in week view/calendar
 #+end_src
 
 Agendas is my main entry point into daily work. This is where I pickup tasks to work on during the day. I generally use a combination of GTD and "Eating Live Frogs: Do the Worst Thing First" (see [[id:8d4483f2-7a4f-4508-b403-f8635e33a34e][Rainer König: Orgmode-TV: How do I plan my days]], [[id:979c767f-0355-4b6d-86a1-1e10d5fa9202][The Ultimate Guide to Personal Productivity Methods]]), though I am not disciplined enough to follow the latter precisely. In addition, I sometimes use [[id:ee371af1-c478-49d1-9814-1eb78242a341][Pomodoro]], [[id:435d7660-576f-42d0-88fd-9882f494712c][Time blocking]] (kind of), and [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][Bonus/penalty based time management]]. These methods works fine for me at this point, though many more methods do exist [[id:3e4fe63cc3799c4173caa47ceede0a5aaf43b223][The Ultimate Guide to Personal Productivity Methods]].
