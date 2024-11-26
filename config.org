@@ -7221,7 +7221,7 @@ Use different signatures depending on the sent address.
 #+begin_src emacs-lisp
 (when init-flag
   ;; "@\\(debbugs\\.\\)?gnu.org\\|@github.com"
-  (defvar yant/message-signature-alist `((".*" . "Ihor Radchenko // yantar92,
+  (defvar yant/message-signature-alist `(("yantar92@posteo\.net" . "Ihor Radchenko // yantar92,
 Org mode contributor,
 Learn more about Org mode at <https://orgmode.org/>.
 Support Org development at <https://liberapay.com/org-mode>,
