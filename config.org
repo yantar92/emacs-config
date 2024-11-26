@@ -6918,6 +6918,11 @@ the notmuch-tree buffer if it appears after closing the message."
 - multiple accounts
   #+begin_src emacs-lisp
     (setq send-mail-function 'sendmail-send-it)
+    (setq notmuch-identities
+          '("Ihor Radchenko <yantar92@posteo.net>"
+    	"Ihor Radchenko <ihor.radchenko@ensemble3.eu>"
+            "Ihor Radchenko <yantar92@gmail.com>"
+            "Ihor Radchenko <ihor_radchenko@alumni.sutd.edu.sg>"))
     ;;autochoose account name for msmtp
     (defun cg-feed-msmtp ()
       (if (message-mail-p)
