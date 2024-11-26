@@ -7328,22 +7328,22 @@ As recommended in [[https://orgmode.org/worg/org-mailing-list.html#orgf343a0f][W
 ***** Check if the sender forgot to CC mailing list in message
 
 #+begin_src emacs-lisp
-(use-package notmuch
-  :if init-flag
-  :defer t
-  :config
-  (defun yant/notmuch-show-check-cc-and-reply (&optional prompt-for-sender)
-    "Remind to CC orgmode."
-    (interactive "P")
-    (when (member "emacs-orgmode.gnu.org" (notmuch-show-get-tags))
-      (let ((case-fold-search t))
-        (save-excursion
-	  (goto-char (point-min))
-	  (unless (re-search-forward "^\\(To:\\|Cc:\\).+emacs-orgmode@gnu\\.org" nil t)
-            (unless (yes-or-no-p "Org mode ML is not in CC. Send anyway? ")
-	      (error "Org mode ML is not in CC"))))))
-    (notmuch-show-reply prompt-for-sender))
-  (bind-key "R" #'yant/notmuch-show-check-cc-and-reply  notmuch-show-mode-map))
+  (use-package notmuch
+    :if init-flag
+    :defer t
+    :config
+    (defun yant/notmuch-show-check-cc-and-reply (&optional prompt-for-sender)
+      "Remind to CC orgmode."
+      (interactive "P")
+      (when (member "emacs-orgmode.gnu.org" (notmuch-show-get-tags))
+        (let ((case-fold-search t))
+          (save-excursion
+  	  (goto-char (point-min))
+  	  (unless (re-search-forward "^\\(To:\\|Cc:\\).+emacs-orgmode@gnu\\.org" nil t)
+              (unless (yes-or-no-p "Org mode ML is not in CC. Send anyway? ")
+  	      (error "Org mode ML is not in CC"))))))
+      (notmuch-show-reply prompt-for-sender))
+    (bind-key "R" #'yant/notmuch-show-check-cc-and-reply  notmuch-show-mode-map))
 #+end_src
 
 **** Avoid replying to "no-reply" when replying to all
