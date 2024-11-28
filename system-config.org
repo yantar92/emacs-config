@@ -6127,7 +6127,7 @@ The idea of the script is regular reminder to not spend too much money on certai
        RETIREMENT="<span color=\"#00FF00\">ok</span>"
    fi
 
-   OTHER="$(ledger budget Expenses:Personal:Other -X <<ledger-main-currency()>> -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | awk '{print $3}' | sed -r 's/<<ledger-main-currency()>>//')"
+   OTHER="$(ledger budget Expenses:Personal:Other -X <<ledger-main-currency()>> -p "until tomorrow" | tail -n1 | awk '{print $3}' | sed -r 's/<<ledger-main-currency()>>//')"
    # OTHER="$(echo "$OTHER * -1 / 1000" | bc -l)"
    # OTHER_SHORT="$(echo $OTHER | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')k"
    OTHER="$(echo "$OTHER * -1" | bc -l)"
