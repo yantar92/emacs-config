@@ -7228,7 +7228,7 @@ Use different signatures depending on the sent address.
 (when init-flag
   ;; "@\\(debbugs\\.\\)?gnu.org\\|@github.com"
   (defvar yant/message-signature-alist `(("yantar92@posteo\.net" . "Ihor Radchenko // yantar92,
-Org mode contributor,
+Org mode maintainer,
 Learn more about Org mode at <https://orgmode.org/>.
 Support Org development at <https://liberapay.com/org-mode>,
 or support my work at <https://liberapay.com/yantar92>
