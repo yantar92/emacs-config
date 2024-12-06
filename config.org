@@ -2435,17 +2435,18 @@ However, I do not want to auto-save email drafts. Mostly because
 to dig into.
 
 #+begin_src emacs-lisp
-(use-package no-littering
-  :demand t
-  :config
-  (auto-save-visited-mode +1)
-  (defun yant/auto-save-buffer-p ()
-    "Return non-nil when current buffer should be auto-saved."
-    (cond
-     ((derived-mode-p 'message-mode) nil)
-     (t t)))
-  (setq auto-save-visited-predicate #'yant/auto-save-buffer-p)
-  (setq auto-save-file-name-transforms `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+  (use-package no-littering
+    :demand t
+    :config
+    (auto-save-visited-mode +1)
+    (setq remote-file-name-inhibit-auto-save-visited t)
+    (defun yant/auto-save-buffer-p ()
+      "Return non-nil when current buffer should be auto-saved."
+      (cond
+       ((derived-mode-p 'message-mode) nil)
+       (t t)))
+    (setq auto-save-visited-predicate #'yant/auto-save-buffer-p)
+    (setq auto-save-file-name-transforms `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 #+end_src
 
 Save virtual buffers (kill ring, etc.)
