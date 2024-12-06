@@ -6088,8 +6088,10 @@ The idea of the script is regular reminder to not spend too much money on certai
   	 YEARS_LEFT=$(echo "$BAL_ASSETS / $BAL_PROJECTION_YEAR" | bc -l | sed -r 's/(\..{1}).+/\1/');
   	 if [[ "1" == "$(echo "$YEARS_LEFT < 5" | bc -l)" ]]; then
   	     YEARS_LEFT="<span font=\"12\" color=\"#FF0000\">+${YEARS_LEFT}y</span>";
+           elif [[ "1" == "$(echo "$YEARS_LEFT < 15" | bc -l)" ]]; then
+               YEARS_LEFT="<span font=\"12\" color=\"#FFFF00\">+${YEARS_LEFT}y</span>";
   	 else
-  	     YEARS_LEFT="<span font=\"12\" color=\"#FFFF00\">+${YEARS_LEFT}y</span>";
+  	     YEARS_LEFT="<span font=\"12\" color=\"#99FF00\">+${YEARS_LEFT}y</span>";
   	 fi
        else
   	 YEARS_LEFT="<span font=\"12\" color=\"#00FF00\">+∞y</span>";
