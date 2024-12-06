@@ -6009,17 +6009,17 @@ The idea of the script is regular reminder to not spend too much money on certai
   BAL_ENTERTAINMENT_SHORT="$(echo "$BAL_ENTERTAINMENT*(-1)" | bc -l | grep -oE '^-?[0-9]*')"
   [[ "$(echo "$BAL_ENTERTAINMENT > 0" | bc -l)" == "1" ]] && BAL_ENTERTAINMENT_SHORT="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT</span>" || BAL_ENTERTAINMENT_SHORT="<<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT"
 
-  WEEKLY_INCOME_AVG="$(ledger r -X <<ledger-main-currency()>> Income -W -n -A -p "${BUDGET_CUTOFF} until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income from the beginning of the year
+  WEEKLY_INCOME_AVG="$(ledger r -X <<ledger-main-currency()>> Income -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income from the beginning of the year
   [[ -z "$WEEKLY_INCOME_AVG" ]] && WEEKLY_INCOME_AVG="0"
-  WEEKLY_INCOME_AVG_NO_SALARY="$(ledger r -X <<ledger-main-currency()>> Income and not Salary -W -n -A -p "${BUDGET_CUTOFF} until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
+  WEEKLY_INCOME_AVG_NO_SALARY="$(ledger r -X <<ledger-main-currency()>> Income and not Salary -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
   [[ -z "$WEEKLY_INCOME_AVG_NO_SALARY" ]] && WEEKLY_INCOME_AVG_NO_SALARY="0"
-  WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS="$(ledger r -X <<ledger-main-currency()>> Income and not Salary and not Gifts -W -n -A -p "${BUDGET_CUTOFF} until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
+  WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS="$(ledger r -X <<ledger-main-currency()>> Income and not Salary and not Gifts -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
   [[ -z "$WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS" ]] && WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS="0"
 
 
   MONTHLY_INCOME_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_INCOME_AVG" | bc -l)"
   # https://www.wisebread.com/figuring-the-size-of-your-emergency-fund
-  WEEKLY_SPENDING_AVG="$(ledger r -X <<ledger-main-currency()>> Expenses and not Work and not Gifts -W -n -A -p "${BUDGET_CUTOFF} until last week" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/,//')" # average expenses from beginning last year in <<ledger-main-currency()>>
+  WEEKLY_SPENDING_AVG="$(ledger r -X <<ledger-main-currency()>> Expenses and not Work and not Gifts -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/,//')" # average expenses from beginning last year in <<ledger-main-currency()>>
   [[ -z "$WEEKLY_SPENDING_AVG" ]] && WEEKLY_SPENDING_AVG="0"
   MONTHLY_SPENDING_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_SPENDING_AVG" | bc -l)"
 
