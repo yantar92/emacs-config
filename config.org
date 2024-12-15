@@ -5193,7 +5193,6 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
 #+begin_src emacs-lisp
 (use-package which-key
   :if init-flag
-  :straight t
   :diminish which-key-mode
   :config
   (which-key-mode))
