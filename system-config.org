@@ -8752,6 +8752,14 @@ dev-lang/clojure
 dev-java/leiningen-bin
 #+end_src
 ** Python for research
+*** Setup python to use local venv by default
+:PROPERTIES:
+:ID:       169dc99a-c9dc-4505-a351-f958aec459d8
+:END:
+#+begin_src bash :tangle ~/.local/bin/python :shebang "#!/bin/bash"
+  . ~/.venv/bin/activate
+  python "$@"
+#+end_src
 *** Pyton linters
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
