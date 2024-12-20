@@ -3624,7 +3624,6 @@ open the email threads in browser.  Can instead use [[id:f6ca2367-45c4-45bc-acec
                    . yant/browse-url-orgmode-ml)))
 #+end_src
 
-
 *** =Imenu=
 :PROPERTIES:
 :CREATED:  [2018-10-25 Thu 22:45]
@@ -5180,6 +5179,17 @@ Another package =elisp-demos= extends =helpful= even further providing examples 
   :straight t
   :config
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+#+end_src
+
+***** Customization UI
+
+****** Do not "unlispify" symbols
+
+I prefer seeing the actual customization variable names to be set
+manually here (in this config) myself.
+
+#+begin_src emacs-lisp
+  (if init-flag (setopt custom-unlispify-tag-names nil))
 #+end_src
 
 **** Command loop
