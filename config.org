@@ -6472,6 +6472,16 @@ Show the key strokes.
   :straight (qrencode-el :host github :repo "ruediger/qrencode-el"))
 #+end_src
 
+*** Graphviz
+
+#+begin_src emacs-lisp
+  (use-package graphviz-dot-mode
+    :straight t
+    :init
+    (setf (alist-get "dot" org-src-lang-modes nil nil #'string=) 'graphviz-dot))
+
+#+end_src
+
 ** News & email
 :PROPERTIES:
 :ID:       b53c6b66-4a7c-4eae-ab26-e010fdeb3534
