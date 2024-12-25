@@ -5631,6 +5631,14 @@ It warns me if the original definition changes from what I expect.
   :demand t)
 #+end_src
 
+**** Regexp disassembler
+
+#+begin_src emacs-lisp
+  (use-package regexp-disasm
+    :if init-flag
+    :straight (regexp-disasm :host github :repo "mattiase/regexp-disasm"))
+#+end_src
+
 *** Scripts
 :PROPERTIES:
 :CREATED:  [2020-05-14 Thu 14:39]
