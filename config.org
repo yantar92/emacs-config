@@ -7902,36 +7902,43 @@ merged together with [[id:0e3c7484-a453-44f8-b826-6f83e893455d][Custom title for
 :END:
 
 #+begin_src emacs-lisp
-(use-package erc-hl-nicks
-  :if init-flag
-  :straight t)
-(use-package erc
-  :if init-flag
-  :demand t
-  :custom
-  (erc-default-server "irc.libera.chat")
-  (erc-nick "yantar92")
-  ;; (erc-prompt-for-nickserv-password nil)
-  (erc-interpret-mirc-color t)
-  (erc-rename-buffers t)
-  (erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
-  (erc-hide-list '("JOIN" "QUIT"))
-  (erc-track-exclude-types '("JOIN" "NICK" "QUIT" "MODE"))
-  (erc-track-enable-keybindings nil)
-  (erc-fill-column 100)
-  (erc-fill-function #'erc-fill-static)
-  (erc-fill-static-center 20)
-  (erc-autojoin-timing 'indent)
-  (erc-autojoin-channels-alist '(("libera.chat" "#org-mode")))
-  (erc-modules '( autoaway autojoin button completion fill
-                  irccontrols keep-place list match menu
-                  move-to-prompt netsplit networks noncommands
-		  notifications
-                  readonly ring stamp track smiley spelling hl-nicks log))
-  :config
-  (use-package meta-functions
+  (use-package erc-hl-nicks
+    :if init-flag
+    :straight t)
+  (use-package erc
+    :if init-flag
+    :demand t
+    :custom
+    (erc-default-server "chat.sr.ht")
+    (erc-nick "yantar92")
+    ;; (erc-prompt-for-nickserv-password nil)
+    (erc-interpret-mirc-color t)
+    (erc-rename-buffers t)
+    (erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+    (erc-hide-list '("JOIN" "QUIT"))
+    (erc-track-exclude-types '("JOIN" "NICK" "QUIT" "MODE"))
+    (erc-track-enable-keybindings nil)
+    (erc-fill-column 100)
+    (erc-fill-function #'erc-fill-static)
+    (erc-fill-static-center 20)
+    (erc-autojoin-timing 'indent)
+    (erc-autojoin-channels-alist '(("libera.chat" "#org-mode")))
+    (erc-modules '( autoaway autojoin button completion fill
+                    irccontrols keep-place list match menu
+                    move-to-prompt netsplit networks noncommands
+  		  notifications
+                    readonly ring stamp track smiley spelling hl-nicks log))
     :config
-    (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
+    (defun run-erc ()
+      (interactive)
+      (erc-tls :server "chat.sr.ht"
+               :port 6697
+               :nick "yantar92"
+               :user "yantar92/irc.libera.chat" ;; Example with Libera.Chat
+               :password (erc-auth-source-search :host "chat.sr.ht" :user "yantar92/irc.libera.chat")))
+    (use-package meta-functions
+      :config
+      (meta-defun meta-new-line :mode erc-mode (erc-send-current-line))))
 #+end_src
 
 *** Store history
