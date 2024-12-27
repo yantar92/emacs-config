@@ -5851,7 +5851,7 @@ yant/ledger-file
 :END:
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses.sh :shebang #!/bin/bash
-  _LAST_YEAR=$(echo $(date +%Y) - 1 | bc -l)
+  _LAST_YEAR=$(echo $(date +%Y) - 2 | bc -l)
   BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
   ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Expenses and not Work and not Gifts and not Medical -W -n -A -b "${BUDGET_CUTOFF}"
 #+end_src
