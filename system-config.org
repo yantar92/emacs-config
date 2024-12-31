@@ -8760,7 +8760,14 @@ dev-java/leiningen-bin
   . ~/.venv/bin/activate
   python "$@"
 #+end_src
+#+begin_src bash :tangle ~/.local/bin/pyright-langserver :shebang "#!/bin/bash"
+  . ~/.venv/bin/activate
+  pyright-langserver "$@"
+#+end_src
 *** Pyton linters
+:PROPERTIES:
+:ID:       520eb1f2-a131-4e49-9eac-e935f4fb4788
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
   dev-python/yapf
