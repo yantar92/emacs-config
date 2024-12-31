@@ -8778,12 +8778,13 @@ dev-java/leiningen-bin
 
 *** Python LSP
 
-#+begin_src conf :tangle /sudo::/var/lib/portage/world
-  dev-python/python-lsp-server
-  dev-python/python-lsp-black
-#+end_src
+Use =pyright=.
+There is no ebuild, so I have to use local =pip install=.
 
 *** Vesta
+:PROPERTIES:
+:ID:       5eae7bf8-cc37-43ff-83e9-6233e419cc51
+:END:
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.unmask/vesta-bin
 sci-chemistry/vesta-bin::guru
