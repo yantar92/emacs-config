@@ -5397,6 +5397,34 @@ This is according to Corfu README.
   	 :maxLineLength nil ; integer: null (default)
   	 :perFileIgnores [] ; string array: [] (default) e.g. ["file_path.py:W305,W304"]
   	 :select nil) ; string array: null (default)
+         :jedi
+         ( :auto_import_modules ["numpy" "pymatgen" "matplotlib" "numpy"] ; string array: ["numpy"] (default)
+           :env_vars nil ; object: null (default)
+           :environment nil ; string: null (default)
+           :extra_paths []) ; string array: [] (default)
+         :jedi_completion
+         ( :cache_for ["pandas" "numpy" "tensorflow" "matplotlib" "pymatgen"]
+           :eager t ; boolean: true or false (default)
+           :enabled t ; boolean: true (default) or false
+           :fuzzy :json-false ; boolean: true or false (default)
+           :include_class_objects t ; boolean: true or false (default)
+           :include_function_objects t ; boolean: true or false (default)
+           :include_params t ; boolean: true (default) or false
+           :resolve_at_most 50) ; integer: 25 (default)
+         :jedi_definition
+         ( :enabled t ; boolean: true (default) or false
+           :follow_builtin_definitions t ; boolean: true (default) or false
+           :follow_builtin_imports t ; boolean: true (default) or false
+           :follow_imports t) ; boolean: true (default) or false
+         :jedi_references
+         (:enabled t)
+         ;; FIXME: errs
+         ;; :jedi_signature_help
+         ;; (:enabled t)
+         :jedi_symbols
+         ( :all_scopes t
+           :enabled t
+           :include_import_symbols t)
          :mccabe
          ( :enabled t ; boolean: true (default) or false
            :threshold 15) ; integer: 15 (default)
