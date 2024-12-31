@@ -5373,13 +5373,17 @@ This is according to Corfu README.
 
 ***** Workspace config
 
+- [2024-12-30 Mon] Use =pyright= language server
+  - Unlike =pylsp=, it can do static typechecking and thus method
+    completion in class variables
+
 #+begin_src emacs-lisp
   (use-package eglot
     :if init-flag
     :config
     (setq-default
      eglot-workspace-configuration
-     '(:pylsp
+     '(:pyright
        (:plugins
         (;; Note autopep uses some pycodestyle settings further down to avoid redefining things namely aggressive, exclude, hangClosing, ignore, maxLineLength and select
          :autopep8 (:enabled t)
