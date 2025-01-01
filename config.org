@@ -2811,7 +2811,7 @@ abort completely with `C-g'."
   (setq-default abbrev-mode t)
   (diminish 'abbrev-mode))
 #+end_src
-**** =jinx= - spell checker
+**** COMMENT =jinx= - spell checker
 :PROPERTIES:
 :ID:       d644950a-a361-49ab-8662-a7f201fe65f3
 :END:
