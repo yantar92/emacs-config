@@ -514,7 +514,7 @@ of Emacs session).
 #+begin_src emacs-lisp
 (when init-flag
   (setf (alist-get (regexp-quote "*Warnings*") display-buffer-alist nil nil #'equal)
-	'(display-buffer-at-bottom (window-height . 0.3))))
+	'(display-buffer-in-site-window (side . bottom) (window-height . 0.3))))
 #+end_src
 
 ***** Display Org mode's =*Select link*= buffer in posframe
@@ -547,6 +547,14 @@ ALIST may have non-standard elements `poshandler', `foreground-color',
             (internal-border-color . ,(face-background 'highlight))
             (internal-border-width . 20)))))
 #+end_src
+***** Display async shell command output at the bottom
+
+#+begin_src emacs-lisp
+  (when init-flag
+    (setf (alist-get (regexp-quote "*Async Shell Command*") display-buffer-alist nil nil #'equal)
+  	'(display-buffer-in-side-window (side . bottom) (window-height . 0.15))))
+#+end_src
+
 
 **** Centered text in window
 :PROPERTIES:
