@@ -514,7 +514,7 @@ of Emacs session).
 #+begin_src emacs-lisp
 (when init-flag
   (setf (alist-get (regexp-quote "*Warnings*") display-buffer-alist nil nil #'equal)
-	'(display-buffer-in-site-window (side . bottom) (window-height . 0.3))))
+	'(display-buffer-in-side-window (side . bottom) (window-height . 0.3))))
 #+end_src
 
 ***** Display Org mode's =*Select link*= buffer in posframe
