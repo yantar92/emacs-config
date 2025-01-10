@@ -551,7 +551,7 @@ ALIST may have non-standard elements `poshandler', `foreground-color',
 
 #+begin_src emacs-lisp
   (when init-flag
-    (setf (alist-get (regexp-quote "*Async Shell Command*") display-buffer-alist nil nil #'equal)
+    (setf (alist-get (regexp-opt '("*Async Shell Command*" "*Shell Command Output*")) display-buffer-alist nil nil #'equal)
   	'(display-buffer-in-side-window (side . bottom) (window-height . 0.15))))
 #+end_src
 
