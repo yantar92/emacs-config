@@ -630,8 +630,10 @@ Match default face background
 
 As the usual Emacs user belief goes, fancy "bells and whistles" should be unnecessary.
 Yet, smooth scrolling makes surprisingly good experience when reading things.
+***** =pixel-scroll-precision-mode= (built-in)
 
-#+begin_src emacs-lisp
+[2025-01-09 Thu] testing ultra-scroll
+#+begin_src emacs-lisp :tangle no
 (use-package pixel-scroll
   :if init-flag
   :hook
@@ -716,7 +718,17 @@ Use smooth page-up/down, but do it quickly to not trade visuals for work efficie
   (setq pixel-scroll-precision-interpolate-page t
         pixel-scroll-precision-interpolation-total-time 0.07))
 #+end_src
+***** =ultra-scroll=
 
+#+begin_src emacs-lisp
+  (use-package ultra-scroll
+    :straight (ultra-scroll :host github :repo "jdtsmith/ultra-scroll")
+    :init
+    (setq scroll-conservatively 101 ; important!
+          scroll-margin 0) 
+    :config
+    (ultra-scroll-mode 1))
+#+end_src
 *** Buffer
 
 General buffer appearance.
