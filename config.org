@@ -4173,6 +4173,20 @@ Using trash is safer.
 	      ("<return>" . dired-open-xdg)))
 #+end_src
 
+***** Copy in the background
+
+#+begin_src emacs-lisp
+  (use-package dired-rsync-transient
+    :straight t
+    :bind (:map dired-mode-map
+                ("C" . dired-rsync-transient))
+    :config
+    (defun yant/dired-rsync-report-success ()
+      (message "%s" (propertize "rsync finished!" :face '(:color "green"))))
+    (add-hook 'dired-rsync-success-hook #'yant/dired-rsync-report-success)
+    (setq-default mode-line-format (append mode-line-format '(dired-rsync-modeline-status))))
+#+end_src
+
 ***** Appearance
 ****** Group files :EMACS:COMMON:SOMEDAY:
 :PROPERTIES:
