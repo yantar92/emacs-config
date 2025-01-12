@@ -8143,20 +8143,32 @@ Despite the usual big-tech concerns, it makes a decent:
 *** TODO Display my GPX tracks
 
 #+begin_src emacs-lisp
-(use-package osm
-  :if init-flag
-  :init
-  (defun yant/display-all-gpx ()
-    "Display all my GPX tracks in current OSM buffer."
-    (when (derived-mode-p 'osm-mode)
-      (mapc
-       #'osm-gpx-show
-       (append (directory-files-recursively "~/Sync/GPX" "\\.gpx$")
-	       (directory-files-recursively "~/Sync/GPX2" "\\.gpx$")))))
-  (defun yant/display-all-gpx-delayed ()
-    "Call `yant/display-all-gpx' after delay."
-    (run-with-timer 2 nil #'yant/display-all-gpx))
-  (add-hook 'osm-mode-hook #'yant/display-all-gpx-delayed))
+  (use-package osm
+    :if init-flag
+    :init
+    (defun yant/display-all-gpx ()
+      "Display all my GPX tracks in current OSM buffer."
+      (when (derived-mode-p 'osm-mode)
+        (let* ((files (append (directory-files-recursively "~/Sync/GPX" "\\.gpx$")
+  			    (directory-files-recursively "~/Sync/GPX2" "\\.gpx$")))
+               (reporter (progress-reporter-make "Displaying GPX tracks" 0 (length files))))
+  	(cl-loop
+  	 for idx = 0 then (cl-incf idx)
+  	 for f in
+  	 (sort
+            (append (directory-files-recursively "~/Sync/GPX" "\\.gpx$")
+  		  (directory-files-recursively "~/Sync/GPX2" "\\.gpx$"))
+            :key (lambda (f) (file-attribute-modification-time (file-attributes f)))
+            :reverse t)
+           do (progress-reporter-update reporter idx)
+  	 when (= 0 (% idx 20))
+  	 do (osm-gpx-show f)
+           finally (progress-reporter-done reporter)
+  	 finally return nil))))
+    (defun yant/display-all-gpx-delayed ()
+      "Call `yant/display-all-gpx' after delay."
+      (run-with-timer 2 nil #'yant/display-all-gpx))
+    (add-hook 'osm-mode-hook #'yant/display-all-gpx-delayed))
 #+end_src
 
 ** COMMENT Browser
