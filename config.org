@@ -2569,25 +2569,28 @@ One more step towards doing all the things in Emacs.
 Do not even need terminal to interact with Git.
 
 #+BEGIN_SRC emacs-lisp
-(use-package magit
-  :straight t
-  :if init-flag
-  :after boon
-  :requires boon
-  :bind (:map boon-x-map
-              ("g" . meta-magit-status)
-	      ("G" . magit-dispatch-popup)
-	      ("M-g" . magit-file-dispatch))
-  :config
-  (use-package meta-functions
+  (use-package magit
+    :straight t
+    :if init-flag
+    :after boon
+    :requires boon
+    :bind (:map boon-x-map
+                ("g" . meta-magit-status)
+  	      ("G" . magit-dispatch-popup)
+  	      ("M-g" . magit-file-dispatch))
+    :init
+    ;; Use built-in transient
+    (require 'transient)
     :config
-    (meta-defun meta-magit-status "Open magit status buffer" magit-status)
-    (meta-defun meta-down-element :mode magit-diff-mode magit-section-forward)
-    (meta-defun meta-up-element :mode magit-diff-mode magit-section-backward)
-    (meta-defun meta-down-element :mode magit-status-mode magit-section-forward)
-    (meta-defun meta-up-element :mode magit-status-mode magit-section-backward)
-    (meta-defun meta-down-element :mode magit-revision-mode magit-section-forward)
-    (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward)))
+    (use-package meta-functions
+      :config
+      (meta-defun meta-magit-status "Open magit status buffer" magit-status)
+      (meta-defun meta-down-element :mode magit-diff-mode magit-section-forward)
+      (meta-defun meta-up-element :mode magit-diff-mode magit-section-backward)
+      (meta-defun meta-down-element :mode magit-status-mode magit-section-forward)
+      (meta-defun meta-up-element :mode magit-status-mode magit-section-backward)
+      (meta-defun meta-down-element :mode magit-revision-mode magit-section-forward)
+      (meta-defun meta-up-element :mode magit-revision-mode magit-section-backward)))
 #+END_SRC
 
 **** COMMENT Interaction with GitHub \ other forges
