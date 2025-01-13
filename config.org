@@ -11916,191 +11916,191 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
 ****************** END
 
 #+begin_src emacs-lisp
-(use-package helm-org-ql
-  :straight (helm-org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
-			 :fork (:host github :repo "yantar92/org-ql"))
-  :after org-ql
-  :after helm-notmuch
-  :custom
-  (helm-org-ql-reverse-paths t)
-  (helm-org-ql-show-paths nil)
-  (helm-org-ql-input-idle-delay 0.1)
-  (helm-candidate-number-limit 150)
-  :config
-  (require 'helm-org-ql)
-  (require 'helm-notmuch)
-  (use-package boon
+  (use-package helm-org-ql
+    :straight (helm-org-ql :type git :host github :repo "alphapapa/org-ql" :local-repo "~/Git/org-ql"
+  			 :fork (:host github :repo "yantar92/org-ql"))
+    :after org-ql
+    :after helm-notmuch
+    :custom
+    (helm-org-ql-reverse-paths t)
+    (helm-org-ql-show-paths nil)
+    (helm-org-ql-input-idle-delay 0.1)
+    (helm-candidate-number-limit 300)
     :config
-    (cl-defun yant/helm-git-list-candidates (repo &key (branch "main") grep (limit 100))
-      "Return commits from REPO on BRANCH matching GREP up to LIMIT."
-      (let ((default-directory repo))
-        (with-temp-buffer
-          ;; Reverse-engineering magit API
-          (cl-letf (((symbol-function 'magit-log-format-margin)
-                     (lambda (hash author date)
-                       (cl-letf (((symbol-function 'magit-make-margin-overlay)
-                                  (lambda (text _)
-                                    (insert " ("
-                                            (replace-regexp-in-string "  +" " " text)
-                                            ")")))
-                                 (magit-buffer-margin '(t age 18 t 18)))
-                         (magit-log-format-author-margin author date)))))
-            (magit-git-wash (apply-partially #'magit-log-wash-log 'log)
-              "log"
-              "--format=%h%x0c%x0c%G?%x0c%aN%x0c%at%x0c%s"
-              "--regexp-ignore-case"
-              (when grep
-                (cl-typecase grep
-                  (string (list "--grep" grep))
-                  (list
-                   (nconc (list "--all-match")
-                          (flatten-list
-                           (mapcar
-                            (lambda (s) (list "--grep" s))
-                            grep))))))
-              "--max-count" (number-to-string limit)
-              "--use-mailmap"
-              "--no-prefix"
-              branch "--"))
-          (let ((candidates))
-            (goto-char (point-min))
-            (while (not (eobp))
-              (when (looking-at "^\\S-+")
-                (push
-                 ;; CANDIDATE
-                 (cons
-                  ;; DISPLAY
-                  (buffer-substring (line-beginning-position) (line-end-position))
-                  ;; REAL: (repo branch hash)
-                  (list repo branch (match-string 0)))
-                 candidates))
-              ;; Next line
-              (beginning-of-line 2))
-            (nreverse candidates)))))
-
-    (defun yant/helm-git-show-candidate (candidate)
-      "Show Magit commit CANDIDATE."
-      (pcase-let ((`(,repo _ ,hash) candidate))
+    (require 'helm-org-ql)
+    (require 'helm-notmuch)
+    (use-package boon
+      :config
+      (cl-defun yant/helm-git-list-candidates (repo &key (branch "main") grep (limit 100))
+        "Return commits from REPO on BRANCH matching GREP up to LIMIT."
         (let ((default-directory repo))
-          (magit-show-commit hash))))
+          (with-temp-buffer
+            ;; Reverse-engineering magit API
+            (cl-letf (((symbol-function 'magit-log-format-margin)
+                       (lambda (hash author date)
+                         (cl-letf (((symbol-function 'magit-make-margin-overlay)
+                                    (lambda (text _)
+                                      (insert " ("
+                                              (replace-regexp-in-string "  +" " " text)
+                                              ")")))
+                                   (magit-buffer-margin '(t age 18 t 18)))
+                           (magit-log-format-author-margin author date)))))
+              (magit-git-wash (apply-partially #'magit-log-wash-log 'log)
+                "log"
+                "--format=%h%x0c%x0c%G?%x0c%aN%x0c%at%x0c%s"
+                "--regexp-ignore-case"
+                (when grep
+                  (cl-typecase grep
+                    (string (list "--grep" grep))
+                    (list
+                     (nconc (list "--all-match")
+                            (flatten-list
+                             (mapcar
+                              (lambda (s) (list "--grep" s))
+                              grep))))))
+                "--max-count" (number-to-string limit)
+                "--use-mailmap"
+                "--no-prefix"
+                branch "--"))
+            (let ((candidates))
+              (goto-char (point-min))
+              (while (not (eobp))
+                (when (looking-at "^\\S-+")
+                  (push
+                   ;; CANDIDATE
+                   (cons
+                    ;; DISPLAY
+                    (buffer-substring (line-beginning-position) (line-end-position))
+                    ;; REAL: (repo branch hash)
+                    (list repo branch (match-string 0)))
+                   candidates))
+                ;; Next line
+                (beginning-of-line 2))
+              (nreverse candidates)))))
 
-    (defun yant/helm-git-insert-link (candidate)
-      "Insert link to commit CANDIDATE."
-      (pcase-let ((`(,repo ,branch ,hash) candidate))
-        (let* ((default-directory repo)
-               (origin (string-trim (shell-command-to-string "git remote get-url origin"))
-                       ;; FIXME: This is not reliable - multiple remotes may mean anything.
-                       ;; (string-trim (shell-command-to-string "git remote get-url $(git remote show | tail -n1)"))
-                       ))
-          (cond
-           ((string-match "git\\.savannah\\.gnu\\.org:/srv/git/\\(.+\\)" origin)
-            (insert
-             (format "https://git.savannah.gnu.org/cgit/%s/commit/?id=%s"
-                     (match-string 1 origin)
-                     hash)))
-           ((string-match "github.com:\\(.+\\)\\.git" origin)
-            (insert
-             (format "https://github.com/%s/commit/%s"
-                     (match-string 1 origin)
-                     hash)))
-           ((string-match "sr\\.ht:\\(.+\\)" origin)
-            (insert
-             (format "https://git.sr.ht/%s/commit/%s"
-                     (match-string 1 origin)
-                     hash)))
-           (t nil)))))
+      (defun yant/helm-git-show-candidate (candidate)
+        "Show Magit commit CANDIDATE."
+        (pcase-let ((`(,repo _ ,hash) candidate))
+          (let ((default-directory repo))
+            (magit-show-commit hash))))
+
+      (defun yant/helm-git-insert-link (candidate)
+        "Insert link to commit CANDIDATE."
+        (pcase-let ((`(,repo ,branch ,hash) candidate))
+          (let* ((default-directory repo)
+                 (origin (string-trim (shell-command-to-string "git remote get-url origin"))
+                         ;; FIXME: This is not reliable - multiple remotes may mean anything.
+                         ;; (string-trim (shell-command-to-string "git remote get-url $(git remote show | tail -n1)"))
+                         ))
+            (cond
+             ((string-match "git\\.savannah\\.gnu\\.org:/srv/git/\\(.+\\)" origin)
+              (insert
+               (format "https://git.savannah.gnu.org/cgit/%s/commit/?id=%s"
+                       (match-string 1 origin)
+                       hash)))
+             ((string-match "github.com:\\(.+\\)\\.git" origin)
+              (insert
+               (format "https://github.com/%s/commit/%s"
+                       (match-string 1 origin)
+                       hash)))
+             ((string-match "sr\\.ht:\\(.+\\)" origin)
+              (insert
+               (format "https://git.sr.ht/%s/commit/%s"
+                       (match-string 1 origin)
+                       hash)))
+             (t nil)))))
 
 
-    (defvar yant/helm-git-actions
-      '(("Show in Magit" . yant/helm-git-show-candidate)
-        ("Show in Magit" . yant/helm-git-show-candidate)
-        ("Insert link" . yant/helm-git-insert-link)
-        ("Insert URL" . yant/helm-git-insert-link)))
+      (defvar yant/helm-git-actions
+        '(("Show in Magit" . yant/helm-git-show-candidate)
+          ("Show in Magit" . yant/helm-git-show-candidate)
+          ("Insert link" . yant/helm-git-insert-link)
+          ("Insert URL" . yant/helm-git-insert-link)))
 
-    (cl-defun yant/helm-git-make-source (repo &key (branch "main"))
-      "Build Helm source for Git REPO."
-      (helm-build-sync-source (format "Git: %s" repo)
-        :candidates
-        `(lambda ()
-           (yant/helm-git-list-candidates
-            ,repo
-            :branch ,branch
-            :grep (split-string (string-clean-whitespace helm-pattern))
-            :limit (min 50 helm-candidate-number-limit)))
-        :action yant/helm-git-actions
-        :match #'identity
-        :fuzzy-match nil
-        :multimatch nil
-        :nohighlight t
-        :match-dynamic t))
+      (cl-defun yant/helm-git-make-source (repo &key (branch "main"))
+        "Build Helm source for Git REPO."
+        (helm-build-sync-source (format "Git: %s" repo)
+          :candidates
+          `(lambda ()
+             (yant/helm-git-list-candidates
+              ,repo
+              :branch ,branch
+              :grep (split-string (string-clean-whitespace helm-pattern))
+              :limit (min 50 helm-candidate-number-limit)))
+          :action yant/helm-git-actions
+          :match #'identity
+          :fuzzy-match nil
+          :multimatch nil
+          :nohighlight t
+          :match-dynamic t))
 
 
-    (defvar yant/helm-git-sources (list (yant/helm-git-make-source "~/Git/org-mode")
-                                        (yant/helm-git-make-source "~/Git/worg" :branch "master")
-                                        (yant/helm-git-make-source "~/Git/org-mode-tests" :branch "master"))
-      "Sources for Git repositories")
+      (defvar yant/helm-git-sources (list (yant/helm-git-make-source "~/Git/org-mode")
+                                          (yant/helm-git-make-source "~/Git/worg" :branch "master")
+                                          (yant/helm-git-make-source "~/Git/org-mode-tests" :branch "master"))
+        "Sources for Git repositories")
 
-    (require 'helm-for-files)
-    (defvar yant/helm-org-ql-agenda-files-history nil
-      "`yant/helm-org-ql-agenda-files' query history.")
-    (cl-defun yant/helm-org-ql-agenda-files (arg)
-      "Like `helm-org-ql-agenda-files', but also allow creating a new heading."
-      (interactive "P")
-      (let ((files (if arg (org-agenda-files t t) (org-agenda-files t)))
-            (search-archives-p t ;; arg
-                               )
-            (helm-full-frame t)
-            (helm-buffer-max-length 80))
-        (helm :prompt (format "Query (boolean and): ")
-              :truncate-lines t
-              :history 'yant/helm-org-ql-agenda-files-history
-              :sources `(,(helm-make-source "Buffers" 'helm-source-buffers)
-                         ,(helm-make-source "Recentf" 'helm-recentf-source
-                            :fuzzy-match helm-recentf-fuzzy-match)
-                         ,(helm-org-ql-source files
-                                              :name "Org Agenda Files"
-                                              :filter (unless search-archives-p
-                                                        '(not (and (not (tags-local "ARCHIVE"))
-                                                                 (tags "ARCHIVE"))))
-                                              :limit-count 150)
-                         ,helm-source-notmuch
-                         ,(helm-make-source "External Commands" 'helm-external-commands
-                            :data (helm-external-commands-list-1 'sort)
-                            :candidate-number-limit 15
-                            :action
-                            ;; Modify default action to set
-                            ;; `helm-exit-status' to 1, making
-                            ;; system runner exit immediately.
-                            (helm-make-actions
-                             "Run program"
-                             (lambda (candidate)
-                               (helm-run-external-command-action candidate)
-                               (setq helm-exit-status 1))
-                             (lambda ()
-                               (unless (memq system-type '(windows-nt ms-dos))
-                                 "Run program detached"))
-                             (lambda (candidate)
-                               (helm-run-external-command-action candidate 'detached)
-                               (setq helm-exit-status 1))))
-                         ,(helm-build-sync-source "Create new"
-                            :candidates
-                            (lambda ()
-                              (if (string-empty-p helm-pattern)
-                                  (list "New note")
-                                (list (format "New note: \"%s\"" (string-clean-whitespace helm-pattern)))))
-                            :match #'identity
-                            :match-dynamic t
-                            :nohighlight t
-			    :action
-                            '(("New note" . (lambda (_)
-                                              (let ((helm-org-ql-default-title helm-pattern))
-                                                (org-capture  nil "N"))))))
-                         ,@yant/helm-git-sources))
-        ;; Remove from history no more valid executables. 
-        (setq helm-external-command-history
-              (cl-loop for i in helm-external-command-history
-                       when (executable-find i) collect i)))))
-  (bind-key "h" #'yant/helm-org-ql-agenda-files boon-forward-search-map))
+      (require 'helm-for-files)
+      (defvar yant/helm-org-ql-agenda-files-history nil
+        "`yant/helm-org-ql-agenda-files' query history.")
+      (cl-defun yant/helm-org-ql-agenda-files (arg)
+        "Like `helm-org-ql-agenda-files', but also allow creating a new heading."
+        (interactive "P")
+        (let ((files (if arg (org-agenda-files t t) (org-agenda-files t)))
+              (search-archives-p t ;; arg
+                                 )
+              (helm-full-frame t)
+              (helm-buffer-max-length 80))
+          (helm :prompt (format "Query (boolean and): ")
+                :truncate-lines t
+                :history 'yant/helm-org-ql-agenda-files-history
+                :sources `(,(helm-make-source "Buffers" 'helm-source-buffers)
+                           ,(helm-make-source "Recentf" 'helm-recentf-source
+                              :fuzzy-match helm-recentf-fuzzy-match)
+                           ,(helm-org-ql-source files
+                                                :name "Org Agenda Files"
+                                                :filter (unless search-archives-p
+                                                          '(not (and (not (tags-local "ARCHIVE"))
+                                                                   (tags "ARCHIVE"))))
+                                                :limit-count helm-candidate-number-limit)
+                           ,helm-source-notmuch
+                           ,(helm-make-source "External Commands" 'helm-external-commands
+                              :data (helm-external-commands-list-1 'sort)
+                              :candidate-number-limit 15
+                              :action
+                              ;; Modify default action to set
+                              ;; `helm-exit-status' to 1, making
+                              ;; system runner exit immediately.
+                              (helm-make-actions
+                               "Run program"
+                               (lambda (candidate)
+                                 (helm-run-external-command-action candidate)
+                                 (setq helm-exit-status 1))
+                               (lambda ()
+                                 (unless (memq system-type '(windows-nt ms-dos))
+                                   "Run program detached"))
+                               (lambda (candidate)
+                                 (helm-run-external-command-action candidate 'detached)
+                                 (setq helm-exit-status 1))))
+                           ,(helm-build-sync-source "Create new"
+                              :candidates
+                              (lambda ()
+                                (if (string-empty-p helm-pattern)
+                                    (list "New note")
+                                  (list (format "New note: \"%s\"" (string-clean-whitespace helm-pattern)))))
+                              :match #'identity
+                              :match-dynamic t
+                              :nohighlight t
+  			    :action
+                              '(("New note" . (lambda (_)
+                                                (let ((helm-org-ql-default-title helm-pattern))
+                                                  (org-capture  nil "N"))))))
+                           ,@yant/helm-git-sources))
+          ;; Remove from history no more valid executables. 
+          (setq helm-external-command-history
+                (cl-loop for i in helm-external-command-history
+                         when (executable-find i) collect i)))))
+    (bind-key "h" #'yant/helm-org-ql-agenda-files boon-forward-search-map))
 #+end_src
 
 ***** Speed up agenda generation via =org-refresh-properties=
