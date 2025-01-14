@@ -8778,6 +8778,10 @@ dev-java/leiningen-bin
   . ~/.venv/bin/activate
   python "$@"
 #+end_src
+#+begin_src bash :tangle ~/.local/bin/pyright :shebang "#!/bin/bash"
+  . ~/.venv/bin/activate
+  pyright "$@"
+#+end_src
 #+begin_src bash :tangle ~/.local/bin/pyright-langserver :shebang "#!/bin/bash"
   . ~/.venv/bin/activate
   pyright-langserver "$@"
