@@ -8001,6 +8001,31 @@ Make Emacs ERC automatically re-connect when it looses server connection.
   :custom
   (erc-server-reconnect-attempts t))
 #+end_src
+** TRAMP
+*** No remote shell history
+
+#+begin_src emacs-lisp
+  (setq shell-history-file-name t)
+#+end_src
+
+*** Disable remove file locks
+
+#+begin_src emacs-lisp
+  (setq remote-file-name-inhibit-locks t)
+#+end_src
+
+*** Disable remote version-control
+
+As per [[info:tramp#Frequently Asked Questions][tramp#Frequently Asked Questions]]
+#+begin_src emacs-lisp
+  (use-package tramp
+    :config
+    (setq vc-ignore-dir-regexp
+  	(format "\\(%s\\)\\|\\(%s\\)"
+  		vc-ignore-dir-regexp
+  		tramp-file-name-regexp)))
+#+end_src
+
 ** File sharing via =0x0=
 
 [[id:GitLab-willvaughn-willvaughn-emacs-0x0-d03][willvaughn [GitLab] willvaughn/emacs-0x0: Integration with https://0x0.st from emacs]]
