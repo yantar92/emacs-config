@@ -15334,61 +15334,61 @@ Do not highlight line below mouse
 Modify prefix for the entries to show if the entry is repeatable and
 the time [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time balance multiplier]].
   #+begin_src emacs-lisp
-(setq org-agenda-scheduled-leaders '("* today" "* %2d d. ago"))
-(defun yant/format-summary-for-agenda ()
-  "Format the contents of :SUMMARY: property to show in agenda view."
-  (let ((summary (org-with-point-at-org-buffer (org-entry-get (point) "SUMMARY"))))
-    (if (not (seq-empty-p summary))
-	(format "[%s] " summary)
-      "")))
+    (setq org-agenda-scheduled-leaders '("* today" "* %2d d. ago"))
+    (defun yant/format-summary-for-agenda ()
+      "Format the contents of :SUMMARY: property to show in agenda view."
+      (let ((summary (org-with-point-at-org-buffer (org-entry-get (point) "SUMMARY"))))
+        (if (not (seq-empty-p summary))
+    	(format "[%s] " summary)
+          "")))
 
-(defun yant/get-clocked-time-today-for-agenda ()
-  "Get total clocked-in time for an entry in agenda."
-  (let ((minutes (org-with-point-at-org-buffer
-		  (org-narrow-to-subtree)
-		  (org-clock-sum-today))))
-    (if (= minutes 0) "" (concat (org-duration-from-minutes minutes 'h:mm) "/"))))
+    (defun yant/get-clocked-time-today-for-agenda ()
+      "Get total clocked-in time for an entry in agenda."
+      (let ((minutes (org-with-point-at-org-buffer
+    		  (org-narrow-to-subtree)
+    		  (org-clock-sum-today))))
+        (if (= minutes 0) "" (concat (org-duration-from-minutes minutes 'h:mm) "/"))))
 
-(defun yant/format-hashtags-for-agenda ()
-  "Format the list of hashtags to show in agenda view."
-  (let* ((entry-text (org-with-point-at-org-buffer
-		      (org-back-to-heading)
-		      ;; Skip heading
-		      (end-of-line 1)
-		      ;; Get entry text
-		      (buffer-substring
-		       (point)
-		       (or (save-excursion (outline-next-heading) (point))
-			   (point-max)))))
-         (entry-text (and entry-text (replace-regexp-in-string org-babel-src-block-regexp "" entry-text)))
-         (entry-hashtags
-          (and entry-text
-               (let (hashtags (pos 0))
-		 (while (string-match " #[^+ ][^# ]+" entry-text pos)
-                   (push (match-string 0 entry-text) hashtags)
-                   (setq pos (match-end 0)))
-                 (nreverse hashtags)))))
-    (if (seq-empty-p entry-hashtags)
-	""
-      (concat "\t\t" (mapconcat #'s-trim entry-hashtags " ") "\n"))))
+    (defun yant/format-hashtags-for-agenda ()
+      "Format the list of hashtags to show in agenda view."
+      (let* ((entry-text (org-with-point-at-org-buffer
+    		      (org-back-to-heading)
+    		      ;; Skip heading
+    		      (end-of-line 1)
+    		      ;; Get entry text
+    		      (buffer-substring
+    		       (point)
+    		       (or (save-excursion (outline-next-heading) (point))
+    			   (point-max)))))
+             (entry-text (and entry-text (replace-regexp-in-string org-babel-src-block-regexp "" entry-text)))
+             (entry-hashtags
+              (and entry-text
+                   (let (hashtags (pos 0))
+    		 (while (string-match " #[^+ ][^# ]+" entry-text pos)
+                       (push (match-string 0 entry-text) hashtags)
+                       (setq pos (match-end 0)))
+                     (nreverse hashtags)))))
+        (if (seq-empty-p entry-hashtags)
+    	""
+          (concat "\t\t" (mapconcat #'s-trim entry-hashtags " ") "\n"))))
 
-(defun yant/format-time-balance-multiplier ()
-  "Format :ORG-TIME-BALANCE-MULTIPLIER: into agenda."
-  (condition-case nil
-      (save-match-data
-	(let* ((mult (org-ql--value-at (point) #'org-get-time-balance-multiplier-at-point))
-	       (bonus (org-ql--value-at (point) #'org-get-org-time-bonus-on-done-at-point))
-               (schedule-string (or (org-entry-get (point) "SCHEDULED") ""))
-               (scheduled? (string-match org-repeat-re schedule-string))
-               (repeat-string (and scheduled? (match-string 1 schedule-string)))
-               (repeat-string (and scheduled? (replace-regexp-in-string "[+.]+" "" repeat-string))))
-	  (format "%s%s%s" (if scheduled? (format "%-4s" (format "%s↰" repeat-string)) "    ") (if mult (format "%+.1fx" mult) "")
-		  (if (and bonus (> bonus 0)) (format "+%-3s" bonus) "    "))))
-    (error "")))
-(setq org-agenda-prefix-format '((agenda . "%-12.12s %-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-				 (search . "%s %-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-				 (todo . "%-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-                                 (tags . "%-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")))
+    (defun yant/format-time-balance-multiplier ()
+      "Format :ORG-TIME-BALANCE-MULTIPLIER: into agenda."
+      (condition-case nil
+          (save-match-data
+    	(let* ((mult (org-ql--value-at (point) #'org-get-time-balance-multiplier-at-point))
+    	       (bonus (org-ql--value-at (point) #'org-get-org-time-bonus-on-done-at-point))
+                   (schedule-string (or (org-entry-get (point) "SCHEDULED") ""))
+                   (scheduled? (string-match org-repeat-re schedule-string))
+                   (repeat-string (and scheduled? (match-string 1 schedule-string)))
+                   (repeat-string (and scheduled? (replace-regexp-in-string "[+.]+" "" repeat-string))))
+    	  (format "%s%s%s" (if scheduled? (format "%-4s" (format "%s↰" repeat-string)) "    ") (if mult (format "%+.1fx" mult) "")
+    		  (if (and bonus (> bonus 0)) (format "+%-3s" bonus) "    "))))
+        (error "")))
+    (setq org-agenda-prefix-format '((agenda . "%-12.12s %-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+    				 (search . "%s %-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+    				 (todo . "%-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+                                     (tags . "%-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")))
   #+end_src
 
 Hide some uninteresting tags
