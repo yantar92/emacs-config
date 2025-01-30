@@ -520,32 +520,32 @@ of Emacs session).
 ***** Display Org mode's =*Select link*= buffer in posframe
 
 #+begin_src emacs-lisp
-(when init-flag
-  (use-package posframe
-    :straight t
-    :config
-    (defun yant/display-buffer-in-posframe (buffer alist)
-      "Display BUFFER using `posframe-show'.
-ALIST may have non-standard elements `poshandler', `foreground-color',
-`background-color', `internal-border-color', and
-`internal-border-width' to be passed to `posframe-show'."
-      (posframe-show
-       buffer
-       :override-parameters `((quit-restore . (frame frame nil ,buffer)))
-       :poshandler (alist-get 'poshandler alist)
-       :foreground-color (alist-get 'foreground-color alist)
-       :background-color (alist-get 'background-color alist)
-       :internal-border-color (alist-get 'internal-border-color alist)
-       :internal-border-width (alist-get 'internal-border-width alist))
-      ;; FIXME: suppress `org-fit-window-to-buffer'.
-      (setq-local window-size-fixed t))
-    (setf (alist-get (regexp-quote "*Select Link*") display-buffer-alist nil nil #'equal)
-	  `(yant/display-buffer-in-posframe
-            (poshandler . posframe-poshandler-frame-center)
-            (foreground-color . ,(face-foreground 'mode-line))
-            (background-color . ,(face-background 'highlight))
-            (internal-border-color . ,(face-background 'highlight))
-            (internal-border-width . 20)))))
+  (when init-flag
+    (use-package posframe
+      :straight t
+      :config
+      (defun yant/display-buffer-in-posframe (buffer alist)
+        "Display BUFFER using `posframe-show'.
+  ALIST may have non-standard elements `poshandler', `foreground-color',
+  `background-color', `internal-border-color', and
+  `internal-border-width' to be passed to `posframe-show'."
+        (posframe-show
+         buffer
+         :override-parameters `((quit-restore . (frame frame nil ,buffer)))
+         :poshandler (alist-get 'poshandler alist)
+         :foreground-color (alist-get 'foreground-color alist)
+         :background-color (alist-get 'background-color alist)
+         :internal-border-color (alist-get 'internal-border-color alist)
+         :internal-border-width (alist-get 'internal-border-width alist))
+        ;; FIXME: suppress `org-fit-window-to-buffer'.
+        (setq-local window-size-fixed t))
+      (setf (alist-get (regexp-quote "*Select Link*") display-buffer-alist nil nil #'equal)
+  	  `(yant/display-buffer-in-posframe
+              (poshandler . posframe-poshandler-frame-center)
+              (foreground-color . ,(face-foreground 'mode-line))
+              (background-color . ,(face-background 'highlight))
+              (internal-border-color . ,(face-background 'highlight))
+              (internal-border-width . 20)))))
 #+end_src
 ***** Display async shell command output at the bottom
 
@@ -839,62 +839,62 @@ Show some text in buffer differently.
 ****************** END
 
 #+begin_src emacs-lisp
-(use-package pretty-symbols
-  :if init-flag
-  :diminish pretty-symbols-mode
-  :straight t
-  :after org
-  :hook (((prog-mode lisp-interaction-mode org-mode) . pretty-symbols-mode))
-  :init
-  (setq pretty-symbol-categories '(relational logical lambda org-specific nil cpp general))
+  (use-package pretty-symbols
+    :if init-flag
+    :diminish pretty-symbols-mode
+    :straight t
+    :after org
+    :hook (((prog-mode lisp-interaction-mode org-mode) . pretty-symbols-mode))
+    :init
+    (setq pretty-symbol-categories '(relational logical lambda org-specific nil cpp general))
 
-  (defun yant/str-to-glyph (str)
-    "Transform string into glyph, displayed correctly."
-    (let ((composition nil))
-      (dolist (char (string-to-list str)
-		    (nreverse (cdr composition)))
-	(push char composition)
-	(push '(Br . Bl) composition)
-	)))
-  :config
-  (setq pretty-symbol-patterns  (let ((lisps '(emacs-lisp-mode
-					       inferior-lisp-mode
-					       inferior-emacs-lisp-mode
-					       lisp-mode scheme-mode))
-				      (c-like '(c-mode
-						c++-mode go-mode java-mode js-mode
-						perl-mode cperl-mode ruby-mode
-						python-mode inferior-python-mode)))
-				  `(
-				    ;; Basic symbols, enabled by default
-				    (?λ lambda "\\<lambda\\>" (,@lisps python-mode inferior-python-mode))
-				    (?ƒ lambda "\\<function\\>" (js-mode))
-				    ;; general symbols, which can be applied in most of the modes
-				    ;; Relational operators --
-				    ;; enable by adding 'relational to `pretty-symbol-categories'
-				    (?≠ relational "\\(!=\\)" (,@c-like org-mode) 1)
-				    (?≠ relational "\\(/=\\)" (,@lisps) 1)
-				    (?≥ relational "\\(>=\\)" (,@c-like ,@lisps) 1)
-				    (?≤ relational "\\(<=\\)" (,@c-like ,@lisps) 1)
-				    ;; (?≔ relational "[^=]\\(=\\)" (,@c-like ,@lisps org-mode) 1)
-				    (?≡ relational "\\(==\\)" (,@c-like ,@lisps) 1)
-				    (?↠ cpp ">>" (c++-mode))
-				    (?↞ cpp "<<" (c++-mode))
-				    (?➩ cpp " \\(->\\) " (c++-mode org-mode) 1)
-				    (?⋮ cpp "::" (c++-mode))
-				    (?⏎ cpp "\\<endl\\>" (c++-mode))
-				    (?∞ cpp "\\<INF\\>" (c++-mode))
-				    (?⇰ cpp "\\<return\\>" (c++-mode))
-				    ;; (?↹ cpp "\\(\\\\t\\) " (,@c-like ,@lisps org-mode))
-				    ;; Logical operators
-				    ;; (?∧ logical "&&" (,@c-like org-mode))
-				    ;; (?∨ logical "||" (,@c-like org-mode))
-                                    (?… nil "\\.\\.\\." (org-mode))
-                                    (?— nil " \\(-\\) " (org-mode) 1)
-                                    ((yant/str-to-glyph "——") nil " \\(--\\) " (org-mode) 1)
-				    (?¬ logical "(\\<\\(not\\)\\>" (,@lisps) 1)
-				    (?∅ nil "\\<nil\\>" (,@lisps))
-				    ))))
+    (defun yant/str-to-glyph (str)
+      "Transform string into glyph, displayed correctly."
+      (let ((composition nil))
+        (dolist (char (string-to-list str)
+  		    (nreverse (cdr composition)))
+  	(push char composition)
+  	(push '(Br . Bl) composition)
+  	)))
+    :config
+    (setq pretty-symbol-patterns  (let ((lisps '(emacs-lisp-mode
+  					       inferior-lisp-mode
+  					       inferior-emacs-lisp-mode
+  					       lisp-mode scheme-mode))
+  				      (c-like '(c-mode
+  						c++-mode go-mode java-mode js-mode
+  						perl-mode cperl-mode ruby-mode
+  						python-mode inferior-python-mode)))
+  				  `(
+  				    ;; Basic symbols, enabled by default
+  				    (?λ lambda "\\<lambda\\>" (,@lisps python-mode inferior-python-mode))
+  				    (?ƒ lambda "\\<function\\>" (js-mode))
+  				    ;; general symbols, which can be applied in most of the modes
+  				    ;; Relational operators --
+  				    ;; enable by adding 'relational to `pretty-symbol-categories'
+  				    (?≠ relational "\\(!=\\)" (,@c-like org-mode) 1)
+  				    (?≠ relational "\\(/=\\)" (,@lisps) 1)
+  				    (?≥ relational "\\(>=\\)" (,@c-like ,@lisps) 1)
+  				    (?≤ relational "\\(<=\\)" (,@c-like ,@lisps) 1)
+  				    ;; (?≔ relational "[^=]\\(=\\)" (,@c-like ,@lisps org-mode) 1)
+  				    (?≡ relational "\\(==\\)" (,@c-like ,@lisps) 1)
+  				    (?↠ cpp ">>" (c++-mode))
+  				    (?↞ cpp "<<" (c++-mode))
+  				    (?➩ cpp " \\(->\\) " (c++-mode org-mode) 1)
+  				    (?⋮ cpp "::" (c++-mode))
+  				    (?⏎ cpp "\\<endl\\>" (c++-mode))
+  				    (?∞ cpp "\\<INF\\>" (c++-mode))
+  				    (?⇰ cpp "\\<return\\>" (c++-mode))
+  				    ;; (?↹ cpp "\\(\\\\t\\) " (,@c-like ,@lisps org-mode))
+  				    ;; Logical operators
+  				    ;; (?∧ logical "&&" (,@c-like org-mode))
+  				    ;; (?∨ logical "||" (,@c-like org-mode))
+                                      (?… nil "\\.\\.\\." (org-mode))
+                                      (?— nil " \\(-\\) " (org-mode) 1)
+                                      ((yant/str-to-glyph "——") nil " \\(--\\) " (org-mode) 1)
+  				    (?¬ logical "(\\<\\(not\\)\\>" (,@lisps) 1)
+  				    (?∅ nil "\\<nil\\>" (,@lisps))
+  				    ))))
 #+end_src
 **** Selection
 :PROPERTIES:
@@ -11856,7 +11856,7 @@ instead."
         (setq yant/helm-org-ql--refile-history
               (seq-filter
                (lambda (el) (and (buffer-live-p (marker-buffer el))
-                                 (org-with-point-at el (org-at-heading-p))))
+                            (org-with-point-at el (org-at-heading-p))))
                yant/helm-org-ql--refile-history))
         (let ((helm-org-ql-actions (pcase arg
                                      ('(4) '(("Go to heading" . yant/helm-org-ql-show-marker)
