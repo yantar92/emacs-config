@@ -8186,9 +8186,14 @@ Despite the usual big-tech concerns, it makes a decent:
             :key (lambda (f) (file-attribute-modification-time (file-attributes f)))
             :reverse t)
            do (progress-reporter-update reporter idx)
-  	 when (= 0 (% idx 20))
-  	 do (osm-gpx-show f)
+  	 ;; when (= 0 (% idx 5))
+  	 do
+           ;; Suppress refreshing the view while batch-processing
+           (cl-letf (((symbol-function 'osm--revert) #'ignore)
+  		   ((symbol-function 'osm--goto) #'ignore))
+             (osm-gpx-show f))
            finally (progress-reporter-done reporter)
+           finally (osm--revert)
   	 finally return nil))))
     (defun yant/display-all-gpx-delayed ()
       "Call `yant/display-all-gpx' after delay."
