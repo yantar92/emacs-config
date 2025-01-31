@@ -13401,7 +13401,7 @@ A large task that needs to be studied systematically. It has to have a concrete 
 		     :clock-in t
 		     :clock-resume t
 		     :template
-		     ("* NEXT %^{Aproximate title of the paper} :publication:project:NOARCHIVE:"
+		     ("* NEXT %^{Aproximate title of the paper} :publication:project:NOARCHIVE:article:"
 		      ":PROPERTIES:"
 		      ":CREATED: %U"
                       ":ATTACH_DIR_INHERIT: t"
