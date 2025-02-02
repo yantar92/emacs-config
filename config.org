@@ -8143,18 +8143,18 @@ Despite the usual big-tech concerns, it makes a decent:
 3. Surprisingly good answers in nuanced topics
 
 #+begin_src emacs-lisp
-(use-package gptel
-  :if init-flag
-  :straight t
-  :after boon
-  :custom
-  ( gptel-api-key (lambda () (nth 0 (process-lines "pass" "show" "internet/openai-key")))
-    gptel-default-mode 'org-mode)
-  :config
-  (setf (alist-get 'org-mode gptel-response-prefix-alist)
-	"# AI response\n")
-  (dolist (map '(boon-forward-search-map boon-backward-search-map))
-    (bind-key "q" #'gptel-menu map)))
+  (use-package gptel
+    :if init-flag
+    :straight t
+    :after boon
+    :custom
+    (gptel-api-key (lambda () (nth 0 (process-lines "pass" "show" "internet/openai-key"))))
+    (gptel-default-mode 'org-mode)
+    :config
+    (setf (alist-get 'org-mode gptel-response-prefix-alist)
+  	"# AI response\n")
+    (dolist (map '(boon-forward-search-map boon-backward-search-map))
+      (bind-key "q" #'gptel-menu map)))
 #+end_src
 
 ** OpenStreetMaps
