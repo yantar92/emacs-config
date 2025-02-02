@@ -1142,13 +1142,11 @@ Defining some modes below:
   )
 #+end_src
 
-*** COMMENT Breadcrumbs in header line
+*** Breadcrumbs in header line
 :PROPERTIES:
 :SUMMARY:  disabling due to performance issues
 :END:
 
-- Note taken on [2024-11-15 Fri 08:24] \\
-  disabling due to performance issues
 When grepping through sources, I sometimes end up in the middle of a
 long unknown function. It is then handy to see what that function is
 without having to move the cursor. =breadcrumbs= package displays
