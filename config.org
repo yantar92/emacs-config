@@ -8115,6 +8115,7 @@ As per [[info:tramp#Frequently Asked Questions][tramp#Frequently Asked Questions
     (defvar yant/mastodon-hosts
       '("emacs.ch" "mastodon.social"
         "writeout.ink" "social.tchncs.de"
+        "piaille.fr"
         "framapiaf.org" "social.lol"
         "functional.cafe" "social.roger.family"
         "social.vivaldi.net" "mastodon.cloud"
