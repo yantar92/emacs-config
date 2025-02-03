@@ -805,6 +805,27 @@ I need to copy over my ssh key id_rsa and id_rsa.pub
 ****************** TODO store them in safe place
 ****************** END
 
+**** ssh configuration :crypt:TANGLE:
+:PROPERTIES:
+:ID:       75742101-00cc-4f69-9ba2-e95ac2e57f26
+:END:
+
+-----BEGIN PGP MESSAGE-----
+
+hQEMA3SKBiQ2zhL6AQf/Uqd6izxCdSYkczdRaHe/yZN4bePtUtG1OQppH+rPUXjr
+nevVrjNzH9rYF50odXeaWlxcuzInOjjCYOcTgRmminiu21VAmCnO5f5zbnd2E1ZK
+SaYVUoQ/hhpSDPSxRO+Bo2OgHAEJ+kmqY+wPyRIW/phk/pNugg72fVm8sG6pMQ6B
+j9RTTBsSPXH2t+fA0wLEM2DyGSBjG3+bTP9JQHhTtKQuQmQIXocX3C0Ugd4aXX2N
+BXqAvDiAnxpbvsSzynfaoJvb1F5b1HKUb7eqRd4aYBM0iRZ1I1a57hJZTv0ondDE
+jppW81UjQCkzFXwgxNzKkpjYU15MinlbGdMW1zfJx9LAawHBigL9tYs0fIOXVZAU
+imhWCr9c4KIRIW0C3Dezy0UxSj+CAkRDbqLwD9TkgZingGwmjKk6m4H3aznyAn4A
+X66G9PppQgqGpXIUqTrROiF7KNghXan3T6Lm6qdTMbEYN4hBGjTgt+DScYgE2Yhu
+3T2UC6iiQhbPtY8OTNvv9sb1qknYpPOXomgcd9onZSjLXafa73x8lYhpwIeVscLk
+oeX6wkYL1Y0tackjyqzQi2jhPpNWdvzp14jasPzv2K3wzi238zRm0FArD1wBg/Dt
+nnypD0DJs9t4RpbUSL5D91bKiE+alNVLHM2LTFqjkKTPD8j73Vzpf3wHFkKQwgSl
+DaU/KqmVouyC1FcAzM/HWCmdOaN+4EsU/3yqR3KfJa47SJFXWdWR0n5rDOmg
+=TrIU
+-----END PGP MESSAGE-----
 *** sshfs: Mount remove ssh as a folder
 :PROPERTIES:
 :ID:       1ba8a156-3647-4e9f-b8b4-5a1cd897e8ec
