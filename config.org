@@ -8250,6 +8250,14 @@ gone a long way since then.  Now, includes elements of Zettelkasten,
 P.A.R.A., and many other task management approaches I have encountered
 and tried in the past. Everything tailored to my personal needs.
 
+*** (temporary) Debugging cache
+
+#+begin_src emacs-lisp
+  (setq org-element--cache-self-verify 'backtrace
+        ;; record logs, but only check critical crashes
+        org-element--cache-self-verify-frequency 0.00)
+#+end_src
+
 *** Workflow
 :PROPERTIES:
 :CREATED:  [2020-04-08 Wed 15:48]
