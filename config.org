@@ -8255,7 +8255,8 @@ and tried in the past. Everything tailored to my personal needs.
 #+begin_src emacs-lisp
   (setq org-element--cache-self-verify 'backtrace
         ;; record logs, but only check critical crashes
-        org-element--cache-self-verify-frequency 0.00)
+        org-element--cache-self-verify-frequency 0.00
+        org-element--cache-diagnostics-ring-size 50000)
 #+end_src
 
 *** Workflow
