@@ -327,12 +327,14 @@ See https://emacsconf.org/2023/talks/gc/ for rationale and statistical
 data.
 
 #+begin_src emacs-lisp
-(setq gc-cons-percentage 0.2)
-(setq gc-cons-threshold (* 200 1000 1000))
-      (add-hook
-       'after-init-hook
-       (lambda () (setq gc-cons-threshold (* 20 1000 1000))))
-(setq garbage-collection-messages nil) ; nil is default, this is just to remind about the option
+  ;; For IGC branch
+  (setq igc-step-interval 0.04)
+  (setq gc-cons-percentage 0.2)
+  (setq gc-cons-threshold (* 200 1000 1000))
+        (add-hook
+         'after-init-hook
+         (lambda () (setq gc-cons-threshold (* 20 1000 1000))))
+  (setq garbage-collection-messages nil) ; nil is default, this is just to remind about the option
 #+end_src
 
 ** Appearance
