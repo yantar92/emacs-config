@@ -5963,6 +5963,10 @@ yant/ledger-normal-balance-food
 #+begin_src emacs-lisp :eval yes
 yant/ledger-emergency-fund-months
 #+end_src
+#+name: min-weekly-spending
+#+begin_src emacs-lisp :eval yes
+yant/min-weekly-spending
+#+end_src
 #+name: ledger-checking-account
 #+begin_src emacs-lisp :eval yes
 yant/ledger-checking-account
@@ -5987,6 +5991,8 @@ The idea of the script is regular reminder to not spend too much money on certai
 
   _LAST_YEAR=$(echo $(date +%Y) - 2 | bc -l)
   BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+
+  weekly_min_spending="<<min-weekly-spending()>>"
 
   if [[ ! -z "$UNCONVERTED_CURRENCIES" ]]; then
       [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ <span color=\"#FF0000\"><b>Ledger error</b></span>༼ <span color=\"#FF0000\">Not all currencies convertable</span>༼ '" | awesome-client;
@@ -6051,6 +6057,8 @@ The idea of the script is regular reminder to not spend too much money on certai
   # https://www.wisebread.com/figuring-the-size-of-your-emergency-fund
   WEEKLY_SPENDING_AVG="$(ledger r -X <<ledger-main-currency()>> Expenses and not Work and not Gifts -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/,//')" # average expenses from beginning last year in <<ledger-main-currency()>>
   [[ -z "$WEEKLY_SPENDING_AVG" ]] && WEEKLY_SPENDING_AVG="0"
+  under_min_spending=$(echo "$WEEKLY_SPENDING_AVG < $weekly_min_spending" | bc -l)
+  [[ "$under_min_spending" == "1" ]] && WEEKLY_SPENDING_AVG="$weekly_min_spending"
   MONTHLY_SPENDING_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_SPENDING_AVG" | bc -l)"
 
   INCOME_RATIO="$(echo "100.0 * $WEEKLY_INCOME_AVG / $WEEKLY_SPENDING_AVG" | bc -l | sed -r 's/\..*//')"
