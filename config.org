@@ -3594,6 +3594,8 @@ Use =eww= for most Urls, except some (like EDX) that do not work well
 and that I use frequently.  Use [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]] for the websites that
 require javascript or complex rendering.
 
+***** Use external browser for specific URLs
+
 #+begin_src emacs-lisp
   (use-package browse-url
     :init
@@ -8103,39 +8105,32 @@ As per [[info:tramp#Frequently Asked Questions][tramp#Frequently Asked Questions
     (meta-defun meta-new-line :mode mastodon-mode mastodon-tl--do-link-action-at-point))
 #+end_src
 
-*** Use =mastodon.el= to open Mastodon links
-:PROPERTIES:
-:SUMMARY:  their heuristics is not ideal
-:END:
+*** Automatically redirect from EWW to mastodon.el
 
-- Note taken on [2023-01-16 Mon 11:45] \\
-  their heuristics is not ideal
+The built-in mastodon.el heuristics matching URL is not ideal.
+
+Here is a more reliable setup that simply lets eww render the page,
+looks up if it is mastodon and redirects when it is.
+
 #+begin_src emacs-lisp
   (use-package mastodon
-    :if init-flag
-    :config
-    (defvar yant/mastodon-hosts
-      '("emacs.ch" "mastodon.social"
-        "writeout.ink" "social.tchncs.de"
-        "piaille.fr" "mastodon.sdf.org"
-        "framapiaf.org" "social.lol"
-        "functional.cafe" "social.roger.family"
-        "social.vivaldi.net" "mastodon.cloud"
-        "fosstodon.org" "mathstodon.xyz"
-        "julialang.social" "mamot.fr"
-        "mstdn.social" "mastodon.acm.org"
-        "todon.nl" "indieweb.social"
-        "masto.ai" "pkm.social" "hostux.social")
-      "List of known Mastodon hosts.")
-    (defun yant/mastodon-url-p (url)
-      "Wrapper for `mastodon-url-lookup' appropriate for URL handlers."
-      (cl-loop for host in yant/mastodon-hosts
-               when (string-match-p (regexp-quote host) url)
-               return t))
-    (add-to-list 'browse-url-handlers
-                 '(yant/mastodon-url-p
-                   . (lambda (url &rest args) (mastodon-url-lookup url)))))
+    :init
+    (use-package org-capture-ref :demand t)
+    (defun yant/open-mastodon-maybe ()
+      "When current EWW page is mastodon page, open it via mastodon.el."
+      (when (derived-mode-p 'eww-mode)
+        (save-excursion
+  	(goto-char (point-min))
+  	(when (or (search-forward "To use the Mastodon web application, please enable JavaScript" nil t)
+  		  (let ((html-data (plist-get eww-data :dom)))
+                      (setq org-capture-ref--buffer-dom html-data)
+                      (equal "Iceshrimp" (org-capture-ref-query-dom :meta 'application-name))))
+  	  (let ((url (plist-get eww-data :url)))
+  	    (kill-buffer)
+  	    (mastodon-url-lookup url))))))
+    (add-hook 'eww-after-render-hook #'yant/open-mastodon-maybe))
 #+end_src
+
 ** ChatGPT
 
 Despite the usual big-tech concerns, it makes a decent:
