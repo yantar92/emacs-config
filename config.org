@@ -1162,7 +1162,20 @@ without having to move the cursor. =breadcrumbs= package displays
   :config
   (breadcrumb-mode +1))
 #+end_src
+**** Disable in remove files
 
+It is too slow there.
+
+#+begin_src emacs-lisp
+  (use-package breadcrumb
+    :init
+    (defun yant/breadcrumb-mode-disable-in-remote-buffers ()
+      "When in remote buffer, disable `breadcrum-local-mode'."
+      (when (and buffer-file-name
+  	       (file-remote-p buffer-file-name))
+        (breadcrumb-local-mode -1)))
+    (add-hook 'breadcrumb-local-mode-hook #'yant/breadcrumb-mode-disable-in-remote-buffers))
+#+end_src
 *** Mini-buffer
 :PROPERTIES:
 :CREATED:  [2018-10-24 Wed 20:29]
