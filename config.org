@@ -14495,6 +14495,24 @@ Unarchive when UNARCHIVE is non-nil."
                 (yes-or-no-p (format "%s\n%s: There are child headings. Really archive?" children headline)))
         (funcall-interactively oldfun find-done)))))
 #+end_src
+***** Assign all the inherited tags to archived entry
+
+I heavily use archiving to avoid growing my org files too much (they
+are large even with archiving). However, this can create a problem
+with querying past tasks. For example, I sometimes want to look into
+clocking data for work-related vs. leisure-related tasks. However, I
+normally rely upon tag inheritance to mark groups of tasks that are
+work-related and not work-related. Archived entries to not immediately
+have these inherited tags available for query, even though they do get
+saved in =ARCHIVE_ITAGS= property).
+
+So, let's make archiving assign all the task tags explicitly, so that
+all other Org commands can see them.
+
+#+begin_src emacs-lisp
+  (use-package org-archive
+    :custom (org-archive-subtree-add-inherited-tags t))
+#+end_src
 
 **** Babel
 :PROPERTIES:
