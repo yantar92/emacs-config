@@ -8164,6 +8164,17 @@ Despite the usual big-tech concerns, it makes a decent:
     (gptel-api-key (lambda () (nth 0 (process-lines "pass" "show" "internet/openai-key"))))
     (gptel-default-mode 'org-mode)
     :config
+
+    ;; OPTIONAL configuration
+    (setq gptel-model   'deepseek-chat
+  	gptel-backend
+  	(gptel-make-openai "DeepSeek"     ;Any name you want
+            :host "api.deepseek.com"
+            :endpoint "/chat/completions"
+            :stream t
+            :key  (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi")))
+            :models '(deepseek-chat deepseek-coder)))
+
     (setf (alist-get 'org-mode gptel-response-prefix-alist)
   	"# AI response\n")
     (dolist (map '(boon-forward-search-map boon-backward-search-map))
