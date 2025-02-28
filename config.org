@@ -8141,7 +8141,7 @@ looks up if it is mastodon and redirects when it is.
   	(when (let ((html-data (plist-get eww-data :dom)))
   		(setq org-capture-ref--buffer-dom html-data)
   		(or (equal "Iceshrimp" (org-capture-ref-query-dom :meta 'application-name))
-  		    (org-capture-ref-query-dom :class "app-holder" :id "mastodon")))
+  		    (not (string-empty-p (org-capture-ref-query-dom :class "app-holder" :id "mastodon")))))
   	  (let ((url (plist-get eww-data :url)))
   	    (kill-buffer)
   	    (mastodon-url-lookup url))))))
