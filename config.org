@@ -13054,7 +13054,7 @@ $0
                             (let (org-store-link-plist org-stored-links)
                               (org-store-link nil))))))
       (if current-task
-          (format "- Following up :: %s" current-task)
+          (format "Following up: %s" current-task)
         ""))))
 
 (use-package ya-org-capture
@@ -16114,7 +16114,7 @@ the trivial changes.
         "^\\(-\\|\\+\\)[ \t]*- \\[.\\] \\[\\[elisp:(browse-url (url-encode-url (format \"https://www\\.connectedpapers\\.com/search\\?q=%s\" (org-entry-get nil \"TITLE\"))))\\]\\[check related articles\\]\\].*\n"
         "^\\(-\\|\\+\\)[ \t]*- \\[.\\] check if bibtex entry has missing fields.*\n"
         "^\\(-\\|\\+\\)[ \t]*- \\[.\\] Consider subscribing to new citations.*\n"
-        "^[ \t]*- Following up ::.+\n"
+        "^[ \t]*\\(- \\)?Following up\\( :\\)?:.+\n"
         "^\\(-\\|\\+\\)[ \t]*:PUBLISHER: .+\n"
         "^\\(-\\|\\+\\)[ \t]*:EMAIL-SOURCE: .+\n"
         "^\\(-\\|\\+\\)[ \t]*:Source: .+\n"
