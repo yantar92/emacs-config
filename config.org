@@ -7620,7 +7620,8 @@ I automated the check by examining WORG repository directly and checking the ~gi
               (goto-char (point-min))
   	    (search-forward "Current contributors with FSF assignment")
   	    (save-excursion
-  	      (search-forward "Processing")
+  	      (re-search-forward org-outline-regexp-bol)
+                (goto-char (match-beginning 0))
   	      (setq end-of-FSF-assign (point)))
   	    (when (search-forward sender end-of-FSF-assign t)
   	      (throw
