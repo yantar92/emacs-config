@@ -5873,25 +5873,29 @@ yant/ledger-file
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses.sh :shebang #!/bin/bash
   _LAST_YEAR=$(echo $(date +%Y) - 2 | bc -l)
-  BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  # BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  BUDGET_CUTOFF="from 2024-09-01"
   ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Expenses and not Work and not Gifts and not Medical -W -n -A -b "${BUDGET_CUTOFF}"
 #+end_src
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-income.sh :shebang #!/bin/bash
   _LAST_YEAR=$(echo $(date +%Y) - 2 | bc -l)
-  BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  # BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  BUDGET_CUTOFF="from 2024-09-01"
   ledger --no-pager -f <<ledger-file()>>  reg -X <<ledger-main-currency()>> Income -W -n -A -b "${BUDGET_CUTOFF}"
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses-USD.sh :shebang #!/bin/bash
-    _LAST_YEAR=$(echo $(date +%Y) - 2 | bc -l)
-    BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
-    ledger --no-pager -f <<ledger-file()>>  reg -X $ Expenses and not Work and not Gifts and not Medical -W -n -A -b "${BUDGET_CUTOFF}"
+  _LAST_YEAR=$(echo $(date +%Y) - 2 | bc -l)
+  # BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  BUDGET_CUTOFF="from 2024-09-01"
+  ledger --no-pager -f <<ledger-file()>>  reg -X $ Expenses and not Work and not Gifts and not Medical -W -n -A -b "${BUDGET_CUTOFF}"
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/ledger-weekly-expenses-EUR.sh :shebang #!/bin/bash
-    _LAST_YEAR=$(echo $(date +%Y) - 2 | bc -l)
-    BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
-    ledger --no-pager -f <<ledger-file()>>  reg -X EUR Expenses and not Work and not Gifts and not Medical -W -n -A -b "${BUDGET_CUTOFF}"
+  _LAST_YEAR=$(echo $(date +%Y) - 2 | bc -l)
+  # BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  BUDGET_CUTOFF="from 2024-09-01"
+  ledger --no-pager -f <<ledger-file()>>  reg -X EUR Expenses and not Work and not Gifts and not Medical -W -n -A -b "${BUDGET_CUTOFF}"
 #+end_src
 
 *** Food status script
@@ -5981,7 +5985,8 @@ The idea of the script is regular reminder to not spend too much money on certai
   UNCONVERTED_CURRENCIES="$(ledger -X  <<ledger-main-currency()>> bal Expenses | sed -E '/<<ledger-main-currency()>>|----+/d')"
 
   _LAST_YEAR=$(echo $(date +%Y) - 2 | bc -l)
-  BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  # BUDGET_CUTOFF="from ${_LAST_YEAR}-$(date +%m)"
+  BUDGET_CUTOFF="from 2024-09-01"
 
   weekly_min_spending="<<min-weekly-spending()>>"
 
