@@ -10778,8 +10778,9 @@ CLOCK: [2019-05-06 Mon 11:34]--[2019-05-06 Mon 11:53] =>  0:19
        '(and
          (not (done))
          (or
+          (not (todo))
           ;; always show active timestamps (events)
-          (ts-active :on today :with-time t)
+          (ts-active :with-time t)
           ;; Show all the deadline except scheduled in future
           (and (deadline)
                (not (scheduled :from +1)))
