@@ -2705,6 +2705,13 @@ in my [[id:e3d02bee-a924-4808-9a2f-fe577065038d][capture templates]].
     :custom
     (orgit-store-reference t)))
 #+end_src
+**** Disable ~auto-revert-use-notify~ to avoid notification flood from git
+
+As suggested by Eli in bug#76505, frequent notification can cause slowdowns in git-controlled files.
+
+#+begin_src emacs-lisp
+  (setopt auto-revert-use-notify nil)
+#+end_src
 
 ** Text highlight & coloring
 :PROPERTIES:
