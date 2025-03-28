@@ -1169,10 +1169,35 @@ It is too slow there.
 #+begin_src emacs-lisp
   (use-package breadcrumb
     :init
+    (defun yant/file-remote-mount-p (path)
+      "Return non-nil when PATH is in remote FUSE mount."
+      (when (executable-find "mount")
+        (setq path (expand-file-name path))
+        (with-temp-buffer
+  	(let ((default-directory user-emacs-directory))
+            (shell-command "mount" t))
+          (goto-char (point-min))
+          ;; user@server:path on <local-path> type fuse.sshfs (...)
+  	(catch :found
+  	  (while (re-search-forward "sshfs" nil t)
+              (save-excursion
+  	      (search-backward " type")
+                (let ((end (point)))
+  		(search-backward " ")
+  		(let ((mount-point
+  		       (string-trim
+  			(buffer-substring-no-properties
+  			 (point) end))))
+                    (when (string-prefix-p
+  			 (file-name-as-directory mount-point) path)
+  		    (throw :found t))))))
+            nil))))
     (defun yant/breadcrumb-mode-disable-in-remote-buffers ()
       "When in remote buffer, disable `breadcrum-local-mode'."
       (when (and buffer-file-name
-  	       (file-remote-p buffer-file-name))
+  	       breadcrumb-local-mode
+  	       (or (file-remote-p buffer-file-name)
+  		   (yant/file-remote-mount-p buffer-file-name)))
         (breadcrumb-local-mode -1)))
     (add-hook 'breadcrumb-local-mode-hook #'yant/breadcrumb-mode-disable-in-remote-buffers))
 #+end_src
@@ -5364,7 +5389,14 @@ manually here (in this config) myself.
 #+begin_src emacs-lisp
   (use-package eglot
     :if init-flag
-    :config (add-hook 'python-mode-hook #'eglot-ensure))
+    :config
+    (defun yant/eglot-ensure-maybe ()
+      "Run eglot but only in local files."
+      (when (and buffer-file-name
+  	       (not (file-remote-p buffer-file-name))
+                 (not (yant/file-remote-mount-p buffer-file-name)))
+        (eglot-ensure)))
+    (add-hook 'python-mode-hook #'yant/eglot-ensure-maybe))
 #+end_src
 
 ***** Setup corfu for incremental completion from LSP
