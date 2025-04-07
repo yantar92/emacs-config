@@ -5853,44 +5853,45 @@ The Emacs config is coupled with finance modeline indicators that keep
 me informed about my budget status - [[id:4df7a164-25a1-4106-b610-155c5b34afd8][Continuous monitoring of budget]].
 
 #+begin_src emacs-lisp
-(use-package ledger-mode
-  :if init-flag
-  :straight t
-  :bind (:map boon-goto-map
-	      ("z" . open-finance)
-	      :map ledger-mode-map
-	      ("M-n" . nil)
-	      ("M-p" . nil)
-	      ("C-c C-a" . ledger-add-transaction-and-boonedit))
-  :config
-  (defun open-finance()
-    "Open ledger file."
-    (interactive)
-    (find-file yant/ledger-file))
-  (defun ledger-add-transaction-and-boonedit ()
-    "Switch to boon insert state when adding transaction."
-    (interactive)
-    (call-interactively 'ledger-add-transaction)
-    (boon-set-insert-like-state))
-  (setq ledger-reports
-	'(("bal" "ledger --pedantic -f %(ledger-file) bal not Opening")
-	  ("balsg" "ledger --pedantic -f %(ledger-file) bal not Opening -X SGD")
-          ("balusd" "ledger --pedantic -f %(ledger-file) bal not Opening -X $")
-          ("baleur" "ledger --pedantic -f %(ledger-file) bal not Opening -X EUR")
-	  ("balcny" "ledger --pedantic -f %(ledger-file) bal not Opening -X CNY")
-          ("baltry" "ledger --pedantic -f %(ledger-file) bal not Opening -X TRY")
-	  ("balall" "ledger --pedantic -f %(ledger-file) bal not Opening")
-	  ("reg" "ledger --pedantic --pending -f %(ledger-file) reg not Opening")
-	  ("payee" "ledger --pedantic -f %(ledger-file) reg @%(payee)")
-	  ("account" "ledger --pedantic -f %(ledger-file) reg %(account)")
-	  ("budget" "ledger --pedantic -f %(ledger-file) bal --budget")
-          ("budgetcny" "ledger --pedantic -f %(ledger-file) bal --budget -X CNY")
-	  ("budgetsg" "ledger --pedantic -f %(ledger-file) bal --budget -X S$"))
-	ledger-report-auto-refresh t)
-  (use-package meta-functions
+  (use-package ledger-mode
+    :if init-flag
+    :straight t
+    :bind (:map boon-goto-map
+  	      ("z" . open-finance)
+  	      :map ledger-mode-map
+  	      ("M-n" . nil)
+  	      ("M-p" . nil)
+  	      ("C-c C-a" . ledger-add-transaction-and-boonedit))
     :config
-    (meta-defun meta-down-element :mode ledger-mode ledger-navigate-next-xact-or-directive)
-    (meta-defun meta-up-element :mode ledger-mode ledger-navigate-prev-xact-or-directive)))
+    (defun open-finance()
+      "Open ledger file."
+      (interactive)
+      (find-file yant/ledger-file))
+    (defun ledger-add-transaction-and-boonedit ()
+      "Switch to boon insert state when adding transaction."
+      (interactive)
+      (call-interactively 'ledger-add-transaction)
+      (boon-set-insert-like-state))
+    (setq ledger-reports
+  	'(("bal" "ledger --pedantic -f %(ledger-file) bal not Opening")
+  	  ("balsg" "ledger --pedantic -f %(ledger-file) bal not Opening -X SGD")
+            ("balusd" "ledger --pedantic -f %(ledger-file) bal not Opening -X $")
+            ("balpln" "ledger --pedantic -f %(ledger-file) bal not Opening -X PLN")
+            ("baleur" "ledger --pedantic -f %(ledger-file) bal not Opening -X EUR")
+  	  ("balcny" "ledger --pedantic -f %(ledger-file) bal not Opening -X CNY")
+            ("baltry" "ledger --pedantic -f %(ledger-file) bal not Opening -X TRY")
+  	  ("balall" "ledger --pedantic -f %(ledger-file) bal not Opening")
+  	  ("reg" "ledger --pedantic --pending -f %(ledger-file) reg not Opening")
+  	  ("payee" "ledger --pedantic -f %(ledger-file) reg @%(payee)")
+  	  ("account" "ledger --pedantic -f %(ledger-file) reg %(account)")
+  	  ("budget" "ledger --pedantic -f %(ledger-file) bal --budget")
+            ("budgetcny" "ledger --pedantic -f %(ledger-file) bal --budget -X CNY")
+  	  ("budgetsg" "ledger --pedantic -f %(ledger-file) bal --budget -X S$"))
+  	ledger-report-auto-refresh t)
+    (use-package meta-functions
+      :config
+      (meta-defun meta-down-element :mode ledger-mode ledger-navigate-next-xact-or-directive)
+      (meta-defun meta-up-element :mode ledger-mode ledger-navigate-prev-xact-or-directive)))
 #+END_SRC
 
 *** Do not end the completions with string
