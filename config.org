@@ -4269,11 +4269,13 @@ Using trash is safer.
     :hook (dired-mode . dired-filter-group-mode))
 #+END_SRC
 
-****** File icons
+****** COMMENT File icons
 :PROPERTIES:
 :CREATED:  [2019-08-27 Tue 17:18]
 :ID:       942eca8c-c6e6-4c60-91b6-0e7cc0c6857b
 :END:
+
+[2025-04-14 Mon] Slow on sshfs
 
 #+begin_src emacs-lisp
 (use-package all-the-icons-dired
