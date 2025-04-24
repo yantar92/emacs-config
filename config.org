@@ -3102,17 +3102,19 @@ Note that I write a lot of scientific staff and hence passive voice is hard to a
 
 [[id:English-Language-Usage-Stack-Exchange-expressing-opinion-to-903][[English Language \& Usage Stack Exchange] Expressing an opinion: to me or for me?]]
 #+begin_src emacs-lisp
-(use-package writegood-mode
-  :config
-  (defun writegood-weasels-font-lock-keywords ()
-    `((,(writegood-weasels-font-lock-keywords-regexp)
-       0 '(face writegood-weasels-face help-echo ,writegood-weasel-words-tooltip) prepend)
-      ("For me,"
-       0 '(face writegood-weasels-face help-echo "Use \"To me\" instead") prepend)
-      ("Schmidt"
-       0 '(face writegood-weasels-face help-echo "Use \"Schmid\" instead") prepend)
-      ("is not"
-       0 '(face writegood-duplicates-face help-echo "Double check if I meant \"is now\"") prepend))))
+  (use-package writegood-mode
+    :config
+    (defun writegood-weasels-font-lock-keywords ()
+      `((,(writegood-weasels-font-lock-keywords-regexp)
+         0 '(face writegood-weasels-face help-echo ,writegood-weasel-words-tooltip) prepend)
+        ("For me,"
+         0 '(face writegood-weasels-face help-echo "Use \"To me\" instead") prepend)
+        ("May you"
+         0 '(face writegood-weasels-face help-echo "Use \"Could you\" instead") prepend)
+        ("Schmidt"
+         0 '(face writegood-weasels-face help-echo "Use \"Schmid\" instead") prepend)
+        ("is not"
+         0 '(face writegood-duplicates-face help-echo "Double check if I meant \"is now\"") prepend))))
 #+end_src
 
 *** Code and prose checking (=flycheck=)
