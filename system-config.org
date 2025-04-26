@@ -5638,86 +5638,86 @@ The information about time balance multiplier is shown in [[id:4df7a164-25a1-410
 while true; do org-clocked-in.sh 2>> ~/.log/org-clocked-in.log; sleep 5; done &
 #+end_src
 #+begin_src bash :tangle /home/yantar92/.local/bin/org-clocked-in.sh :shebang #!/bin/bash
-# Make sure it exists
-[[ -f "/home/yantar92/.org-clock-in" ]] || touch ~/.org-clock-in
-BALANCE=""
-[[ "$1" == "balance" ]] && BALANCE="1"
+  # Make sure it exists
+  [[ -f "/home/yantar92/.org-clock-in" ]] || touch ~/.org-clock-in
+  BALANCE=""
+  [[ "$1" == "balance" ]] && BALANCE="1"
 
-PID="$(pgrep awesome | head -n1)"
-[[ -z "$PID" && -d "/proc/$PID" ]] || export DBUS_SESSION_BUS_ADDRESS="$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ | tr '\0' '\n' | cut -d= -f2-)"
+  PID="$(pgrep awesome | head -n1)"
+  # [[ -z "$PID" && -d "/proc/$PID" ]] || export DBUS_SESSION_BUS_ADDRESS="$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ | tr '\0' '\n' | cut -d= -f2-)"
 
 
-if [[ "$(cat ~/.org-clock-in | head -n1)" =~ "No clocked in task" ]]; then
-    echo "orgstatus:set_text(\"No clocked in task\")" | awesome-client
-    if [[ ! -z "$BALANCE" ]]; then
-	BAL=$(cat ~/.org-clock-in  | head -n2 | tail -n1 | cut -d. -f1)
-        BAL=$(echo "$BAL/60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
-        LOSSAGE=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
-        LOSSAGE=$(echo "$LOSSAGE/-60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
-        [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"#FF0000\">⏺</span>" || LOSSAGE="<span color=\"#00FF00\">⏺</span>"
-	[[ "$(echo "$BAL < 0" | bc -l)" == "1" ]] && BAL_STRING="<span color=\"#FF0000\">${BAL}h</span>" \
-		|| BAL_STRING="${BAL}h"
-        BAL_STRING="${BAL_STRING}<span font=\"12\">${LOSSAGE}</span>"
-        echo $BAL_STRING
-    fi
-    exit
-fi
+  if [[ "$(cat ~/.org-clock-in | head -n1)" =~ "No clocked in task" ]]; then
+      echo "orgstatus:set_text(\"No clocked in task\")" | awesome-client
+      if [[ ! -z "$BALANCE" ]]; then
+  	BAL=$(cat ~/.org-clock-in  | head -n2 | tail -n1 | cut -d. -f1)
+          BAL=$(echo "$BAL/60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
+          LOSSAGE=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
+          LOSSAGE=$(echo "$LOSSAGE/-60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
+          [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"#FF0000\">⏺</span>" || LOSSAGE="<span color=\"#00FF00\">⏺</span>"
+  	[[ "$(echo "$BAL < 0" | bc -l)" == "1" ]] && BAL_STRING="<span color=\"#FF0000\">${BAL}h</span>" \
+  		|| BAL_STRING="${BAL}h"
+          BAL_STRING="${BAL_STRING}<span font=\"12\">${LOSSAGE}</span>"
+          echo $BAL_STRING
+      fi
+      exit
+  fi
 
-time_string="`cat ~/.org-clock-in | cut -d[ -f2 | cut -d] -f1 | head -n1`"
-time_before="`echo $time_string | cut -dh -f1`:`echo $time_string | sed -r 's/[0-9]+h //' | cut -dm -f1`"
-if [[ "$time_string" =~ .+/.+ ]]; then
-    effort_estimate="/`echo $time_string | sed -r 's/.+\///' | sed 's/ \([0-9]min\)/ 0\1/' | sed -r 's/h /:/' | sed -r 's/min//'`"
-fi
+  time_string="`cat ~/.org-clock-in | cut -d[ -f2 | cut -d] -f1 | head -n1`"
+  time_before="`echo $time_string | cut -dh -f1`:`echo $time_string | sed -r 's/[0-9]+h //' | cut -dm -f1`"
+  if [[ "$time_string" =~ .+/.+ ]]; then
+      effort_estimate="/`echo $time_string | sed -r 's/.+\///' | sed 's/ \([0-9]min\)/ 0\1/' | sed -r 's/h /:/' | sed -r 's/min//'`"
+  fi
 
-# cat ~/.org-clock-in | cut -d[ -f2 | cut -d] -f1 | head -n1 | cut -d'(' -f1 | grep / &&\
-     #     estimate="/`cat ~/.org-clock-in | cut -d[ -f2 | cut -d] -f1 | head -n1 | cut -d'(' -f1 | sed -r 's|.+/||'`"\
-     # 	|| estimate=""
+  # cat ~/.org-clock-in | cut -d[ -f2 | cut -d] -f1 | head -n1 | cut -d'(' -f1 | grep / &&\
+       #     estimate="/`cat ~/.org-clock-in | cut -d[ -f2 | cut -d] -f1 | head -n1 | cut -d'(' -f1 | sed -r 's|.+/||'`"\
+       # 	|| estimate=""
 
- time_plus="`timefromchange.sh ~/.org-clock-in | grep -Eo "[0-9]+ hours" | grep -Eo "[0-9]+" || echo 0`:`timefromchange.sh ~/.org-clock-in | grep -Eo "[0-9]+ minutes" | grep -Eo "[0-9]+" || echo 0`"
- hours_before="`echo $time_before | cut -d':' -f1 | sed -r 's/^0*([0-9]+)/\1/'`"
- hours_plus="`echo $time_plus | cut -d':' -f1 | sed -r 's/^0*([0-9]+)/\1/'`"
- minutes_before="`echo $time_before | cut -d':' -f2 | sed -r 's/^0*([0-9]+)/\1/'`"
- minutes_plus="`echo $time_plus | cut -d':' -f2 | sed -r 's/^0*([0-9]+)/\1/'`"
-   hours_now="$(($hours_before + $hours_plus))"
-   minutes_now="$(($minutes_before + $minutes_plus))"
+   time_plus="`timefromchange.sh ~/.org-clock-in | grep -Eo "[0-9]+ hours" | grep -Eo "[0-9]+" || echo 0`:`timefromchange.sh ~/.org-clock-in | grep -Eo "[0-9]+ minutes" | grep -Eo "[0-9]+" || echo 0`"
+   hours_before="`echo $time_before | cut -d':' -f1 | sed -r 's/^0*([0-9]+)/\1/'`"
+   hours_plus="`echo $time_plus | cut -d':' -f1 | sed -r 's/^0*([0-9]+)/\1/'`"
+   minutes_before="`echo $time_before | cut -d':' -f2 | sed -r 's/^0*([0-9]+)/\1/'`"
+   minutes_plus="`echo $time_plus | cut -d':' -f2 | sed -r 's/^0*([0-9]+)/\1/'`"
+     hours_now="$(($hours_before + $hours_plus))"
+     minutes_now="$(($minutes_before + $minutes_plus))"
 
-   while (($minutes_now >= 60)); do
-       minutes_now="$(($minutes_now - 60))";
-       hours_now="$(($hours_now + 1))";
-   done
+     while (($minutes_now >= 60)); do
+         minutes_now="$(($minutes_now - 60))";
+         hours_now="$(($hours_now + 1))";
+     done
 
-   if (($minutes_now < 10)); then
-       minutes_now="0$minutes_now";
-   fi
+     if (($minutes_now < 10)); then
+         minutes_now="0$minutes_now";
+     fi
 
-time_now="$hours_now:$minutes_now"
-RES="[ ${time_now}${effort_estimate} ] :: `cat ~/.org-clock-in | cut -d] -f 2- | head -n1`"
-RES="$(echo "$RES" | sed -r 's/\((.*)\)/\1/')"
+  time_now="$hours_now:$minutes_now"
+  RES="[ ${time_now}${effort_estimate} ] :: `cat ~/.org-clock-in | cut -d] -f 2- | head -n1`"
+  RES="$(echo "$RES" | sed -r 's/\((.*)\)/\1/')"
 
-RES=$(echo "$RES" | sed -r "s/'/\"/g") # fix "'"
+  RES=$(echo "$RES" | sed -r "s/'/\"/g") # fix "'"
 
-echo "orgstatus:set_text('$RES')" | awesome-client 2>&1 >>/dev/null;
+  echo "orgstatus:set_text('$RES')" | awesome-client 2>&1 >>/dev/null;
 
-if [[ ! -z "$BALANCE" ]]; then
-    MULT="$(cat ~/.org-clock-in | tail -n2 | head -n1)";
-    BAL="$(cat ~/.org-clock-in | tail -n3 | head -n1)";
-    BAL_STRING=$(echo "($hours_plus * $MULT * 60 + $minutes_plus * $MULT + $BAL)/60.0" | bc -l | sed -r 's/([^.]*\..).*/\1/');
-    LOSSAGE=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
-    LOSSAGE=$(echo "$LOSSAGE/-60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
-    [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"#FF0000\">⏺</span>" || LOSSAGE="<span color=\"#00FF00\">⏺</span>"
-    if [[ $(echo "$BAL_STRING < 0" | bc -l) == "1" ]]; then
-	BAL_STRING="<span color=\"#FF0000\">${BAL_STRING}h</span>"
-        [[ ! -f /tmp/negative-time-balance ]] && notify-send -u critical "Negative time balance"
-        touch /tmp/negative-time-balance
-    else
-	BAL_STRING="${BAL_STRING}h"
-        rm -f /tmp/negative-time-balance
-    fi
-    [[ $(echo "$MULT < 0" | bc -l) == "1" ]] && BAL_STRING="${BAL_STRING}<span color=\"#FF0000\">⇓"\
-	    || BAL_STRING="${BAL_STRING}<span color=\"#00FF00\">⇑"
-    BAL_STRING="${BAL_STRING}<span font=\"8\">$(echo $MULT | sed -r 's/-//')x</span></span><span font=\"12\">${LOSSAGE}</span>"
-    echo $BAL_STRING
-fi
+  if [[ ! -z "$BALANCE" ]]; then
+      MULT="$(cat ~/.org-clock-in | tail -n2 | head -n1)";
+      BAL="$(cat ~/.org-clock-in | tail -n3 | head -n1)";
+      BAL_STRING=$(echo "($hours_plus * $MULT * 60 + $minutes_plus * $MULT + $BAL)/60.0" | bc -l | sed -r 's/([^.]*\..).*/\1/');
+      LOSSAGE=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
+      LOSSAGE=$(echo "$LOSSAGE/-60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
+      [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"#FF0000\">⏺</span>" || LOSSAGE="<span color=\"#00FF00\">⏺</span>"
+      if [[ $(echo "$BAL_STRING < 0" | bc -l) == "1" ]]; then
+  	BAL_STRING="<span color=\"#FF0000\">${BAL_STRING}h</span>"
+          [[ ! -f /tmp/negative-time-balance ]] && notify-send -u critical "Negative time balance"
+          touch /tmp/negative-time-balance
+      else
+  	BAL_STRING="${BAL_STRING}h"
+          rm -f /tmp/negative-time-balance
+      fi
+      [[ $(echo "$MULT < 0" | bc -l) == "1" ]] && BAL_STRING="${BAL_STRING}<span color=\"#FF0000\">⇓"\
+  	    || BAL_STRING="${BAL_STRING}<span color=\"#00FF00\">⇑"
+      BAL_STRING="${BAL_STRING}<span font=\"8\">$(echo $MULT | sed -r 's/-//')x</span></span><span font=\"12\">${LOSSAGE}</span>"
+      echo $BAL_STRING
+  fi
 #+end_src
 
 Helper script calculating time from last change of a file
@@ -6459,6 +6459,7 @@ while true; do mail-monitor.sh; sleep 100; done &
       [[ "$x" == *"IMAP error: unexpected EOF"* ]] && continue
       [[ "$x" == *"Processed"* ]] && continue
       [[ "$x" == *"pulled"* ]] && continue
+      [[ "$x" == *"failed to sufficiently increase receive buffer size"* ]] && continue
       [[ "$x" == *"expunged"* ]] && continue
       [[ "$x" == *"Maildir notice: sleeping due to recent directory modification"* ]] && continue
       [[ "$x" == *"No working address found"* ]] && continue
