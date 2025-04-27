@@ -4652,7 +4652,7 @@ main(args)
 #+end_src
 
 *** JS (greasemonkey) scripts
-**** COMMENT Force old reddit design
+**** Force old reddit design
 :PROPERTIES:
 :ID:       2c18aa4c-c9b8-4c1a-b4e2-15fac23473ef
 :END:
