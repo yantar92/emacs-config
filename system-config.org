@@ -95,7 +95,7 @@ See https://wiki.gentoo.org/wiki/Gentoo_Binary_Host_Quickstart
 #+begin_src conf :tangle /sudo::/etc/portage/binrepos.conf/gentoobinhost.conf :mkdirp yes
 [binhost]
 priority = 9999
-sync-uri = https://mirror.bytemark.co.uk/gentoo/releases/amd64/binpackages/23.0/x86-64/
+sync-uri = https://www.mirrorservice.org/sites/distfiles.gentoo.org/releases/amd64/binpackages/23.0/x86-64/
 #+end_src
 
 
