@@ -3091,7 +3091,7 @@ Note that I write a lot of scientific staff and hence passive voice is hard to a
 #+begin_src emacs-lisp
 (use-package writegood-mode
   :straight t
-  :hook (org-mode . yant/writegood-mode)
+  :hook ((org-mode message-mode) . yant/writegood-mode)
   :config
   (set-face-attribute 'writegood-weasels-face nil :inherit 'modus-themes-lang-note)
   (defun yant/writegood-mode (&optional arg)
