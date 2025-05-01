@@ -7007,7 +7007,7 @@ sci-visualization/gnuplot
 #+end_src
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/gnuplot
-sci-visualization/gnuplot doc examples qt5 cairo
+sci-visualization/gnuplot doc examples qt6 cairo
 #+end_src
 
 *** Configuration
@@ -7020,7 +7020,7 @@ Based on other templates.
 ****************** END
 
 
-#+begin_src conf :tangle /home/yantar92/.gnuplot
+#+begin_src conf :tangle /home/yantar92/.config/gnuplot/gnuplotrc :mkdirp yes
 # palette
 set palette defined (0 "violet",1 "blue",2 "cyan",3 "green",4 "yellow",5 "orange",6 "red")
 
