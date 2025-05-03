@@ -7658,6 +7658,16 @@ I automated the check by examining WORG repository directly and checking the ~gi
   	      )
                yant/org-devel-committers-stats)))
           (catch :exit
+            (with-current-buffer (get-buffer-create " *Full FSF data*")
+              (when (= 0 (buffer-size))
+  	      (insert-file-contents "/ssh:yantar92@fp.gnu.org:/gd/gnuorg/copyright.list"))
+              (goto-char (point-min))
+  	    (when (re-search-forward (regexp-opt (list sender email)) nil t)
+  	      (throw
+                 :exit
+                 (propertize
+                  (string-trim (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats)))
+                  'face 'modus-themes-intense-green))))
             (with-current-buffer (get-buffer-create " *Org FSF data*")
               (when (= 0 (buffer-size))
   	      (insert-file-contents "~/Git/worg/contributors.org"))
