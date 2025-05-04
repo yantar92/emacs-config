@@ -8905,6 +8905,20 @@ snapshots when looking to some rarely accessed data.
   app-text/zotero-bin
 #+end_src
 
+** =hut= CLI for sourcehut
+:PROPERTIES:
+:ID:       fa4e24fa-6a42-4b04-baac-13a67f5686bf
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-util/hut
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/hut
+dev-util/hut::guru
+#+end_src
+
+
 * Archived
 
 ** COMMENT Compositor (compton) :COMMON:
