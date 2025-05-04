@@ -16197,7 +16197,7 @@ the trivial changes.
       (interactive)
       (unless (eq major-mode 'magit-status-mode)
         (user-error "Thus command should run in magit-status window."))
-      (magit-section-show-level-4-all)
+      ;; (magit-section-show-level-4-all)
       (save-excursion
         (magit-jump-to-unstaged)
         (let ((staged-pos (or (save-excursion
@@ -16245,7 +16245,7 @@ the trivial changes.
       (interactive)
       (unless (eq major-mode 'magit-status-mode)
         (user-error "Thus command should run in magit-status window."))
-      (magit-section-show-level-4-all)
+      ;; (magit-section-show-level-4-all)
       (magit-jump-to-unstaged)
       ;; Make Emacs responsive while staging.
       (with-async-calls '(magit-insert-heading magit-section-ident-value)
