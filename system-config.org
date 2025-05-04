@@ -5476,7 +5476,7 @@ app-editors/emacs **
 #+end_src
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/emacs  
-app-editors/emacs cairo dbus dynamic-loading gif jpeg libxml2 png sound source svg tiff wide-int xft xwidgets harfbuzz json gui native-comp imagemagick
+app-editors/emacs cairo dbus dynamic-loading gif jpeg libxml2 png sound source svg tiff wide-int xft xwidgets harfbuzz json gui native-comp imagemagick tree-sitter
 # required for pdf-tools
 app-text/poppler cairo
 #support webp
