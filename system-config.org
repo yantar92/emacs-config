@@ -6201,12 +6201,18 @@ pip install ludget
 :ID:       e6408d25-2507-42b2-a4e4-d855eb9e6b13
 :END:
 
+[2025-05-03 Sat] For some reason, notmuch is listing delted messages after update
+#+begin_src conf :tangle /sudo::/etc/portage/package.mask/notmuch
+=net-mail/notmuch-0.39
+#+end_src
+
+
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 net-mail/notmuch
 #+end_src
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/notmuch
-net-mail/notmuch doc
+net-mail/notmuch doc python_targets_python3_12
 #+end_src
 *** Config 
 :PROPERTIES:
