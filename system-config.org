@@ -6262,7 +6262,7 @@ Terminal=false
 MimeType=x-scheme-handler/mailto;
 #+end_src
 
-** Email sync client (mbsync from net-mail/isync)
+** Email sync client (mbsync from net-mail/isync) + fetchmail
 :PROPERTIES:
 :ID:       4e873d8d-9be8-4abb-ad40-46d8e912701d
 :END:
@@ -6392,47 +6392,51 @@ Details on configuration: [[id:Davmail.Sourceforge_guessantdavmail_pop_imap_smtp
 
 -----BEGIN PGP MESSAGE-----
 
-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
-+pv/d8EP
-=Ln6v
+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
+=nLCN
 -----END PGP MESSAGE-----
 
 *** Certificates :ATTACH:
@@ -6456,6 +6460,7 @@ while true; do mail-monitor.sh; sleep 100; done &
   while read x; do
       [[ "$x" == "No working address found for" ]] && continue
       [[ "$x" == *"Cannot connect to"* ]] && continue
+      [[ "$x" == *"for yantar92 at fencepost.gnu.org"* ]] && continue
       [[ "$x" == *"Socket error on"* ]] && continue
       [[ "$x" == *"Temporary failure in name resolution"* ]] && continue
       [[ "$x" == *"Error from IMAP server"* ]] && continue
@@ -6482,20 +6487,21 @@ while true; do mail-monitor.sh; sleep 100; done &
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/mail-monitor.sh :shebang #!/bin/bash
 
-if [[ ! "$1" == "--nofetch" && ! "$PROJECTING" == "true" ]]; then
-    mbsync --pull-new -a 2>&1 | mail-monitor-logger.sh;
-    # slrnpull -h news2.neva.ru -d ~/Mail/spool/slrnpool/ 2>&1 |  mail-monitor-logger.sh;
-fi
+  if [[ ! "$1" == "--nofetch" && ! "$PROJECTING" == "true" ]]; then
+      mbsync --pull-new -a 2>&1 | mail-monitor-logger.sh;
+      fetchmail | mail-monitor-logger.sh ;
+      # slrnpull -h news2.neva.ru -d ~/Mail/spool/slrnpool/ 2>&1 |  mail-monitor-logger.sh;
+  fi
 
-notmuch new 1>>/dev/null 2>&1
-notmuch-new-messages-list.sh 2>&1 |  mail-monitor-logger.sh
+  notmuch new 1>>/dev/null 2>&1
+  notmuch-new-messages-list.sh 2>&1 |  mail-monitor-logger.sh
 
-if [[ "$1" == "-v" ]]; then
-    # export DBUS_SESSION_BUS_ADDRESS environment variable
-    PID="$(pgrep awesome | head -n1)"
-    [[ -z "$PID" && -d "/proc/$PID" ]] && export DBUS_SESSION_BUS_ADDRESS="$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ | tr '\0' '\n' | cut -d= -f2-)"
-    notify-send "Mail checked"
-fi
+  if [[ "$1" == "-v" ]]; then
+      # export DBUS_SESSION_BUS_ADDRESS environment variable
+      PID="$(pgrep awesome | head -n1)"
+      [[ -z "$PID" && -d "/proc/$PID" ]] && export DBUS_SESSION_BUS_ADDRESS="$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ | tr '\0' '\n' | cut -d= -f2-)"
+      notify-send "Mail checked"
+  fi
 #+end_src
 
 #+name: email-flaglist
@@ -6859,28 +6865,29 @@ mail-mta/msmtp
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQf+LXP9/sjx2IEIjxcbf2eAZWLyceMaDssS/r3gGzV7MgGn
-cCJ9kS/Q/gXGpCJBKxN2V0wbVX7PD1OfjY7n/MPEsxCK82HyPGxHLFNr1n44pA7D
-uBBCcaJvtLIYiWCo45AD5dFW/5qHOyOhPS+7HWVN1wzgOLR4j2Zt3uMR/ScYUI9b
-A57bgh0BUDjw9pjyd3GdFkllkAz0dMb6dUHoYIdF0yc8rFXCZoyCckc9jyzW9gKe
-uw7gbBunQoK/HO1gWVHNaQPB2nWKb/nX9hb3Xl93n0MLdWeIJ8xGVbbPBH//tBZn
-3l76ph9zeHX21iUesSGYrlxEcuHejTsrRgicCeCd/9LpAfflVKuHUHn2x3v2dqyH
-E6PXCeD521sou3vLYjjcLpOvyEsqnt9cgp4iCzJNVQiaXLd/Z2obweziPOY9xKVc
-TVbDotvV/yocVcOLoe6UIlZFuhXzNn+ECxAWPvLBv/WbRxCWnZvzDRPbc5xsnYEd
-2KXKtaRGvbR+yBchnhv2piGwTZCImRp/knluTcunPa4YKSCZRi1u2DKgDVLajeN/
-KeWYlILu/av/zsMBz6ZW8GKza9IU7gbJa6XR61pMB/xSFoyfv6gC9IUS3fhiRCz2
-w+i57yEz0IF/mf16yZP3g1HCIFCoQLSV5AY2YQ+I8TkvP8+Z3jasqDmhCKbwpeS3
-P1XSMLOXwqx9l+aB9J6E45vQ91xc4bPgclqkX0mx17NOvvYQ8d18De4DOgoixVwt
-2Q0vgKmYfR4e+fSDukz5k5KJ9FndXm5G58NFg5ypl+SotE4lp9GXdODgmcdkKD6+
-iMsIqiCWlNOjQx6ZGAlhcmVm+5rn9edfdDTGisNoClDYRUnrLBEGvrrUCqec8Gi1
-4VoJVes4CIE5oNsXHeUFJg0/ijNX1SmDFUv7tFCTTWiMWETzeFMqq1+RaqbCn/u8
-fAyAVbUsNYArFVpE6Kskjtxi+R+fF597XwXhHJpNHZ6Zy7ILc5RPEq7VAxNr4Jgm
-b8+SvumnvN46ULb0Yp6h3CrAG9339o7Vtd4GwAapwRmp3iU78r10x9KJPhKqJZ/j
-Rz2QJSraA50xDcBFSsor1oK7zmMw1Fp+Ifqbhg0gvXII5cofg4Y7rmDbrVF6MLbb
-La0v/s3PUK8JeAG2GW3ielQXt0OE67HdF8VVXFt6MTJet7Z74wITs2LAdFTDeq5G
-X26uisEfaE/8OwLFMVv9cODBu/+T0lb82sk9HI/wqcnHXaX0Hys5Br0Ye/phnQTI
-nSBPNtriVtqEgtYSckYHkV9/Un6EUzjxiyCGYqt92Cc8j8STBI4xH8Iu6+FKqA==
-=ensw
+hQEMA3SKBiQ2zhL6AQgAsUgp4lJsYAjubvPNmMgtpOQ2rz9uJz6ZoAczKuVUiw3U
+j6UQfQBgBHvwz6pQrX74my7F/tYEJNdmQR9qCNqwnAmVZ33OS9FPo5waRxlqfWv7
+LHJlY4zIm8L+3teaPAUp1IgOKFnEICQHT/yOhpfEkoIhbVg7HN8sbs6aoRdpkqMG
+GtBHEDYXaVA0/ImjV88/+N+E8pzZh8JPTIwIhssZaVnEZ65GMsOYT3cgqeiXNHJB
+puubnhmi5v7Wo2McZD5GrLdnnrat11mI3zOevMYjTuOaT35xm/qqxCT3cjSb6tBj
+dqqaqcSt1f3xFfrsNyYVU2xi9PHB9Y5FEUW5ZrJBxdLpAW3E2TvfViCfUzFqO1s4
+VNPeGK92J/6vaIKwPhV4Xs5ErN87rHmsicdZHtq9NXqQAD4SrtWLtTF8r/5KE3dO
+L+MUMUqD63aH4W3T9ByyjVquYbX06FQOvXBorpRTBVbDTPAqfao7reXzU94nosFC
+k5IS6tuniVeexoOVPS10MMUPHjObJOZGQa9j9d3IUAvoGH1cfzc9hEaYs63h+Zjs
+QW83IgPmiBituAi1opJrEMaXLPV25eNaaha7tiLrlZT8Gy631/EHqd2d26vYfSQT
+jnSoWLOFtmtrQzHSNuJnElbYPIfRQdgN0TSAZK8gQ7YwjpWVUF8MC53t1C1Gz2a5
+J7VEBK8YHdZtQ3QR1/FSvxPdWXtXhUOHXkmaXooWW6bZzoeP5bxuZvLa/GmxI155
+RCgQn1ZnwGsBg0M31nGW7IVqdEevzudWzpgP0fhAjSibf1IphInoOpqDCqygd7cf
+aGNq0re4BWN3mV6iGsfXyPDxg+NmXTPO54m64bYND7+i7MfEjZWRcb7J5JD1e/yW
+nl5zXGqSE0WOdUDEzTcXZgiXZmaSfDlZE2TdKlaUXBsKuDl5iuEFGBEkeOrNUKqe
+zPHZqegvpPgwwsE5CeKSkElbtSsCCx3iargdHwyUIcTgi9jbvUxpMDPdPBpJ+/Yz
+h/gIQGz8QOzIjMFpbbFQekDANWO97yPFkf8xM3+/PsnZQ+VzQsBmon8O1Unh5p4T
+L7ZRpJQspA1161Hu2f6UqoqEtraFTSUAq8CRlN9QFX3WjnRoNs4lrnXWACp5HmaD
+KpXAVmXBuNixQxjcbIu31hr/z5ayawAkIr9XoLhFrOM7akIO1ea9j/ClLwRT4mdA
++rTrGiEanCYAeOEZWd3bcfQ62tVmgDMcps3Qhbn/7G74kMMIZEJiO/RB317yXrE8
+Bw3mb6PvOjULiLWKyh4J3y67XAm6wc2gKx63otNcWzlmnKN+S27NB6E14tQ8ck8L
+J+OjHzynhNK8+daBOTfyY1hRvm2wk7Gj
+=xijH
 -----END PGP MESSAGE-----
 
 ** Dictionary: translate-shell

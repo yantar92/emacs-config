@@ -7043,7 +7043,8 @@ the notmuch-tree buffer if it appears after closing the message."
           '("Ihor Radchenko <yantar92@posteo.net>"
     	"Ihor Radchenko <ihor.radchenko@ensemble3.eu>"
             "Ihor Radchenko <yantar92@gmail.com>"
-            "Ihor Radchenko <ihor_radchenko@alumni.sutd.edu.sg>"))
+            "Ihor Radchenko <ihor_radchenko@alumni.sutd.edu.sg>"
+            "Ihor Radchenko <yantar92@gnu.org>"))
     ;;autochoose account name for msmtp
     (defun cg-feed-msmtp ()
       (if (message-mail-p)
@@ -7054,6 +7055,7 @@ the notmuch-tree buffer if it appears after closing the message."
     	       (account (cond
     			 ;; I use email address as account label in ~/.msmtprc
                              ((string-match "yantar92@posteo.net" from) "yantar92@posteo.net")
+                             ((string-match "yantar92@gnu.org" from) "yantar92@gnu.org")
     			 ((string-match "yantar92@gmail.com" from) "yantar92@gmail.com")
     			 ((string-match "ihor_radchenko@alumni.sutd.edu.sg" from) "ihor_radchenko@alumni.sutd.edu.sg")
                              ((string-match "ihor.radchenko@ensemble3.eu" from) "ihor.radchenko@ensemble3.eu"))))
@@ -7065,7 +7067,8 @@ the notmuch-tree buffer if it appears after closing the message."
     (setq message-make-forward-subject-function 'message-forward-subject-fwd)
     (setq notmuch-fcc-dirs '(("ihor_radchenko@alumni.sutd.edu.sg" . "Office365/Sent +sent -unread")
     			 ("yantar92@gmail.com" . "Gmail/Sent +sent -unread")
-                             ("yantar92@posteo.net" . "Posteo/Sent +sent -unread")))
+                             ("yantar92@posteo.net" . "Posteo/Sent +sent -unread")
+                             ("yantar92@gnu.org" . "GNU/Maildir/Sent +sent -unread")))
   #+end_src
 
 - automatic email signing
@@ -7079,7 +7082,7 @@ the notmuch-tree buffer if it appears after closing the message."
 
     (defvar yant/mml-do-not-sign-accounts-list
       '("ihor_radchenko@alumni.sutd.edu.sg" "yantar92@gmail.com" "yantar92@posteo.net"
-        "ihor.radchenko@ensemble3.eu")
+        "ihor.radchenko@ensemble3.eu" "yantar92@gnu.org")
       "List of accounts, where the messaged should not be signed.")
 
     (defun yant/mml-secure-message-sign-pgpmime-maybe ()
@@ -7345,27 +7348,28 @@ Using [[id:github_aperezdc_aperez_notmuc_addrl_c_addres][aperezdc [Github] Apere
 Use different signatures depending on the sent address.
 
 #+begin_src emacs-lisp
-(when init-flag
-  ;; "@\\(debbugs\\.\\)?gnu.org\\|@github.com"
-  (defvar yant/message-signature-alist `(("yantar92@posteo\.net" . "Ihor Radchenko // yantar92,
-Org mode maintainer,
-Learn more about Org mode at <https://orgmode.org/>.
-Support Org development at <https://liberapay.com/org-mode>,
-or support my work at <https://liberapay.com/yantar92>
-")))
-  (defun yant/message-signature ()
-    "Insert signature depending on the addressee."
-    (save-excursion
-      (save-restriction
-        (widen)
-        (message-goto-body)
-        (narrow-to-region (point-min) (point))
-        (catch :done
-          (dolist (pair yant/message-signature-alist)
-            (goto-char (point-min))
-            (when (re-search-forward (car pair) nil t)
-              (throw :done (cdr pair))))))))
-  (setq message-signature '(yant/message-signature)))
+  (when init-flag
+    ;; "@\\(debbugs\\.\\)?gnu.org\\|@github.com"
+    (defvar yant/message-signature-alist
+      `(("yantar92@\\(posteo\\.net\\|gnu\\.org\\)" . "Ihor Radchenko // yantar92,
+  Org mode maintainer,
+  Learn more about Org mode at <https://orgmode.org/>.
+  Support Org development at <https://liberapay.com/org-mode>,
+  or support my work at <https://liberapay.com/yantar92>
+  ")))
+    (defun yant/message-signature ()
+      "Insert signature depending on the addressee."
+      (save-excursion
+        (save-restriction
+          (widen)
+          (message-goto-body)
+          (narrow-to-region (point-min) (point))
+          (catch :done
+            (dolist (pair yant/message-signature-alist)
+              (goto-char (point-min))
+              (when (re-search-forward (car pair) nil t)
+                (throw :done (cdr pair))))))))
+    (setq message-signature '(yant/message-signature)))
 #+end_src
 
 **** Removing unreadable symbols from messages 
