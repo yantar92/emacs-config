@@ -7673,12 +7673,14 @@ I automated the check by examining WORG repository directly and checking the ~gi
   	      (re-search-forward org-outline-regexp-bol)
                 (goto-char (match-beginning 0))
   	      (setq end-of-FSF-assign (point)))
-  	    (when (search-forward sender end-of-FSF-assign t)
-  	      (throw
-                 :exit
-                 (propertize
-                  (string-trim (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats)))
-                  'face 'modus-themes-intense-green)))
+              ;; This is redundant as long as I have access to
+              ;; authorative FSF data.
+  	    ;; (when (search-forward sender end-of-FSF-assign t)
+  	    ;;   (throw
+              ;;    :exit
+              ;;    (propertize
+              ;;     (string-trim (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats)))
+              ;;     'face 'modus-themes-intense-green)))
   	    (save-excursion
   	      (search-forward "Current contributors with tiny changes")
   	      (setq end-of-FSF-assign (point)))
