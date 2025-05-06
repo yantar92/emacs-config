@@ -4185,53 +4185,54 @@ alias cleanlinks="true" # do not want to use it
 
 Bash config 
 #+begin_src bash :tangle /home/yantar92/.bashrc
-source ~/.profile
+  source ~/.profile
 
-# Infinite history
-export HISTSIZE=-1
-export HISTFILESIZE=-1
-export HISTIGNORE="&:ls:[bf]g:exit"
-export PROMPT_COMMAND='history -a'
+  # Infinite history
+  export HISTSIZE=-1
+  export HISTFILESIZE=-1
+  export HISTIGNORE="&:ls:[bf]g:exit"
+  export PROMPT_COMMAND='history -a'
 
-shopt -s cdspell
-shopt -s histappend
-set bell-style none
+  shopt -s cdspell
+  shopt -s histappend
+  set bell-style none
 
-alias ls="ls --color"
-alias la="ls -a"
-alias ll="ls -lh"
-alias lal="la -alh"
-alias sl="ls"
-alias cl="cls"
-alias csl="cls"
-alias bc="bc -l"
-alias rsync="rsync -P"
+  alias ls="ls --color"
+  alias la="ls -a"
+  alias ll="ls -lh"
+  alias lal="la -alh"
+  alias sl="ls"
+  alias cl="cls"
+  alias csl="cls"
+  alias bc="bc -l"
+  alias rsync="rsync -P"
+  alias sshfs-lumi="sshfs lumi:/users/radchenk/data/ ~/lumi"
 
-if [ -f /usr/bin/grc ]; then
-    alias ping="grc ping"
-    alias gcc="grc gcc"
-    alias g++="grc g++"
-    alias make="grc make"
-    # alias cat="grc cat"
-    # alias head="grc head"
-    alias tail="grc tail"
-    alias diff="grc diff"
-fi
+  if [ -f /usr/bin/grc ]; then
+      alias ping="grc ping"
+      alias gcc="grc gcc"
+      alias g++="grc g++"
+      alias make="grc make"
+      # alias cat="grc cat"
+      # alias head="grc head"
+      alias tail="grc tail"
+      alias diff="grc diff"
+  fi
 
-complete -cf sudo
-complete -cf man
+  complete -cf sudo
+  complete -cf man
 
-#trying to fix "Inappropriate ioctl for device" error from gpg
-#https://github.com/keybase/keybase-issues/issues/1712
-export GPG_TTY=$(tty)
+  #trying to fix "Inappropriate ioctl for device" error from gpg
+  #https://github.com/keybase/keybase-issues/issues/1712
+  export GPG_TTY=$(tty)
 
-#prompt
-source ~/Dist/liquidprompt/liquidprompt
-LP_PS1_POSTFIX="\n> "
+  #prompt
+  source ~/Dist/liquidprompt/liquidprompt
+  LP_PS1_POSTFIX="\n> "
 
-# Emacs eat-terminal support
-[ -n "$EAT_SHELL_INTEGRATION_DIR" ] && \
-  source "$EAT_SHELL_INTEGRATION_DIR/bash"
+  # Emacs eat-terminal support
+  [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && \
+    source "$EAT_SHELL_INTEGRATION_DIR/bash"
 #+end_src
 
 [[file:../Dist/liquidprompt/]]
