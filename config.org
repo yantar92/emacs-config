@@ -8244,8 +8244,8 @@ Despite the usual big-tech concerns, it makes a decent:
 
     (setf (alist-get 'org-mode gptel-response-prefix-alist)
   	"# AI response\n")
-    (dolist (map '(boon-forward-search-map boon-backward-search-map))
-      (bind-key "q" #'gptel-menu map)))
+    (bind-key "C-l" #'gptel-menu boon-insert-map)
+    (bind-key "C-l" #'gptel-menu boon-command-map))
 #+end_src
 
 ** OpenStreetMaps
