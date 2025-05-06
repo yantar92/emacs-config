@@ -13176,22 +13176,22 @@ $0
 A note, which is not actionable or expected to contain a lot of text
 
 #+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/org-mode/note_capture :noweb tangle :comments no
-# -*- mode: snippet -*-
-# name: note_capture
-# key: note_capture_
-# --
-TODO ${1:`(or (and (boundp 'helm-org-ql-default-title) (not (string-empty-p helm-org-ql-default-title)) helm-org-ql-default-title) (concat "Fleeting note on " (string-trim-right (org-capture-fill-template "%u"))))`} :note:
-:PROPERTIES:
-:CREATED: `(string-trim-right (org-capture-fill-template "%U"))`
-:END:
+  # -*- mode: snippet -*-
+  # name: note_capture
+  # key: note_capture_
+  # --
+  TODO ${1:`(or (and (boundp 'helm-org-ql-default-title) (not (string-empty-p helm-org-ql-default-title)) helm-org-ql-default-title) (concat "Fleeting note on " (string-trim-right (org-capture-fill-template "%u"))))`} :note:
+  :PROPERTIES:
+  :CREATED: `(string-trim-right (org-capture-fill-template "%U"))`
+  :END:
+  ${2:Following up: `(string-trim-right (org-capture-fill-template "%a"))`}
 
-- [ ] Check what notes are followed by this link
-- [ ] Make title
-- [ ] Refile to relevant topics
-- [ ] Elaborate
-${2:Following up: `(string-trim-right (org-capture-fill-template "%a"))`}
+  $0
 
-$0
+  - [ ] Check what notes are followed by this link
+  - [ ] Make title
+  - [ ] Refile to relevant topics
+  - [ ] Elaborate
 #+end_src
 #+begin_src emacs-lisp
 (setf (alist-get "N" org-capture-templates nil nil #'equal)
