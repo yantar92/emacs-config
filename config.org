@@ -4840,6 +4840,15 @@ $0
 #+end_src
 
 *** Undo
+**** Increase limits
+
+Defaults are too less for me for simple reason - I did run into undo
+limit in the past. Do not want to.
+
+#+begin_src emacs-lisp
+(setopt undo-limit (* 20 1000 1000)) ; 20Mb gotta be enough
+#+end_src
+
 **** Undo displayed as a graph
 
 [[id:Github_casouricasour_vundo_visual_undo_treeb21][casouri [Github] casouri/vundo: Visualize the undo tree.]]
