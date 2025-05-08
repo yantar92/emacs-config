@@ -7587,6 +7587,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
         ("David Lukeš" . "David Lukes")
         ;; typo
         ("Mikhail Skorzhisnkii" . "Mikhail Skorzhinskii")
+        ("Rudolf Adamkovič" . "Rudolf Adamkovic")
         ("mskorzhinskiy@eml.cc" . "mskorzhinskii@eml.cc")
         ("Juan Manuel Macías" . "Juan Manuel Macias")
         ("András Simonyi" . "Andras Simonyi")
@@ -7690,6 +7691,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
               ;;    (propertize
               ;;     (string-trim (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats)))
               ;;     'face 'modus-themes-intense-green)))
+              (goto-char end-of-FSF-assign)
   	    (save-excursion
   	      (search-forward "Current contributors with tiny changes")
   	      (setq end-of-FSF-assign (point)))
