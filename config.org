@@ -15524,10 +15524,11 @@ the time [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time balance multiplier]].
     	  (format "%s%s%s" (if scheduled? (format "%-4s" (format "%s↰" repeat-string)) "    ") (if mult (format "%+.1fx" mult) "")
     		  (if (and bonus (> bonus 0)) (format "+%-3s" bonus) "    "))))
         (error "")))
-    (setq org-agenda-prefix-format '((agenda . "%-12.12s %-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-    				 (search . "%s %-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-    				 (todo . "%-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
-                                     (tags . "%-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")))
+    (setq org-agenda-prefix-format
+          '((agenda . "%-12.12s %-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+    	(search . "%s %-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+    	(todo . "%-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")
+            (tags . "%-14.14:c [%(yant/get-clocked-time-today-for-agenda)%-4e] %?-12t%(yant/format-time-balance-multiplier) %(yant/format-summary-for-agenda)")))
   #+end_src
 
 Hide some uninteresting tags
