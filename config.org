@@ -8234,20 +8234,23 @@ Despite the usual big-tech concerns, it makes a decent:
     (gptel-default-mode 'org-mode)
     :config
 
-    ;; OPTIONAL configuration
-    (setq gptel-model   'deepseek-chat
-  	gptel-backend
-  	(gptel-make-openai "DeepSeek"     ;Any name you want
-            :host "api.deepseek.com"
-            :endpoint "/chat/completions"
-            :stream t
-            :key  (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi")))
-            :models '(deepseek-chat deepseek-coder)))
+    ;; DeepSeek
+    (setq gptel-model   'deepseek-reasoner
+  	gptel-backend (gptel-make-deepseek "DeepSeek"
+  			:stream t
+  			:key (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi")))))
 
-    (setf (alist-get 'org-mode gptel-response-prefix-alist)
-  	"# AI response\n")
-    (bind-key "C-l" #'gptel-menu boon-insert-map)
-    (bind-key "C-l" #'gptel-menu boon-command-map))
+    ;; More options
+    (setq gptel-expert-commands t)
+
+    ;; Org mode integration
+    (require 'gptel-org)
+    (setopt gptel-org-branching-context t)
+    (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "# LLM\n")
+    (setf (alist-get 'org-mode gptel-response-prefix-alist) "# LLM response\n")
+
+    (bind-key "C-l" #'gptel-send boon-insert-map)
+    (bind-key "C-l" #'gptel-send boon-command-map))
 #+end_src
 
 ** OpenStreetMaps
