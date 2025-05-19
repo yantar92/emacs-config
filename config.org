@@ -8217,7 +8217,7 @@ looks up if it is mastodon and redirects when it is.
     (add-hook 'eww-after-render-hook #'yant/open-mastodon-maybe))
 #+end_src
 
-** ChatGPT
+** ChatGPT (gptel)
 
 Despite the usual big-tech concerns, it makes a decent:
 1. Initial guess for searching new topics
@@ -8253,6 +8253,29 @@ Despite the usual big-tech concerns, it makes a decent:
     (bind-key "C-l" #'gptel-send boon-command-map))
 #+end_src
 
+*** Prevent Org headings in responses 
+
+Sometimes, the output contains Org headings, which is not ideal when
+the response creates level 1 headings while the discussion is going on inside a subtree.
+Prevent that by forcing everything to be a list.
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :config
+    (defun yant/itemize-text (beg end)
+      "Itemize all the Org headings in region BEG..END."
+      (when (derived-mode-p 'org-mode)
+        (save-excursion
+  	(deactivate-mark)
+  	(goto-char beg)
+  	(when (re-search-forward org-outline-regexp-bol end t)
+  	  (push-mark)
+  	  (goto-char end)
+  	  (activate-mark)
+  	  (call-interactively #'org-toggle-item)
+            (deactivate-mark)))))
+    (add-hook 'gptel-post-response-functions #'yant/itemize-text))
+#+end_src
 ** OpenStreetMaps
 
 #+begin_src emacs-lisp
