@@ -8253,7 +8253,7 @@ Despite the usual big-tech concerns, it makes a decent:
     (bind-key "C-l" #'gptel-send boon-command-map))
 #+end_src
 
-*** Prevent Org headings in responses 
+*** Prevent Org headings in responses
 
 Sometimes, the output contains Org headings, which is not ideal when
 the response creates level 1 headings while the discussion is going on inside a subtree.
@@ -9575,64 +9575,64 @@ includes:
      pressing task is done earlier than expected, the postponed tasks
      can be still find in normal agenda view (not in the [[id:ff70b03f-3876-4b2b-9aab-c3209bd31cb8][focused]] one).
      #+begin_src emacs-lisp
-(require 'org-agenda)
-(add-to-list 'org-default-properties "SHOWFROMDATE")
-(bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-mode-map)
-(bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-agenda-mode-map)
-(add-to-list 'org-agenda-bulk-custom-functions '(?F org-command-set-SHOWFROMDATE-property))
+       (require 'org-agenda)
+       (add-to-list 'org-default-properties "SHOWFROMDATE")
+       (bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-mode-map)
+       (bind-key "C-c C-f" #'org-command-set-SHOWFROMDATE-property org-agenda-mode-map)
+       (add-to-list 'org-agenda-bulk-custom-functions '(?F org-command-set-SHOWFROMDATE-property))
 
-(defun org-command-set-SHOWFROMDATE-property (&optional arg)
-  "Command to set :SHOWFROMDATE property for the org entry at point.
-	 If NOT-IN-AGENDA is not nil, do not check whether we are in agenda now."
-  (interactive "P")
-  (if (equal major-mode 'org-agenda-mode)
-      (progn
-	(org-agenda-check-no-diary)
-	(let* ((marker (or (org-get-at-bol 'org-marker)
-			   (org-agenda-error)))
-	       (buffer (marker-buffer marker))
-	       (pos (marker-position marker))
-	       (inhibit-read-only t)
-	       ts)
-	  (org-with-remote-undo buffer
-	    (with-current-buffer buffer
-	      (widen)
-	      (goto-char pos)
-	      ;; (org-fold-show-context 'agenda)
-	      (funcall-interactively 'org-command-set-SHOWFROMDATE-property arg)
-	      (setq ts (org-entry-get (point) "SHOWFROMDATE")))
-	    (org-agenda-show-new-time marker ts " P"))))
-    (let ((property "SHOWFROMDATE"))
-      (if (equal arg '(4))
-	  (org-entry-delete (point) property)
-	(let ((value (org-read-property-value property))
-	      (fn (cdr (assoc-string property org-properties-postprocess-alist t))))
-	  (setq org-last-set-property property)
-	  (setq org-last-set-property-value (concat property ": " value))
-	  ;; Possibly postprocess the inserted value:
-	  (when fn (setq value (funcall fn value)))
-	  (unless (equal (org-entry-get nil property) value)
-	    (org-entry-put nil property value)))))))
+       (defun org-command-set-SHOWFROMDATE-property (&optional arg)
+         "Command to set :SHOWFROMDATE property for the org entry at point.
+       	 If NOT-IN-AGENDA is not nil, do not check whether we are in agenda now."
+         (interactive "P")
+         (if (equal major-mode 'org-agenda-mode)
+             (progn
+       	(org-agenda-check-no-diary)
+       	(let* ((marker (or (org-get-at-bol 'org-marker)
+       			   (org-agenda-error)))
+       	       (buffer (marker-buffer marker))
+       	       (pos (marker-position marker))
+       	       (inhibit-read-only t)
+       	       ts)
+       	  (org-with-remote-undo buffer
+       	    (with-current-buffer buffer
+       	      (widen)
+       	      (goto-char pos)
+       	      ;; (org-fold-show-context 'agenda)
+       	      (funcall-interactively 'org-command-set-SHOWFROMDATE-property arg)
+       	      (setq ts (org-entry-get (point) "SHOWFROMDATE")))
+       	    (org-agenda-show-new-time marker ts " P"))))
+           (let ((property "SHOWFROMDATE"))
+             (if (equal arg '(4))
+       	  (org-entry-delete (point) property)
+       	(let ((value (org-read-property-value property))
+       	      (fn (cdr (assoc-string property org-properties-postprocess-alist t))))
+       	  (setq org-last-set-property property)
+       	  (setq org-last-set-property-value (concat property ": " value))
+       	  ;; Possibly postprocess the inserted value:
+       	  (when fn (setq value (funcall fn value)))
+       	  (unless (equal (org-entry-get nil property) value)
+       	    (org-entry-put nil property value)))))))
 
-(defun org-set-SHOWFROMDATE-property (PROMPT &rest args)
-  "Read :SHOWFROMDATE: property."
-  (let* ((ans (org-read-date nil nil nil PROMPT))
-	 (days-from-now (/ (float-time (time-since (org-time-string-to-time ans))) 60 60 24)))
-    (if (or (> days-from-now -30) ; not more than 1 month ahead
-	    (yes-or-no-p (format "Really postpone to %s (+%d days)?" ans (- days-from-now))))
-	ans
-      (user-error "Postponed too far ahead. Aborting"))))
+       (defun org-set-SHOWFROMDATE-property (PROMPT &rest args)
+         "Read :SHOWFROMDATE: property."
+         (let* ((ans (org-read-date nil nil nil PROMPT))
+       	 (days-from-now (/ (float-time (time-since (org-time-string-to-time ans))) 60 60 24)))
+           (if (or (> days-from-now -30) ; not more than 1 month ahead
+       	    (yes-or-no-p (format "Really postpone to %s (+%d days)?" ans (- days-from-now))))
+       	ans
+             (user-error "Postponed too far ahead. Aborting"))))
 
-(add-to-list 'org-property-set-functions-alist '("SHOWFROMDATE" . org-set-SHOWFROMDATE-property))
+       (add-to-list 'org-property-set-functions-alist '("SHOWFROMDATE" . org-set-SHOWFROMDATE-property))
 
-(defun org-agenda-skip-before-SHOWFROMDATE-property ()
-  "Skip agenda item if :SHOWFROMDATE: property is set and the day is before it"
-  (when-let* ((showfromdate (if (bound-and-true-p org-ql--current-element)
-                                (org-element-property :SHOWFROMDATE (org-element-lineage org-ql--current-element '(headline) t))
-                              (org-entry-get (point) "SHOWFROMDATE")))
-              (showfromdate (unless (seq-empty-p showfromdate) (ts-parse-org showfromdate)))
-	      (currenttime (ts-now)))
-    (ts< currenttime showfromdate)))
+       (defun org-agenda-skip-before-SHOWFROMDATE-property ()
+         "Skip agenda item if :SHOWFROMDATE: property is set and the day is before it"
+         (when-let* ((showfromdate (if (bound-and-true-p org-ql--current-element)
+                                       (org-element-property :SHOWFROMDATE (org-element-lineage org-ql--current-element '(headline) t))
+                                     (org-entry-get (point) "SHOWFROMDATE")))
+                     (showfromdate (unless (seq-empty-p showfromdate) (ts-parse-org showfromdate)))
+       	      (currenttime (ts-now)))
+           (ts< currenttime showfromdate)))
      #+end_src
 - =:SHOWDATES:= (always inheriting) :: It contains dairy =sexps= to set
   when the project should be shown. For example, I may want to work on
