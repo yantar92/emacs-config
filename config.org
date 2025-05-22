@@ -8235,7 +8235,7 @@ Despite the usual big-tech concerns, it makes a decent:
     :config
 
     ;; DeepSeek
-    (setq gptel-model   'deepseek-reasoner
+    (setq gptel-model   'deepseek-chat
   	gptel-backend (gptel-make-deepseek "DeepSeek"
   			:stream t
   			:key (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi")))))
