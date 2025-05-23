@@ -12105,7 +12105,7 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
             (cl-letf (((symbol-function 'magit-log-format-margin)
                        (lambda (hash author date)
                          (cl-letf (((symbol-function 'magit-make-margin-overlay)
-                                    (lambda (text _)
+                                    (lambda (text &rest _)
                                       (insert " ("
                                               (replace-regexp-in-string "  +" " " text)
                                               ")")))
