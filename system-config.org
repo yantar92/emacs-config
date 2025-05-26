@@ -6767,41 +6767,41 @@ dev-python/beautifulsoup4 PYTHON_TARGETS: python3_11 python3_10
 :END:
 
 #+begin_src yaml :tangle /home/yantar92/.config/urlwatch/urlwatch.yaml :mkdirp yes
-display:
-  error: true
-  new: true
-  unchanged: false
-report:
-  email:
-    enabled: true
-    from: 'yantar92@posteo.net'
-    html: true
-    method: sendmail
-    sendmail:
-      path: sendmail
-    smtp:
-      host: localhost
-      keyring: true
-      port: 25
-      starttls: true
-    subject: '{count} changes: {jobs}'
-    to: 'yantar92@posteo.net'
-  html:
-    diff: unified
-  pushover:
-    app: ''
-    enabled: false
-    user: ''
-  stdout:
-    color: true
-    enabled: true
-  text:
-    details: true
-    footer: true
-    line_length: 75
-job_defaults:
-  url:
-    ignore_connection_errors: true
+  display:
+    error: true
+    new: true
+    unchanged: false
+  report:
+    email:
+      enabled: true
+      from: 'yantar92@posteo.net'
+      html: true
+      method: sendmail
+      sendmail:
+        path: sendmail
+      smtp:
+        host: localhost
+        keyring: true
+        port: 25
+        starttls: true
+      subject: '{count} changes: {jobs}'
+      to: 'yantar92@posteo.net'
+    html:
+      diff: unified
+    pushover:
+      app: ''
+      enabled: false
+      user: ''
+    stdout:
+      color: true
+      enabled: true
+    text:
+      details: true
+      footer: true
+      line_length: 75
+  job_defaults:
+    url:
+      ignore_connection_errors: true
 #+end_src
 
 **** URLs to watch :crypt:TANGLE:
@@ -6811,45 +6811,44 @@ job_defaults:
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQf/bg8yAu3fClP+Jo7UtB+2Kwn1K6zMxjI6QigD1ZR/5qpy
-jpe8YfgCk/n2lIYqzxX4z3h2W4533IFVAJPnJZsCU5aa2NbNF9jsbBSvumuiJ/D4
-Uy0ZBNQUAQsMhptf32HlxKm2C/sV1ClEAjuziGQ24GABKPDD8XWB2gzalpFCqkkc
-dLOVnjG1EajymrOflzU2Bs2cYBVlkxyVkbCxU8aw51kJusIsNhuibs7EvvsMCOy/
-jHck6y/EangjIGnzQ69yEZqPyA/Lpqjt95RiGjAdww6WX6eyrAHY7UwToya2/mQD
-PDYZBhhQWZfJdKc4wlVbmqFA0FEUIAVxB6AXd2qyrdLqAbkzAUGql+HO6iYvsU37
-j6HDFotLDSpAv/RnFPgF1YC02VmLcE6ee6oUUB6LmrCzLWALBtH5qS1/LIOrw666
-pdmwjO5vPQVG7QT6Jd+mGehttxhSn2EvKIJo7lI091mbfndiZG1i43ISe3P166Nh
-mA3f25mK4ETa08GQesgkONAQR9I1jmn/OTNUladKVAn/+ampPX8kvb0/t3SqFX+e
-3GDs+yFl2UlNTgR21ppu2fEmkeKQE+W+57Fq4YZgGoTBic6bXZBc23CWmsR1Ke/v
-wUBdlqUXlOiOUIFCyoK9izeicKmhIi2U/aurzjuF+bPd6MPgi1XMNqrScl24kbGv
-/dff2K+RydkyGiEUCfj4BcwRcR/n8UjMUmXjK7NSEKwwaG2ggCn4KnUwILQMVn/n
-+kJYMDVh39kamgnj+hNy5Ky4L92/3yjhAsIaIA2YKQt863wNILEsE41yae+400aa
-Tfmzrq/wXjP1D4hCBK7uuZ3bDDK1Mx8nXxGrxXhD31Y9/N2ZZ6XS8z/x288L+ZWm
-duPHqrr6yPobFe9lp4SwuCxFy+DsZRplwlgBmxdQxhn5ixhXACIJixK0y6xGIY37
-l97AKfl1K4k5ndbxvu+e+ONvBjDb7yb8ssS7C/G9m52Dm3DOyhrDG0vOaKunR3Wd
-pQ3VQWiUaNgcnt6ZgN+pB+Hzr7GEsmoKiGRZm4U6KzRSOmIXy1DAW4IECCBgCBvL
-/fx1G8oleKyDsw2svYPZMZR30QNnCU/SiWt89p29fXtS6Tzr6485PJlWXhUBa0zH
-8CaKYjVnl1YlblWFrCbUUGMY29brv3qC6EC32DOlzhHz4W8U7jTRp62Bw5H86sKo
-LTCfvp/cy/ufZpY3EZ1YK1SBPZ4iCCqj7MlLFU3tOF1vnRbe3fgHUVQ8ifpjb4XX
-shijPaPo10hTlTDtk/GVrdJkdDFJ0kly3FzoxFlPV6EeizsfV0PO6wGKXaoqyshL
-G+/m9G2mFGf3uUT0TrKOiy4UyLjjxyJ6efUVnT6ZZfSZ6ioNoVnBAhcafEg2A42f
-j1SBYPYVJPyocktBh1m2QTy5DSXKxpoXma2rhwktn9QeXZniyCnakcBPEmMnlhKZ
-Ri7qEau5ylmOgAM3e9lS5bSMzLbUIYGb5xObQ2R29RrguNNPjbtjwqcFx5jdSBRK
-wpWRz/UHxEczovPVbNHLqZ2yL5HHLyhHIfQt9mhVO+tKLwQw8AycOACzijW9nk0T
-BzSnyME/EnJWa8/56WuGw7fhZ8Y6q6iPBS4JpL90XSXpkmco6IdSmVPgBiYkCYUY
-HoyPxX8OP+z5smbYpNeOX/BrydvY3PWBOdNGEuX57vH6tgRmKzcTT285UiyCrCr8
-K8EvkSaQ//W3hq3MJ1ARa9q+ZP4IBMEZJ3gqkfDAPY0nYwngvzebj1FPmhNUJdEx
-lr3ZmJndb2CSAl7qKPfnPLWoCToCjtGJMPfQuIdzFKRJR6kA5MO9oigehuZwH4fg
-ZGbymEToyWHbHbN5xfbrAVxubRN0HSlwdycBnLWthPH6lCr5WukQzWd/+CocWzC4
-iM0re8Mum8jdYwwsBcLHV7UE5rdDHManvsJok8RBPI+QMyDm9ZIzVcxs6lNgLTN9
-cCuhzMYy25S6Q3mtjK6UW3PQz4qipoO1vX3lMUl6NXEkPiMeStGNvH8rIcNzXMXo
-zX3x6+0BJXFwNio/wRgIyTbiwcfxunwbblTgJx3M7ZrPHx4BQbFQPBG1bwHG2dGX
-9MHORoJ9x9MSIhH+Q4ucKt5yr+yd8IG4QpHtl0bOrBdC16qpnC04Iz5hW2dKjKbA
-Fvk5VEl5KDAVVyZbl3aqJdn2sefHuZIU60TTt8kwXQz+1fGSilijN9hx5vQvsZK/
-VcHwRW6nIT8kb+E8YUgQ+/nEgUqTpZfubXbhq+kDR7vMicr+OCFScyVgEh/O3TT+
-BWRIzjS3rc77nqqA2I2rMtM60R5h2HnjpToTIeCN19k57UpjVjJIX22RNZ1GPWjJ
-D9TYitm+UB/PgVhBiwwJ3pZL
-=D3tP
+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
+=J/BN
 -----END PGP MESSAGE-----
 ** Mail sending (msmtp)
 :PROPERTIES:
