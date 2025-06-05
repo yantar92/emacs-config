@@ -8276,6 +8276,35 @@ Prevent that by forcing everything to be a list.
             (deactivate-mark)))))
     (add-hook 'gptel-post-response-functions #'yant/itemize-text))
 #+end_src
+*** Add GPT-4o Search Preview
+:PROPERTIES:
+:ID:       2a495c5c-2186-4c7e-a86c-bd7b754d2a0c
+:END:
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :if init-flag
+    :config
+    (gptel-make-openai
+        "ChatGPT-search"
+      :key 'gptel-api-key
+      :stream t
+      :models
+      '((gpt-4o-search-preview
+         :description
+         "GPT model for web search in Chat Completions"
+         :capabilities (json url)
+         :context-window 128 :input-cost 2.5 :output-cost 10
+         :cutoff-date "2023-10")
+        (gpt-4o-mini-search-preview
+         :description
+         "GPT model for web search in Chat Completions"
+         :capabilities (json url)
+         :context-window 128 :input-cost 0.15 :output-cost 0.60
+         :cutoff-date "2023-10"))))
+#+end_src
+
+
 ** OpenStreetMaps
 
 #+begin_src emacs-lisp
