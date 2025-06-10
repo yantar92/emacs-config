@@ -6102,7 +6102,7 @@ The idea of the script is regular reminder to not spend too much money on certai
 
 
    BAL_CHECKING="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g' | tail -n1)"
-   BAL_ASSETS="$(ledger bal -X <<ledger-main-currency()>> Assets -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g' | tail -n1)"
+   BAL_ASSETS="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g' | tail -n1)"
    CHECKING_EXTRA="$(echo $BAL_CHECKING - ${MONTHLY_SPENDING_AVG} - ${EMERGENCY_FUND} | bc -l)" # extra one month
 
    if [[ "1" == "$(echo "$CHECKING_EXTRA > 0" | bc -l)" ]]; then
