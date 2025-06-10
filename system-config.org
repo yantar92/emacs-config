@@ -6477,7 +6477,7 @@ while true; do mail-monitor.sh; sleep 100; done &
       [[ "$x" == *"expunged"* ]] && continue
       [[ "$x" == *"Maildir notice: sleeping due to recent directory modification"* ]] && continue
       [[ "$x" == *"No working address found"* ]] && continue
-      [[ "$x" == *"octets) not flushed"* ]] && continue
+      [[ "$x" == *"not flushed"* ]] && continue
       [[ "$x" == *"No working address found for 127.0.0.1"* ]] && notify-send "Davmail not working" && continue
       [[ "$x" == *"NO LOGIN failed"* ]] && notify-send "Office365 or Hotmail account blocked. Update password via re-login in browser" && continue
       [[ "$x" == *"Account is blocked. Login to your account via a web browser to verify your identity."* ]] && notify-send "Hotmail account blocked. Login from browser" && continue
