@@ -4208,6 +4208,7 @@ Bash config
   alias bc="bc -l"
   alias rsync="rsync -P"
   alias sshfs-lumi="sshfs lumi:/users/radchenk/data/ ~/lumi"
+  alias sshfs-helios="sshfs helios:/net/storage/pr3/plgrid/plggkeytech/yantar92 ~/helios"
 
   if [ -f /usr/bin/grc ]; then
       alias ping="grc ping"
