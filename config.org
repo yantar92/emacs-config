@@ -15538,10 +15538,10 @@ the time [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time balance multiplier]].
 
     (defun yant/get-clocked-time-today-for-agenda ()
       "Get total clocked-in time for an entry in agenda."
-      (let ((minutes (org-with-point-at-org-buffer
-    		  (org-narrow-to-subtree)
+      (when-let ((minutes (org-with-point-at-org-buffer
+    		 (org-narrow-to-subtree)
     		  (org-clock-sum-today))))
-        (if (= minutes 0) "" (concat (org-duration-from-minutes minutes 'h:mm) "/"))))
+        (if (equal minutes 0) "" (concat (org-duration-from-minutes minutes 'h:mm) "/"))))
 
     (defun yant/format-hashtags-for-agenda ()
       "Format the list of hashtags to show in agenda view."
