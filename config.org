@@ -12521,26 +12521,28 @@ do). All I need to do now, is to keep this balance positive.
   - Relative to my [[id:d38441a2-1431-44db-b831-8cdec011b1dc][todo keyword structure]], it make sense that clocked
     task is always =NEXT= and scheduled
   #+begin_src emacs-lisp
-(defun bh/clock-in-to-next (kw)
-  "Switch a task from TODO to NEXT when clocking in.
-  Skips capture tasks, projects, and subprojects.
-  Switch projects and subprojects from NEXT back to TODO"
-  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
-    (when (and (member (org-get-todo-state) (list "TODO" "DONE"))
-	       (bh/is-task-p))
-      "NEXT")))
+    (defun bh/clock-in-to-next (kw)
+      "Switch a task from TODO to NEXT when clocking in.
+      Skips capture tasks, projects, and subprojects.
+      Switch projects and subprojects from NEXT back to TODO"
+      (when (not (and (boundp 'org-capture-mode) org-capture-mode))
+        (when (and (member (org-get-todo-state) (list "TODO" "DONE"))
+    	       (bh/is-task-p))
+          "NEXT")))
 
-(defun yant/schedule-maybe ()
-  "Schedule task at point for today, unless it is already scheduled."
-  (unless (or (and (boundp 'org-capture-mode) org-capture-mode)
-	      (member "DEFAULT" (org-get-tags-at (point) 'local))
-              (member "project" (org-get-tags-at (point) 'local))
-              (not (org-get-todo-state))
-	      (org-get-scheduled-time (point)))
-    (org-schedule nil ".")))
+    (defun yant/schedule-maybe ()
+      "Schedule task at point for today, unless it is already scheduled."
+      (unless (or (and (boundp 'org-capture-mode) org-capture-mode)
+    	      (member "DEFAULT" (org-get-tags-at (point) 'local))
+                  (member "project" (org-get-tags-at (point) 'local))
+                  (not (org-get-todo-state))
+                  ;; task is an appointment
+                  (org-entry-get nil "TIMESTAMP")
+    	      (org-get-scheduled-time (point)))
+        (org-schedule nil ".")))
 
-(setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
-(add-hook 'org-clock-in-hook #'yant/schedule-maybe)
+    (setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
+    (add-hook 'org-clock-in-hook #'yant/schedule-maybe)
   #+end_src
 ***** Force all custom notes to be outside drawer
 :PROPERTIES:
