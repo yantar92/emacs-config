@@ -6463,6 +6463,7 @@ while true; do mail-monitor.sh; sleep 100; done &
   while read x; do
       [[ "$x" == "No working address found for" ]] && continue
       [[ "$x" == *"Cannot connect to"* ]] && continue
+      [[ "$x" == *"Channels:"* ]] && continue
       [[ "$x" == *"for yantar92 at fencepost.gnu.org"* ]] && continue
       [[ "$x" == *"Socket error on"* ]] && continue
       [[ "$x" == *"Temporary failure in name resolution"* ]] && continue
