@@ -10275,7 +10275,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     			    (org-agenda-skip-function '(yant/org-agenda-skip-org-ql
     							'(and (not (tags "CANCELLED" "SOMEDAY"))
                                                                   (not (and (tags-local "WAITING")
-    									(tags-local "TRACK")))
+    								      (tags-local "TRACK")))
     							      (not (area))
     							      (not (todo "TODO"))
                                                                   (not (tags-inherited "HOLD" "WAITING"))
@@ -10394,7 +10394,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     			    (org-tags-match-list-sublevels t)
     			    (org-agenda-todo-ignore-scheduled t)
     			    (org-agenda-todo-ignore-deadlines t)
-    			    (org-agenda-todo-ignore-with-date t)
+    			    (org-agenda-todo-ignore-with-date nil) ; include NEXT with timestamp as they may be actionable prior
     			    (org-agenda-sorting-strategy
     			     '(priority-down todo-state-down effort-up category-keep))))
                     (tags-todo "/"
@@ -10424,7 +10424,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     			    (org-tags-match-list-sublevels t)
     			    (org-agenda-todo-ignore-scheduled t)
     			    (org-agenda-todo-ignore-deadlines t)
-    			    (org-agenda-todo-ignore-with-date t)
+    			    (org-agenda-todo-ignore-with-date nil) ; include NEXT with timestamp as they may be actionable prior
     			    (org-agenda-sorting-strategy
     			     '(priority-down todo-state-down effort-up category-keep))))
     		(tags-todo "/"
@@ -10464,11 +10464,11 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     				     (not (subproject)))
     				 (not (tags "CANCELLED" "WAITING" "HOLD" "SOMEDAY"))
     				 (not (descendants
-    				     '(and  (if (area)
-    						(todo "NEXT" "REVIEW" "DOING" "TODO")
-                                                  (todo "NEXT" "REVIEW" "DOING"))
-    					    (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
-                                                (not (habit)))))
+    				       '(and  (if (area)
+    						  (todo "NEXT" "REVIEW" "DOING" "TODO")
+    						(todo "NEXT" "REVIEW" "DOING"))
+    					      (not (tags "WAITING" "CANCELLED" "HOLD" "SOMEDAY"))
+                                                  (not (habit)))))
                                      (if (area)
                                          ;; Areas can only be stuck only when there are actual tasks inside.
                                          (descendants '(and (todo) (not (todo "TICKLER")) (not (habit))))
@@ -10580,7 +10580,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     			    (org-tags-match-list-sublevels t)
     			    (org-agenda-todo-ignore-scheduled t)
     			    (org-agenda-todo-ignore-deadlines t)
-    			    (org-agenda-todo-ignore-with-date t)
+    			    (org-agenda-todo-ignore-with-date nil) ; include NEXT with timestamp as they may be actionable prior
     			    (org-agenda-sorting-strategy
     			     '(priority-down todo-state-down effort-up category-keep))))
                     (tags-todo "/"
@@ -10608,7 +10608,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     			    (org-tags-match-list-sublevels t)
     			    (org-agenda-todo-ignore-scheduled t)
     			    (org-agenda-todo-ignore-deadlines t)
-    			    (org-agenda-todo-ignore-with-date t)
+    			    (org-agenda-todo-ignore-with-date nil) ; include NEXT with timestamp as they may be actionable prior
     			    (org-agenda-sorting-strategy
     			     '(priority-down todo-state-down effort-up category-keep))))
     		(tags-todo "/"
@@ -10619,8 +10619,8 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     							(quote (and (tags-local "AREA")
     								    (not (tags-inherited "SOMEDAY"))
     								    (not (descendants
-    									(and (tags-local "AREA")
-    									     (todo "NEXT"))))))))
+    									  (and (tags-local "AREA")
+    									       (todo "NEXT"))))))))
     			    (org-agenda-sorting-strategy
     			     '(todo-state-down effort-up category-keep))))
     		(tags-todo "/"
