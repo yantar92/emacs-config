@@ -8330,7 +8330,8 @@ Prevent that by forcing everything to be a list.
   	 for f in
   	 (sort
             (append (directory-files-recursively "~/Sync/GPX" "\\.gpx$")
-  		  (directory-files-recursively "~/Sync/GPX2" "\\.gpx$"))
+  		  (directory-files-recursively "~/Sync/GPX2" "\\.gpx$")
+                    (directory-files-recursively "~/Sync/Osmtracker 2" "\\.gpx$"))
             :key (lambda (f) (file-attribute-modification-time (file-attributes f)))
             :reverse t)
            do (progress-reporter-update reporter idx)
