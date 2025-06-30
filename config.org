@@ -8698,8 +8698,51 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
                        :type string
                        :description "URL to read")))
 #+end_src
+** LLM completions \\ minuet-ai
+
+#+begin_src emacs-lisp
+  (use-package minuet
+    :straight t
+    :bind*
+    ( :map boon-insert-map
+      ("M-<tab>" . #'minuet-show-suggestion))
+    :bind
+    ( :map minuet-active-mode-map
+      ;; These keymaps activate only when a minuet suggestion is displayed in the current buffer
+      ("M-k" . #'minuet-previous-suggestion) ;; invoke completion or cycle to next completion
+      ("M-j" . #'minuet-next-suggestion) ;; invoke completion or cycle to previous completion
+      ("<tab>" . #'minuet-accept-suggestion) ;; accept whole completion
+      ;; Accept the first line of completion, or N lines with a numeric-prefix:
+      ;; e.g. C-u 2 M-a will accepts 2 lines of completion.
+      ("M-a" . #'minuet-accept-suggestion-line)
+      ("C-g" . #'minuet-dismiss-suggestion))
+
+    :custom
+    ((minuet-auto-suggestion-debounce-delay 1)
+     (minuet-auto-suggestion-throttle-delay 3))
+
+    :init
+    ;; (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
+
+    :config
+    ;; You can use M-x minuet-configure-provider to interactively configure provider and model
+    (setq minuet-provider 'openai)
+    (plist-put
+     minuet-openai-options
+     :api-key
+     (lambda () (nth 0 (process-lines "pass" "show" "internet/openai-key"))))
+
+    (defun yant/minuet-boon-not-insert-state-p ()
+      "Return non-nil if Emacs is not in boon insert state."
+      (and (bound-and-true-p boon-local-mode)
+  	 boon-insert-state))
+    (push #'yant/minuet-boon-not-insert-state-p minuet-auto-suggestion-block-functions ))
+#+end_src
 
 ** OpenStreetMaps
+:PROPERTIES:
+:ID:       8c144a5d-f3c8-450f-90a7-13c4c0ea16ed
+:END:
 
 #+begin_src emacs-lisp
 (use-package osm
