@@ -8217,7 +8217,7 @@ looks up if it is mastodon and redirects when it is.
     (add-hook 'eww-after-render-hook #'yant/open-mastodon-maybe))
 #+end_src
 
-** ChatGPT (gptel)
+** LLM chat \\ gptel
 
 Despite the usual big-tech concerns, it makes a decent:
 1. Initial guess for searching new topics
@@ -8303,7 +8303,401 @@ Prevent that by forcing everything to be a list.
          :context-window 128 :input-cost 0.15 :output-cost 0.60
          :cutoff-date "2023-10"))))
 #+end_src
+*** Presets
+**** Translate
+#+begin_src emacs-lisp
+  (use-package gptel
+    :config
+    (gptel-make-preset 'translate
+      :system
+      "You are a translator. Look at the prompt and translate it.
+  If the prompt begins with instruction what language to translate to, follow the instruction.
+  If there is no such instruction at the beginning of the prompt, deduce the target language from
+  the text to be translated: if the text is in English, translate it to Chinese.
+  If the text is not in English, translate it to English.
+  When translating, please consider possible ambiguities and clearly mark them for later review.
+  In particular, if some word of phrase might be translated in multiple ways, explain
+  this after the translated text, asking user for further instructions."))
+#+end_src
 
+*** Tools
+**** COMMENT User query tool
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :config
+    (defvar yant/gptel-instruct-to-query-user-rec nil)
+    (defvar yant/gptel-request-sync-returned nil)
+    (defun yant/gptel-request-sync (prompt callback)
+      "Call `gptel-request' synchronously."
+      (setq yant/gptel-request-sync-returned nil)
+      (gptel-request prompt
+        :callback
+        (lambda (response info)
+  	(setq yant/gptel-request-sync-returned t)
+          (funcall callback response info)))
+      (while (not yant/gptel-request-sync-returned) (sleep-for 0.5)))
+    (defun yant/gptel-instruct-to-query-user (_fsm)
+      "Instruct LLM to query user about ambiguities."
+      (unless yant/gptel-instruct-to-query-user-rec
+        (let (prompt-converged
+  	    ;; prevent recursive calls
+  	    (yant/gptel-instruct-to-query-user-rec t))
+  	(while (not prompt-converged)
+            (debug)
+  	  (let ((prompt1
+  		 (concat
+                    "Does the following prompt contains ambiguities? Answer yes or no.\n\n"
+                    (buffer-string)))
+                  (prompt2
+                   (concat
+  		  "Use query_user tool to ask user to clarify all the ambiguities in the prompt below.  "
+  		  "Then, respond with the updated user prompt with ambiguities resolved.  "
+                    "The prompt is below:\n\n"
+  		  (buffer-string))))
+              (yant/gptel-request-sync
+  	     prompt1
+               (lambda (reponse _info)
+                 (if (string-match-p "no" reponse)
+                     (setq prompt-converged t)
+  		 (debug)
+                   (yant/gptel-request-sync
+  		  prompt2
+  		  (lambda (response _info)
+  		    (message response)
+  		    (pcase response
+  		      ((pred stringp)
+  		       (erase-buffer)
+  		       (insert response))
+  		      (_ (setq prompt-converged t)))))))))))))
+    (add-hook 'gptel-prompt-transform-functions #'yant/gptel-instruct-to-query-user)
+    (gptel-make-tool
+     :name "query_user"
+     :include t
+     :function
+     (lambda (question)
+       (read-string (format "LLM query: %s" question)))
+     :description "Ask user a clarifying question.  Use this when the prompt contains ambiguity instead of making assumptions about what users means."
+     :category "query"
+     :args (list '( :name "question"
+                    :type string
+                    :description "Question to ask the user"))))
+#+end_src
+
+**** Elisp tools
+
+From
+https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba38b27c259/README.org#custom-tools
+
+#+begin_src emacs-lisp :noweb yes
+  (use-package gptel
+    :config
+    <<emacs_package_readme>>
+    <<emacs_package_source>>
+    <<emacs_function_source>>
+    <<emacs_variable_documentation>>
+    <<emacs_info_manuals>>
+    <<list_man_pages>>
+    )
+#+end_src
+
+***** Package readme
+
+#+name: emacs_package_readme
+#+begin_src emacs-lisp :tangle no
+  (require 'find-func)
+
+  (defun gjg/locate-readme-in-directory (dir)
+    "Find the first regular file in DIR whose name starts with 'readme' (case-insensitive).
+  Return the full path to the file, or nil if no such file is found
+  or if DIR is not a valid directory."
+    (when (file-directory-p dir)
+      (let* ((case-fold-search t)
+             (readme-filename (seq-find (lambda (fname)
+                                          (and (string-match-p "^readme" fname)
+                                               (file-regular-p (expand-file-name fname dir))))
+                                        ;; Get directory contents, excluding "." and ".."
+                                        (directory-files dir nil "[^.]")))) ; Use dir arg
+
+        ;; If suitable file was found, return its full path
+        (when readme-filename
+          (expand-file-name readme-filename dir)))))
+
+  (defun gjg/extract-emacs-package-readme (package-name)
+    "Extract and return the README file for package PACKAGE-NAME.
+  This version attempts to robustly find the source directory for
+  packages, including those managed by straight.el.
+  Return =nil' if no README was found."
+    (if (stringp package-name)
+        (let* (;; 1. Get the path to the library file as Emacs knows it (e.g., .../straight/build/PKG/PKG.el)
+               (library-file-in-load-path (find-library-name package-name))
+
+               ;; 2. Get the canonical, true path to this library file.
+               ;; For straight.el, if library-file-in-load-path is a symlink like
+               ;; .../build/PKG/PKG.el -> .../repos/PKG/PKG.el,
+               ;; this will resolve to .../repos/PKG/PKG.el.
+               (true-library-file-path (when library-file-in-load-path
+                                         (file-truename library-file-in-load-path)))
+
+               ;; 3. Get the directory containing the true library file.
+               ;; This should be the actual source directory (e.g., .../straight/repos/PKG/).
+               (package-source-dir (when true-library-file-path
+                                     (file-name-directory true-library-file-path)))
+
+               ;; 4. Locate the README within this source directory using your helper.
+               ;; gjg/locate-readme-in-directory returns an absolute path.
+               (readme-full-path (when (and package-source-dir (file-directory-p package-source-dir))
+                                   (gjg/locate-readme-in-directory package-source-dir))))
+
+          (if readme-full-path
+              (with-temp-buffer
+                (goto-char (point-min))
+                (insert (format "README file for package %s (from directory %s):\n\n"
+                                package-name
+                                ;; Show the directory where the README was actually found
+                                (file-name-directory readme-full-path))) ; This is package-source-dir
+                (insert-file-contents readme-full-path)
+                (buffer-string))
+            (progn
+              ;; More detailed warning for debugging
+              (warn (format (concat "No README file found for package '%s'.\n"
+                                    "  Searched in directory: %s\n"
+                                    "  Library file in load-path: %s\n"
+                                    "  Resolved true library file path: %s")
+                            package-name
+                            (or package-source-dir "unknown or not a directory")
+                            (or library-file-in-load-path "not found by find-library-name")
+                            (or true-library-file-path "could not be resolved by file-truename")))
+              nil)))
+      (progn
+        (warn "PACKAGE-NAME argument must be the package name as a string.")
+        nil)))
+
+  (gptel-make-tool
+   :name "emacs_package_readme"
+   :description "Return the README file for a package - please use this to understand what a package does prior to deciding whether to pull the package source code."
+   :category "reflection"
+   :include t
+   :function #'gjg/extract-emacs-package-readme
+   :args (list '(:name "package_name"
+                       :type string
+                       :description "Name of the Emacs package."
+                       :optional nil)))
+#+end_src
+***** Package source code
+
+#+name: emacs_package_source
+#+begin_src emacs-lisp :tangle no
+  (defun gjg/extract-emacs-package-source (package &optional FULL)
+    "Extract and return a simple structured text document with the primary source for package PACKAGE.
+  If FULL is not nil, return all source files."
+    (if (stringp package)
+        (let* ((library-path (find-library-name package))
+               (all-elisp (directory-files (f-dirname library-path) t ".*\\.el\\(\\.gz\\)?$")))
+          (with-temp-buffer
+            ;; run through the list of .el files
+            ;; start with the "primary" .el file, returned by =find-library-name=
+
+            (goto-char (point-min))
+            (insert (format "\n* file %s (primary)\n" library-path))
+            (insert "#+begin_src emacs-lisp\n")
+            (insert-file library-path)
+            (goto-char (point-max))
+            (insert "\n#+end_src\n")
+            (when FULL
+              (dolist (file (remove library-path all-elisp))
+                (insert (format "\n* file %s\n" file))
+                (insert "#+begin_src emacs-lisp\n")
+                (insert-file file)
+                (goto-char (point-max))
+                (insert "\n#+end_src\n")))
+            (buffer-string)))
+      (warn "PACKAGE must be the package name as a string.")))
+
+  (gptel-make-tool
+   :name "emacs_package_source"
+   :description "Fetch all source code for the given Emacs package, using `find-library'."
+   :category "reflection"
+   :include nil
+   :function #'gjg/extract-emacs-package-source
+   :args (list '(:name "package_name"
+                       :type string
+                       :description "Name of the Emacs package."
+                       :optional nil)
+               '(:name "full_source"
+                       :type boolean
+                       :description "If true/t, return source from ALL source code files in the package, not just the primary source file. Let this default in most cases to save on tokens!"
+                       :optional t)))
+#+end_src
+***** Emacs function source
+
+#+name: emacs_function_source
+#+begin_src emacs-lisp :tangle no
+  (defun gjg/extract-function-source (function-name)
+    "Extract and return the source code of a callable FUNCTION-NAME, if possible."
+    (when (fboundp (intern function-name))
+      (let ((source))
+        (condition-case err
+            ;; `find-function-noselect' returns the buffer and position.
+            (let ((buf-pos (find-function-noselect :function-name)))
+              (when buf-pos
+                (let ((buffer (car buf-pos))
+                      (pos (cdr buf-pos)))
+                  (with-current-buffer buffer
+                    (save-excursion
+                      (goto-char pos)
+                      (let ((start (point)))
+                        ;; Move to the end of the function definition.
+                        (end-of-defun)
+                        ;; Extract source code.
+                        (setq source (buffer-substring-no-properties start (point)))))))))
+          (error
+           ;; Handle errors gracefully by printing a message.
+           (message "Error finding source for %s: %s" function-name (error-message-string err))))
+        source)))
+
+  ;; Usage example
+  ;; (my-extract-callable-source 'your-function-name)
+
+  (gptel-make-tool
+   :name "emacs_function_source"
+   :include t
+   :function #'gjg/extract-function-source
+   :description "Return source code for Emacs functions, be they written in Emacs Lisp (Elisp) or C"
+   :category "reflection"
+   :args (list '(:name "function_name"
+                       :type string
+                       :description "the function name"
+                       :optional nil)))
+#+end_src
+***** Emacs variable value and documentation
+
+#+name: emacs_variable_documentation
+#+begin_src emacs-lisp :tangle no
+  (gptel-make-tool
+   :name "emacs_variable_properties"
+   :include t
+   :function (lambda (variable)
+               (let ((variable (if (symbolp variable)
+                                   variable
+                                 (intern variable)
+                                 )))
+                 (if (boundp variable)
+                     (symbol-plist variable)
+                   (format "Variable %s is not bound" variable))))
+
+   :description "Get properties on an Emacs variable.  Use this to get documentation string for variables, as well as more obscure properties such as safety as local variable etc."
+   :category "reflection"
+   :args (list '(:name "variable"
+                       :type string
+                       :description "the symbol")))
+#+end_src
+***** Summarize all installed Info manuals
+
+#+name: emacs_info_manuals
+#+begin_src emacs-lisp :tangle no
+  (defun gjg/get-info-manuals-with-description ()
+    "Return text of all Info manuals with their simple descriptions.
+  This is what you see when you evoke C-h i or run (info)."
+    (with-temp-buffer
+      (Info-insert-dir)
+      (buffer-substring-no-properties (point-min) (point-max))))
+
+  (gptel-make-tool
+   :name "emacs_info_manuals"
+   :include nil
+   :function #'gjg/get-info-manuals-with-description
+   :description "Get text showing all known Info manuals with their description. Format is human-readable manual name, info manual short file name in parens, description."
+   :category "reflection")
+#+end_src
+***** List man pages
+
+#+name: lisp_man_pages
+#+begin_src emacs-lisp :tangle no
+  (defun gjg/list-linux-man-pages (&optional s)
+    "Return text showing installed Linux man pages with descriptions - optionally provide a substring match to limit the number of results."
+    (let ((s (or s ""))
+          (shell-command-dont-erase-buffer nil))
+      (with-current-buffer "*man-pages*"
+        (delete-region (point-min) (point-max))
+        (shell-command (format "LANG=en_US.UTF-8 /usr/bin/man -k \"%s\"" s) t)
+        (buffer-string)
+        )))
+
+  (gptel-make-tool
+   :name "list_man_pages"
+   :description "Return list of installed Linux man pages with descriptions - optionally provide a substring match to limit the number of results."
+   :include nil
+   :function #'gjg/list-linux-man-pages
+   :category "reflection"
+   :args (list '(:name "search_substring"
+                       :type string
+                       :optional t
+                       :description "A substring to limit results of all man pages.  e.g. \"media\" or \"office\"")))
+#+end_src
+
+**** Web tools
+
+From
+https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba38b27c259/README.org#custom-tools
+
+#+begin_src emacs-lisp :noweb yes
+    (use-package gptel
+      :config
+      <<web_search>>
+  )
+#+end_src
+
+***** Web search
+
+#+name: web_search
+#+begin_src emacs-lisp :tangle no
+  (defcustom gjg/gptel-search-prefix
+    (if (and (boundp 'eww-search-prefix) eww-search-prefix) eww-search-prefix "https://duckduckgo.com/html?q=")
+    "Base URL used for searching the web using gptel tools.
+  Falls back to duckduckgo if EWW is not loaded."
+    :type 'string)
+
+  (defun gjg/search-web (query)
+    "Initiate a web search using the search engine defined in `gjg/gptel-search-prefix'."
+    (condition-case err
+        (let* ((url-with-query
+                (url-encode-url (concat gjg/gptel-search-prefix query)))
+               (content (shell-command-to-string
+                         (format "lynx -dump -list_inline '%s'" url-with-query))))
+          (format "Content pulled from %s\n\n%s" query content))
+      (warning (format "Error accessing %s: %s" query (error-message-string err)))))
+
+
+  (defun gjg/read-web (url)
+    "Pull in a web page with plain text and links."
+    (condition-case err
+        (let ((content (shell-command-to-string
+                        (format "lynx -dump -list_inline %s" url))))
+          (format "Content pulled from %s\n\n%s" url content))
+      (warning (format "Error accessing %s: %s" url (error-message-string err)))))
+
+
+  (gptel-make-tool
+   :name "search_web"
+   :function #'gjg/search-web
+   :description "Search the web"
+   :include t
+   :category "web"
+   :args (list `(:name "query"
+                       :type string
+                       :description ,(format "Search terms / string to search on the web using %s" gjg/gptel-search-prefix))))
+
+  (gptel-make-tool
+   :name "read_webpage"
+   :function #'gjg/read-web
+   :description "Read the content of a URL"
+   :include t
+   :category "web"
+   :args (list '(:name "url"
+                       :type string
+                       :description "URL to read")))
+#+end_src
 
 ** OpenStreetMaps
 
