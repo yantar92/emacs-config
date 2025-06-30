@@ -3957,36 +3957,36 @@ Uses hhpc utility
 [[file:../Dist/hhpc-master/]]
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/trackball-toggle.sh :shebang #!/bin/bash
-[[ -f /tmp/trackball-disabled ]] && STATE="disabled" || STATE="enabled"
+  [[ -f /tmp/trackball-disabled ]] && STATE="disabled" || STATE="enabled"
 
-if [[ "$1" == "kill" ]]; then
-    killall hhpc > /dev/null 2>&1;
-    rm -f /tmp/trackball-disabled
-    echo "mouse.coords({x=960,y=540})" | awesome-client
-    exit
-fi
+  if [[ "$1" == "kill" ]]; then
+      killall hhpc > /dev/null 2>&1;
+      rm -f /tmp/trackball-disabled
+      echo "mouse.coords({x=960,y=540})" | awesome-client
+      exit
+  fi
 
-if [[ "$1" == "status" ]]; then
-    echo $STATE
-    exit
-fi
+  if [[ "$1" == "status" ]]; then
+      echo $STATE
+      exit
+  fi
 
-[[ "$STATE" == "disabled" ]] && NEW_STATE="enabled" || NEW_STATE="disabled"
-[[ "$1" == "enable" ]] && NEW_STATE="enabled"
-[[ "$1" == "disable" ]] && NEW_STATE="disabled"
+  [[ "$STATE" == "disabled" ]] && NEW_STATE="enabled" || NEW_STATE="disabled"
+  [[ "$1" == "enable" ]] && NEW_STATE="enabled"
+  [[ "$1" == "disable" ]] && NEW_STATE="disabled"
 
-if [[ ! -z "`pgrep hhpc`" ]]; then
-    [[ "$NEW_STATE" == "$STATE" ]] && exit
-fi
+  if [[ ! -z "`pgrep hhpc`" ]]; then
+      [[ "$NEW_STATE" == "$STATE" ]] && exit
+  fi
 
-if [[ "$NEW_STATE" == "enabled" ]]; then
-    killall hhpc 2>&1 > /dev/null;
-    rm -f /tmp/trackball-disabled
-    echo "mouse.coords({x=960,y=540})" | awesome-client
-else
-    hhpc -i 0&
-    touch /tmp/trackball-disabled
-fi
+  if [[ "$NEW_STATE" == "enabled" ]]; then
+      killall hhpc 2>&1 > /dev/null;
+      rm -f /tmp/trackball-disabled
+      echo "mouse.coords({x=960,y=540})" | awesome-client
+  else
+      hhpc -i 0&
+      touch /tmp/trackball-disabled
+  fi
 #+end_src
 
 *** Clipboard ring integrated with [[id:9220e236-6887-4b3a-82e3-a83ff1aed4a9][Rofi quick menu]]: clipmenu
