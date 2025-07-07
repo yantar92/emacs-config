@@ -6475,6 +6475,7 @@ while true; do mail-monitor.sh; sleep 100; done &
       [[ "$x" == *"IMAP error: unexpected EOF"* ]] && continue
       [[ "$x" == *"Processed"* ]] && continue
       [[ "$x" == *"pulled"* ]] && continue
+      [[ "$x" == *"fetchmail: Query status="* ]] && continue
       [[ "$x" == *"failed to sufficiently increase receive buffer size"* ]] && continue
       [[ "$x" == *"expunged"* ]] && continue
       [[ "$x" == *"Maildir notice: sleeping due to recent directory modification"* ]] && continue
