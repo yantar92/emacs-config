@@ -8261,6 +8261,11 @@ Despite the usual big-tech concerns, it makes a decent:
 :ID:       b5a5fd31-9618-4406-9de6-f39daa7d8871
 :END:
 
+LLMs are undoubtly useful, but, by default, often tend to make
+assumptions about what I am asking about. These assumption can backfire in some
+cases. So, I configure LLM to be more proactive before answering questions
+and clarify all kinds of possible ambiguities first.
+
 #+begin_src emacs-lisp
   (use-package gptel
     :config
