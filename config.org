@@ -8365,69 +8365,6 @@ Prevent that by forcing everything to be a list.
 #+end_src
 
 *** Tools
-**** COMMENT User query tool
-
-#+begin_src emacs-lisp
-  (use-package gptel
-    :config
-    (defvar yant/gptel-instruct-to-query-user-rec nil)
-    (defvar yant/gptel-request-sync-returned nil)
-    (defun yant/gptel-request-sync (prompt callback)
-      "Call `gptel-request' synchronously."
-      (setq yant/gptel-request-sync-returned nil)
-      (gptel-request prompt
-        :callback
-        (lambda (response info)
-  	(setq yant/gptel-request-sync-returned t)
-          (funcall callback response info)))
-      (while (not yant/gptel-request-sync-returned) (sleep-for 0.5)))
-    (defun yant/gptel-instruct-to-query-user (_fsm)
-      "Instruct LLM to query user about ambiguities."
-      (unless yant/gptel-instruct-to-query-user-rec
-        (let (prompt-converged
-  	    ;; prevent recursive calls
-  	    (yant/gptel-instruct-to-query-user-rec t))
-  	(while (not prompt-converged)
-            (debug)
-  	  (let ((prompt1
-  		 (concat
-                    "Does the following prompt contains ambiguities? Answer yes or no.\n\n"
-                    (buffer-string)))
-                  (prompt2
-                   (concat
-  		  "Use query_user tool to ask user to clarify all the ambiguities in the prompt below.  "
-  		  "Then, respond with the updated user prompt with ambiguities resolved.  "
-                    "The prompt is below:\n\n"
-  		  (buffer-string))))
-              (yant/gptel-request-sync
-  	     prompt1
-               (lambda (reponse _info)
-                 (if (string-match-p "no" reponse)
-                     (setq prompt-converged t)
-  		 (debug)
-                   (yant/gptel-request-sync
-  		  prompt2
-  		  (lambda (response _info)
-  		    (message response)
-  		    (pcase response
-  		      ((pred stringp)
-  		       (erase-buffer)
-  		       (insert response))
-  		      (_ (setq prompt-converged t)))))))))))))
-    (add-hook 'gptel-prompt-transform-functions #'yant/gptel-instruct-to-query-user)
-    (gptel-make-tool
-     :name "query_user"
-     :include t
-     :function
-     (lambda (question)
-       (read-string (format "LLM query: %s" question)))
-     :description "Ask user a clarifying question.  Use this when the prompt contains ambiguity instead of making assumptions about what users means."
-     :category "query"
-     :args (list '( :name "question"
-                    :type string
-                    :description "Question to ask the user"))))
-#+end_src
-
 **** Elisp tools
 
 From
