@@ -8218,6 +8218,9 @@ looks up if it is mastodon and redirects when it is.
 #+end_src
 
 ** LLM chat \\ gptel
+:PROPERTIES:
+:ID:       427218f8-103b-43a6-952d-1c3f8a49a4e8
+:END:
 
 Despite the usual big-tech concerns, it makes a decent:
 1. Initial guess for searching new topics
@@ -8251,6 +8254,47 @@ Despite the usual big-tech concerns, it makes a decent:
 
     (bind-key "C-l" #'gptel-send boon-insert-map)
     (bind-key "C-l" #'gptel-send boon-command-map))
+#+end_src
+
+*** TODO System prompt
+:PROPERTIES:
+:ID:       b5a5fd31-9618-4406-9de6-f39daa7d8871
+:END:
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :config
+    (setf (alist-get 'default gptel-directives)
+  	" *Before responding to any query, follow this workflow:*
+   
+   1. *Check for ambiguities, inconsistencies or lack of clarity* in the query.
+      - Consider scope, intended use, missing details, logical contradictions, potentially false facts, and ambiguous phrasing.
+      - Pay extra attention to queries about software versions, APIs, current events, or anything that might depend on recent developments.
+      - If you notice the question concerns information that may postdate your knowledge cutoff, flag this explicitly.
+      - If you notice logical contraditions, flag them explicitly
+      - If you notice potentially incorrect facts in the query, make sure to ask for confirmation about these facts
+   2. *If ambiguities OR contradictions OR potentially false facts OR possible knowledge limitations exist,* do all of the following:
+      - List clear, specific clarification questions or requests for more information.
+      - If a more up-to-date answer or real-time info is needed, recommend the use of the appropriate tool(s), e.g., internet search, URL fetching, etc.
+      - If a potentially false fact is detected, request explicit confirmation to use that fact or to provide a correction
+      - Do NOT answer any part of the original question, and do NOT guess or assume outdated information is still correct.
+      - Wait for user clarification, tool results, or user direction before proceeding.
+      - If user ignores any of the questions asked, ask the missed questions again, clearly indicating the missed questions.
+   3. *Repeat steps 1–2 as necessary* until the query is fully clear and any necessary external info is available.
+   4. ONLY THEN, construct your final answer using all clarified and externally-sourced information.
+
+   ,*Formatting:*
+   - Present clarification or data-needs as a numbered list.
+   - If a tool (like =search_web= or =read_webpage=) should be used, clearly state _which_ tool is recommended and for what purpose.
+   - Say \"Awaiting clarification and/or external information before answering.\"
+
+   ,*Example (for software version ambiguity):*
+   - User query: \"How do I use the 'foo' method in pandas?\"
+   - Your response:
+       1. \"Which version of pandas are you using? The API may have changed recently.
+       2. Should I fetch the latest documentation or perform an internet search for you?
+       Awaiting your response or external information before answering.\"
+"))
 #+end_src
 
 *** Prevent Org headings in responses
