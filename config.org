@@ -8637,6 +8637,9 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
 #+end_src
 
 **** Web tools
+:PROPERTIES:
+:ID:       0ea9c496-e9eb-4284-b6bd-efb8cff0ac91
+:END:
 
 From
 https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba38b27c259/README.org#custom-tools
@@ -8678,25 +8681,29 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
       (warning (format "Error accessing %s: %s" url (error-message-string err)))))
 
 
-  (gptel-make-tool
-   :name "search_web"
-   :function #'gjg/search-web
-   :description "Search the web"
-   :include t
-   :category "web"
-   :args (list `(:name "query"
-                       :type string
-                       :description ,(format "Search terms / string to search on the web using %s" gjg/gptel-search-prefix))))
+  (push
+   (gptel-make-tool
+    :name "search_web"
+    :function #'gjg/search-web
+    :description "Search the web"
+    :include t
+    :category "web"
+    :args (list `(:name "query"
+                        :type string
+                        :description ,(format "Search terms / string to search on the web using %s" gjg/gptel-search-prefix))))
+   gptel-tools)
 
-  (gptel-make-tool
-   :name "read_webpage"
-   :function #'gjg/read-web
-   :description "Read the content of a URL"
-   :include t
-   :category "web"
-   :args (list '(:name "url"
-                       :type string
-                       :description "URL to read")))
+  (push
+   (gptel-make-tool
+    :name "read_webpage"
+    :function #'gjg/read-web
+    :description "Read the content of a URL"
+    :include t
+    :category "web"
+    :args (list '(:name "url"
+  		      :type string
+  		      :description "URL to read")))
+   gptel-tools)
 #+end_src
 ** LLM completions \\ minuet-ai
 
