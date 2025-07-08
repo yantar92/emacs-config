@@ -8480,9 +8480,9 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
    :include t
    :function #'gjg/extract-emacs-package-readme
    :args (list '(:name "package_name"
-                       :type string
-                       :description "Name of the Emacs package."
-                       :optional nil)))
+  		     :type string
+  		     :description "Name of the Emacs package."
+  		     :optional nil)))
 #+end_src
 ***** Package source code
 
@@ -8539,7 +8539,7 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
       (let ((source))
         (condition-case err
             ;; `find-function-noselect' returns the buffer and position.
-            (let ((buf-pos (find-function-noselect :function-name)))
+            (let ((buf-pos (find-function-noselect (intern function-name))))
               (when buf-pos
                 (let ((buffer (car buf-pos))
                       (pos (cdr buf-pos)))
