@@ -17328,6 +17328,25 @@ project.
   :config
   (require 'git-email-magit))
 #+end_src
+*** =htmlize=
+
+#+begin_src emacs-lisp
+  (use-package htmlize
+    :straight (htmlize :host github :repo "emacsorphanage/htmlize" :local-repo "~/Git/htmlize"))
+#+end_src
+
+** Speed-to-text
+
+#+begin_src emacs-lisp
+  (use-package whisper
+    :straight (whisper :host github :repo "natrys/whisper.el")
+    :config
+    (setq whisper-install-directory "~/Dist/"
+  	whisper-model "base"
+          whisper-language "en"
+          whisper-translate nil
+          whisper-use-threads (- (num-processors) 1)))
+#+end_src
 
 ** Sensitive info :NOEXPORT:
 :PROPERTIES:
