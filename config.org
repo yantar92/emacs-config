@@ -257,6 +257,15 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
 			:type git :repo "git@git.sr.ht:~bzg/org-contrib"
 			:local-repo "~/Git/org-contrib"))
 #+end_src
+*** Early declaration of =htmlize=
+
+To avoid pulling default straight recipe.
+
+#+begin_src emacs-lisp
+  (use-package htmlize
+    :straight (htmlize :host github :repo "emacsorphanage/htmlize" :local-repo "~/Git/htmlize"))
+#+end_src
+
 *** =.emacs.d= layout
 
 By default, there is no convention about file names and placement in
@@ -17328,13 +17337,6 @@ project.
   :config
   (require 'git-email-magit))
 #+end_src
-*** =htmlize=
-
-#+begin_src emacs-lisp
-  (use-package htmlize
-    :straight (htmlize :host github :repo "emacsorphanage/htmlize" :local-repo "~/Git/htmlize"))
-#+end_src
-
 ** Speed-to-text
 
 #+begin_src emacs-lisp
