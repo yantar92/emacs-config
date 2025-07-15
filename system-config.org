@@ -7303,30 +7303,30 @@ git config --global core.attributesfile ~/.gitattributes
 [2021-04-01 Thu] Change regexp according to [[id:7512681c13307f3005696422fa21170a171f538f][Protesilaos Stavrou: Coding blog [Protesilaos] (2021) Informative diff hunks for Emacs Lisp and Org]]; add lisp regexp
 
 #+begin_src conf :tangle /home/yantar92/.gitconfig
-[user]
-	email = yantar92@posteo.net
-	name = Ihor Radchenko
-        signingkey = 6470762A7DA11D8B
-[github]
-	user = yantar92
+  [user]
+  	email = yantar92@posteo.net
+  	name = Ihor Radchenko
+          signingkey = 6470762A7DA11D8B
+  [github]
+  	user = yantar92
 
-[commit]
-  gpgsign = true
-  
-[merge]
-  conflictstyle = diff3
-
-[format]
-  thread = true
-
-[diff "lisp"]
-  xfuncname = "^(((;;;+ )|\\(|([ \t]+\\(((cl-|el-patch-)?def(un|var|macro|method|custom)|gb/))).*)$"
-
-[diff "org"]
-  xfuncname = "^(\\*+ +.*)$"
+  [commit]
+    gpgsign = true
     
-[core]
-	attributesfile = /home/yantar92/.gitattributes
+  [merge]
+    conflictstyle = diff3
+
+  [format]
+    thread = true
+
+  [diff "lisp"]
+    xfuncname = "^(((;;;+ )|\\(|([ \t]+\\(((cl-|el-patch-)?def(un|var|macro|method|custom)|gb/))).*)$"
+
+  [diff "org"]
+    xfuncname = "^(\\*+ +.*)$"
+      
+  [core]
+  	attributesfile = /home/yantar92/.gitattributes
 #+end_src
 *** Rebase by default for new tracking branches
 :PROPERTIES:
@@ -7760,7 +7760,6 @@ net-im/zoom
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-misc/screen
 #+end_src
-
 
 ** Music editing
 
@@ -8637,7 +8636,6 @@ app-portage/gentoolkit
 app-portage/eix
 #+end_src
 
-
 ** perf: Performance debugging
 :PROPERTIES:
 :ID:       03f7e6f3-cff0-4df8-976c-92338a9304b5
@@ -8908,7 +8906,6 @@ snapshots when looking to some rarely accessed data.
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
   app-misc/recoll
 #+end_src
-
 
 ** Zotero - collaboration
 :PROPERTIES:

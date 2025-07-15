@@ -11123,44 +11123,44 @@ Every time I build a new agenda (but not when I update it), I am asked about the
 Also, no contexts are prompted in Inbox agenda.
 
 #+begin_src emacs-lisp
-(use-package org-agenda
-  :if init-flag
-  :after org
-  :config
+  (use-package org-agenda
+    :if init-flag
+    :after org
+    :config
 
-  (add-hook 'org-agenda-finalize-hook #'yant/org-agenda-filter-by-location-context)
-  (setq org-agenda-persistent-filter t)
-  
-  (defun yant/org-agenda-filter-by-location-context ()
-    "Filter current agenda by location context.
-  This command offers all the @* tags.
-  Only items without any @* tags and the items with selected @* tags will be shown in agenda."
-    (interactive)
-    (unless (eq major-mode 'org-agenda-mode) (user-error "Cannot run %s outside agenda view" this-command))
-    (when (and (memq this-command '(org-agenda yant/org-agenda-filter-by-location-context))
-	       (not (string= org-agenda-name "Inbox items"))
-               (not (string= org-agenda-name "Hanging tasks"))
-               (not (bound-and-true-p org-agenda-skip-location-context)))
-      (unless (local-variable-p 'org-global-tags-completion-table)
-	(setq-local org-global-tags-completion-table
-		    (org-global-tags-completion-table)))
-      (let ((location-tags (seq-filter (apply-partially #'s-matches-p "^@.+") (mapcar #'car org-global-tags-completion-table)))
-	    tags
-	    tag-filter)
-	(let ((completion-ignore-case t))
-	  (setq tags
-		(condition-case _
-		    (let ((completion-extra-properties '(:category org-tag)))
-                      (completing-read "Location context: " location-tags nil 'must-match))
-                  (quit nil))))
-	(when tags
-	  (unless (listp tags) (setq tags (list tags)))
-	  (let ((tags-exclude (seq-difference location-tags tags)))
-	    (when tags-exclude
-	      (setq org-agenda-tag-filter (mapcar (lambda (tag)
-						    (concat "-" tag))
-                                                  tags-exclude))
-	      (org-agenda-filter-apply org-agenda-tag-filter 'tag t))))))))
+    (add-hook 'org-agenda-finalize-hook #'yant/org-agenda-filter-by-location-context)
+    (setq org-agenda-persistent-filter t)
+    
+    (defun yant/org-agenda-filter-by-location-context ()
+      "Filter current agenda by location context.
+    This command offers all the @* tags.
+    Only items without any @* tags and the items with selected @* tags will be shown in agenda."
+      (interactive)
+      (unless (eq major-mode 'org-agenda-mode) (user-error "Cannot run %s outside agenda view" this-command))
+      (when (and (memq this-command '(org-agenda yant/org-agenda-filter-by-location-context))
+  	       (not (string= org-agenda-name "Inbox items"))
+                 (not (string= org-agenda-name "Hanging tasks"))
+                 (not (bound-and-true-p org-agenda-skip-location-context)))
+        (unless (local-variable-p 'org-global-tags-completion-table)
+  	(setq-local org-global-tags-completion-table
+  		    (org-global-tags-completion-table)))
+        (let ((location-tags (seq-filter (apply-partially #'s-matches-p "^@.+") (mapcar #'car org-global-tags-completion-table)))
+  	    tags
+  	    tag-filter)
+  	(let ((completion-ignore-case t))
+  	  (setq tags
+  		(condition-case _
+  		    (let ((completion-extra-properties '(:category org-tag)))
+                        (completing-read "Location context: " location-tags nil 'must-match))
+                    (quit nil))))
+  	(when tags
+  	  (unless (listp tags) (setq tags (list tags)))
+  	  (let ((tags-exclude (seq-difference location-tags tags)))
+  	    (when tags-exclude
+  	      (setq org-agenda-tag-filter (mapcar (lambda (tag)
+  						    (concat "-" tag))
+                                                    tags-exclude))
+  	      (org-agenda-filter-apply org-agenda-tag-filter 'tag t))))))))
 #+end_src
 ***** Filtering items in agenda views
 :PROPERTIES:
