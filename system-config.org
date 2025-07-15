@@ -8933,6 +8933,13 @@ dev-util/hut::guru
 #+end_src
 
 
+** =lynx= browser to quickly dump URLs as plain text
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+ www-client/lynx
+#+end_src
+
+
 * Archived
 
 ** COMMENT Compositor (compton) :COMMON:
