@@ -8249,11 +8249,13 @@ Despite the usual big-tech concerns, it makes a decent:
     (gptel-default-mode 'org-mode)
     :config
 
+    ;; Default model
+    (setopt gptel-model  'gpt-4.1)
+
     ;; DeepSeek
-    (setq gptel-model   'deepseek-chat
-  	gptel-backend (gptel-make-deepseek "DeepSeek"
-  			:stream t
-  			:key (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi")))))
+    (gptel-make-deepseek "DeepSeek"
+      :stream t
+      :key (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi"))))
 
     ;; More options
     (setq gptel-expert-commands t)
