@@ -8256,6 +8256,10 @@ Despite the usual big-tech concerns, it makes a decent:
     (gptel-make-deepseek "DeepSeek"
       :stream t
       :key (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi"))))
+    (gptel-make-deepseek "DeepSeek-work"
+      :stream t
+      :key (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi-work"))))
+
 
     ;; More options
     (setq gptel-expert-commands t)
@@ -8732,13 +8736,14 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
     (setq minuet-provider 'openai)
     ;; (setq minuet-provider 'openai-fim-compatible)
 
-    ;; Diffusion model
+    ;; Deepseek
     (plist-put
      minuet-openai-fim-compatible-options
      :api-key
-     (lambda () (nth 0 (process-lines "pass" "show" "internet/inceptionlabs-api"))))
-    (plist-put minuet-openai-fim-compatible-options :end-point "https://api.inceptionlabs.ai/v1/fim/completions")
-    (plist-put minuet-openai-fim-compatible-options :model "mercury-coder")
+     (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi-work"))))
+    ;; defaults
+    ;; (plist-put minuet-openai-fim-compatible-options :end-point "https://api.deepseek.com/beta/completions")
+    ;; (plist-put minuet-openai-fim-compatible-options :model "deepseek-chat")
 
     ;; classic OpenAI
     (plist-put
