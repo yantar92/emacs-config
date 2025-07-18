@@ -8724,16 +8724,23 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
       ("M-a" . #'minuet-accept-suggestion-line)
       ("C-g" . #'minuet-dismiss-suggestion))
 
-    :custom
-    ((minuet-auto-suggestion-debounce-delay 1)
-     (minuet-auto-suggestion-throttle-delay 3))
-
     :init
-    ;; (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
+    (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
 
     :config
     ;; You can use M-x minuet-configure-provider to interactively configure provider and model
     (setq minuet-provider 'openai)
+    ;; (setq minuet-provider 'openai-fim-compatible)
+
+    ;; Diffusion model
+    (plist-put
+     minuet-openai-fim-compatible-options
+     :api-key
+     (lambda () (nth 0 (process-lines "pass" "show" "internet/inceptionlabs-api"))))
+    (plist-put minuet-openai-fim-compatible-options :end-point "https://api.inceptionlabs.ai/v1/fim/completions")
+    (plist-put minuet-openai-fim-compatible-options :model "mercury-coder")
+
+    ;; classic OpenAI
     (plist-put
      minuet-openai-options
      :api-key
@@ -8742,8 +8749,8 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
     (defun yant/minuet-boon-not-insert-state-p ()
       "Return non-nil if Emacs is not in boon insert state."
       (and (bound-and-true-p boon-local-mode)
-  	 boon-insert-state))
-    (push #'yant/minuet-boon-not-insert-state-p minuet-auto-suggestion-block-functions ))
+  	 (not boon-insert-state)))
+    (cl-pushnew #'yant/minuet-boon-not-insert-state-p minuet-auto-suggestion-block-functions ))
 #+end_src
 
 ** OpenStreetMaps
