@@ -16620,24 +16620,26 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
 
   (defun yant/mark-linked-email-after-todo-state-change ()
     "Remove track tag from a linked email :EMAIL-SOURCE: after the task is marked as finished."
-    (let* ((mystate (or (and (fboundp 'org-state) state)
-   		      (nth 2 (org-heading-components))))
-           (email-link (or (org-entry-get nil "EMAIL-SOURCE")
-                           (org-entry-get nil "LINK")
-                           ))
-           (email-link (and email-link
-                            (save-match-data
-                              (string-match "^\\(?:\\[\\[\\)?\\(notmuch.+?\\)\\(?:\\]\\]\\)?$" email-link)
-                              (match-string 1 email-link))))
-  	 (done-keywords org-done-keywords))
-      (when (and email-link
-                 (not (string-empty-p email-link)))
-        (save-match-data
-          (string-match "^notmuch:\\(.+\\)" email-link)
-          (setq email-link (match-string 1 email-link)))
-        (if (member mystate done-keywords)
-            (call-process notmuch-command nil nil nil "tag" "-track" "--" email-link)
-          (call-process notmuch-command nil nil nil "tag" "-todo" "--" email-link)))))
+    (condition-case _
+        (let* ((mystate (or (and (fboundp 'org-state) state)
+   			  (nth 2 (org-heading-components))))
+               (email-link (or (org-entry-get nil "EMAIL-SOURCE")
+                               (org-entry-get nil "LINK")
+                               ))
+               (email-link (and email-link
+                                (save-match-data
+  				(string-match "^\\(?:\\[\\[\\)?\\(notmuch.+?\\)\\(?:\\]\\]\\)?$" email-link)
+  				(match-string 1 email-link))))
+  	     (done-keywords org-done-keywords))
+  	(when (and email-link
+  		   (not (string-empty-p email-link)))
+  	  (save-match-data
+              (string-match "^notmuch:\\(.+\\)" email-link)
+              (setq email-link (match-string 1 email-link)))
+  	  (if (member mystate done-keywords)
+                (call-process notmuch-command nil nil nil "tag" "-track" "--" email-link)
+              (call-process notmuch-command nil nil nil "tag" "-todo" "--" email-link))))
+      ('outline-before-first-heading nil)))
 
   (add-hook 'org-after-todo-state-change-hook 'yant/mark-linked-email-after-todo-state-change 'append)
   (add-hook 'org-capture-before-finalize-hook 'yant/mark-linked-email-after-todo-state-change 'append)
