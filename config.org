@@ -12592,9 +12592,12 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
                        (lambda (hash author date)
                          (cl-letf (((symbol-function 'magit-make-margin-overlay)
                                     (lambda (text &rest _)
+                                      (let ((pos (point)))
+                                        (skip-chars-backward " \n\r")
+                                        (delete-region (point) pos))
                                       (insert " ("
                                               (replace-regexp-in-string "  +" " " text)
-                                              ")")))
+                                              ")\n")))
                                    (magit-buffer-margin '(t age 18 t 18)))
                            (magit-log-format-author-margin author date)))))
               (magit-git-wash (apply-partially #'magit-log-wash-log 'log)
@@ -12713,7 +12716,7 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
                                                 :name "Org Agenda Files"
                                                 :filter (unless search-archives-p
                                                           '(not (and (not (tags-local "ARCHIVE"))
-                                                                   (tags "ARCHIVE"))))
+                                                                     (tags "ARCHIVE"))))
                                                 :limit-count helm-candidate-number-limit)
                            ,helm-source-notmuch
                            ,(helm-make-source "External Commands" 'helm-external-commands
