@@ -8441,7 +8441,7 @@ are relevant to the context of the discussion. Those need to be cleaned up.
   		  (goto-char (point-max))
                     (text-property-search-backward 'gptel 'response)
   		  (delete-region (point) (point-max))
-  		  (insert "The prompt recognized from speech will be given below.  Repeat the prompt before answering it.  HOWEVER, if the prompt appears to have speed recognition artefacts, DO NOT ANSWER, BUT clarify about the intended meaning\n\n")
+  		  (insert "The prompt recognized from speech will be given below.  Repeat the prompt before answering it. It is IMPORTANT that you repeat the prompt exactly.  HOWEVER, if the prompt appears to have speed recognition artefacts, DO NOT ANSWER, BUT clarify about the intended meaning\n\n")
   		  (insert response)))
                  ;; Do nothing otherwise
                  (t nil))
