@@ -34,11 +34,12 @@ CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
 :END:
 
 #+begin_src emacs-lisp
-;; Setting this is not only fancy, but actually used
-;; for example, by yasnippet when filling elisp file header
-(setq user-full-name "Ihor Radchenko")
-(setq user-mail-address "yantar92@posteo.net")
-(setq force-load-messages t)
+  ;;  -*- lexical-binding: nil; -*-
+  ;; Setting this is not only fancy, but actually used
+  ;; for example, by yasnippet when filling elisp file header
+  (setq user-full-name "Ihor Radchenko")
+  (setq user-mail-address "yantar92@posteo.net")
+  (setq force-load-messages t)
 #+end_src
 
 I do not do much programming, but rather use Emacs as knowledge
@@ -125,9 +126,13 @@ You can find the public parts of OS setup in [[file:system-config.org]].
  
 Init-file, which loads this file.
 
+#+begin_src emacs-lisp :tangle "~/.emacs.d/init.el"
+  ;;  -*- lexical-binding: nil; -*-
+#+end_src
+
 #+begin_src emacs-lisp :tangle "~/.emacs.d/init.el"  :var el-file="~/.emacs.d/config.el"
-(setq init-flag t)
-(load el-file)
+  (setq init-flag t)
+  (load el-file)
 #+end_src
 
 ** Emacs server settings
@@ -3775,6 +3780,10 @@ Credit: [[id:4ebf4428-3ed3-42cd-9d6c-ddc2d949dd53][nv-elisp comments on Weekly t
     :config
     (meta-defun meta-next-buffer "Go forward in buffer." skip-buffers-next-buffer)
     (meta-defun meta-previous-buffer "Go backward in buffer." skip-buffers-previous-buffer)))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/Git/skip-buffers-mode/skip-buffers-mode.el :mkdirp yes :comments no
+;;  -*- lexical-binding: nil; -*-
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/Git/skip-buffers-mode/skip-buffers-mode.el :mkdirp yes
@@ -13556,6 +13565,7 @@ than work certain number of hours every workday.
   	     org-time-balance)
       (setq org-time-balance-save-time (or org-time-balance-update-time (current-time)))
       (with-temp-file org-time-balance-storage
+        (insert ";;  -*- lexical-binding: nil; -*-\n")
         (insert "(setq org-time-balance " (prin1-to-string org-time-balance) ")" "\n")
         (insert "(setq org-time-balance-lossage " (prin1-to-string org-time-balance-lossage) ")" "\n")
         (insert "(setq org-time-balance-save-time '" (prin1-to-string org-time-balance-save-time) ")"))))
