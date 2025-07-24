@@ -8929,6 +8929,9 @@ dev-util/hut::guru
 
 
 ** =lynx= browser to quickly dump URLs as plain text
+:PROPERTIES:
+:ID:       78c17191-8c4e-468e-ae8f-9bd02e9b011c
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
  www-client/lynx
