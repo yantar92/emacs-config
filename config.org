@@ -17662,17 +17662,49 @@ project.
   :config
   (require 'git-email-magit))
 #+end_src
-** Speed-to-text
+** Speech-to-text \\ whisper
 
 #+begin_src emacs-lisp
   (use-package whisper
     :straight (whisper :host github :repo "natrys/whisper.el")
+    :bind
+    ("<f6>" . whisper-run)
     :config
     (setq whisper-install-directory "~/Dist/"
   	whisper-model "base"
           whisper-language "en"
           whisper-translate nil
           whisper-use-threads (- (num-processors) 1)))
+#+end_src
+*** Mark whisper-transcribed text with =@voice=
+
+This is to automatically mark the text for [[id:427218f8-103b-43a6-952d-1c3f8a49a4e8][LLM chat \\ gptel]]
+
+#+begin_src emacs-lisp
+  (use-package whisper
+    :config
+    (defun yant/whisper-mark-text ()
+      "Mark text with @voice."
+      (save-excursion
+        (goto-char (point-max))
+        (insert " @voice")))
+    (add-hook 'whisper-after-transcription-hook #'yant/whisper-mark-text 90))
+#+end_src
+
+*** Automatically send to LLM when in =gptel-mode= buffers
+
+It is handy to press a key, talk, press one more key, and get the speech auto-transcribed and
+sent to LLM chat.
+
+#+begin_src emacs-lisp
+  (use-package whisper
+    :after gptel
+    :config
+    (defun yant/whisper-send-llm-after-insert-maybe ()
+      "Run `gptel-send' when `gptel-mode' is active."
+      (when gptel-mode (gptel-send)))
+    (setopt whisper-return-cursor-to-start nil)
+    (add-hook 'whisper-after-insert-hook #'yant/whisper-send-llm-after-insert-maybe))
 #+end_src
 
 ** Sensitive info :NOEXPORT:
