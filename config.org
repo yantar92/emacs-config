@@ -14658,7 +14658,7 @@ For now, I avoid capturing website text directly into org. Instead, I write my o
 
 #+begin_src emacs-lisp
   (when init-flag
-    (defvar yant/org-capture-archive-disk-threshold (* 5 1000 1000) ; 5GiB
+    (defvar yant/org-capture-archive-disk-threshold (* 8 1000 1000) ; 8GiB
       "Do not archive when free space is below this threshold.")
     (defvar yant/org-capture-archive-process nil)
     (defvar yant/org-capture-archive-markers nil)
