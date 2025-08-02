@@ -6480,7 +6480,6 @@ while true; do mail-monitor.sh; sleep 100; done &
       [[ "$x" == *"failed to sufficiently increase receive buffer size"* ]] && continue
       [[ "$x" == *"expunged"* ]] && continue
       [[ "$x" == *"Maildir notice: sleeping due to recent directory modification"* ]] && continue
-      [[ "$x" == *"failed to sufficiently increase receive buffer size"* ]] && continue
       [[ "$x" == *"No working address found"* ]] && continue
       [[ "$x" == *"gpg: decryption failed: Bad session key"* ]] && continue
       [[ "$x" == *"PassCmd exited with status 2"* ]] && continue
