@@ -8270,6 +8270,52 @@ Despite the usual big-tech concerns, it makes a decent:
       :stream t
       :key (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi-work"))))
 
+    (gptel-make-openai "Groq"               ;Any name you want
+      :host "api.groq.com"
+      :endpoint "/openai/v1/chat/completions"
+      :stream t
+      :key (lambda () (nth 0 (process-lines "pass" "show" "internet/groq-api")))
+      :models
+      '((qwen/qwen3-32b
+         :description "Qwen 3 32B is the latest generation of large language models in the Qwen series"
+         :capabilities (tool-use json reasoning)
+         :context-window 128
+         :input-cost 0.29
+         :output-cost 0.59)
+        (moonshotai/kimi-k2-instruct
+         :description "Mixture-of-Experts (MoE) language model with 1 trillion total parameters and 32 billion activated parameters"
+         :capabilities (tool-use json)
+         :context-window 128
+         :input-cost 1.00
+         :output-cost 3.00
+         :cutoff-date "2023-04")
+        (deepseek-r1-distill-llama-70b
+         :description "Distilled version of DeepSeek's R1 model, fine-tuned from the Llama-3.3-70B-Instruct base model"
+         :capabilities (tool-use json reasoning)
+         :context-window 131
+         :input-cost 0.75
+         :output-cost 0.99
+         :cutoff-date "2024-07")
+        (llama-3.3-70b-versatile
+         :description "Meta's advanced multilingual large language model, optimized for a wide range of natural language processing tasks"
+         :capabilities (tool-use json)
+         :context-window 128
+         :input-cost 0.59
+         :output-cost 0.79
+         :cutoff-date "2023-12")
+        (llama-3.1-8b-instant
+         :description "low-latency, high-quality responses suitable for real-time conversational interfaces, content filtering systems, and data analysis applications"
+         :capabilities (tool-use json)
+         :context-window 128
+         :input-cost 0.05
+         :output-cost 0.08
+         :cutoff-date "2023-12")
+        (gemma2-9b-it
+         :description "lightweight, state-of-the-art open model from Google, built from the same research and technology used to create the Gemini models"
+         :capabilities (tool-use json)
+         :context-window 8.1
+         :input-cost 0.20
+         :output-cost 0.20)))
 
     ;; More options
     (setq gptel-expert-commands t)
