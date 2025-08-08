@@ -8315,7 +8315,19 @@ Despite the usual big-tech concerns, it makes a decent:
          :capabilities (tool-use json)
          :context-window 8.1
          :input-cost 0.20
-         :output-cost 0.20)))
+         :output-cost 0.20)
+        (openai/gpt-oss-120b
+         :description "flagship open-weight MoE model with 120B total parameters"
+         :capabilities (tool-use json reasoning)
+         :context-window 132
+         :input-cost 0.15
+         :output-cost 0.75)
+        (openai/gpt-oss-20b
+         :description "compact open-weight Mixture-of-Experts (MoE) model with 20B total parameters"
+         :capabilities (tool-use json reasoning)
+         :context-window 132
+         :input-cost 0.10
+         :output-cost 0.50)))
 
     ;; More options
     (setq gptel-expert-commands t)
