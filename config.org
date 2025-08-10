@@ -589,29 +589,32 @@ I am not very comfortable with =auto-fill-mode=, so I prefer to limit the buffer
 comparison with [[id:3b4bfdc3-0a46-469d-a7f6-a470cb90f2ad][Centered window mode]] (major mode).
 
 #+begin_src emacs-lisp
-(use-package olivetti
-  :if init-flag
-  :straight t
-  :demand t
-  :hook ((text-mode notmuch-show-mode erc-mode Info-mode) . olivetti-mode)
-  :init
-  (setq-default olivetti-body-width 110)
-  (defun yant/set-olivetti-width ()
-    (cond
-     ((derived-mode-p 'Info-mode)
-      (setq-local olivetti-body-width nil))))
-  (add-hook 'olivetti-mode-hook #'yant/set-olivetti-width)
-  (setq olivetti-lighter
-  	(concat " "
-  		(propertize (all-the-icons-material "tablet")
-  	 		    'face `((:family "Material Icons")))))
-  (use-package boon
-    :defer t
+  (use-package olivetti
+    :if init-flag
+    :straight t
+    :demand t
+    :hook ((text-mode notmuch-show-mode erc-mode Info-mode) . olivetti-mode)
+    :init
+    (setq-default olivetti-body-width 110)
+    (defun yant/set-olivetti-width ()
+      (cond
+       ((derived-mode-p 'Info-mode)
+        (setq-local olivetti-body-width nil))))
+    (add-hook 'olivetti-mode-hook #'yant/set-olivetti-width)
+    (setq olivetti-lighter
+    	(concat " "
+    		(propertize (all-the-icons-material "tablet")
+    	 		    'face `((:family "Material Icons")))))
+    (use-package boon
+      :defer t
+      :config
+      (bind-keys :map boon-x-map ("w" . olivetti-mode)))
     :config
-    (bind-keys :map boon-x-map ("w" . olivetti-mode)))
-  :config
-  ;; Do not shadow cdlatex.
-  (unbind-key "C-c {" olivetti-mode-map))
+    ;; Do not shadow cdlatex.
+    (unbind-key "C-c {" olivetti-mode-map)
+    ;; Do not shadow `org-table-create-or-convert-from-region'.
+    ;; Credit: pinmacs
+    (unbind-key "C-c |" olivetti-mode-map))
 #+end_src
 
 **** Window boundaries
