@@ -5618,6 +5618,40 @@ after expressions.  Disable.
     (meta-defun meta-new-line :mode inferior-python-mode comint-send-input))
 #+end_src
 
+**** Script template
+
+#+begin_src conf :tangle ~/.emacs.d/etc/yasnippet/snippets/python-mode/script :noweb tangle :comments no :mkdirp yes
+  # -*- mode: snippet -*-
+  # name: script
+  # key: script
+  # --
+  #!/usr/bin/env python3
+  """${1:Script name}: ${2:A brief description of the script}.
+
+  Author: ${3:`(user-full-name)`}
+  Email: ${4:`user-mail-address`}
+  Version: ${5:1.0.0}
+  """
+  from __future__ import annotations
+
+  import click
+
+  @click.command()
+  def main($6  # Arguments/options
+  ):
+      """${7:Extended description of the command.}
+
+      \b
+      Examples:
+        $ ${1} ${8:example arguments}
+      """
+      click.echo("Running command: main")
+      $0  # Command implementation here
+
+  if __name__ == "__main__":
+      main()
+#+end_src
+
 *** Elisp coding
 :PROPERTIES:
 :CREATED:  [2019-07-08 Mon 20:50]
