@@ -4146,6 +4146,7 @@ dev-libs/jemalloc
       [[ "$x" == *"Fontconfig error: Cannot load default config file: No such file: (null)"* ]] && continue
       [[ "$x" == *"handshake failed; returned -1, SSL error code 1"* ]] && continue
       [[ "$x" == *"Message 4 rejected by interface"* ]] && continue
+      [[ "$x" == *"Trying to Produce a Skia representation from a non-existent mailbox"* ]] && continue
       [[ "$x" == *"Message 5 rejected by interface"* ]] && continue
       [[ "$x" == *"org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files"* ]] && continue
       [[ "$x" == "" ]] && continue
