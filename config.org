@@ -14769,7 +14769,7 @@ For now, I avoid capturing website text directly into org. Instead, I write my o
   				       (lambda (host) (string-match-p (regexp-quote host) url))
   				       (append (when (boundp 'yant/mastodon-hosts)
   						 yant/mastodon-hosts)
-  					       '("author.today")))))
+  					       '("author.today" "reddit.com")))))
   		  (attach-dir (or attach-dir (org-attach-dir-get-create))))
           (if (let ((free-bytes (nth 2 (file-system-info attach-dir))))
   	      (or (not free-bytes)
