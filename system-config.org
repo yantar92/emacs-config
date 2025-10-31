@@ -4212,6 +4212,7 @@ Bash config
   alias rsync="rsync -P"
   alias sshfs-lumi="sshfs lumi:/users/radchenk/data/ ~/lumi"
   alias sshfs-helios="sshfs helios:/net/storage/pr3/plgrid/plggkeytech/yantar92 ~/helios"
+  alias sshfs-athena="sshfs athena:/net/pr2/projects/plgrid/plggkeytech/yantar92/ ~/athena"
 
   if [ -f /usr/bin/grc ]; then
       alias ping="grc ping"
