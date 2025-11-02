@@ -2061,31 +2061,31 @@ This requires some customized key bindings.
    completions match the input
 
    #+begin_src emacs-lisp
-(use-package mct
-  :config
-  ;; Indicate the changed behavior by auto-highlighting the first
-  ;; completion.
-  (defun yant/select-first-completion ()
-    (let ((completions-window (get-buffer-window "*Completions*" 0)))
-      (when completions-window
-	(with-selected-window completions-window
-	  (first-completion)
-          (mct--completions-candidate-highlight)))))
+     (use-package mct
+       :config
+       ;; Indicate the changed behavior by auto-highlighting the first
+       ;; completion.
+       (defun yant/select-first-completion ()
+         (let ((completions-window (get-buffer-window "*Completions*" 0)))
+           (when completions-window
+     	(with-selected-window completions-window
+     	  (first-completion)
+               (mct--completions-candidate-highlight)))))
 
-  (add-hook 'completion-list-mode-hook #'yant/select-first-completion)
+       (add-hook 'completion-list-mode-hook #'yant/select-first-completion)
 
-  (defun yant/complete-minibuffer-selection ()
-    (interactive)
-    (let ((completions-window (get-buffer-window "*Completions*" 0)))
-      (if completions-window
-          (with-selected-window completions-window
-            (condition-case _
-		(mct-choose-completion-exit)
-              (error
-               (first-completion)
-               (mct-choose-completion-exit))))
-	(minibuffer-complete-and-exit))))
-  (bind-key "<RET>" #'yant/complete-minibuffer-selection minibuffer-local-must-match-map))
+       (defun yant/complete-minibuffer-selection ()
+         (interactive)
+         (let ((completions-window (get-buffer-window "*Completions*" 0)))
+           (if (and completions-window mct-mode)
+               (with-selected-window completions-window
+                 (condition-case _
+     		(mct-choose-completion-exit)
+                   (error
+                    (first-completion)
+                    (mct-choose-completion-exit))))
+     	(minibuffer-complete-and-exit))))
+       (bind-key "<RET>" #'yant/complete-minibuffer-selection minibuffer-local-must-match-map))
    #+end_src
 
 3. Insert selected completion candidate into minibuffer
