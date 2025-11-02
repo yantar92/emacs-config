@@ -8301,6 +8301,11 @@ Despite the usual big-tech concerns, it makes a decent:
     ;; Default model
     (setopt gptel-model  'gpt-4.1)
 
+    ;; Gemini
+    (gptel-make-gemini "Gemini-work"
+      :key  (lambda () (nth 0 (process-lines "pass" "show" "internet/geminiapi-work")))
+      :stream t)
+
     ;; DeepSeek
     (gptel-make-deepseek "DeepSeek"
       :stream t
