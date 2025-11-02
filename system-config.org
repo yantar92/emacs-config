@@ -6488,6 +6488,7 @@ while true; do mail-monitor.sh; sleep 100; done &
       [[ "$x" == *"Error: Cannot resolve server"* ]] && continue
       [[ "$x" == *"fetchmail: timeout after 300 seconds waiting to connect to server fencepost.gnu.org"* ]] && continue
       [[ "$x" == *"not flushed"* ]] && continue
+      [[ "$x" == *"fetchmail: couldn't find canonical DNS name"* ]] && continue
       [[ "$x" == *"No working address found for 127.0.0.1"* ]] && notify-send "Davmail not working" && continue
       [[ "$x" == *"NO LOGIN failed"* ]] && notify-send "Office365 or Hotmail account blocked. Update password via re-login in browser" && continue
       [[ "$x" == *"Account is blocked. Login to your account via a web browser to verify your identity."* ]] && notify-send "Hotmail account blocked. Login from browser" && continue
