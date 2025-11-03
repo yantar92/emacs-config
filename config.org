@@ -2656,15 +2656,16 @@ Do not even need terminal to interact with Git.
 ***** =forge= package
 
 #+begin_src emacs-lisp
-  ;; [2025-07-13 Sun] FIXME: straight.el recipies are broken, so had to do things manually here.
-  (use-package emacsql :straight (emacsql :host github :repo "magit/emacsql"))
-  (use-package closql :straight (closq :host github :repo "magit/closql"))
+  ;; Not known by straight.el recipes
+  (use-package cond-let :straight (cond-let :host github :repo "tarsius/cond-let"))
   (use-package forge
     :if init-flag
-    :straight (forge :host github :repo "magit/forge")
+    :straight t
     :after magit
+    :init
     :custom
     (forge-owned-accounts '(("yantar92" "emacsorphanage"))))
+
 #+end_src
 
 **** Activate insert state when editing commits
