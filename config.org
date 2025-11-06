@@ -10624,8 +10624,9 @@ The new files are usually coming from my Downloads (=yant/org-attach-default-sou
   	     :marked-candidates t))
       current-prefix-arg
       nil))
-    (unless (listp files) (setq files (list files)))
-    (mapc (lambda (file) (apply oldfun file args)) files))
+    (if (listp files)
+        (mapc (lambda (file) (apply oldfun file args)) files)
+      (apply oldfun files args)))
 #+END_SRC
 
 ***** Make it possible to attach directories (not only files)
