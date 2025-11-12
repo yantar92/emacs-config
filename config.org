@@ -42,7 +42,7 @@ CLOCK: [2017-12-28 Thu 17:59]--[2017-12-28 Thu 18:40] =>  0:41
   (setq force-load-messages t)
 #+end_src
 
-I do not do much programming, but rather use Emacs as knowledge
+I do not do as much programming, but rather use Emacs as knowledge
 base management tool. Most of the time, I do not even edit or type
 things directly, but read through the files. The main focus of this
 setup is =org-mode= and not as much programming, navigating through text
