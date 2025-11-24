@@ -17008,7 +17008,13 @@ CLOCK: [2018-09-06 Thu 21:10]--[2018-09-06 Thu 22:51] =>  1:41
     :straight t
     :init (require 'notmuch)
     :custom
-    (org-notmuch-open-function #'org-notmuch-follow-link))
+    (org-notmuch-open-function #'org-notmuch-follow-link)
+    :config
+    (defun yant/org-notmuch-open (search arg)
+      "Open SEARCH using `notmuch-show' by default but use `notmuch-tree' with prefix ARG."
+      (if arg (notmuch-tree search) (notmuch-show search)))
+    (plist-put (alist-get "notmuch" org-link-parameters nil nil #'equal)
+  	     :follow #'yant/org-notmuch-open))
 
   (use-package helm-notmuch
     :straight t
