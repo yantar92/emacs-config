@@ -8361,6 +8361,12 @@ Despite the usual big-tech concerns, it makes a decent:
          :context-window 8.1
          :input-cost 0.20
          :output-cost 0.20)
+        (groq/compound
+         :description "OpenAI's GPT-OSS 120B + Llama Scount + web search + code execution"
+         :capabilities (tool-use json reasoning)
+         :context-window 132
+         :input-cost 0.15
+         :output-cost 0.60)
         (openai/gpt-oss-120b
          :description "flagship open-weight MoE model with 120B total parameters"
          :capabilities (tool-use json reasoning)
