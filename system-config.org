@@ -6096,7 +6096,7 @@ The idea of the script is regular reminder to not spend too much money on certai
   EMERGENCY_FUND="$(echo "$MONTHLY_SPENDING_AVG * <<emergency-fund-months()>>" | bc -l)"
   BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g' | tail -n1)"
    if [[ "1" == "$(echo "$EMERGENCY_FUND > $BAL_EMERGENCY" | bc -l)" ]]; then
-       BAL_EMERGENCY="<span color=\"#FF0000\">$(echo "($BAL_EMERGENCY - $EMERGENCY_FUND)/$MONTHLY_INCOME_AVG" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')m</span>"
+       BAL_EMERGENCY="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$(echo "$BAL_EMERGENCY - $EMERGENCY_FUND" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')</span>"
    else
        if [[ "0" == "$EMERGENCY_FUND" ]]; then
   	 BAL_EMERGENCY="<span color=\"#FFFF00\">N/A</span>"
@@ -6166,7 +6166,16 @@ The idea of the script is regular reminder to not spend too much money on certai
    ASSETS="$(ledger bal -X <<ledger-main-currency()>> Assets -n  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
    EQUITY="$(ledger bal -X <<ledger-main-currency()>> Equity -n  -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g')"
    if [[ "1" == "$(echo "$RETIREMENT > ($ASSETS + $EQUITY)" | bc -l)" ]]; then
-       RETIREMENT="<span color=\"#FF0000\">$(echo "($ASSETS + $EQUITY - $RETIREMENT)/$MONTHLY_INCOME_AVG" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')m</span>"
+       if [[ "1" == "$(echo "$MONTHLY_INCOME_AVG > $MONTHLY_SPENDING_AVG" | bc -l)" ]]; then
+  	 RETIREMENT="$(echo "($ASSETS + $EQUITY - $RETIREMENT)/($MONTHLY_INCOME_AVG - $MONTHLY_SPENDING_AVG)" | bc -l)"
+  	 RETIREMENT="$(echo "$RETIREMENT" | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')"
+           RETIREMENT="${RETIREMENT}m"
+       else
+  	 RETIREMENT="$(echo "$ASSETS + $EQUITY - $RETIREMENT" | bc -l)"
+  	 RETIREMENT="$(echo "$RETIREMENT" | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')"
+           RETIREMENT="<<ledger-main-currency-symbol()>>${RETIREMENT}"
+       fi
+       RETIREMENT="<span color=\"#FF0000\">${RETIREMENT}</span>"
    else
        RETIREMENT="<span color=\"#00FF00\">ok</span>"
    fi
