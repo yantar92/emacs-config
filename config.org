@@ -8363,7 +8363,7 @@ Despite the usual big-tech concerns, it makes a decent:
          :output-cost 0.20)
         (groq/compound
          :description "OpenAI's GPT-OSS 120B + Llama Scount + web search + code execution"
-         :capabilities (tool-use json reasoning)
+         :capabilities (json reasoning)
          :context-window 132
          :input-cost 0.15
          :output-cost 0.60)
