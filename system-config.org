@@ -6115,9 +6115,9 @@ The idea of the script is regular reminder to not spend too much money on certai
   	 EXTRA="<span color=\"#FFFF00\">N/A</span>"
        else
   	 if [[ "1" == "$(echo "$CHECKING_EXTRA > $MONTHLY_SPENDING_AVG" | bc -l)" ]]; then
-  	     EXTRA="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$(echo "$CHECKING_EXTRA/1000.0" | bc -l | grep -oE '^-?[0-9]*\.?[0-9]{0,1}')k</span>"
+               printf -v EXTRA '<span color="#FF0000"><<ledger-main-currency-symbol()>>%.1fk</span>' $(echo "$CHECKING_EXTRA/1000.0" | bc -l)
   	 else
-  	     EXTRA="<<ledger-main-currency-symbol()>>$(echo "$CHECKING_EXTRA/1000.0" | bc -l | grep -oE '^-?[0-9]*\.?[0-9]{0,1}')k"
+               printf -v EXTRA '<<ledger-main-currency-symbol()>>%.1fk' $(echo "$CHECKING_EXTRA/1000.0" | bc -l)
   	 fi
        fi
    else
