@@ -3195,30 +3195,28 @@ The maximum file size is `yant/flycheck-file-size-threshold'."
 :END:
 
 #+begin_src emacs-lisp
-(use-package highlight-parentheses
-  :if init-flag
-  :demand t
-  :straight t
-  :diminish highlight-parentheses-mode
-  :init
-  (require 'modus-themes)
-  :custom
-  (highlight-parentheses-background-colors
-   `(,(face-background 'modus-themes-intense-red)
-     ,(face-background 'modus-themes-intense-magenta)
-     ,(face-background 'modus-themes-intense-blue)))
-  :config
-  (add-hook 'minibuffer-setup-hook #'highlight-parentheses-minibuffer-setup)
-  (dolist (hook
-	   '( prog-mode-hook helpful-mode-hook
-              debugger-mode-hook lisp-interaction-mode-hook))
-    (add-hook hook #'highlight-parentheses-mode)))
+  (use-package highlight-parentheses
+    :if init-flag
+    :demand t
+    :straight t
+    :diminish highlight-parentheses-mode
+    :init
+    (require 'modus-themes)
+    :custom
+    (highlight-parentheses-background-colors
+     (modus-themes-with-colors (list red-intense green-cooler)))
+    :config
+    (add-hook 'minibuffer-setup-hook #'highlight-parentheses-minibuffer-setup)
+    (dolist (hook
+  	   '( prog-mode-hook helpful-mode-hook
+                debugger-mode-hook lisp-interaction-mode-hook))
+      (add-hook hook #'highlight-parentheses-mode)))
 
-(use-package rainbow-delimiters
-  :if init-flag
-  :demand t
-  :straight t
-  :hook ((prog-mode lisp-interaction-mode) . rainbow-delimiters-mode))
+  (use-package rainbow-delimiters
+    :if init-flag
+    :demand t
+    :straight t
+    :hook ((prog-mode lisp-interaction-mode) . rainbow-delimiters-mode))
 #+end_src
 
 *** Highlight numbers
