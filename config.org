@@ -48,6 +48,11 @@ things directly, but read through the files. The main focus of this
 setup is =org-mode= and not as much programming, navigating through text
 and not as much editing.
 
+[2025-12-03 Wed] Well. I do a lot more programming these days. Both at
+work (Python, oh well) and as Org mode maintainer. But I am materials
+scientist by training, although I was interested in algorithms during
+school and early into my bachelor.
+
 This Emacs configuration allows loading Emacs in both interactive and
 batch modes. It is controlled by special variable, identifying
 startup mode:
