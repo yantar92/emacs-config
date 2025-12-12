@@ -12996,7 +12996,7 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
     (helm-org-ql-reverse-paths t)
     (helm-org-ql-show-paths nil)
     (helm-org-ql-input-idle-delay 0.1)
-    (helm-candidate-number-limit 300)
+    (helm-candidate-number-limit 100)
     :config
     (require 'helm-org-ql)
     (require 'helm-notmuch)
