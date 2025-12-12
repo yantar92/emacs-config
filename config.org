@@ -2663,6 +2663,8 @@ Do not even need terminal to interact with Git.
 #+begin_src emacs-lisp
   ;; Not known by straight.el recipes
   (use-package cond-let :straight (cond-let :host github :repo "tarsius/cond-let"))
+  ;; For Emacs < 31
+  (use-package sqlite3 :straight t)
   (use-package forge
     :if init-flag
     :straight t
