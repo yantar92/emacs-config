@@ -1,6 +1,7 @@
 # -*- after-save-hook: (org-babel-tangle); -*-
 :PROPERTIES:
 :ID:       922b85aa-b01d-47ac-b34e-99201b7f9abf
+:header-args:org: :tangle no
 :END:
 #+AUTHOR: Ihor Radchenko
 #+EMAIL: yantar92@posteo.net
