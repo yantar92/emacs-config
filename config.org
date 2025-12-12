@@ -8301,13 +8301,30 @@ Despite the usual big-tech concerns, it makes a decent:
     :straight t
     :after boon
     :custom
+    ;; Need to be lower for non-latin queries.
+    (gptel-curl-file-size-threshold 50000)
     (gptel-api-key (lambda () (nth 0 (process-lines "pass" "show" "internet/openai-key"))))
     (gptel-default-mode 'org-mode)
     :config
-
     ;; Default model
-    (setopt gptel-model  'gpt-4.1)
+    (setopt gptel-model  'gpt-5-mini)
+    (setq gptel-expert-commands t)
+    ;; Org mode integration
+    (require 'gptel-org)
+    (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "# LLM\n")
+    (setf (alist-get 'org-mode gptel-response-prefix-alist) "# LLM response\n")
+    (bind-key "C-l" #'gptel-send boon-insert-map)
+    (bind-key "C-l" #'gptel-send boon-command-map))
+#+end_src
 
+*** Models
+
+I am not limited to one provider. Can mix and match and compare.
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :config
+    
     ;; Gemini
     (gptel-make-gemini "Gemini-work"
       :key  (lambda () (nth 0 (process-lines "pass" "show" "internet/geminiapi-work")))
@@ -8384,66 +8401,483 @@ Despite the usual big-tech concerns, it makes a decent:
          :capabilities (tool-use json reasoning)
          :context-window 132
          :input-cost 0.10
-         :output-cost 0.50)))
-
-    ;; More options
-    (setq gptel-expert-commands t)
-
-    ;; Org mode integration
-    (require 'gptel-org)
-    (setopt gptel-org-branching-context t)
-    (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "# LLM\n")
-    (setf (alist-get 'org-mode gptel-response-prefix-alist) "# LLM response\n")
-
-    (bind-key "C-l" #'gptel-send boon-insert-map)
-    (bind-key "C-l" #'gptel-send boon-command-map))
+         :output-cost 0.50))))
 #+end_src
 
-*** TODO System prompt
+*** System prompt
 :PROPERTIES:
 :ID:       b5a5fd31-9618-4406-9de6-f39daa7d8871
 :END:
 
-LLMs are undoubtly useful, but, by default, often tend to make
-assumptions about what I am asking about. These assumption can backfire in some
-cases. So, I configure LLM to be more proactive before answering questions
-and clarify all kinds of possible ambiguities first.
+The default gptel prompt is simple, mostly asking to be concise and
+telling that we are in Emacs. But we can do *much* better.
+
+I can tell LLM about my general priorities. I can ask to catch my common
+blind spots. I can define how I prefer LLM to behave and how I do not
+want it to behave. (This is not just about talking in funny language
+-- I can disable certain patterns LLMs are trained for to satisfy
+general auditory and instead nudge it to fit *me*). I can even define
+certain protocols to follow, like summarizing chats at the end of
+discussion or hunting ambiguities or deficiencies in my logic (no
+fluffy language when I make mistakes!).
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :init
+    (defvar yant/gptel-system-prompt-default-functions nil
+      "List of strings or functions to build default prompt.")
+    (add-hook
+     'yant/gptel-system-prompt-default-functions
+     (lambda () (format "Today is %s" (format-time-string "%Y-%m-%d %a %H:%M %Z")))
+     -1)
+    :config
+    (setf (alist-get 'default gptel-directives)
+  	(lambda ()
+            "Personal profile"
+  	  (with-temp-buffer
+              (dolist (el yant/gptel-system-prompt-default-functions)
+                (pcase el
+  		((pred functionp) (insert (funcall el)))
+                  ((pred stringp) (insert el)))
+                (insert "\n\n"))
+              (buffer-string))))
+    (setq gptel--system-message (alist-get 'default gptel-directives)))
+#+end_src
+
+**** Workflow setup
+
+More generally, I setup a number of workflow protocol to LLM to follow, adding
+a brief description to the system message. It is basically like tools, but
+more prompt-like.
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :init
+    (defvar yant/gptel-llm-workflow-setup
+      "Some tools define /thinking workflows/ (e.g. clarification, challenge layer, session wrap).
+  When their descriptions match the situation, call them even if you could answer directly; they return protocols/instructions that you should follow."
+      "LLM instruction to follow workflow protocols.")
+    (add-hook 'yant/gptel-system-prompt-default-functions
+  	    ;; at the end
+  	    yant/gptel-llm-workflow-setup 50)
+    :config
+    (use-package gptel
+      :config
+      (cl-defun yant/gptel-make-workflow (&key name description workflow)
+        "Create new workflow tool NAME with DESCRIPTION.
+  DESCRIPTION should clearly describe when to use the workflow.
+  WORKDLOW should contain the workflow as text."
+        (let ((name-symbol (intern (format "yant/gptel-workflow-%s" name))))
+  	(defvar-1
+           name-symbol workflow
+  	 (format "Gptel workflow definition for %s" name))
+  	(gptel-make-tool
+  	 :function `(lambda () ,name-symbol)
+  	 :confirm nil
+  	 :name name
+  	 :description (concat "Thinking workflow: " description)
+  	 :category "workflow")))))
+#+end_src
+
+**** Personalized prompt
+:PROPERTIES:
+:ID:       cd21cbf0-a035-4e8c-9cd4-bd45ab5b2433
+:END:
+
+I can tell LLM things about me, my preferences, my strategic and
+tactical goals. In fact, I can run LLM asking to be psychologist for a
+bit to identify my tendencies. Then, use it to generate something the
+is most helpful to me and my current life state. Targeting my weak
+points is something nice to have.
+
+More specifically, I instruct LLM about:
+1. My values, preferences, behavior under stress, emotional directions
+2. Current life priorities
+3. Setup specific reasoning style, ask to avoid fluff/disclaimers and
+   other things I do not like
+4. Spot when I go meandering in my reasoning
+5. Generally watch for problematic patterns in my chats and warn
+6. Keep track of my blind spots and flag them
+
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :init
+    (defvar yant/gptel-user-profile-file
+      "~/PersonalDocuments/llm-user-card-medium.org"
+      "Path to the high-level user profile file for the LLM.")
+    (defvar yant/gptel-user-profile-current-file
+      "~/PersonalDocuments/llm-user-card-current.org"
+      "Path to the current (tactical) user profile file for the LLM.")
+    (add-hook 'yant/gptel-system-prompt-default-functions
+  	    (lambda () (org-file-contents yant/gptel-user-profile-file))
+              1)
+    (add-hook 'yant/gptel-system-prompt-default-functions
+  	    (lambda () (org-file-contents yant/gptel-user-profile-current-file))
+              1))
+#+end_src
+
+In addition to static prompt addressing generic information about me,
+I maintain dynamically generated tactical goal prompt allowing LLM to
+be aware about my recent context: current projects, goals, recent
+preferences, etc. This is done by maintaining self-updated tactical
+user profile + LLM memory.
+
+The user profile is updated after every chat, taking into account previous chats
+stored in memory.
 
 #+begin_src emacs-lisp
   (use-package gptel
     :config
-    (setf (alist-get 'default gptel-directives)
-  	" *Before responding to any query, follow this workflow:*
-   
-   1. *Check for ambiguities, inconsistencies or lack of clarity* in the query.
-      - Consider scope, intended use, missing details, logical contradictions, potentially false facts, and ambiguous phrasing.
-      - Pay extra attention to queries about software versions, APIs, current events, or anything that might depend on recent developments.
-      - If you notice the question concerns information that may postdate your knowledge cutoff, flag this explicitly.
-      - If you notice logical contraditions, flag them explicitly
-      - If you notice potentially incorrect facts in the query, make sure to ask for confirmation about these facts
-   2. *If ambiguities OR contradictions OR potentially false facts OR possible knowledge limitations exist,* do all of the following:
-      - List clear, specific clarification questions or requests for more information.
-      - If a more up-to-date answer or real-time info is needed, recommend the use of the appropriate tool(s), e.g., internet search, URL fetching, etc.
-      - If a potentially false fact is detected, request explicit confirmation to use that fact or to provide a correction
-      - Do NOT answer any part of the original question, and do NOT guess or assume outdated information is still correct.
-      - Wait for user clarification, tool results, or user direction before proceeding.
-      - If user ignores any of the questions asked, ask the missed questions again, clearly indicating the missed questions.
-   3. *Repeat steps 1–2 as necessary* until the query is fully clear and any necessary external info is available.
-   4. ONLY THEN, construct your final answer using all clarified and externally-sourced information.
+    
+    (defun yant/gptel-tool-update-current-season (context)
+      "Update [USER PROFILE — CURRENT SEASON] based on CONTEXT.
 
-   ,*Formatting:*
-   - Present clarification or data-needs as a numbered list.
-   - If a tool (like =search_web= or =read_webpage=) should be used, clearly state _which_ tool is recommended and for what purpose.
-   - Say \"Awaiting clarification and/or external information before answering.\"
+  Reads `yant/gptel-user-profile-current-file`, asks the model to update
+  it, writes it back, and returns the updated profile as a string."
+      (message "update season -- Starting query: %S" context)
+      (let* ((current-profile
+  	    (with-temp-buffer
+                (when (file-readable-p yant/gptel-user-profile-current-file)
+  		(insert-file-contents yant/gptel-user-profile-current-file))
+                (buffer-string)))
+             (prompt
+  	    "
+  You maintain the user's evolving profile for this LLM.
 
-   ,*Example (for software version ambiguity):*
-   - User query: \"How do I use the 'foo' method in pandas?\"
-   - Your response:
-       1. \"Which version of pandas are you using? The API may have changed recently.
-       2. Should I fetch the latest documentation or perform an internet search for you?
-       Awaiting your response or external information before answering.\"
-"))
+  Current profile:
+  <<<PROFILE>>>
+
+  Conversation context:
+  <<<CONTEXT>>>
+
+  Your job is to update ONLY the \"[USER PROFILE — CURRENT SEASON]\"
+  block, and only when there is clear, substantive NEW information.
+
+  STRICT RULES:
+
+  1. Treat the CURRENT PROFILE as the primary truth.
+     - You are updating it, not rewriting it from scratch.
+     - Preserve existing items unless they are clearly contradicted or
+       explicitly superseded by the conversation.
+
+  2. Do NOT treat isolated meta-testing or one-off experiments as a new \"chapter\".
+     - Phrases like \"this is a test\", \"just experimenting\", and
+       similar meta interactions are usually context, not a new life
+       chapter.
+     - Only change the Chapter when there is strong, explicit signal of
+       a real shift in focus (e.g. a new long-term goal, a finished or
+       abandoned previous chapter).
+
+  3. Be conservative about changes:
+     - Only modify:
+       - Chapter,
+       - Active projects,
+       - Current constraints,
+       - Near-term priorities
+       when there is clear evidence of a real, ongoing change.
+     - If a change seems temporary, small, or purely meta-experimental,
+       DO NOT promote it to Chapter or Active projects. At most, it may
+       slightly adjust constraints or near-term priorities.
+
+  4. If nothing materially changed:
+     - Keep the profile ALMOST IDENTICAL.
+     - You may refine wording for clarity, but avoid semantic changes.
+
+  5. Respect stability of key themes from static profile:
+     - The items from static profile should remain unless the user
+       explicitly says they are no longer relevant. If the user does,
+       suggest re-evaluating the static profile.
+     - Do NOT remove or demote key items without very clear, repeated
+       evidence.
+
+  TASK:
+
+  Using the CURRENT PROFILE as a base, and considering only NEW or
+  CHANGED information from the conversation (plus any long-term memory
+  or knowledge graph tools you may call):
+
+  - Update the existing \"[USER PROFILE — CURRENT SEASON]\" block to reflect:
+    - Chapter (what season they are in now, only if clearly changed),
+    - Active projects (add/remove/adjust only when sustained changes are clear),
+    - Current constraints,
+    - Near-term priorities.
+
+  - When in doubt about whether something should become a Chapter-level
+    theme or an Active project, err on the side of NOT changing the
+    Chapter or project list.
+
+  OUTPUT FORMAT (IMPORTANT):
+
+  - Return a single, self-contained org block starting with:
+    [USER PROFILE — CURRENT SEASON]
+  - Preserve the general structure (Chapter / Active projects / Current
+    constraints / Near-term priorities), but update contents as needed.
+  - Do NOT include any commentary, explanation, tool call logs, or
+    markdown fencing.  Only the profile text.
+  ")
+             (final-prompt
+              (thread-last
+                prompt
+  	      (replace-regexp-in-string "<<<PROFILE>>>" (or current-profile ""))
+  	      (replace-regexp-in-string "<<<CONTEXT>>>" context)))
+             (modtime (file-attribute-access-time
+  		     (file-attributes yant/gptel-user-profile-current-file))))
+        ;; Gptel call
+        (with-current-buffer (get-buffer-create " *yant/gptel-tool-update-current-season*")
+  	(kill-all-local-variables)
+          (erase-buffer)
+          (let ((gptel-use-tools t)
+                (gptel-tools
+                 (delq nil
+  		     (mapcar
+  		      (lambda (tool) (when (equal "mcp-memory" (gptel-tool-category tool))))
+                        gptel-tools))))
+            (message "%s" final-prompt)
+  	  (gptel-request final-prompt
+  	    :system
+  	    "You update the user's current-season profile. Follow instructions exactly."
+  	    :callback
+  	    (lambda (response inner-info)
+  	      (message "response:: %S" response)
+                (pcase response
+  		((pred stringp)
+  		 (when (and response
+  			    (string-match
+                               "\\[USER PROFILE — CURRENT SEASON\\]"
+                               response))
+  		   (with-temp-file yant/gptel-user-profile-current-file
+                       (insert (string-trim response))))
+  		 response)
+  		(`(tool-call . ,tool-calls) (gptel--accept-tool-calls response))
+  		(_ nil))))))
+        (while (not (org-file-newer-than-p
+  		 yant/gptel-user-profile-current-file modtime))
+  	(sleep-for 1))
+        (with-temp-buffer
+  	(insert-file-contents yant/gptel-user-profile-current-file)
+          (buffer-string))))
+    (push
+     (gptel-make-tool
+      :function #'yant/gptel-tool-update-current-season
+      :confirm t
+      :name "update_current_season_profile"
+      :description "Update the user's [USER PROFILE — CURRENT SEASON] based on the given conversation context. Returns the updated profile block."
+      :args (list '(:name "context"
+  			:type string
+  			:description "Conversation transcript or summary to base the profile update on"))
+      :category "workflow")
+     gptel-tools))
 #+end_src
+
+**** Simple prompt for quick Q&A
+
+All the above is heavyweight and consumes lots of tokens.
+For simpler tasks and lightweight models, I use a much shorter prompt.
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :init
+    (defconst yant/gptel-directive-simple
+      "You are a concise Q&A assistant for a technically literate user.
+    Behavior:
+    - Answer directly and briefly (ideally 1–3 sentences).
+    - If the question is ambiguous, ask one short clarifying question before answering.
+    - Do not invent detailed context about the user; treat each question as mostly local.
+    - If a question clearly touches potential impactful decisions, say so explicitly and recommend that the user re‑ask a stronger model.
+
+    At the very end of your reply, add exactly one line:
+      [MODEL_HINT: <ok|use-stronger> REASON:<one short sentence>]
+
+    Examples:
+      [MODEL_HINT: ok REASON:Local syntax question; current answer sufficient.]
+      [MODEL_HINT: use-stronger REASON:Touches long-term finances; deeper reasoning recommended.]
+
+    No other lines may start with \"[MODEL_HINT:\"."
+      "System prompt for fast, cheap Q&A.")
+
+    (defun gptel-mini ()
+      "Run `gptel' setting the model to gpt-5-nano."
+      (interactive)
+      (with-current-buffer (call-interactively #'gptel)
+        (setq-local gptel-model 'gpt-oss-20b)
+        (setq-local gptel--system-message yant/gptel-directive-simple))))
+#+end_src
+
+**** Model self-assessment
+
+Sometimes, the model strength does not match the discussion.
+Then, I can ask the model self-assess and suggest cheaper/strong model
+to make sure that I do not overuse strong models without missing on strength
+for important things.
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :config
+    (defun yant/gptel-name-model ()
+      "Produce information about current model for the purposes of the prompt."
+      (format "You are a large language model named %s. Your description: %s"
+  	    gptel-model
+  	    (get gptel-model :description)))
+    (add-hook 'yant/gptel-system-prompt-default-functions
+  	    #'yant/gptel-name-model -1)
+    (defconst yant/gptel-self-assesment-directive
+      "Model hierarchy and cost awareness
+
+  You may assume that:
+
+  - There exist models that are /stronger / more capable / more
+    expensive/ than the current one.
+  - There exist models that are /lighter / cheaper / less capable/ than
+    the current one.
+  - Your own capabilities and intended use can be inferred from the
+    model description provided in the system prompt (for example: terms
+    like “flagship”, “most powerful”, “reasoning model”, “best
+    price/performance”, “fastest & cheapest”, “lightweight”, etc.).
+
+  Interpret these phrases roughly as:
+
+  - /Stronger models/: better reasoning and reliability on complex or
+    high‑stakes tasks, but higher cost.
+  - /Lighter models/: sufficient for simple, local, clearly low‑risk
+    questions, but not ideal for deep, subtle, or high‑consequence work.
+
+  Role‑based behavior (based on your description)
+
+  From the model description, infer your approximate role:
+
+  - If you are described as *“flagship”, “most powerful”, “most intelligent”, or similar*
+    → treat yourself as a /top/flagship tier/ model.
+
+  - If you are described as *“best price/performance”, “strong default”, or similar*  
+    → treat yourself as a /mid tier/ model.
+
+  - If you are described as *“fastest & cheapest”, “lightweight”, “lite”, or similar*  
+    → treat yourself as a /low tier/ model, intended mainly for simple, low‑risk tasks.
+
+  Model self‑assessment and hints
+
+  Occasionally, you may help the user choose a better‑suited model. Follow these rules:
+
+  - By default, assume the current model is acceptable and DO NOT output any special hint.
+
+  - Only when you have a /clear/ opinion that the model tier should be different, add exactly one line at the very end of your reply, in this format:
+
+    ⚠⚠⚠ [MODEL_HINT: <use-stronger|use-lighter> REASON:<one short sentence>]
+
+    where:
+
+    - =use-stronger= means:  
+      Given the stakes and complexity of this conversation, a /stronger, more capable, more expensive/ model would clearly be advisable.
+
+    - =use-lighter= means:  
+      The task is clearly /simple, local, and low‑risk/ enough that a /lighter, cheaper/ model would have been sufficient.
+
+  ,*Important role‑specific restrictions:*
+
+  - If you are a *flagship / top‑tier* model (per your description):
+    - You *MAY NOT* emit =use-stronger=. Assume there is no substantially stronger tier above you for this purpose.
+    - You *MAY* emit =use-lighter= when the task is clearly simple, local, and low‑risk, and a cheaper model would have been sufficient.
+
+  - If you are a *mid‑tier* model:
+    - You *MAY* emit both =use-stronger= and =use-lighter=, depending on your assessment of stakes and complexity.
+
+  - If you are a *low‑tier* model:
+    - You *MAY* emit =use-stronger= when the task looks high‑stakes, complex, or subtle.
+    - You should *rarely* (almost never) emit =use-lighter=, since you are already a light/cheap tier.
+
+  Additional guidance for REASON:
+
+  - The =REASON= should be one short sentence explaining why, ideally referencing at least one of:
+    - /Consequence/ – e.g. affects long‑term life decisions, governance, critical data, production systems, or long‑lived infrastructure.
+    - /Permanence/ – e.g. will be executed, published, or reused as a reference.
+    - /Complexity/ – e.g. non‑trivial multi‑step reasoning, cross‑document consistency, subtle edge cases, or security implications.
+    - /Ambiguity/ – e.g. the prompt is underspecified in a way that makes subtle mistakes likely and costly.
+
+  Examples:
+
+    [MODEL_HINT: use-stronger REASON:Touches long-term financial allocation; deeper and more reliable reasoning is advisable.]  
+    [MODEL_HINT: use-lighter REASON:Single short factual lookup with low consequence; a cheaper model would be sufficient.]
+
+  Rules about the hint line:
+
+  - Never output =[MODEL_HINT: ok]= or any variant.  
+    If the current model is fine, output /no hint line at all/.
+
+  - No other lines may start with =[MODEL_HINT:=.  
+    When present, the hint line must be the /final line/ of the reply.
+  "
+      "Self-assessment model directive to check whether it is appropriate.")
+    (add-hook 'yant/gptel-system-prompt-default-functions yant/gptel-self-assesment-directive 1))
+#+end_src
+**** Guardrails against over-trust to AI
+
+AI is nice. A lot of time. So much that you may start trusting it by default.
+But that's an illustion. AI can and do make mistakes. And you can't predict when
+as with human. There is no predictable competence area AI is familiar
+with. You never know when AI does not know and is making up things
+(for whatever reason - be it a lack of context or problem with
+analysis or fact mixing). So, it is useful to shape the answers in such a way
+that you get reminded about this problem.
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :config
+    (defconst yant/gptel-guardrails-directive
+      "
+  [AI GUARDRAILS – USE & TRUST]
+
+  For this user:
+
+  - Treat all non-trivial outputs as hypotheses, not conclusions.
+  - Non-trivial = anything that affects design decisions, code, Org architecture, finances, or controversial topics, or that summarizes “memory” across notes/emails.
+
+  USER-SIDE GUARDRAILS
+  - Reference rule:
+    - If a non-trivial claim or recommendation matters, it should have at least one independent check (docs, tests, original notes, or my own reasoning).
+    - A “reference” from the model is a pointer to check, NOT proof. I only accept the claim after I:
+      - open the reference and see it actually supports the claim, OR
+      - confirm it via another source or my own reasoning.
+
+  - Draft-first stance:
+    - I will treat all non-trivial outputs as drafts or hypotheses.
+    - When an answer feels “surprisingly good” or “comfortably right”, I will assume it is HIGH-RISK for being wrong or incomplete and:
+      - pause, and
+      - explicitly look for 1–2 ways it might be wrong, or what could be missing.
+
+  - Memory summaries:
+    - When using AI to summarize or integrate past chats/notes/emails, I assume:
+      - chunking may be off,
+      - correct and incorrect details may be mixed.
+    - Before acting on a memory-based summary for anything important, I will check at least one underlying source (original Org entry, email, or note).
+
+  AI-SIDE BEHAVIOR
+  - Uncertainty & assumptions:
+    - For non-trivial or controversial claims, or memory-like summaries:
+      - flag assumptions and potential weak spots explicitly.
+      - avoid “pure confidence” tone when evidence is incomplete.
+    - When in doubt, prefer language like:
+      - “This is a plausible pattern; please verify against [X].”
+      - “This part relies on inference; check the original source.”
+
+  - Reference handling:
+    - When providing references:
+      - present them as candidate sources to check, not as proof.
+      - if a reference is only thematically related or not clearly supporting the specific claim, say so.
+
+  - Critical helper:
+    - When the user asks for reasoning, design advice, or memory summaries:
+      - occasionally prompt them to sanity-check (e.g., “Do you want to verify this against [manual/doc/note]?”).
+      - be willing to highlight where things might be wrong, incomplete, or assumption-heavy, even if the answer sounds good.
+
+  DEFAULT STANCE
+  - Confidence of wording ≠ correctness.
+  - Outputs are tools for the user’s judgment, not replacements for it.
+  "
+      "Guardrails for AI output.")
+    (add-hook 'yant/gptel-system-prompt-default-functions yant/gptel-guardrails-directive 1))
+#+end_src
+
 
 *** Prevent Org headings in responses
 
@@ -8467,33 +8901,6 @@ Prevent that by forcing everything to be a list.
   	  (call-interactively #'org-toggle-item)
             (deactivate-mark)))))
     (add-hook 'gptel-post-response-functions #'yant/itemize-text))
-#+end_src
-*** Add GPT-4o Search Preview
-:PROPERTIES:
-:ID:       2a495c5c-2186-4c7e-a86c-bd7b754d2a0c
-:END:
-
-#+begin_src emacs-lisp
-  (use-package gptel
-    :if init-flag
-    :config
-    (gptel-make-openai
-        "ChatGPT-search"
-      :key 'gptel-api-key
-      :stream t
-      :models
-      '((gpt-4o-search-preview
-         :description
-         "GPT model for web search in Chat Completions"
-         :capabilities (json url)
-         :context-window 128 :input-cost 2.5 :output-cost 10
-         :cutoff-date "2023-10")
-        (gpt-4o-mini-search-preview
-         :description
-         "GPT model for web search in Chat Completions"
-         :capabilities (json url)
-         :context-window 128 :input-cost 0.15 :output-cost 0.60
-         :cutoff-date "2023-10"))))
 #+end_src
 *** Presets
 
@@ -8557,7 +8964,7 @@ are relevant to the context of the discussion. Those need to be cleaned up.
   		  (goto-char (point-max))
                     (text-property-search-backward 'gptel 'response)
   		  (delete-region (point) (point-max))
-  		  (insert "The prompt recognized from speech will be given below.  Repeat the prompt before answering it. It is IMPORTANT that you repeat the prompt exactly.  HOWEVER, if the prompt appears to have speed recognition artefacts, DO NOT ANSWER, BUT clarify about the intended meaning\n\n")
+  		  (insert "The prompt recognized from speech will be given below.  Repeat the prompt before answering it. It is IMPORTANT that you repeat the prompt exactly.  HOWEVER, if the prompt appears to have speech recognition artefacts, DO NOT ANSWER, BUT clarify about the intended meaning\n\n")
   		  (insert response)))
                  ;; Do nothing otherwise
                  (t nil))
@@ -8568,257 +8975,524 @@ are relevant to the context of the discussion. Those need to be cleaned up.
 #+end_src
 
 *** Tools
-**** Elisp tools
 
-From
-https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba38b27c259/README.org#custom-tools
+A collection of tools and MCP servers.
 
-#+begin_src emacs-lisp :noweb yes
+**** Memory
+
+This one is important - keep conversation history *locally*.
+See [[id:SESSION_WRAP_V1][Session Wrap & Memory Scan]] and [[id:cd21cbf0-a035-4e8c-9cd4-bd45ab5b2433][Personalized prompt]].
+
+#+begin_src elisp
+  (use-package mcp
+    :straight t
+    :after gptel
+    :config
+    (require 'mcp-hub)
+    (push '("memory"
+  	  :command "memory-mcp-server-go"
+  	  :args ("--memory" "/home/yantar92/PersonalDocuments/memory.db"
+                   "--storage" "sqlite"))
+  	mcp-hub-servers)
+    (require 'gptel-integrations)
+    (mcp-hub-start-all-server #'gptel-mcp-connect '("memory")))
+#+end_src
+
+**** Workflow protocols
+
+These are specialized workflows I expose to LLMs.
+They are not generic tools, but prompt augmentations to trigger
+certain LLM logic when conditions are met.
+
+***** Clarification & ambiguity control
+:PROPERTIES:
+:ID:       CLARIFICATION_SERIOUS
+:END:
+
+#+begin_src emacs-lisp :var workflow=workflow-clarification[]
   (use-package gptel
     :config
-    <<emacs_package_readme>>
-    <<emacs_package_source>>
-    <<emacs_function_source>>
-    <<emacs_variable_documentation>>
-    <<emacs_info_manuals>>
-    <<list_man_pages>>
-    <<bufedit>>
-    )
+    (push
+     (yant/gptel-make-workflow
+      :name "clarification_serious"
+      :description "Use by default EXCEPT when *all* of the following are true:
+   1. *The question is a simple lookup or narrow technical how‑to*
+      - Single fact / value / definition  
+        /or/  
+      - A concrete “how do I do X?” for a specific technical operation
+        (e.g. one pandas/bash/Emacs action).
+
+   2. *No structural or long‑term impact is implied*
+      - Not about the key personal priorities
+
+   3. *No real tradeoffs or major assumptions are required*
+      - The answer doesn’t require choosing between priorities or
+        inventing missing constraints.
+
+   4. *User hasn’t explicitly requested the protocol*
+      - If the user says “treat this as structural/serious”, “use
+        clarification protocol”, or “help me think this through”, *do*
+        run the protocol even if the question looks simple.
+
+   If any of the above are not satisfied → *run the full clarification protocol.*
+  "
+      :workflow workflow)
+     gptel-tools))
 #+end_src
 
-***** Package readme
 
-#+name: emacs_package_readme
-#+begin_src emacs-lisp :tangle no
-  (require 'find-func)
+#+name: workflow-clarification
+#+begin_src org
+  ,*Before responding to query, follow this workflow:*
 
-  (defun gjg/locate-readme-in-directory (dir)
-    "Find the first regular file in DIR whose name starts with 'readme' (case-insensitive).
-  Return the full path to the file, or nil if no such file is found
-  or if DIR is not a valid directory."
-    (when (file-directory-p dir)
-      (let* ((case-fold-search t)
-             (readme-filename (seq-find (lambda (fname)
-                                          (and (string-match-p "^readme" fname)
-                                               (file-regular-p (expand-file-name fname dir))))
-                                        ;; Get directory contents, excluding "." and ".."
-                                        (directory-files dir nil "[^.]")))) ; Use dir arg
+    1. *Check for ambiguities, inconsistencies or lack of clarity* in the query.
+       - Consider scope, intended use, missing details, logical contradictions, potentially false facts, and ambiguous phrasing.
+       - Pay extra attention to queries about software versions, APIs, current events, or anything that might depend on recent developments.
+       - If you notice the question concerns information that may postdate your knowledge cutoff, flag this explicitly.
+       - If you notice logical contraditions, flag them explicitly
+       - If you notice potentially incorrect facts in the query, make sure to ask for confirmation about these facts
+    2. *If ambiguities OR contradictions OR potentially false facts OR possible knowledge limitations exist,* do all of the following:
+       - List clear, specific clarification questions or requests for more information.
+       - If a more up-to-date answer or real-time info is needed, recommend the use of the appropriate tool(s), e.g., internet search, URL fetching, etc.
+       - If a potentially false fact is detected, request explicit confirmation to use that fact or to provide a correction
+       - Do NOT answer any part of the original question, and do NOT guess or assume outdated information is still correct.
+       - Wait for user clarification, tool results, or user direction before proceeding.
+       - If user ignores any of the questions asked, ask the missed questions again, clearly indicating the missed questions.
+    3. *Repeat steps 1–2 as necessary* until the query is fully clear and any necessary external info is available.
+    4. ONLY THEN, construct your final answer using all clarified and externally-sourced information.
 
-        ;; If suitable file was found, return its full path
-        (when readme-filename
-          (expand-file-name readme-filename dir)))))
+    ,*Formatting:*
+    - Present clarification or data-needs as a numbered list.
+    - If a tool (like =search_web= or =read_webpage=) should be used, clearly state _which_ tool is recommended and for what purpose.
+    - Say "Awaiting clarification and/or external information before answering."
 
-  (defun gjg/extract-emacs-package-readme (package-name)
-    "Extract and return the README file for package PACKAGE-NAME.
-  This version attempts to robustly find the source directory for
-  packages, including those managed by straight.el.
-  Return =nil' if no README was found."
-    (if (stringp package-name)
-        (let* (;; 1. Get the path to the library file as Emacs knows it (e.g., .../straight/build/PKG/PKG.el)
-               (library-file-in-load-path (find-library-name package-name))
+    ,*Example (for software version ambiguity):*
+    - User query: "How do I use the 'foo' method in pandas?"
+    - Your response:
+        1. "Which version of pandas are you using? The API may have changed recently.
+        2. Should I fetch the latest documentation or perform an internet search for you?
+        Awaiting your response or external information before answering."
 
-               ;; 2. Get the canonical, true path to this library file.
-               ;; For straight.el, if library-file-in-load-path is a symlink like
-               ;; .../build/PKG/PKG.el -> .../repos/PKG/PKG.el,
-               ;; this will resolve to .../repos/PKG/PKG.el.
-               (true-library-file-path (when library-file-in-load-path
-                                         (file-truename library-file-in-load-path)))
-
-               ;; 3. Get the directory containing the true library file.
-               ;; This should be the actual source directory (e.g., .../straight/repos/PKG/).
-               (package-source-dir (when true-library-file-path
-                                     (file-name-directory true-library-file-path)))
-
-               ;; 4. Locate the README within this source directory using your helper.
-               ;; gjg/locate-readme-in-directory returns an absolute path.
-               (readme-full-path (when (and package-source-dir (file-directory-p package-source-dir))
-                                   (gjg/locate-readme-in-directory package-source-dir))))
-
-          (if readme-full-path
-              (with-temp-buffer
-                (goto-char (point-min))
-                (insert (format "README file for package %s (from directory %s):\n\n"
-                                package-name
-                                ;; Show the directory where the README was actually found
-                                (file-name-directory readme-full-path))) ; This is package-source-dir
-                (insert-file-contents readme-full-path)
-                (buffer-string))
-            (progn
-              ;; More detailed warning for debugging
-              (warn (format (concat "No README file found for package '%s'.\n"
-                                    "  Searched in directory: %s\n"
-                                    "  Library file in load-path: %s\n"
-                                    "  Resolved true library file path: %s")
-                            package-name
-                            (or package-source-dir "unknown or not a directory")
-                            (or library-file-in-load-path "not found by find-library-name")
-                            (or true-library-file-path "could not be resolved by file-truename")))
-              nil)))
-      (progn
-        (warn "PACKAGE-NAME argument must be the package name as a string.")
-        nil)))
-
-  (gptel-make-tool
-   :name "emacs_package_readme"
-   :description "Return the README file for a package - please use this to understand what a package does prior to deciding whether to pull the package source code."
-   :category "reflection"
-   :include t
-   :function #'gjg/extract-emacs-package-readme
-   :args (list '(:name "package_name"
-  		     :type string
-  		     :description "Name of the Emacs package."
-  		     :optional nil)))
 #+end_src
-***** Package source code
 
-#+name: emacs_package_source
-#+begin_src emacs-lisp :tangle no
-  (defun gjg/extract-emacs-package-source (package &optional FULL)
-    "Extract and return a simple structured text document with the primary source for package PACKAGE.
-  If FULL is not nil, return all source files."
-    (if (stringp package)
-        (let* ((library-path (find-library-name package))
-               (all-elisp (directory-files (f-dirname library-path) t ".*\\.el\\(\\.gz\\)?$")))
-          (with-temp-buffer
-            ;; run through the list of .el files
-            ;; start with the "primary" .el file, returned by =find-library-name=
+***** Constructive friction Protocol
+:PROPERTIES:
+:ID: CHALLENGE_LAYER
+:END:
 
-            (goto-char (point-min))
-            (insert (format "\n* file %s (primary)\n" library-path))
-            (insert "#+begin_src emacs-lisp\n")
-            (insert-file library-path)
-            (goto-char (point-max))
-            (insert "\n#+end_src\n")
-            (when FULL
-              (dolist (file (remove library-path all-elisp))
-                (insert (format "\n* file %s\n" file))
-                (insert "#+begin_src emacs-lisp\n")
-                (insert-file file)
-                (goto-char (point-max))
-                (insert "\n#+end_src\n")))
-            (buffer-string)))
-      (warn "PACKAGE must be the package name as a string.")))
-
-  (gptel-make-tool
-   :name "emacs_package_source"
-   :description "Fetch all source code for the given Emacs package, using `find-library'."
-   :category "reflection"
-   :include nil
-   :function #'gjg/extract-emacs-package-source
-   :args (list '(:name "package_name"
-                       :type string
-                       :description "Name of the Emacs package."
-                       :optional nil)
-               '(:name "full_source"
-                       :type boolean
-                       :description "If true/t, return source from ALL source code files in the package, not just the primary source file. Let this default in most cases to save on tokens!"
-                       :optional t)))
+#+begin_src emacs-lisp :var workflow=workflow-challange-layer[]
+  (use-package gptel
+    :config
+    (push
+     (yant/gptel-make-workflow
+      :name "challenge_layer"
+      :description "When to use:
+- For serious/high-stakes topics (strategies, architectures, policies,
+  long-term tradeoffs, key communications).
+- After giving a main answer, when the user has not explicitly opted out
+  of critique.
+- Use this for anything that looks consequential; no extra permission needed."
+      :workflow workflow)
+     gptel-tools))
 #+end_src
-***** Emacs function source
 
-#+name: emacs_function_source
-#+begin_src emacs-lisp :tangle no
-  (defun gjg/extract-function-source (function-name)
-    "Extract and return the source code of a callable FUNCTION-NAME, if possible."
-    (when (fboundp (intern function-name))
-      (let ((source))
-        (condition-case err
-            ;; `find-function-noselect' returns the buffer and position.
-            (let ((buf-pos (find-function-noselect (intern function-name))))
-              (when buf-pos
-                (let ((buffer (car buf-pos))
-                      (pos (cdr buf-pos)))
-                  (with-current-buffer buffer
-                    (save-excursion
-                      (goto-char pos)
-                      (let ((start (point)))
-                        ;; Move to the end of the function definition.
-                        (end-of-defun)
-                        ;; Extract source code.
-                        (setq source (buffer-substring-no-properties start (point)))))))))
-          (error
-           ;; Handle errors gracefully by printing a message.
-           (message "Error finding source for %s: %s" function-name (error-message-string err))))
-        source)))
 
-  ;; Usage example
-  ;; (my-extract-callable-source 'your-function-name)
+#+name: workflow-challange-layer
+#+begin_src org
+  GOAL:
+  - Add a concise “challenge layer” that stress-tests the answer without derailing it.
 
-  (gptel-make-tool
-   :name "emacs_function_source"
-   :include t
-   :function #'gjg/extract-function-source
-   :description "Return source code for Emacs functions, be they written in Emacs Lisp (Elisp) or C"
-   :category "reflection"
-   :args (list '(:name "function_name"
-                       :type string
-                       :description "the function name"
-                       :optional nil)))
+  STEPS:
+    1. Confirm this is a serious/high-stakes topic.
+       - If unsure, err on the side of *not* adding heavy critique.
+    2. Identify 2–4 of the most assumption-heavy or consequential parts of your answer.
+    3. For each, generate one of:
+       - A devil’s-advocate view or alternative hypothesis.
+       - A key risk, failure point, or missing constraint.
+       - A second-/third-order effect or unintended consequence.
+       - What a skeptical or critical stakeholder might say.
+    4. Present these as a clearly separated “Challenge Layer” section, in calm, precise tone:
+       - Critique ideas, not the user.
+       - Keep it concise (bullets or short paragraphs).
+    5. If the user seems overloaded or explicitly asks for brevity:
+       - Limit to 1–2 core challenge points.
+       - Optionally phrase as questions (e.g. “Two things to double-check: …”).
+
+  NOTES:
+    - Do not re-argue the entire answer; focus on leverage points.
+    - If the user explicitly declines critique, skip this workflow even for serious topics.
+
 #+end_src
-***** Emacs variable value and documentation
 
-#+name: emacs_variable_documentation
-#+begin_src emacs-lisp :tangle no
-  (gptel-make-tool
-   :name "emacs_variable_properties"
-   :include t
-   :function (lambda (variable)
-               (let ((variable (if (symbolp variable)
-                                   variable
-                                 (intern variable)
-                                 )))
-                 (if (boundp variable)
-                     (symbol-plist variable)
-                   (format "Variable %s is not bound" variable))))
+***** Session Wrap & Memory Scan
+:PROPERTIES:
+:ID: SESSION_WRAP
+:END:
 
-   :description "Get properties on an Emacs variable.  Use this to get documentation string for variables, as well as more obscure properties such as safety as local variable etc."
-   :category "reflection"
-   :args (list '(:name "variable"
-                       :type string
-                       :description "the symbol")))
+#+begin_src emacs-lisp :var workflow=workflow-session-wrap[]
+  (use-package gptel
+    :config
+    (push
+     (yant/gptel-make-workflow
+      :name "session_wrap"
+      :description "When to use:
+  - Near the end of a substantial session (multiple messages, non-trivial topic).
+  - Especially when:
+    - We made concrete decisions, or
+    - We updated plans/systems, or
+    - The user seems to want closure (“let’s wrap”, “that’s enough for now”)."
+      :workflow workflow)
+     gptel-tools))
 #+end_src
-***** Summarize all installed Info manuals
 
-#+name: emacs_info_manuals
-#+begin_src emacs-lisp :tangle no
-  (defun gjg/get-info-manuals-with-description ()
-    "Return text of all Info manuals with their simple descriptions.
-  This is what you see when you evoke C-h i or run (info)."
-    (with-temp-buffer
-      (Info-insert-dir)
-      (buffer-substring-no-properties (point-min) (point-max))))
+#+name: workflow-session-wrap
+#+begin_src org
+    GOAL:
+    - Provide a concise wrap-up.
+    - Surface potential long-term memory updates (Season profile, KG memory).
+    - Avoid forcing extra cognitive load if the user is tired.
 
-  (gptel-make-tool
-   :name "emacs_info_manuals"
-   :include nil
-   :function #'gjg/get-info-manuals-with-description
-   :description "Get text showing all known Info manuals with their description. Format is human-readable manual name, info manual short file name in parens, description."
-   :category "reflection")
+    STEPS:
+    1. Check user energy/intent from recent messages.
+       - If they explicitly want to stop quickly or seem overloaded:
+         - Aim for a *minimal* wrap (1–3 bullets).
+       - Otherwise, proceed normally.
+
+    2. Produce a brief wrap-up for this session:
+       - 2–5 bullets maximum, covering:
+         - Key decisions or conclusions.
+         - Non-obvious insights or reframings.
+         - Next concrete actions (if any).
+
+    3. Scan for potential long-term memory candidates:
+       - Consider:
+         - Season/Profile-level changes (chapter, long-running projects, constraints).
+         - Durable Facts/Summaries for the Knowledge-Graph memory.
+       - If nothing clearly long-term emerged, skip this step and finish.
+
+    4. If there are clear candidates, *ask explicitly*:
+       - Example phrasing:
+         - “There are 1–2 things that look like long-term memory candidates (season profile / KG facts).”
+         - “Do you want me to:
+            (a) suggest an update to your Season profile,
+            (b) suggest KG memory entries,
+            (c) skip memory updates for now?”
+       - Respect the answer fully (including “skip”).
+
+    5. If user chooses Season profile update:
+       - Summarize the proposed change in 1–2 sentences.
+       - Use the `update_current_season_profile` tool with a focused `context`
+         that contains only what is needed to adjust the Season block.
+       - Show the updated profile block (or key delta) back to the user.
+
+    6. If user chooses KG memory update:
+       - Identify 1 Topic (or at most 2) that best matches this session.
+       - Propose:
+         - One Session name (e.g. session:YYYY-MM-DD-1),
+         - One Summary (2–4 sentences),
+         - 1–3 Facts (each 1–2 precise sentences).
+       - If they confirm, run `KG_MEMORY_WRITE_V1` with that material.
+
+    7. Close the session with:
+       - A short confirmation of what (if anything) was written to long-term memory.
+       - Otherwise, a simple “No long-term memory changes this time” note.
+     
+    NOTES:
+    - Do *not* push for Season or KG updates every time; step 3 may often decide “nothing long-term here”.
+    - Keep all wrap-up text concise; this is not a second answer, just a digest.
+
 #+end_src
-***** List man pages
 
-#+name: lisp_man_pages
-#+begin_src emacs-lisp :tangle no
-  (defun gjg/list-linux-man-pages (&optional s)
-    "Return text showing installed Linux man pages with descriptions - optionally provide a substring match to limit the number of results."
-    (let ((s (or s ""))
-          (shell-command-dont-erase-buffer nil))
-      (with-current-buffer "*man-pages*"
-        (delete-region (point-min) (point-max))
-        (shell-command (format "LANG=en_US.UTF-8 /usr/bin/man -k \"%s\"" s) t)
-        (buffer-string)
-        )))
+***** Memory check
+:PROPERTIES:
+:ID:       MEMORY_CHECK
+:END:
 
-  (gptel-make-tool
-   :name "list_man_pages"
-   :description "Return list of installed Linux man pages with descriptions - optionally provide a substring match to limit the number of results."
-   :include nil
-   :function #'gjg/list-linux-man-pages
-   :category "reflection"
-   :args (list '(:name "search_substring"
-                       :type string
-                       :optional t
-                       :description "A substring to limit results of all man pages.  e.g. \"media\" or \"office\"")))
+#+begin_src emacs-lisp :var workflow=workflow-memory-check[]
+  (use-package gptel
+    :config
+    (push
+     (yant/gptel-make-workflow
+      :name "memory_check"
+      :description "When to use:
+- ALWAYS use at the start of a new session."
+      :workflow workflow)
+     gptel-tools))
+#+end_src
+
+#+NAME: workflow-memory-check
+#+begin_src org
+  GOAL:
+  - Detect whether memory-retrival tools are available.
+  - If they are not, explicitly report this and avoid memory-dependent behavior.
+
+  STEPS:
+  1. Inspect MCP capabilities / tool list.
+  2. Check specifically for the presence of:
+     - create_entities
+     - create_relations
+     - add_observations
+     - search_nodes
+     - open_nodes
+     - (optional, for cleanup only) delete_entities, delete_relations, delete_observations
+  3. If *all* required tools (at least: create_entities, create_relations,
+     add_observations, search_nodes, open_nodes) are available:
+     - Note internally that memory is usable in this environment.
+     - Proceed with other memory workflows when appropriate.
+  4. If *any* required tool is missing or the server is unreachable:
+     - Tell the user in a single concise sentence, for example:
+       - "⚠ Knowledge-graph memory tools (e.g. create_entities, search_nodes) are not available from the Go memory-mcp-server here, so I’ll use only in-session memory (and any alternative the OS describes)."
+     - Do NOT attempt further memory operations in this session unless the tools become available later.
+     - Fall back to:
+       - In-session reasoning, and
+       - Any non-KG memory mechanisms explicitly described in the OS (e.g. summary files, Org notes), if present.
+
+  NOTES:
+  - Never silently assume KG tools exist.
+  - This workflow should be very cheap; it is primarily a guard-rail.
+#+end_src
+
+***** Memory recall
+:PROPERTIES:
+:ID:       MEMORY_RECALL
+:END:
+
+#+begin_src emacs-lisp :var workflow=workflow-memory-recall[]
+  (use-package gptel
+    :config
+    (push
+     (yant/gptel-make-workflow
+      :name "memory_recall"
+      :description "When to use:
+- Before answering a question where past conversations or decisions on
+  a known topic might be relevant.
+- When the user is working again on something with a clear Topic
+  (e.g. gptel memory, finance, community docs, Emacs setup).
+- When the user explicitly asks you to “use past memory” or “look up
+  what we decided earlier”.
+"
+      :workflow workflow)
+     gptel-tools))
+#+end_src
+
+#+NAME: workflow-memory-recall
+#+begin_src org
+  GOAL:
+  - Retrieve a small, relevant subset of the knowledge graph:
+    - Mostly Summaries and Facts,
+    - Scoped by Topic and Session,
+    - To inject as compact context for the current task.
+
+  SCHEMA REMINDER:
+  - Entity types: Session, Summary, Fact, Topic.
+  - Relation types:
+    - Session --has summary--> Summary
+    - Session --has fact-->    Fact
+    - Summary --about-->       Topic
+    - Fact --about-->          Topic
+
+  STEPS:
+  1. Identify the Topic(s) for this task.
+     - Infer one or more Topic names from:
+       - The current project/domain (e.g. finance, emacs, gptel-memory, community-docs).
+       - The file/directory context if known.
+       - Explicit user instructions (“this is about finance”, “this is about memory architecture”).
+     - Construct Topic names as: topic:<name>, e.g.:
+       - topic:gptel-memory
+       - topic:finance
+       - topic:emacs
+     - If uncertain, ask the user which Topic label(s) are appropriate.
+
+  2. Search for relevant nodes using search_nodes.
+     - For each Topic name, call search_nodes with a *specific* query string, e.g.:
+       - "topic:gptel-memory"
+       - "topic:finance"
+     - Avoid ultra-broad or vague queries like "memory" or "project" that could return large, unfocused sets.
+     - Optionally, also search by entity name prefixes for known patterns, e.g.:
+       - "summary:2025-12-06-gptel-memory"
+       - "fact:gptel-memory"
+
+  3. Optionally open specific known entities with open_nodes.
+     - If you or the user refer to a concrete entity by name (e.g. a known summary):
+       - Call open_nodes with a list of names, for example:
+         - ["summary:2025-12-06-gptel-memory-v0"]
+     - This returns that entity and its directly related nodes (Sessions, Topics, Facts).
+
+  4. From the returned graph, select relevant Summaries and Facts.
+     - Among all entities in the response:
+       - First prioritize:
+         - Summary entities whose names or observations clearly match the requested Topic.
+         - Fact entities linked to the same Topic (via "about" relations) or to a recent Session related to the Topic.
+       - De-emphasize:
+         - Very old Sessions if clearly superseded.
+         - Entities whose observations are clearly unrelated to the current question.
+     - You do not need to use every node returned; pick a small, coherent subset.
+
+  5. Construct a compact textual memory context.
+     - From the selected entities, produce a short, structured text block to feed into the model’s working context, for example:
+
+       - Past knowledge (KG memory for topic:gptel-memory):
+         - Summary [2025-12-06-gptel-memory-v0]:
+           - We adopted a simple KG schema: Session, Summary, Fact, Topic.
+           - We use Go memory-mcp-server as KG backend and avoid embeddings for now.
+         - Fact [gptel-memory:backend-choice]:
+           - User prefers Go memory-mcp-server over @modelcontextprotocol/server-memory due to JSON bloat.
+         - Fact [gptel-memory:org-desire]:
+           - User ultimately prefers Org-based, inspectable storage but is okay with JSONL KG initially.
+
+     - Keep this block concise:
+       - Summaries: a few bullet-like lines each.
+       - Facts: one sentence each where possible.
+
+  6. Use the memory context explicitly in reasoning.
+     - When answering the user’s current question:
+       - Treat the constructed memory block as authoritative past context unless it conflicts with explicit new information from the user.
+       - If conflicts appear, point them out and ask the user how to resolve them.
+
+  7. Avoid heavy operations.
+     - Do *not* use read_graph in normal operation; it returns the entire graph and can be large.
+     - Prefer:
+       - search_nodes with specific queries, and
+       - open_nodes for exact entity names.
+       - If a search seems to return too much data, narrow the query (e.g. include the Topic name or a more specific slug).
+
+  NOTES:
+  If memory_check has previously determined that KG tools are
+  unavailable in this environment, do not attempt this workflow;
+  instead, rely on in-session context or any alternative memory
+  described in the OS.
+
+#+end_src
+
+***** Memory save
+:PROPERTIES:
+:ID:       MEMORY_SAVE
+:END:
+
+#+begin_src emacs-lisp :var workflow=workflow-memory-save[]
+  (use-package gptel
+    :config
+    (push
+     (yant/gptel-make-workflow
+      :name "memory_save"
+      :description "When to use:
+- After an important chat or cohesive work chunk that the user wants
+  to persist as long-term memory.
+- When the user explicitly says \"remember this\", \"please store this\", or similar.
+- When a conversation produced reusable facts or a stable summary that will matter in future sessions.
+"
+      :workflow workflow)
+     gptel-tools))
+#+end_src
+
+#+name: workflow-memory-save
+#+begin_src org
+  GOAL:
+  - Encode the conversation into the knowledge graph using a small fixed schema:
+    - Entity types: Session, Summary, Fact, Topic.
+    - Relation types: "has summary", "has fact", "about".
+  - Keep stored observations concise and avoid dumping full transcripts.
+
+  SCHEMA REMINDER:
+  - Entity types:
+    - Session  — one per important conversation or work chunk.
+    - Summary  — short, high-level textual summary of a Session.
+    - Fact     — atomic, reusable knowledge points.
+    - Topic    — stable coarse buckets, e.g. topic:gptel-memory, topic:finance.
+
+  - Naming conventions:
+    - Session : session:YYYY-MM-DD-N          (e.g. session:2025-12-06-1)
+    - Summary : summary:YYYY-MM-DD-<slug>    (e.g. summary:2025-12-06-gptel-memory-v0)
+    - Fact    : fact:<topic>:<short-slug>    (e.g. fact:gptel-memory:backend-choice)
+    - Topic   : topic:<name>                 (e.g. topic:gptel-memory)
+
+  - Relations (active voice):
+    - Session --has summary--> Summary
+    - Session --has fact-->    Fact
+    - Summary --about-->       Topic
+    - Fact --about-->          Topic
+
+  STEPS:
+  1. Identify Topic(s).
+     - From the conversation, infer one or more Topic names, e.g.:
+       - topic:gptel-memory
+       - topic:finance
+       - topic:emacs
+       - topic:community-docs
+     - If uncertain, ask the user which Topic label(s) to use.
+
+  2. Ensure Topic entity(ies) exist.
+     - For each Topic name, call create_entities with:
+       - name:       "topic:<name>"
+       - entityType: "Topic"
+       - observations: a short description, if not already present, e.g.:
+         - "All notes about configuring persistent KG-based memory for gptel in Emacs."
+     - It is safe if the server ignores duplicates; do not worry about re-creating an existing Topic.
+
+  3. Create a Session entity for this conversation.
+     - Choose a Session name: session:YYYY-MM-DD-N (N is a small counter or unique suffix).
+     - Call create_entities with:
+       - name:       "session:YYYY-MM-DD-N"
+       - entityType: "Session"
+       - observations: 1–3 concise sentences, for example:
+         - "Main focus: designing local KG-based memory for gptel."
+         - "Context: Emacs, MCP, Go memory-mcp-server, Gentoo."
+         - "Outcome: adopted small KG schema (Session, Summary, Fact, Topic) for memory."
+
+  4. Create a Summary entity for this Session.
+     - Pick a summary name: summary:YYYY-MM-DD-<slug>.
+     - Call create_entities with:
+       - name:       "summary:YYYY-MM-DD-<slug>"
+       - entityType: "Summary"
+       - observations: 2–5 short bullet-like sentences that capture:
+         - the key decisions,
+         - the main reasoning, and
+         - any important constraints.
+       - Do NOT include full transcripts; keep each observation short and clear.
+
+  5. Create one or more Fact entities.
+     - Identify atomic, reusable facts from the conversation (1 idea per Fact).
+     - For each Fact:
+       - Choose name: fact:<topic>:<short-slug>
+         - Use a short, meaningful slug, e.g. backend-choice, org-desire, tax-constraint.
+       - Call create_entities with:
+         - entityType: "Fact"
+         - observations: 1–3 precise sentences capturing the idea, for example:
+           - "User prefers Go memory-mcp-server over @modelcontextprotocol/server-memory due to JSON bloat."
+           - "User ultimately prefers Org-based, inspectable storage but accepts JSONL KG for now."
+
+  6. Connect Session, Summary, Facts, and Topics with relations.
+     - Call create_relations with all of the following (as applicable):
+       - From Session to Summary:
+         - from: "session:YYYY-MM-DD-N"
+         - to:   "summary:YYYY-MM-DD-<slug>"
+         - relationType: "has summary"
+       - From Session to each Fact:
+         - from: "session:YYYY-MM-DD-N"
+         - to:   "fact:<topic>:<short-slug>"
+         - relationType: "has fact"
+       - From Summary to each Topic:
+         - from: "summary:YYYY-MM-DD-<slug>"
+         - to:   "topic:<name>"
+         - relationType: "about"
+       - From each Fact to each relevant Topic:
+         - from: "fact:<topic>:<short-slug>"
+         - to:   "topic:<name>"
+         - relationType: "about"
+
+  7. For refinements or corrections, prefer add_observations.
+     - If you need to add extra nuance to an existing Summary or Fact:
+       - Use add_observations with:
+         - entityName: the entity’s name
+         - contents:   additional short observation strings.
+     - Only create new Summary/Fact entities when the new content is clearly a distinct idea, not just a refinement.
+
+  8. Keep everything concise.
+     - Observations should be short, precise sentences.
+     - Avoid storing long raw answers or transcripts.
+
+  NOTES:
+  - Do not perform cleanup (delete_entities / delete_relations / delete_observations) unless the user explicitly asks for corrections or removal.
 #+end_src
 
 **** Web tools
@@ -8866,7 +9540,6 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
     :args (list '( :name "query"
   		 :type string
   		 :description "The search query string"))
-    :include t
     :category "web")
    gptel-tools)
 
@@ -8946,127 +9619,6 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
              :description "Content to write to the buffer"))
    :confirm t
    :category "edit")
-#+end_src
-
-**** COMMENT Editing files
-
-from https://github.com/karthink/gptel/wiki/Tools-collection
-#+name: filesystem
-#+begin_src emacs-lisp :tangle no
-  (gptel-make-tool
-   :function (lambda (filepath)
-               (with-temp-buffer
-                 (insert-file-contents (expand-file-name filepath))
-                 (buffer-string)))
-   :name "read_file"
-   :description "Read and display the contents of a file"
-   :args (list '( :name "filepath"
-  		:type string
-  		:description "Path to the file to read. Supports relative paths and ~."))
-   :category "filesystem")
-
-  (gptel-make-tool
-   :function (lambda (directory)
-               (mapconcat #'identity
-                          (directory-files directory)
-                          "\n"))
-   :name "list_directory"
-   :description "List the contents of a given directory"
-   :args (list '( :name "directory"
-  		:type string
-  		:description "The path to the directory to list"))
-   :category "filesystem")
-
-  (gptel-make-tool
-   :function (lambda (parent name)
-               (condition-case nil
-                   (progn
-                     (make-directory (expand-file-name name parent) t)
-                     (format "Directory %s created/verified in %s" name parent))
-                 (error (format "Error creating directory %s in %s" name parent))))
-   :name "make_directory"
-   :description "Create a new directory with the given name in the specified parent directory"
-   :args (list '( :name "parent"
-  		:type string
-  		:description "The parent directory where the new directory should be created, e.g. /tmp")
-               '( :name "name"
-  		:type string
-  		:description "The name of the new directory to create, e.g. testdir"))
-   :confirm t
-   :category "filesystem")
-
-  (gptel-make-tool
-   :function (lambda (path filename content)
-               (let ((full-path (expand-file-name filename path)))
-                 (with-temp-buffer
-                   (insert content)
-                   (write-file full-path))
-                 (format "Created file %s in %s" filename path)))
-   :name "create_file"
-   :description "Create a new file with the specified content"
-   :args (list '( :name "path"
-  		:type string
-  		:description "The directory where to create the file")
-               '( :name "filename"
-  		:type string
-  		:description "The name of the file to create")
-               '( :name "content"
-  		:type string
-  		:description "The content to write to the file"))
-   :confirm t
-   :category "filesystem")
-
-  (defun my-gptel--edit_file (file-path file-edits)
-    "In FILE-PATH, apply FILE-EDITS with pattern matching and replacing."
-    (if (and file-path (not (string= file-path "")) file-edits)
-        (with-current-buffer (get-buffer-create "*edit-file*")
-          (erase-buffer)
-          (insert-file-contents (expand-file-name file-path))
-          (let ((inhibit-read-only t)
-                (case-fold-search nil)
-                (file-name (expand-file-name file-path))
-                (edit-success nil))
-            ;; apply changes
-            (dolist (file-edit (seq-into file-edits 'list))
-              (when-let ((line-number (plist-get file-edit :line_number))
-                         (old-string (plist-get file-edit :old_string))
-                         (new-string (plist-get file-edit :new_string))
-                         (is-valid-old-string (not (string= old-string ""))))
-                (goto-char (point-min))
-                (forward-line (1- line-number))
-                (when (search-forward old-string nil t)
-                  (replace-match new-string t t)
-                  (setq edit-success t))))
-            ;; return result to gptel
-            (if edit-success
-                (progn
-                  ;; show diffs
-                  (ediff-buffers (find-file-noselect file-name) (current-buffer))
-                  (format "Successfully edited %s" file-name))
-              (format "Failed to edited %s" file-name))))
-      (format "Failed to edited %s" file-path)))
-
-  (gptel-make-tool
-   :function #'my-gptel--edit_file
-   :name "edit_file"
-   :description "Edit file with a list of edits, each edit contains a line-number,
-  a old-string and a new-string, new-string will replace the old-string at the specified line."
-   :args (list '( :name "file-path"
-                  :type string
-                  :description "The full path of the file to edit")
-               '( :name "file-edits"
-                  :type array
-                  :items (:type object
-                                :properties
-                                (:line_number
-                                 (:type integer :description "The line number of the file where edit starts.")
-                                 :old_string
-                                 (:type string :description "The old-string to be replaced.")
-                                 :new_string
-                                 (:type string :description "The new-string to replace old-string.")))
-                  :description "The list of edits to apply on the file"))
-   :confirm t
-   :category "filesystem")
 #+end_src
 
 **** COMMENT Running commands
@@ -9279,7 +9831,7 @@ and tried in the past. Everything tailored to my personal needs.
 #+begin_src emacs-lisp
   (setq org-element--cache-self-verify 'backtrace
         ;; record logs, but only check critical crashes
-        org-element--cache-self-verify-frequency 0.00
+        org-element--cache-self-verify-frequency 0.000
         org-element--cache-diagnostics-ring-size 50000)
 #+end_src
 
@@ -10674,6 +11226,9 @@ This way allows to keep all the file attached to the project accessible with rel
 ****************** TODO I do not handle the situation when the entry uid is being changed..
 Try to look in symlinks?
 ****************** END
+:PROPERTIES:
+:ID: 37e02ecc-e612-4bd7-8460-a8df49d0d85a
+:END:
 
 For the implementation, the idea is keeping all the actual attachments in a common folder for all the org files according to their uuid. As a result, I can safely refile tasks between different org files without worrying about moving the attachments around (assuming that there is not change in the task ids).
 
@@ -10907,11 +11462,15 @@ Now, when I have the mirror attach folder structure, it make sense to open this 
 ****************** HOLD [#A] because of org-attach API change, need to rewrite :HOLD:
 :PROPERTIES:
 :SHOWFROMDATE: 2020-05-23
+:ID:       a15bd80d-5498-421c-834f-70af5917e834
 :END:
 :LOGBOOK:
 - State "HOLD"       from "NEXT"          [2020-05-30 Sat 14:24]
 :END:
 ****************** END
+:PROPERTIES:
+:ID: f181ed29-d000-4cb9-bf30-bc4c6292c1f8
+:END:
 
 
 #+BEGIN_SRC emacs-lisp
@@ -10974,6 +11533,9 @@ Files, out of the folder structure, will appear in my agenda to attach them to t
 
 ****************** TODO implement this
 ****************** END
+:PROPERTIES:
+:ID: a6761321-2a6e-4727-aa92-412e57e71cd6
+:END:
 
 #+begin_src emacs-lisp
 
@@ -12985,6 +13547,9 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
 
 ****************** TODO In future, I might all add searching across the filesystem and over internet (via semanticscholar)
 ****************** END
+:PROPERTIES:
+:ID: 245344b6-e345-4036-81af-254a1d932e5a
+:END:
 
 #+begin_src emacs-lisp
   (use-package helm-org-ql
