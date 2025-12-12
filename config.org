@@ -9336,7 +9336,7 @@ is used to find out when to remind about the idea next time.
   	("SKIP" . ?s) ("SKIP_PROJECT_REVIEW" . ?S) ("NOARCHIVE" . ?a)
   	("ARCHIVEALL" . ?A) ("ignore" . ?g) ("REFILE" . ?r)
   	("AREA" . ?E) ("FLAGGED" . ?F) ("@home" . ?h) ("@work" . ?w)
-  	("_hard" . ?x) ("_easy" . ?z) ("meeting" . ?m)))
+  	("_hard" . ?x) ("_think" . ?t) ("_easy" . ?z) ("meeting" . ?m)))
   (setq org-tags-exclude-from-inheritance
         '("ATTACH"
           "REFILE" "AREA"
