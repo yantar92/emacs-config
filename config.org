@@ -7644,6 +7644,15 @@ I automated the check by examining WORG repository directly and checking the ~gi
       "Last time `yant/org-devel-committers-cache' was refreshed.")
     (defvar yant/org-devel-committers-cache-update-interval (* 60 60 24)
       "Frequency of updating `yant/org-devel-committers-cache'.")
+    (defface yant/fsf-assignment-done
+      (modus-themes-with-colors `((t :background ,bg-green-subtle)))
+      "Face to indicate that FSF assignment is done.")
+    (defface yant/fsf-assignment-none
+      (modus-themes-with-colors `((t :background ,bg-red-intense)))
+      "Face to indicate that FSF assignment is NOT done.")
+    (defface yant/fsf-assignment-tinychange
+      (modus-themes-with-colors `((t :background ,bg-yellow-intense)))
+      "Face to indicate that FSF assignment is not done, and there are changes.")
     (defcustom yant/org-devel-committer-aliases
       '(("Max Nikulin" . "Maxim Nikulin")
         ("Mikhail Skorzhinskiy" . "Mikhail Skorzhinskii")
@@ -7684,7 +7693,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
         (if (not email)
             (propertize
              "Contributor status unknown"
-             'face 'modus-themes-refine-red)
+             'face `((t :background (modus-themes-with-colors bg-red-intense))))
           (when (or (not all-committers)
   	          (not yant/org-devel-committers-cache-update-time)
                     (> (float-time
@@ -7738,7 +7747,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
                  :exit
                  (propertize
                   (string-trim (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats)))
-                  'face 'modus-themes-intense-green))))
+                  'face 'yant/fsf-assignment-done))))
             (with-current-buffer (get-buffer-create " *Org FSF data*")
               (when (= 0 (buffer-size))
   	      (insert-file-contents "~/Git/worg/contributors.org"))
@@ -7748,14 +7757,12 @@ I automated the check by examining WORG repository directly and checking the ~gi
   	      (re-search-forward org-outline-regexp-bol)
                 (goto-char (match-beginning 0))
   	      (setq end-of-FSF-assign (point)))
-              ;; This is redundant as long as I have access to
-              ;; authorative FSF data.
-  	    ;; (when (search-forward sender end-of-FSF-assign t)
-  	    ;;   (throw
-              ;;    :exit
-              ;;    (propertize
-              ;;     (string-trim (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats)))
-              ;;     'face 'modus-themes-intense-green)))
+  	    (when (search-forward sender end-of-FSF-assign t)
+  	      (throw
+                 :exit
+                 (propertize
+                  (string-trim (concat "FSF assignment done; " (gethash email yant/org-devel-committers-stats)))
+                  'face 'yant/fsf-assignment-done)))
               (goto-char end-of-FSF-assign)
   	    (save-excursion
   	      (search-forward "Current contributors with tiny changes")
@@ -7765,17 +7772,17 @@ I automated the check by examining WORG repository directly and checking the ~gi
                  :exit
                  (propertize
                   (string-trim (concat "FSF assignment pending; " (gethash email yant/org-devel-committers-stats)))
-                  'face 'modus-themes-nuanced-red)))
+                  'face 'yant/fsf-assignment-none)))
               (when (or (string-match-p sender all-committers)
   		      (string-match-p sender email))
                 (throw
                  :exit
                  (propertize
                   (concat "Tiny change contributor; " (gethash email yant/org-devel-committers-stats))
-                  'face 'modus-themes-intense-yellow))))
+                  'face 'yant/fsf-assignment-tinychange))))
             (propertize
              "Contributor status unknown"
-             'face 'modus-themes-intense-red)))))
+             'face 'yant/fsf-assignment-none)))))
 
     (defvar yant/org-devel-ml-stats nil
       "Hash table holding Org mailing list participant stats.")
@@ -7814,7 +7821,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
           (puthash sender (list (current-time) first-mention email-count) yant/org-devel-ml-stats))
         (propertize
          (format "In Org ML since %s (%s messages)" first-mention email-count)
-         'face 'modus-themes-mark-alt)))
+         'face 'secondary-selection)))
 
     (defvar yant/org-devel-maintainer-stats nil
       "Hash table holding Org maintainer stats.")
@@ -7970,45 +7977,77 @@ Mark mailing lists (and off-list messages) with different colors to
 make things more noticeable.
 
 #+begin_src emacs-lisp
-(use-package notmuch
-  :if init-flag
-  :init
-  (defun yant/notmuch-show-highlight-mailing-list ()
-    "Overlay mailing list the message is in.
-This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
-    (goto-char (point-min))
-    (let ((mailing-lists
-	   (let (lists)
-             (goto-char (point-min))
-             (when (save-excursion (search-forward "emacs-orgmode@gnu.org" nil t))
-               (push (propertize "ML: Org mode" 'face 'modus-themes-subtle-cyan) lists))
-             (when (save-excursion (search-forward "help-gnu-emacs@gnu.org" nil t))
-               (push (propertize "ML: Help GNU Emacs" 'face 'modus-themes-subtle-green) lists))
-             (when (save-excursion (search-forward "emacs-devel@gnu.org" nil t))
-               (push (propertize "ML: Emacs devel" 'face 'modus-themes-subtle-magenta) lists))
-             (when (save-excursion (search-forward "emacs-tangents@gnu.org" nil t))
-               (push (propertize "ML: Emacs tangents" 'face 'modus-themes-intense-yellow) lists))
-             (when (save-excursion (search-forward "emacs-gc-stats@gnu.org" nil t))
-               (push (propertize "ML: emacs-gc-stats" 'face 'modus-themes-intense-blue) lists))
-             (when (save-excursion (search-forward "@debbugs.gnu.org" nil t))
-               (push (propertize "Debbugs" 'face 'modus-themes-mark-alt) lists))
-             (when (save-excursion (re-search-forward "\\([^ ]+\\) <[^<@ ]+@noreply\\.github\\.com" nil t))
-               (push (propertize (format "Github: %s" (match-string 1)) 'face 'modus-themes-intense-magenta) lists))
-             (when (save-excursion (re-search-forward "\\([^@ ]+\\)@lists\\.sr\\.ht" nil t))
-               (push (propertize (format "SourceHut: %s" (match-string 1)) 'face 'modus-themes-mark-sel) lists))
-             lists)))
-      (put-text-property
-       (point-min) (1+ (point-min))
-       'display
-       (concat
-	(if mailing-lists
-	    (mapconcat #'identity mailing-lists " ")
-          (propertize "--> Off list <--" 'face 'dired-flagged))
-        " "
-        (or (get-text-property (point-min) 'display)
-	    (buffer-substring (point-min) (1+ (point-min))))))))
+  (use-package notmuch
+    :if init-flag
+    :init
+    (defun yant/notmuch-show-highlight-mailing-list ()
+      "Overlay mailing list the message is in.
+  This functoin is intended to be used in `notmuch-show-markup-headers-hook`."
+      (goto-char (point-min))
+      (let ((mailing-lists
+  	   (let (lists)
+               (goto-char (point-min))
+               (when (save-excursion (search-forward "emacs-orgmode@gnu.org" nil t))
+                 (push (propertize
+  		      "ML: Org mode"
+  		      'face
+                        `((t :background ,(modus-themes-with-colors bg-cyan-subtle))))
+                       lists))
+               (when (save-excursion (search-forward "help-gnu-emacs@gnu.org" nil t))
+                 (push (propertize
+  		      "ML: Help GNU Emacs"
+                        'face
+                        `((t :background ,(modus-themes-with-colors bg-green-intense))))
+                       lists))
+               (when (save-excursion (search-forward "emacs-devel@gnu.org" nil t))
+                 (push (propertize
+  		      "ML: Emacs devel"
+                        'face
+                        `((t :background ,(modus-themes-with-colors bg-magenta-subtle))))
+                       lists))
+               (when (save-excursion (search-forward "emacs-tangents@gnu.org" nil t))
+                 (push (propertize
+  		      "ML: Emacs tangents"
+                        'face
+                        `((t :background ,(modus-themes-with-colors bg-yellow-intense))))
+                       lists))
+               (when (save-excursion (search-forward "emacs-gc-stats@gnu.org" nil t))
+                 (push (propertize
+  		      "ML: emacs-gc-stats"
+                        'face
+                        `((t :background ,(modus-themes-with-colors modus-themes-intense-blue))))
+                       lists))
+               (when (save-excursion (search-forward "@debbugs.gnu.org" nil t))
+                 (push (propertize
+  		      "Debbugs"
+                        'face
+                        `((t :background ,(modus-themes-with-colors bg-red-intense))))
+                       lists))
+               (when (save-excursion (re-search-forward "\\([^ ]+\\) <[^<@ ]+@noreply\\.github\\.com" nil t))
+                 (push (propertize
+  		      (format "Github: %s" (match-string 1))
+                        'face
+                        `((t :background ,(modus-themes-with-colors bg-magenta-subtle))))
+                       lists))
+               (when (save-excursion (re-search-forward "\\([^@ ]+\\)@lists\\.sr\\.ht" nil t))
+                 (push (propertize
+  		      (format "SourceHut: %s" (match-string 1))
+                        'face
+                        `((t :background ,(modus-themes-with-colors bg-red-nuanced))))
+                       lists))
+               lists)))
+        (put-text-property
+         (point-min) (1+ (point-min))
+         'display
+         (concat
+  	(if mailing-lists
+  	    (mapconcat #'identity mailing-lists " ")
+            (propertize "--> Off list <--" 'face 'dired-flagged))
+          " "
+          (or (get-text-property (point-min) 'display)
+  	    (buffer-substring (point-min) (1+ (point-min))))))))
 
-  (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-mailing-list))
+    (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-mailing-list))
 #+end_src
 
 *** Mail host address
