@@ -8238,6 +8238,17 @@ As per [[info:tramp#Frequently Asked Questions][tramp#Frequently Asked Questions
   (ement-notify-sound "message-new-instant"))
 #+end_src
 
+** Eww (web browser)
+
+It works fine for many websites.
+Even better, when we sanitize the DOM for readability
+#+begin_src emacs-lisp
+  (use-package eww
+    :custom
+    ;; Enable readability by default.
+    (eww-readable-urls '(".+")))
+#+end_src
+
 ** Mastodon client =mastodon.el=
 
 #+begin_src emacs-lisp
