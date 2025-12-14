@@ -3123,7 +3123,6 @@ Note that I write a lot of scientific staff and hence passive voice is hard to a
   :straight t
   :hook ((org-mode message-mode) . yant/writegood-mode)
   :config
-  (set-face-attribute 'writegood-weasels-face nil :inherit 'modus-themes-lang-note)
   (defun yant/writegood-mode (&optional arg)
     "Turn on `writegood-mode', but disable passive voice checks."
     (writegood-mode +1)
@@ -7953,7 +7952,10 @@ When reading long and entangled public mailing list threads, many people can par
   	   (concat
   	    (if contact-title
   		;; Known contact.
-  		(propertize contact-title 'face 'modus-themes-refine-green)
+  		(propertize
+                   contact-title
+                   'face
+                   (modus-themes-with-colors bg-green-intense))
   	      ;; Unknown contact
   	      (propertize "--> Unknown contact <--" 'face 'dired-flagged))
   	    "\n"
@@ -8015,7 +8017,7 @@ make things more noticeable.
                  (push (propertize
   		      "ML: emacs-gc-stats"
                         'face
-                        `((t :background ,(modus-themes-with-colors modus-themes-intense-blue))))
+                        `((t :background ,(modus-themes-with-colors bg-blue-intense))))
                        lists))
                (when (save-excursion (search-forward "@debbugs.gnu.org" nil t))
                  (push (propertize
@@ -17467,23 +17469,24 @@ Patching the relevant function to not put that tooltip into the overlay.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org
-  :requires macrostep
-  :config
-  (defface yant/org-agenda-highlight-face `((t :inherit modus-themes-nuanced-yellow :extend t))
-    "Face used to highlight flagged entries in agenda view.")
-  (set-face-background 'org-agenda-clocking (face-background 'diff-added nil t))
-  (set-face-attribute 'org-agenda-clocking nil :extend t)
-  (defun yant/org-agenda-highlight-flagged ()
-    "Highlight flagged items in agenda."
-    (let ((inhibit-read-only t))
-      (save-excursion
-	(goto-char (point-min))
-	(while (re-search-forward ":FLAGGED:" nil t)
-	  (font-lock-append-text-property (line-beginning-position) (line-end-position) 'face 'yant/org-agenda-highlight-face)))))
-  (add-hook 'org-agenda-finalize-hook
-	    #'yant/org-agenda-highlight-flagged))
-  
+  (use-package org
+    :requires macrostep
+    :config
+    (defface yant/org-agenda-highlight-face
+      `((t :background ,(modus-themes-with-colors bg-yellow-subtle) :extend t))
+      "Face used to highlight flagged entries in agenda view.")
+    (set-face-background 'org-agenda-clocking (face-background 'diff-added nil t))
+    (set-face-attribute 'org-agenda-clocking nil :extend t)
+    (defun yant/org-agenda-highlight-flagged ()
+      "Highlight flagged items in agenda."
+      (let ((inhibit-read-only t))
+        (save-excursion
+  	(goto-char (point-min))
+  	(while (re-search-forward ":FLAGGED:" nil t)
+  	  (font-lock-append-text-property (line-beginning-position) (line-end-position) 'face 'yant/org-agenda-highlight-face)))))
+    (add-hook 'org-agenda-finalize-hook
+  	    #'yant/org-agenda-highlight-flagged))
+    
 #+end_src
 
 **** Property drawers
