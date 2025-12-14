@@ -8340,10 +8340,10 @@ Reddit annoyingly required javascript to view comments.
 Better view things from the comfort of Emacs.
 
 #+begin_src emacs-lisp
+  (use-package org-pandoc-import
+    :straight (:host github :repo "tecosaur/org-pandoc-import" :files ("filters" "*.el")))
   (use-package reddigg :straight (:host github :repo "thanhvg/emacs-reddigg")
     :init
-    (use-package org-pandoc-import
-      :straight (:host github :repo "tecosaur/org-pandoc-import" :files ("filters" "*.el")))
     (defun yant/browse-url-reddit (url &optional _)
       "Open an orgmode list url using notmuch."
       (let ((path (and (string-match "^https?://\\(?:www\\.\\)?\\(?:old\\.\\)?reddit.com/\\(.+\\)" url)
