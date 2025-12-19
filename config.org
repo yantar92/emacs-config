@@ -14217,19 +14217,27 @@ than spend time in completely useless manner.
 ****************** END
 
 #+begin_src emacs-lisp
-(use-package org-clock
-  :after org
-  :if init-flag
-  :config
-  (use-package pomidor
-    :defer t
+  (use-package org-clock
+    :after org
+    :if init-flag
     :config
-    (setq org-clock-sound pomidor-sound-overwork))
-  (unless org-clock-sound (setq org-clock-sound "~/Org/alert.wav"))
-  ;; this is not a default value, 't will still trigger notification
-  ;; when clocked in time exceeds effort estimate, while not triggering
-  ;; showing the current task in modeline or frame title.
-  (setq org-clock-clocked-in-display t))
+    (use-package pomidor
+      :defer t
+      :config
+      (setq org-clock-sound pomidor-sound-overwork
+  	  pomidor-play-sound-file
+            (lambda (f)
+              (if (equal pomidor-sound-overwork f)
+  		(alert "Look out of the screen!"))
+              (unless (equal pomidor-sound-tick f)
+                (pomidor-play-sound-file-emacs f)))
+  	  ;; look out of the screen; relax eyes
+  	  pomidor-seconds (* 20 60)))
+    (unless org-clock-sound (setq org-clock-sound "~/Org/alert.wav"))
+    ;; this is not a default value, 't will still trigger notification
+    ;; when clocked in time exceeds effort estimate, while not triggering
+    ;; showing the current task in modeline or frame title.
+    (setq org-clock-clocked-in-display t))
 #+end_src
 
 ****** Effort filtering in agenda views
@@ -14929,76 +14937,78 @@ An area of knowledge I am interested in. Unlike project, this does not have a co
 A large task that needs to be studied systematically. It has to have a concrete outcome
 
 #+begin_src emacs-lisp
-(setf (alist-get "P" org-capture-templates nil nil #'equal)
-      (cdar  (doct '("Research project"
-		     :keys "P"
-		     :type entry
-		     :file "~/Org/inbox.org"
-		     :clock-in t
-		     :clock-resume t
-		     :template
-		     ("* TODO %^{Project title} :%^G:project:"
-		      ":PROPERTIES:"
-		      ":CREATED: %U"
-		      ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
-                      ":CATEGORY: %^{Category}"
-		      ":END:"
-                      " #project"
-                      "# A short summary about the project."
-                      "\n%?"
-                      "** TODO Notes :REFILE:"
-                      "# Notes about what I think about the topic\n"
-                      "** TODO Bookmarks \ references :NOARCHIVE:REFILE:"
-                      "# Notes about what is known about the topic\n"
-                      "** NEXT Action plan :NOARCHIVE:REFILE:"
-                      "# Action plan to complete the project.\n"
-                      "*** NEXT Add tasks to the project and refile relevant info/tasks"
-                      "** Sample condition :REFILE:NOARCHIVE:"
-                      "# Limited resources I need to complete the project."
-                      "** Methods :REFILE:NOARCHIVE:"
-                      "# Nontrivial methods used to execute the action plan."
-                      "** Raw data :REFILE:NOARCHIVE:"
-                      "# The raw data is stored here on per-experiment basis"
-                      "** Results :REFILE:"
-                      "# The raw data is analysed here to be put into human-readable form (in non-trivial ways)."
-                      "# The data is organised by sample rather than by experiment to avoid dealing with experimental note mess."
-                      "# Plots, important observations and thoughs are coming here.\n"
-                      "** Paperwork :REFILE:"
-                      "** Presentations :REFILE:"
-                      "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
-                      ":PROPERTIES:"
-                      ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
-                      ":END:")))))
+  (setf (alist-get "P" org-capture-templates nil nil #'equal)
+        (cdar  (doct '("Research project"
+  		     :keys "P"
+  		     :type entry
+  		     :file "~/Org/inbox.org"
+  		     :clock-in t
+  		     :clock-resume t
+  		     :template
+  		     ("* TODO %^{Project title} :%^G:project:"
+  		      ":PROPERTIES:"
+  		      ":CREATED: %U"
+  		      ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
+                        ":CATEGORY: %^{Category}"
+  		      ":END:"
+                        " #project"
+                        "# A short summary about the project."
+                        "\n%?"
+                        "# Measurable project outcomes"
+                        "** TODO Notes :REFILE:"
+                        "# Notes about what I think about the topic\n"
+                        "** TODO Bookmarks \ references :NOARCHIVE:REFILE:"
+                        "# Notes about what is known about the topic\n"
+                        "** NEXT Action plan :NOARCHIVE:REFILE:"
+                        "# Action plan to complete the project.\n"
+                        "*** NEXT Add tasks to the project and refile relevant info/tasks"
+                        "** Sample condition :REFILE:NOARCHIVE:"
+                        "# Limited resources I need to complete the project."
+                        "** Methods :REFILE:NOARCHIVE:"
+                        "# Nontrivial methods used to execute the action plan."
+                        "** Raw data :REFILE:NOARCHIVE:"
+                        "# The raw data is stored here on per-experiment basis"
+                        "** Results :REFILE:"
+                        "# The raw data is analysed here to be put into human-readable form (in non-trivial ways)."
+                        "# The data is organised by sample rather than by experiment to avoid dealing with experimental note mess."
+                        "# Plots, important observations and thoughs are coming here.\n"
+                        "** Paperwork :REFILE:"
+                        "** Presentations :REFILE:"
+                        "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
+                        ":PROPERTIES:"
+                        ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
+                        ":END:")))))
 
-(setf (alist-get "G" org-capture-templates nil nil #'equal)
-      (cdar  (doct '("General project"
-		     :keys "G"
-		     :type entry
-		     :file "~/Org/inbox.org"
-		     :clock-in t
-		     :clock-resume t
-		     :template
-		     ("* TODO #project %^{Project title} :%^G:project:"
-		      ":PROPERTIES:"
-		      ":CREATED: %U"
-		      ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
-                      ":CATEGORY: %^{Category}"
-		      ":END:"
-                      "# A short summary about the project."
-                      "\n%?"
-                      "** TODO Notes :REFILE:"
-                      "# Notes about what I think about the topic\n"
-                      "** TODO Bookmarks \ references :NOARCHIVE:REFILE:"
-                      "# Notes about what is known about the topic\n"
-                      "** NEXT Action plan :NOARCHIVE:REFILE:"
-                      "# Action plan to complete the project.\n"
-                      "*** NEXT Add tasks to the project and refile relevant info/tasks"
-                      "** Methods :REFILE:NOARCHIVE:"
-                      "# Nontrivial methods used to execute the action plan."
-                      "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
-                      ":PROPERTIES:"
-                      ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
-                      ":END:")))))
+  (setf (alist-get "G" org-capture-templates nil nil #'equal)
+        (cdar  (doct '("General project"
+  		     :keys "G"
+  		     :type entry
+  		     :file "~/Org/inbox.org"
+  		     :clock-in t
+  		     :clock-resume t
+  		     :template
+  		     ("* TODO #project %^{Project title} :%^G:project:"
+  		      ":PROPERTIES:"
+  		      ":CREATED: %U"
+  		      ":ORG-TIME-BALANCE-MULTIPLIER: %^{Time balance multiplier}"
+                        ":CATEGORY: %^{Category}"
+  		      ":END:"
+                        "# A short summary about the project."
+                        "\n%?"
+                        "# Measurable project outcomes"
+                        "** TODO Notes :REFILE:"
+                        "# Notes about what I think about the topic\n"
+                        "** TODO Bookmarks \ references :NOARCHIVE:REFILE:"
+                        "# Notes about what is known about the topic\n"
+                        "** NEXT Action plan :NOARCHIVE:REFILE:"
+                        "# Action plan to complete the project.\n"
+                        "*** NEXT Add tasks to the project and refile relevant info/tasks"
+                        "** Methods :REFILE:NOARCHIVE:"
+                        "# Nontrivial methods used to execute the action plan."
+                        "** NEXT No deadline :NODEADLINE:SKIP:REFILE:"
+                        ":PROPERTIES:"
+                        ":LOGGING: DONE(!) FAILED(!) MERGED(!) WAITING(!) HOLD(!) CANCELLED(!)"
+                        ":END:")))))
 #+end_src
 ****** Conference presentation/poster
 :PROPERTIES:
