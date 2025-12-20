@@ -7965,7 +7965,6 @@ When reading long and entangled public mailing list threads, many people can par
     (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-contact-info))
 #+end_src
 
-
 **** Clearly indicate mailing lists a message is on
 :PROPERTIES:
 :ID:       653b5860-fe8c-4593-899f-f7e5bb25151e
@@ -8051,6 +8050,21 @@ make things more noticeable.
 
     (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-mailing-list))
 #+end_src
+**** Auto-update relevant URLs for emails from github/gitlab
+
+Small package that simplifies navigating to URL of issue/pull request.
+
+#+begin_src emacs-lisp
+  (use-package notmuch-microdata
+    :if init-flag
+    :straight (microdata :host github :repo "Stebalien/microdata.el")
+    :bind
+    (:map notmuch-show-mode-map
+  	("C-c C-o" . notmuch-microdata-show-action-view)
+  	:map notmuch-search-mode-map
+  	("C-c C-o" . notmuch-microdata-search-action-view)))
+#+end_src
+
 
 *** Mail host address
 :PROPERTIES:
