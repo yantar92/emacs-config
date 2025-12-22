@@ -9649,22 +9649,71 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
     :category "web")
    gptel-tools)
 
+  (defun yant/pdf-bytes-to-text (pdf-bytes)
+    "Convert raw PDF bytes to plain text using pdftotext.
+  Preserves layout (-layout)."
+    (with-temp-buffer
+      (set-buffer-multibyte nil)
+      (insert pdf-bytes)
+      (let ((exit-code
+             (call-process-region (point-min) (point-max)
+                                  "pdftotext" 'delete t nil
+                                  "-layout" "-" "-")))
+        (cond
+         ((or (zerop exit-code) (> (buffer-size) 0))
+          (buffer-substring-no-properties (point-min) (point-max)))
+         (t (format "[PDF extraction failed (pdftotext exit %d)]" exit-code))))))
+
+  (defun yant/read-url-or-pdf (url &optional limit)
+    "Read URL and return text.
+  If URL contains PDF, pass it through pdftotext and return it.
+  LIMIT is the maximum number of characters."
+    (with-current-buffer (url-retrieve-synchronously url)
+      ;; 1. Skip HTTP headers
+      (goto-char (point-min))
+      (unless (re-search-forward "\r?\n\r?\n" nil t)
+        (error "Malformed HTTP response"))
+      (let* ((headers (buffer-substring (point-min) (point)))
+  	   (content-type
+  	    (when (string-match "^Content-Type: \\(.*?\\)\r?$" headers)
+                (match-string 1 headers)))
+             data)
+        ;; (run-at-time 0 nil #'kill-buffer (current-buffer))
+        ;; 2. Decide how to process the body
+        (setq data
+  	    (cond
+  	     ((or (string-match-p "application/pdf" content-type)
+  		  (string-match-p "\\.pdf\\'" url)
+  		  (save-excursion (search-forward "%PDF" nil t)))
+                ;; PDF → extract text with layout & 100 KB limit
+                (set-buffer-multibyte nil)
+  	      (yant/pdf-bytes-to-text
+  	       (buffer-substring-no-properties
+  		(point) (point-max))))
+  	     (t
+                ;; Assume HTML/plain text
+                (condition-case nil
+  		  (let ((dom (libxml-parse-html-region (point) (point-max))))
+  		    (with-temp-buffer
+  		      (shr-insert-document dom)
+  		      (buffer-substring-no-properties (point-min) (point-max))))
+  		(error
+  		 ;; If HTML parsing fails, treat as plain text
+  		 (buffer-substring-no-properties (point-min) (point-max)))))))
+        (if limit (substring data 0 limit) data))))
+
   (push
    (gptel-make-tool
-    :function (lambda (url)
-                (with-current-buffer (url-retrieve-synchronously url)
-  		(goto-char (point-min))
-  		(forward-paragraph)
-  		(let ((dom (libxml-parse-html-region (point) (point-max))))
-                    (run-at-time 0 nil #'kill-buffer (current-buffer))
-                    (with-temp-buffer
-                      (shr-insert-document dom)
-                      (buffer-substring-no-properties (point-min) (point-max))))))
+    :function #'yant/read-url-or-pdf
     :name "read_url"
     :description "Fetch and read the contents of a URL"
-    :args (list '(:name "url"
-  		      :type string
-  		      :description "The URL to read"))
+    :args (list '( :name "url"
+  		 :type string
+  		 :description "The URL to read")
+                '( :name "character_limit"
+  		 :optional t
+  		 :type integer
+                   :description "When provided, only return first CHARACTER_LIMIT characters"))
     :category "web")
    gptel-tools)
 #+end_src
