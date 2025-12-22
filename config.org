@@ -14284,18 +14284,6 @@ than spend time in completely useless manner.
     :after org
     :if init-flag
     :config
-    (use-package pomidor
-      :defer t
-      :config
-      (setq org-clock-sound pomidor-sound-overwork
-  	  pomidor-play-sound-file
-            (lambda (f)
-              (if (equal pomidor-sound-overwork f)
-  		(alert "Look out of the screen!"))
-              (unless (equal pomidor-sound-tick f)
-                (pomidor-play-sound-file-emacs f)))
-  	  ;; look out of the screen; relax eyes
-  	  pomidor-seconds (* 20 60)))
     (unless org-clock-sound (setq org-clock-sound "~/Org/alert.wav"))
     ;; this is not a default value, 't will still trigger notification
     ;; when clocked in time exceeds effort estimate, while not triggering
@@ -16483,6 +16471,38 @@ In addition to lisp code in =init.el=, it is also possible to define globally av
   :defer t
   :custom
   (org-plantuml-exec-mode 'plantuml))
+#+end_src
+
+**** Screen time management
+
+Both my main work and volunteer work involves working with computer.
+That puts strain on my eyes (especially since I already wear glasses).
+I adapt pomodoro to help me remind about screen time management.
+
+#+begin_src emacs-lisp
+  (use-package pomidor
+    :after org
+    :config
+    (defun yant/pomidor-start-maybe ()
+      (unless (pomidor-running-p)
+        (save-excursion (pomidor))))
+    (bind-key* "<f8>" #'pomidor-break)
+    (add-hook 'org-clock-in-hook #'yant/pomidor-start-maybe)
+    (setq org-clock-sound pomidor-sound-overwork
+          pomidor-play-sound-file
+          (lambda (f)
+            (if (equal pomidor-sound-overwork f)
+                (alert "Look out of the screen!"))
+            (unless (equal pomidor-sound-tick f)
+              (pomidor-play-sound-file-emacs f)))
+          ;; look out of the screen; relax eyes
+          pomidor-seconds (* 20 60)
+          ;; 60 seconds look far
+          pomidor-break-seconds 60
+          pomidor-confirm-end-break nil
+          ;; 5 minutes break every hour
+          pomidor-breaks-before-long 2
+          pomidor-long-break-seconds (* 60 5)))
 #+end_src
 
 **** COMMENT Distraction-free browsing
