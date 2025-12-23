@@ -8737,6 +8737,7 @@ stored in memory.
   	(kill-all-local-variables)
           (erase-buffer)
           (let ((gptel-use-tools t)
+                (gptel-include-reasoning nil)
                 (gptel-tools
                  (delq nil
   		     (mapcar
@@ -8748,7 +8749,6 @@ stored in memory.
   	    "You update the user's current-season profile. Follow instructions exactly."
   	    :callback
   	    (lambda (response inner-info)
-  	      (message "response:: %S" response)
                 (pcase response
   		((pred stringp)
   		 (when (and response
