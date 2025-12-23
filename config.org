@@ -9044,20 +9044,19 @@ are relevant to the context of the discussion. Those need to be cleaned up.
 #+begin_src emacs-lisp
   (use-package gptel
     :config
-    (eval
-     '(defun yant/gptel-cleanup-voice-recognition (callback fsm)
-        "Cleanup whisper.cpp output in current buffer.
+    (defun yant/gptel-cleanup-voice-recognition (callback fsm)
+      "Cleanup whisper.cpp output in current buffer.
   Intended to be used in `gptel-prompt-transform-functions'."
-        (let ((gptel-use-tools nil)
-  	    (prompt (save-excursion
-  		      (goto-char (point-max))
-                        (text-property-search-backward 'gptel 'response)
-                        (buffer-substring-no-properties (point) (point-max))))
-              (buffer (current-buffer)))
-  	(with-temp-buffer ; avoid buffer-locals in prompt buffer
-  	  (gptel-request prompt
-  	    :system
-  	    "You will receive an output of whisper.cpp speech recognition.
+      (let ((prompt (save-excursion
+  		    (goto-char (point-max))
+                      (text-property-search-backward 'gptel 'response)
+                      (buffer-substring-no-properties (point) (point-max))))
+            (buffer (current-buffer)))
+        (with-temp-buffer ; avoid buffer-locals in prompt buffer
+  	(let ((gptel-use-tools nil))
+  	  (gptel-request
+                (concat
+  	       "You will receive an output of whisper.cpp speech recognition.
   The output might contain typical speech iregularities and irrelevant words.
   More importantly, the recognized text may contain some incorrectly recognized words,
   especially for abbreviations or special terminology.
@@ -9065,20 +9064,24 @@ are relevant to the context of the discussion. Those need to be cleaned up.
   according to the current chat context and the overall meaning of the output text.
   Also, remove repetitions and spacer words.   DO NOT remove words like @keyword.
   Output the modified cleaned up text without answering it."
+  	       "\n\nHere is the output of whisper.cpp:\n"
+                 prompt)
   	    :callback
-  	    (lambda (response inner-info)
-                (cond
-  	       ((stringp response)
-  		(with-current-buffer buffer
-  		  (goto-char (point-max))
-                    (text-property-search-backward 'gptel 'response)
-  		  (delete-region (point) (point-max))
-  		  (insert "The prompt recognized from speech will be given below.  Repeat the prompt before answering it. It is IMPORTANT that you repeat the prompt exactly.  HOWEVER, if the prompt appears to have speech recognition artefacts, DO NOT ANSWER, BUT clarify about the intended meaning\n\n")
-  		  (insert response)))
-                 ;; Do nothing otherwise
-                 (t nil))
-                (funcall callback))))))
-     'lexical)
+  	    `(lambda (response inner-info)
+  	       (cond
+  		((stringp response)
+  		 (with-current-buffer ,buffer
+  		   (goto-char (point-max))
+                     (text-property-search-backward 'gptel 'response)
+  		   (delete-region (point) (point-max))
+  		   (insert "The prompt recognized from speech will be given below.  Repeat the prompt before answering it. It is IMPORTANT that you repeat the prompt exactly.  HOWEVER, if the prompt appears to have speech recognition artefacts, DO NOT ANSWER, BUT clarify about the intended meaning\n\n")
+  		   (insert response)
+                     (funcall ,callback)
+                     ;; return non-nil
+                     response))
+  		;; Do nothing otherwise
+  		(t nil))))))))
+    
     (gptel-make-preset 'voice
       :prompt-transform-functions (list #'yant/gptel-cleanup-voice-recognition)))
 #+end_src
