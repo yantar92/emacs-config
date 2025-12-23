@@ -378,25 +378,27 @@ is not really a good idea to work in darkness regardless of the colour
 scheme, I ended up using a light theme I prefer.
 
 #+begin_src emacs-lisp
-(use-package modus-themes
-  :straight (modus-themes
-             :host gitlab
-             :repo "protesilaos/modus-themes")
-  :if init-flag
-  :init
-  (require 'modus-operandi-theme)
-  (setq modus-themes-headings '((t regular)))
-  (setopt modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
-  (setopt modus-operandi-tinted-palette-overrides
-	  '((bg-dim "#f2eff3")
-            (fg-dim "#505050")
-	    (fg-heading-1 "#5317ac")
-	    (bg-hl-line "#e0e0e0")
-            (fringe unspecified)
-            (bg-active bg-blue-subtle)
-            (bg-hover-secondary "#aae59c")))
-  :config
-  (modus-themes-load-theme 'modus-operandi-tinted))
+  (use-package modus-themes
+    :straight (modus-themes
+               :host gitlab
+               :repo "protesilaos/modus-themes")
+    :if init-flag
+    :init
+    (require 'modus-operandi-theme)
+    (setq modus-themes-headings '((t regular)))
+    (setopt modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
+    (setopt modus-operandi-tinted-palette-overrides
+  	  '((bg-dim "#f2eff3")
+  	    (bg-main "#f8f0e0") ; warmer, more amber tint to reduce strain on eyes
+              (fg-dim "#505050")
+  	    (fg-main "#2a2a2a") ; slightly softer black to reduce strain on eyes
+  	    (fg-heading-1 "#5317ac")
+  	    (bg-hl-line "#e0e0e0")
+              (fringe unspecified)
+              (bg-active bg-blue-subtle)
+              (bg-hover-secondary "#aae59c")))
+    :config
+    (modus-themes-load-theme 'modus-operandi-tinted))
 #+end_src
 
 *** Fonts
@@ -6084,10 +6086,11 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
 Enable goodies like =isearch= support, link selection, jump history, etc (see ~pdf-tools-enabled-modes~).
 
 #+begin_src emacs-lisp
-(use-package pdf-tools
-  :if init-flag
-  :config
-  (add-hook 'pdf-view-mode-hook #'pdf-tools-enable-minor-modes 'append))
+  (use-package pdf-tools
+    :if init-flag
+    :config
+    (cl-pushnew #'pdf-view-themed-minor-mode pdf-tools-enabled-modes)
+    (add-hook 'pdf-view-mode-hook #'pdf-tools-enable-minor-modes 'append))
 #+end_src
 
 **** Select links using =avy=
@@ -16497,8 +16500,8 @@ I adapt pomodoro to help me remind about screen time management.
               (pomidor-play-sound-file-emacs f)))
           ;; look out of the screen; relax eyes
           pomidor-seconds (* 20 60)
-          ;; 60 seconds look far
-          pomidor-break-seconds 60
+          ;; 20 seconds look far
+          pomidor-break-seconds 20
           pomidor-confirm-end-break nil
           ;; 5 minutes break every hour
           pomidor-breaks-before-long 2

@@ -3394,99 +3394,73 @@ inactive_tab_font_style normal
 :PROPERTIES:
 :ID:       26e871cf-3b07-47de-8ba4-c4cc8f876681
 :END:
+
+Use Modus operandi tinted to reduce eye strain.
+Change some colors:
+1. Black becomes "#2a2a2a" (ligher)
+2. Background is "#f8f0e0"
+
 #+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
+  # vim:ft=kitty
 
-#: Color scheme {{{
+  ## name: Modus Operandi Tinted
+  ## author: Protesilaos Stavrou
+  ## license: GPLv3
+  ## blurb: Highly accessible themes made for GNU Emacs, conforming with the highest
+  ## standard for colour contrast between background and foreground values (WCAG AAA)
 
-foreground #dddddd
-background #000000
+  # The basic colors
+  foreground              #2a2a2a
+  background              #f8f0e0
+  selection_foreground    #2a2a2a
+  selection_background    #c2bcb5
 
-#: The foreground and background colors
+  # Cursor colors
+  cursor                  #d00000
+  cursor_text_color       #fbf7f0
 
-background_opacity 1.0
+  # kitty window border colors
+  active_border_color     #193668
+  inactive_border_color   #9f9f9f
 
-#: The opacity of the background. A number between 0 and 1, where 1 is
-#: opaque and 0 is fully transparent.  This will only work if
-#: supported by the OS (for instance, when using a compositor under
-#: X11). Note that it only sets the default background color's
-#: opacity. This is so that things like the status bar in vim,
-#: powerline prompts, etc. still look good.  But it means that if you
-#: use a color theme with a background color in your editor, it will
-#: not be rendered as transparent.  Instead you should change the
-#: default background color in your kitty config and not use a
-#: background color in the editor color scheme. Or use the escape
-#: codes to set the terminals default colors in a shell script to
-#: launch your editor.  Be aware that using a value less than 1.0 is a
-#: (possibly significant) performance hit.  If you want to dynamically
-#: change transparency of windows set dynamic_background_opacity to
-#: yes (this is off by default as it has a performance cost)
+  # Tab bar colors
+  active_tab_foreground   #000000
+  active_tab_background   #c9b8b1
+  inactive_tab_foreground #585858
+  inactive_tab_background #dfd6cd
 
-dynamic_background_opacity no
+  # The basic 16 colors
+  # black
+  color0 #2a2a2a
+  color8 #595959
 
-#: Allow changing of the background_opacity dynamically, using either
-#: keyboard shortcuts (increase_background_opacity and
-#: decrease_background_opacity) or the remote control facility.
+  # red
+  color1 #a60000
+  color9 #972500
 
-dim_opacity 0.75
+  # green
+  color2  #006800
+  color10 #00663f
 
-#: How much to dim text that has the DIM/FAINT attribute set. One
-#: means no dimming and zero means fully dimmed (i.e. invisible).
+  # yellow
+  color3  #6f5500
+  color11 #884900
 
-selection_foreground #000000
+  # blue
+  color4  #0031a9
+  color12 #3548cf
 
-#: The foreground for text selected with the mouse. A value of none
-#: means to leave the color unchanged.
+  # magenta
+  color5  #721045
+  color13 #531ab6
 
-selection_background #fffacd
+  # cyan
+  color6  #005e8b
+  color14 #005f5f
 
-#: The background for text selected with the mouse.
-
-
-#: The 16 terminal colors. There are 8 basic colors, each color has a
-#: dull and bright version. You can also set the remaining colors from
-#: the 256 color table as color16 to color255.
-
-color0 #000000
-color8 #767676
-
-#: black
-
-color1 #cc0403
-color9 #f2201f
-
-#: red
-
-color2  #19cb00
-color10 #23fd00
-
-#: green
-
-color3  #cecb00
-color11 #fffd00
-
-#: yellow
-
-color4  #0d73cc
-color12 #1a8fff
-
-#: blue
-
-color5  #cb1ed1
-color13 #fd28ff
-
-#: magenta
-
-color6  #0dcdcd
-color14 #14ffff
-
-#: cyan
-
-color7  #dddddd
-color15 #ffffff
-
-#: white
-
-#: }}}
+  # white
+  color7  #a6a6a6
+  color15 #595959
 #+END_SRC
 
 ***** Advanced
@@ -8500,18 +8474,20 @@ Compare pdfs visually and/or textually
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQf/V0icLktLNAF/Ql1alL2d7W0miRni716mlXIyfXLxq3dT
-+RNDJWU4ThvreV5Er06BskFX2fTJlKG88pChA/+ZXrBNu3g2v1qrK8Zr/QpVXorr
-fUZvDV4Ax0Uu910thS1Z32nQM6ja2gANheVmODj3zA7gHGiwjW008ybtpLB0G2Zk
-qWHdzjwaL4G8O0Ynv6vkApx0a8o9oouFu0c376K/zuOUt+a31/4Yh+FhWh4PWOV9
-tmlIUABVFh2bs9UqxdFtNSgoLcmoQ/kcTQeBo59lKbTgG9MzzKGrtq/GDOCd1Eyl
-W4lFiLbMWMKwln66J5b2ZRDybZEzQd3IgTO4wBbcxdLAHwEuMcj+MSolk2/VheP5
-3jiAzimPzjzNb0GfdroM7BBDUtVjO+/g1Mq+O6okybeyOuIdpoEtn66xxvLfVmfv
-AUj21/haVSaLlvdbe3iDuIvgB0PrBzOFcM52ErEDITtd2+6Ey13UoKl7vwR7iV7P
-4YdiyZQkK0Sa55y6vjg7yTADAK5LgieTS4Rzm+hSdJY+A8BsnsB3UxIGoUFTV0T8
-Roy3SFfwnOsPnoV0WH8E0olKEJFLIbUP4POl877gwrJY0erHC5NGn4rwaY8QSxC6
-46CT6Hal43NbXVZ3NZdImBU=
-=3ugs
+hQEMA3SKBiQ2zhL6AQf/agMEd2f9kCLK+ZmnxbTDjcFNfj5q+lUig8XUO3YK3bw9
+YsQ87jBz+s8i0jp/nU/RjqMBx+K3wANZgvg/iYhAPqbWkrVup6sPCZTq3uKEgELD
+eoiBD/V/zeAfCulN2LqlK1BMhBUxqNn01kYlQB/Woec94mXMPeqpF1BiDQrvr2SK
+2Cwbuh4a4mqoZxJX6B+RnV89pPoCH013WEypPv8Ia8VbSsijhpPl2qyAo1CeNt5q
+mWYJ6a7BQyh8Hzj4qvkEZ3OQT2xBIRdK6RnVSc22ZObLIl+COmr+Mz0sRq8Rda4w
+sc2iT4uV3bJhf3+DSknTll4ndCxRSKzlZX5OtBIogtLAnAGJTafztAbE/zHyqiRG
+U5n4cvZ7tBjc52X8GNJZ23db9fyRrnCyho/qIE/qjmb3NqwFi063XnoO55IKpkeX
+tXw2Vybk3YWydM/dX3H+F+jzQZlMNPIEGPkYKWWByaIegpHh28xlIcMGIM0NKeYs
+ay7/jLo+3UtACyrSCo7dGa+o8aPS7e5rakZZ3GG1saU+UZ6zJnbSpjIV22vwRt4y
+XDyk4MypboL0oCZJNFO6gSDhX40dZ0bcQP8EZXxHWuDt3Ozrv6E6k+dNNgmP0rGy
+x3ywRYHc2KZyhTiblZhldUh4YEvqhaG0cwaZWgMqO8hpzrBFRSh5tSPvS1shHjDh
+MELLQPg02FeRdDvHpeldjIj50Z9RWMw6P5NSkT060BLe0/juFtqOfs626wcjXplC
+ICtV80FCm+fmuGGqv+yWMpvJ5M8iy8DmUPvtMRuVrZX2f/nJPXYNrQZSqo5S0Q==
+=FLbz
 -----END PGP MESSAGE-----
 
 ** =sys-fs/avfs=: browse archives
