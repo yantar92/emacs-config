@@ -6488,7 +6488,7 @@ while true; do mail-monitor.sh; sleep 100; done &
 
   if [[ ! "$1" == "--nofetch" && ! "$PROJECTING" == "true" ]]; then
       mbsync --pull-new -a 2>&1 | mail-monitor-logger.sh;
-      fetchmail | mail-monitor-logger.sh ;
+      fetchmail 2>&1 | mail-monitor-logger.sh ;
       # slrnpull -h news2.neva.ru -d ~/Mail/spool/slrnpool/ 2>&1 |  mail-monitor-logger.sh;
   fi
 
