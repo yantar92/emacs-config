@@ -933,7 +933,7 @@ I need to grant superuser access for calling wpa_gui if I want to be able to cha
 #+PROPERTY: sudo-commands-list+ /usr/bin/wpa_gui
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/wpa_supplicant
-net-wireless/wpa_supplicant qt5 tkip
+net-wireless/wpa_supplicant qt5 tkip gui
 #+end_src
 
 **** wireless-tools
