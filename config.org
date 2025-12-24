@@ -8510,7 +8510,14 @@ I am not limited to one provider. Can mix and match and compare.
          :capabilities (tool-use json reasoning)
          :context-window 132
          :input-cost 0.10
-         :output-cost 0.50))))
+         :output-cost 0.50)
+        (meta-llama/llama-4-scout-17b-16e-instruct
+         :description "A powerful multimodal model capable of processing both text and image inputs that supports multilingual, multi-turn conversations, tool use, and JSON mode."
+         :capabilities (tool-use json media)
+         :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
+         :context-window 132
+         :input-cost 0.11
+         :output-cost 0.34))))
 #+end_src
 
 *** System prompt
