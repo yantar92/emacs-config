@@ -8653,13 +8653,12 @@ stored in memory.
   it, writes it back, and returns the updated profile as a string."
       (message "update season -- Starting query: %S" context)
       (let* ((current-profile
-  	    (with-temp-buffer
-                (when (file-readable-p yant/gptel-user-profile-current-file)
+              (with-temp-buffer
+  	      (when (file-readable-p yant/gptel-user-profile-current-file)
   		(insert-file-contents yant/gptel-user-profile-current-file))
-                (buffer-string)))
+  	      (buffer-string)))
              (prompt
-  	    "
-  You maintain the user's evolving profile for this LLM.
+              "You maintain the user’s evolving profile for this LLM.
 
   Current profile:
   <<<PROFILE>>>
@@ -8667,112 +8666,107 @@ stored in memory.
   Conversation context:
   <<<CONTEXT>>>
 
-  Your job is to update ONLY the \"[USER PROFILE — CURRENT SEASON]\"
-  block, and only when there is clear, substantive NEW information.
+  Your job is to update ONLY the “[USER PROFILE — CURRENT SEASON]” block, and only when there is clear, substantive NEW information.
 
   STRICT RULES:
 
   1. Treat the CURRENT PROFILE as the primary truth.
-     - You are updating it, not rewriting it from scratch.
-     - Preserve existing items unless they are clearly contradicted or
-       explicitly superseded by the conversation.
+     • You are updating it, not rewriting it from scratch.
+     • Preserve existing items unless they are clearly contradicted or explicitly superseded by the conversation.
 
-  2. Do NOT treat isolated meta-testing or one-off experiments as a new \"chapter\".
-     - Phrases like \"this is a test\", \"just experimenting\", and
-       similar meta interactions are usually context, not a new life
-       chapter.
-     - Only change the Chapter when there is strong, explicit signal of
-       a real shift in focus (e.g. a new long-term goal, a finished or
-       abandoned previous chapter).
+  2. Do NOT treat isolated meta‑testing or one‑off experiments as a new “chapter”.
+     • Phrases like “this is a test”, “just experimenting”, and similar meta interactions are usually context, not a new life chapter.
+     • Only change the Chapter when there is strong, explicit signal of a real shift in focus (e.g. a new long‑term goal, a finished or abandoned previous chapter).
 
   3. Be conservative about changes:
-     - Only modify:
-       - Chapter,
-       - Active projects,
-       - Current constraints,
-       - Near-term priorities
-       when there is clear evidence of a real, ongoing change.
-     - If a change seems temporary, small, or purely meta-experimental,
-       DO NOT promote it to Chapter or Active projects. At most, it may
-       slightly adjust constraints or near-term priorities.
+     • Only modify:
+  	 – Chapter,
+  	 – Active projects,
+  	 – Current constraints,
+  	 – Near‑term priorities
+  	 when there is clear evidence of a real, ongoing change.
+     • If a change seems temporary, small, or purely meta‑experimental, DO NOT promote it to Chapter or Active projects. At most, it may slightly adjust constraints or near‑term priorities.
 
   4. If nothing materially changed:
-     - Keep the profile ALMOST IDENTICAL.
-     - You may refine wording for clarity, but avoid semantic changes.
+     • Return the existing profile block **unchanged** (still in the required format).
 
   5. Respect stability of key themes from static profile:
-     - The items from static profile should remain unless the user
-       explicitly says they are no longer relevant. If the user does,
-       suggest re-evaluating the static profile.
-     - Do NOT remove or demote key items without very clear, repeated
-       evidence.
+     • The items from the static profile should remain unless the user explicitly says they are no longer relevant. If the user does, suggest re‑evaluating the static profile.
+     • Do NOT remove or demote key items without very clear, repeated evidence.
+
+  6. **Formatting**:
+     • Use normal sentence case (no all‑caps).
+     • Keep the same four sections:
+  	   – CHAPTER
+  	   – ACTIVE PROJECTS
+  	   – CURRENT CONSTRAINTS
+  	   – NEAR‑TERM PRIORITIES
+     • You may add an optional fifth section “ENERGY & FOCUS PATTERNS” if the conversation provides strong evidence about how the user manages energy, friction, or focus (e.g., “practicing friction‑analysis”, “going sideways/low”, “hard stop against deep research”). Place it after CURRENT CONSTRAINTS.
 
   TASK:
 
-  Using the CURRENT PROFILE as a base, and considering only NEW or
-  CHANGED information from the conversation (plus any long-term memory
-  or knowledge graph tools you may call):
+  Using the CURRENT PROFILE as a base, and considering only NEW or CHANGED information from the conversation (plus any long‑term memory or knowledge‑graph tools you may call):
 
-  - Update the existing \"[USER PROFILE — CURRENT SEASON]\" block to reflect:
-    - Chapter (what season they are in now, only if clearly changed),
-    - Active projects (add/remove/adjust only when sustained changes are clear),
-    - Current constraints,
-    - Near-term priorities.
+  - Update the existing “[USER PROFILE — CURRENT SEASON]” block to reflect:
+    – Chapter (only if clearly changed),
+    – Active projects (add/remove/adjust only when sustained changes are clear),
+    – Current constraints,
+    – Near‑term priorities,
+    – Optionally, Energy & focus patterns (if relevant).
 
-  - When in doubt about whether something should become a Chapter-level
-    theme or an Active project, err on the side of NOT changing the
-    Chapter or project list.
+  - When in doubt about whether something should become a Chapter‑level theme or an Active project, err on the side of NOT changing the Chapter or project list.
 
   OUTPUT FORMAT (IMPORTANT):
 
-  - Return a single, self-contained org block starting with:
+  - Return a single, self‑contained org block starting with:
     [USER PROFILE — CURRENT SEASON]
-  - Preserve the general structure (Chapter / Active projects / Current
-    constraints / Near-term priorities), but update contents as needed.
-  - Do NOT include any commentary, explanation, tool call logs, or
-    markdown fencing.  Only the profile text.
+  - Preserve the general structure (Chapter / Active projects / Current constraints / Near‑term priorities), but update contents as needed.
+  - Do NOT include any commentary, explanation, tool‑call logs, or markdown fencing. Only the profile text.
   ")
              (final-prompt
               (thread-last
-                prompt
+  	      prompt
   	      (replace-regexp-in-string "<<<PROFILE>>>" (or current-profile ""))
-  	      (replace-regexp-in-string "<<<CONTEXT>>>" context)))
-             (modtime (file-attribute-access-time
-  		     (file-attributes yant/gptel-user-profile-current-file))))
+  	      (replace-regexp-in-string "<<<CONTEXT>>>" context))))
         ;; Gptel call
         (with-current-buffer (get-buffer-create " *yant/gptel-tool-update-current-season*")
   	(kill-all-local-variables)
-          (erase-buffer)
-          (let ((gptel-use-tools t)
-                (gptel-include-reasoning nil)
-                (gptel-tools
-                 (delq nil
-  		     (mapcar
+  	(erase-buffer)
+          (setq gptel/updated nil)
+          (setq gptel/result nil)
+  	(let ((gptel-use-tools t)
+  	      (gptel-include-reasoning nil)
+  	      (gptel-tools
+  	       (delq nil
+                       (mapcar
   		      (lambda (tool) (when (equal "mcp-memory" (gptel-tool-category tool))))
-                        gptel-tools))))
-            (message "%s" final-prompt)
-  	  (gptel-request final-prompt
-  	    :system
-  	    "You update the user's current-season profile. Follow instructions exactly."
-  	    :callback
-  	    (lambda (response inner-info)
-                (pcase response
+  		      gptel-tools))))
+            (gptel-request final-prompt
+              :system
+              "You update the user's current‑season profile. Follow instructions exactly."
+              :callback
+              (lambda (response inner-info)
+  	      (pcase response
   		((pred stringp)
-  		 (when (and response
-  			    (string-match
-                               "\\[USER PROFILE — CURRENT SEASON\\]"
-                               response))
-  		   (with-temp-file yant/gptel-user-profile-current-file
-                       (insert (string-trim response))))
-  		 response)
-  		(`(tool-call . ,tool-calls) (gptel--accept-tool-calls response))
-  		(_ nil))))))
-        (while (not (org-file-newer-than-p
-  		 yant/gptel-user-profile-current-file modtime))
-  	(sleep-for 1))
-        (with-temp-buffer
-  	(insert-file-contents yant/gptel-user-profile-current-file)
-          (buffer-string))))
+  		 (if (string-match "\\[USER PROFILE — CURRENT SEASON\\]" response)
+                       (progn
+  		       (with-temp-file yant/gptel-user-profile-current-file
+  			 (insert (string-trim response)))
+  		       (setq gptel/result response
+                               gptel/updated t))
+                     ;; Model returned something else (e.g., “no change” commentary).
+                     ;; Write the original profile to unblock the loop.
+                     (with-temp-file yant/gptel-user-profile-current-file
+                       (insert current-profile))
+                     (setq gptel/result current-profile
+  			 gptel/updated t)))
+  		(`(tool-call . ,tool-calls)
+  		 (gptel--accept-tool-calls response))
+  		(_ (setq gptel/result nil gptel/updated t))))))   ; error case – still unblock
+  	;; Wait for callback to finish (with timeout)
+  	(while (not gptel/updated) (sleep-for 0.5))
+          (or gptel/result current-profile))))
+
     (push
      (gptel-make-tool
       :function #'yant/gptel-tool-update-current-season
