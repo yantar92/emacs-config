@@ -9650,19 +9650,6 @@ net-fs/davfs2
 net-misc/rclone
 #+end_src
 
-** Midnight commander
-:PROPERTIES:
-:ID:       2b9cffa1-fe20-4d50-89cf-721fa415db3b
-:END:
-
-#+begin_src conf :tangle /sudo::/var/lib/portage/world
-app-misc/mc
-#+end_src
-
-Mostly used to access ftp.
-****************** TODO Should figure out how to used dired
-****************** END
-
 ** Screencasting
 :PROPERTIES:
 :ID:       ce5a7514-0660-4ffe-b1bf-f74175ff06ff
@@ -10148,14 +10135,6 @@ net-im/deepin-wine-wechat
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.license/wechat
 net-im/deepin-wine-wechat Tencent
-#+end_src
-** Repair corrupted git repositories
-:PROPERTIES:
-:ID:       9163d67d-7b51-4bc4-a545-b09e26af6189
-:END:
-
-#+begin_src conf :tangle /sudo::/var/lib/portage/world
-dev-vcs/git-repair
 #+end_src
 ** GDB
 :PROPERTIES:
