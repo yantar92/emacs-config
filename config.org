@@ -781,24 +781,24 @@ I am setting line truncation globally and enable line wrapping only for specific
 If the line wrapping is active, I also want the word wrap to be activated automatically and obey the indentation of the beginning of the line (=adaprive-wrap= package; not yet part of Emacs, but will likely be https://yhetil.org/emacs-devel/878r4eqjh8.fsf@yahoo.com/).
 
 #+begin_src emacs-lisp
-(when init-flag
-  (use-package adaptive-wrap
-    :straight t
-    :demand t
-    :bind ("C-x l" . toggle-truncate-lines)
-    :config
-    (diminish 'adaptive-wrap-prefix-mode)
-    (diminish 'visual-line-mode)
-    (define-advice toggle-truncate-lines (:after (&optional arg) toggle-adaptive-wrap)
-      "Always use `adaptive-wrap-prefix-mode' when truncation of lines is disabled."
-      (setq line-move-visual nil)
-      (if truncate-lines
-	  (adaptive-wrap-prefix-mode -1)
-	(adaptive-wrap-prefix-mode +1))))
-  
-  (setq-default truncate-lines t
-		word-wrap t
-                line-move-visual nil))
+  (when init-flag
+    (use-package adaptive-wrap
+      :straight t
+      :demand t
+      :bind ("C-x l" . toggle-truncate-lines)
+      :config
+      (diminish 'adaptive-wrap-prefix-mode)
+      (diminish 'visual-line-mode)
+      (define-advice toggle-truncate-lines (:after (&optional arg) toggle-adaptive-wrap)
+        "Always use `adaptive-wrap-prefix-mode' when truncation of lines is disabled."
+        (setq line-move-visual nil)
+        (if truncate-lines
+  	  (adaptive-wrap-prefix-mode -1)
+  	(adaptive-wrap-prefix-mode +1))))
+    (global-visual-wrap-prefix-mode +1)
+    (setq-default truncate-lines t
+  		word-wrap t
+                  line-move-visual nil))
 #+end_src
 
 *** Text in buffers
