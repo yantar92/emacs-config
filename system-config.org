@@ -9271,8 +9271,10 @@ fi
 I need this for research videos where lossy compression is not acceptable.
 Assumes that =mkv= format is supported.
 
+[2025-12-20 Sat] Add sdl flag for =ffplay=
+
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/ffmpeg
-media-video/ffmpeg x264
+media-video/ffmpeg x264 sdl
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/video2mkv.sh :shebang #!/bin/bash
