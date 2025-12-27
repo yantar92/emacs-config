@@ -1246,6 +1246,33 @@ sys-fs/btrfs-progs
 app-backup/restic
 #+end_src
 
+** System theme
+
+Unified theme, derived from my Emacs theme, everywhere.
+
+#+name: get-color
+#+begin_src emacs-lisp :var color="fg-main" :eval yes
+  (eval `(modus-themes-with-colors ,(intern color)))
+#+end_src
+
+#+name: system-font
+#+begin_src emacs-lisp :eval yes
+  (format "%s %s"
+  	(face-attribute 'default :family)
+          (ceiling (/ (face-attribute 'default :height) 10.0)))
+#+end_src
+
+#+name: system-font-family
+#+begin_src emacs-lisp :eval yes
+  (format "%s" (face-attribute 'default :family))
+#+end_src
+
+#+name: system-font-size
+#+begin_src emacs-lisp :eval yes
+  (format "%s" (ceiling (/ (face-attribute 'default :height) 10.0)))
+#+end_src
+
+
 ** GUI
 *** X window system
 **** =Wmctrl=
@@ -1455,20 +1482,162 @@ end
 ***** Theme
 :PROPERTIES:
 :ID:       e52ad2cc-5b08-417d-917f-bd7e3407f813
+:DIR: nil
 :END:
-****************** TODO create git repo for the theme and unify it
-****************** END
-****************** TODO copy wallpaper to the theme itself
-****************** END
+
+#+name: generate-wallpaper
+#+begin_src bash :eval yes :results output :dir 'attach :noweb yes
+magick wallpaper.png -quality 95 \( -size 1x256 gradient:"<<get-color("fg-main")>>-<<get-color("bg-main")>>" \) -clut wallpaper-themed.png 2>&1 >/dev/null
+echo -n wallpaper-themed.png
+#+end_src
+
+#+name: awesome-theme-pathToConfig
+#+begin_src emacs-lisp :eval yes
+  (org-attach-dir)
+#+end_src
+
+#+header: :tangle /home/yantar92/.config/awesome/themes/custom/theme.lua
+#+begin_src lua :noweb yes
+  theme = {}
+
+  pathToConfig = "<<awesome-theme-pathToConfig()>>/"
+
+  theme.font          = "<<system-font()>>"
+
+  theme.bg_normal     = "<<get-color("bg-main")>>"
+  theme.bg_focus      = "<<get-color("bg-main")>>"
+  theme.bg_urgent     = "<<get-color("bg-dim")>>"
+  theme.bg_systray    = theme.bg_normal
+
+  theme.fg_normal     = "<<get-color("fg-main")>>"
+  theme.fg_focus      = "<<get-color("fg-alt")>>"
+  theme.fg_urgent     = "<<get-color("red")>>"
+  theme.fg_minimize = theme.fg_normal
+  theme.bg_minimize = "<<get-color("bg-inactive")>>"
+
+  theme.border_width  = 0
+  theme.border_normal = "<<get-color("border")>>"
+  theme.border_focus  = "<<get-color("border-mode-line-active")>>"
+  theme.border_marked = "<<get-color("border")>>"
+
+  -- Display the taglist squares
+  theme.taglist_squares_sel   = pathToConfig .. "icons/square_sel.png"
+  theme.taglist_squares_unsel = pathToConfig .. "icons/square_unsel.png"
+  theme.taglist_fg_focus = "<<get-color("fg-completion-match-1")>>"
+
+  -- Variables set for theming the menu:
+  -- menu_[bg|fg]_[normal|focus]
+  -- menu_[border_color|border_width]
+  theme.menu_submenu_icon = "/usr/share/awesome/themes/default/submenu.png"
+  theme.menu_height = 25
+  theme.menu_width  = 100
+
+  theme.wallpaper = pathToConfig .. "<<generate-wallpaper()>>"
+
+  -- {{{ Layout
+  theme.layout_tile       = "/usr/share/awesome/themes/zenburn/layouts/tile.png"
+  theme.layout_tileleft   = "/usr/share/awesome/themes/zenburn/layouts/tileleft.png"
+  theme.layout_tilebottom = "/usr/share/awesome/themes/zenburn/layouts/tilebottom.png"
+  theme.layout_tiletop    = "/usr/share/awesome/themes/zenburn/layouts/tiletop.png"
+  theme.layout_fairv      = "/usr/share/awesome/themes/zenburn/layouts/fairv.png"
+  theme.layout_fairh      = "/usr/share/awesome/themes/zenburn/layouts/fairh.png"
+  theme.layout_spiral     = "/usr/share/awesome/themes/zenburn/layouts/spiral.png"
+  theme.layout_dwindle    = "/usr/share/awesome/themes/zenburn/layouts/dwindle.png"
+  theme.layout_max        = "/usr/share/awesome/themes/zenburn/layouts/max.png"
+  theme.layout_fullscreen = "/usr/share/awesome/themes/zenburn/layouts/fullscreen.png"
+  theme.layout_magnifier  = "/usr/share/awesome/themes/zenburn/layouts/magnifier.png"
+  theme.layout_floating   = "/usr/share/awesome/themes/zenburn/layouts/floating.png"
+  -- }}}
+
+  --{{ For the Dark Theme }} --
+
+  theme.arr1 = pathToConfig .. "icons/diag-t.png"
+
+  -- The clock icon:
+  theme.clock = pathToConfig .. "icons/myclocknew.png"
+
+  --{{ For the wifi widget icons }} --
+  theme.nethigh = pathToConfig .. "icons/nethigh.png"
+  theme.netmedium = pathToConfig .. "icons/netmedium.png"
+  theme.netlow = pathToConfig .. "icons/netlow.png"
+  theme.netno = pathToConfig .. "icons/netno.png"
+
+  --{{ For the battery icon }} --
+  theme.baticon = pathToConfig .. "icons/battery.png"
+  theme.chargeicon = pathToConfig .. "icons/charging.png"
+
+  --{{ For the hard drive icon }} --
+  theme.fsicon = pathToConfig .. "icons/hdd.png"
+
+  --{{ For the volume icons }} --
+  theme.mute = pathToConfig .. "icons/mute.png"
+  theme.music = pathToConfig .. "icons/music.png"
+
+  --{{ For the volume icon }} --
+  theme.mute = pathToConfig .. "icons/volmute.png"
+  theme.volhi = pathToConfig .. "icons/volhi.png"
+  theme.volmed = pathToConfig .. "icons/volmed.png"
+  theme.vollow = pathToConfig .. "icons/vollow.png"
+
+  --{{ For the CPU icon }} --
+  theme.cpuicon = pathToConfig .. "icons/cpu.png"
+
+  --{{ For the memory icon }} --
+  theme.mem = pathToConfig .. "icons/mem.png"
+
+  --{{ For the memory icon }} --
+  theme.mail = pathToConfig .. "icons/mail.png"
+  theme.mailopen = pathToConfig .. "icons/mailopen.png"
+
+  --{{ For the vpn icon }} --
+  theme.vpn_off = pathToConfig .. "icons/vpn-off.png"
+  theme.vpn_on = pathToConfig .. "icons/vpn-on.png"
+
+  theme.diag = pathToConfig .. "icons/diag.png"
+
+  -- Define the icon theme for application icons. If not set then the icons
+  -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
+  theme.icon_theme = nil
+
+  return theme
+#+end_src
 
 #+BEGIN_SRC lua
--- Themes define colours, icons, font and wallpapers.
-home_dir = "/home/yantar92/"
-beautiful.init(home_dir .. ".config/awesome/themes/powerarrowf/theme.lua")
+  -- Themes define colours, icons, font and wallpapers.
+  beautiful.init("/home/yantar92/.config/awesome/themes/custom/theme.lua")
 
--- {{ These are the power arrow dividers/separators }} --
-arr1 = wibox.widget.imagebox()
-arr1:set_image(beautiful.arr1)
+  -- {{ These are the power arrow dividers/separators }} --
+  arr1 = wibox.widget.imagebox()
+  arr1:set_image(beautiful.arr1)
+
+  -- follow Modus Operanti Tinted theme for notifications
+  naughty.config.presets = {
+     low = {
+        timeout = 5
+     },
+     normal = {},
+     critical = {
+        bg = "<<get-color("bg-red-intense")>>",
+        fg = "<<get-color("fg-main")>>",
+        timeout = 0,
+     },
+     ok = {
+        bg = "<<get-color("bg-green-nuanced")>>",
+        fg = "<<get-color("fg-main")>>",
+        timeout = 5,
+     },
+     info = {
+        bg = "<<get-color("bg-dim")>>",
+        fg = "<<get-color("fg-main")>>",
+        timeout = 5,
+     },
+     warn = {
+        bg = "<<get-color("bg-yellow-intense")>>",
+        fg = "<<get-color("fg-main")>>",
+        timeout = 10,
+     },
+  }
+
 #+END_SRC
 
 ***** Widgets
@@ -1513,7 +1682,7 @@ fi
 
 #+END_SRC
 
-#+BEGIN_SRC lua
+#+BEGIN_SRC lua :noweb yes
   baticon = wibox.widget.imagebox()
   vicious.register(baticon, vicious.widgets.bat, function(widget, args)
 		      stdout=assert(io.popen("battery_status.sh", 'r'))
@@ -1533,7 +1702,7 @@ fi
 		      local file_adapter = stdout:read('*all')
 		      stdout:close()
 		      if args[2] < 10 then
-			 textcolor="#FF0000"
+			 textcolor="<<get-color("err")>>"
 		      end
 		      if args[2]<5 and tonumber(file_adapter)==1 then
 			 naughty.notify({ preset = naughty.config.presets.critical,
@@ -1565,7 +1734,7 @@ vicious.register(netwidget, vicious.widgets.wifi, function(widget, args)
 		       cur_ssid=cur_ssid:sub(1,12).."..."
 		    end
 		    if cur_ssid=="N/A" then
-		       cur_ssid='<span font="'.. beautiful.font ..'" color="#FF0000">N/A</span>'
+		       cur_ssid='<span font="'.. beautiful.font ..'" color="<<get-color("err")>>">N/A</span>'
 		    end
 		    return '<span font="'.. beautiful.font ..'"><span font ="'.. beautiful.font ..'">'..cur_ssid..' </span></span>' end, 10, "<<wifi-name()>>")
 #+end_src
@@ -1783,48 +1952,6 @@ awful.layout.layouts = {
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 #+END_SRC
 
-***** Conky integration
-:PROPERTIES:
-:ID:       35944e3b-9790-4617-b294-7034e6f69d79
-:END:
-
-#+BEGIN_SRC lua
-function get_conky()
-   local clients = client.get()
-   local conky = { }
-   local j = 1
-   local i = 1
-   while clients[i]
-   do
-      if clients[i].class == "conky"
-      then
-	 conky[j] = clients[i]
-	 j = j + 1
-      end
-      i = i + 1
-   end
-   return conky
-end
-function raise_conky()
-   local conky = get_conky()
-   local i = 1
-   while conky[i]
-   do
-      conky[i].ontop = true
-      i = i + 1
-   end
-end
-function lower_conky()
-   local conky = get_conky()
-   local i = 1
-   while conky[i]
-   do
-      conky[i].ontop = false
-      i = i + 1
-   end
-end
-#+END_SRC
-
 ***** Wallpaper
 :PROPERTIES:
 :ID:       a697d982-c539-434f-84c3-53711cf43432
@@ -1939,89 +2066,93 @@ return kbdlayout
 #+BEGIN_SRC lua
   awful.screen.connect_for_each_screen(
      function(s)
-	-- Wallpaper
-	set_wallpaper(s)
+  	-- Wallpaper
+  	set_wallpaper(s)
 
-	-- Each screen has its own tag table.
-	-- if s.index == 1 then
-	awful.tag({ "emacs", "web", "tile", "float", "steam" }, s, { awful.layout.suit.tile.bottom, awful.layout.suit.tile.left, awful.layout.suit.spiral.dwindle, awful.layout.suit.floating, awful.layout.suit.floating })
-	root.tags()[1].master_width_factor = 0.65
-	root.tags()[1].useless_gap = 0
-	-- else
-	--    awful.tag({"present","data"}, s, awful.layout.layouts[1])
-	-- end
+  	-- Each screen has its own tag table.
+  	-- if s.index == 1 then
+  	awful.tag({ "emacs", "web", "tile", "float", "steam" }, s, { awful.layout.suit.tile.bottom, awful.layout.suit.tile.left, awful.layout.suit.spiral.dwindle, awful.layout.suit.floating, awful.layout.suit.floating })
+  	root.tags()[1].master_width_factor = 0.65
+  	root.tags()[1].useless_gap = 0
+  	-- else
+  	--    awful.tag({"present","data"}, s, awful.layout.layouts[1])
+  	-- end
 
-	-- Create an imagebox widget which will contains an icon indicating which layout we're using.
-	-- We need one layoutbox per screen.
-	s.mylayoutbox = awful.widget.layoutbox(s)
-	-- Create a taglist widget
-	s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
+  	-- Create an imagebox widget which will contains an icon indicating which layout we're using.
+  	-- We need one layoutbox per screen.
+  	s.mylayoutbox = awful.widget.layoutbox(s)
+  	-- Create a taglist widget
+  	s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
 
-	-- Create a tasklist widget
+  	-- Create a tasklist widget
 
-	s.mytasklist_nofocus = awful.widget.tasklist(s, function (c,screen) return awful.widget.tasklist.filter.currenttags (c, screen) end, nil, nil, nil, wibox.layout.flex.horizontal())
+  	s.mytasklist_nofocus = awful.widget.tasklist(s, function (c,screen) return awful.widget.tasklist.filter.currenttags (c, screen) end, nil, nil, nil, wibox.layout.flex.horizontal())
 
-	-- Create the wibox
-	s.mywibox = awful.wibar({ position = "top", screen = s })
-	s.mywibox_status = awful.wibar({ position = "bottom", screen = s })
-	s.mywibox_right = awful.wibar({ position = "right", screen = s })
+  	-- Create the wibox
+  	s.mywibox = awful.wibar({ position = "top", screen = s })
+  	s.mywibox_status = awful.wibar({ position = "bottom", screen = s })
+  	s.mywibox_right = awful.wibar({ position = "right", screen = s })
 
-	-- Add widgets to the wibox
-	s.mywibox:setup {
-	   layout = wibox.layout.align.horizontal,
-	   s.mylayoutbox,
-	   s.mytasklist_nofocus,
-	   { -- Right widgets
-	      layout = wibox.layout.fixed.horizontal,
-	      s.index == 1 and spacing,
-	      s.index == 1 and balance,
-	      arr1,
-	      spacing
-	   },
-	}
-	s.mywibox_right:setup {
-	   layout = wibox.layout.align.vertical,
-	   {
-	      layout = wibox.layout.fixed.vertical,
-	      s.index == 1 and spacing,
-	      s.index == 1 and mysystray,
-	   },
-	   {
-	      layout = wibox.layout.fixed.vertical,
-	   },
-	   {
-	      s.mytaglist,
-	      direction = 'west',
-	      layout = wibox.container.rotate,
-	   },
-	}
-	s.mywibox_status:setup {
-	   layout = wibox.layout.align.horizontal,
-	   expand = "none",
-	   s.index == 1 and orgstatus,
-	   {
-	      layout =  wibox.layout.fixed.horizontal,
-	      forced_width = 1,
-	      spacing,
-	   },
-	   {
-	      layout =  wibox.layout.fixed.horizontal,
-	      cpuicon,
-	      cpuwidget,
-	      memicon,
-	      memwidget,
-	      volumeicon,
-	      volume,
-	      baticon,
-	      batwidget,
-	      neticon,
-	      netwidget,
-	      clockicon,
-	      tdwidget,
-	      -- vpnicon,
-	      diagicon,
-	   },
-	}
+  	-- Add widgets to the wibox
+  	s.mywibox:setup {
+  	   layout = wibox.layout.align.horizontal,
+  	   s.mylayoutbox,
+  	   { -- Right widgets
+  	      layout = wibox.layout.fixed.horizontal,
+  	      s.index == 1 and spacing,
+  	      s.index == 1 and balance,
+  	      arr1,
+  	      spacing
+  	   },
+  	}
+  	s.mywibox_right:setup {
+  	   layout = wibox.layout.align.vertical,
+  	   {
+  	      layout = wibox.layout.fixed.vertical,
+  	      s.index == 1 and spacing,
+  	      s.index == 1 and mysystray,
+  	   },
+  	   {
+  	      layout = wibox.layout.fixed.vertical,
+  	   },
+  	   {
+  	      s.mytasklist_nofocus,
+                direction = 'west',
+                layout = wibox.container.rotate,
+  	   },
+  	   {
+  	      s.mytaglist,
+  	      direction = 'west',
+  	      layout = wibox.container.rotate,
+  	   },
+  	}
+  	s.mywibox_status:setup {
+  	   layout = wibox.layout.align.horizontal,
+  	   expand = "none",
+  	   s.index == 1 and orgstatus,
+  	   {
+  	      layout =  wibox.layout.fixed.horizontal,
+  	      forced_width = 1,
+  	      spacing,
+  	   },
+  	   {
+  	      layout =  wibox.layout.fixed.horizontal,
+  	      cpuicon,
+  	      cpuwidget,
+  	      memicon,
+  	      memwidget,
+  	      volumeicon,
+  	      volume,
+  	      baticon,
+  	      batwidget,
+  	      neticon,
+  	      netwidget,
+  	      clockicon,
+  	      tdwidget,
+  	      -- vpnicon,
+  	      diagicon,
+  	   },
+  	}
   end)
   -- }}}
 
@@ -2034,48 +2165,35 @@ return kbdlayout
 #+BEGIN_SRC lua  
   function initflagmove ()
      keynumber = 0
-     -- Bind all key numbers to tags.
-     -- Be careful: we use keycodes to make it works on any keyboard layout.
-     -- This should map on the top row of your keyboard, usually 1 to 9.
      tagkeys={"x","z","s","d","f"}
      for s in screen do
   	keynumber = math.min(9, math.max(#s.tags, keynumber));
      end
 
      for i = 1, keynumber do
-  	globalkeys = awful.util.table.join(globalkeys,
-  					   -- View tag only.
-  					   awful.key({ modkey, "Control" }, tagkeys[i],
-  					      function ()
-  							local screen = awful.screen.focused()
-  							local tag = screen.tags[i]
-  							if tag then
-  							   tag:view_only()
-  							end
-  						     end,
-  						     {description = "view tag #"..i, group = "tag"}),
-  					   -- Move client to tag.
-  					   awful.key({ modkey, "Shift" }, tagkeys[i],
-  					      function ()
-  							if client.focus then
-  							   local tag = client.focus.screen.tags[i]
-  							   if tag then
-  							      client.focus:move_to_tag(tag)
-  							   end
-  							end
-  						     end,
-  						     {description = "move focused client to tag #"..i, group = "tag"})
-  					   -- -- Toggle tag on focused client.
-  					   -- awful.key({ modkey, "Alt_L", "Shift" }, tagkeys[i],
-  					   -- 	   function ()
-  					   -- 	      if client.focus then
-  					   -- 		 local tag = client.focus.screen.tags[i]
-  					   -- 		 if tag then
-  					   -- 		    client.focus:toggle_tag(tag)
-  					   -- 		 end
-  					   -- 	      end
-  					   -- 	   end,
-  					   -- 	   {description = "toggle focused client on tag #" .. i, group = "tag"})
+  	globalkeys = awful.util.table.join(
+  	   globalkeys,
+  	   -- View tag only.
+  	   awful.key({ modkey, "Control" }, tagkeys[i],
+  	      function ()
+  		 local screen = awful.screen.focused()
+  		 local tag = screen.tags[i]
+  		 if tag then
+  		    tag:view_only()
+  		 end
+  	      end,
+  	      {description = "view tag #"..i, group = "tag"}),
+  	   -- Move client to tag.
+  	   awful.key({ modkey, "Shift" }, tagkeys[i],
+  	      function ()
+  		 if client.focus then
+  		    local tag = client.focus.screen.tags[i]
+  		    if tag then
+  		       client.focus:move_to_tag(tag)
+  		    end
+  		 end
+  	      end,
+  	      {description = "move focused client to tag #"..i, group = "tag"})
   	)
      end
   end
@@ -2173,44 +2291,7 @@ return kbdlayout
   		  if client.focus then
   		     client.focus:raise()
   		  end
-  						    end),
-     -- Prompt
-     awful.key({}, "F11", function() raise_conky() end, function() lower_conky() end)
-     -- awful.key({ modkey, "Shift", "Control" }, "n",
-     -- 	     function()
-     -- 		local tag = awful.tag.selected()
-     -- 		for i=1, #tag:clients() do
-     -- 		   tag:clients()[i].minimized=false
-     -- 		end
-     -- 	     end),
-     -- awful.key({ modkey, "Shift"       }, "n",
-     -- 	       function()
-     -- 		  -- client_list={}
-     -- 		  -- local tag = awful.tag.selected()
-     -- 		  -- for i=1, #tag:clients() do
-     -- 		  --    cl=tag:clients()[i]
-     -- 		  --    if tag:clients()[i].minimized then
-     -- 		  --       prefix = "_ "
-     -- 		  --    else
-     -- 		  --       prefix = "* "
-     -- 		  --    end
-     -- 		  --    if not awful.rules.match(cl, {class= "conky"}) then
-     -- 		  --       client_list[i]=
-     -- 		  -- 	 {prefix .. cl.name.."</span>",
-     -- 		  -- 	  function()
-     -- 		  -- 	     cl_menu:hide()
-     -- 		  -- 	     tag:clients()[i].minimized=not tag:clients()[i].minimized
-     -- 		  -- 	  end,
-     -- 		  -- 	  cl.icon
-     -- 		  -- 	 }
-     -- 		  --    end
-     -- 		  -- end
-     -- 		  -- cl_menu=awful.menu({items = client_list, theme = {width=300}})
-     -- 		  -- mouse.coords({x=533,y=354})
-     -- 		  -- cl_menu:show({keygrabber = true})
-     -- 		  awful.spawn("windowcd.sh")
-     -- 	       end
-     -- )
+  						    end)
   )
 
   clientkeys = awful.util.table.join(
@@ -2246,9 +2327,7 @@ return kbdlayout
      awful.button({ modkey }, 1, function(c) awful.mouse.client.move() end),
      awful.button({ modkey }, 3, function(c) awful.mouse.client.resize() end))
 
-  -- Set keys
   root.keys(globalkeys)
-  -- }}}
 #+END_SRC
 ***** Client rules
 :PROPERTIES:
@@ -2267,9 +2346,7 @@ return kbdlayout
 	<<awesome-default-keyring-rule>>,
 	<<awesome-default-kitty-rule>>,
 	<<awesome-default-gnuplot-rule>>,
-	<<awesome-default-conky-rule>>,
 	<<awesome-default-mpv-rule>>,
-	<<awesome-default-astrill-rule>>,
 	<<awesome-default-crqt-rule>>,
   }
 #+END_SRC
@@ -2328,20 +2405,25 @@ return kbdlayout
 
 #+name: awesome-default-emacs-rule
 #+begin_src lua :tangle no
+  { rule = { class = "Emacs" },
+    properties = {
+       titlebars_enabled = false,
+    }
+  },
      { rule = { class = "Emacs", name = "Helm frame"},
        properties = {
-	  floating = true,
-          placement = awful.placement.centered,
-          skip_taskbar = true,
-          ontop = true,
-          maximized_horizontal = true,
-          height = 800,
-	  titlebars_enabled = false,
-	  border_width = 1.0,
-	  opacity = 0.9,
+  	floating = true,
+  	placement = awful.placement.centered,
+  	skip_taskbar = true,
+  	ontop = true,
+  	maximized_horizontal = true,
+  	height = 800,
+  	titlebars_enabled = false,
+  	border_width = 1.0,
+  	opacity = 0.9,
        },
        callback = function(c)
-	  gears.apply_shape_bounding(c, gears.shape.rounded_rect, 15)
+  	gears.apply_shape_bounding(c, gears.shape.rounded_rect, 15)
        end,
      }
 #+end_src
@@ -2424,24 +2506,6 @@ return kbdlayout
      }
 #+end_src
 
-****** Conky 
-:PROPERTIES:
-:ID:       0f440b7d-1090-4ed8-95f0-f4145ce69067
-:END:
-
-#+name: awesome-default-conky-rule
-#+begin_src lua :tangle no
-     { rule = { class = "conky" },
-       properties = {
-	  floating = true,
-	  sticky = true,
-	  ontop = false,
-	  focusable = false,
-	  border_width = 0,
-       }
-     }
-#+end_src
-
 ****** MPV
 :PROPERTIES:
 :ID:       80b366e2-7385-4ba0-8af9-1d7ba59e5907
@@ -2452,21 +2516,6 @@ return kbdlayout
      { rule = { class = "mpv" },
        properties = {
 	  floating = true
-       }
-     }
-#+end_src
-
-****** Astrill
-:PROPERTIES:
-:ID:       c7d13b82-c2fe-4de2-a561-2babf9f336b4
-:END:
-
-#+name: awesome-default-astrill-rule
-#+begin_src lua :tangle no
-     { rule = { class = "Astrill" },
-       properties = {
-	  floating = true,
-	  placement = awful.placement.top_right
        }
      }
 #+end_src
@@ -2486,7 +2535,6 @@ return kbdlayout
 #+end_src
 
 
-
 ***** Client signals
 :PROPERTIES:
 :ID:       d3976060-2ee2-47a1-8f09-93fc7b434fa6
@@ -2496,55 +2544,54 @@ return kbdlayout
 #+BEGIN_SRC lua  
   -- {{{ Signals
   -- Signal function to execute when a new client appears.
-  client.connect_signal("manage", function (c)
-			   -- Set the windows at the slave,
-			   -- i.e. put it at the end of others instead of setting it master.
-			   -- if not awesome.startup then awful.client.setslave(c) end
-			   if awesome.startup and
-			      not c.size_hints.user_position
-			      and not c.size_hints.program_position
-			   then
-			      -- Prevent clients from being unreachable after screen count changes.
-			      awful.placement.no_offscreen(c)
-			   end
-				  end)
+  client.connect_signal(
+     "manage", function (c)
+        -- Set the windows at the slave,
+        -- i.e. put it at the end of others instead of setting it master.
+        -- if not awesome.startup then awful.client.setslave(c) end
+        if awesome.startup and
+  	 not c.size_hints.user_position
+  	 and not c.size_hints.program_position
+        then
+  	 -- Prevent clients from being unreachable after screen count changes.
+  	 awful.placement.no_offscreen(c)
+        end
+  end)
 
   -- Add a titlebar if titlebars_enabled is set to true in the rules.
-  client.connect_signal("request::titlebars", function(c)
-			   -- buttons for the titlebar
-			   awful.titlebar(c, {position="bottom"}) : setup {
-			      { -- Left
-				 awful.titlebar.widget.iconwidget(c),
-				 spacing,
-				 buttons = buttons,
-				 layout  = wibox.layout.fixed.horizontal
-			      },
-			      { -- Middle
-				 { -- Title
-				    align  = "left",
-				    widget = awful.titlebar.widget.titlewidget(c)
-				 },
-				 buttons = buttons,
-				 layout  = wibox.layout.flex.horizontal
-			      },
-			      spacing,
-			      layout = wibox.layout.align.horizontal
-									  }
-					      end)
-
-  -- Enable sloppy focus, so that focus follows mouse.
-  -- client.connect_signal("mouse::enter", function(c)
-  --     if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
-  --         and awful.client.focus.filter(c) then
-  --         client.focus = c
-  --     end
-  -- end)
+  client.connect_signal(
+     "request::titlebars", function(c)
+        -- buttons for the titlebar
+        awful.titlebar(c, {position="bottom"}) : setup {
+  	 { -- Left
+  	    awful.titlebar.widget.iconwidget(c),
+  	    spacing,
+  	    buttons = buttons,
+  	    layout  = wibox.layout.fixed.horizontal
+  	 },
+  	 { -- Middle
+  	    { -- Title
+  	       align  = "left",
+  	       widget = awful.titlebar.widget.titlewidget(c)
+  	    },
+  	    buttons = buttons,
+  	    layout  = wibox.layout.flex.horizontal
+  	 },
+  	 spacing,
+  	 layout = wibox.layout.align.horizontal}
+  end)
 
 
-  client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus; if not c.class == "mpv" then c.above = true; end end)
-
-  client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal; c.above=false; end)
-  -- }}}
+  client.connect_signal(
+     "focus", function(c)
+        c.border_color = beautiful.border_focus;
+        if not c.class == "mpv" then c.above = true; end
+  end)
+  client.connect_signal(
+     "unfocus", function(c)
+        c.border_color = beautiful.border_normal;
+        c.above=false;
+  end)
 #+END_SRC
 
 ***** Autostart \\ startup
@@ -2690,20 +2737,46 @@ x11-misc/rofi
 :END:
 
 #+begin_src conf :tangle /home/yantar92/.config/rofi/config.rasi :mkdirp yes :comments no
-configuration {
-        separator-style: "solid";
-        scrollbar-width: 5;
-        terminal: "urxvt";
-        width: 35;
-        lines: 7;
-        padding: 10;
-        run-command: "bash -c '{cmd}'";
-        window-command: "wmctrl -b toggle,hidden -i -r {window}";
-        font: "Adobe Garamond 15";
-        kb-row-down: "Down,Control+n,Alt+j";
-        kb-row-up: "Up,Control+p,Shift+Tab,Shift+ISO_Left_Tab,Alt+k";
-}
-@theme "/usr/share/rofi/themes/Arc-Dark.rasi"
+  configuration {
+          separator-style: "solid";
+          scrollbar-width: 5;
+          terminal: "urxvt";
+          width: 35;
+          lines: 7;
+          padding: 10;
+          run-command: "bash -c '{cmd}'";
+          window-command: "wmctrl -b toggle,hidden -i -r {window}";
+          font: "Adobe Garamond 15";
+          kb-row-down: "Down,Control+n,Alt+j";
+          kb-row-up: "Up,Control+p,Shift+Tab,Shift+ISO_Left_Tab,Alt+k";
+  }
+  @theme "/usr/share/rofi/themes/Arc-Dark.rasi"
+  ,* {
+      foreground:                  <<get-color("fg-main")>>;
+      background:                  <<get-color("bg-main")>>;
+      normal-foreground:           @foreground;
+      normal-background:           @background;
+      alternate-normal-foreground: @foreground;
+      alternate-normal-background: <<get-color("bg-dim")>>;
+      active-foreground:           @foreground;
+      active-background:           <<get-color("bg-active")>>;
+      alternate-active-foreground: @active-foreground;
+      alternate-active-background: <<get-color("bg-active")>>;
+      selected-normal-foreground:  @foreground;
+      selected-normal-background:  <<get-color("bg-inactive")>>;
+      selected-active-foreground:  @foreground;
+      selected-active-background:  @active-background;
+      urgent-foreground:           <<get-color("fg-prominent-err")>>;
+      urgent-background:           <<get-color("bg-prominent-err")>>;
+      alternate-urgent-foreground: @urgent-foreground;
+      alternate-urgent-background: @urgent-background;
+      selected-urgent-foreground:  @urgent-foreground;
+      selected-urgent-background:  @active-foreground;
+      border-color:                <<get-color("border")>>;
+      spacing:                     2;
+      separatorcolor:              @background;
+      background-color:            @background;
+  }
 #+end_src
 
 ***** Menu generator for rofi: menugen
@@ -2886,111 +2959,25 @@ media-libs/libcanberra alsa
 :PROPERTIES:
 :ID:       3a2b29f7-62da-4c70-bf0b-a995ff2b7caa
 :END:
-#+begin_src conf :tangle /home/yantar92/.config/kitty/kitty.conf
-# vim:fileencoding=utf-8:ft=conf:foldmethod=marker
-
-#: Fonts {{{
-
-#: kitty has very powerful font management. You can configure
-#: individual font faces and even specify special fonts for particular
-#: characters.
-
-font_family      monospace
+#+begin_src conf :tangle /home/yantar92/.config/kitty/kitty.conf :noweb yes
+font_family      <<system-font-family()>>
 bold_font        auto
 italic_font      auto
 bold_italic_font auto
 
-#: You can specify different fonts for the bold/italic/bold-italic
-#: variants. To get a full list of supported fonts use the `kitty
-#: list-fonts` command. By default they are derived automatically, by
-#: the OSes font system. Setting them manually is useful for font
-#: families that have many weight variants like Book, Medium, Thick,
-#: etc. For example::
-
-#:     font_family      Operator Mono Book
-#:     bold_font        Operator Mono Medium
-#:     italic_font      Operator Mono Book Italic
-#:     bold_italic_font Operator Mono Medium Italic
-
-#font_size 11.0
-font_size 15
-
-#: Font size (in pts)
+font_size 13
 
 adjust_line_height  0
 adjust_column_width 0
 
-#: Change the size of each character cell kitty renders. You can use
-#: either numbers, which are interpreted as pixels or percentages
-#: (number followed by %), which are interpreted as percentages of the
-#: unmodified values. You can use negative pixels or percentages less
-#: than 100% to reduce sizes (but this might cause rendering
-#: artifacts).
-
-# symbol_map U+E0A0-U+E0A2,U+E0B0-U+E0B3 PowerlineSymbols
-
-#: Map the specified unicode codepoints to a particular font. Useful
-#: if you need special rendering for some symbols, such as for
-#: Powerline. Avoids the need for patched fonts. Each unicode code
-#: point is specified in the form U+<code point in hexadecimal>. You
-#: can specify multiple code points, separated by commas and ranges
-#: separated by hyphens. symbol_map itself can be specified multiple
-#: times. Syntax is::
-
-#:     symbol_map codepoints Font Family Name
-
 disable_ligatures never
 
-#: Choose how you want to handle multi-character ligatures. The
-#: default is to always render them.  You can tell kitty to not render
-#: them when the cursor is over them by using cursor to make editing
-#: easier, or have kitty never render them at all by using always, if
-#: you don't like them. The ligature strategy can be set per-window
-#: either using the kitty remote control facility or by defining
-#: shortcuts for it in kitty.conf, for example::
+box_drawing_scale 0.101, 1, 1.5, 2
 
-#:     map alt+1 disable_ligatures_in active always
-#:     map alt+2 disable_ligatures_in all never
-#:     map alt+3 disable_ligatures_in tab cursor
-
-box_drawing_scale 0.001, 1, 1.5, 2
-
-#: Change the sizes of the lines used for the box drawing unicode
-#: characters These values are in pts. They will be scaled by the
-#: monitor DPI to arrive at a pixel value. There must be four values
-#: corresponding to thin, normal, thick, and very thick lines.
-
-#: }}}
-
-#: Cursor customization {{{
-
-cursor #cccccc
-
-#: Default cursor color
-
-cursor_text_color #111111
-
-#: Choose the color of text under the cursor. If you want it rendered
-#: with the background color of the cell underneath instead, use the
-#: special keyword: background
-
+cursor <<get-color("cursor")>>
+cursor_text_color <<get-color("fg-main")>>
 cursor_shape block
-
-#: The cursor shape can be one of (block, beam, underline)
-
 cursor_blink_interval -1
-
-#: The interval (in seconds) at which to blink the cursor. Set to zero
-#: to disable blinking. Negative values mean use system default. Note
-#: that numbers smaller than repaint_delay will be limited to
-#: repaint_delay.
-
-cursor_stop_blinking_after 15.0
-
-#: Stop blinking cursor after the specified number of seconds of
-#: keyboard inactivity.  Set to zero to never stop blinking.
-
-#: }}}
 #+END_SRC
 
 ***** Text buffer
@@ -2999,138 +2986,39 @@ cursor_stop_blinking_after 15.0
 :END:
 #+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
 
-#: Scrollback {{{
-
-scrollback_lines 2000
-
-#: Number of lines of history to keep in memory for scrolling back.
-#: Memory is allocated on demand. Negative numbers are (effectively)
-#: infinite scrollback. Note that using very large scrollback is not
-#: recommended as it can slow down resizing of the terminal and also
-#: use large amounts of RAM.
-
+scrollback_lines 4000
 scrollback_pager less --chop-long-lines --RAW-CONTROL-CHARS +INPUT_LINE_NUMBER
-
-#: Program with which to view scrollback in a new window. The
-#: scrollback buffer is passed as STDIN to this program. If you change
-#: it, make sure the program you use can handle ANSI escape sequences
-#: for colors and text formatting. INPUT_LINE_NUMBER in the command
-#: line above will be replaced by an integer representing which line
-#: should be at the top of the screen.
-
 scrollback_pager_history_size 0
 
-#: Separate scrollback history size, used only for browsing the
-#: scrollback buffer (in MB). This separate buffer is not available
-#: for interactive scrolling but will be piped to the pager program
-#: when viewing scrollback buffer in a separate window. The current
-#: implementation stores one character in 4 bytes, so approximatively
-#: 2500 lines per megabyte at 100 chars per line. A value of zero or
-#: less disables this feature. The maximum allowed size is 4GB.
-
 wheel_scroll_multiplier 5.0
-
-#: Modify the amount scrolled by the mouse wheel. Note this is only
-#: used for low precision scrolling devices, not for high precision
-#: scrolling on platforms such as macOS and Wayland. Use negative
-#: numbers to change scroll direction.
-
 touch_scroll_multiplier 1.0
-
-#: Modify the amount scrolled by a touchpad. Note this is only used
-#: for high precision scrolling devices on platforms such as macOS and
-#: Wayland. Use negative numbers to change scroll direction.
-
-#: }}}
 #+END_SRC
 
 ***** Mouse
 :PROPERTIES:
 :ID:       0f17aadb-10c1-4f04-9edb-edd1f5ae4f97
 :END:
-#+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
-
-#: Mouse {{{
-
+#+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf :noweb yes
 mouse_hide_wait 3.0
 
-#: Hide mouse cursor after the specified number of seconds of the
-#: mouse not being used. Set to zero to disable mouse cursor hiding.
-#: Set to a negative value to hide the mouse cursor immediately when
-#: typing text.
-
-url_color #0087bd
+url_color <<get-color("fg-link")>>
 url_style curly
 
-#: The color and style for highlighting URLs on mouse-over. url_style
-#: can be one of: none, single, double, curly
-
 open_url_modifiers kitty_mod
-
-#: The modifier keys to press when clicking with the mouse on URLs to
-#: open the URL
-
 open_url_with xdg-open
 
-#: The program with which to open URLs that are clicked on. The
-#: special value default means to use the operating system's default
-#: URL handler.
-
 copy_on_select no
-
-#: Copy to clipboard or a private buffer on select. With this set to
-#: clipboard, simply selecting text with the mouse will cause the text
-#: to be copied to clipboard. Useful on platforms such as macOS that
-#: do not have the concept of primary selections. You can instead
-#: specify a name such as a1 to copy to a private kitty buffer
-#: instead. Map a shortcut with the paste_from_buffer action to paste
-#: from this private buffer. For example::
-
-#:     map cmd+shift+v paste_from_buffer a1
-
-#: Note that copying to the clipboard is a security risk, as all
-#: programs, including websites open in your browser can read the
-#: contents of the system clipboard.
-
 strip_trailing_spaces never
 
-#: Remove spaces at the end of lines when copying to clipboard. A
-#: value of smart will do it when using normal selections, but not
-#: rectangle selections. always will always do it.
-
 rectangle_select_modifiers ctrl+alt
-
-#: The modifiers to use rectangular selection (i.e. to select text in
-#: a rectangular block with the mouse)
-
 terminal_select_modifiers shift
-
-#: The modifiers to override mouse selection even when a terminal
-#: application has grabbed the mouse
-
 select_by_word_characters :@-./_~?&=%+#
-
-#: Characters considered part of a word when double clicking. In
-#: addition to these characters any character that is marked as an
-#: alpha-numeric character in the unicode database will be matched.
 
 click_interval -1.0
 
-#: The interval between successive clicks to detect double/triple
-#: clicks (in seconds). Negative numbers will use the system default
-#: instead, if available, or fallback to 0.5.
-
 focus_follows_mouse no
 
-#: Set the active window to the window under the mouse when moving the
-#: mouse around
-
 pointer_shape_when_grabbed arrow
-
-#: The shape of the mouse pointer when the program running in the
-#: terminal grabs the mouse.
-
-#: }}}
 #+END_SRC
 
 ***** Performance tuning
@@ -3138,37 +3026,9 @@ pointer_shape_when_grabbed arrow
 :ID:       6b4f1201-dd40-4921-81dc-0c83d20837d4
 :END:
 #+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
-
-#: Performance tuning {{{
-
 repaint_delay 10
-
-#: Delay (in milliseconds) between screen updates. Decreasing it,
-#: increases frames-per-second (FPS) at the cost of more CPU usage.
-#: The default value yields ~100 FPS which is more than sufficient for
-#: most uses. Note that to actually achieve 100 FPS you have to either
-#: set sync_to_monitor to no or use a monitor with a high refresh
-#: rate. Also, to minimize latency when there is pending input to be
-#: processed, repaint_delay is ignored.
-
 input_delay 3
-
-#: Delay (in milliseconds) before input from the program running in
-#: the terminal is processed. Note that decreasing it will increase
-#: responsiveness, but also increase CPU usage and might cause flicker
-#: in full screen programs that redraw the entire screen on each loop,
-#: because kitty is so fast that partial screen updates will be drawn.
-
 sync_to_monitor yes
-
-#: Sync screen updates to the refresh rate of the monitor. This
-#: prevents tearing (https://en.wikipedia.org/wiki/Screen_tearing)
-#: when scrolling. However, it limits the rendering speed to the
-#: refresh rate of your monitor. With a very high speed mouse/high
-#: keyboard repeat rate, you may notice some slight input latency. If
-#: so, set this to no.
-
-#: }}}
 #+END_SRC
 
 ***** Terminal bell
@@ -3176,35 +3036,11 @@ sync_to_monitor yes
 :ID:       021dafbb-51b7-4c95-ab60-13f7e38412ac
 :END:
 #+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
-
-#: Terminal bell {{{
-
 enable_audio_bell no
-
-#: Enable/disable the audio bell. Useful in environments that require
-#: silence.
-
 visual_bell_duration 0.0
-
-#: Visual bell duration. Flash the screen when a bell occurs for the
-#: specified number of seconds. Set to zero to disable.
-
 window_alert_on_bell yes
-
-#: Request window attention on bell. Makes the dock icon bounce on
-#: macOS or the taskbar flash on linux.
-
 bell_on_tab yes
-
-#: Show a bell symbol on the tab if a bell occurs in one of the
-#: windows in the tab and the window is not the currently focused
-#: window
-
 command_on_bell none
-
-#: Program to run when a bell occurs.
-
-#: }}}
 #+END_SRC
 
 ***** Window layout
@@ -3212,115 +3048,31 @@ command_on_bell none
 :ID:       2810697d-8808-4670-83c3-ff9771ac999f
 :END:
 #+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
-
-#: Window layout {{{
-
 remember_window_size  yes
 initial_window_width  640
 initial_window_height 400
 
-#: If enabled, the window size will be remembered so that new
-#: instances of kitty will have the same size as the previous
-#: instance. If disabled, the window will initially have size
-#: configured by initial_window_width/height, in pixels. You can use a
-#: suffix of "c" on the width/height values to have them interpreted
-#: as number of cells instead of pixels.
-
 enabled_layouts *
-
-#: The enabled window layouts. A comma separated list of layout names.
-#: The special value all means all layouts. The first listed layout
-#: will be used as the startup layout. For a list of available
-#: layouts, see the
-#: https://sw.kovidgoyal.net/kitty/index.html#layouts.
 
 window_resize_step_cells 2
 window_resize_step_lines 2
-
-#: The step size (in units of cell width/cell height) to use when
-#: resizing windows. The cells value is used for horizontal resizing
-#: and the lines value for vertical resizing.
-
 window_border_width 1.0
-
-#: The width (in pts) of window borders. Will be rounded to the
-#: nearest number of pixels based on screen resolution. Note that
-#: borders are displayed only when more than one window is visible.
-#: They are meant to separate multiple windows.
-
 draw_minimal_borders yes
-
-#: Draw only the minimum borders needed. This means that only the
-#: minimum needed borders for inactive windows are drawn. That is only
-#: the borders that separate the inactive window from a neighbor. Note
-#: that setting a non-zero window margin overrides this and causes all
-#: borders to be drawn.
-
 window_margin_width 0.0
-
-#: The window margin (in pts) (blank area outside the border)
-
 single_window_margin_width -1000.0
-
-#: The window margin (in pts) to use when only a single window is
-#: visible. Negative values will cause the value of
-#: window_margin_width to be used instead.
-
 window_padding_width 0.0
-
-#: The window padding (in pts) (blank area between the text and the
-#: window border)
-
 placement_strategy center
 
-#: When the window size is not an exact multiple of the cell size, the
-#: cell area of the terminal window will have some extra padding on
-#: the sides. You can control how that padding is distributed with
-#: this option. Using a value of center means the cell area will be
-#: placed centrally. A value of top-left means the padding will be on
-#: only the bottom and right edges.
-
 active_border_color #00ff00
-
-#: The color for the border of the active window. Set this to none to
-#: not draw borders around the active window.
-
 inactive_border_color #cccccc
-
-#: The color for the border of inactive windows
-
 bell_border_color #ff5a00
-
-#: The color for the border of inactive windows in which a bell has
-#: occurred
 
 inactive_text_alpha 1.0
 
-#: Fade the text in inactive windows by the specified amount (a number
-#: between zero and one, with zero being fully faded).
-
 hide_window_decorations no
 
-#: Hide the window decorations (title-bar and window borders). Whether
-#: this works and exactly what effect it has depends on the window
-#: manager/operating system.
-
 resize_debounce_time 0.1
-
-#: The time (in seconds) to wait before redrawing the screen when a
-#: resize event is received. On platforms such as macOS, where the
-#: operating system sends events corresponding to the start and end of
-#: a resize, this number is ignored.
-
 resize_draw_strategy static
-
-#: Choose how kitty draws a window while a resize is in progress. A
-#: value of static means draw the current window contents, mostly
-#: unchanged. A value of scale means draw the current window contents
-#: scaled. A value of blank means draw a blank window. A value of size
-#: means show the window size in cells.
-
-#: }}}
 #+END_SRC
 
 ***** Tab bar
@@ -3328,66 +3080,16 @@ resize_draw_strategy static
 :ID:       cd314739-abcf-4075-b8f6-821f7d30487d
 :END:
 #+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
-
-#: Tab bar {{{
-
 tab_bar_edge top
-
-#: Which edge to show the tab bar on, top or bottom
-
 tab_bar_margin_width 0.0
-
-#: The margin to the left and right of the tab bar (in pts)
-
 tab_bar_style fade
-
-#: The tab bar style, can be one of: fade, separator or hidden. In the
-#: fade style, each tab's edges fade into the background color, in the
-#: separator style, tabs are separated by a configurable separator.
-
 tab_bar_min_tabs 2
-
-#: The minimum number of tabs that must exist before the tab bar is
-#: shown
-
 tab_switch_strategy previous
-
-#: The algorithm to use when switching to a tab when the current tab
-#: is closed. The default of previous will switch to the last used
-#: tab. A value of left will switch to the tab to the left of the
-#: closed tab. A value of last will switch to the right-most tab.
-
 tab_fade 0.25 0.5 0.75 1
-
-#: Control how each tab fades into the background when using fade for
-#: the tab_bar_style. Each number is an alpha (between zero and one)
-#: that controls how much the corresponding cell fades into the
-#: background, with zero being no fade and one being full fade. You
-#: can change the number of cells used by adding/removing entries to
-#: this list.
-
 tab_separator " ┇"
-
-#: The separator between tabs in the tab bar when using separator as
-#: the tab_bar_style.
-
 tab_title_template {title}
-
-#: A template to render the tab title. The default just renders the
-#: title. If you wish to include the tab-index as well, use something
-#: like: {index}: {title}. Useful if you have shortcuts mapped for
-#: goto_tab N.
-
-active_tab_foreground   #000
-active_tab_background   #eee
 active_tab_font_style   bold-italic
-inactive_tab_foreground #444
-inactive_tab_background #999
 inactive_tab_font_style normal
-
-#: Tab bar colors and styles
-
-#: }}}
 #+END_SRC
 
 ***** Color scheme
@@ -3395,72 +3097,58 @@ inactive_tab_font_style normal
 :ID:       26e871cf-3b07-47de-8ba4-c4cc8f876681
 :END:
 
-Use Modus operandi tinted to reduce eye strain.
-Change some colors:
-1. Black becomes "#2a2a2a" (ligher)
-2. Background is "#f8f0e0"
-
 #+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
-  # vim:ft=kitty
-
-  ## name: Modus Operandi Tinted
-  ## author: Protesilaos Stavrou
-  ## license: GPLv3
-  ## blurb: Highly accessible themes made for GNU Emacs, conforming with the highest
-  ## standard for colour contrast between background and foreground values (WCAG AAA)
-
-  # The basic colors
-  foreground              #2a2a2a
-  background              #f8f0e0
-  selection_foreground    #2a2a2a
-  selection_background    #c2bcb5
+  foreground              <<get-color("fg-main")>>
+  background              <<get-color("bg-main")>>
+  selection_foreground    <<get-color("fg-dim")>>
+  selection_background    <<get-color("bg-dim")>>
 
   # Cursor colors
-  cursor                  #d00000
-  cursor_text_color       #fbf7f0
+  cursor                  <<get-color("cursor")>>
+  cursor_text_color       <<get-color("fg-main")>>
 
   # kitty window border colors
-  active_border_color     #193668
-  inactive_border_color   #9f9f9f
+  active_border_color     <<get-color("border-mode-line-active")>>
+  inactive_border_color   <<get-color("border-mode-line-inactive")>>
 
   # Tab bar colors
-  active_tab_foreground   #000000
-  active_tab_background   #c9b8b1
-  inactive_tab_foreground #585858
-  inactive_tab_background #dfd6cd
+  active_tab_foreground   <<get-color("fg-main")>>
+  active_tab_background   <<get-color("bg-main")>>
+  inactive_tab_foreground <<get-color("fg-main")>>
+  inactive_tab_background <<get-color("bg-main")>>
 
   # The basic 16 colors
   # black
-  color0 #2a2a2a
-  color8 #595959
+  color0 <<get-color("fg-term-black")>>
+  color8 <<get-color("fg-term-black-bright")>>
 
   # red
-  color1 #a60000
-  color9 #972500
+  color1 <<get-color("fg-term-red")>>
+  color9 <<get-color("fg-term-red-bright")>>
 
   # green
-  color2  #006800
-  color10 #00663f
+  color2  <<get-color("fg-term-green")>>
+  color10 <<get-color("fg-term-green-bright")>>
 
   # yellow
-  color3  #6f5500
-  color11 #884900
+  color3  <<get-color("fg-term-yellow")>>
+  color11 <<get-color("fg-term-yellow-bright")>>
 
   # blue
-  color4  #0031a9
-  color12 #3548cf
+  color4  <<get-color("fg-term-blue")>>
+  color12 <<get-color("fg-term-blue-bright")>>
 
   # magenta
-  color5  #721045
-  color13 #531ab6
+  color5  <<get-color("fg-term-magenta")>>
+  color13 <<get-color("fg-term-magenta-bright")>>
 
   # cyan
-  color6  #005e8b
-  color14 #005f5f
+  color6  <<get-color("fg-term-cyan")>>
+  color14 <<get-color("fg-term-cyan-bright")>>
 
   # white
-  color7  #a6a6a6
-  color15 #595959
+  color7  <<get-color("fg-term-white")>>
+  color15 <<get-color("fg-term-white-bright")>>
 #+END_SRC
 
 ***** Advanced
@@ -3468,96 +3156,14 @@ Change some colors:
 :ID:       0b6f566c-4fe2-44ff-a6e9-60ec3d252226
 :END:
 #+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
-
-#: Advanced {{{
-
 shell .
-
-#: The shell program to execute. The default value of . means to use
-#: whatever shell is set as the default shell for the current user.
-#: Note that on macOS if you change this, you might need to add
-#: --login to ensure that the shell starts in interactive mode and
-#: reads its startup rc files.
-
 editor .
-
-#: The console editor to use when editing the kitty config file or
-#: similar tasks. A value of . means to use the environment variable
-#: EDITOR. Note that this environment variable has to be set not just
-#: in your shell startup scripts but system-wide, otherwise kitty will
-#: not see it.
-
 close_on_child_death no
-
-#: Close the window when the child process (shell) exits. If no (the
-#: default), the terminal will remain open when the child exits as
-#: long as there are still processes outputting to the terminal (for
-#: example disowned or backgrounded processes). If yes, the window
-#: will close as soon as the child process exits. Note that setting it
-#: to yes means that any background processes still using the terminal
-#: can fail silently because their stdout/stderr/stdin no longer work.
-
 allow_remote_control no
-
-#: Allow other programs to control kitty. If you turn this on other
-#: programs can control all aspects of kitty, including sending text
-#: to kitty windows, opening new windows, closing windows, reading the
-#: content of windows, etc. Note that this even works over ssh
-#: connections.
-
-# env 
-
-#: Specify environment variables to set in all child processes. Note
-#: that environment variables are expanded recursively, so if you
-#: use::
-
-#:     env MYVAR1=a
-#:     env MYVAR2=${MYVAR1}/${HOME}/b
-
-#: The value of MYVAR2 will be a/<path to home directory>/b.
-
 update_check_interval 0
-
-#: Periodically check if an update to kitty is available. If an update
-#: is found a system notification is displayed informing you of the
-#: available update. The default is to check every 24 hrs, set to zero
-#: to disable.
-
 startup_session none
-
-#: Path to a session file to use for all kitty instances. Can be
-#: overridden by using the kitty --session command line option for
-#: individual instances. See
-#: https://sw.kovidgoyal.net/kitty/index.html#sessions in the kitty
-#: documentation for details. Note that relative paths are interpreted
-#: with respect to the kitty config directory. Environment variables
-#: in the path are expanded.
-
 clipboard_control write-clipboard write-primary
-
-#: Allow programs running in kitty to read and write from the
-#: clipboard. You can control exactly which actions are allowed. The
-#: set of possible actions is: write-clipboard read-clipboard write-
-#: primary read-primary. You can additionally specify no-append to
-#: disable kitty's protocol extension for clipboard concatenation. The
-#: default is to allow writing to the clipboard and primary selection
-#: with concatenation enabled. Note that enabling the read
-#: functionality is a security risk as it means that any program, even
-#: one running on a remote server via SSH can read your clipboard.
-
 term xterm-kitty
-
-#: The value of the TERM environment variable to set. Changing this
-#: can break many terminal programs, only change it if you know what
-#: you are doing, not because you read some advice on Stack Overflow
-#: to change it. The TERM variable is used by various programs to get
-#: information about the capabilities and behavior of the terminal. If
-#: you change it, depending on what programs you run, and how
-#: different the terminal you are changing it to is, various things
-#: from key-presses, to colors, to various advanced features may not
-#: work.
-
-#: }}}
 #+END_SRC
 
 ***** Keyboard shortcuts
@@ -3565,101 +3171,12 @@ term xterm-kitty
 :ID:       8c04a3db-d856-4520-9ca4-daadaa5fe8cc
 :END:
 #+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
-
-#: Keyboard shortcuts {{{
-
-#: For a list of key names, see: GLFW keys
-#: <https://www.glfw.org/docs/latest/group__keys.html>. The name to
-#: use is the part after the GLFW_KEY_ prefix. For a list of modifier
-#: names, see: GLFW mods
-#: <https://www.glfw.org/docs/latest/group__mods.html>
-
-#: On Linux you can also use XKB key names to bind keys that are not
-#: supported by GLFW. See XKB keys
-#: <https://github.com/xkbcommon/libxkbcommon/blob/master/xkbcommon/xkbcommon-
-#: keysyms.h> for a list of key names. The name to use is the part
-#: after the XKB_KEY_ prefix. Note that you should only use an XKB key
-#: name for keys that are not present in the list of GLFW keys.
-
-#: Finally, you can use raw system key codes to map keys. To see the
-#: system key code for a key, start kitty with the kitty --debug-
-#: keyboard option. Then kitty will output some debug text for every
-#: key event. In that text look for ``native_code`` the value of that
-#: becomes the key name in the shortcut. For example:
-
-#: .. code-block:: none
-
-#:     on_key_input: glfw key: 65 native_code: 0x61 action: PRESS mods: 0x0 text: 'a'
-
-#: Here, the key name for the A key is 0x61 and you can use it with::
-
-#:     map ctrl+0x61 something
-
-#: to map ctrl+a to something.
-
-#: You can use the special action no_op to unmap a keyboard shortcut
-#: that is assigned in the default configuration.
-
-#: You can combine multiple actions to be triggered by a single
-#: shortcut, using the syntax below::
-
-#:     map key combine <separator> action1 <separator> action2 <separator> action3 ...
-
-#: For example::
-
-#:     map kitty_mod+e combine : new_window : next_layout
-
-#: this will create a new window and switch to the next available
-#: layout
-
-#: You can use multi-key shortcuts using the syntax shown below::
-
-#:     map key1>key2>key3 action
-
-#: For example::
-
-#:     map ctrl+f>2 set_font_size 20
-
 kitty_mod ctrl+shift
-
-#: The value of kitty_mod is used as the modifier for all default
-#: shortcuts, you can change it in your kitty.conf to change the
-#: modifiers for all the default shortcuts.
-
-clear_all_shortcuts no
-
-#: You can have kitty remove all shortcut definition seen up to this
-#: point. Useful, for instance, to remove the default shortcuts.
-
-#: Clipboard {{{
-
 map kitty_mod+d copy_to_clipboard
-
-#: There is also a copy_or_interrupt action that can be optionally
-#: mapped to Ctrl+c. It will copy only if there is a selection and
-#: send an interrupt otherwise.
-
 map kitty_mod+f  paste_from_clipboard
 map kitty_mod+F  paste_from_selection
 map shift+insert paste_from_selection
 map kitty_mod+o  pass_selection_to_program
-
-#: You can also pass the contents of the current selection to any
-#: program using pass_selection_to_program. By default, the system's
-#: open program is used, but you can specify your own, the selection
-#: will be passed as a command line argument to the program, for
-#: example::
-
-#:     map kitty_mod+o pass_selection_to_program firefox
-
-#: You can pass the current selection to a terminal program running in
-#: a new kitty window, by using the @selection placeholder::
-
-#:     map kitty_mod+y new_window less @selection
-
-#: }}}
-
-#: Scrolling {{{
 
 map kitty_mod+up        scroll_line_up
 map kitty_mod+k         scroll_line_up
@@ -3675,45 +3192,7 @@ map kitty_mod+home      scroll_home
 map kitty_mod+end       scroll_end
 map kitty_mod+h         show_scrollback
 
-#: You can pipe the contents of the current screen + history buffer as
-#: STDIN to an arbitrary program using the ``pipe`` function. For
-#: example, the following opens the scrollback buffer in less in an
-#: overlay window::
-
-#:     map f1 pipe @ansi overlay less +G -R
-
-#: For more details on piping screen and buffer contents to external
-#: programs, see pipe.
-
-#: }}}
-
-#: Window management {{{
-
 map kitty_mod+enter new_window
-
-#: You can open a new window running an arbitrary program, for
-#: example::
-
-#:     map kitty_mod+y      new_window mutt
-
-#: You can open a new window with the current working directory set to
-#: the working directory of the current window using::
-
-#:     map ctrl+alt+enter    new_window_with_cwd
-
-#: You can open a new window that is allowed to control kitty via the
-#: kitty remote control facility by prefixing the command line with @.
-#: Any programs running in that window will be allowed to control
-#: kitty. For example::
-
-#:     map ctrl+enter new_window @ some_program
-
-#: You can open a new window next to the currently active window or as
-#: the first window, with::
-
-#:     map ctrl+n new_window !neighbor some_program
-#:     map ctrl+f new_window !first some_program
-
 map kitty_mod+n new_os_window
 map kitty_mod+w close_window
 
@@ -3736,9 +3215,6 @@ map kitty_mod+7 seventh_window
 map kitty_mod+8 eighth_window
 map kitty_mod+9 ninth_window
 map kitty_mod+0 tenth_window
-#: }}}
-
-#: Tab management {{{
 
 map kitty_mod+right next_tab
 map kitty_mod+o next_tab
@@ -3750,97 +3226,22 @@ map kitty_mod+.     move_tab_forward
 map kitty_mod+,     move_tab_backward
 map kitty_mod+alt+t set_tab_title
 
-#: You can also create shortcuts to go to specific tabs, with 1 being
-#: the first tab, 2 the second tab and -1 being the previously active
-#: tab::
-
-#:     map ctrl+alt+1 goto_tab 1
-#:     map ctrl+alt+2 goto_tab 2
-
-#: Just as with new_window above, you can also pass the name of
-#: arbitrary commands to run when using new_tab and use
-#: new_tab_with_cwd. Finally, if you want the new tab to open next to
-#: the current tab rather than at the end of the tabs list, use::
-
-#:     map ctrl+t new_tab !neighbor [optional cmd to run]
-#: }}}
-
-#: Layout management {{{
-
 map kitty_mod+space next_layout
-
-#: You can also create shortcuts to switch to specific layouts::
-
-#:     map ctrl+alt+t goto_layout tall
-#:     map ctrl+alt+s goto_layout stack
-
-#: Similarly, to switch back to the previous layout::
-
-#:    map ctrl+alt+p last_used_layout
-#: }}}
-
-#: Font sizes {{{
-
-#: You can change the font size for all top-level kitty OS windows at
-#: a time or only the current one.
 
 map kitty_mod+equal     change_font_size all +2.0
 map kitty_mod+minus     change_font_size all -2.0
 map kitty_mod+backspace change_font_size all 0
 
-#: To setup shortcuts for specific font sizes::
-
-#:     map kitty_mod+f6 change_font_size all 10.0
-
-#: To setup shortcuts to change only the current OS window's font
-#: size::
-
-#:     map kitty_mod+f6 change_font_size current 10.0
-#: }}}
-
-#: Select and act on visible text {{{
-
-#: Use the hints kitten to select text and either pass it to an
-#: external program or insert it into the terminal or copy it to the
-#: clipboard.
-
-#map kitty_mod+e kitten hints
-
-#: Open a currently visible URL using the keyboard. The program used
-#: to open the URL is specified in open_url_with.
-
 map kitty_mod+h>f kitten hints --type path --program default
-
-#: Select a path/filename and insert it into the terminal. Useful, for
-#: instance to run git commands on a filename output from a previous
-#: git command.
 
 #map kitty_mod+p>shift+f kitten hints --type path
 map kitty_mod+h>p kitten hints --type path --program default
 
-#: Select a path/filename and open it with the default open program.
-
 #map kitty_mod+p>l kitten hints --type line --program -
 map ctrl+shift+h>l kitten hints --type line --program *
 
-#: Select a line of text and insert it into the terminal. Use for the
-#: output of things like: ls -1
-
 #map kitty_mod+p>w kitten hints --type word --program -
 map ctrl+shift+h>w kitten hints --type word --program *
-
-#: Select words and insert into terminal.
-
-#: Select something that looks like a hash and insert it into the
-#: terminal. Useful with git, which uses sha1 hashes to identify
-#: commits
-
-
-#: The hints kitten has many more modes of operation that you can map
-#: to different shortcuts. For a full description see kittens/hints.
-#: }}}
-
-#: Miscellaneous {{{
 
 map kitty_mod+f11    toggle_fullscreen
 map kitty_mod+f10    toggle_maximized
@@ -3848,67 +3249,16 @@ map kitty_mod+u      kitten unicode_input
 map kitty_mod+f2     edit_config_file
 map kitty_mod+escape kitty_shell window
 
-#: Open the kitty shell in a new window/tab/overlay/os_window to
-#: control kitty using commands.
-
 map kitty_mod+a>m    set_background_opacity +0.1
 map kitty_mod+a>l    set_background_opacity -0.1
 map kitty_mod+a>1    set_background_opacity 1
 map kitty_mod+a>d    set_background_opacity default
 map kitty_mod+delete clear_terminal reset active
-
-#: You can create shortcuts to clear/reset the terminal. For example::
-
-#:     # Reset the terminal
-#:     map kitty_mod+f9 clear_terminal reset active
-#:     # Clear the terminal screen by erasing all contents
-#:     map kitty_mod+f10 clear_terminal clear active
-#:     # Clear the terminal scrollback by erasing it
-#:     map kitty_mod+f11 clear_terminal scrollback active
-#:     # Scroll the contents of the screen into the scrollback
-#:     map kitty_mod+f12 clear_terminal scroll active
-
-#: If you want to operate on all windows instead of just the current
-#: one, use all instead of active.
-
-#: It is also possible to remap Ctrl+L to both scroll the current
-#: screen contents into the scrollback buffer and clear the screen,
-#: instead of just clearing the screen::
-
-#:     map ctrl+l combine : clear_terminal scroll active : send_text normal,application \x0c
-
-
-#: You can tell kitty to send arbitrary (UTF-8) encoded text to the
-#: client program when pressing specified shortcut keys. For example::
-
-#:     map ctrl+alt+a send_text all Special text
-
-#: This will send "Special text" when you press the ctrl+alt+a key
-#: combination.  The text to be sent is a python string literal so you
-#: can use escapes like \x1b to send control codes or \u21fb to send
-#: unicode characters (or you can just input the unicode characters
-#: directly as UTF-8 text). The first argument to send_text is the
-#: keyboard modes in which to activate the shortcut. The possible
-#: values are normal or application or kitty or a comma separated
-#: combination of them.  The special keyword all means all modes. The
-#: modes normal and application refer to the DECCKM cursor key mode
-#: for terminals, and kitty refers to the special kitty extended
-#: keyboard protocol.
-
-#: Another example, that outputs a word and then moves the cursor to
-#: the start of the line (same as pressing the Home key)::
-
-#:     map ctrl+alt+a send_text normal Word\x1b[H
-#:     map ctrl+alt+a send_text application Word\x1bOH
-
-#: }}}
-
-# }}}
 #+end_src
 
 *** Mouse
 
-**** COMMENT Disable touchpad
+**** Disable touchpad
 :PROPERTIES:
 :ID:       c412a610-d374-499e-98d8-07d7ad1ece8b
 :END:
@@ -4093,9 +3443,8 @@ dev-libs/jemalloc
 #+begin_src  bash :tangle /home/yantar92/.local/bin/emacs-start.sh :shebang #!/bin/bash
   # [[ "$#" == "0" ]] && emacsclient --frame-parameters='(quote (name . "main"))' -c -n -e '(switch-to-buffer (quote "*scratch*"))' && exit
   [[ "$#" == "0" ]] && emacsclient -c -n -e '(switch-to-buffer (quote "*scratch*"))' -e '(boon-set-command-state)' >>/dev/null 2>&1  || \
-  	#    /home/yantar92/tmp/emacs2/emacs/src/emacs && exit
-  	# emacs && exit
   	~/Git/emacs/src/emacs && exit
+  # emacs && exit
   [[ "$1" == "agenda" ]] && emacsclient -c -n -e '(org-agenda nil " ")'
   #run_single_window.sh "Emacs" "sh -c emacs -name \"main\""
 #+end_src
@@ -5349,6 +4698,2035 @@ config.bind('A', "jseval (function(){window.hypothesisConfig=function(){return{s
 #+begin_src python
 c.qt.highdpi = True
 #+end_src
+**** Theme
+:PROPERTIES:
+:ID:       c48e3d29-8203-42b4-8f49-783055b82449
+:END:
+
+#+begin_src python :noweb yes
+  c.fonts.default_family = "<<system-font-family()>>"
+  c.fonts.default_size = "<<system-font-size()>>pt"
+
+  bg_default = "<<get-color("bg-main")>>"
+  bg_lighter = "<<get-color("bg-dim")>>"
+  bg_selection = "<<get-color("bg-inactive")>>"
+  fg_default = "<<get-color("fg-main")>>"
+  fg_disabled = "<<get-color("fg-dim")>>"
+  bg_lightest = "<<get-color("fg-alt")>>"
+  fg_error = "<<get-color("err")>>"
+  bg_hint = "<<get-color("info")>>"
+  fg_matched_text = "<<get-color("fg-completion-match-1")>>"
+  bg_passthrough_mode = "<<get-color("blue")>>"
+  bg_insert_mode = "<<get-color("green")>>"
+  bg_warning = "<<get-color("warning")>>"
+
+  ############
+  # SETTINGS #
+  ############
+
+  # Text color of the completion widget. May be a single color to use for
+  # all columns or a list of three colors, one for each column.
+  c.colors.completion.fg = fg_default
+
+  # Background color of the completion widget for odd rows.
+  c.colors.completion.odd.bg = bg_lighter
+
+  # Background color of the completion widget for even rows.
+  c.colors.completion.even.bg = bg_default
+
+  # Foreground color of completion widget category headers.
+  c.colors.completion.category.fg = bg_hint
+
+  # Background color of the completion widget category headers.
+  c.colors.completion.category.bg = bg_default
+
+  # Top border color of the completion widget category headers.
+  c.colors.completion.category.border.top = bg_default
+
+  # Bottom border color of the completion widget category headers.
+  c.colors.completion.category.border.bottom = bg_default
+
+  # Foreground color of the selected completion item.
+  c.colors.completion.item.selected.fg = fg_default
+
+  # Background color of the selected completion item.
+  c.colors.completion.item.selected.bg = bg_selection
+
+  # Top border color of the selected completion item.
+  c.colors.completion.item.selected.border.top = bg_selection
+
+  # Bottom border color of the selected completion item.
+  c.colors.completion.item.selected.border.bottom = bg_selection
+
+  # Foreground color of the matched text in the selected completion item.
+  c.colors.completion.item.selected.match.fg = fg_matched_text
+
+  # Foreground color of the matched text in the completion.
+  c.colors.completion.match.fg = fg_matched_text
+
+  # Color of the scrollbar handle in the completion view.
+  c.colors.completion.scrollbar.fg = fg_default
+
+  # Color of the scrollbar in the completion view.
+  c.colors.completion.scrollbar.bg = bg_default
+
+  # Background color of disabled items in the context menu.
+  c.colors.contextmenu.disabled.bg = bg_lighter
+
+  # Foreground color of disabled items in the context menu.
+  c.colors.contextmenu.disabled.fg = fg_disabled
+
+  # Background color of the context menu. If set to null, the Qt default is used.
+  c.colors.contextmenu.menu.bg = bg_default
+
+  # Foreground color of the context menu. If set to null, the Qt default is used.
+  c.colors.contextmenu.menu.fg =  fg_default
+
+  # Background color of the context menu’s selected item. If set to null, the Qt default is used.
+  c.colors.contextmenu.selected.bg = bg_selection
+
+  #Foreground color of the context menu’s selected item. If set to null, the Qt default is used.
+  c.colors.contextmenu.selected.fg = fg_default
+
+  # Background color for the download bar.
+  c.colors.downloads.bar.bg = bg_default
+
+  # Color gradient start for download text.
+  c.colors.downloads.start.fg = bg_default
+
+  # Color gradient start for download backgrounds.
+  c.colors.downloads.start.bg = bg_insert_mode
+
+  # Color gradient end for download text.
+  c.colors.downloads.stop.fg = bg_default
+
+  # Color gradient stop for download backgrounds.
+  c.colors.downloads.stop.bg = bg_passthrough_mode
+
+  # Foreground color for downloads with errors.
+  c.colors.downloads.error.fg = fg_error
+
+  # Font color for hints.
+  c.colors.hints.fg = bg_default
+
+  # Background color for hints. Note that you can use a `rgba(...)` value
+  # for transparency.
+  c.colors.hints.bg = bg_hint
+
+  # Font color for the matched part of hints.
+  c.colors.hints.match.fg = fg_default
+
+  # Text color for the keyhint widget.
+  c.colors.keyhint.fg = fg_default
+
+  # Highlight color for keys to complete the current keychain.
+  c.colors.keyhint.suffix.fg = fg_default
+
+  # Background color of the keyhint widget.
+  c.colors.keyhint.bg = bg_default
+
+  # Foreground color of an error message.
+  c.colors.messages.error.fg = bg_default
+
+  # Background color of an error message.
+  c.colors.messages.error.bg = fg_error
+
+  # Border color of an error message.
+  c.colors.messages.error.border = fg_error
+
+  # Foreground color of a warning message.
+  c.colors.messages.warning.fg = bg_default
+
+  # Background color of a warning message.
+  c.colors.messages.warning.bg = bg_warning
+
+  # Border color of a warning message.
+  c.colors.messages.warning.border = bg_warning
+
+  # Foreground color of an info message.
+  c.colors.messages.info.fg = fg_default
+
+  # Background color of an info message.
+  c.colors.messages.info.bg = bg_default
+
+  # Border color of an info message.
+  c.colors.messages.info.border = bg_default
+
+  # Foreground color for prompts.
+  c.colors.prompts.fg = fg_default
+
+  # Border used around UI elements in prompts.
+  c.colors.prompts.border = bg_default
+
+  # Background color for prompts.
+  c.colors.prompts.bg = bg_default
+
+  # Background color for the selected item in filename prompts.
+  c.colors.prompts.selected.bg = bg_selection
+
+  # Foreground color for the selected item in filename prompts.
+  c.colors.prompts.selected.fg = fg_default
+
+  # Foreground color of the statusbar.
+  c.colors.statusbar.normal.fg = fg_matched_text
+
+  # Background color of the statusbar.
+  c.colors.statusbar.normal.bg = bg_default
+
+  # Foreground color of the statusbar in insert mode.
+  c.colors.statusbar.insert.fg = bg_default
+
+  # Background color of the statusbar in insert mode.
+  c.colors.statusbar.insert.bg = bg_insert_mode
+
+  # Foreground color of the statusbar in passthrough mode.
+  c.colors.statusbar.passthrough.fg = bg_default
+
+  # Background color of the statusbar in passthrough mode.
+  c.colors.statusbar.passthrough.bg = bg_passthrough_mode
+
+  # Foreground color of the statusbar in private browsing mode.
+  c.colors.statusbar.private.fg = bg_default
+
+  # Background color of the statusbar in private browsing mode.
+  c.colors.statusbar.private.bg = bg_lighter
+
+  # Foreground color of the statusbar in command mode.
+  c.colors.statusbar.command.fg = fg_default
+
+  # Background color of the statusbar in command mode.
+  c.colors.statusbar.command.bg = bg_default
+
+  # Foreground color of the statusbar in private browsing + command mode.
+  c.colors.statusbar.command.private.fg = fg_default
+
+  # Background color of the statusbar in private browsing + command mode.
+  c.colors.statusbar.command.private.bg = bg_default
+
+  # Foreground color of the statusbar in caret mode.
+  c.colors.statusbar.caret.fg = bg_default
+
+  # Background color of the statusbar in caret mode.
+  c.colors.statusbar.caret.bg = bg_warning
+
+  # Foreground color of the statusbar in caret mode with a selection.
+  c.colors.statusbar.caret.selection.fg = bg_default
+
+  # Background color of the statusbar in caret mode with a selection.
+  c.colors.statusbar.caret.selection.bg = bg_insert_mode
+
+  # Background color of the progress bar.
+  c.colors.statusbar.progress.bg = bg_insert_mode
+
+  # Default foreground color of the URL in the statusbar.
+  c.colors.statusbar.url.fg = fg_default
+
+  # Foreground color of the URL in the statusbar on error.
+  c.colors.statusbar.url.error.fg = fg_error
+
+  # Foreground color of the URL in the statusbar for hovered links.
+  c.colors.statusbar.url.hover.fg = fg_default
+
+  # Foreground color of the URL in the statusbar on successful load
+  # (http).
+  c.colors.statusbar.url.success.http.fg = bg_passthrough_mode
+
+  # Foreground color of the URL in the statusbar on successful load
+  # (https).
+  c.colors.statusbar.url.success.https.fg = fg_matched_text
+
+  # Foreground color of the URL in the statusbar when there's a warning.
+  c.colors.statusbar.url.warn.fg = bg_warning
+
+  # Background color of the tab bar.
+  c.colors.tabs.bar.bg = bg_default
+
+  # Color gradient start for the tab indicator.
+  c.colors.tabs.indicator.start = bg_insert_mode
+
+  # Color gradient end for the tab indicator.
+  c.colors.tabs.indicator.stop = bg_passthrough_mode
+
+  # Color for the tab indicator on errors.
+  c.colors.tabs.indicator.error = fg_error
+
+  # Foreground color of unselected odd tabs.
+  c.colors.tabs.odd.fg = fg_default
+
+  # Background color of unselected odd tabs.
+  c.colors.tabs.odd.bg = bg_selection
+
+  # Foreground color of unselected even tabs.
+  c.colors.tabs.even.fg = fg_default
+
+  # Background color of unselected even tabs.
+  c.colors.tabs.even.bg = bg_selection
+
+  # Background color of pinned unselected even tabs.
+  c.colors.tabs.pinned.even.bg = bg_selection
+
+  # Foreground color of pinned unselected even tabs.
+  c.colors.tabs.pinned.even.fg = bg_selection
+
+  # Background color of pinned unselected odd tabs.
+  c.colors.tabs.pinned.odd.bg = fg_matched_text
+
+  # Foreground color of pinned unselected odd tabs.
+  c.colors.tabs.pinned.odd.fg = bg_selection
+
+  # Background color of pinned selected even tabs.
+  c.colors.tabs.pinned.selected.even.bg = bg_default
+
+  # Foreground color of pinned selected even tabs.
+  c.colors.tabs.pinned.selected.even.fg = fg_default
+
+  # Background color of pinned selected odd tabs.
+  c.colors.tabs.pinned.selected.odd.bg = bg_default
+
+  # Foreground color of pinned selected odd tabs.
+  c.colors.tabs.pinned.selected.odd.fg = fg_default
+
+  # Foreground color of selected odd tabs.
+  c.colors.tabs.selected.odd.fg = fg_default
+
+  # Background color of selected odd tabs.
+  c.colors.tabs.selected.odd.bg = bg_default
+
+  # Foreground color of selected even tabs.
+  c.colors.tabs.selected.even.fg = fg_default
+
+  # Background color of selected even tabs.
+  c.colors.tabs.selected.even.bg = bg_default
+
+  # Background color for webpages if unset (or empty to use the theme's
+  # color).
+  # c.colors.webpage.bg = bg_default
+#+end_src
+
+**** Stylesheet
+:PROPERTIES:
+:ID:       772e565b-d4bb-4aa4-b539-6b44a3fddf13
+:DIR: nil
+:END:
+
+#+begin_src python
+  c.content.user_stylesheets = '/home/yantar92/.config/qutebrowser/theme.css'
+#+end_src
+
+#+begin_src css :tangle :tangle /home/yantar92/.config/qutebrowser/theme.css :mkdirp yes
+  ,* {
+      border-color: <<get-color("border")>> !important;
+  }
+  a {
+      color: <<get-color("fg-link")>> !important;
+  }
+  a:visited {
+      color: <<get-color("fg-link-visited")>> !important;
+  }
+  body {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  html {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  input,
+  textarea {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  blockquote,
+  pre {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .post-actions {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .textarea-wrapper {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .search--adv {
+      background-color: <<get-color("bg-dim")>> !important;
+  }
+  .search__autocomplete > .acp-wrap {
+      background-color: <<get-color("bg-dim")>> !important;
+  }
+  .search__autocomplete > .acp-wrap > .acp--highlight {
+      background-color: <<get-color("bg-dim")>> !important;
+      color: <<get-color("fg-completion-match-1")>> !important;
+  }
+  .search__autocomplete > .acp-wrap strong {
+      color: <<get-color("fg-completion-match-1")>> !important;
+  }
+  .site-wrapper > #header_wrapper {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .site-wrapper > #header_wrapper > #header {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .search--header {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .zci {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .tile--info {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .tile--info__expand {
+      background-color: <<get-color("bg-inactive")>> !important;
+  }
+  .tile--c {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-completion-match-1")>> !important;
+  }
+  .module__text {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .about-info-box__heading {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .result.highlight {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .result__snippet {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .result__snippet b {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .btn--top {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .btn--top:hover {
+      background-color: <<get-color("bg-inactive")>> !important;
+  }
+  .result--sep--hr:before {
+      background-color: <<get-color("bg-inactive")>> !important;
+  }
+  ,* {
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  .news .alert .pull-info {
+      background-color: <<get-color("bg-active")>> !important;
+  }
+  .link-gray-dark,
+  .text-gray-dark {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .bg-white {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .border {
+      border-color: <<get-color("border")>> !important;
+  }
+  .breadcrumb .repo-root.js-repo-root a {
+      color: <<get-color("fg-link")>> !important;
+  }
+  .breadcrumb strong.final-path {
+      color: <<get-color("fg-main")>> !important;
+  }
+  button.ajax-pagination-btn {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  button.ajax-pagination-btn:hover {
+      background-color: <<get-color("bg-inactive")>> !important;
+  }
+  .comment-reactions .btn-link {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .comment-reactions .user-has-reacted {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .text-gray-dark {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .contrib-number {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .counter {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .diffstat-bar {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .file-header {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .file-history-tease .participation {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .file-history-tease .participation .quickstat strong {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .file-history-tease .participation a {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .file-history-tease .author a {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .file-history-tease-header {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .file-info-divider {
+      background-color: <<get-color("bg-inactive")>> !important;
+  }
+  .file-wrap {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .file-wrap * {
+      background-color: transparent !important;
+  }
+  .filter-bar {
+      background-color: <<get-color("bg-active")>> !important;
+  }
+  a.filter-item,
+  .filter-item {
+      color: <<get-color("fg-main")>> !important;
+  }
+  a.filter-item.selected,
+  .filter-item.selected {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  a.filter-item:hover,
+  .filter-item:hover {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .flash {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .gh-header {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .gh-header-number {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .ellipsis-expander,
+  .hidden-text-expander a {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .issue-meta {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .issues-listing a {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .muted-link {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .new-user-avatar-cta {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .overall-summary {
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .pinned-repo-item.border {
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .progress-bar {
+      background-color: <<get-color("bg-inactive")>> !important;
+  }
+  .simple-box {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .social-count {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .scope-badge {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .stats-switcher-wrapper {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .stats-switcher-wrapper .numbers-summary li a {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .table-list-header-toggle .btn-link {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .table-list-header-toggle .btn-link.selected {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .text-emphasized {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .text-diff-added {
+      color: <<get-color("fg-added")>> !important;
+  }
+  .text-diff-deleted {
+      color: <<get-color("fg-removed")>> !important;
+  }
+  .avatar,
+  .timeline-comment-avatar {
+      filter: opacity(75%);
+  }
+  .blob-code {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .blob-code-addition {
+      background-color: <<get-color("bg-added-faint")>> !important;
+  }
+  .blob-code-addition .x {
+      background-color: <<get-color("bg-added")>> !important;
+      color: <<get-color("fg-added")>> !important;
+  }
+  .blob-code-deletion {
+      background-color: <<get-color("bg-removed-faint")>> !important;
+  }
+  .blob-code-deletion .x {
+      background-color: <<get-color("bg-removed")>> !important;
+      color: <<get-color("fg-removed")>> !important;
+  }
+  .blob-code-hunk {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .blob-code-inner {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .blob-num {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .file {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .form-control {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .pl-c {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .pl-c1 {
+      color: <<get-color("fg-link")>> !important;
+  }
+  .pl-e {
+      color: #b58900 !important;
+  }
+  .pl-en {
+      color: <<get-color("fg-link")>> !important;
+  }
+  .pl-k {
+      color: <<get-color("fg-added")>> !important;
+      font-weight: bold !important;
+  }
+  .pl-pds {
+      color: #2aa198 !important;
+  }
+  .pl-s {
+      color: #2aa198 !important;
+  }
+  .pl-smi {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .pl-v {
+      color: <<get-color("fg-added")>> !important;
+      font-weight: bold !important;
+  }
+  .pl-mi1 {
+      color: <<get-color("fg-added")>> !important;
+      background-color: transparent !important;
+  }
+  .pl-md {
+      color: <<get-color("fg-removed")>> !important;
+      background-color: transparent !important;
+  }
+  .border-bottom,
+  .border-top {
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  .boxed-group * {
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .boxed-group article {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .boxed-group > h3 {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .more-repos {
+      background-color: <<get-color("bg-main")>> !important;
+      box-shadow: inset 0 1px 0 <<get-color("bg-inactive")>> !important;
+  }
+  .boxed-group-inner {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .branch-action-body {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .branch-action-body div {
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .branch-action-state-clean .branch-action-icon {
+      background-color: <<get-color("fg-added")>> !important;
+  }
+  .branch-action-state-dirty .branch-action-icon,
+  .branch-action-state-unstable .branch-action-icon,
+  .branch-action-state-unknown .branch-action-icon {
+      background-color: #b58900 !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .text-shadow-light,
+  .branch-group-name,
+  .branch-summary {
+      color: <<get-color("fg-main")>> !important;
+      text-shadow: none !important;
+  }
+  .branch-a-b-count .meter {
+      background-color: #b58900 !important;
+  }
+  .more-branches,
+  .branch-group-heading,
+  .branch-infobar,
+  .branch-name {
+      border-color: <<get-color("bg-inactive")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .State,
+  .State:visited {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .State--red {
+      background-color: <<get-color("fg-removed")>> !important;
+      color: <<get-color("bg-main")>> !important;
+  }
+  .State--green {
+      background-color: <<get-color("fg-added")>> !important;
+      color: <<get-color("bg-main")>> !important;
+  }
+  .select-menu-filters {
+      background-color: <<get-color("bg-active")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .js-select-menu-tab {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .select-menu-tabs a.selected,
+  .select-menu-tab-nav.selected {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("bg-main")>> !important;
+  }
+  .signed-commit-header {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .build-status-item {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .build-status-item .build-status-details {
+      color: <<get-color("fg-link")>> !important;
+  }
+  .capped-card h3 {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .capped-card h3 a {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .capped-card-content {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .capped-list th {
+      background-color: <<get-color("bg-active")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .capped-list tr:nth-child(2n) {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .commit,
+  .commit-meta,
+  .commit-icon .octicon,
+  .commit-group-title .octicon-git-commit {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .commit *,
+  .commit-meta *,
+  .commit-icon .octicon *,
+  .commit-group-title .octicon-git-commit * {
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .commit-author {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .commit-author-section {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .commit-meta {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .commit-meta .sha-block {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .commit-meta .sha-block .sha {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .commit-ref,
+  code.commit-sha {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .commit-ref .user,
+  code.commit-sha .user {
+      color: #2aa198 !important;
+  }
+  .commit-branches *,
+  .commit-tease,
+  .commit-title {
+      background-color: rgba(0,0,142,0.2) !important;
+      border: none !important;
+  }
+  .commit-branches * *,
+  .commit-tease *,
+  .commit-title * {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .commit-tease-contributors {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  div.commit-branches,
+  div.commit.full-commit p.commit-title,
+  qul.branches-list {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  div.commit-branches *,
+  div.commit.full-commit p.commit-title *,
+  qul.branches-list * {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .commit-meta {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .commits-listing:before {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .full-commit {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .full-commit * {
+      text-shadow: none !important;
+  }
+  .commit-desc pre {
+      background-color: transparent !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .commit.table-list-item {
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  .commit-meta.commit-author-section {
+      background-color: transparent !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .table-list-cell .commit-title {
+      background-color: transparent !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .completeness-indicator-success {
+      background-color: <<get-color("fg-added")>> !important;
+  }
+  .completeness-indicator-problem {
+      background-color: #b58900 !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .copyable-terminal {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .blankslate {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .comment-form-head.tabnav {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .conversation-list-heading .inner {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .discussion-item-closed .discussion-item-icon {
+      background-color: <<get-color("fg-removed")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .discussion-item-icon {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .discussion-item-icon.octicon {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .discussion-item-entity,
+  .discussion-item .renamed-was,
+  .discussion-item .renamed-is {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .discussion-timeline:before {
+      background-color: <<get-color("border")>> !important;
+  }
+  .discussion-timeline-actions {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .drag-and-drop {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .new-discussion-timeline .closed-banner {
+      background-color: <<get-color("border")>> !important;
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  .timeline-comment {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .timeline-comment-header {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .timeline-comment-wrapper {
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  .donut-chart > .pending {
+      fill: #b58900 !important;
+  }
+  .dropdown-divider {
+      background-color: <<get-color("border")>> !important;
+  }
+  .dropdown-item {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .dropdown-item:hover {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .dropdown-menu {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+      border-color: <<get-color("border")>> !important;
+  }
+  .files * {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .files tbody tr {
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  .files tbody tr:nth-child(even) {
+      background-color: #fcf3da !important;
+  }
+  .files tbody tr:nth-child(odd) {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .files tbody tr:hover * {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .btn {
+      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-inactive")>>) !important;
+      border-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .btn:hover {
+      background-color: <<get-color("bg-active")>> !important;
+  }
+  .btn-primary,
+  .issues-listing .btn-primary {
+      background-color: <<get-color("fg-added")>> !important;
+      background-image: linear-gradient(<<get-color("fg-added")>>, #424d00) !important;
+      color: #000 !important;
+      filter: opacity(62.5%);
+  }
+  .entry-title a {
+      color: <<get-color("fg-link")>> !important;
+  }
+  .Header {
+      background-color: <<get-color("bg-active")>> !important;
+      border-bottom-color: <<get-color("bg-inactive")>> !important;
+  }
+  .Header a {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .lang {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .reponav-item,
+  .pagehead-tabs-item {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: transparent !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .reponav-item:visited,
+  .pagehead-tabs-item:visited {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .reponav-item.selected,
+  .pagehead-tabs-item.selected {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("fg-removed")>> <<get-color("bg-main")>> transparent !important;
+  }
+  .site-footer-links * {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .Box-row--focus-gray.navigation-focus {
+      background-color: <<get-color("bg-active")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .js-directory-link {
+      color: <<get-color("fg-link")>> !important;
+  }
+  .js-site-search-form input,
+  .js-chromeless-input-container {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  a.label {
+      color: <<get-color("fg-main")>> !important;
+      filter: opacity(75%);
+  }
+  .notifications-list a {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .notifications-list li {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .octicon-repo {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .type-icon-state-closed {
+      color: rgba(202,0,0,0.65) !important;
+  }
+  .type-icon-state-merged {
+      color: <<get-color("fg-link-visited")>> !important;
+  }
+  .type-icon-state-open {
+      color: rgba(68,103,0,0.65) !important;
+  }
+  .octicon-alert {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .octicon-x {
+      color: <<get-color("fg-removed")>> !important;
+  }
+  .octicon-check {
+      color: <<get-color("fg-added")>> !important;
+  }
+  .octicon-primitive-dot {
+      color: #b58900 !important;
+  }
+  .octicon-clippy {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .octicon-diff {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .octicon-markdown {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .orghead {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("border")>> !important;
+      border-bottom: 0px !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .org-name {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .pagehead.orghead {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .outline-box-highlighted {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .pagination .current {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .pagination .disabled {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .pagination .disabled:hover {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .pagination .gap {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .pagination a {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .pagination a:hover {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("bg-main")>> !important;
+  }
+  .empty-cell,
+  .diffbar {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .merge-status-item {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .merge-message {
+      background-color: <<get-color("bg-active")>> !important;
+  }
+  .pr-toolbar {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .review-thread-reply {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .review-thread-reply .inline-comment-form {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .merged.octicon,
+  .octicon-git-merge {
+      color: <<get-color("fg-link-visited")>> !important;
+  }
+  .uploaded-files {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .upload-progress {
+      background-color: <<get-color("bg-main")>> !important;
+      box-shadow: 1px 0px 0px <<get-color("bg-main")>> inset;
+  }
+  #readme .plain {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .markdown-body,
+  .markdown-body table * {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("border")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .markdown-body a,
+  .markdown-body table * a {
+      color: <<get-color("fg-link")>> !important;
+  }
+  .markdown-body code,
+  .markdown-body table * code,
+  .markdown-body pre,
+  .markdown-body table * pre {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .markdown-body hr,
+  .markdown-body table * hr {
+      background-color: <<get-color("bg-inactive")>> !important;
+  }
+  .markdown-body img,
+  .markdown-body table * img {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .task-list-item.hovered {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .range-editor {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .compare-pr-placeholder {
+      background-color: <<get-color("bg-active")>> !important;
+  }
+  ul.comparison-list > li.title {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  ul.comparison-list {
+      background-color: <<get-color("bg-active")>> !important;
+  }
+  .repository-description {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .repository-meta .edit-repository-meta label {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .pagehead.repohead {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .repository-content .RecentBranches {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("border")>> !important;
+  }
+  .repohead-details-container a {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .select-menu-modal {
+      border-color: <<get-color("fg-main")>> !important;
+  }
+  .select-menu-modal * {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .select-menu-header,
+  .select-menu-header * {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+      text-shadow: none !important;
+  }
+  .select-menu-item {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .select-menu-item.navigation-focus,
+  .select-menu-item.navigation-focus.selected,
+  .select-menu-item.navigation-focus.select-menu-action,
+  .select-menu-item-text.navigation-focus {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .repository-sidebar {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .thread-subscription-status {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .sunken-menu {
+      background-image: linear-gradient(to right, <<get-color("bg-main")>> 0%, <<get-color("bg-main")>> 8px) !important;
+      box-shadow: 1px 0px 0px <<get-color("bg-main")>> inset;
+  }
+  .sunken-menu:before {
+      background-image: linear-gradient(<<get-color("bg-main")>>, transparent) !important;
+  }
+  .sunken-menu:after {
+      background-image: linear-gradient(transparent, <<get-color("bg-main")>>) !important;
+  }
+  .sunken-menu-item {
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  .sunken-menu-item.selected {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .sunken-menu-item.selected:after {
+      background-color: #cb4b16 !important;
+  }
+  .sunken-menu-separator:before {
+      background-image: linear-gradient(to right, <<get-color("bg-main")>> 70%, <<get-color("bg-main")>> 100%) !important;
+  }
+  .state {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .state-closed {
+      background-color: <<get-color("fg-removed")>> !important;
+  }
+  .state-open {
+      background-color: <<get-color("fg-added")>> !important;
+  }
+  .subnav-item {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .subnav-item:hover {
+      background-color: <<get-color("bg-active")>> !important;
+  }
+  .subnav-item:visited {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .subnav-item.selected {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .subnav-links a:hover {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .subnav-search input {
+      border-color: <<get-color("bg-inactive")>> !important;
+  }
+  .right .tabnav-extra {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  a.tabnav-tab,
+  .tabnav-tab {
+      border-color: transparent !important;
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  a.tabnav-tab.selected,
+  .tabnav-tab.selected {
+      background-color: <<get-color("bg-main")>> !important;
+      background-image: linear-gradient(<<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+      border-color: <<get-color("border")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .table-list tr,
+  .table-list li {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .table-list tr:hover,
+  .table-list li:hover {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .table-list-header {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .text-pending {
+      color: #b58900 !important;
+  }
+  .text-pending .octicon-primitive-dot {
+      color: #b58900 !important;
+  }
+  .text-red {
+      color: <<get-color("fg-removed")>> !important;
+  }
+  .timeline-commits .commit-meta {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .timeline-commits .commit-meta .commit-id {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .topic-tag.topic-tag-link {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .underline-nav-item {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .underline-nav-item.selected {
+      border-bottom-color: <<get-color("fg-removed")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .user-profile-nav {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("border")>> !important;
+  }
+  .user-profile-sticky-bar:after {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("border")>> !important;
+  }
+  .graphs .area {
+      fill: <<get-color("fg-added")>>;
+  }
+  .summary-stats li .num {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .viz {
+      background-color: <<get-color("bg-active")>> !important;
+  }
+  .facebox-popup {
+      color: <<get-color("fg-main")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .facebox-popup .octicon {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .facebox-popup .owner-select-target {
+      color: <<get-color("fg-main")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .facebox-popup .owner-select-target:hover {
+      background-color: <<get-color("bg-inactive")>> !important;
+  }
+  .suggester {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .suggester li.navigation-focus {
+      background-color: <<get-color("bg-inactive")>> !important;
+  }
+  .menu {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .menu-item.selected {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .menu-item:hover {
+      background-color: <<get-color("bg-inactive")>> !important;
+  }
+  .Box {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .Box-header {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  svg > * text {
+      color: <<get-color("fg-main")>> !important;
+      fill: <<get-color("fg-main")>> !important;
+  }
+  .insertions {
+      color: <<get-color("fg-added")>> !important;
+  }
+  .deletions {
+      color: <<get-color("fg-removed")>> !important;
+  }
+  .sfbgg {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .sbib_a {
+      background: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+  }
+  input#lst-ib,
+  #sb_ifc0.sbib_b,
+  #gs_taif0 {
+      background: transparent !important;
+  }
+  #lst-ib,
+  .sbsb_a {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .kpbb {
+      background-image: linear-gradient(to bottom, #59a9e1, <<get-color("fg-link")>>) !important;
+  }
+  #hdtbSum {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  #hdtbMenus.hdtb-td-o {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  #hdtb-tls.hdtb-tl {
+      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+  }
+  #hdtb-tls.hdtb-tl.hdtb-tl-sel {
+      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+  }
+  #abar_button_opt.ab_button {
+      background: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+  }
+  #appbar {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  cite {
+      color: <<get-color("fg-added")>> !important;
+  }
+  .ab_dropdown {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  div.crp {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  #fbar {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  tr.Even {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .BigQuote {
+      background-color: <<get-color("bg-main")>> !important;
+      color: #cb4b16 !important;
+  }
+  .Cat1HL {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .Cat2HL {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .Cat3HL {
+      background-color: <<get-color("bg-active")>> !important;
+  }
+  .FeatureByline {
+      background-color: <<get-color("bg-main")>> !important;
+      border: none !important;
+  }
+  .Headline {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .QuotedText {
+      color: <<get-color("fg-link-visited")>> !important;
+  }
+  DIV.GAByline {
+      background-color: <<get-color("bg-main")>> !important;
+      border: none !important;
+  }
+  table.OddEven tr:nth-child(even) {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  table.OddEven tr:nth-child(odd) {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  DIV.CommentBox {
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  DIV.CommentBox P.CommentTitle {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  #menu,
+  .topnav-container {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .navmenu ul {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  body * {
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  #content {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  #mw-head,
+  #mw-panel {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  #mw-head div.portal,
+  #mw-panel div.portal {
+      background-image: none !important;
+  }
+  #mw-head {
+      background-color: <<get-color("bg-main")>> !important;
+      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+  }
+  #mw-panel,
+  #p-logo {
+      background-image: linear-gradient(to right, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+  }
+  div.vectorTabs {
+      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+  }
+  div.vectorTabs ul {
+      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+  }
+  div.vectorTabs ul li {
+      background-color: <<get-color("bg-main")>> !important;
+      background-image: none !important;
+      padding: 0px 1px 0px 1px !important;
+  }
+  div.vectorTabs span {
+      background-color: <<get-color("bg-main")>> !important;
+      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+  }
+  div.vectorTabs li.selected,
+  div.vectorTabs li.selected span {
+      background-color: transparent !important;
+      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+  }
+  .mw-wiki-logo {
+      filter: opacity(50%);
+  }
+  div#simpleSearch #searchInput {
+      background-color: <<get-color("bg-main")>> !important;
+      padding: 0.05em 0px 0.2em 0.2em !important;
+  }
+  .ambox,
+  .infobox,
+  #toc,
+  #toctitle,
+  .toclevel-1 {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .catlinks {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .navbox {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .navbox .th,
+  .navbox .navbox-title {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .navbox-abovebelow,
+  th.navbox-group,
+  .navbox-subgroup,
+  .navbox-title {
+      background-color: <<get-color("bg-active")>> !important;
+  }
+  .navbox-even {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+      border-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  code {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  div.thumbinner {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  img {
+      filter: opacity(75%);
+  }
+  img.thumbimage {
+      border-color: <<get-color("bg-main")>> !important;
+  }
+  .mw-body .external {
+      opacity: 0.5 !important;
+  }
+  table.wikitable {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  table.wikitable > * > tr > th {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  table {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  #hnmain > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table,
+  #hnmain > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table {
+      background-color: #cb4b16 !important;
+  }
+  #hnmain > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) a,
+  #hnmain > tbody:nth-child(1) > tr:nth-child(1) a {
+      color: #000 !important;
+  }
+  #hnmain > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > tbody:nth-child(1) > tr:nth-child(2),
+  #hnmain > tbody:nth-child(1) > tr:nth-child(2) {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  #hnmain > tbody:nth-child(1) > tr:nth-child(2) {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .title a {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .title a:visited {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  a.storylink {
+      color: <<get-color("fg-alt")>> !important;
+      font-weight: bold;
+  }
+  .sitestr {
+      color: <<get-color("fg-link")>> !important;
+  }
+  #hnmain > tbody:nth-child(1) > tr:nth-child(3) > td:nth-child(1) {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  #hnmain .comhead {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  #hnmain .c00 {
+      color: <<get-color("fg-main")>> !important;
+  }
+  #hnmain a.hnuser {
+      color: #b58900 !important;
+  }
+  #hnmain span.age a {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  .cdd {
+      color: rgba(202,0,0,0.65) !important;
+  }
+  .comment i {
+      color: <<get-color("fg-link-visited")>> !important;
+  }
+  #hnmain > tbody:nth-child(1) > tr:nth-child(4) {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  #hnmain > tbody:nth-child(1) > tr:nth-child(4) > td:nth-child(1) > table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) {
+      background-color: #cb4b16 !important;
+  }
+  div#page div#header {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  div#page div#header a {
+      color: <<get-color("fg-link-visited")>> !important;
+  }
+  .post {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .post * {
+      overflow: auto !important;
+  }
+  .post h2 {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .post h2 a {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .post div.entry {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .post div.entry blockquote {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .post div.entry kbd {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-inactive")>> !important;
+      box-shadow: none !important;
+      color: <<get-color("fg-alt")>> !important;
+      text-shadow: 0px 1px 0px #000 !important;
+  }
+  .post pre.mode-line {
+      overflow: visible !important;
+  }
+  #sr-header-area {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  #sr-header-area .srdrop .selected {
+      color: <<get-color("fg-main")>> !important;
+  }
+  #sr-header-area #sr-more-link {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .link.promotedlink.promoted {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .link .usertext .md {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .linkinfo {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .linklisting .odd {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .thing .title {
+      color: <<get-color("fg-main")>> !important;
+  }
+  div.md {
+      color: <<get-color("fg-main")>> !important;
+  }
+  body.comment {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .commentarea > .usertext {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .commentarea .menuarea {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .comments-page .panestack-title {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .listing-chooser {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .listing-chooser .intro {
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .listing-chooser .grippy {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .listing-chooser .grippy:after {
+      border-right: none !important;
+  }
+  .listing-chooser li {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .listing-chooser li.selected {
+      background-color: <<get-color("bg-inactive")>> !important;
+      box-shadow: none;
+  }
+  .listing-chooser li a {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .listing-chooser li a .description {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .titlebox {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .titlebox form.toggle {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .side .usertext-body .md {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .side {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .sidebox .spacer {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .tabmenu li a {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  #header-bottom-right {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .morelink .nub {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  ,* {
+      border-color: <<get-color("border")>> !important;
+  }
+  a {
+      color: <<get-color("fg-link")>> !important;
+  }
+  a:visited {
+      color: <<get-color("fg-link-visited")>> !important;
+  }
+  body {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  html {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  input,
+  textarea {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  tr:hover,
+  blockquote,
+  pre {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  #toolMenu li {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .navPanel,
+  .navIntraTool {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .instruction,
+  .sakaiCopyrightInfo {
+      color: <<get-color("fg-main")>> !important;
+  }
+  .listHier th {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  ul.makeMenu {
+      background-color: <<get-color("bg-main")>> !important;
+      border: 1px solid <<get-color("bg-main")>> !important;
+  }
+  tr.external {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  hr {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("bg-main")>> !important;
+  }
+  .bounty-indicator,
+  .bounty-indicator-tab {
+      background-color: <<get-color("fg-link-visited")>> !important;
+  }
+  .bottom-notice {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .comments-link {
+      color: <<get-color("fg-added")>> !important;
+  }
+  .page-numbers {
+      background-color: <<get-color("fg-added")>> !important;
+      color: <<get-color("fg-completion-match-1")>> !important;
+  }
+  .page-numbers.current {
+      background-color: #cb4b16 !important;
+      color: <<get-color("bg-main")>> !important;
+  }
+  .post-menu a {
+      color: <<get-color("fg-link-visited")>> !important;
+  }
+  .question-status {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  .bg-black-050 {
+      background-color: transparent !important;
+  }
+  .val-info {
+      background-color: transparent !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  .s-label {
+      color: <<get-color("fg-main")>> !important;
+  }
+  pre code {
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
+  }
+  pre code .atn {
+      color: <<get-color("fg-link")>> !important;
+  }
+  pre code .atv {
+      color: #2aa198 !important;
+  }
+  pre code .com {
+      color: <<get-color("bg-inactive")>> !important;
+  }
+  pre code .kwd {
+      color: <<get-color("keyword")>> !important;
+  }
+  pre code .lit {
+      color: #d33682 !important;
+  }
+  pre code .pln,
+  pre code .pun {
+      color: <<get-color("fg-main")>> !important;
+  }
+  pre code .str {
+      color: <<get-color("docstring")>> !important;
+  }
+  pre code .tag {
+      color: <<get-color("fg-added")>> !important;
+  }
+  pre code .typ {
+      color: <<get-color("type")>> !important;
+  }
+  #footer {
+      background-color: <<get-color("bg-active")>> !important;
+      color: <<get-color("fg-main")>> !important;
+  }
+  #footer #footer-sites th {
+      color: <<get-color("fg-alt")>> !important;
+  }
+  .top-footer-links a {
+      color: <<get-color("fg-added")>> !important;
+  }
+  .so-header {
+      background-color: <<get-color("bg-main")>> !important;
+    color: <<get-color("fg-alt")>> !important;
+  }
+  .so-header a {
+    color: <<get-color("fg-added")>> !important;
+  }
+  .so-header .navigation .-list .-item :hover {
+    background-color: <<get-color("fg-added")>> !important;
+    color: #002b36 !important;
+  }
+  .topbar-dialog {
+    background-color: <<get-color("bg-main")>> !important;
+    box-shadow: <<get-color("bg-inactive")>> 5px 5px 5px;
+  }
+  .topbar-dialog .current-site-container {
+    background-color: <<get-color("bg-main")>> !important;
+  }
+  .topbar-dialog .header {
+    background-color: <<get-color("bg-main")>> !important;
+  }
+  .topbar-dialog .header a {
+    color: <<get-color("fg-alt")>> !important;
+  }
+  .topbar-dialog .site-link {
+    color: <<get-color("fg-alt")>> !important;
+  }
+  #header {
+    background-color: <<get-color("bg-main")>> !important;
+  }
+  #question-header .question-hyperlink {
+    color: <<get-color("fg-alt")>> !important;
+  }
+  #hlogo a {
+    filter: opacity(75%);
+  }
+  .new-post-activity {
+    background-color: <<get-color("bg-main")>> !important;
+  }
+  .tagged-interesting {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  div.answered-accepted {
+    background-color: <<get-color("fg-added")>> !important;
+    color: <<get-color("fg-completion-match-1")>> !important;
+  }
+  div.answered-accepted .mini-counts {
+    background-color: <<get-color("fg-added")>> !important;
+    color: <<get-color("fg-completion-match-1")>> !important;
+  }
+  .answered .mini-counts span {
+    color: <<get-color("fg-added")>> !important;
+  }
+  .unanswered .mini-counts span {
+    color: <<get-color("fg-main")>> !important;
+  }
+  #hot-network-questions a {
+    color: #2aa198 !important;
+  }
+  #hot-network-questions h4 a.js-gps-track {
+    color: <<get-color("fg-alt")>> !important;
+  }
+  #sidebar .community-bulletin .bulletin-item-content a {
+    color: <<get-color("fg-alt")>> !important;
+  }
+  #sidebar .module.community-bulletin {
+    background-color: <<get-color("bg-main")>> !important;
+    color: <<get-color("fg-alt")>> !important;
+  }
+  #sidebar .question-hyperlink {
+    color: #2aa198 !important;
+  }
+  .newuser {
+    background-color: <<get-color("bg-main")>> !important;
+    color: <<get-color("fg-alt")>> !important;
+  }
+  .label-key {
+    color: <<get-color("fg-main")>> !important;
+  }
+  .label-key b {
+    color: <<get-color("fg-alt")>> !important;
+  }
+  #h-chat-link {
+    color: <<get-color("fg-alt")>> !important;
+  }
+  .ad502-room {
+    background-color: <<get-color("bg-main")>> !important;
+    box-shadow: <<get-color("bg-inactive")>> 0px 1px 3px;
+    color: <<get-color("fg-alt")>> !important;
+  }
+  #tabs a {
+    background-color: transparent !important;
+    background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>);
+    color: <<get-color("fg-alt")>> !important;
+  }
+  #tabs a.youarehere {
+    background-image: linear-gradient(to bottom, #cb4b16, <<get-color("bg-main")>>);
+    color: #002b36 !important;
+  }
+  .post-tag {
+    background-color: <<get-color("bg-inactive")>> !important;
+    color: <<get-color("bg-main")>> !important;
+  }
+  .post-tag::before {
+    background-color: <<get-color("bg-main")>> !important;
+  }
+  a.comment-user.owner {
+    background-color: <<get-color("fg-added")>> !important;
+    color: <<get-color("fg-completion-match-1")>> !important;
+  }
+  .post-signature {
+    background-color: <<get-color("bg-main")>> !important;
+    color: <<get-color("fg-alt")>> !important;
+  }
+  .post-signature a {
+    color: #2aa198 !important;
+  }
+  .post-signature.owner .user-info .user-details a {
+    color: <<get-color("fg-added")>> !important;
+  }
+  .post-signature span.relativetime {
+    color: <<get-color("fg-alt")>> !important;
+  }
+  .vote {
+    background-color: <<get-color("bg-main")>> !important;
+  }
+  .vote .star-off {
+    filter: opacity(75%);
+  }
+  .vote .star-on {
+    filter: opacity(50%) !important;
+  }
+  .vote .vote-down-off,
+  .vote .vote-up-off {
+    filter: opacity(50%);
+  }
+  .answer-votes {
+    background-color: <<get-color("bg-inactive")>> !important;
+    color: <<get-color("bg-main")>> !important;
+  }
+#+end_src
 
 *** Bash script opening a new tab in qutebrowser depending on the url
 :PROPERTIES:
@@ -5619,7 +6997,7 @@ The information about time balance multiplier is shown in [[id:4df7a164-25a1-410
 #+begin_src bash :tangle /home/yantar92/.config/awesome/startup :shebang #!/bin/bash 
 while true; do org-clocked-in.sh 2>> ~/.log/org-clocked-in.log; sleep 5; done &
 #+end_src
-#+begin_src bash :tangle /home/yantar92/.local/bin/org-clocked-in.sh :shebang #!/bin/bash
+#+begin_src bash :tangle /home/yantar92/.local/bin/org-clocked-in.sh :shebang #!/bin/bash :noweb yes
   # Make sure it exists
   [[ -f "/home/yantar92/.org-clock-in" ]] || touch ~/.org-clock-in
   BALANCE=""
@@ -5636,8 +7014,8 @@ while true; do org-clocked-in.sh 2>> ~/.log/org-clocked-in.log; sleep 5; done &
           BAL=$(echo "$BAL/60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
           LOSSAGE=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
           LOSSAGE=$(echo "$LOSSAGE/-60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
-          [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"#FF0000\">⏺</span>" || LOSSAGE="<span color=\"#00FF00\">⏺</span>"
-  	[[ "$(echo "$BAL < 0" | bc -l)" == "1" ]] && BAL_STRING="<span color=\"#FF0000\">${BAL}h</span>" \
+          [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"<<get-color("err")>>\">⏺</span>" || LOSSAGE="<span color=\"<<get-color("green-intense")>>\">⏺</span>"
+  	[[ "$(echo "$BAL < 0" | bc -l)" == "1" ]] && BAL_STRING="<span color=\"<<get-color("err")>>\">${BAL}h</span>" \
   		|| BAL_STRING="${BAL}h"
           BAL_STRING="${BAL_STRING}<span font=\"12\">${LOSSAGE}</span>"
           echo $BAL_STRING
@@ -5686,17 +7064,17 @@ while true; do org-clocked-in.sh 2>> ~/.log/org-clocked-in.log; sleep 5; done &
       BAL_STRING=$(echo "($hours_plus * $MULT * 60 + $minutes_plus * $MULT + $BAL)/60.0" | bc -l | sed -r 's/([^.]*\..).*/\1/');
       LOSSAGE=$(cat ~/.org-clock-in  | tail -n1 | cut -d. -f1)
       LOSSAGE=$(echo "$LOSSAGE/-60" | bc -l | sed -r 's/([^.]*\..).*/\1/')
-      [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"#FF0000\">⏺</span>" || LOSSAGE="<span color=\"#00FF00\">⏺</span>"
+      [[ "$(echo "$LOSSAGE < 0" | bc -l)" == "1" ]] && LOSSAGE="<span color=\"<<get-color("err")>>\">⏺</span>" || LOSSAGE="<span color=\"<<get-color("green-intense")>>\">⏺</span>"
       if [[ $(echo "$BAL_STRING < 0" | bc -l) == "1" ]]; then
-  	BAL_STRING="<span color=\"#FF0000\">${BAL_STRING}h</span>"
+  	BAL_STRING="<span color=\"<<get-color("err")>>\">${BAL_STRING}h</span>"
           [[ ! -f /tmp/negative-time-balance ]] && notify-send -u critical "Negative time balance"
           touch /tmp/negative-time-balance
       else
   	BAL_STRING="${BAL_STRING}h"
           rm -f /tmp/negative-time-balance
       fi
-      [[ $(echo "$MULT < 0" | bc -l) == "1" ]] && BAL_STRING="${BAL_STRING}<span color=\"#FF0000\">⇓"\
-  	    || BAL_STRING="${BAL_STRING}<span color=\"#00FF00\">⇑"
+      [[ $(echo "$MULT < 0" | bc -l) == "1" ]] && BAL_STRING="${BAL_STRING}<span color=\"<<get-color("err")>>\">⇓"\
+  	    || BAL_STRING="${BAL_STRING}<span color=\"<<get-color("green-intense")>>\">⇑"
       BAL_STRING="${BAL_STRING}<span font=\"8\">$(echo $MULT | sed -r 's/-//')x</span></span><span font=\"12\">${LOSSAGE}</span>"
       echo $BAL_STRING
   fi
@@ -5975,7 +7353,7 @@ The idea of the script is regular reminder to not spend too much money on certai
   weekly_min_spending="<<min-weekly-spending()>>"
 
   if [[ ! -z "$UNCONVERTED_CURRENCIES" ]]; then
-      [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ <span color=\"#FF0000\"><b>Ledger error</b></span>༼ <span color=\"#FF0000\">Not all currencies convertable</span>༼ '" | awesome-client;
+      [[ "$PROJECTING" == "1" ]] && echo "balance.markup=''" | awesome-client || echo "balance.markup='༼ <span color=\"<<get-color("err")>>\"><b>Ledger error</b></span>༼ <span color=\"<<get-color("green-intense")>>\">Not all currencies convertable</span>༼ '" | awesome-client;
       exit;
   fi
 
@@ -5984,9 +7362,9 @@ The idea of the script is regular reminder to not spend too much money on certai
   BAL_RENT="$(echo "${BAL_RENT}*(-1)" | bc -l)";
   under_0=$(echo "$BAL_RENT < 0" | bc -l)
   if [[ "$under_0" == "1" ]]; then
-      BAL_RENT="<span color=\"#FF0000\">⏺</span>"
+      BAL_RENT="<span color=\"<<get-color("err")>>\">⏺</span>"
   else
-      BAL_RENT="<span color=\"#00FF00\">⏺</span>"
+      BAL_RENT="<span color=\"<<get-color("green-intense")>>\">⏺</span>"
   fi
 
 
@@ -6013,9 +7391,9 @@ The idea of the script is regular reminder to not spend too much money on certai
   BAL_FOOD=$(echo "$BAL_FOOD" | sed -r 's/^\./0./')
   BAL_FOOD=$(echo "$BAL_FOOD" | sed -r 's/^-\./-0./')
   if [[ "$under_0" == "1" ]]; then
-      BAL_FOOD="<span color=\"#FF0000\"><<ledger-food-currency-symbol()>>$BAL_FOOD milk\!</span>"
+      BAL_FOOD="<span color=\"<<get-color("err")>>\"><<ledger-food-currency-symbol()>>$BAL_FOOD milk\!</span>"
   elif [[ "$under_limit" == "1" ]]; then
-      BAL_FOOD="<span color=\"#FF0000\"><<ledger-food-currency-symbol()>>$BAL_FOOD canteen\!</span>"
+      BAL_FOOD="<span color=\"<<get-color("err")>>\"><<ledger-food-currency-symbol()>>$BAL_FOOD canteen\!</span>"
   else
       BAL_FOOD="<<ledger-food-currency-symbol()>>$BAL_FOOD"
   fi
@@ -6023,7 +7401,7 @@ The idea of the script is regular reminder to not spend too much money on certai
   # BAL_ENTERTAINMENT_SHORT="$(echo "$BAL_ENTERTAINMENT/1000.0*(-1)" | bc -l | grep -oE '^-?[0-9]*\.?[0-9]{0,2}')k"
   # BAL_ENTERTAINMENT_SHORT="$(echo $BAL_ENTERTAINMENT_SHORT | sed -r 's/^(-?)\./\10\./')"
   BAL_ENTERTAINMENT_SHORT="$(echo "$BAL_ENTERTAINMENT*(-1)" | bc -l | grep -oE '^-?[0-9]*')"
-  [[ "$(echo "$BAL_ENTERTAINMENT > 0" | bc -l)" == "1" ]] && BAL_ENTERTAINMENT_SHORT="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT</span>" || BAL_ENTERTAINMENT_SHORT="<<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT"
+  [[ "$(echo "$BAL_ENTERTAINMENT > 0" | bc -l)" == "1" ]] && BAL_ENTERTAINMENT_SHORT="<span color=\"<<get-color("err")>>\"><<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT</span>" || BAL_ENTERTAINMENT_SHORT="<<ledger-main-currency-symbol()>>$BAL_ENTERTAINMENT_SHORT"
 
   WEEKLY_INCOME_AVG="$(ledger r -X <<ledger-main-currency()>> Income -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income from the beginning of the year
   [[ -z "$WEEKLY_INCOME_AVG" ]] && WEEKLY_INCOME_AVG="0"
@@ -6052,12 +7430,12 @@ The idea of the script is regular reminder to not spend too much money on certai
   colorize_ratio () {
       local INCOME_RATIO="$1"
       if [[ "1" == "$(echo "$INCOME_RATIO < 100" | bc -l)" ]]; then
-  	INCOME_RATIO="<span color=\"#FF0000\">"$INCOME_RATIO"%</span>"
+  	INCOME_RATIO="<span color=\"<<get-color("err")>>\">"$INCOME_RATIO"%</span>"
       else
   	if [[ "1" == "$(echo "$INCOME_RATIO < 200" | bc -l)" ]]; then
-  	    INCOME_RATIO="<span color=\"#FFFF00\">"$INCOME_RATIO"%</span>"
+  	    INCOME_RATIO="<span color=\"<<get-color("warning")>>\">"$INCOME_RATIO"%</span>"
   	else
-  	    INCOME_RATIO="<span color=\"#00FF00\">"$INCOME_RATIO"%</span>"
+  	    INCOME_RATIO="<span color=\"<<get-color("green-intense")>>\">"$INCOME_RATIO"%</span>"
   	fi
       fi
       echo "$INCOME_RATIO"
@@ -6070,12 +7448,12 @@ The idea of the script is regular reminder to not spend too much money on certai
   EMERGENCY_FUND="$(echo "$MONTHLY_SPENDING_AVG * <<emergency-fund-months()>>" | bc -l)"
   BAL_EMERGENCY="$(ledger bal -X <<ledger-main-currency()>> Assets:Checking -p 'until tomorrow' | awk '{print $1}' | sed -r 's/<<ledger-main-currency()>>//' | sed -r 's/,//g' | tail -n1)"
    if [[ "1" == "$(echo "$EMERGENCY_FUND > $BAL_EMERGENCY" | bc -l)" ]]; then
-       BAL_EMERGENCY="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$(echo "$BAL_EMERGENCY - $EMERGENCY_FUND" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')</span>"
+       BAL_EMERGENCY="<span color=\"<<get-color("err")>>\"><<ledger-main-currency-symbol()>>$(echo "$BAL_EMERGENCY - $EMERGENCY_FUND" | bc -l | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')</span>"
    else
        if [[ "0" == "$EMERGENCY_FUND" ]]; then
-  	 BAL_EMERGENCY="<span color=\"#FFFF00\">N/A</span>"
+  	 BAL_EMERGENCY="<span color=\"<<get-color("warning")>>\">N/A</span>"
        else
-  	 BAL_EMERGENCY="<span color=\"#00FF00\">ok</span>"
+  	 BAL_EMERGENCY="<span color=\"<<get-color("green-intense")>>\">ok</span>"
        fi
    fi
 
@@ -6086,16 +7464,16 @@ The idea of the script is regular reminder to not spend too much money on certai
 
    if [[ "1" == "$(echo "$CHECKING_EXTRA > 0" | bc -l)" ]]; then
        if [[ "0" == "$MONTHLY_SPENDING_AVG" ]]; then
-  	 EXTRA="<span color=\"#FFFF00\">N/A</span>"
+  	 EXTRA="<span color=\"<<get-color("err")>>\">N/A</span>"
        else
   	 if [[ "1" == "$(echo "$CHECKING_EXTRA > $MONTHLY_SPENDING_AVG" | bc -l)" ]]; then
-               printf -v EXTRA '<span color="#FF0000"><<ledger-main-currency-symbol()>>%.1fk</span>' $(echo "$CHECKING_EXTRA/1000.0" | bc -l)
+               printf -v EXTRA '<span color="<<get-color("err")>>"><<ledger-main-currency-symbol()>>%.1fk</span>' $(echo "$CHECKING_EXTRA/1000.0" | bc -l)
   	 else
                printf -v EXTRA '<<ledger-main-currency-symbol()>>%.1fk' $(echo "$CHECKING_EXTRA/1000.0" | bc -l)
   	 fi
        fi
    else
-       EXTRA="<span color=\"#00FF00\">no</span>"
+       EXTRA="<span color=\"<<get-color("green-intense")>>\">no</span>"
    fi
 
    # args: BAL_PROJECTION_YEAR
@@ -6105,14 +7483,14 @@ The idea of the script is regular reminder to not spend too much money on certai
        if [[ "1" == "$(echo "$BAL_PROJECTION_YEAR > 0" | bc -l)" ]]; then
   	 YEARS_LEFT=$(echo "$BAL_ASSETS / $BAL_PROJECTION_YEAR" | bc -l | sed -r 's/(\..{1}).+/\1/');
   	 if [[ "1" == "$(echo "$YEARS_LEFT < 5" | bc -l)" ]]; then
-  	     YEARS_LEFT="<span font=\"12\" color=\"#FF0000\">+${YEARS_LEFT}y</span>";
+  	     YEARS_LEFT="<span font=\"12\" color=\"<<get-color("err")>>\">+${YEARS_LEFT}y</span>";
            elif [[ "1" == "$(echo "$YEARS_LEFT < 15" | bc -l)" ]]; then
-               YEARS_LEFT="<span font=\"12\" color=\"#FFFF00\">+${YEARS_LEFT}y</span>";
+               YEARS_LEFT="<span font=\"12\" color=\"<<get-color("warning")>>\">+${YEARS_LEFT}y</span>";
   	 else
-  	     YEARS_LEFT="<span font=\"12\" color=\"#99FF00\">+${YEARS_LEFT}y</span>";
+  	     YEARS_LEFT="<span font=\"12\" color=\"<<get-color("green-warmer")>>\">+${YEARS_LEFT}y</span>";
   	 fi
        else
-  	 YEARS_LEFT="<span font=\"12\" color=\"#00FF00\">+∞y</span>";
+  	 YEARS_LEFT="<span font=\"12\" color=\"<<get-color("green-intense")>>\">+∞y</span>";
        fi
        echo "$YEARS_LEFT"
    }    
@@ -6149,9 +7527,9 @@ The idea of the script is regular reminder to not spend too much money on certai
   	 RETIREMENT="$(echo "$RETIREMENT" | sed -r 's/(\..{1}).+/\1/' | sed -r 's/^(-?)(\.)/\10\2/')"
            RETIREMENT="<<ledger-main-currency-symbol()>>${RETIREMENT}"
        fi
-       RETIREMENT="<span color=\"#FF0000\">${RETIREMENT}</span>"
+       RETIREMENT="<span color=\"<<get-color("err")>>\">${RETIREMENT}</span>"
    else
-       RETIREMENT="<span color=\"#00FF00\">ok</span>"
+       RETIREMENT="<span color=\"<<get-color("green-intense")>>\">ok</span>"
    fi
 
    OTHER="$(ledger budget Expenses:Personal:Other -X <<ledger-main-currency()>> -p "until tomorrow" | tail -n1 | awk '{print $3}' | sed -r 's/<<ledger-main-currency()>>//')"
@@ -6160,9 +7538,9 @@ The idea of the script is regular reminder to not spend too much money on certai
    OTHER="$(echo "$OTHER * -1" | bc -l)"
    OTHER_SHORT="$(echo $OTHER | sed -r 's/(\..{1}).+/\1/')"
    if [[ "1" == "$(echo "$OTHER < 0" | bc -l)" ]]; then
-       OTHER="<span color=\"#FF0000\"><<ledger-main-currency-symbol()>>$OTHER_SHORT</span>"
+       OTHER="<span color=\"<<get-color("err")>>\"><<ledger-main-currency-symbol()>>$OTHER_SHORT</span>"
    else
-       OTHER="<span color=\"#00FF00\"><<ledger-main-currency-symbol()>>$OTHER_SHORT</span>"
+       OTHER="<span color=\"<<get-color("green-intense")>>\"><<ledger-main-currency-symbol()>>$OTHER_SHORT</span>"
    fi
 
    BAL_TIME=$(org-clocked-in.sh balance)
