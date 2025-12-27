@@ -8100,13 +8100,10 @@ Requires notmuch.
 :ID:       2242c473-3c03-459f-b0d4-9f916850dc6e
 :END:
 
-Installing using Docker
-#+begin_src bash :tangle no :eval yes
-docker pull diygod/rsshub
-#+end_src
+[2025-12-27 Sat] Need puppeteer version to bypass aggressive crawler blocking.
 
 #+begin_src bash :tangle /home/yantar92/.config/awesome/startup :shebang #!/bin/bash
-docker run -d --name rsshub -p 1200:1200 diygod/rsshub
+podman run -d --name rsshub -p 1200:1200 diygod/rsshub:chromium-bundled
 #+end_src
 
 ** Generic web-page update watcher (via diff): [[id:c711711207c4738449032aa13d464d500bc9aa95][urlwatch]]
