@@ -9900,6 +9900,15 @@ dev-python/numpy doc
 dev-python/matplotlib
 #+end_src
 
+** =uv= - new Python package manager
+:PROPERTIES:
+:ID:       19a6e0bb-36e8-4400-9b6e-9e34938e6d1b
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-python/uv
+#+end_src
+
 ** Games
 *** COMMENT =steam=
 :PROPERTIES:
