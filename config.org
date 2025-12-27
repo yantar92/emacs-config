@@ -1261,7 +1261,8 @@ information update.
 :END:
 
 #+begin_src emacs-lisp
-  (setq multi-message-max 4)
+  (setq multi-message-max 3
+        multi-message-timeout 0.3)
 
   (defun multi-message--ellipsis-p (message)
     "Return non nil when MESSAGE ends with ellipsis."
