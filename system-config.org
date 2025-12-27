@@ -7391,9 +7391,9 @@ The idea of the script is regular reminder to not spend too much money on certai
   BAL_FOOD=$(echo "$BAL_FOOD" | sed -r 's/^\./0./')
   BAL_FOOD=$(echo "$BAL_FOOD" | sed -r 's/^-\./-0./')
   if [[ "$under_0" == "1" ]]; then
-      BAL_FOOD="<span color=\"<<get-color("err")>>\"><<ledger-food-currency-symbol()>>$BAL_FOOD milk\!</span>"
+      BAL_FOOD="<span color=\"<<get-color("err")>>\"><<ledger-food-currency-symbol()>>$BAL_FOOD</span>"
   elif [[ "$under_limit" == "1" ]]; then
-      BAL_FOOD="<span color=\"<<get-color("err")>>\"><<ledger-food-currency-symbol()>>$BAL_FOOD canteen\!</span>"
+      BAL_FOOD="<span color=\"<<get-color("err")>>\"><<ledger-food-currency-symbol()>>$BAL_FOOD </span>"
   else
       BAL_FOOD="<<ledger-food-currency-symbol()>>$BAL_FOOD"
   fi
