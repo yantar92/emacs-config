@@ -1510,20 +1510,20 @@ echo -n wallpaper-themed.png
   theme.bg_systray    = theme.bg_normal
 
   theme.fg_normal     = "<<get-color("fg-main")>>"
-  theme.fg_focus      = "<<get-color("fg-alt")>>"
+  theme.fg_focus      = "<<get-color("fg-completion-match-3")>>"
   theme.fg_urgent     = "<<get-color("red")>>"
   theme.fg_minimize = theme.fg_normal
   theme.bg_minimize = "<<get-color("bg-inactive")>>"
 
-  theme.border_width  = 0
+  theme.border_width  = 1
   theme.border_normal = "<<get-color("border")>>"
-  theme.border_focus  = "<<get-color("border-mode-line-active")>>"
+  theme.border_focus  = "<<get-color("border")>>"
   theme.border_marked = "<<get-color("border")>>"
 
   -- Display the taglist squares
   theme.taglist_squares_sel   = pathToConfig .. "icons/square_sel.png"
   theme.taglist_squares_unsel = pathToConfig .. "icons/square_unsel.png"
-  theme.taglist_fg_focus = "<<get-color("fg-completion-match-1")>>"
+  theme.taglist_fg_focus = "<<get-color("fg-completion-match-3")>>"
 
   -- Variables set for theming the menu:
   -- menu_[bg|fg]_[normal|focus]
@@ -2097,8 +2097,9 @@ return kbdlayout
   	s.mywibox:setup {
   	   layout = wibox.layout.align.horizontal,
   	   s.mylayoutbox,
+  	   spacing,
   	   { -- Right widgets
-  	      layout = wibox.layout.fixed.horizontal,
+  	      layout = wibox.layout.align.horizontal,
   	      s.index == 1 and spacing,
   	      s.index == 1 and balance,
   	      arr1,
@@ -2113,12 +2114,9 @@ return kbdlayout
   	      s.index == 1 and mysystray,
   	   },
   	   {
-  	      layout = wibox.layout.fixed.vertical,
-  	   },
-  	   {
   	      s.mytasklist_nofocus,
-                direction = 'west',
-                layout = wibox.container.rotate,
+  	      direction = 'west',
+  	      layout = wibox.container.rotate,
   	   },
   	   {
   	      s.mytaglist,
@@ -2435,11 +2433,12 @@ return kbdlayout
 
 #+name: awesome-default-qutebrowser-rule
 #+begin_src lua :tangle no
-     { rule = { class = "qutebrowser" },
-       properties = {
-	  tag = "web",
-       },
-     }
+  { rule = { class = "qutebrowser" },
+    properties = {
+  	  tag = "web",
+  	  maximized = true,
+    },
+  }
 #+end_src
 
 ****** =Pinentry= prompt
@@ -2486,7 +2485,7 @@ return kbdlayout
 	  titlebars_enabled = false,
 	  width = 1878,
 	  height = 500,
-	  border_width = 0
+	  border_width = 1
        }
      }
 #+end_src
@@ -3098,10 +3097,11 @@ inactive_tab_font_style normal
 :END:
 
 #+BEGIN_SRC conf  :tangle /home/yantar92/.config/kitty/kitty.conf
+  background_opacity 0.95
   foreground              <<get-color("fg-main")>>
   background              <<get-color("bg-main")>>
-  selection_foreground    <<get-color("fg-dim")>>
-  selection_background    <<get-color("bg-dim")>>
+  selection_foreground    <<get-color("fg-main")>>
+  selection_background    <<get-color("bg-active")>>
 
   # Cursor colors
   cursor                  <<get-color("cursor")>>
@@ -4704,6 +4704,7 @@ c.qt.highdpi = True
 :END:
 
 #+begin_src python :noweb yes
+  c.window.transparent = True
   c.fonts.default_family = "<<system-font-family()>>"
   c.fonts.default_size = "<<system-font-size()>>pt"
 
@@ -4715,7 +4716,7 @@ c.qt.highdpi = True
   bg_lightest = "<<get-color("fg-alt")>>"
   fg_error = "<<get-color("err")>>"
   bg_hint = "<<get-color("info")>>"
-  fg_matched_text = "<<get-color("fg-completion-match-1")>>"
+  fg_matched_text = "<<get-color("fg-completion-match-3")>>"
   bg_passthrough_mode = "<<get-color("blue")>>"
   bg_insert_mode = "<<get-color("green")>>"
   bg_warning = "<<get-color("warning")>>"
@@ -4954,46 +4955,46 @@ c.qt.highdpi = True
   c.colors.tabs.odd.fg = fg_default
 
   # Background color of unselected odd tabs.
-  c.colors.tabs.odd.bg = bg_selection
+  c.colors.tabs.odd.bg = bg_default
 
   # Foreground color of unselected even tabs.
-  c.colors.tabs.even.fg = fg_default
+  c.colors.tabs.even.fg = fg_disabled
 
   # Background color of unselected even tabs.
-  c.colors.tabs.even.bg = bg_selection
+  c.colors.tabs.even.bg = bg_default
 
   # Background color of pinned unselected even tabs.
-  c.colors.tabs.pinned.even.bg = bg_selection
+  c.colors.tabs.pinned.even.bg = bg_default
 
   # Foreground color of pinned unselected even tabs.
-  c.colors.tabs.pinned.even.fg = bg_selection
+  c.colors.tabs.pinned.even.fg = fg_disabled
 
   # Background color of pinned unselected odd tabs.
-  c.colors.tabs.pinned.odd.bg = fg_matched_text
+  c.colors.tabs.pinned.odd.bg = bg_default
 
   # Foreground color of pinned unselected odd tabs.
-  c.colors.tabs.pinned.odd.fg = bg_selection
+  c.colors.tabs.pinned.odd.fg = fg_default
 
   # Background color of pinned selected even tabs.
   c.colors.tabs.pinned.selected.even.bg = bg_default
 
   # Foreground color of pinned selected even tabs.
-  c.colors.tabs.pinned.selected.even.fg = fg_default
+  c.colors.tabs.pinned.selected.even.fg = fg_matched_text
 
   # Background color of pinned selected odd tabs.
   c.colors.tabs.pinned.selected.odd.bg = bg_default
 
   # Foreground color of pinned selected odd tabs.
-  c.colors.tabs.pinned.selected.odd.fg = fg_default
+  c.colors.tabs.pinned.selected.odd.fg = fg_matched_text
 
   # Foreground color of selected odd tabs.
-  c.colors.tabs.selected.odd.fg = fg_default
+  c.colors.tabs.selected.odd.fg = fg_matched_text
 
   # Background color of selected odd tabs.
   c.colors.tabs.selected.odd.bg = bg_default
 
   # Foreground color of selected even tabs.
-  c.colors.tabs.selected.even.fg = fg_default
+  c.colors.tabs.selected.even.fg = fg_matched_text
 
   # Background color of selected even tabs.
   c.colors.tabs.selected.even.bg = bg_default
@@ -5016,12 +5017,20 @@ c.qt.highdpi = True
 #+begin_src css :tangle :tangle /home/yantar92/.config/qutebrowser/theme.css :mkdirp yes
   ,* {
       border-color: <<get-color("border")>> !important;
+      background-color: initial !important;
+  }
+  .color-bg-default, .bgColor-default {
+      background-color: <<get-color("bg-main")>> !important;
   }
   a {
       color: <<get-color("fg-link")>> !important;
   }
   a:visited {
       color: <<get-color("fg-link-visited")>> !important;
+  }
+  p, ul, li {
+      color: <<get-color("fg-main")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
   }
   body {
       background-color: <<get-color("bg-main")>> !important;
@@ -5047,18 +5056,23 @@ c.qt.highdpi = True
       background-color: <<get-color("bg-main")>> !important;
       color: <<get-color("fg-main")>> !important;
   }
+  .ytSearchboxComponentInputBox,
+  input,
+  form,
+  button,
   .search--adv {
       background-color: <<get-color("bg-dim")>> !important;
+      color: <<get-color("fg-main")>> !important;
   }
   .search__autocomplete > .acp-wrap {
       background-color: <<get-color("bg-dim")>> !important;
   }
   .search__autocomplete > .acp-wrap > .acp--highlight {
       background-color: <<get-color("bg-dim")>> !important;
-      color: <<get-color("fg-completion-match-1")>> !important;
+      color: <<get-color("fg-completion-match-3")>> !important;
   }
   .search__autocomplete > .acp-wrap strong {
-      color: <<get-color("fg-completion-match-1")>> !important;
+      color: <<get-color("fg-completion-match-3")>> !important;
   }
   .site-wrapper > #header_wrapper {
       background-color: <<get-color("bg-main")>> !important;
@@ -5067,7 +5081,7 @@ c.qt.highdpi = True
       background-color: <<get-color("bg-main")>> !important;
   }
   .search--header {
-      background-color: <<get-color("bg-main")>> !important;
+      background-color: <<get-color("bg-dim")>> !important;
   }
   .zci {
       background-color: <<get-color("bg-main")>> !important;
@@ -5081,7 +5095,7 @@ c.qt.highdpi = True
   }
   .tile--c {
       background-color: <<get-color("bg-inactive")>> !important;
-      color: <<get-color("fg-completion-match-1")>> !important;
+      color: <<get-color("fg-completion-match-3")>> !important;
   }
   .module__text {
       color: <<get-color("fg-main")>> !important;
@@ -5312,7 +5326,7 @@ c.qt.highdpi = True
       border-color: <<get-color("bg-inactive")>> !important;
   }
   .pl-c {
-      color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("comment")>> !important;
   }
   .pl-c1 {
       color: <<get-color("fg-link")>> !important;
@@ -5691,8 +5705,8 @@ c.qt.highdpi = True
   }
   .js-site-search-form input,
   .js-chromeless-input-container {
-      background-color: <<get-color("bg-main")>> !important;
-      border-color: <<get-color("bg-inactive")>> !important;
+      background-color: <<get-color("bg-dim")>> !important;
+      border-color: <<get-color("bg-active")>> !important;
   }
   a.label {
       color: <<get-color("fg-main")>> !important;
@@ -5942,7 +5956,7 @@ c.qt.highdpi = True
       background-color: <<get-color("bg-main")>> !important;
   }
   .subnav-search input {
-      border-color: <<get-color("bg-inactive")>> !important;
+      border-color: <<get-color("bg-dim")>> !important;
   }
   .right .tabnav-extra {
       color: <<get-color("bg-inactive")>> !important;
@@ -6204,7 +6218,7 @@ c.qt.highdpi = True
       filter: opacity(50%);
   }
   div#simpleSearch #searchInput {
-      background-color: <<get-color("bg-main")>> !important;
+      background-color: <<get-color("bg-dim")>> !important;
       padding: 0.05em 0px 0.2em 0.2em !important;
   }
   .ambox,
@@ -6221,6 +6235,48 @@ c.qt.highdpi = True
       border-color: <<get-color("bg-main")>> !important;
       color: <<get-color("fg-alt")>> !important;
   }
+  .active {
+      background-color: <<get-color("bg-main")>> !important;
+      border-color: <<get-color("bg-active")>> !important;
+  }
+  section,
+  article,
+  .react-module,
+  .pane,
+  .book-page,
+  .aside-profile-stats, .aside-profile-btns,
+  .react-comments-container,
+  .tab-content,
+  .panel-nav,
+  .panel-heading,
+  .issue-body,
+  #issue-body-viewer,
+  .issue-viewer-issue-container,
+  .contentContainer,
+  div[class*='banner'],
+  div[class^='IssueCommentViewer'],
+  div[class^='Box'],
+  .panel {
+      background-color: <<get-color("bg-main")>> !important;
+  }
+  nav,
+  .nav,
+  .header,
+  footer,
+  #postamble,
+  header,
+  .navbar,
+  .accessbar,
+  .nav-news,
+  #page-header,
+  .ytd-tabbed-page-header,
+  #masthead,
+  .nav-profile,
+  .topnavbar,
+  .navbar-wrapper,
+  .topnavbar-wrapper,
+  #header,
+  #chips-content,
   .navbox {
       background-color: <<get-color("bg-main")>> !important;
       border-color: <<get-color("bg-main")>> !important;
@@ -6522,7 +6578,7 @@ c.qt.highdpi = True
   }
   .page-numbers {
       background-color: <<get-color("fg-added")>> !important;
-      color: <<get-color("fg-completion-match-1")>> !important;
+      color: <<get-color("fg-completion-match-3")>> !important;
   }
   .page-numbers.current {
       background-color: #cb4b16 !important;
@@ -6588,143 +6644,143 @@ c.qt.highdpi = True
   }
   .so-header {
       background-color: <<get-color("bg-main")>> !important;
-    color: <<get-color("fg-alt")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   .so-header a {
-    color: <<get-color("fg-added")>> !important;
+      color: <<get-color("fg-added")>> !important;
   }
   .so-header .navigation .-list .-item :hover {
-    background-color: <<get-color("fg-added")>> !important;
-    color: #002b36 !important;
+      background-color: <<get-color("fg-added")>> !important;
+      color: #002b36 !important;
   }
   .topbar-dialog {
-    background-color: <<get-color("bg-main")>> !important;
-    box-shadow: <<get-color("bg-inactive")>> 5px 5px 5px;
+      background-color: <<get-color("bg-main")>> !important;
+      box-shadow: <<get-color("bg-inactive")>> 5px 5px 5px;
   }
   .topbar-dialog .current-site-container {
-    background-color: <<get-color("bg-main")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
   }
   .topbar-dialog .header {
-    background-color: <<get-color("bg-main")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
   }
   .topbar-dialog .header a {
-    color: <<get-color("fg-alt")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   .topbar-dialog .site-link {
-    color: <<get-color("fg-alt")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   #header {
-    background-color: <<get-color("bg-main")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
   }
   #question-header .question-hyperlink {
-    color: <<get-color("fg-alt")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   #hlogo a {
-    filter: opacity(75%);
+      filter: opacity(75%);
   }
   .new-post-activity {
-    background-color: <<get-color("bg-main")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
   }
   .tagged-interesting {
       background-color: <<get-color("bg-main")>> !important;
   }
   div.answered-accepted {
-    background-color: <<get-color("fg-added")>> !important;
-    color: <<get-color("fg-completion-match-1")>> !important;
+      background-color: <<get-color("fg-added")>> !important;
+      color: <<get-color("fg-completion-match-3")>> !important;
   }
   div.answered-accepted .mini-counts {
-    background-color: <<get-color("fg-added")>> !important;
-    color: <<get-color("fg-completion-match-1")>> !important;
+      background-color: <<get-color("fg-added")>> !important;
+      color: <<get-color("fg-completion-match-3")>> !important;
   }
   .answered .mini-counts span {
-    color: <<get-color("fg-added")>> !important;
+      color: <<get-color("fg-added")>> !important;
   }
   .unanswered .mini-counts span {
-    color: <<get-color("fg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
   }
   #hot-network-questions a {
-    color: #2aa198 !important;
+      color: #2aa198 !important;
   }
   #hot-network-questions h4 a.js-gps-track {
-    color: <<get-color("fg-alt")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   #sidebar .community-bulletin .bulletin-item-content a {
-    color: <<get-color("fg-alt")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   #sidebar .module.community-bulletin {
-    background-color: <<get-color("bg-main")>> !important;
-    color: <<get-color("fg-alt")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   #sidebar .question-hyperlink {
-    color: #2aa198 !important;
+      color: #2aa198 !important;
   }
   .newuser {
-    background-color: <<get-color("bg-main")>> !important;
-    color: <<get-color("fg-alt")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   .label-key {
-    color: <<get-color("fg-main")>> !important;
+      color: <<get-color("fg-main")>> !important;
   }
   .label-key b {
-    color: <<get-color("fg-alt")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   #h-chat-link {
-    color: <<get-color("fg-alt")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   .ad502-room {
-    background-color: <<get-color("bg-main")>> !important;
-    box-shadow: <<get-color("bg-inactive")>> 0px 1px 3px;
-    color: <<get-color("fg-alt")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
+      box-shadow: <<get-color("bg-inactive")>> 0px 1px 3px;
+      color: <<get-color("fg-alt")>> !important;
   }
   #tabs a {
-    background-color: transparent !important;
-    background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>);
-    color: <<get-color("fg-alt")>> !important;
+      background-color: transparent !important;
+      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>);
+      color: <<get-color("fg-alt")>> !important;
   }
   #tabs a.youarehere {
-    background-image: linear-gradient(to bottom, #cb4b16, <<get-color("bg-main")>>);
-    color: #002b36 !important;
+      background-image: linear-gradient(to bottom, #cb4b16, <<get-color("bg-main")>>);
+      color: #002b36 !important;
   }
   .post-tag {
-    background-color: <<get-color("bg-inactive")>> !important;
-    color: <<get-color("bg-main")>> !important;
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("bg-main")>> !important;
   }
   .post-tag::before {
-    background-color: <<get-color("bg-main")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
   }
   a.comment-user.owner {
-    background-color: <<get-color("fg-added")>> !important;
-    color: <<get-color("fg-completion-match-1")>> !important;
+      background-color: <<get-color("fg-added")>> !important;
+      color: <<get-color("fg-completion-match-3")>> !important;
   }
   .post-signature {
-    background-color: <<get-color("bg-main")>> !important;
-    color: <<get-color("fg-alt")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   .post-signature a {
-    color: #2aa198 !important;
+      color: #2aa198 !important;
   }
   .post-signature.owner .user-info .user-details a {
-    color: <<get-color("fg-added")>> !important;
+      color: <<get-color("fg-added")>> !important;
   }
   .post-signature span.relativetime {
-    color: <<get-color("fg-alt")>> !important;
+      color: <<get-color("fg-alt")>> !important;
   }
   .vote {
-    background-color: <<get-color("bg-main")>> !important;
+      background-color: <<get-color("bg-main")>> !important;
   }
   .vote .star-off {
-    filter: opacity(75%);
+      filter: opacity(75%);
   }
   .vote .star-on {
-    filter: opacity(50%) !important;
+      filter: opacity(50%) !important;
   }
   .vote .vote-down-off,
   .vote .vote-up-off {
-    filter: opacity(50%);
+      filter: opacity(50%);
   }
   .answer-votes {
-    background-color: <<get-color("bg-inactive")>> !important;
-    color: <<get-color("bg-main")>> !important;
+      background-color: <<get-color("bg-inactive")>> !important;
+      color: <<get-color("bg-main")>> !important;
   }
 #+end_src
 
