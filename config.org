@@ -491,6 +491,12 @@ instead.
 (when init-flag (setq frame-resize-pixelwise t))
 #+end_src
 
+*** Transparency of the frame
+
+#+begin_src emacs-lisp
+(add-to-list 'default-frame-alist '(alpha-background . 95))
+#+end_src
+
 *** Window
 :PROPERTIES:
 :CREATED:  [2019-12-25 Wed 14:14]
