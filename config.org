@@ -4884,7 +4884,7 @@ Defaults are too less for me for simple reason - I did run into undo
 limit in the past. Do not want to.
 
 #+begin_src emacs-lisp
-(setopt undo-limit (* 20 1000 1000)) ; 20Mb gotta be enough
+(setopt undo-limit (* 200 1000 1000)) ; 200Mb gotta be enough
 #+end_src
 
 **** Undo displayed as a graph
