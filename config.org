@@ -6341,6 +6341,37 @@ Requires [[id:61837011-1bce-41d6-8aa5-27bc4335466d][app-text/diffpdf]].
   :straight t)
 #+end_src
 
+** Epub & books
+
+#+begin_src emacs-lisp
+  (use-package nov
+    :straight t
+    :when init-flag
+    :mode ("\\.fb2" . nov-mode)
+    :mode ("\\.epub" . nov-mode)
+    :custom
+    (nov-text-width t)
+    :init
+    (defun yant/setup-reading ()
+      "Scale text size for comfortable reading."
+      (setq-local olivetti-body-width 60)
+      (olivetti-mode +1)
+      (breadcrumb-local-mode -1)
+      (scroll-lock-mode +1)
+      (setq cursor-type nil)
+      (hl-line-mode -1)
+      (setq-local boon-special-cursor-type nil)
+      ;; (add-hook 'pre-command-hook (lambda () (setq cursor-type nil)) nil t)
+      ;; (add-hook 'post-command-hook (lambda () (setq cursor-type nil)) nil t)
+      (text-scale-set 3))
+    (add-hook 'nov-mode-hook 'yant/setup-reading)
+    :config
+    (meta-defun meta-down :cond (bound-and-true-p scroll-lock-mode) (scroll-lock-next-line))
+    (meta-defun meta-up :cond (bound-and-true-p scroll-lock-mode) (scroll-lock-previous-line))
+    (meta-defun meta-down-element :mode nov-mode nov-next-document)
+    (meta-defun meta-up-element :mode nov-mode nov-previous-document))
+#+end_src
+
 ** Utils
 :PROPERTIES:
 :ID:       460ee9e2-32f5-4ad2-a535-69121b201bcf
