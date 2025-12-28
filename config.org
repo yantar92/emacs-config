@@ -13779,7 +13779,19 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
       :config
       (cl-defun yant/helm-git-list-candidates (repo &key (branch "main") grep (limit 100))
         "Return commits from REPO on BRANCH matching GREP up to LIMIT."
-        (let ((default-directory repo))
+        (let ((default-directory repo)
+  	    (magit-log-heading-re
+  	     (concat "^"
+  		     "\\(?4:[-_/|\\*o<>. ]*\\)"               ; graph
+  		     "\\(?1:[0-9a-fA-F]+\\)?"               ; hash
+  		     "\\(?3:[^\n]+\\)?"                   ; refs
+  		     "\\(?7:[BGUXYREN]\\)?"                 ; gpg
+  		     "\\(?5:[^\n]*\\)"                    ; author
+  		     "\\(?6:[^\n]*\\)"                    ; date
+                       ;; MODIFY default magit value here
+  		     ;; "\\(?12:[^\n]+\\)?"                  ; trailers
+  		     "\\(?2:.*\\)$"))
+  	    )
           (with-temp-buffer
             ;; Reverse-engineering magit API
             (cl-letf (((symbol-function 'magit-log-format-margin)
@@ -13792,11 +13804,12 @@ With =helm=, =helm-org-ql=, and =notmuch=, I can search pretty much through ever
                                       (insert " ("
                                               (replace-regexp-in-string "  +" " " text)
                                               ")\n")))
-                                   (magit-buffer-margin '(t age 18 t 18)))
+                                   (magit--right-margin-config '(t age 18 t 18)))
                            (magit-log-format-author-margin author date)))))
               (magit-git-wash (apply-partially #'magit-log-wash-log 'log)
                 "log"
-                "--format=%h%x0c%x0c%G?%x0c%aN%x0c%at%x0c%s"
+                ;; magit-log-heading-format
+  	      "--format=%h%x0c%x0c%G?%x0c%aN%x0c%at%x0c%s"
                 "--regexp-ignore-case"
                 (when grep
                   (cl-typecase grep
