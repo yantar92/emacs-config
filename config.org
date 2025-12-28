@@ -8336,6 +8336,16 @@ As per [[info:tramp#Frequently Asked Questions][tramp#Frequently Asked Questions
   (ement-notify-sound "message-new-instant"))
 #+end_src
 
+** Time zones
+
+Handy. I am often reaching out to time.is, but built-in Emacs option is indeed better.
+
+#+begin_src emacs-lisp
+  (use-package time-zones
+    :straight (time-zones :host github :report "xenodium/time-zones")
+    :if init-flag)
+#+end_src
+
 ** Eww (web browser)
 
 It works fine for many websites.
