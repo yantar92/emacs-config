@@ -5049,7 +5049,8 @@ c.qt.highdpi = True
 #+begin_src css :tangle :tangle /home/yantar92/.config/qutebrowser/theme.css :mkdirp yes
   ,* {
       border-color: <<get-color("border")>> !important;
-      background-color: initial !important;
+      /* interferes with whatsapp web */
+      /* background-color: initial !important; */
   }
   .color-bg-default, .bgColor-default {
       background-color: <<get-color("bg-main")>> !important;
@@ -5091,10 +5092,10 @@ c.qt.highdpi = True
   .ytSearchboxComponentInputBox,
   input,
   form,
-  button,
   .search--adv {
       background-color: <<get-color("bg-dim")>> !important;
       color: <<get-color("fg-main")>> !important;
+      background-image: initial !important;
   }
   .search__autocomplete > .acp-wrap {
       background-color: <<get-color("bg-dim")>> !important;
@@ -5682,20 +5683,15 @@ c.qt.highdpi = True
   .files tbody tr:hover * {
       background-color: <<get-color("bg-main")>> !important;
   }
+  button,
+  .btn-primary,
   .btn {
-      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-inactive")>>) !important;
+      /* background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-inactive")>>) !important; */
       border-color: <<get-color("bg-inactive")>> !important;
       color: <<get-color("fg-alt")>> !important;
   }
   .btn:hover {
       background-color: <<get-color("bg-active")>> !important;
-  }
-  .btn-primary,
-  .issues-listing .btn-primary {
-      background-color: <<get-color("fg-added")>> !important;
-      background-image: linear-gradient(<<get-color("fg-added")>>, #424d00) !important;
-      color: #000 !important;
-      filter: opacity(62.5%);
   }
   .entry-title a {
       color: <<get-color("fg-link")>> !important;
@@ -5940,15 +5936,15 @@ c.qt.highdpi = True
       background-color: <<get-color("bg-main")>> !important;
   }
   .sunken-menu {
-      background-image: linear-gradient(to right, <<get-color("bg-main")>> 0%, <<get-color("bg-main")>> 8px) !important;
+      /* background-image: linear-gradient(to right, <<get-color("bg-main")>> 0%, <<get-color("bg-main")>> 8px) !important; */
       box-shadow: 1px 0px 0px <<get-color("bg-main")>> inset;
   }
-  .sunken-menu:before {
-      background-image: linear-gradient(<<get-color("bg-main")>>, transparent) !important;
-  }
-  .sunken-menu:after {
-      background-image: linear-gradient(transparent, <<get-color("bg-main")>>) !important;
-  }
+  /* .sunken-menu:before { */
+  /*     background-image: linear-gradient(<<get-color("bg-main")>>, transparent) !important; */
+  /* } */
+  /* .sunken-menu:after { */
+  /*     background-image: linear-gradient(transparent, <<get-color("bg-main")>>) !important; */
+  /* } */
   .sunken-menu-item {
       border-color: <<get-color("bg-main")>> !important;
   }
@@ -5960,9 +5956,9 @@ c.qt.highdpi = True
   .sunken-menu-item.selected:after {
       background-color: #cb4b16 !important;
   }
-  .sunken-menu-separator:before {
-      background-image: linear-gradient(to right, <<get-color("bg-main")>> 70%, <<get-color("bg-main")>> 100%) !important;
-  }
+  /* .sunken-menu-separator:before { */
+  /*     background-image: linear-gradient(to right, <<get-color("bg-main")>> 70%, <<get-color("bg-main")>> 100%) !important; */
+  /* } */
   .state {
       color: <<get-color("fg-alt")>> !important;
   }
@@ -6001,7 +5997,7 @@ c.qt.highdpi = True
   a.tabnav-tab.selected,
   .tabnav-tab.selected {
       background-color: <<get-color("bg-main")>> !important;
-      background-image: linear-gradient(<<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+      /* background-image: linear-gradient(<<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
       border-color: <<get-color("border")>> !important;
       color: <<get-color("fg-alt")>> !important;
   }
@@ -6107,9 +6103,9 @@ c.qt.highdpi = True
   .sfbgg {
       background-color: <<get-color("bg-main")>> !important;
   }
-  .sbib_a {
-      background: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
-  }
+  /* .sbib_a { */
+  /*     background: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
+  /* } */
   input#lst-ib,
   #sb_ifc0.sbib_b,
   #gs_taif0 {
@@ -6119,24 +6115,24 @@ c.qt.highdpi = True
   .sbsb_a {
       background-color: <<get-color("bg-main")>> !important;
   }
-  .kpbb {
-      background-image: linear-gradient(to bottom, #59a9e1, <<get-color("fg-link")>>) !important;
-  }
+  /* .kpbb { */
+  /*     background-image: linear-gradient(to bottom, #59a9e1, <<get-color("fg-link")>>) !important; */
+  /* } */
   #hdtbSum {
       background-color: <<get-color("bg-main")>> !important;
   }
   #hdtbMenus.hdtb-td-o {
       background-color: <<get-color("bg-main")>> !important;
   }
-  #hdtb-tls.hdtb-tl {
-      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
-  }
-  #hdtb-tls.hdtb-tl.hdtb-tl-sel {
-      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
-  }
-  #abar_button_opt.ab_button {
-      background: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
-  }
+  /* #hdtb-tls.hdtb-tl { */
+  /*     background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
+  /* } */
+  /* #hdtb-tls.hdtb-tl.hdtb-tl-sel { */
+  /*     background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
+  /* } */
+  /* #abar_button_opt.ab_button { */
+  /*     background: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
+  /* } */
   #appbar {
       background-color: <<get-color("bg-main")>> !important;
   }
@@ -6220,18 +6216,18 @@ c.qt.highdpi = True
   }
   #mw-head {
       background-color: <<get-color("bg-main")>> !important;
-      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+      /* background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
   }
   #mw-panel,
-  #p-logo {
-      background-image: linear-gradient(to right, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
-  }
-  div.vectorTabs {
-      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
-  }
-  div.vectorTabs ul {
-      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
-  }
+  /* #p-logo { */
+  /*     background-image: linear-gradient(to right, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
+  /* } */
+  /* div.vectorTabs { */
+  /*     background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
+  /* } */
+  /* div.vectorTabs ul { */
+  /*     background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
+  /* } */
   div.vectorTabs ul li {
       background-color: <<get-color("bg-main")>> !important;
       background-image: none !important;
@@ -6239,12 +6235,12 @@ c.qt.highdpi = True
   }
   div.vectorTabs span {
       background-color: <<get-color("bg-main")>> !important;
-      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+      /* background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
   }
   div.vectorTabs li.selected,
   div.vectorTabs li.selected span {
       background-color: transparent !important;
-      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important;
+      /* background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>) !important; */
   }
   .mw-wiki-logo {
       filter: opacity(50%);
@@ -6297,6 +6293,7 @@ c.qt.highdpi = True
   footer,
   #postamble,
   header,
+  .label,
   .navbar,
   .accessbar,
   .nav-news,
@@ -6766,11 +6763,11 @@ c.qt.highdpi = True
   }
   #tabs a {
       background-color: transparent !important;
-      background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>);
+      /* background-image: linear-gradient(to bottom, <<get-color("bg-main")>>, <<get-color("bg-main")>>); */
       color: <<get-color("fg-alt")>> !important;
   }
   #tabs a.youarehere {
-      background-image: linear-gradient(to bottom, #cb4b16, <<get-color("bg-main")>>);
+      /* background-image: linear-gradient(to bottom, #cb4b16, <<get-color("bg-main")>>); */
       color: #002b36 !important;
   }
   .post-tag {
