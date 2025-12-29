@@ -9562,19 +9562,22 @@ certain LLM logic when conditions are met.
 :END:
 
 #+begin_src emacs-lisp :var workflow=workflow-memory-save[]
-  (use-package gptel
-    :config
-    (push
-     (yant/gptel-make-workflow
-      :name "memory_save"
-      :description "When to use:
-- After an important chat or cohesive work chunk that the user wants
-  to persist as long-term memory.
-- When the user explicitly says \"remember this\", \"please store this\", or similar.
-- When a conversation produced reusable facts or a stable summary that will matter in future sessions.
-"
-      :workflow workflow)
-     gptel-tools))
+    (use-package gptel
+      :config
+      (push
+       (yant/gptel-make-workflow
+        :name "memory_save"
+        :description "When to use:
+  - After an important chat or cohesive work chunk that the user wants
+    to persist as long-term memory.
+  - When the user explicitly says \"remember this\", \"please store this\", or similar.
+  - When a conversation produced reusable facts or a stable summary that
+    will matter in future sessions. DO NOT WAIT for the end of the
+    discussion. Save the new facts as you identify them (if they are not already
+    in memory).
+  "
+        :workflow workflow)
+       gptel-tools))
 #+end_src
 
 #+name: workflow-memory-save
