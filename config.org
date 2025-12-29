@@ -6342,7 +6342,22 @@ Requires [[id:61837011-1bce-41d6-8aa5-27bc4335466d][app-text/diffpdf]].
   :straight t)
 #+end_src
 
-** Epub & books
+** Ebooks #nov
+
+I did not use =nov.el= despite knowing about it for a long time.
+For two reaons:
+1. Line width & wrapping makes long reading difficult
+2. Scrolling the text is less comfortable compared to
+   reading software workflow where the books are displayed
+   on static pages - easier to follow by eyes.
+
+I have managed to partially solve (1) using olivetti + conservative text fill settings.
+There is also https://github.com/Fuco1/justify-kp, which may be utilized for
+truly uniform justification in the future.
+
+More importantly I managed to reduce text "jumpiness" when scrolling
+using simple functions that scroll by paragraph. That's good enough
+for my eyes.
 
 #+begin_src emacs-lisp
   (use-package nov
@@ -6367,10 +6382,24 @@ Requires [[id:61837011-1bce-41d6-8aa5-27bc4335466d][app-text/diffpdf]].
       (text-scale-set 3))
     (add-hook 'nov-mode-hook 'yant/setup-reading)
     :config
+    (defun yant/scroll-paragraph-forward ()
+      "Scroll forward one paragraph."
+      (interactive)
+      (goto-char (window-start))
+      (forward-paragraph)
+      (set-window-start nil (point)))
+    (defun yant/scroll-paragraph-backward ()
+      "Scroll forward one paragraph."
+      (interactive)
+      (goto-char (window-start))
+      (backward-paragraph)
+      (set-window-start nil (point)))
     (meta-defun meta-down :cond (bound-and-true-p scroll-lock-mode) (scroll-lock-next-line))
     (meta-defun meta-up :cond (bound-and-true-p scroll-lock-mode) (scroll-lock-previous-line))
     (meta-defun meta-down-element :mode nov-mode nov-next-document)
-    (meta-defun meta-up-element :mode nov-mode nov-previous-document))
+    (meta-defun meta-up-element :mode nov-mode nov-previous-document)
+    (meta-defun meta-down :mode nov-mode yant/scroll-paragraph-forward)
+    (meta-defun meta-up :mode nov-mode yant/scroll-paragraph-backward))
 #+end_src
 
 ** Utils
