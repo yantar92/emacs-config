@@ -4810,7 +4810,7 @@ c.qt.highdpi = True
   c.colors.contextmenu.disabled.fg = fg_disabled
 
   # Background color of the context menu. If set to null, the Qt default is used.
-  c.colors.contextmenu.menu.bg = bg_default
+  c.colors.contextmenu.menu.bg = bg_selection
 
   # Foreground color of the context menu. If set to null, the Qt default is used.
   c.colors.contextmenu.menu.fg =  fg_default
@@ -4889,16 +4889,16 @@ c.qt.highdpi = True
   c.colors.prompts.fg = fg_default
 
   # Border used around UI elements in prompts.
-  c.colors.prompts.border = bg_default
+  c.colors.prompts.border = "<<get-color("border")>>"
 
   # Background color for prompts.
-  c.colors.prompts.bg = bg_default
+  c.colors.prompts.bg = bg_selection
 
   # Background color for the selected item in filename prompts.
   c.colors.prompts.selected.bg = bg_selection
 
   # Foreground color for the selected item in filename prompts.
-  c.colors.prompts.selected.fg = fg_default
+  c.colors.prompts.selected.fg = fg_matched_text
 
   # Foreground color of the statusbar.
   c.colors.statusbar.normal.fg = fg_matched_text
