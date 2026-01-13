@@ -18511,7 +18511,7 @@ Work around this issue by suppressing messages coming from
       "Write google docs block.
   PARAMS is a property list containing mandatory parameter
   `:id' Google docs document ID."
-      (let ((plain-text (google-docs-to-plain-text-sync (plist-get params :id))))
+      (let ((plain-text (google-docs-to-plain-text (plist-get params :id))))
         (insert
          (thread-last
   	 plain-text
@@ -18604,24 +18604,7 @@ Work around this issue by suppressing messages coming from
     (defun google-docs-to-plain-text (document-id)
       "Fetch Google Document with DOCUMENT-ID and return as plain text."
       (let ((document-json (google-docs--fetch-document document-id)))
-        (google-docs--extract-plain-text document-json)))
-
-    ;; Alternative: synchronous version using oauth2-auto-plist-sync
-    (defun google-docs-to-plain-text-sync (document-id)
-      "Synchronous version of `google-docs-to-plain-text'."
-      (let* ((token (oauth2-auto-plist-sync "" google-docs-provider))
-             (access-token (plist-get token :access-token))
-             (url (format "https://docs.googleapis.com/v1/documents/%s" document-id))
-             (url-request-extra-headers
-              `(("Authorization" . ,(format "Bearer %s" access-token))
-                ("Accept" . "application/json")))
-             (buffer (url-retrieve-synchronously url)))
-        (with-current-buffer buffer
-  	(goto-char (point-min))
-  	(when (search-forward-regexp "^$" nil t)
-            (let ((document-json (json-read)))
-              (kill-buffer buffer)
-              (google-docs--extract-plain-text document-json)))))))
+        (google-docs--extract-plain-text document-json))))
 #+end_src
 
 ** GNU development
