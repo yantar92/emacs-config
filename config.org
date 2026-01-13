@@ -18493,6 +18493,130 @@ Work around this issue by suppressing messages coming from
       (let ((inhibit-message t)) (funcall fun args))))
 #+end_src
 
+*** Google docs integration
+**** Dynamic block to retrieve google docs contents in org format
+
+#+begin_src emacs-lisp
+  (use-package org
+    :config
+    (defun yant/gdocs-insert-dblock (&optional document-id)
+      (interactive "sDocument id: ")
+      (org-create-dblock (list :name "gdocs" :id document-id))
+      (org-update-dblock))
+    (defun org-dblock-write:gdocs (params)
+      "Write google docs block.
+  PARAMS is a property list containing mandatory parameter
+  `:id' Google docs document ID."
+      (let ((plain-text (shell-command-to-string
+  		       (format "~/.local/bin/python ~/.local/bin/google-docs-to-org.py %s"
+  			       (plist-get params :id)))))
+        (insert
+        (thread-last
+  	plain-text
+          (replace-regexp-in-string (rx (1+ bol (0+ space) "\n")) "\n")))))
+    (org-dynamic-block-define "gdocs" #'yant/gdocs-insert-dblock))
+#+end_src
+
+#+begin_src python :results output :session docs :tangle ~/.local/bin/google-docs-to-org.py :shebang "#!/usr/bin/env python3"
+  """
+  Extract plain text from a Google Doc using the Google Docs API.
+  Usage: python google-docs-to-text.py DOCUMENT_ID [--token-dir TOKEN_DIR]
+  """
+
+  import os
+  import sys
+  import argparse
+  from pathlib import Path
+  from google.auth.transport.requests import Request
+  from google.oauth2.credentials import Credentials
+  from google_auth_oauthlib.flow import InstalledAppFlow
+  from googleapiclient.discovery import build
+
+  # Default paths
+  DEFAULT_TOKEN_DIR = Path.home() / 'PersonalDocuments' / 'googleapi'
+  DEFAULT_SECRETS_FILE = DEFAULT_TOKEN_DIR / 'credentials.json'
+
+  # Required API scope (only Docs API needed)
+  SCOPES = ['https://www.googleapis.com/auth/documents.readonly']
+
+  def get_authenticated_service(token_path, secrets_path):
+      """Return authenticated Docs service."""
+      creds = None
+      if token_path.exists():
+          creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
+      
+      if not creds or not creds.valid:
+          if creds and creds.expired and creds.refresh_token:
+              creds.refresh(Request())
+          else:
+              if not secrets_path.exists():
+                  raise FileNotFoundError(
+                      f"Client secrets file not found at {secrets_path}\n"
+                      "Download credentials.json from Google Cloud Console and place it there."
+                  )
+              flow = InstalledAppFlow.from_client_secrets_file(
+                  str(secrets_path), SCOPES)
+              creds = flow.run_local_server(port=0)
+          # Save token for next run
+          token_path.parent.mkdir(parents=True, exist_ok=True)
+          with open(token_path, 'w') as token:
+              token.write(creds.to_json())
+      
+      return build('docs', 'v1', credentials=creds)
+
+  def extract_plain_text(doc_id, docs_service):
+      """Extract plain text from a Google Doc via Docs API."""
+      doc = docs_service.documents().get(documentId=doc_id).execute()
+      
+      text_parts = []
+      if 'body' in doc and 'content' in doc['body']:
+          for element in doc['body']['content']:
+              if 'paragraph' in element:
+                  for elem in element['paragraph'].get('elements', []):
+                      if 'textRun' in elem:
+                          text_parts.append(elem['textRun']['content'])
+              # Handle tables if present
+              elif 'table' in element:
+                  for row in element['table'].get('tableRows', []):
+                      for cell in row.get('tableCells', []):
+                          for para in cell.get('content', []):
+                              if 'paragraph' in para:
+                                  for elem in para['paragraph'].get('elements', []):
+                                      if 'textRun' in elem:
+                                          text_parts.append(elem['textRun']['content'])
+                          text_parts.append('\t')  # Tab between cells
+                      text_parts.append('\n')  # Newline after row
+      
+      return ''.join(text_parts).strip()
+
+  def main():
+      parser = argparse.ArgumentParser(description='Extract plain text from Google Doc')
+      parser.add_argument('doc_id', help='Google Document ID (from URL)')
+      parser.add_argument('--token-dir', default=DEFAULT_TOKEN_DIR,
+                          help=f'Directory for token storage (default: {DEFAULT_TOKEN_DIR})')
+      parser.add_argument('--secrets-file', default=DEFAULT_SECRETS_FILE,
+                          help=f'Path to client secrets JSON (default: {DEFAULT_SECRETS_FILE})')
+      
+      args = parser.parse_args()
+      
+      # Convert paths
+      token_dir = Path(args.token_dir).expanduser()
+      token_path = token_dir / 'token.json'
+      secrets_path = Path(args.secrets_file).expanduser()
+      
+      try:
+          docs_service = get_authenticated_service(token_path, secrets_path)
+          text = extract_plain_text(args.doc_id, docs_service)
+          print(text)
+              
+      except Exception as e:
+          print(f"Error: {e}", file=sys.stderr)
+          sys.exit(1)
+
+  if __name__ == '__main__':
+      main()
+#+end_src
+
 ** GNU development
 *** ~multi-occur~ in project
 
