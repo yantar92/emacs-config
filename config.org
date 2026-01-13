@@ -18624,43 +18624,6 @@ Work around this issue by suppressing messages coming from
               (google-docs--extract-plain-text document-json)))))))
 #+end_src
 
-Now let me explain the implementation:
-
-1. *Provider Definition*: Adds a new =google-docs= provider to =oauth2-auto-additional-providers-alist= with the correct scope for document read-only access.
-
-2. *Token Acquisition*: Two approaches:
-   - =google-docs--get-access-token=: Uses =oauth2-auto-access-token-sync= 
-   - =google-docs-to-plain-text-sync=: Uses =oauth2-auto-plist-sync= directly
-
-3. *Document Fetching*: =google-docs--fetch-document= makes a GET request to Google Docs API with Bearer token.
-
-4. *Text Extraction*: 
-   - =google-docs--extract-text-from-element=: Recursively extracts text from paragraphs and tables
-   - =google-docs--extract-plain-text=: Processes all elements in document body
-
-5. *Integration*: Updated =org-dblock-write:gdocs= to use the Elisp function instead of Python script.
-
-*Key Differences from Python Implementation*:
-
-1. Uses Elisp's =json-read= instead of Python's json module
-2. Recursive traversal of document structure using =cond= and =assoc=
-3. Uses =url-retrieve-synchronously= for HTTP requests
-4. Integrated with oauth2-auto for OAuth flow
-
-*Usage*:
-
-1. Load this file in Emacs
-2. Ensure =oauth2-auto-google-client-id= and =oauth2-auto-google-client-secret= are set
-3. Use the dynamic block with =:id= parameter
-
-*Note*: The provider uses the same client ID/secret as the Google provider. If you have separate credentials for Docs, you'd need to create custom variables.
-
-The implementation handles:
-- Paragraphs with text runs
-- Tables with rows and cells
-- Proper concatenation with newlines
-
-This should work as a drop-in replacement for the Python script in the dynamic block.
 ** GNU development
 *** ~multi-occur~ in project
 
