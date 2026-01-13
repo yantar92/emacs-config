@@ -18499,124 +18499,174 @@ Work around this issue by suppressing messages coming from
 #+begin_src emacs-lisp
   (use-package org
     :config
+    )
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package oauth2-auto
+    :straight t
+    :after org
+    :config
+
     (defun yant/gdocs-insert-dblock (&optional document-id)
       (interactive "sDocument id: ")
       (org-create-dblock (list :name "gdocs" :id document-id))
       (org-update-dblock))
+
     (defun org-dblock-write:gdocs (params)
       "Write google docs block.
   PARAMS is a property list containing mandatory parameter
   `:id' Google docs document ID."
-      (let ((plain-text (shell-command-to-string
-  		       (format "~/.local/bin/python ~/.local/bin/google-docs-to-org.py %s"
-  			       (plist-get params :id)))))
+      (let ((plain-text (google-docs-to-plain-text-sync (plist-get params :id))))
         (insert
-        (thread-last
-  	plain-text
-          (replace-regexp-in-string (rx (1+ bol (0+ space) "\n")) "\n")))))
-    (org-dynamic-block-define "gdocs" #'yant/gdocs-insert-dblock))
+         (thread-last
+  	 plain-text
+           (replace-regexp-in-string (rx (1+ bol (0+ space) "\n")) "\n")))))
+    (org-dynamic-block-define "gdocs" #'yant/gdocs-insert-dblock)
+
+    (require 'json)
+    (require 'url)
+
+    (defcustom google-docs-provider 'google-docs
+      "OAuth2 provider for Google Docs API."
+      :type 'symbol
+      :group 'google-docs)
+
+    ;; Add Google Docs provider to oauth2-auto
+    (setq oauth2-auto-additional-providers-alist
+          (append oauth2-auto-additional-providers-alist
+  		(let ((credentials (alist-get 'installed (json-read-file "~/PersonalDocuments/googleapi/credentials.json"))))
+                    `((google-docs
+  		     (authorize_url . ,(alist-get 'auth_uri credentials))
+  		     (token_url . ,(alist-get 'token_uri credentials))
+  		     (scope . "https://www.googleapis.com/auth/documents.readonly")
+  		     (client_id . ,(alist-get 'client_id credentials))
+  		     (client_secret . ,(alist-get 'client_secret credentials)))))))
+
+    (defun google-docs--get-access-token ()
+      "Get OAuth2 access token for Google Docs API."
+      (oauth2-auto-access-token-sync "" google-docs-provider))
+
+    (defun google-docs--fetch-document (document-id)
+      "Fetch Google Document with DOCUMENT-ID as JSON."
+      (let* ((token (google-docs--get-access-token))
+             (url (format "https://docs.googleapis.com/v1/documents/%s" document-id))
+             (url-request-extra-headers
+              `(("Authorization" . ,(format "Bearer %s" token))
+                ("Accept" . "application/json")))
+             (buffer (url-retrieve-synchronously url)))
+        (with-current-buffer buffer
+  	(goto-char (point-min))
+  	(when (search-forward-regexp "^$" nil t)
+            (let ((json-data (json-read)))
+              (kill-buffer buffer)
+              json-data)))))
+
+    (defun google-docs--extract-text-from-element (element)
+      "Extract plain text from document ELEMENT."
+      (cond
+       ((and (listp element)
+             (assoc 'paragraph element))
+        ;; Paragraph element
+        (let ((elements (cdr (assoc 'elements (cdr (assoc 'paragraph element)))))
+              (text-parts '()))
+  	(seq-doseq (elem elements text-parts)
+            (when (and (listp elem)
+                       (assoc 'textRun elem))
+              (push (cdr (assoc 'content (cdr (assoc 'textRun elem)))) text-parts)))
+  	(apply #'concat (nreverse text-parts))))
+       
+       ((and (listp element)
+             (assoc 'table element))
+        ;; Table element
+        (let ((table-rows (cdr (assoc 'tableRows (cdr (assoc 'table element)))))
+              (text-parts '()))
+  	(dolist (row table-rows)
+            (let ((cells (cdr (assoc 'tableCells (cdr row)))))
+              (dolist (cell cells)
+                (let ((content (cdr (assoc 'content (cdr cell)))))
+  		(dolist (item content)
+                    (when (and (listp item)
+                               (assoc 'paragraph item))
+                      (let ((para-text (google-docs--extract-text-from-element item)))
+                        (when (not (string-empty-p para-text))
+  			(push para-text text-parts)))))))
+              (push "\n" text-parts))) ; Newline after each row
+  	(apply #'concat (nreverse text-parts))))
+       
+       (t "")))
+
+    (defun google-docs--extract-plain-text (document-json)
+      "Extract plain text from DOCUMENT-JSON."
+      (let* ((body (cdr (assoc 'body document-json)))
+             (content (cdr (assoc 'content body)))
+             (text-parts '()))
+        (seq-doseq (element content)
+  	(let ((text (google-docs--extract-text-from-element element)))
+            (when (not (string-empty-p text))
+              (push text text-parts))))
+        (mapconcat #'identity (nreverse text-parts) "\n")))
+
+    (defun google-docs-to-plain-text (document-id)
+      "Fetch Google Document with DOCUMENT-ID and return as plain text."
+      (let ((document-json (google-docs--fetch-document document-id)))
+        (google-docs--extract-plain-text document-json)))
+
+    ;; Alternative: synchronous version using oauth2-auto-plist-sync
+    (defun google-docs-to-plain-text-sync (document-id)
+      "Synchronous version of `google-docs-to-plain-text'."
+      (let* ((token (oauth2-auto-plist-sync "" google-docs-provider))
+             (access-token (plist-get token :access-token))
+             (url (format "https://docs.googleapis.com/v1/documents/%s" document-id))
+             (url-request-extra-headers
+              `(("Authorization" . ,(format "Bearer %s" access-token))
+                ("Accept" . "application/json")))
+             (buffer (url-retrieve-synchronously url)))
+        (with-current-buffer buffer
+  	(goto-char (point-min))
+  	(when (search-forward-regexp "^$" nil t)
+            (let ((document-json (json-read)))
+              (kill-buffer buffer)
+              (google-docs--extract-plain-text document-json)))))))
 #+end_src
 
-#+begin_src python :results output :session docs :tangle ~/.local/bin/google-docs-to-org.py :shebang "#!/usr/bin/env python3"
-  """
-  Extract plain text from a Google Doc using the Google Docs API.
-  Usage: python google-docs-to-text.py DOCUMENT_ID [--token-dir TOKEN_DIR]
-  """
+Now let me explain the implementation:
 
-  import os
-  import sys
-  import argparse
-  from pathlib import Path
-  from google.auth.transport.requests import Request
-  from google.oauth2.credentials import Credentials
-  from google_auth_oauthlib.flow import InstalledAppFlow
-  from googleapiclient.discovery import build
+1. *Provider Definition*: Adds a new =google-docs= provider to =oauth2-auto-additional-providers-alist= with the correct scope for document read-only access.
 
-  # Default paths
-  DEFAULT_TOKEN_DIR = Path.home() / 'PersonalDocuments' / 'googleapi'
-  DEFAULT_SECRETS_FILE = DEFAULT_TOKEN_DIR / 'credentials.json'
+2. *Token Acquisition*: Two approaches:
+   - =google-docs--get-access-token=: Uses =oauth2-auto-access-token-sync= 
+   - =google-docs-to-plain-text-sync=: Uses =oauth2-auto-plist-sync= directly
 
-  # Required API scope (only Docs API needed)
-  SCOPES = ['https://www.googleapis.com/auth/documents.readonly']
+3. *Document Fetching*: =google-docs--fetch-document= makes a GET request to Google Docs API with Bearer token.
 
-  def get_authenticated_service(token_path, secrets_path):
-      """Return authenticated Docs service."""
-      creds = None
-      if token_path.exists():
-          creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
-      
-      if not creds or not creds.valid:
-          if creds and creds.expired and creds.refresh_token:
-              creds.refresh(Request())
-          else:
-              if not secrets_path.exists():
-                  raise FileNotFoundError(
-                      f"Client secrets file not found at {secrets_path}\n"
-                      "Download credentials.json from Google Cloud Console and place it there."
-                  )
-              flow = InstalledAppFlow.from_client_secrets_file(
-                  str(secrets_path), SCOPES)
-              creds = flow.run_local_server(port=0)
-          # Save token for next run
-          token_path.parent.mkdir(parents=True, exist_ok=True)
-          with open(token_path, 'w') as token:
-              token.write(creds.to_json())
-      
-      return build('docs', 'v1', credentials=creds)
+4. *Text Extraction*: 
+   - =google-docs--extract-text-from-element=: Recursively extracts text from paragraphs and tables
+   - =google-docs--extract-plain-text=: Processes all elements in document body
 
-  def extract_plain_text(doc_id, docs_service):
-      """Extract plain text from a Google Doc via Docs API."""
-      doc = docs_service.documents().get(documentId=doc_id).execute()
-      
-      text_parts = []
-      if 'body' in doc and 'content' in doc['body']:
-          for element in doc['body']['content']:
-              if 'paragraph' in element:
-                  for elem in element['paragraph'].get('elements', []):
-                      if 'textRun' in elem:
-                          text_parts.append(elem['textRun']['content'])
-              # Handle tables if present
-              elif 'table' in element:
-                  for row in element['table'].get('tableRows', []):
-                      for cell in row.get('tableCells', []):
-                          for para in cell.get('content', []):
-                              if 'paragraph' in para:
-                                  for elem in para['paragraph'].get('elements', []):
-                                      if 'textRun' in elem:
-                                          text_parts.append(elem['textRun']['content'])
-                          text_parts.append('\t')  # Tab between cells
-                      text_parts.append('\n')  # Newline after row
-      
-      return ''.join(text_parts).strip()
+5. *Integration*: Updated =org-dblock-write:gdocs= to use the Elisp function instead of Python script.
 
-  def main():
-      parser = argparse.ArgumentParser(description='Extract plain text from Google Doc')
-      parser.add_argument('doc_id', help='Google Document ID (from URL)')
-      parser.add_argument('--token-dir', default=DEFAULT_TOKEN_DIR,
-                          help=f'Directory for token storage (default: {DEFAULT_TOKEN_DIR})')
-      parser.add_argument('--secrets-file', default=DEFAULT_SECRETS_FILE,
-                          help=f'Path to client secrets JSON (default: {DEFAULT_SECRETS_FILE})')
-      
-      args = parser.parse_args()
-      
-      # Convert paths
-      token_dir = Path(args.token_dir).expanduser()
-      token_path = token_dir / 'token.json'
-      secrets_path = Path(args.secrets_file).expanduser()
-      
-      try:
-          docs_service = get_authenticated_service(token_path, secrets_path)
-          text = extract_plain_text(args.doc_id, docs_service)
-          print(text)
-              
-      except Exception as e:
-          print(f"Error: {e}", file=sys.stderr)
-          sys.exit(1)
+*Key Differences from Python Implementation*:
 
-  if __name__ == '__main__':
-      main()
-#+end_src
+1. Uses Elisp's =json-read= instead of Python's json module
+2. Recursive traversal of document structure using =cond= and =assoc=
+3. Uses =url-retrieve-synchronously= for HTTP requests
+4. Integrated with oauth2-auto for OAuth flow
 
+*Usage*:
+
+1. Load this file in Emacs
+2. Ensure =oauth2-auto-google-client-id= and =oauth2-auto-google-client-secret= are set
+3. Use the dynamic block with =:id= parameter
+
+*Note*: The provider uses the same client ID/secret as the Google provider. If you have separate credentials for Docs, you'd need to create custom variables.
+
+The implementation handles:
+- Paragraphs with text runs
+- Tables with rows and cells
+- Proper concatenation with newlines
+
+This should work as a drop-in replacement for the Python script in the dynamic block.
 ** GNU development
 *** ~multi-occur~ in project
 
