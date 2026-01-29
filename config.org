@@ -9897,28 +9897,88 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
     (lambda () (nth 0 (process-lines "pass" "show" "internet/search.brave.com-api")))
     "API key for accessing the Brave Search API.")
 
-  (defun brave-search-query (query)
-    "Perform a web search using the Brave Search API with the given QUERY."
+  (cl-defun brave-search-query (query &optional count freshness country search-lang
+                                   result-filter safesearch offset)
+    "Perform a web search for QUERY using the Brave Search API.
+
+    QUERY is the search string (required).
+    Optional keyword‑style parameters (all default to nil, meaning use Brave's default):
+
+    COUNT        – number of results (max 20)
+    FRESHNESS    – \"pd\", \"pw\", \"pm\", \"py\", or a custom range like \"2022‑04‑01to2022‑07‑30\"
+    COUNTRY      – ISO 3166‑1 alpha‑2 country code (e.g., \"US\", \"DE\")
+    SEARCH‑LANG  – ISO 639‑1 language code (e.g., \"en\", \"de\")
+    RESULT‑FILTER – comma‑separated list: \"web\", \"news\", \"videos\", etc.
+    SAFESEARCH   – \"off\", \"moderate\", \"strict\"
+    OFFSET       – pagination offset (0‑based, max 9)
+
+    Returns a hash‑table with the parsed JSON response."
     (if (functionp brave-search-api-key)
         (setq brave-search-api-key (funcall brave-search-api-key)))
-    (let ((url-request-method "GET")
-          (url-request-extra-headers
-           `(("X-Subscription-Token" . ,brave-search-api-key)))
-          (url (format "https://api.search.brave.com/res/v1/web/search?q=%s" (url-encode-url query))))
+    (let* ((params `(("q" ,(url-encode-url query))))
+           ;; Build alist of non‑nil parameters
+           (param-list
+            (cl-loop for (key . val) in
+                     `(("count" . ,count)
+                       ("freshness" . ,freshness)
+                       ("country" . ,country)
+                       ("search_lang" . ,search-lang)
+                       ("result_filter" . ,result-filter)
+                       ("safesearch" . ,safesearch)
+                       ("offset" . ,offset))
+                     when val
+                     collect (list key (if (stringp val) val (format "%s" val)))))
+           (params (append params param-list))
+           (query-string (url-build-query-string params))
+           (url (concat "https://api.search.brave.com/res/v1/web/search?"
+                        query-string))
+           (url-request-method "GET")
+           (url-request-extra-headers
+            `(("X-Subscription-Token" . ,brave-search-api-key))))
       (with-current-buffer (url-retrieve-synchronously url)
         (goto-char (point-min))
         (when (re-search-forward "^$" nil 'move)
-          (let ((json-object-type 'hash-table)) ; Use hash-table for JSON parsing
-            (json-parse-string (buffer-substring-no-properties (point) (point-max))))))))
+          (let ((json-object-type 'hash-table))
+            (json-parse-string
+             (buffer-substring-no-properties (point) (point-max))))))))
 
   (push
    (gptel-make-tool
     :function #'brave-search-query
     :name "search_web"
-    :description "Perform a web search using the Brave Search API"
-    :args (list '( :name "query"
-  		 :type string
-  		 :description "The search query string"))
+    :description "Perform a web search using the Brave Search API with optional filters."
+    :args (list
+           '( :name "query"
+              :type string
+              :description "The search query string (required)." )
+           '( :name "count"
+              :type integer
+  	    :optional t
+              :description "Number of results (max 20). Optional." )
+           '( :name "freshness"
+              :type string
+  	    :optional t
+              :description "Time filter: pd (day), pw (week), pm (month), py (year), or custom range like 2022‑04‑01to2022‑07‑30. Optional." )
+           '( :name "country"
+              :type string
+  	    :optional t
+              :description "ISO country code (e.g., US, DE). Optional." )
+           '( :name "search_lang"
+              :type string
+  	    :optional t
+              :description "ISO 639‑1 language code (e.g., en, de). Optional." )
+           '( :name "result_filter"
+              :type string
+  	    :optional t
+              :description "Comma‑separated result types: web, news, videos, discussions, faq, infobox, summarizer, locations. Optional." )
+           '( :name "safesearch"
+              :type string
+  	    :optional t
+              :description "Content safety: off, moderate, strict. Optional." )
+           '( :name "offset"
+              :type integer
+  	    :optional t
+              :description "Pagination offset (0‑9). Optional." ))
     :category "web")
    gptel-tools)
 
@@ -9988,6 +10048,7 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
   		 :optional t
   		 :type integer
                    :description "When provided, only return first CHARACTER_LIMIT characters. Defaults to 100000."))
+    :include t
     :category "web")
    gptel-tools)
 #+end_src
