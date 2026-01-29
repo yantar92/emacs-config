@@ -10099,7 +10099,7 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
 
   (defun codel-replace-buffer (buffer-name content)
     "Completely replace contents of BUFFER-NAME with CONTENT."
-    (with-current-buffer buffer-name
+    (with-current-buffer (get-buffer-create buffer-name)
       (erase-buffer)
       (insert content)
       (format "Buffer replaced: %s" buffer-name)))
