@@ -6429,6 +6429,23 @@ for my eyes.
     (meta-defun meta-up :mode nov-mode yant/scroll-paragraph-backward))
 #+end_src
 
+** Jupyter notebooks
+
+#+begin_src emacs-lisp
+  (use-package code-cells
+    :if init-flag
+    :straight t
+    :custom
+    (code-cells-convert-ipynb-style
+     '(("pandoc" "--to" "ipynb" "--from" "org")
+       ("pandoc" "--to" "org" "--from" "ipynb")
+       org-mode))
+    :config
+    (use-package org-src
+      :config
+      (cl-pushnew '("jupyter-python" . python) org-src-lang-modes)))
+#+end_src
+
 ** Utils
 :PROPERTIES:
 :ID:       460ee9e2-32f5-4ad2-a535-69121b201bcf
