@@ -7688,23 +7688,24 @@ As recommended in [[https://orgmode.org/worg/org-mailing-list.html#orgf343a0f][W
 :END:
 
 #+begin_src emacs-lisp
-(setq message-dont-reply-to-names `("noreply"
-                                    "builds@sr.ht"
-                                    ,user-mail-address))
-(use-package notmuch
-  :defer t
-  :config
-  (defun yant/notmuch-honor-dont-reply-to-names ()
-    "Maybe remove To: header components according to `message-dont-reply-to-names'.
-This should be called as a hook ran inside `message-header-setup-hook'."
-    (save-excursion
-      (when (and (eq major-mode 'notmuch-message-mode)
-                 (message-fetch-field "To"))
-        (when-let ((new-headers (message-get-reply-headers t nil '("to" "cc"))))
-          (message-replace-header "To" (alist-get 'To new-headers))
-          (message-replace-header "Cc" (alist-get 'Cc new-headers))
-          (message-sort-headers)))))
-  (add-hook 'message-setup-hook #'yant/notmuch-honor-dont-reply-to-names))
+  (setq message-dont-reply-to-names `("noreply"
+                                      "builds@sr.ht"
+                                      "ihor.radchenko@ensemble3.eu"
+                                      ,user-mail-address))
+  (use-package notmuch
+    :defer t
+    :config
+    (defun yant/notmuch-honor-dont-reply-to-names ()
+      "Maybe remove To: header components according to `message-dont-reply-to-names'.
+  This should be called as a hook ran inside `message-header-setup-hook'."
+      (save-excursion
+        (when (and (eq major-mode 'notmuch-message-mode)
+                   (message-fetch-field "To"))
+          (when-let ((new-headers (message-get-reply-headers t nil '("to" "cc"))))
+            (message-replace-header "To" (alist-get 'To new-headers))
+            (message-replace-header "Cc" (alist-get 'Cc new-headers))
+            (message-sort-headers)))))
+    (add-hook 'message-setup-hook #'yant/notmuch-honor-dont-reply-to-names))
 #+end_src
 **** Highlight interesting text in emails
 :PROPERTIES:
