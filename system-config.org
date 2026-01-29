@@ -3638,7 +3638,11 @@ dev-libs/jemalloc
       [[ "$x" == *"Trying to Produce a Skia representation from a non-existent mailbox"* ]] && continue
       [[ "$x" == *"Message 5 rejected by interface"* ]] && continue
       [[ "$x" == *"org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files"* ]] && continue
+      [[ "$x" == *"ERROR:federated_auth_request_impl.cc"* ]] && continue
       [[ "$x" == "" ]] && continue
+      [[ "$x" == "nil" ]] && continue
+      [[ "$x" == "1" ]] && continue
+      [[ "$x" == "2" ]] && continue
       notify-send "Qutebrowser: $x"
       echo $(date): $x >> ~/.log/qutebrowser.log
   done
@@ -8826,11 +8830,13 @@ syncthing --no-browser 2>&1 | syncthing-logger.sh &
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/syncthing-logger.sh :shebang #!/bin/bash
-while read x; do
-    [[ "$x" == *"INFO:"* ]] && continue
-    [[ "$x" == "" ]] && continue
-    echo $(date): $x >> ~/.log/mail-monitor.log
-done
+  while read x; do
+      [[ "$x" == *"INF"* ]] && continue
+      [[ "$x" == "" ]] && continue
+      [[ "$x" == *"Failed to acquire open port"* ]] && continue
+      [[ "$x" == *"Failed TLS handshake"* ]] && continue    
+      echo $(date): $x >> ~/.log/syncthing.log
+  done
 #+end_src
 
 ** Drawing
