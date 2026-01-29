@@ -3040,42 +3040,42 @@ abort completely with `C-g'."
         message-cited-text-3 message-cited-text-4)))
 #+end_src
 
-***** TODO Auto-check current paragraph
+***** TODO COMMENT Auto-check current paragraph
 
 #+begin_src emacs-lisp
-(use-package langtool
-  :if init-flag
-  :config
-  (defvar yant/langtool-check-last-run-time (current-time)
-    "Last time `yant/langtool-check-current-paragraph' was executed.")
-  (defvar yant/langtool-check-timeout 10
-    "Timeout in seconds between Langtool checks.")
-  (defun yant/langtool-check-current-paragraph ()
-    "Check current paragraph in Org-mode."
-    (when (and (eq major-mode 'org-mode)
-               (> (float-time
-                   (time-since yant/langtool-check-last-run-time))
-                  yant/langtool-check-timeout)
-               (not langtool-buffer-process))
-      (let ((element (org-element-at-point)))
-        (when (memq (org-element-type element) '(paragraph))
-          (org-with-wide-buffer
-           (push-mark (org-element-property :post-affiliated element) 'silent 'activate)
-           (goto-char (org-element-property :end element))
-           ;; Move to the last complete sentence.
-           (if (search-backward
-                "\\. "
-                (org-element-property :post-affiliated element)
-                t)
-               (progn
-                 (setq yant/langtool-check-last-run-time (current-time))
-                 (funcall-interactively #'langtool-check))
-             (deactivate-mark)))))))
-  (add-hook 'org-mode-hook
-	    (lambda ()
-              (add-hook 'post-self-insert-hook
-			#'yant/langtool-check-current-paragraph
-                        nil 'local))))
+  (use-package langtool
+    :if init-flag
+    :config
+    (defvar yant/langtool-check-last-run-time (current-time)
+      "Last time `yant/langtool-check-current-paragraph' was executed.")
+    (defvar yant/langtool-check-timeout 10
+      "Timeout in seconds between Langtool checks.")
+    (defun yant/langtool-check-current-paragraph ()
+      "Check current paragraph in Org-mode."
+      (when (and (eq major-mode 'org-mode)
+                 (> (float-time
+                     (time-since yant/langtool-check-last-run-time))
+                    yant/langtool-check-timeout)
+                 (not langtool-buffer-process))
+        (let ((element (org-element-at-point)))
+          (when (memq (org-element-type element) '(paragraph))
+            (org-with-wide-buffer
+             (push-mark (org-element-property :post-affiliated element) 'silent 'activate)
+             (goto-char (org-element-property :end element))
+             ;; Move to the last complete sentence.
+             (if (search-backward
+                  "\\. "
+                  (org-element-property :post-affiliated element)
+                  t)
+                 (progn
+                   (setq yant/langtool-check-last-run-time (current-time))
+                   (funcall-interactively #'langtool-check))
+               (deactivate-mark)))))))
+    (add-hook 'org-mode-hook
+  	    (lambda ()
+  	      (add-hook 'post-self-insert-hook
+  			#'yant/langtool-check-current-paragraph
+  			nil 'local))))
 #+end_src
 
 ***** COMMENT =languagetool= via [[id:3a550aad-f2a2-4636-a92c-539cdf230aeb][Flycheck]]
