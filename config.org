@@ -10133,6 +10133,109 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
    :category "edit")
 #+end_src
 
+**** Human interruption
+
+Some new LLMs are trained expecting human-in-the-loop as an option.
+This is available on web chat, but not for API. Let's make it working
+here, so that LLM reasoning can be utilized better.
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :if init-flag
+    :config
+    (defun yant/gptel-tool-ask-clarification
+        (question &optional type options context default)
+      "Ask user for clarification during AI reasoning.
+  QUESTION: string, the question to ask (required)
+  TYPE: string, one of \"choice\", \"multiple\", \"text\", \"yesno\"
+  \\(optional, default \"text\")
+  OPTIONS: list of strings (for choice/multiple types, optional)
+  CONTEXT: string, relevant reasoning context (optional)
+  DEFAULT: string, fallback answer if timeout or no response (optional)
+
+  Returns: string (or list of strings for multiple type, serialized by gptel)."
+      (let* ((type (or type "text"))
+             (prompt (concat question " "))
+             answer)
+
+        ;; Display context if provided
+        (when (and context (not (string-empty-p context)))
+  	(if (> (length context) 200)
+              ;; Long context: show in separate buffer
+              (with-current-buffer (get-buffer-create "*GPTel Clarification Context*")
+                (erase-buffer)
+                (insert "=== Context for clarification ===\n\n")
+                (insert context)
+                (display-buffer (current-buffer)
+                                '((display-buffer-in-side-window)
+  				(window-height . 0.3) (side . bottom)))
+                (setq prompt (concat prompt "\n(Context shown in separate buffer)\n")))
+            ;; Short context: include in prompt
+            (setq prompt (concat "Context: " context "\n\n" prompt))))
+
+        ;; Ask based on type
+        (condition-case err
+            (setq answer
+  		(cond
+  		 ((equal type "yesno")
+                    (if (y-or-n-p prompt) "Yes" "No"))
+
+  		 ((equal type "choice")
+                    (if options
+                        (completing-read prompt (seq-into options 'list) nil nil nil nil default)
+                      (read-string prompt nil nil default)))
+
+  		 ((equal type "multiple")
+                    (if options
+                        (completing-read-multiple prompt (seq-into options 'list))
+                      (list (read-string prompt nil nil default))))
+
+  		 ((equal type "text")
+                    (read-string prompt nil nil default))
+
+  		 (t (error "Unknown question type: %s" type))))
+  	(error
+  	 (setq answer (or default (format "Error: %s" (error-message-string err))))))
+        (when (get-buffer "*GPTel Clarification Context*")
+  	(kill-buffer "*GPTel Clarification Context*"))
+        (unless (org-string-nw-p answer)
+  	(setq answer (or default "No response")))
+
+        answer))
+
+    ;; Define the gptel tool
+    (gptel-make-tool
+     :name "ask_clarification"
+     :function #'yant/gptel-tool-ask-clarification
+     :description "Ask the user for clarification during reasoning. Supports multiple question types."
+     :args
+     (list '(:name "question"
+                   :type string
+                   :description "The question to ask the user. The question must be a single, one-sentence question. Other details should go to CONTEXT argument.")
+           '(:name "type"
+                   :type string
+                   :description "Question type: 'choice', 'multiple', 'text', or 'yesno' (default: 'text')"
+                   :optional t)
+           '(:name "options"
+                   :type array
+                   :items (:type string)
+                   :description "For 'choice' or 'multiple' types: list of options"
+                   :optional t)
+           '(:name "context"
+                   :type string
+                   :description "Relevant reasoning context to show the user and additional details about QUESTION asked."
+                   :optional t)
+           '(:name "default"
+                   :type string
+                   :description "Fallback answer if timeout or no response"
+                   :optional t))
+     :category "human-in-the-loop"
+     :confirm nil
+     :include nil)
+
+    ;; To use this tool, add to gptel-tools:
+    (add-to-list 'gptel-tools (gptel-get-tool "ask_clarification")))
+
 #+end_src
 
 **** COMMENT Running commands
