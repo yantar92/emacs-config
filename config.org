@@ -412,6 +412,17 @@ default everywhere.
   (set-face-attribute 'default nil :height 130 :family "Source Code Pro"))
 #+end_src
 
+Avoid white background in the initial frame.
+
+#+name: get-frame-background
+#+begin_src emacs-lisp :eval yes :tangle no
+  (face-background 'default)
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el :noweb yes
+  (set-face-attribute 'default nil :height 130 :family "Source Code Pro" :background "<<get-frame-background()>>")
+#+end_src
+
 [2020-03-10 Tue] <<39a84dde-88d1-46e8-86d0-28fb8f72f30c>>
 Chinese symbols are not covered by Source Code Pro. The result is
 different character width for Chinese characters. Using Sarasa Gothic
