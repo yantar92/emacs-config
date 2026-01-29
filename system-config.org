@@ -292,7 +292,6 @@ L10N="en-US ru uk zh-CN ar zh de es fr en"
 app-admin/eclean-kernel
 #+end_src
 
-
 **** =smart-live-rebuild= : Rebuild =9999= packages
 :PROPERTIES:
 :ID:       6237f3bc-eaa2-431c-a4a9-5d06a737907b
@@ -312,7 +311,7 @@ sys-kernel/gentoo-sources
 #+end_src
 
 Firmware for Linux
-#+begin_src conf  :tangle /sudo::/etc/portage/package.license/linux-firmware
+#+begin_src conf :tangle /sudo::/etc/portage/package.license/linux-firmware
 sys-kernel/linux-firmware linux-fw-redistributable no-source-code
 #+end_src
 
@@ -1353,7 +1352,6 @@ Unified theme, derived from my Emacs theme, everywhere.
 #+begin_src emacs-lisp :eval yes
   (format "%s" (ceiling (/ (face-attribute 'default :height) 10.0)))
 #+end_src
-
 
 ** GUI
 *** X window system
@@ -7546,8 +7544,6 @@ The idea of the script is regular reminder to not spend too much money on certai
 - Leisure (I usually go from one extreme to other: either not spend much or vice versa)
 - Retirement fund
 - Reminder to invest extra money
-****************** TODO note how I calculate retirement account
-****************** END
 #+begin_src bash :tangle /home/yantar92/.local/bin/balance-monitor.sh :shebang #!/bin/bash :noweb tangle
   # export DBUS_SESSION_BUS_ADDRESS environment variable
   PID=$(pgrep awesome | head -n1)
