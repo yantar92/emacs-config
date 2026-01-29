@@ -16097,33 +16097,34 @@ Occasionally, I need to add subtask to the existing task, which is not a project
 ****************** END
 
 #+begin_src emacs-lisp
-(defvar refile-to-tasks nil
-  "Non nil means, that single tasks will be included into refile candidates.")
+  (defvar refile-to-tasks nil
+    "Non nil means, that single tasks will be included into refile candidates.")
 
-(defun yant/toggle-refile-to-tasks ()
-  "Toggle refiling into single tasks."
-  (interactive)
-  (setq refile-to-tasks (not refile-to-tasks))
-  (setq org-refile-cache nil); reset refile cache
-  (if refile-to-tasks (message "Refiling to tasks") (message "Not refiling to tasks")))
+  (defun yant/toggle-refile-to-tasks ()
+    "Toggle refiling into single tasks."
+    (interactive)
+    (setq refile-to-tasks (not refile-to-tasks))
+    (setq org-refile-cache nil); reset refile cache
+    (if refile-to-tasks (message "Refiling to tasks") (message "Not refiling to tasks")))
 
-(bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks org-mode-map)
-(bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks org-agenda-mode-map)
-(use-package helm :config
-  (bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks helm-map))
+  (bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks org-mode-map)
+  (bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks org-agenda-mode-map)
+  (use-package helm :config
+    (bind-key "C-c C-S-w" #'yant/toggle-refile-to-tasks helm-map))
 
-(defun yant/verify-refile-target ()
-  "Exclude tasks and todo keywords with a done state from refile targets."
-  (let ((next
-         (yant/org-agenda-skip-org-ql '(and (not (path "rss.org"))
-                                            ;; (todo)
-                                            (not (tags-local "NOREFILE"))
-                                            (or refile-to-tasks
-                                                (tags-local "REFILE")
-                                                (not (task)))))))
-    (if next (prog1 nil (goto-char next)) t)))
+  (defun yant/verify-refile-target ()
+    "Exclude tasks and todo keywords with a done state from refile targets."
+    (let ((next
+           (yant/org-agenda-skip-org-ql '(and (not (path "rss.org"))
+                                              ;; (todo)
+                                              (not (tags-local "NOREFILE"))
+                                              (not (tags "CANCELLED"))
+                                              (or refile-to-tasks
+                                                  (tags-local "REFILE")
+                                                  (not (task)))))))
+      (if next (prog1 nil (goto-char next)) t)))
 
-(setq org-refile-target-verify-function 'yant/verify-refile-target)
+  (setq org-refile-target-verify-function 'yant/verify-refile-target)
 #+end_src
 
 ****************** TODO Integrate with helm refile
