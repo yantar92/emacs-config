@@ -8447,9 +8447,18 @@ Even better, when we sanitize the DOM for readability
   (use-package eww
     :custom
     ;; Enable readability by default.
-    (eww-readable-urls '(".+")))
+    (eww-readable-urls '(".+"))
+    ;; Rename buffers according to page title
+    (eww-auto-rename-buffer 'title)
+    ;; Avoid too wide images. They tend to be tall
+    (shr-max-image-proportion 0.6)
+    :config
+    ;; This is mirrowing my qutebrowser keys
+    (bind-key "y y" #'eww-copy-page-url eww-mode-map)
+    (bind-key "y Y" #'eww-copy-page-url eww-mode-map)
+    (meta-defun meta-previous-buffer :mode eww-mode (eww-back-url))
+    (meta-defun meta-next-buffer :mode eww-mode (eww-forward-url)))
 #+end_src
-
 ** Mastodon client =mastodon.el=
 
 #+begin_src emacs-lisp
