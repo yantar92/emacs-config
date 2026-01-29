@@ -8872,28 +8872,21 @@ stored in memory.
   (use-package gptel
     :config
 
-    (defun yant/gptel-tool-update-current-season (context)
-      "Update [USER PROFILE — CURRENT SEASON] based on CONTEXT.
+    (defun yant/gptel-tool-update-current-season-v2 (new_text)
+      "Write [USER PROFILE — CURRENT SEASON] with NEW_TEXT."
+      (with-temp-file yant/gptel-user-profile-current-file
+        (insert (string-trim new_text)))
+      "success")
 
-  Reads `yant/gptel-user-profile-current-file`, asks the model to update
-  it, writes it back, and returns the updated profile as a string."
-      (message "update season -- Starting query: %S" context)
-      (let* ((current-profile
-              (with-temp-buffer
-  	      (when (file-readable-p yant/gptel-user-profile-current-file)
-  		(insert-file-contents yant/gptel-user-profile-current-file))
-  	      (buffer-string)))
-             (prompt
-              "You maintain the user’s evolving profile for this LLM.
-
-  Current profile:
-  <<<PROFILE>>>
-
-  Conversation context:
-  <<<CONTEXT>>>
-
-  Your job is to update ONLY the “[USER PROFILE — CURRENT SEASON]” block, and only when there is clear, substantive NEW information.
-
+    (push
+     (gptel-make-tool
+      :function #'yant/gptel-tool-update-current-season-v2
+      :confirm t
+      :name "update_current_season_profile_v2"
+      :description "Update the user's [USER PROFILE — CURRENT SEASON] based on the given conversation context. Return string \"success\" when the profile is updated."
+      :args (list '(:name "new_text"
+  			:type string
+  			:description "New contents of the user profile to be written.
   STRICT RULES:
 
   1. Treat the CURRENT PROFILE as the primary truth.
@@ -8948,62 +8941,21 @@ stored in memory.
     [USER PROFILE — CURRENT SEASON]
   - Preserve the general structure (Chapter / Active projects / Current constraints / Near‑term priorities), but update contents as needed.
   - Do NOT include any commentary, explanation, tool‑call logs, or markdown fencing. Only the profile text.
-  ")
-             (final-prompt
-              (thread-last
-  	      prompt
-  	      (replace-regexp-in-string "<<<PROFILE>>>" (or current-profile ""))
-  	      (replace-regexp-in-string "<<<CONTEXT>>>" context))))
-        ;; Gptel call
-        (with-current-buffer (get-buffer-create " *yant/gptel-tool-update-current-season*")
-  	(kill-all-local-variables)
-  	(erase-buffer)
-          (setq gptel/updated nil)
-          (setq gptel/result nil)
-  	(let ((gptel-use-tools t)
-  	      (gptel-include-reasoning nil)
-  	      (gptel-tools
-  	       (delq nil
-                       (mapcar
-  		      (lambda (tool) (when (equal "mcp-memory" (gptel-tool-category tool))))
-  		      gptel-tools))))
-            (gptel-request final-prompt
-              :system
-              "You update the user's current‑season profile. Follow instructions exactly."
-              :callback
-              (lambda (response inner-info)
-  	      (pcase response
-  		((pred stringp)
-  		 (if (string-match "\\[USER PROFILE — CURRENT SEASON\\]" response)
-                       (progn
-  		       (with-temp-file yant/gptel-user-profile-current-file
-  			 (insert (string-trim response)))
-  		       (setq gptel/result response
-                               gptel/updated t))
-                     ;; Model returned something else (e.g., “no change” commentary).
-                     ;; Write the original profile to unblock the loop.
-                     (with-temp-file yant/gptel-user-profile-current-file
-                       (insert current-profile))
-                     (setq gptel/result current-profile
-  			 gptel/updated t)))
-  		(`(tool-call . ,tool-calls)
-  		 (gptel--accept-tool-calls response))
-  		(_ (setq gptel/result nil gptel/updated t))))))   ; error case – still unblock
-  	;; Wait for callback to finish (with timeout)
-  	(while (not gptel/updated) (sleep-for 0.5))
-          (or gptel/result current-profile))))
-
+  "))
+      :category "workflow")
+     gptel-tools)
+    (defun yant/gptel-get-user-profile-current ()
+      "Get contents of `yant/gptel-user-profile-current-file'."
+      (org-file-contents yant/gptel-user-profile-current-file))
     (push
      (gptel-make-tool
-      :function #'yant/gptel-tool-update-current-season
-      :confirm t
-      :name "update_current_season_profile"
-      :description "Update the user's [USER PROFILE — CURRENT SEASON] based on the given conversation context. Returns the updated profile block."
-      :args (list '(:name "context"
-  			:type string
-  			:description "Conversation transcript or summary to base the profile update on"))
+      :function #'yant/gptel-get-user-profile-current
+      :confirm nil
+      :name "get_current_season_profile"
+      :description "Get exact contents of user's [USER PROFILE — CURRENT SEASON]. Returns the profile block."
       :category "workflow")
-     gptel-tools))
+     gptel-tools)
+    )
 #+end_src
 
 **** Simple prompt for quick Q&A
