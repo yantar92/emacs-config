@@ -3179,33 +3179,34 @@ automatically used by =flycheck= if available). Thanks [[id:0c12a7e7-6cd0-45aa-b
 notes: Trying out ShellCheck]] for suggestion!
 
 #+begin_src emacs-lisp
-(use-package flycheck
-  :if init-flag
-  :demand t
-  :straight t
-  :init
-  (global-flycheck-mode +1)
-  (setq flycheck-mode-line-prefix "λ✓")
-  (setq flycheck-global-modes '(not lisp-interaction-mode))
-  (add-hook 'org-mode-hook #'yant/flycheck-disable-for-large-files)
-  :config
-  (defvar yant/flycheck-file-size-threshold (* 1000 500)
-    "Maximum file size in bytes where `flycheck-mode' is allowed.")
-  (defun yant/flycheck-disable-for-large-files ()
-    "Disable flycheck in large files.
-The maximum file size is `yant/flycheck-file-size-threshold'."
-    (when (> (buffer-size) yant/flycheck-file-size-threshold)
-      (flycheck-mode -1)))
-  (use-package flycheck-tip
+  (use-package flycheck
+    :if init-flag
+    :demand t
     :straight t
+    :init
+    (global-flycheck-mode +1)
+    (setq flycheck-flake8-maximum-line-length 120)
+    (setq flycheck-mode-line-prefix "λ✓")
+    (setq flycheck-global-modes '(not lisp-interaction-mode))
+    (add-hook 'org-mode-hook #'yant/flycheck-disable-for-large-files)
     :config
-    (setq flycheck-display-errors-function 'ignore)
-    (use-package boon
+    (defvar yant/flycheck-file-size-threshold (* 1000 500)
+      "Maximum file size in bytes where `flycheck-mode' is allowed.")
+    (defun yant/flycheck-disable-for-large-files ()
+      "Disable flycheck in large files.
+  The maximum file size is `yant/flycheck-file-size-threshold'."
+      (when (> (buffer-size) yant/flycheck-file-size-threshold)
+        (flycheck-mode -1)))
+    (use-package flycheck-tip
+      :straight t
       :config
-      (bind-keys :map boon-forward-search-map
-		 ("c" . flycheck-tip-cycle)
-                 :map boon-backward-search-map
-                 ("c" . flycheck-tip-cycle-reverse)))))
+      (setq flycheck-display-errors-function 'ignore)
+      (use-package boon
+        :config
+        (bind-keys :map boon-forward-search-map
+  		 ("c" . flycheck-tip-cycle)
+                   :map boon-backward-search-map
+                   ("c" . flycheck-tip-cycle-reverse)))))
 #+end_src
 
 **** Inherit ~load-path~ when checking
