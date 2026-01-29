@@ -325,6 +325,100 @@ sys-kernel/linux-firmware linux-fw-redistributable no-source-code
 sys-fs/cryptsetup
 #+end_src
 
+**** Theme
+:PROPERTIES:
+:ID:       920f96ad-8d57-4d2e-95aa-ad2335e0561d
+:END:
+
+See https://wiki.gentoo.org/wiki/Plymouth
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-boot/plymouth
+sys-boot/plymouth-openrc-plugin
+#+end_src
+
+#+name: get-plymouth-fg-color
+#+begin_src emacs-lisp :eval yes :results value :noweb yes
+  (mapconcat (lambda (x) (format "%.2f" x)) (color-name-to-rgb "<<get-color("fg-main")>>") ", ")
+#+end_src
+
+#+name: get-plymouth-bg-color
+#+begin_src emacs-lisp :eval yes :results value :noweb yes
+  (mapconcat (lambda (x) (format "%.2f" x)) (color-name-to-rgb "<<get-color("bg-main")>>") ", ")
+#+end_src
+
+I use modified hexagon theme from https://github.com/adi1090x/plymouth-themes.git
+#+name: generate-plymouth-wallpaper
+#+begin_src bash :eval yes :results output :dir 'attach :noweb yes
+  BACKGROUND="<<get-wallpaper-path()>>"
+  # DIMS=$(magick identify -format "%wx%h" $BACKGROUND)
+  cd hexagon
+  rm progress*.png
+  rm wallpaper.png
+  for x in *.png; do
+      magick $x -quality 95 \( -size 1x256 gradient:"<<get-color("bg-main")>>-<<get-color("fg-main")>>" \) -clut progress-${x%.*}.png 2>&1 >/dev/null
+      # magick progress-$x -background "<<get-color("bg-main")>>" -gravity Center -extent $DIMS progress-$x 2>&1 >/dev/null
+      magick progress-$x -fuzz 5% -transparent "<<get-color("bg-main")>>" progress-$x
+      # magick $BACKGROUND progress-$x -compose blend -composite progress-$x >&1 >/dev/null
+  done
+  cp $BACKGROUND wallpaper.png
+  cp hexagon-orig.script hexagon.script
+  sed -i 's/1, 1, 1/<<get-plymouth-fg-color()>>/' hexagon.script
+  sed -i 's/0, 0, 0/<<get-plymouth-bg-color()>>/' hexagon.script
+  cd ..
+  echo -n $(pwd)
+#+end_src
+
+#+RESULTS: generate-plymouth-wallpaper
+: /home/yantar92/.data/92/0f96ad-8d57-4d2e-95aa-ad2335e0561d
+
+
+#+name: install-plymouth-theme
+#+begin_src bash :eval yes :results output :dir /sudo::/usr/share/plymouth/themes :noweb yes
+  rm -rf hexagon
+  cp -r <<generate-plymouth-wallpaper()>>/hexagon ./
+  chmod a+rx hexagon
+  echo -n "hexagon"
+#+end_src
+
+#+RESULTS: install-plymouth-theme
+: hexagon
+
+Same idea, also installing custom grub theme
+#+name: install-grub-theme
+#+begin_src bash :eval yes :results output :dir /sudo::/usr/share/grub/themes :noweb yes
+  rm -rf yant_theme
+  cp -r starfield yant_theme
+  cd yant_theme
+  # Adjust terminal colors
+  for x in terminal_box*.png; do
+      magick $x -quality 95 \( -size 1x256 gradient:"<<get-color("bg-main")>>-<<get-color("fg-main")>>" \) -clut $x 2>&1 >/dev/null
+  done
+  cp <<get-wallpaper-path()>> starfield.png
+  # Overlay opaque background on top to avoid text visibility issues
+  # magick starfield.png -alpha Opaque +level-colors "<<get-color("bg-main")>>" foreground.png
+  # magick composite -dissolve 95 -gravity Center foreground.png starfield.png -alpha Set starfield.png
+  # rm foreground.png
+  sed -i 's/#000/<<get-color("fg-main")>>/' theme.txt
+  sed -i 's/#fff/<<get-color("bg-main")>>/' theme.txt
+  sed -i 's/#fff/<<get-color("bg-main")>>/' theme.txt
+  sed -i 's/#FFF/<<get-color("bg-dim")>>/' theme.txt
+  sed -i 's/#6ac/<<get-color("bg-inactive")>>/' theme.txt
+  echo 'terminal-height: "40"' >> theme.txt
+  echo 'terminal-top: "80%"' >> theme.txt
+  cd ..
+  mount /boot
+  rm -rf /boot/grub/themes/yant_theme
+  cp -r yant_theme /boot/grub/themes/
+  echo -n "/boot/grub/themes/yant_theme/theme.txt"
+#+end_src
+
+#+RESULTS: install-grub-theme
+: /boot/grub/themes/yant_theme/theme.txt
+
+#+begin_src conf :tangle /sudo::/etc/grub.d/99_custom-colors :tangle-mode o755
+  echo "set color_normal=dark-gray/white"
+#+end_src
+
 **** Building and installing the kernel (=genkernel= and =grub=)
 :PROPERTIES:
 :ID:       7b221b51-cd0a-4eba-893b-714f8cd17907
@@ -354,12 +448,14 @@ sys-boot/grub
 app-crypt/efitools
 #+end_src
 
-#+begin_src conf :tangle /sudo::/etc/genkernel.conf
+#+begin_src conf :tangle /sudo::/etc/genkernel.conf :noweb yes
 LUKS="yes"
 LVM="yes"
 DOLVM="yes"
 ZFS="no"
 GPG="yes"
+PLYMOUTH="yes"
+SPLASH="<<install-plymouth-theme()>>"
 BOOTLOADER="grub2"
 NOCOLOR="false"
 GK_SHARE="${GK_SHARE:-/usr/share/genkernel}"
@@ -390,10 +486,12 @@ Disabling SSD power saving as suggested in the answer.
 [2024-10-11 Fri] RAM failures corrupted hard drive. Disabling (memmap)
 faulty memory address range according to memtest.
 
-#+begin_src conf :tangle /sudo::/etc/default/grub
+#+begin_src conf :tangle /sudo::/etc/default/grub :noweb yes
   GRUB_DISTRIBUTOR="Gentoo"
-  GRUB_CMDLINE_LINUX="memmap=300M\\\$4200M dolvm crypt crypt_root=UUID=b074fbfd-65b3-4830-971c-0dd07b8977b5 root_trim=yes root_key=luks-key.gpg nvme_core.default_ps_max_latency_us=0"
+  GRUB_THEME="<<install-grub-theme()>>"
+  GRUB_CMDLINE_LINUX="memmap=300M\\\$4200M dolvm crypt crypt_root=UUID=b074fbfd-65b3-4830-971c-0dd07b8977b5 root_trim=yes root_key=luks-key.gpg nvme_core.default_ps_max_latency_us=0 quiet splash"
   GRUB_TIMEOUT="1"
+  GRUB_GFXPAYLOAD_LINUX=keep
 #+end_src
 
 *** Pip
@@ -666,7 +764,7 @@ unset alsa oss amixer ossmix group action device id
 :END:
 
 #+begin_src conf :tangle /sudo::/etc/udev/rules.d/81-backlight.rules
-SUBSYSTEM=="backlight", ACTION=="add", KERNEL=="intel_backlight", ATTR{brightness}="700"
+SUBSYSTEM=="backlight", ACTION=="add", KERNEL=="intel_backlight", ATTR{brightness}="1450"
 #+end_src
 
 **** Screen brightness key bindings
@@ -1391,7 +1489,30 @@ rc-update add display-manager default
   # NOTE: If this is set in /etc/rc.conf, that setting will override this one.
   DISPLAYMANAGER="lightdm"
 #+end_src
+**** Theme
+:PROPERTIES:
+:ID:       dcfb1f14-9ca4-4431-aaee-52fffd38859f
+:END:
 
+#+begin_src conf :tangle /sudo::/etc/lightdm/lightdm-gtk-greeter.conf :noweb yes
+  [greeter]
+  background = <<get-wallpaper-path()>>
+  font-name = <<system-font()>>
+  laptop = true
+  #user-background=
+  #theme-name=
+  #icon-theme-name=
+  #xft-antialias=
+  #xft-dpi=
+  #xft-hintstyle=
+  #xft-rgba=
+  #indicators=
+  #clock-format=
+  #keyboard=
+  #reader=
+  #position=
+  #screensaver-timeout=
+#+end_src
 *** Window manager: Awesome WM
 :PROPERTIES:
 :CATEGORY: AwesomeConf
@@ -1485,6 +1606,13 @@ end
 :DIR: nil
 :END:
 
+#+name: get-wallpaper-path
+#+begin_src bash :eval yes :results output :dir 'attach :noweb yes
+  # <<generate-wallpaper()>>
+  echo -n $(pwd)/wallpaper-themed.png
+#+end_src
+
+
 #+name: generate-wallpaper
 #+begin_src bash :eval yes :results output :dir 'attach :noweb yes
 magick wallpaper.png -quality 95 \( -size 1x256 gradient:"<<get-color("fg-main")>>-<<get-color("bg-main")>>" \) -clut wallpaper-themed.png 2>&1 >/dev/null
@@ -1516,7 +1644,7 @@ echo -n wallpaper-themed.png
   theme.bg_minimize = "<<get-color("bg-inactive")>>"
 
   theme.border_width  = 1
-  theme.border_normal = "<<get-color("border")>>"
+  theme.border_normal = "<<get-color("bg-main")>>"
   theme.border_focus  = "<<get-color("border")>>"
   theme.border_marked = "<<get-color("border")>>"
 
@@ -2680,6 +2808,10 @@ EOF
 :ID:       47146ef7-67fd-4f69-a9e1-a0a8290ae45d
 :END:
 
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+x11-misc/picom
+#+end_src
+
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/compton
 x11-misc/picom opengl
 #+end_src
@@ -2703,7 +2835,8 @@ picom -b
 
   rules = (
         # Dim unfocused, except system Awesome wm windows (like taskbar)
-        { match = "!focused and !class_g = 'awesome'"; dim = 0.02; },
+        { match = "!focused"; dim = 0.03; },
+        { match = "class_g = 'awesome'"; dim = 0.00; },
         { match = "class_g = 'qutebrowser'"; opacity = 0.95; },
   )
 #+end_src
@@ -5033,7 +5166,7 @@ c.qt.highdpi = True
 
   # Background color for webpages if unset (or empty to use the theme's
   # color).
-  # c.colors.webpage.bg = bg_default
+  c.colors.webpage.bg = bg_default
 #+end_src
 
 **** Stylesheet
@@ -5049,7 +5182,7 @@ c.qt.highdpi = True
 #+begin_src css :tangle :tangle /home/yantar92/.config/qutebrowser/theme.css :mkdirp yes
   ,* {
       border-color: <<get-color("border")>> !important;
-      /* interferes with whatsapp web */
+      /* interferes with whatsapp web and many other websites */
       /* background-color: initial !important; */
   }
   .color-bg-default, .bgColor-default {
@@ -6810,6 +6943,9 @@ c.qt.highdpi = True
   .answer-votes {
       background-color: <<get-color("bg-inactive")>> !important;
       color: <<get-color("bg-main")>> !important;
+  }
+  div[class*='adComponent'], .expandable-banner, #gateway-content {
+      visibility: hidden;
   }
 #+end_src
 
