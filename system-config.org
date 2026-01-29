@@ -1241,25 +1241,6 @@ HLc1VKP96NQ67CnS9XAtS70wN5E3pjKsxr370OjK0fC0+zx9Ouooy7EO+w==
 =K701
 -----END PGP MESSAGE-----
 
-*** Docker
-:PROPERTIES:
-:ID:       8abca0b9-a070-4362-ab0b-abe6bafaddae
-:END:
-
-Installing following [[id:6ac6c92eec714e52a7fb5cf0e1a70ef62b789b83][[Wiki.Gentoo] Docker - Gentoo Wiki]]
-
-#+begin_src conf :tangle /sudo::/var/lib/portage/world
-app-containers/docker
-app-containers/docker-cli
-#+end_src
-
-#+begin_src bash :eval yes :tangle no
-rc-update add docker default
-#+end_src
-
-#+begin_src conf :tangle /sudo::/etc/portage/package.use/docker
-app-containers/docker btrfs cli
-#+end_src
 *** Podman - alternative to docker
 :PROPERTIES:
 :ID:       11c49d2f-6a8a-4d5c-87a3-48442c266795
