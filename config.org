@@ -8696,7 +8696,7 @@ fluffy language when I make mistakes!).
       "List of strings or functions to build default prompt.")
     (add-hook
      'yant/gptel-system-prompt-default-functions
-     (lambda () (format "Today is %s" (format-time-string "%Y-%m-%d %a %H:%M %Z")))
+     (lambda () (format "TEMPORAL CONTEXT: Today is %s" (format-time-string "%Y-%m-%d %a %H:%M %Z")))
      -1)
     :config
     (setf (alist-get 'default gptel-directives)
