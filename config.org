@@ -5543,7 +5543,8 @@ This is according to Corfu README.
   	 :extendIgnore [] ; string array: [] (default)
   	 :filename nil ; string: null (default)
   	 :hangClosing nil ; boolean: true or false; null (default)
-  	 :ignore [] ; string array: [] (default)
+  	 ;; Ignore E501 - long lines
+  	 :ignore ["E501"] ; string array: [] (default)
   	 :indentSize nil ; integer: null (default)
   	 :maxComplexity 15 ; integer: null (default)
   	 :maxLineLength nil ; integer: null (default)
