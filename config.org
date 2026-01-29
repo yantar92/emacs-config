@@ -3131,7 +3131,7 @@ abort completely with `C-g'."
   (add-hook 'message-send-hook #'langtool-check-buffer-ensure))
 #+end_src
 
-**** =Writegood=: Highlight common problematic words, including custom words
+**** COMMENT =Writegood=: Highlight common problematic words, including custom words
 
 [[id:Github-bnbeckwith-bnbeckwith-writegood-mode-453][bnbeckwith [Github] bnbeckwith/writegood-mode: Minor mode for Emacs to improve English writing]]
 
