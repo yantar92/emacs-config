@@ -10345,6 +10345,53 @@ here, so that LLM reasoning can be utilized better.
     (cl-pushnew #'yant/minuet-boon-not-insert-state-p minuet-auto-suggestion-block-functions ))
 #+end_src
 
+** Github client =consult-gh=
+
+#+begin_src emacs-lisp
+  (use-package consult-gh
+    :if init-flag
+    :straight (consult-gh :type git :host github :repo "armindarvish/consult-gh" :branch "main")
+    :after consult
+    :custom
+    (consult-gh-default-clone-directory "~/Git/")
+    (consult-gh-show-preview t)
+    (consult-gh-preview-key "C-o")
+    (consult-gh-large-file-warning-threshold 2500000)
+    (consult-gh-confirm-before-clone t)
+    (consult-gh-default-interactive-command #'consult-gh-transient)
+    ;;;; Optional
+    (consult-gh-preview-major-mode 'org-mode)
+    :config
+    (require 'consult-gh-transient)
+    ;; Remember visited orgs and repos across sessions
+    (add-to-list 'savehist-additional-variables 'consult-gh--known-orgs-list)
+    (add-to-list 'savehist-additional-variables 'consult-gh--known-repos-list)
+    ;; Enable default keybindings (e.g. for commenting on issues, prs, ...)
+    (consult-gh-enable-default-keybindings))
+#+end_src
+
+*** Use consult-gh to browse github URLs
+
+#+begin_src emacs-lisp
+  (use-package consult-gh
+    :init
+    (defun yant/browse-url-gh (url &optional _)
+      "Browse github URL."
+      (let* ((repo (and (string-match "github\\.com/\\([^/]+/[^/]+\\)\\(?:/issues/\\([0-9]+\\)\\)?" url)
+  		      (match-string 1 url)))
+             (issue (match-string 2 url)))
+        (cond
+         (issue (funcall consult-gh-issue-action
+  		       (propertize "dummy" :repo repo :number issue)))
+         ((and repo
+  	     (not (equal repo "user-attachments/assets")))
+          (funcall consult-gh-repo-action (propertize "dummy" :repo repo)))
+         (t (funcall browse-url-browser-function url)))))
+    (add-to-list 'browse-url-handlers
+                 '("^https?://\\(www\\.\\)?github\\.com"
+                   . yant/browse-url-gh)))
+#+end_src
+
 ** OpenStreetMaps
 :PROPERTIES:
 :ID:       8c144a5d-f3c8-450f-90a7-13c4c0ea16ed
