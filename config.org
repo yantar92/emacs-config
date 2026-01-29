@@ -474,12 +474,11 @@ General frame appearance configuration.
 First, disable unnecessary graphical elements No tool bar, no scroll
 bar, no menu bar (not recommended for newcomers).
 
-#+begin_src emacs-lisp
-(when init-flag
+#+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el :noweb yes
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
-  (menu-bar-mode -1))
-#+END_SRC
+  (menu-bar-mode -1)
+#+end_src
 
 Because of the [[id:335a0a70-61ef-4691-bf1f-90351bd7c3bd][color scheme]] I use, the border between windows is not easy to distinguish.
 Using =window-divider-mode= to emphasise it more.
