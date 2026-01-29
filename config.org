@@ -9441,14 +9441,12 @@ certain LLM logic when conditions are met.
 
     ,*Formatting:*
     - Present clarification or data-needs as a numbered list.
-    - If a tool (like =search_web= or =read_webpage=) should be used, clearly state _which_ tool is recommended and for what purpose.
     - Say "Awaiting clarification and/or external information before answering."
 
     ,*Example (for software version ambiguity):*
     - User query: "How do I use the 'foo' method in pandas?"
     - Your response:
-        1. "Which version of pandas are you using? The API may have changed recently.
-        2. Should I fetch the latest documentation or perform an internet search for you?
+        "Which version of pandas are you using? The API may have changed recently.
         Awaiting your response or external information before answering."
 
 #+end_src
