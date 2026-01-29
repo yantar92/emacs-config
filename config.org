@@ -5825,6 +5825,18 @@ It warns me if the original definition changes from what I expect.
     :if init-flag
     :straight (regexp-disasm :host github :repo "mattiase/regexp-disasm"))
 #+end_src
+**** Semantic highlighting
+
+I new feature, which is, as many new cool features, disabled by default.
+Enable it.
+#+begin_src emacs-lisp
+  (setq elisp-fontify-semantically t)
+#+end_src
+**** Trust files in my repos
+
+#+begin_src emacs-lisp
+  (setq trusted-content '("/home/yantar92/Git/"))
+#+end_src
 
 *** Scripts
 :PROPERTIES:
