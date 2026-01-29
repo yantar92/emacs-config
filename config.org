@@ -12368,7 +12368,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     								    (project)
     								    (not (subproject))))))
     			    (org-agenda-sorting-strategy
-    			     '(todo-state-down effort-up category-keep))))
+    			     '(todo-state-down category-keep))))
     		(tags-todo "/"
     			   ((org-agenda-overriding-header "Waiting and Hold projects")
     			    (org-agenda-dim-blocked-tasks nil)
@@ -12384,7 +12384,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
                                                                   (not (org-agenda-skip-before-SHOWFROMDATE-property))
     							      (project))))
     			    (org-agenda-sorting-strategy
-    			     '(todo-state-down effort-up category-keep))))
+    			     '(todo-state-down category-keep))))
     		(tags-todo "/"
     			   ((org-agenda-overriding-header "Someday projects")
     			    (org-agenda-dim-blocked-tasks nil)
@@ -12409,12 +12409,12 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     								    (project)
     								    (not (subproject))))))
     			    (org-agenda-sorting-strategy
-    			     '(todo-state-down effort-up category-keep))))))
+    			     '(todo-state-down category-keep))))))
     	      ("A" "Areas of interest" tags-todo "-CANCELLED+AREA"
     	       ((org-agenda-dim-blocked-tasks nil)
     		(org-agenda-prefix-format "%?-12t %(yant/format-summary-for-agenda)")
     		(org-agenda-sorting-strategy
-    		 '(todo-state-down effort-up category-keep))))
+    		 '(todo-state-down category-keep))))
     	      ("d" "Focus daily agenda" agenda ""
     	       ((org-agenda-overriding-header "Focused daily agenda")
     		(org-agenda-skip-function 'yant/org-agenda-skip-nofocus)))
@@ -12497,7 +12497,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     			    (org-agenda-todo-ignore-deadlines t)
     			    (org-agenda-todo-ignore-with-date nil) ; include NEXT with timestamp as they may be actionable prior
     			    (org-agenda-sorting-strategy
-    			     '(priority-down todo-state-down effort-up category-keep))))
+    			     '(priority-down todo-state-down category-keep))))
                     (tags-todo "/"
     			   ((org-agenda-overriding-header "Tasks to review")
     			    (org-agenda-dim-blocked-tasks 'invisible)
@@ -12527,7 +12527,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     			    (org-agenda-todo-ignore-deadlines t)
     			    (org-agenda-todo-ignore-with-date nil) ; include NEXT with timestamp as they may be actionable prior
     			    (org-agenda-sorting-strategy
-    			     '(priority-down todo-state-down effort-up category-keep))))
+    			     '(priority-down todo-state-down category-keep))))
     		(tags-todo "/"
     			   ((org-agenda-overriding-header "Tasks in progress")
     			    (org-agenda-prefix-format "[%(yant/get-clocked-time-today-for-agenda)%e] %-12:c\t%?-12t")
@@ -12536,7 +12536,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
                                                             (quote (and (todo "DOING")
                                                                         (not (tags "CANCELLED" "HOLD" "WAITING" "SOMEDAY"))))))
     			    (org-agenda-sorting-strategy
-    			     '(priority-down todo-state-down effort-up category-keep))))
+    			     '(priority-down todo-state-down category-keep))))
                     (tags-todo "/"
     			   ((org-agenda-overriding-header (concat "Hold Tasks" ""))
     			    (org-agenda-prefix-format "%-12:c\t%?-12t %(yant/format-summary-for-agenda)")
@@ -12683,7 +12683,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     			    (org-agenda-todo-ignore-deadlines t)
     			    (org-agenda-todo-ignore-with-date nil) ; include NEXT with timestamp as they may be actionable prior
     			    (org-agenda-sorting-strategy
-    			     '(priority-down todo-state-down effort-up category-keep))))
+    			     '(priority-down todo-state-down category-keep))))
                     (tags-todo "/"
     			   ((org-agenda-overriding-header "Tasks to review")
     			    (org-agenda-dim-blocked-tasks 'invisible)
@@ -12711,7 +12711,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     			    (org-agenda-todo-ignore-deadlines t)
     			    (org-agenda-todo-ignore-with-date nil) ; include NEXT with timestamp as they may be actionable prior
     			    (org-agenda-sorting-strategy
-    			     '(priority-down todo-state-down effort-up category-keep))))
+    			     '(priority-down todo-state-down category-keep))))
     		(tags-todo "/"
     			   ((org-agenda-overriding-header "Areas of interest")
     			    (org-agenda-dim-blocked-tasks nil)
@@ -12723,7 +12723,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     									  (and (tags-local "AREA")
     									       (todo "NEXT"))))))))
     			    (org-agenda-sorting-strategy
-    			     '(todo-state-down effort-up category-keep))))
+    			     '(todo-state-down category-keep))))
     		(tags-todo "/"
     			   ((org-agenda-overriding-header "All other active tasks")
     			    (org-agenda-dim-blocked-tasks 'invisible)
@@ -14165,8 +14165,8 @@ instead."
                        '(and (not (path "rss.org" "schedule.org"))
                              ;; (todo)
                              (not (tags-local "NOREFILE"))
-                             (tags-local "REFILE" "goal")
-                             )))))
+                             (not (tags "CANCELLED"))
+                             (tags-local "REFILE" "goal"))))))
     (defun yant/helm-org-ql-toggle-archives ()
       "Toggle searching across archive files."
       (interactive)
