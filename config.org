@@ -813,7 +813,7 @@ If the line wrapping is active, I also want the word wrap to be activated automa
         (if truncate-lines
   	  (adaptive-wrap-prefix-mode -1)
   	(adaptive-wrap-prefix-mode +1))))
-    (global-visual-wrap-prefix-mode +1)
+    (add-hook 'text-mode-hook #'visual-wrap-prefix-mode)
     (setq-default truncate-lines t
   		word-wrap t
                   line-move-visual nil))
