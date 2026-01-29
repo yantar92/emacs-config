@@ -19021,6 +19021,18 @@ Work around this issue by suppressing messages coming from
         (google-docs--extract-plain-text document-json))))
 #+end_src
 
+** Disk usage
+
+I clean my HD from time to time, mostly archiving unused things.
+I used to do it with midnight commander, but may as well do from
+inside Emacs with nicer UI.
+
+#+begin_src emacs-lisp
+  (use-package disk-usage
+    :if init-flag
+    :straight t)
+#+end_src
+
 ** GNU development
 *** ~multi-occur~ in project
 
