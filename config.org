@@ -9750,15 +9750,15 @@ certain LLM logic when conditions are met.
       :config
       (push
        (yant/gptel-make-workflow
-        :name "memory_save"
+        :name "memory_save_v2"
         :description "When to use:
   - After an important chat or cohesive work chunk that the user wants
     to persist as long-term memory.
   - When the user explicitly says \"remember this\", \"please store this\", or similar.
-  - When a conversation produced reusable facts or a stable summary that
-    will matter in future sessions. DO NOT WAIT for the end of the
-    discussion. Save the new facts as you identify them (if they are not already
-    in memory).
+  - When you find new facts you do not yet have in memory. When you do,
+    IMMEDIATELY save.
+  - When a conversation produced a stable summary that
+    you do not yet have in memory.
   "
         :workflow workflow)
        gptel-tools))
