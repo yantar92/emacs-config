@@ -7543,7 +7543,26 @@ Use different signatures depending on the sent address.
   Learn more about Org mode at <https://orgmode.org/>.
   Support Org development at <https://liberapay.com/org-mode>,
   or support my work at <https://liberapay.com/yantar92>
-  ")))
+  ")
+        ("ihor\\.radchenko@ensemble3\\.eu" . "Ihor Radchenko,
+  Postdoc
+
+  Ensemble3 Sp. z o. o.
+  Wolczynska Str. 133
+  01-919 Warsaw
+  POLAND
+
+  KRS: 0000858669
+  REGON: 386406355
+  NIP: PL1182211096
+
+  Powyższa korespondencja przeznaczona jest wyłącznie dla osoby lub podmiotu, do którego jest adresowana i może zawierać informacje o charakterze poufnym lub zastrzeżonym. Nieuprawnione wykorzystanie informacji zawartych w wiadomości e-mail przez osobę lub podmiot nie będący jej adresatem jest zabronione odpowiednimi przepisami prawa. Odbiorca korespondencji, który otrzymał ją omyłkowo, proszony jest o niezwłoczne zawiadomienie nadawcy drogą elektroniczną lub telefonicznie i trwałe usunięcie tej treści z wszelkich nośników.
+
+  Informacja dotycząca przetwarzania danych osobowych zgodnie z art. 13 ust. 1-2 Rozporządzenia o ochronie danych (Dz.Urz. UE L 119, s. 1) w skrócie RODO znajduje się na stronie ensemble3.eu
+
+  This information is intended only for the person or entity to which it is addressed and may contain confidential and/or privileged material. Unauthorized use of this information by person or entity other than the intended recipient is prohibited by law. If you received this by mistake, please immediately contact the sender by e-mail or by telephone and delete this information from any media.
+
+  The information on processing of personal data according to article 13.1-2 of Regulation 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data, and repealing Directive 95/46/EC (General Data Protection Regulation) – hereinafter referred to as GDPR is available at ensemble3.eu")))
     (defun yant/message-signature ()
       "Insert signature depending on the addressee."
       (save-excursion
