@@ -17082,66 +17082,67 @@ The access is only restored while I am doing a task related to that
 domain (and containing =Source= property with the domain URL)
 
 #+begin_src emacs-lisp
-(defvar yant/hosts-unblocked nil
-  "Non-nil when some hosts are temporarily unblocked.")
+  (defvar yant/hosts-unblocked nil
+    "Non-nil when some hosts are temporarily unblocked.")
 
-(defun yant/unblock-host (url)
-  "Unblock URL in qutebrowser."
-  (with-temp-buffer
-    (insert-file-contents "~/.config/qutebrowser/blocked-hosts")
-    (goto-char (point-min))
-    (let ((hosts))
-      (while (re-search-forward "127\\.0\\.0\\.1 \\(.+\\) *$" nil t)
-        (when (or (string-match-p (regexp-quote (match-string 1)) url)
-                  (and (string-match-p "reddit" url)
-                       (string-match-p "reddit" (match-string 1))))
-          (push (match-string 1) hosts)))
-      (if (and hosts (or (string-match-p "reddit" url) (string-match-p "youtube" url))) (let ((prevent-interactive-run t)) (yant/unblock-all-hosts))
-        (when hosts
-          (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
-            (setq yant/hosts-unblocked t)
-            (start-process-shell-command "Send message to qutebrowser"
-				         nil
-				         (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string))))))))
-
-(defun yant/unblock-all-hosts ()
-  "Unblock all custom-blocked hosts in qutebrowser."
-  (when (bound-and-true-p prevent-interactive-run)
+  (defun yant/unblock-host (url)
+    "Unblock URL in qutebrowser."
     (with-temp-buffer
       (insert-file-contents "~/.config/qutebrowser/blocked-hosts")
       (goto-char (point-min))
       (let ((hosts))
         (while (re-search-forward "127\\.0\\.0\\.1 \\(.+\\) *$" nil t)
-          (push (match-string 1) hosts))
-        (when hosts
-          (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
-            (setq yant/hosts-unblocked t)
-            (start-process-shell-command "Send message to qutebrowser"
-				         nil
-				         (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string))))))))
+          (when (or (string-match-p (regexp-quote (match-string 1)) url)
+                    (and (string-match-p "reddit" url)
+                         (string-match-p "reddit" (match-string 1))))
+            (push (match-string 1) hosts)))
+        (if (and hosts (or (string-match-p "reddit" url) (string-match-p "youtube" url)))
+  	  (let ((prevent-interactive-run t)) (yant/unblock-all-hosts))
+          (when hosts
+            (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
+              (setq yant/hosts-unblocked t)
+              (start-process-shell-command "Send message to qutebrowser"
+  				         nil
+  				         (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string))))))))
 
-(defun yant/org-unblock-heading-source ()
-  "Unblock (`yant/unblock-host') url value stored in Source or URL property of the task at point.
-If the heading has property DISABLE-HOST-BLOCKING set to `t', unblock everything."
-  (when-let ((url (or (org-entry-get (point) "Source")
-                      (org-entry-get (point) "URL"))))
-    (if (string-match ".+@\\(.+\\)" url) ; email
-        (setq url (match-string 1 url)))
-    (yant/unblock-host url))
-  (when (string= (org-entry-get (point) "DISABLE-HOST-BLOCKING") "t")
-    (let ((prevent-interactive-run t))
-      (yant/unblock-all-hosts))))
+  (defun yant/unblock-all-hosts ()
+    "Unblock all custom-blocked hosts in qutebrowser."
+    (progn ;; when (bound-and-true-p prevent-interactive-run)
+      (with-temp-buffer
+        (insert-file-contents "~/.config/qutebrowser/blocked-hosts")
+        (goto-char (point-min))
+        (let ((hosts))
+  	(while (re-search-forward "127\\.0\\.0\\.1 \\(.+\\) *$" nil t)
+            (push (match-string 1) hosts))
+  	(when hosts
+            (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
+              (setq yant/hosts-unblocked t)
+              (start-process-shell-command "Send message to qutebrowser"
+  				         nil
+  				         (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"%s\"'" hosts-list-string))))))))
 
-(defun yant/restore-host-blocks ()
-  "Restore host blocking in qutebrowser."
-  (when yant/hosts-unblocked
-    (setq yant/hosts-unblocked nil)
-    (start-process-shell-command "Send message to qutebrowser"
-			         nil
-			         (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"\"'"))))
+  (defun yant/org-unblock-heading-source ()
+    "Unblock (`yant/unblock-host') url value stored in Source or URL property of the task at point.
+  If the heading has property DISABLE-HOST-BLOCKING set to `t', unblock everything."
+    (when-let* ((url (or (org-entry-get (point) "Source")
+                        (org-entry-get (point) "URL"))))
+      (if (string-match ".+@\\(.+\\)" url) ; email
+          (setq url (match-string 1 url)))
+      (yant/unblock-host url))
+    (when (string= (org-entry-get (point) "DISABLE-HOST-BLOCKING") "t")
+      (let ((prevent-interactive-run t))
+        (yant/unblock-all-hosts))))
 
-(add-hook 'org-clock-in-hook #'yant/org-unblock-heading-source)
-(add-hook 'org-clock-out-hook #'yant/restore-host-blocks)
+  (defun yant/restore-host-blocks ()
+    "Restore host blocking in qutebrowser."
+    (when yant/hosts-unblocked
+      (setq yant/hosts-unblocked nil)
+      (start-process-shell-command "Send message to qutebrowser"
+  			         nil
+  			         (format "pgrep qutebrowser && qutebrowser --nowindow ':set content.blocking.whitelist \"\"'"))))
+
+  (add-hook 'org-clock-in-hook #'yant/org-unblock-heading-source)
+  (add-hook 'org-clock-out-hook #'yant/restore-host-blocks)
 #+end_src
 
 *** Preview
