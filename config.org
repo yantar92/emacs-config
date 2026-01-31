@@ -9576,7 +9576,7 @@ certain LLM logic when conditions are met.
 
 #+end_src
 
-***** Memory check
+***** COMMENT Memory check
 :PROPERTIES:
 :ID:       MEMORY_CHECK
 :END:
