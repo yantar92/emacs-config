@@ -10034,7 +10034,9 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
   		(error
   		 ;; If HTML parsing fails, treat as plain text
   		 (buffer-substring-no-properties (point-min) (point-max)))))))
-        (if limit (substring data 0 limit) data))))
+        ;; Cleanup unibyte non-printable characters if any
+        (setq data (replace-regexp-in-string (rx (not (in print ?\n))) "" data))
+        (if limit (substring data 0 (min limit (1- (length data)))) data))))
 
   (push
    (gptel-make-tool
