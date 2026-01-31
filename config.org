@@ -9176,19 +9176,16 @@ Prevent that by forcing everything to be a list.
 #+begin_src emacs-lisp
   (use-package gptel
     :config
-    (defun yant/itemize-text (beg end)
-      "Itemize all the Org headings in region BEG..END."
+    (defun yant/fix-heading-levels (beg end)
+      "Make sure that Org headings in region BEG..END are subheadings."
       (when (derived-mode-p 'org-mode)
         (save-excursion
-  	(deactivate-mark)
   	(goto-char beg)
-  	(when (re-search-forward org-outline-regexp-bol end t)
-  	  (push-mark)
-  	  (goto-char end)
-  	  (activate-mark)
-  	  (call-interactively #'org-toggle-item)
-            (deactivate-mark)))))
-    (add-hook 'gptel-post-response-functions #'yant/itemize-text))
+          (let ((level (org-current-level)))
+  	  (when (re-search-forward org-outline-regexp-bol end t)
+              (let ((local-level (save-match-data (or (org-current-level) 0))))
+                (replace-match (concat (make-string (+ (1- level) local-level) ?*) " "))))))))
+    (add-hook 'gptel-post-response-functions #'yant/fix-heading-levels))
 #+end_src
 *** Presets
 
