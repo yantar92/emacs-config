@@ -10063,6 +10063,116 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
     :category "web")
    gptel-tools)
 #+end_src
+**** Searching locally
+
+#+begin_src emacs-lisp :noweb yes
+    (use-package gptel
+      :config
+      <<gptel-search>>
+  )
+#+end_src
+
+#+name: gptel-search
+#+begin_src emacs-lisp :tangle no
+  (defun yant/get-buffer-string (buffer &optional beg_line end_line)
+    "Return buffer string for BUFFER.
+    When optional BEG_LINE..END_LINE is given, return substring
+  including BEG_LINE and END_LINE lines in buffer."
+    (with-current-buffer buffer
+      (org-with-wide-buffer
+       (let ((max-chars 100000))
+         (when (and (> (point-max) max-chars) (not beg_line) (not end_line))
+  	 (error "Buffer size exceeds %d. Consider passing start_line or end_line or using search tool." max-chars)))
+       (buffer-substring-no-properties
+        (save-excursion
+  	(org-goto-line (or beg_line 0))
+          (point))
+        (save-excursion
+  	(if end_line (goto-char (point-max))
+            (org-goto-line end_line)
+            (goto-char (point-at-eol)))
+          (point))))))
+
+  (gptel-make-tool
+   :name "view_buffer"
+   :function #'yant/get-buffer-string
+   :description "Return full or partial buffer contents"
+   :args '(( :name "buffer_name"
+             :type string
+             :description "Name of the buffer to view")
+           ( :name "start_line"
+             :type integer
+             :optional t
+             :description "Starting line of the buffer to include. Default: start from first line in buffer")
+           ( :name "end_line"
+             :type integer
+             :optional t
+             :description "Ending line of the buffer to include. Default: last line in buffer"))
+   :confirm nil
+   :category "search")
+  (push (gptel-get-tool "view_buffer") gptel-tools)
+
+  (defun yant/search-buffer (buffer regexp-or-string &optional before-lines after-lines search-literally)
+    "Return a list of match objects for REGEXP-OR-STRING in BUFFER.
+  Each object is a plist with keys :match-text, :start-line, :end-line, and :context.
+  If BEFORE-LINES is non-nil, show that many lines before the match.
+  Same for AFTER-LINES.  When they are nil, include 1 line.
+  When SEARCH-LITERALLY is non-nil, search REGEXP-OR-STRING string literally."
+    (unless before-lines (setq before-lines 1))
+    (unless after-lines (setq after-lines 1))
+    (with-current-buffer buffer
+      (let ((found nil)
+            (result nil)
+            beg)
+        (org-with-wide-buffer
+         (goto-char (point-min))
+         (while (re-search-forward
+                 (if search-literally
+                     (regexp-quote regexp-or-string)
+                   regexp-or-string)
+                 nil t)
+           (setq found t)
+           (goto-char (match-beginning 0))
+           (forward-line (- (or before-lines 0)))
+           (setq beg (point))
+           (goto-char (match-end 0))
+           (forward-line (if after-lines (1+ after-lines) 1))
+           (push (list :match-text (match-string 0)
+                       :start-line (org-current-line (match-beginning 0))
+                       :end-line (org-current-line (match-end 0))
+                       :context (buffer-substring-no-properties beg (point)))
+                 result)
+           (goto-char (match-end 0))))
+        (if (not found) (error "Regexp %s not found in buffer %s" regexp-or-string buffer)
+          (nreverse result)))))
+
+  (gptel-make-tool
+   :name "search_in_buffer"
+   :function #'yant/search-buffer
+   :description "Search all instances of Emacs regexp or literal string in Emacs buffer. Return a list of match objects, each with :match-text, :start-line, :end-line, and :context."
+   :args '(( :name "buffer_name"
+             :type string
+             :description "Name of the buffer to search")
+           ( :name "regexp_or_string"
+             :type string
+             :description "Emacs regexp (default) or a string to search. Pass search_literally to treat this argument as literal string; not regexp.")
+           ( :name "before_lines"
+             :type integer
+             :optional t
+             :description "Number of lines before regexp match to include in :context. Default: 1")
+           ( :name "after_lines"
+             :type integer
+             :optional t
+             :description "Number of lines after regexp match to include in :context. Default: 1.")
+           ( :name "search_literally"
+             :type boolean
+             :optional t
+             :description "When true, treat regexp_or_string as literal string to search for."))
+   :confirm nil
+   :category "search")
+  (push (gptel-get-tool "search_in_buffer") gptel-tools)
+#+end_src
+
 **** Editing buffers
 
 #+begin_src emacs-lisp :noweb yes
@@ -10075,20 +10185,26 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
 #+name: bufedit
 #+begin_src emacs-lisp :tangle no
   (defun codel-edit-buffer (buffer-name old-string new-string)
-    "In BUFFER-NAME, replace OLD-STRING with NEW-STRING."
+    "In BUFFER-NAME, replace OLD-STRING with NEW-STRING.
+  Tabs, spaces, and newlines in OLD-STRING are matched in lax way, allowing multiple."
     (with-current-buffer buffer-name
       (let ((case-fold-search nil))  ;; Case-sensitive search
+        (setq old-string
+  	    (thread-last
+                old-string
+  	      (regexp-quote)
+                (replace-regexp-in-string "[ \t\n]+" "[ \t\n]+")))
         (save-excursion
           (goto-char (point-min))
           (let ((count 0))
-            (while (search-forward old-string nil t)
+            (while (re-search-forward old-string nil t)
               (setq count (1+ count)))
             (if (= count 0)
                 (format "Error: Could not find text to replace in buffer %s" buffer-name)
               (if (> count 1)
                   (format "Error: Found %d matches for the text to replace in buffer %s" count buffer-name)
                 (goto-char (point-min))
-                (search-forward old-string)
+                (re-search-forward old-string)
                 (replace-match new-string t t)
                 (format "Successfully edited buffer %s" buffer-name))))))))
 
@@ -10101,47 +10217,61 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
              :description "Name of the buffer to modify")
            ( :name "old_string"
              :type string
-             :description "Text to replace (must match exactly)")
+             :description "Text to replace (must match exactly, except newlines, tabs, and spaces that will be matched as [ \t\n]+)")
            ( :name "new_string"
              :type string
              :description "Text to replace old_string with"))
    :confirm t
    :category "edit")
 
-  (defun codel-replace-buffer (buffer-name content)
-    "Completely replace contents of BUFFER-NAME with CONTENT."
+  (defun yant/replace-buffer (buffer-name content &optional start-line end-line)
+    "Replace CONTENT in BUFFER-NAME.
+  If START-LINE and END-LINE are both provided, replace only that region.
+  Otherwise, replace the entire buffer."
     (with-current-buffer (get-buffer-create buffer-name)
-      (erase-buffer)
-      (insert content)
-      (format "Buffer replaced: %s" buffer-name)))
+      (org-with-wide-buffer
+       (cond
+        ((and start-line end-line)
+         (when (or (< start-line 1)
+                   (> end-line (org-current-line (point-max)))
+                   (> start-line end-line))
+           (error "Invalid region %d‑%d in buffer %s" start-line end-line buffer-name))
+         (org-goto-line start-line)
+         (delete-region
+  	(point)
+          (save-excursion
+            (org-goto-line end-line)
+            (forward-line)))
+         (insert content)
+         (format "Replaced lines %d-%d in buffer %s" start-line end-line buffer-name))
+        ((or start-line end-line)
+         (error "Both start_line and end_line must be provided for region replacement"))
+        (t
+         (erase-buffer)
+         (insert content)
+         (format "Buffer replaced: %s" buffer-name))))))
 
   (gptel-make-tool
    :name "ReplaceBuffer"
-   :function #'codel-replace-buffer
-   :description "Completely overwrites buffer contents"
+   :function #'yant/replace-buffer
+   :description "Replace buffer contents. If start_line and end_line are provided, replace only lines starting from start_line (inclusive) and ending at end_line (inclusive); otherwise replace the entire buffer."
    :args '(( :name "buffer_name"
              :type string
              :description "Name of the buffer to overwrite")
            ( :name "content"
              :type string
-             :description "Content to write to the buffer"))
+             :description "Content to write to the buffer")
+           ( :name "start_line"
+             :type integer
+             :optional t
+             :description "Starting line for region replacement. Must be used together with end_line.")
+           ( :name "end_line"
+             :type integer
+             :optional t
+             :description "Ending line for region replacement. Must be used together with start_line."))
    :confirm t
    :category "edit")
 
-  (defun yant/get-buffer-string (buffer)
-    "Return buffer string for BUFFER."
-    (with-current-buffer buffer
-      (buffer-substring-no-properties (point-min) (point-max))))
-
-  (gptel-make-tool
-   :name "ViewBuffer"
-   :function #'yant/get-buffer-string
-   :description "Return buffer contents"
-   :args '(( :name "buffer_name"
-             :type string
-             :description "Name of the buffer to view"))
-   :confirm nil
-   :category "edit")
 #+end_src
 
 **** Human interruption
