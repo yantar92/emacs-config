@@ -68,6 +68,11 @@ which are automatically loaded by org agenda command.
   "Do normal init if not nil.")
 #+end_src
 
+#+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el :comments no
+  ;;  -*- lexical-binding: nil; -*-
+#+end_src
+
+
 ** Some performance tricks to speed up initialization
 *** Speed up ~char-displayble-p~
 
