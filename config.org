@@ -9186,11 +9186,18 @@ Prevent that by forcing everything to be a list.
       (when (derived-mode-p 'org-mode)
         (save-excursion
   	(goto-char beg)
-          (let ((level (org-current-level)))
+          (let ((level (or (org-current-level) 1)))
   	  (when (re-search-forward org-outline-regexp-bol end t)
               (let ((local-level (save-match-data (or (org-current-level) 0))))
                 (replace-match (concat (make-string (+ (1- level) local-level) ?*) " "))))))))
-    (add-hook 'gptel-post-response-functions #'yant/fix-heading-levels))
+    (defun yant/fix-unicode (beg end)
+      "Cleanup unnatural unicode inserted by LLMs."
+      (replace-string-in-region " " " " beg end)
+      (replace-string-in-region "“" "\"" beg end)
+      (replace-string-in-region "”" "\"" beg end)
+      (replace-string-in-region "‑" "-" beg end))
+    (add-hook 'gptel-post-response-functions #'yant/fix-heading-levels)
+    (add-hook 'gptel-post-response-functions #'yant/fix-unicode))
 #+end_src
 *** Presets
 
