@@ -5446,7 +5446,7 @@ manually here (in this config) myself.
   (python-indent-guess-indent-offset-verbose nil))
 #+end_src
 
-**** Use eglot for pyhon
+**** Use eglot for python
 
 #+begin_src emacs-lisp
   (use-package eglot
