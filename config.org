@@ -9532,59 +9532,64 @@ certain LLM logic when conditions are met.
 
 #+name: workflow-session-wrap
 #+begin_src org
-    GOAL:
-    - Provide a concise wrap-up.
-    - Surface potential long-term memory updates (Season profile, KG memory).
-    - Avoid forcing extra cognitive load if the user is tired.
+  GOAL:
+  - Provide a concise wrap-up.
+  - Surface potential long-term memory updates (Season profile, KG memory).
+  - Reveal potential improvements to LLM interactions
+    - surface missing tools or tool options that were attempted but not available
+    - mention problems encountered with the existing tools
+  - Avoid forcing extra cognitive load if the user is tired.
 
-    STEPS:
-    1. Check user energy/intent from recent messages.
-       - If they explicitly want to stop quickly or seem overloaded:
-         - Aim for a *minimal* wrap (1–3 bullets).
-       - Otherwise, proceed normally.
+  STEPS:
+  1. Check user energy/intent from recent messages.
+     - If they explicitly want to stop quickly or seem overloaded:
+       - Aim for a *minimal* wrap (1–3 bullets).
+     - Otherwise, proceed normally.
 
-    2. Produce a brief wrap-up for this session:
-       - 2–5 bullets maximum, covering:
-         - Key decisions or conclusions.
-         - Non-obvious insights or reframings.
-         - Next concrete actions (if any).
+  2. Produce a brief wrap-up for this session:
+     - 2–5 bullets maximum, covering:
+       - Key decisions or conclusions.
+       - Non-obvious insights or reframings.
+       - Next concrete actions (if any).
+     - Additional bullets mentioning potential improvements
+       to the LLM-user interaction
 
-    3. Scan for potential long-term memory candidates:
-       - Consider:
-         - Season/Profile-level changes (chapter, long-running projects, constraints).
-         - Durable Facts/Summaries for the Knowledge-Graph memory.
-       - If nothing clearly long-term emerged, skip this step and finish.
+  3. Scan for potential long-term memory candidates:
+     - Consider:
+       - Season/Profile-level changes (chapter, long-running projects, constraints).
+       - Durable Facts/Summaries for the Knowledge-Graph memory.
+     - If nothing clearly long-term emerged, skip this step and finish.
 
-    4. If there are clear candidates, *ask explicitly*:
-       - Example phrasing:
-         - “There are 1–2 things that look like long-term memory candidates (season profile / KG facts).”
-         - “Do you want me to:
-            (a) suggest an update to your Season profile,
-            (b) suggest KG memory entries,
-            (c) skip memory updates for now?”
-       - Respect the answer fully (including “skip”).
+  4. If there are clear candidates, *ask explicitly*:
+     - Example phrasing:
+       - “There are 1–2 things that look like long-term memory candidates (season profile / KG facts).”
+       - “Do you want me to:
+          (a) suggest an update to your Season profile,
+          (b) suggest KG memory entries,
+          (c) skip memory updates for now?”
+     - Respect the answer fully (including “skip”).
 
-    5. If user chooses Season profile update:
-       - Summarize the proposed change in 1–2 sentences.
-       - Use the `update_current_season_profile` tool with a focused `context`
-         that contains only what is needed to adjust the Season block.
-       - Show the updated profile block (or key delta) back to the user.
+  5. If user chooses Season profile update:
+     - Summarize the proposed change in 1–2 sentences.
+     - Use the `update_current_season_profile` tool with a focused `context`
+       that contains only what is needed to adjust the Season block.
+     - Show the updated profile block (or key delta) back to the user.
 
-    6. If user chooses KG memory update:
-       - Identify 1 Topic (or at most 2) that best matches this session.
-       - Propose:
-         - One Session name (e.g. session:YYYY-MM-DD-1),
-         - One Summary (2–4 sentences),
-         - 1–3 Facts (each 1–2 precise sentences).
-       - If they confirm, run `KG_MEMORY_WRITE_V1` with that material.
+  6. If user chooses KG memory update:
+     - Identify 1 Topic (or at most 2) that best matches this session.
+     - Propose:
+       - One Session name (e.g. session:YYYY-MM-DD-1),
+       - One Summary (2–4 sentences),
+       - 1–3 Facts (each 1–2 precise sentences).
+     - If they confirm, run `KG_MEMORY_WRITE_V1` with that material.
 
-    7. Close the session with:
-       - A short confirmation of what (if anything) was written to long-term memory.
-       - Otherwise, a simple “No long-term memory changes this time” note.
-     
-    NOTES:
-    - Do *not* push for Season or KG updates every time; step 3 may often decide “nothing long-term here”.
-    - Keep all wrap-up text concise; this is not a second answer, just a digest.
+  7. Close the session with:
+     - A short confirmation of what (if anything) was written to long-term memory.
+     - Otherwise, a simple “No long-term memory changes this time” note.
+   
+  NOTES:
+  - Do *not* push for Season or KG updates every time; step 3 may often decide “nothing long-term here”.
+  - Keep all wrap-up text concise; this is not a second answer, just a digest.
 
 #+end_src
 
