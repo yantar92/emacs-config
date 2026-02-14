@@ -10203,8 +10203,8 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
   	    (thread-last
                 old-string
   	      (regexp-quote)
-                (replace-regexp-in-string "[\n]+" "[ \t\n]+")
-                (replace-regexp-in-string "[ \t]+" "[ \t]+")))
+  	      (replace-regexp-in-string "[ \t]+" "[ \t]+")
+                (replace-regexp-in-string "[\n]+" "[ \t\n]+")))
         (save-excursion
           (goto-char (point-min))
           (let ((count 0))
