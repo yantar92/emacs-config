@@ -10184,16 +10184,18 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
 
 #+name: bufedit
 #+begin_src emacs-lisp :tangle no
-  (defun codel-edit-buffer (buffer-name old-string new-string)
+  (defun codel-edit-buffer (buffer-name old-string new-string &optional indent-column)
     "In BUFFER-NAME, replace OLD-STRING with NEW-STRING.
-  Tabs, spaces, and newlines in OLD-STRING are matched in lax way, allowing multiple."
+  Tabs, spaces, and newlines in OLD-STRING are matched in lax way, allowing multiple.
+  When INDENT-COLUMN is provided, it should be a column to indent the NEW-STING to."
     (with-current-buffer buffer-name
       (let ((case-fold-search nil))  ;; Case-sensitive search
         (setq old-string
   	    (thread-last
                 old-string
   	      (regexp-quote)
-                (replace-regexp-in-string "[ \t\n]+" "[ \t\n]+")))
+                (replace-regexp-in-string "[\n]+" "[ \t\n]+")
+                (replace-regexp-in-string "[ \t]+" "[ \t]+")))
         (save-excursion
           (goto-char (point-min))
           (let ((count 0))
@@ -10206,6 +10208,8 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
                 (goto-char (point-min))
                 (re-search-forward old-string)
                 (replace-match new-string t t)
+                (when indent-column
+  		(indent-region (match-beginning 0) (match-end 0) indent-column))
                 (format "Successfully edited buffer %s" buffer-name))))))))
 
   (gptel-make-tool
@@ -10220,7 +10224,11 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
              :description "Text to replace (must match exactly, except newlines, tabs, and spaces that will be matched as [ \t\n]+)")
            ( :name "new_string"
              :type string
-             :description "Text to replace old_string with"))
+             :description "Text to replace old_string with")
+           ( :name "indent_column"
+             :type integer
+             :optional t
+             :description "When provided, indent new_string to indent_column column after insertion"))
    :confirm t
    :category "edit")
 
