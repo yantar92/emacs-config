@@ -7610,8 +7610,6 @@ The idea of the script is regular reminder to not spend too much money on certai
 
   WEEKLY_INCOME_AVG="$(ledger r -X <<ledger-main-currency()>> Income and not Interest -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income from the beginning of the year
   [[ -z "$WEEKLY_INCOME_AVG" ]] && WEEKLY_INCOME_AVG="0"
-  WEEKLY_INCOME_AVG_NO_SALARY="$(ledger r -X <<ledger-main-currency()>> Income and not Salary and not Interest -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
-  [[ -z "$WEEKLY_INCOME_AVG_NO_SALARY" ]] && WEEKLY_INCOME_AVG_NO_SALARY="0"
   WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS_NO_INVEST="$(ledger r -X <<ledger-main-currency()>> Income and not Salary and not Gifts and not Interest -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
   [[ -z "$WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS_NO_INVEST" ]] && WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS_NO_INVEST="0"
   TOTAL_INVESTMENT="$(ledger b -X <<ledger-main-currency()>> Equity | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')"
@@ -7625,6 +7623,9 @@ The idea of the script is regular reminder to not spend too much money on certai
   # -2% - inflation depreciation
   WEEKLY_INCOME_CASH=$(echo "$TOTAL_CASH * -0.02 * 0.80 / 52.0" | bc -l)
   WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS=$(echo "$WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS_NO_INVEST + $WEEKLY_INCOME_INVESTMENT + $WEEKLY_INCOME_DEPOSITS + $WEEKLY_INCOME_CASH" | bc -l)
+  WEEKLY_INCOME_AVG_NO_SALARY="$(ledger r -X <<ledger-main-currency()>> Income and not Salary and not Interest -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
+  [[ -z "$WEEKLY_INCOME_AVG_NO_SALARY" ]] && WEEKLY_INCOME_AVG_NO_SALARY="0"
+  WEEKLY_INCOME_AVG_NO_SALARY=$(echo "$WEEKLY_INCOME_AVG_NO_SALARY + $WEEKLY_INCOME_INVESTMENT + $WEEKLY_INCOME_DEPOSITS + $WEEKLY_INCOME_CASH" | bc -l)
   WEEKLY_INCOME_AVG=$(echo "$WEEKLY_INCOME_AVG + $WEEKLY_INCOME_INVESTMENT + $WEEKLY_INCOME_DEPOSITS + $WEEKLY_INCOME_CASH" | bc -l)
 
   MONTHLY_INCOME_AVG="$(echo "52.178574 / 12.0 * $WEEKLY_INCOME_AVG" | bc -l)"
