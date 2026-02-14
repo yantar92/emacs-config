@@ -10087,16 +10087,18 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
       (org-with-wide-buffer
        (let ((max-chars 100000))
          (when (and (> (point-max) max-chars) (not beg_line) (not end_line))
-  	 (error "Buffer size exceeds %d. Consider passing start_line or end_line or using search tool." max-chars)))
-       (buffer-substring-no-properties
-        (save-excursion
-  	(org-goto-line (or beg_line 0))
-          (point))
-        (save-excursion
-  	(if end_line (goto-char (point-max))
-            (org-goto-line end_line)
-            (goto-char (point-at-eol)))
-          (point))))))
+  	 (error "Buffer size exceeds %d characters. Consider passing start_line or end_line or using search tool." max-chars))
+         (let ((beg (save-excursion
+  		    (org-goto-line (or beg_line 0))
+  		    (point)))
+               (end (save-excursion
+  		    (if (not end_line) (goto-char (point-max))
+  		      (org-goto-line end_line)
+  		      (goto-char (point-at-eol)))
+  		    (point))))
+  	 (when (> (- end beg) max-chars)
+  	   (error "Requested text size exceeds %d characters. Consider reducing line range or using search tool." max-chars))
+  	 (buffer-substring-no-properties beg end))))))
 
   (gptel-make-tool
    :name "view_buffer"
