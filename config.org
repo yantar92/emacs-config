@@ -12503,6 +12503,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     	       agenda ""
     	       ((org-agenda-tag-filter-preset '("-TICKLER" "-CANCELLED" "-WAITING" "-HOLD" "-SOMEDAY" "-NODEADLINE"))
                     (org-agenda-regexp-filter-preset '("-TICKLER"))
+                    (org-agenda-show-future-repeats nil)
                     (org-agenda-span 'week)))
                   ("r" "3 day agenda"
     	       agenda ""
