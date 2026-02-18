@@ -10560,7 +10560,7 @@ here, so that LLM reasoning can be utilized better.
     (consult-gh-enable-default-keybindings))
 #+end_src
 
-*** Use consult-gh to browse github URLs
+*** COMMENT Use consult-gh to browse github URLs
 
 #+begin_src emacs-lisp
   (use-package consult-gh
