@@ -8826,7 +8826,8 @@ syncthing --no-browser 2>&1 | syncthing-logger.sh &
       [[ "$x" == *"INF"* ]] && continue
       [[ "$x" == "" ]] && continue
       [[ "$x" == *"Failed to acquire open port"* ]] && continue
-      [[ "$x" == *"Failed TLS handshake"* ]] && continue    
+      [[ "$x" == *"Failed TLS handshake"* ]] && continue
+      [[ "$x" == *"Lost device connection"* ]] && continue
       echo $(date): $x >> ~/.log/syncthing.log
   done
 #+end_src
