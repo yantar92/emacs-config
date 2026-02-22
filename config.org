@@ -17939,7 +17939,9 @@ Hide some uninteresting tags
   (setq org-agenda-hide-tags-regexp
         (rx (or "DEFAULT" "flagged" "NOFOLLOW" "TICKLER" "SKIP"
                 "NOARCHIVE" "INBOX" "HOLD" "WAITING" "NODEADLINE"
-                "CANCELLED" "NOREFILE" "REFILE")))
+                "CANCELLED" "NOREFILE" "REFILE" "BOOKMARK"
+                "emacsdev" "maintenance" "email"
+                "@home" "@work")))
 #+end_src
 
 Shorten too long headlines in agenda. 
