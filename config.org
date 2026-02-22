@@ -10788,7 +10788,8 @@ is used to find out when to remind about the idea next time.
   interest. The difference with normal projects is that areas are not
   expected to be ever finished. Thus, it has little point to keep them
   in weekly review together with projects. However, they can be stuck,
-  as any other project.
+  as any other project. I use them mostly to hold various references,
+  bookmarks, and notes.
 
 ***** Tasks
 :PROPERTIES:
