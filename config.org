@@ -7797,6 +7797,7 @@ I automated the check by examining WORG repository directly and checking the ~gi
       '(("Max Nikulin" . "Maxim Nikulin")
         ("Mikhail Skorzhinskiy" . "Mikhail Skorzhinskii")
         ("David Lukeš" . "David Lukes")
+        ("Nick Dokos" . "Nicholas Dokos")
         ;; typo
         ("Mikhail Skorzhisnkii" . "Mikhail Skorzhinskii")
         ("Rudolf Adamkovič" . "Rudolf Adamkovic")
@@ -17939,8 +17940,9 @@ Hide some uninteresting tags
   (setq org-agenda-hide-tags-regexp
         (rx (or "DEFAULT" "flagged" "NOFOLLOW" "TICKLER" "SKIP"
                 "NOARCHIVE" "INBOX" "HOLD" "WAITING" "NODEADLINE"
-                "CANCELLED" "NOREFILE" "REFILE" "BOOKMARK"
-                "emacsdev" "maintenance" "email"
+                "CANCELLED" "NOREFILE" "REFILE" "BOOKMARK" "COMMON"
+                "emacsdev" "maintenance" "email" "study" "PhD" "ARCHIVEALL" "feature" "bug"
+  	      "fiction" "leisure" "EMACS" "SOMEDAY"
                 "@home" "@work")))
 #+end_src
 
