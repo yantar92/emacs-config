@@ -1419,6 +1419,13 @@ Disable tooltips.
 (tooltip-mode -1)
 #+end_src
 
+*** =M-x=
+
+Filter out commands not available in current major mode in completions.
+#+begin_src emacs-lisp
+(setq read-extended-command-predicate #'command-completion-default-include-p)
+#+end_src
+
 *** Key bindings
 :PROPERTIES:
 :ID:       2e69950e-21b5-40aa-8f82-895cc04aa5c2
