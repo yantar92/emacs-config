@@ -10082,8 +10082,11 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
     (use-package gptel
       :config
       <<gptel-search>>
+      <<gptel-project-search>>
+      <<gptel-org-search>>
   )
 #+end_src
+***** Buffers/files
 
 #+name: gptel-search
 #+begin_src emacs-lisp :tangle no
@@ -10132,23 +10135,6 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
    :confirm nil
    :category "search")
   (push (gptel-get-tool "view_buffer_or_file") gptel-tools)
-
-  (defun yant/find-related-files (&optional buffer)
-    "Return a list of files related to BUFFER."
-    (with-current-buffer (or buffer (current-buffer))
-      (or (project-files (project-current))
-  	(buffer-file-name))))
-
-  (gptel-make-tool
-   :name "list_related_files"
-   :function #'yant/find-related-files
-   :description "Return a list of files that belong to the project/repository BUFFER_NAME belongs to."
-   :args '(( :name "buffer_name"
-             :type string
-             :description "Name of the buffer"))
-   :confirm nil
-   :category "search")
-  (push (gptel-get-tool "list_related_files") gptel-tools)
 
   (defun yant/search-buffer (buffer regexp-or-string &optional before-lines after-lines search-literally top-n)
     "Return a list of match objects for REGEXP-OR-STRING in BUFFER.
@@ -10220,6 +10206,47 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
    :confirm nil
    :category "search")
   (push (gptel-get-tool "search_in_buffer") gptel-tools)
+#+end_src
+***** Org headings
+#+name: gptel-org-search :tangle no
+#+begin_src emacs-lisp
+  (defun yant/get-note-with-id (id)
+    "Retrieve contents of a note/task with ID."
+    (if-let* ((mk (org-id-find id 'marker)))
+        (org-with-point-at mk
+  	(let ((hd (org-element-at-point)))
+  	  (buffer-substring-no-properties (org-element-begin hd) (org-element-end hd))))
+      (error "Heading with id:%s not found" id)))
+  (gptel-make-tool
+   :name "find_note_or_task"
+   :function #'yant/get-note-with-id
+   :description "Return a note or a task associated with ID."
+   :args '(( :name "id"
+             :type string
+             :description "Note ID (as in Org mode id: link)"))
+   :confirm nil
+   :category "search")
+  (push (gptel-get-tool "find_note_or_task") gptel-tools)
+#+end_src
+***** Projects
+#+name: gptel-project-search :tangle no
+#+begin_src elisp
+  (defun yant/find-related-files (&optional buffer)
+    "Return a list of files related to BUFFER."
+    (with-current-buffer (or buffer (current-buffer))
+      (or (project-files (project-current))
+    	(buffer-file-name))))
+
+  (gptel-make-tool
+   :name "list_related_files"
+   :function #'yant/find-related-files
+   :description "Return a list of files that belong to the project/repository BUFFER_NAME belongs to."
+   :args '(( :name "buffer_name"
+             :type string
+             :description "Name of the buffer"))
+   :confirm nil
+   :category "search")
+  (push (gptel-get-tool "list_related_files") gptel-tools)
 #+end_src
 
 **** Editing buffers
