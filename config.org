@@ -2955,7 +2955,19 @@ abort completely with `C-g'."
     :hook ((notmuch-message-mode org-mode text-mode) . jinx-mode)
     :bind* (("M-h" . jinx-correct)))
 #+end_src
+***** Fix automatic language setting in Org buffers
 
+I do not have =en= language in my dictionaries. I need =en_US=.
+But, Org mode files may have =#+LANGUAGE: en=, causing jinx to fail.
+Fix it.
+#+begin_src emacs-lisp
+  (use-package jinx
+    :config
+    (defun yant/jinx-fix-languages ()
+      "Clean up en from `jinx-languages'."
+      (setq jinx-languages (replace-regexp-in-string "\\(en\\)\\(?: \\|$\\)" "en_US" jinx-languages)))
+    (add-hook 'jinx-mode-hook #'yant/jinx-fix-languages))
+#+end_src
 **** Language tool
 :PROPERTIES:
 :ID:       955d0dd9-29d4-4bde-a9a3-46129580ba6f
