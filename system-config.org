@@ -5,7 +5,22 @@
 :END:
 #+ARCHIVE: ::* Archived
 
-* HOLD [#B] System: Gentoo Linux :COMMON:HOLD:
+This file serves are both live system configuration
+and also installation guide that can be deployed following [[*Installation]]
+instructions and tangling.
+
+Clean room tangle setup:
+#+begin_src emacs-lisp :eval yes
+  (load-theme 'modus-operandi)
+  (setq org-confirm-babel-evaluate nil)
+  (setq init-flag t)
+  (load "~/PersonalDocuments/emacs-personal.el")
+#+end_src
+
+#+RESULTS:
+: t
+
+* System: Gentoo Linux :COMMON:
 :PROPERTIES:
 :ID:       9fe29e54-81b8-47a1-888f-f1721f9dae54
 :END:
@@ -16,8 +31,388 @@
   Get full installation first
 :END:
 
-System upgrade:
+** Installation
+:PROPERTIES:
+:header-args: :eval no :tangle no
+:ID:       f7b38cac-b891-448d-b83e-d87ac56f0ceb
+:END:
 
+The system is configured with root and home encryption.
+
+For the duration of the initial installation (while on live USB),
+I do not yet tangle this file instead using minimal setup.
+Later, I can tangle and reboot.
+
+ *Step 1: Live boot*
+
+https://www.gentoo.org/downloads/amd64/
+
+[2026-03-21 Sat] With my new Framework 13, the Gentoo Live USB works just fine.
+One caveat is that I had to configure WiFi password somewhat manually,
+seleting "store for all users" option in settings. Otherwise, KDE wallet prevented
+password from being used.
+
+ *Step 2: disk partition scheme*
+
+I use rootfs&home encryption, following https://wiki.gentoo.org/wiki/Rootfs_encryption
+I used to do full disk encryption with boot partition stored on USB drive, but
+I can instead use yubikey password. That's still equivalent - I need
+external device to enter the password. One slight downside is that bootloader
+is physically on the same device with the laptop (and unencrypted),
+but UEFI signing and secure boot make that attack vector irrelevant.
+The upside, on the other hand, is that boot is faster compared to USB-A.
+
+For FS, I historically use BTRFS. Howadays, the default ZFS is available, which
+gives comparable feature set, but I prefer to use BTRFS to allow emerge rollbacks via
+BTRFS snapshots (via snapper).
+
+Partition scheme:
+1. EFI System Partition (1G - good enough)
+2. Encrypted LVM (here, I deviate from the handbook, creating rootfs and home
+   inside LVM, instead of normal BTRF-formatted partition; see
+   https://wiki.gentoo.org/wiki/LVM)
+   1. RootFS - 100G (recommended 62GiB is not enough for my usage)
+   2. Swap - 1.5*32Gb (1.5*RAM) = 48G
+   3. Home - all the rest
+
+The LVM partition is to be marked as 44 (type) in fdisk.
+See https://wiki.gentoo.org/wiki/LVM.
+
+#+begin_src bash
+  fdisk /dev/nvme0n1
+  # create disklabel
+  g
+  # create EFI System Partition #1 with 1G size, type ESP
+  n
+  1
+  RET
+  +1G
+  t
+  1
+  # create LUKS+LVM partition #2 with all remaining size, type LVM
+  n
+  2
+  RET
+  RET
+  t
+  44
+  # write changes
+  w
+#+end_src
+
+When creating LUKS encryption, I use key file + YubiKey
+See https://wiki.gentoo.org/wiki/Full_Disk_Encryption_From_Scratch#LUKS_Preparation
+This simply means GPG-encrypted LUKS key file with GPG using my yubikey.
+#+begin_src bash :eval no :tangle no
+  chronyd -q # ensure that system clock is correct (for https to work)
+  mkfs.vfat -n "BOOT" -F32 /dev/nvme0n1p1
+  mkdir -p /mnt/efi
+  mount /dev/nvme0n1p1 /mnt/efi
+  cd /mnt/efi
+  cryptsetup luksFormat /dev/nvme0n1p2 # Use Yubikey password
+  cryptsetup luksHeaderBackup /dev/nvme0n1p2 --header-backup-file root_headers.img
+  cryptsetup luksOpen /dev/nvme0n1p2 gentoo
+  pvcreate /dev/mapper/gentoo
+  vgcreate vg1 /dev/mapper/gentoo
+  lvcreate --size 48G --name swap vg1
+  lvcreate --size 100G --name root vg1
+  lvcreate --extents 95%FREE --name home vg1
+  vgchange --available y
+  mkswap -L "swap" /dev/mapper/vg1-swap
+  mkfs.btrfs -L "root" /dev/mapper/vg1-root
+  mkfs.btrfs -L "home" /dev/mapper/vg1-home
+#+end_src
+
+ *Step 3: unpacking stage3 and initial setup*
+
+First, mount everything.
+#+begin_src bash
+  cd /
+  umount /mnt/efi
+  swapon /dev/mapper/vg1-swap
+  mkdir -p /mnt/gentoo
+  mount /dev/mapper/vg1-root /mnt/gentoo
+  mkdir -p /mnt/gentoo/{home,boot}
+  mount /dev/nvme0n1p1 /mnt/gentoo/boot
+  mount /dev/mapper/vg1-home /mnt/gentoo/home
+  mkdir -p /mnt/gentoo/boot/efi
+#+end_src
+
+Download and unpack stage3
+
+#+begin_src bash
+  cd /mnt/gentoo
+  # Go to https://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-openrc/
+  wget https://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-openrc/stage3-amd64-openrc-20260316T093103Z.tar.xz
+  wget https://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-openrc/stage3-amd64-openrc-20260316T093103Z.tar.xz.asc
+  gpg --import /usr/share/openpgp-keys/gentoo-release.asc
+  gpg --verify stage3*.asc stage3*.tar.xz
+  tar xpvf stage3*.tar.xz --xattrs-include='*.*' --numeric-owner -C /mnt/gentoo
+#+end_src
+ 
+At this point, we more or less follow the handbook.
+Most of the setup is already in this file - I can apply it later, when
+booting the new system.
+One thing I need to check manually is CPU flags to be compatible with
+laptop CPU. See <https://wiki.gentoo.org/wiki/CPU_FLAGS_*>
+~cpuid2cpuflags~ should help.
+I also need to make sure that =VIDEO_CARDS= is right.
+
+#+name: getcpuflags
+#+begin_src bash :eval yes :cache yes
+  cpuid2cpuflags | cut -d: -f2-
+#+end_src
+
+#+RESULTS[b4b17b216f8769e2fb58f33ef0c4b1724e9f241c]: getcpuflags
+: aes avx avx2 avx_vnni bmi1 bmi2 f16c fma3 mmx mmxext pclmul popcnt rdrand sha sse sse2 sse3 sse4_1 sse4_2 ssse3 vpclmulqdq
+
+#+name: videocard
+intel
+
+[2026-03-22 Sun] gcc fails to compile, asking to use =resolve-march-native= to get correct CFLAGS.
+#+name: get-cflags
+#+begin_src bash :eval yes :cache yes
+  resolve-march-native
+#+end_src
+
+#+RESULTS: get-cflags
+: -march=alderlake -mabm -mno-kl -mno-pconfig -mno-sgx -mno-widekl -mshstk --param=l1-cache-line-size=64 --param=l1-cache-size=32 --param=l2-cache-size=24576
+
+In any case, the above is not applied during the installation.
+I instead do full ~emerge world~ after rebooting.
+For now, I only use the minimal =make.conf= file, adding only
+absolutely necessary settings.
+
+ *Step 4: chrooting*
+
+Here we do the usual incantation to switch from live system
+to chroot environment.
+
+#+begin_src bash
+  cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
+  mount --types proc /proc /mnt/gentoo/proc
+  mount --rbind /sys /mnt/gentoo/sys
+  mount --make-rslave /mnt/gentoo/sys
+  mount --rbind /dev/ /mnt/gentoo/dev
+  mount --make-rslave /mnt/gentoo/dev
+  mount --bind /run /mnt/gentoo/run
+  mount --make-slave /mnt/gentoo/run
+  chroot /mnt/gentoo /bin/bash
+  source /etc/profile
+  export PS1="(chroot) $PS1"
+  emerge-webrsync
+#+end_src
+
+No other staff from handbook is necessary as I already have it in this
+file to be tangled later. For now, we do absolute minimum - no repo
+config, no mirrors, etc.
+
+I use default profile (non-desktop), as provided by stage3.
+
+Now, continue with other necessary items
+#+begin_src bash
+  cd /etc
+  ln -sf ../usr/share/zoneinfo/Europe/Warsaw /etc/localtime
+  echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+  locale-gen
+  eselect locale set 4 # en_US.utf-8
+  env-update && source /etc/profile && export PS1="(chroot) $PS1"
+#+end_src
+
+ *Step 5: Kernel config*
+
+Just use =installkernel= with =grub ugrd= use flags.
+This will allow easy initramfs config and grub configuration.
+
+Install using distributed kernels for easier upgrades.
+First, use =sys-kernel/gentoo-kernel-bin= (to be replaced by =gentoo-kernel= later).
+
+Configure minimal use flags for bootstrap.
+
+#+begin_src bash :noweb yes :eval yes :dir /sudo::/
+  # mkdir -p /etc/portage/package.use
+  echo "<<installkerneluse>>" >> /mnt/gentoo/etc/portage/package.use/99-bootstrap && echo success
+#+end_src
+
+#+RESULTS:
+: success
+
+Now, also configure EFI signature for kernel and LVM support.
+
+#+begin_src bash :eval no
+  openssl req -new -noenc -utf8 -sha256 -x509 -outform PEM -out /kernel_key.pem -keyout /kernel_key.pem
+#+end_src
+
+#+RESULTS:
+
+#+begin_src bash :noweb yes :eval yes :dir /sudo:: :results output example :noweb-prefix no
+        echo '<<bootstrap-makeconf>>' >> /mnt/gentoo/etc/portage/make.conf && echo success
+#+end_src
+
+#+RESULTS:
+: success
+
+We need to install =btrfs-progs= and =cryptsetup= at this point to make
+auto-installation work.
+
+#+begin_src bash
+  emerge btrfs-progs cryptsetup
+  emerge installkernel gentoo-kernel-bin
+#+end_src
+
+ *Step 6: Fstab and network*
+
+=fstab= should work just fine as long as I provide appropriate
+labels when formatting earlier. Just need to tangle later.
+
+For network, same story - configuration will be tangled.
+
+ *Step 7: Root password and required tools*
+
+#+begin_src bash
+  passwd
+  useradd -m -G users,wheel,audio -s /bin/bash yantar92
+  passwd yantar92
+#+end_src
+
+I do not install system logger and co here.
+All handled by tangle later.
+
+ *Step 8: Grub and EFI install*
+
+The grub and everything else should already be pulled
+by =installkernel=. I just need to actually write GRUB and EFI.
+
+#+begin_src bash
+  grub-install --efi-directory=/boot
+  emerge shim mokutil
+  cp /usr/share/shim/BOOTX64.EFI /boot/EFI/gentoo/shimx64.efi
+  cp /usr/share/shim/mmx64.efi /boot/EFI/gentoo/
+  cp /usr/lib/grub/grub-x86_64.efi.signed /boot/EFI/gentoo/grubx64.efi
+  openssl x509 -in /kernel_key.pem -inform PEM -out /kernel_key.der -outform DER
+  mokutil --import /kernel_key.der
+  efibootmgr --create --disk /dev/nvme0n1p1 --loader '\EFI\gentoo\shimx64.efi' --label 'GRUB via Shim' --unicode
+  grub-mkconfig -o /boot/EFI/gentoo/grub.cfg
+#+end_src
+
+ *Step 9: Rebooting & tangling the full config*
+
+I need Emacs - to tangle this file.
+#+begin_src bash
+  emerge emacs
+#+end_src
+ 
+To make things simple, I now simply download my
+home folder from the backup. That folder will contain this file
+alongside with all the necessary attachments to install themes and whatnot.
+
+#+begin_src bash
+  # From chroot
+  emerge restic
+  cryptsetup luksOpen /dev/sdc1 backup
+  vgchange --available y
+  mkdir -p /mnt/backup
+  mount /dev/mapper/vgbackup-backup /mnt/backup
+  restic -r /mnt/backup/Backup restore latest --target /home/yantar92
+#+end_src
+
+Now, do the tangle.
+First, decrypt this file via M-x org-decrypt-entries
+and write it to /home/yantar92/system-config-decrypted.org
+
+#+begin_src bash
+  emerge sudo
+  emerge app-crypt/gnupg
+  # for theme
+  emerge imagemagick
+  chown yantar92:yantar92 /home/yantar92/system-config-decrypted.org
+  # uncomment wheel group in sudoers
+  su yantar92
+  emacs -Q ~/Git/emacs-config/system-config.org
+  # Now, install linux-firmware for wifi to work
+  exit
+  emerge linux-firmware
+#+end_src
+
+ *Step 10: Bootstraping the world*
+
+Now, reboot.
+From there, install everything needed.
+
+#+begin_src bash
+  # First, compile the compiler optimized to current arch
+  emerge --a -1 gcc
+  emerge --emptytree -a --autounmask-write=y --autounmask-use=y --keep-going world
+#+end_src
+
+The above may have to go through several iterations to add all the necessary use-flags.
+Also, third-party overlays are not yet active, so emerge will complain (to be ignored for now).
+
+Install all the services, enable repositories, etc.
+#+begin_src bash :eval yes :dir /sudo::/ :noweb yes :results verbarim output
+  <<sys-configure>>
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ ,* rc-update: cronie already installed in runlevel `default'; skipping
+ ,* rc-update: acpid already installed in runlevel `default'; skipping
+ ,* rc-update: net.wlp170s0 already installed in runlevel `default'; skipping
+ ,* rc-update: dbus already installed in runlevel `default'; skipping
+ ,* rc-update: display-manager already installed in runlevel `default'; skipping
+error: torbrowser: repository already enabled, in /var/db/repos/torbrowser
+Adding guru to /etc/portage/repos.conf/eselect-repo.conf ...
+1 repositories enabled
+Adding gentoo-zh to /etc/portage/repos.conf/eselect-repo.conf ...
+1 repositories enabled
+Adding pentoo to /etc/portage/repos.conf/eselect-repo.conf ...
+1 repositories enabled
+#+end_example
+
+Some of the above will fail because we do not yet have all the programs
+from overlays installed. Update again, and re-run the above.
+#+begin_src bash
+  eix-sync # pull new repos in
+  emerge -a --update --newuse --autounmask-write=y world
+#+end_src
+
+ *Step 11: Recover notmuch tags*
+
+#+begin_src bash
+  sudo -u yantar92
+  cd ~/Mail
+  notmuch new
+  notmuch restore --input=notmuch-dump.gz
+#+end_src
+
+ *Step 12: Re-tangling from X11*
+
+Some of the tangling cannot be fully done when the fonts and graphics are not yet defined.
+Repeat the tangling from GUI after reboot.
+
+We also need to re-install grub theme.
+
+#+begin_src bash
+  mount /boot
+  grub-mkconfig -o /boot/efi/gentoo/grub.cfg
+#+end_src
+
+ *Step 13: Switch to minimal kernel*
+
+#+begin_src bash
+  emerge --unmerge gentoo-kernel-bin
+  emerge gentoo-kernel
+  grub-mkconfig -o /boot/efi/gentoo/grub.cfg
+#+end_src
+
+
+** TODO System updates
+:PROPERTIES:
+:ID:       e5f43055-2a84-4326-8ccb-640f16abab71
+:END:
+
+- Note taken on [2026-03-21 Sat 18:56] \\
+  update with installkernel
 #+begin_src screen :eval (yes-or-no-p "Run Gentoo system upgrade? ") :terminal kitty :session update :cmd bash
 su
 #+end_src
@@ -36,16 +431,6 @@ smart-live-rebuild
 #+end_src
 
 #+begin_src screen :terminal kitty :session update :eval yes :cmd bash
-eselect kernel list
-#+end_src
-#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
-eselect kernel set 1
-#+end_src
-#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
-genkernel --menuconfig all
-#+end_src
-
-#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
 revdep-rebuild
 eclean-pkg
 eclean-dist
@@ -56,35 +441,40 @@ emerge --depclean --ask
 #+end_src
 
 ** Basic toolchain
-*** System setup
-
-The system is configured with full disk encryption, removed trusted
-Windows EFI key, and Linux kernel stored on USB drive. I used Sakaki's
-guide: [[id:273a40e160b2bac3abab5110fbee51a2f9c3b0ac][[Wiki.Gentoo]
-User:Sakaki/Sakaki's EFI Install Guide - Gentoo Wiki]]
-
-[2023-01-07 Sat] Using more up-to-date
-https://wiki.gentoo.org/wiki/Full_Disk_Encryption_From_Scratch_Simplified#Create_partitions
-but also mixing it with some parts of Sakaki guide.
-
 *** =fstab=
 :PROPERTIES:
 :ID:       53823446-7763-4d86-b05f-ecea10718908
 :END:
 
+#+name: fstab
 #+begin_src conf :tangle /sudo::/etc/fstab
-  UUID=ea7aa879-3483-45c2-81cd-ecf40b49fb15		/				btrfs		defaults,noatime,discard			0 1
-  UUID=adfc4270-9b46-4fc3-b097-6882e910b37f		none				swap		defaults,noatime,discard			0 0
-  UUID=d8bb8479-30b3-4b6b-acaa-43a735ddd020		/home				btrfs		defaults,noatime,discard			0 2
-  efivarfs						/sys/firmware/efi/efivars	efivarfs	rw,nosuid,nodev,noexec,relatime			0 0
-  UUID=3244-9D07						/boot				vfat		noauto,noatime					1 2
+  LABEL=root		/	btrfs	defaults,noatime,discard	0 1
+  LABEL=swap		none	swap	sw				0 0
+  LABEL=home		/home	btrfs	defaults,noatime,discard	0 2
+  LABEL=BOOT		/boot	vfat	noauto,noatime			1 2
 #+end_src
+
+*** Solid state drive helpers
+:PROPERTIES:
+:ID:       b070a152-c55e-4e5e-b1a2-4a0add44a586
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-block/io-scheduler-udev-rules
+#+end_src
+
+
+*** Services \ =rc-update=
+
+Normally, service management is done via =rc-update ...=
+commands.
+
+I automate this here, to auto-configure everything during tangling.
 
 *** Portage
 :PROPERTIES:
 :ID:       6723441a-8121-44b1-87f7-e32474f6c95c
 :END:
-
 **** Binary package repository
 :PROPERTIES:
 :ID:       53e321be-f48a-478f-99b3-a77f526b3c81
@@ -97,7 +487,6 @@ See https://wiki.gentoo.org/wiki/Gentoo_Binary_Host_Quickstart
 priority = 9999
 sync-uri = https://www.mirrorservice.org/sites/distfiles.gentoo.org/releases/amd64/binpackages/23.0/x86-64/
 #+end_src
-
 
 **** Main package repository 
 :PROPERTIES:
@@ -157,8 +546,41 @@ auto-sync = yes
 Instructions how to add new ebuilds: [[id:9bf6534c91e9c1bcc7ec03647dacb1b91eb8a4ce][[Wiki.Gentoo] Custom ebuild repository - Gentoo Wiki]]
 
 Need to install repoman for managing repository.
-**** Eclass docs: =eclass-manpages=
 **** =make.conf=
+***** Kernel setup
+:PROPERTIES:
+:ID:       7b221b51-cd0a-4eba-893b-714f8cd17907
+:END:
+
+ #boot #EFI #grub #genkernel #ugrd
+
+#+name: bootstrap-makeconf
+#+begin_src conf :tangle /sudo::/etc/portage/make.conf
+  USE="$USE lvm modules-sign secureboot dist-kernel"
+  MODULES_SIGN_KEY="/kernel_key.pem"
+  MODULES_SIGN_CERT="/kernel_key.pem"
+  SECUREBOOT_SIGN_KEY="/kernel_key.pem"
+  SECUREBOOT_SIGN_CERT="/kernel_key.pem"
+#+end_src
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-kernel/installkernel
+#+end_src
+
+#+name: installkerneluse
+#+begin_src conf :tangle /sudo::/etc/portage/package.use/installkernel
+  sys-kernel/installkernel -dracut ugrd grub
+#+end_src
+
+Nonstandard =GRUB_CFG= is for signed EFI loading.
+
+#+begin_src conf :tangle /sudo::/etc/default/grub :noweb yes
+  GRUB_DISTRIBUTOR="Gentoo"
+  GRUB_THEME="<<install-grub-theme()>>"
+  GRUB_TIMEOUT="1"
+  GRUB_CFG=/boot/EFI/gentoo/grub.cfg
+#+end_src
+
 ***** Compiler flags
 :PROPERTIES:
 :ID:       850c2184-be3f-4a06-b0aa-a06feb74253b
@@ -178,14 +600,17 @@ usable even during upgrades.
 
 
 #+begin_src conf :tangle /sudo::/etc/portage/make.conf
-# C, C++ and FORTRAN options for GCC.
-MAKEOPTS="-j<<numcpusreduced()>> -l<<numcpusreduced()>>"
-EMERGE_DEFAULT_OPTS="--jobs=<<numcpusreduced()>> --load-average=<<numcpusreduced()>>"
-COMMON_FLAGS="-march=native -O3 -pipe"
-CFLAGS="${COMMON_FLAGS}"
-CXXFLAGS="${COMMON_FLAGS}"
-FCFLAGS="${COMMON_FLAGS}"
-FFLAGS="${COMMON_FLAGS}"
+  # C, C++ and FORTRAN options for GCC.
+  # Also, Rust options
+  MAKEOPTS="-j<<numcpusreduced()>> -l<<numcpusreduced()>>"
+  EMERGE_DEFAULT_OPTS="--jobs=<<numcpusreduced()>> --load-average=<<numcpusreduced()>>"
+  COMMON_FLAGS="-O3 -pipe"
+  COMMON_FLAGS="$COMMON_FLAGS <<get-cflags()>>"
+  CFLAGS="${COMMON_FLAGS}"
+  CXXFLAGS="${COMMON_FLAGS}"
+  FCFLAGS="${COMMON_FLAGS}"
+  FFLAGS="${COMMON_FLAGS}"
+  RUSTFLAGS="${RUSTFLAGS} -C target-cpu=native"
 #+END_SRC
 
 ***** Branch
@@ -193,9 +618,9 @@ FFLAGS="${COMMON_FLAGS}"
 :ID:       08a646ae-b6dd-438d-b156-99609e02bd56
 :END:
 
-Use the 'unstable' branch
+Use the 'stable' branch
 #+BEGIN_SRC conf  :tangle /sudo::/etc/portage/make.conf
-ACCEPT_KEYWORDS="~amd64"
+ACCEPT_KEYWORDS="amd64"
 #+END_SRC
 ***** Global use flags
 :PROPERTIES:
@@ -204,20 +629,24 @@ ACCEPT_KEYWORDS="~amd64"
 
 - =vulkan=: graphic hardware acceleration
 
-#+BEGIN_SRC conf  :tangle /sudo::/etc/portage/make.conf
-USE="$USE X truetype bash-completion unicode emacs fontconfig gnuplot latex libnotify syslog udev pulseaudio"
+#+BEGIN_SRC conf  :tangle /sudo::/etc/portage/make.conf :noweb yes
+USE="$USE X truetype bash-completion unicode emacs fontconfig gnuplot latex libnotify syslog udev pulseaudio bluetooth"
 USE="$USE -qt4 -qt3support -dvd -dvdr -firefox -gnome"
 USE="$USE jit"
 USE="$USE elogind -consolekit -systemd"
 USE="$USE cjk"
 USE="$USE vulkan"
-CPU_FLAGS_X86="aes avx avx2 f16c fma3 mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
+# > cpuid2cpuflags
+CPU_FLAGS_X86="<<getcpuflags()>>"
 #+END_SRC
-***** Use binary packages unless custom use flags are selected
+***** COMMENT Use binary packages unless custom use flags are selected
 :PROPERTIES:
 :ID:       1623e145-503b-4b9f-bb1a-e96167da2da3
+:SUMMARY:  disabling because I now have a non-standard arch where custom compilation is actually going to be useful and can yield significant gains
 :END:
 
+- Note taken on [2026-03-22 Sun 15:32] \\
+  disabling because I now have a non-standard arch where custom compilation is actually going to be useful and can yield significant gains
 #+BEGIN_SRC conf  :tangle /sudo::/etc/portage/make.conf
 EMERGE_DEFAULT_OPTS="$EMERGE_DEFAULT_OPTS --getbinpkg"
 #+END_SRC
@@ -232,7 +661,7 @@ PORTDIR="/var/db/repos/gentoo"
 DISTDIR="/var/cache/distfiles"
 PKGDIR="/var/cache/binpkgs"
 #+END_SRC
-***** Language for build output
+***** COMMENT Language for build output
 :PROPERTIES:
 :ID:       9fff29b3-f207-4652-ac1c-736494e4bce1
 :END:
@@ -241,21 +670,26 @@ PKGDIR="/var/cache/binpkgs"
 # Please keep this setting intact when reporting bugs.
 LC_MESSAGES=C
 #+END_SRC
-***** Emerge logging
+***** TODO Emerge logging
 :PROPERTIES:
 :ID:       978c188c-bb0a-4e96-b5c0-52a441835213
 :END:
 
-#+BEGIN_SRC conf  :tangle /sudo::/etc/portage/make.conf
-# Turn on logging - see http://gentoo-en.vfose.ru/wiki/Gentoo_maintenance
-PORTAGE_ELOG_CLASSES="info warn error log qa"
-# Echo messages after emerge, also save to /var/log/portage/elog
-PORTAGE_ELOG_SYSTEM="echo save"
+- Note taken on [2026-03-22 Sun 08:32] \\
+  modules-sign not working for some reason
 
-# Ensure elogs saved in category subdirectories.
-# Build binary packages as a byproduct of each emerge, a useful backup
-# Enable binary packages
-FEATURES="split-elog buildpkg binpkg-request-signature"
+
+#+BEGIN_SRC conf  :tangle /sudo::/etc/portage/make.conf
+  # Turn on logging - see http://gentoo-en.vfose.ru/wiki/Gentoo_maintenance
+  PORTAGE_ELOG_CLASSES="info warn error log qa"
+  # Echo messages after emerge, also save to /var/log/portage/elog
+  PORTAGE_ELOG_SYSTEM="echo save"
+
+  # Ensure elogs saved in category subdirectories.
+  # Build binary packages as a byproduct of each emerge, a useful backup
+  # Enable binary packages
+  #   FEATURES="split-elog buildpkg binpkg-request-signature"
+  FEATURES="split-elog buildpkg"
 #+END_SRC
 ***** Video cards
 :PROPERTIES:
@@ -263,7 +697,7 @@ FEATURES="split-elog buildpkg binpkg-request-signature"
 :END:
 #+BEGIN_SRC conf  :tangle /sudo::/etc/portage/make.conf
 # Settings for X11
-VIDEO_CARDS="intel i965"
+VIDEO_CARDS="intel"
 INPUT_DEVICES="libinput"
 #+END_SRC
 ***** Gentoo mirrors
@@ -272,7 +706,7 @@ INPUT_DEVICES="libinput"
 :END:
 
 #+BEGIN_SRC conf  :tangle /sudo::/etc/portage/make.conf
-GENTOO_MIRRORS="https://mirror.yandex.ru/gentoo-distfiles/ http://gentoo.aditsu.net:8000/ http://mirror.rise.ph/gentoo http://ftp.daum.net/gentoo/ http://ftp.kaist.ac.kr/pub/gentoo/ https://ftp.lanet.kr/pub/gentoo/"
+# GENTOO_MIRRORS="https://mirror.yandex.ru/gentoo-distfiles/ http://gentoo.aditsu.net:8000/ http://mirror.rise.ph/gentoo http://ftp.daum.net/gentoo/ http://ftp.kaist.ac.kr/pub/gentoo/ https://ftp.lanet.kr/pub/gentoo/"
 #+end_src
 ***** Languages
 :PROPERTIES:
@@ -307,12 +741,19 @@ app-portage/smart-live-rebuild
 :END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-sys-kernel/gentoo-sources
+sys-kernel/gentoo-kernel
+sys-firmware/sof-firmware
+sys-firmware/intel-microcode
+sys-kernel/linux-firmware
 #+end_src
 
 Firmware for Linux
-#+begin_src conf :tangle /sudo::/etc/portage/package.license/linux-firmware
+#+begin_src conf :tangle /sudo::/etc/portage/package.license/linux-firmware :mkdirp yes
 sys-kernel/linux-firmware linux-fw-redistributable no-source-code
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.license/intel-microcode :mkdirp yes
+sys-firmware/intel-microcode intel-ucode
 #+end_src
 
 **** Disk encryption support
@@ -334,6 +775,11 @@ See https://wiki.gentoo.org/wiki/Plymouth
 sys-boot/plymouth
 sys-boot/plymouth-openrc-plugin
 #+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/plymouth
+sys-boot/plymouth-openrc-plugin ~amd64
+#+end_src
+
 
 #+name: get-plymouth-fg-color
 #+begin_src emacs-lisp :eval yes :results value :noweb yes
@@ -418,80 +864,6 @@ Same idea, also installing custom grub theme
   echo "set color_normal=dark-gray/white"
 #+end_src
 
-**** Building and installing the kernel (=genkernel= and =grub=)
-:PROPERTIES:
-:ID:       7b221b51-cd0a-4eba-893b-714f8cd17907
-:END:
-
- #boot #EFI #grub #genkernel #not_loading
-[2024-01-15 Mon] EFI requires VRAM (BIOS memory) and apparently
-~genkernel~ keeps adding things there. Now, I ran out of VRAM causing
-~grub-install~ to fail silently (~genkernel~ did not report anything,
-slurping "No space left" error reported by grub). I had to reset EFI
-keys from BIOS and later clear VRAM from BIOS prompt. Now fixed.
-
-Installing after update
-#+begin_src bash :tangle no :eval no
-genkernel --menuconfig all
-grub-mkconfig -o /boot/grub/grub.cfg
-#+end_src
-
-[2024-03-23 Sat] Need to install =installkernel= (it generates
-=vmlinuz-x.y.z= in =/boot=) manually according to Gentoo news.
-
-#+begin_src conf :tangle /sudo::/var/lib/portage/world
-sys-kernel/installkernel
-sys-kernel/genkernel
-sys-boot/grub
-# kernel signature and EFI trust certificate manipulation
-app-crypt/efitools
-#+end_src
-
-#+begin_src conf :tangle /sudo::/etc/genkernel.conf :noweb yes
-LUKS="yes"
-LVM="yes"
-DOLVM="yes"
-ZFS="no"
-GPG="yes"
-PLYMOUTH="yes"
-SPLASH="<<install-plymouth-theme()>>"
-BOOTLOADER="grub2"
-NOCOLOR="false"
-GK_SHARE="${GK_SHARE:-/usr/share/genkernel}"
-CACHE_DIR="/var/cache/genkernel"
-DISTDIR="${GK_SHARE}/distfiles"
-LOGFILE="/var/log/genkernel.log"
-LOGLEVEL=1
-DEFAULT_KERNEL_SOURCE="/usr/src/linux"
-SAVE_CONFIG="yes"
-#+end_src
-
-#+begin_src conf :tangle /sudo::/etc/portage/make.conf
-USE="$USE lvm"
-#+end_src
-
-#+begin_src bash :eval yes :tangle no
-rc-update add lvm default
-#+end_src
-
-#+begin_src conf :tangle /sudo::/etc/portage/package.use/grub
-sys-boot/grub:2 device-mapper
-#+end_src
-
-[2024-03-12 Tue] Observing SSD errors in dmesg log, like in
-https://unix.stackexchange.com/questions/470778/nvme-missing-or-invalid-subnqn-field
-Disabling SSD power saving as suggested in the answer.
-
-[2024-10-11 Fri] RAM failures corrupted hard drive. Disabling (memmap)
-faulty memory address range according to memtest.
-
-#+begin_src conf :tangle /sudo::/etc/default/grub :noweb yes
-  GRUB_DISTRIBUTOR="Gentoo"
-  GRUB_THEME="<<install-grub-theme()>>"
-  GRUB_CMDLINE_LINUX="memmap=300M\\\$4200M dolvm crypt crypt_root=UUID=b074fbfd-65b3-4830-971c-0dd07b8977b5 root_trim=yes root_key=luks-key.gpg nvme_core.default_ps_max_latency_us=0 quiet splash"
-  GRUB_TIMEOUT="1"
-  GRUB_GFXPAYLOAD_LINUX=keep
-#+end_src
 
 *** Pip
 :PROPERTIES:
@@ -501,7 +873,7 @@ faulty memory address range according to memtest.
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-python/pip
 #+end_src
-*** System logging =sysklogd=
+*** COMMENT System logging =sysklogd=
 :PROPERTIES:
 :ID:       a60cb107-0349-475c-8324-c672cbf3a870
 :END:
@@ -510,10 +882,9 @@ dev-python/pip
 app-admin/sysklogd
 #+end_src
 
-#+begin_src bash :tangle no :dir /sudo::/ :eval yes
+#+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
 rc-update add sysklogd default
 #+end_src
-
 
 *** cron
 :PROPERTIES:
@@ -524,7 +895,7 @@ rc-update add sysklogd default
 sys-process/cronie
 #+end_src
 
-#+begin_src bash :tangle no :dir /sudo::/ :eval yes
+#+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
 rc-update add cronie default
 #+end_src
 
@@ -536,7 +907,7 @@ HOME=/home/yantar92
 DISPLAY=:0
 #+end_src
 
-*** Hibernation \ Suspend (elogind)
+*** COMMENT Hibernation \ Suspend (elogind)
 :PROPERTIES:
 :ID:       5e8fa0bf-7aaf-4724-9555-b7aea4a6bf5c
 :END:
@@ -550,7 +921,7 @@ sys-auth/elogind
 
 Note that it does not work automatically. Need to change [[id:2618d4b3-3cc6-41b6-b5aa-990c65a01ad0][ACPI(d)]] config.
 
-**** Lock screen after resuming from suspend
+**** COMMENT Lock screen after resuming from suspend
 :PROPERTIES:
 :ID:       d2e3c848-dc21-46a8-80a4-336248e09ed1
 :END:
@@ -591,7 +962,7 @@ Info on writing udev rules: [[id:9dbb819e99f9b83488b3cb901bd93828a3a5de1b][[Weng
 yant/boot-pendrive-id
 #+end_src
 
-#+begin_src conf :tangle /sudo::/etc/udev/rules.d/99-automount.rules :noweb tangle
+#+begin_src conf :tangle /sudo::/etc/udev/rules.d/99-automount.rules :noweb tangle :mkdirp yes
 #skip boot pendrive
 ENV{ID_SERIAL_SHORT}=="<<boot-id()>>", GOTO="media_by_label_auto_mount_end"
 #skip non-pendrives
@@ -654,11 +1025,11 @@ sys-power/acpid
 #+end_src
 
 Must run acpid service 
-#+begin_src bash :tangle no :dir /sudo::/ :eval yes
+#+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
 rc-update add acpid default
 #+end_src
 
-**** Default handler 
+**** COMMENT Default handler 
 :PROPERTIES:
 :ID:       94815b9d-8ffb-44b9-8f71-2257299eb1af
 :END:
@@ -762,7 +1133,7 @@ unset alsa oss amixer ossmix group action device id
 :ID:       89d3d2a6-422a-4147-a4df-5c0d274f8d51
 :END:
 
-#+begin_src conf :tangle /sudo::/etc/udev/rules.d/81-backlight.rules
+#+begin_src conf :tangle /sudo::/etc/udev/rules.d/81-backlight.rules :mkdirp yes
 SUBSYSTEM=="backlight", ACTION=="add", KERNEL=="intel_backlight", ATTR{brightness}="1450"
 #+end_src
 
@@ -774,8 +1145,8 @@ SUBSYSTEM=="backlight", ACTION=="add", KERNEL=="intel_backlight", ATTR{brightnes
 #+begin_src bash :tangle /sudo::/etc/acpi/actions/Fn-brightnessdown.sh :shebang #!/bin/bash :mkdirp yes
 # Set the static decrement value.  Keep in mind that this will 
 # be done twice. 
-DecVal=150
-LowDecVal=4 
+DecVal=2400
+LowDecVal=64
  
 # Set the Minimum we will accept. 
 MinVal=0 
@@ -801,8 +1172,8 @@ logger "[ACPI] brightnessdown |$CurrVal<nowiki>| |</nowiki>$NewVal| |$ThresholdV
 #+begin_src bash :tangle /sudo::/etc/acpi/actions/Fn-brightnessup.sh :shebang #!/bin/bash
 # Set the static increment value.  Keep in mind that this will 
 # be done twice. 
-IncVal=150
-LowIncVal=4 
+IncVal=2400
+LowIncVal=64
  
 # Get the Maximum value for use. 
 #MaxVal=$(cat /sys/class/backlight/intel_backlight/max_brightness); 
@@ -851,7 +1222,7 @@ Need to enable =libusb= explicitly (otherwise cannot detect the Yubikey):
 app-crypt/gnupg usb
 #+end_src
 
-***** Configuration tool: =yubikey-personalization-gui=
+***** COMMENT Configuration tool: =yubikey-personalization-gui=
 :PROPERTIES:
 :ID:       e7e56336-d1e6-4619-9339-a9c22005e561
 :END:
@@ -877,7 +1248,7 @@ Use GTK dialogue and allow password keyring
 app-crypt/pinentry gtk gnome-keyring
 #+end_src
 
-#+begin_src bash :tangle no :dir /sudo::/ :results none :eval yes
+#+begin_src bash :tangle no :dir /sudo::/ :results none :eval yes :noweb-ref sys-configure
 eselect pinentry set pinentry-gnome3
 #+end_src
 
@@ -909,22 +1280,22 @@ I need to copy over my ssh key id_rsa and id_rsa.pub
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQgAscs/zXoNDEylcjLlV5Talc580tTWQ6C94qSVMRoKJ8mC
-2i8xsZLtL6FLN5O2L0nQY92xqzpS7o4UdYvLLjNb/CmvfTGdaTe8xKu/yZnL5keD
-iL4ium8+tTJ+FDXVqltmnivKBgU848xn7gZJV4fmeF/kDCPz+cD5njzfsJ+HKFy+
-rK1bHJwAF0z3I4J/ht81sY0zvq9SJwAkRM6y5rCOZRmAMcRt5Rg7YEl/ISRMjqfB
-Vd1CfqdWGkpUAACyEAck2wviV3D62oessOFGS/N6iMYMXxuUgSycs+Vv4un7en0a
-sL0DZS9GwTrKGRLhWo+1fwQk4Z9ycd7FTbE3KEabWtLA4wFdOwjsalu0glHFLNLi
-NWkGfuGe4BanKXLFPSpeKpJkMP1xPkTUQM2F/Qq7ujs0RpCDWspmJ2m75PCr6waG
-nr9pZ3UUOkzC/+OXzAqT6Q5jLZ0Pj4+5zcZQ/B1RgT8xmEicYxerFtCAGC5su9Mt
-ER1pLc2Dqo+Ka+vlpcTuaP/61rBnIIbDcgPkv0XHlyVhstZNUN1jCriMsR67+6Uv
-Zh6h83kG7YQxYykvN9qH0R7uPKwVcJKilfTsAwt+TXEpWxfsQtcZ352zGkFRMQQa
-CW9VcU1nQheQZLHkcYzdfa0mNm/5Hdpyz1pwj+yUTcwUsb3UqyIrDESWQcc1u2ww
-KrScOk91vTjlMhIyjzJlKcZIrBFuEVNiscXcn/1vw4DTAbdQHM6auUgkS/4PdYO4
-ul9JIpMzMwZvRuCGpxJY5cx1dFhLTeX6kYqHArSzQ0JD1nqtLwqZUFAkikxkTvi6
-jYXeG9KEEmjyjLcwIJ89FV32IrnOCQLIVqMIr4u3P/av/ZSeLCPBjCZua3bPMFK+
-ltwnglBGJtBhY4tUa97qc8rV0ieh
-=vjgQ
+hQEMA3SKBiQ2zhL6AQf7BJVXsBBZsCiBVRh04EfLn7KVF/0FFU6/NP8Rv6mL1aRy
+1uBoTRUhLdDlXSrBuMvHWX8FS/I5dNWid65q0nTeUyIv+jZRbcUNMkRfZYW9dUiK
+DfAESwYX8W/agTw75VLwARsCNtH9GToZ4lL84H0BQpwk673/a4h1i3C5zG05x9Gj
+CNkjRbxqkDnvTAfK3+kVIJa1rZiIKyfRtIlUay0LUeBkNAAz5M4TuyvUi/we+JJM
+qWveMWJJfSa2MG1jqOTXq+Ki3upTzKlXrrWkRAfQBuMktNa9wn6ZBK6jPlTHbeY1
+DqpOX4EUnlmFC02jht4JX6wVFTC7XWSOl+s0ZKyuTdLA4wF/V0kxqGi2Jgj+VLxA
+06w3cXy5htY3FuLqg8DShJXXUPkyenYj6slXuZKolqLA3b4AkvJRv41qlhLR/wnn
+5C22iv7+7253mHbOn2kx+7YzV7+naySNQqEthgN2IWVS9UDw5mDi3exAoJHcLU0D
++Iw0QP+8OTZvmQNJmHgMrEBrNTpQMNMV2SobtRkeiqz2MHexDRlMWIubFdETSmiw
+/h7cM6/zFSRLrlZl5xsp7ARQOTYkdHGOEo0yCnbwajYsfHTTPCZovzETeGYcWgRc
+SaDE2Z+mSz8y3WEgnuClK+ORseRRjRY8Hs6PPwJLCGHW++BPXLhFwkQw4MeIxE4W
+guK1xjgwEhHZHdPQVRdVpGayzRtmrHbafagx93SS/ChYqROnVYQTJvNFNXdICLvE
+Kob7pd6re5Oluq1r8BDEOVfRugFymLJ9Inc6vk3hISxfwN2RV+fubi4ZkOatgKnd
+rnkjuGHQhlpXrpukAWy9QeJA8oUpbBsdmsrff/jTH6yUFfIGXAGk9ARw3qwH/G83
+KkWX4iROQp5DLAQg/h3U/CfhlHfl
+=6g3e
 -----END PGP MESSAGE-----
 *** sshfs: Mount remove ssh as a folder
 :PROPERTIES:
@@ -935,8 +1306,7 @@ ltwnglBGJtBhY4tUa97qc8rV0ieh
 net-fs/sshfs
 #+end_src
 
-
-*** lsof
+*** COMMENT lsof
 :PROPERTIES:
 :ID:       5bd3a13e-a1ad-4ee7-a653-3647f6ff2237
 :END:
@@ -956,7 +1326,7 @@ sys-process/lsof
 media-sound/alsa-utils
 #+end_src
 
-*** Card reader
+*** COMMENT Card reader
 :PROPERTIES:
 :ID:       c8c66d90-59ab-4429-be71-dab2eb71b34c
 :END:
@@ -979,49 +1349,49 @@ options sdhci debug_quirks=0x40
 
 -----BEGIN PGP MESSAGE-----
 
-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
-gmy0kxS+s9El
-=tZyG
+hQEMA3SKBiQ2zhL6AQf+MYwSoCrAg7Jaifh1dA+QXW7ETAqGltVsKYuyBsnMQ0TB
+Yz330r31JDoyTiEUlj06RmUxm1cZkRpRqdN2hZQiDUQDeRTxOXBQpgaQTqVxfYE/
+n0fZ4dPumNBXvbRnpcosKQT5cXvtyvHtApUdktb+JcnJ/bN225v7fT5+wes2M2hH
+16xxb+JiJX9AcHqHbMMHXJ7no0xIdhBhQfzdplaNGQsmlJkggaqAIzVY7Qglb5pr
+NKmVeBGstbwmt7l9lxCfon40TtIoPNLNULYI3OvVJ5o3NETBVobMlQ/g1O5n2xl+
+57UMHxNmj4nzFtqgn7aKTYwRJ4ML58NUCZKMd7LPydLqAfMALmIek/EFSM3S7dSr
+pa6GZ+/RMk4saRRo5vyarvLjCK0HJyXTqxu6SodmASNEYfzG/P7DxU97594C6o9x
+PQskf8cKzVebQzvq4Gf445cRoqXVdwps7NK5KgF7MW+3yRoaJSxjLCeufzGCvW6a
+Twr4POhMJxCdILJHc3lisoJNLxE8zn+VOG53BEJBo2GG4KI8xdUB8H2U63+8Mml6
+lYZfJeMZiYp/5LF4WtHRbjVIfyMbQWa77+W4e/V5KbjVILiumjw/mFfEsfgsUAJO
+1OI3G1erkoIjOE+rcdQaftq71gp4W/FPcyQpDz7YAtJ7SRIX3gNka5CHDaogKThD
+9wgzZ8qdHSXJCKcR4izoC/X43RzYj2C5V71D7IwDIZtzf+RNbZhwGSP0LZme1sSU
+rUNNzlFm2A9Td7xL0z5oFNY6TwxFoKAPp9t6AdL/EjVLiOQ7ANqkkjJ+i33JjL4w
+TKRoSk9zbZqYNladlPJQiRuDFA1i3dYod/NeSZzdp68YYE4Y2WcGAtt7gBo6QYn2
+DtJ5iPWffYDdnQ4xuxiR9OUPHfYLSJNzteplcdy2pAwjs/KXwGt6C4B4QYiurUgu
+bYgwvyWcYJLShuNTjKZIwcFOOv5JyRnYasNfn4P0+zaH0aAYq1mdycMyWMN18Hoo
+cDHPPdVOEXMbfDZHFWqBfOB6VcF4ZtIR0HT4DScsN4o5g3KLO4JI14uPTcWIvmF2
+ATv98vizcz1s92ia4ij5ULaBOwT6QsMJg5CR2z5UMxzlWOxZIQfSqhd2bCIm8wcS
+kw4om4Cma2WaeBU/u9ZH31J0KvgF/KFwAa7o/BjCDE5iVGzlwgOMQRu+fiw0j/VW
+QNqHaHW6cfKdvNBxvwRgmVZG/3N/k8DY2p6c88j/CggBzBHKFH0WBYPgX+g9z3KG
+GKuMs3it1cRz01I1aDQF2W+EEHA2Sofg3wATbYKpL6982/5Cb5CVYrfSrbS+CumL
+KiXbMY3D5i5k1AJtYoFzluwNXLIkj0iLyBMQ7so+WviPNUn+J+YiGpI65RpdEOMv
+f6BU/XxS53/keekWHjuO6RQJPuDUedS9ILF38RU7sASWRER6lFwShB2o6ZA0VQ5Z
+i3AL/Ac8QuuPcwL/pM8aXhFb4yMXejwo4HNwEBJ6/aewdXp3JQjDVcH/aSoBQbVp
+iUVUGLpVtbw/Pb1xpOL7C9WpscBkW8AUY/evOM72Tfu1sWP2NdwLM5qp2LOUCgmA
+4Ni+uX4mGtCR4JAKFAbiGstUl8DmFlc1BjUXDdZxJ9P0IcdLR36AIrKEseGfbNLt
+pq3r9dzG/ArSjN63fg2cHo0jYo3tNBKMAiDoN6OhwMUIDRHWBiKSOjMgpy8CEcxP
+O+kAZLRtZDZpjCFhOkWBt9bFy44UvhDSKXjGzTf+mFaI4epIT0dom8Z6a0kz0L3g
+xYvSUnUCS47jDqFJcBYWslhscWlde10Hm1RxTCzGJmSDftfGuZplZEW+lYhJ1Yfy
+ZBA0TSRjONvYfExSBJgiu/mfftTzUIElwSz2Nz0IoAUVRU0ny/Mcunki6ZHka0oZ
+bH9KjV1maGMaYaIa1hdm0GDHjteCg/hJWetFNkIKHLdt1q+/7IFDEAEkh6ObfLj4
+/SWHUV0w79sTGgTtfwtTMvzpOSy53s/VQ6xd5TXKsXQHmnj+Gious0WfsqfxLtqs
+/YL5q2Akpx9+ZDUz4peteThkXd7SGitppvbq8TkhJQTCtnoFcgdaZ6Vt/EKwz+Vr
+8TlBUEOXo7mwNnizGK9nv5un3UmMuavZF2pHU0NbsK/ShLFEqSk/hjaDS803ubqC
+TehM6W/R0GfF5ludd2MdS1EhmRjRMcAobchhq2JzW/8X07rtQGdQmyHD+OOc2iBh
++ju2KRCvXSbg1d2rTD+jNuZcFS+NjPlk8lsoIv3ipvyjKN4AWTkbZ1ZJLTfQMZVq
+cGxAH9afwxUqYFB6DDfIF0SCvalDKm7wDBGdkNWcU6zOg3Gbfzjc/XVjgyfjClKi
+L+DFIjbWr0PmJbuy0hY01HL70m7oX/6m1KyHIq9Yy4NTkrDmmslv+jzFHafLOoP9
+aTW6TDUE8KPgRiV1M9Umlpa/zTM1aw2RPxJiK3UJh+wcfJt701LBMeWOVK7gfPmj
+A5UNBb2CCvMBh681ZSaBrX+vNhKKDwcY4W6TbIU7lYdx9ApFFdMH632J2dBUVhea
+b0udCh3uzEsukpgwNNSk77ohK9FoAx2pzURU5ItquDP9q2Pc4W5eAAPJCRb3PgsI
+SyF6nniuysKtkvMyoKn23TOEQw==
+=WebC
 -----END PGP MESSAGE-----
 **** User access to wpa_supplicant gui + TKIP support for common WiFi routers in China
 :PROPERTIES:
@@ -1036,7 +1406,7 @@ I need to grant superuser access for calling wpa_gui if I want to be able to cha
 net-wireless/wpa_supplicant qt5 tkip gui
 #+end_src
 
-**** wireless-tools
+**** wireless-tools (for awrsome wifi widget)
 :PROPERTIES:
 :ID:       1f3dda9d-68c9-408b-bae0-7cdec63a0882
 :END:
@@ -1045,7 +1415,14 @@ net-wireless/wpa_supplicant qt5 tkip gui
 net-wireless/wireless-tools
 #+end_src
 
-**** VPN
+#+begin_src conf :tangle /sudo::/etc/kernel/config.d/50wifi.config :comments no :mkdirp yes
+CONFIG_COMPAT_NETLINK_MESSAGES=y
+CONFIG_WEXT_CORE=y
+CONFIG_WEXT_PROC=y
+CONFIG_CFG80211_WEXT=y
+#+end_src
+
+**** COMMENT VPN
 
 ***** Kernel configuration
 
@@ -1250,11 +1627,10 @@ app-containers/podman
 #+end_src
 
 Also, need to manually install config and policy files.
-#+begin_src bash :eval yes :tangle no :dir /sudo::/
-cp /etc/containers/policy.json.example /etc/containers/policy.json
-cp /etc/containers/registries.conf.example /etc/containers/registries.conf
-# see https://forums.gentoo.org/viewtopic-t-1145234-start-0.html
-sed -i -e 's|location="quay.io/libpod"|location="docker.io/library"|' /etc/containers/registries.conf
+#+begin_src bash :eval yes :tangle no :dir /sudo::/ :noweb-ref sys-configure
+  cp /etc/containers/registries.conf.example /etc/containers/registries.conf
+  # see https://forums.gentoo.org/viewtopic-t-1145234-start-0.html
+  sed -i -e 's|location="quay.io/libpod"|location="docker.io/library"|' /etc/containers/registries.conf
 #+end_src
 
 #+RESULTS:
@@ -1292,22 +1668,22 @@ sys-devel/bc
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQf/UmaANBYo8ctQHfyL1h0ZGAUyb+zkbg1m2H4/TiMmLSxm
-3n2VxTiUSdvszWuSVCg388icDfp5HOB4Bd4fL8TJ6xFAh+LVejvZvXEVwp1SKW2E
-U7qyVpoyld/UA7hi/ueO2eS6eWve15Cc2m5hw4oGHPTnrxZ3rRl4T7PSU7jcihCd
-ZeUj5MbANuvx+mQ0VlNLEY0C9FHNPlp+d6nH5XcYCHmmTdz/KsKNtzCMgOBGvSrH
-7aHwfa5vBXIhGIGlZ7uVhDf0h2NLHf5kIB1SV2T1ea2XrUv2MlRE/XxleHs/sxPf
-SO6Oclt32ftDDzjVoUWt44dW+/O0YFUp2wWN03CvMtLA0QGmYDh68gb6/otFZCv0
-kAiD4UVuIrulfTWCr5akvuN7dpMOaV9iM7v2DmV5UFSsJzDBTE+xsejlEtLFekDO
-+9bfvBWkpvl2uEPq2ukgaCWCWwdnLP50PIs/ZCKzo2oXxaH4DdUwCv/a6W93UjXw
-iNQm8iIwVabR6XJVQaj97/k0k7Eja56zs/tb/2CBa22miIpr8GOxc4rUOjhJoGAr
-6m4mb8OfdOysB2FDXmeM//YK/pXBfrmxl3JQxSD2J3yaYkBpeb5yH5vm1omelGWy
-iEy5YHiVJ2CAN/hiN9YwI4jazPR04k+0McYzDt6P92Q9PxsHYl7NTKnpGtwakSZW
-9lfJtflKM9oE+eThyDmuIehER/QiywYlhJAEET5hWg1rYf4RAwkGb+b3ug4Fl0Di
-hskd2bDSEcPUE30mzsEnL70nEZgU+eayP9qYRYR9DsJOajwKACsFAemMRw9Z3iBK
-meGrojRTkmhMViEBO0t3Mj4eTX1U7fhcY79iJi5BI39kbO+1qrSHEk/WgjTv4EMo
-BFav
-=Bv4S
+hQEMA3SKBiQ2zhL6AQf+NeRtBjJxNVBiP9TJpA5kiBCxGL+PhOCnxITBvAM3C/UP
+FzeAmkmveeyMu5Dc5L1xUVRpxZDk26ESFycU/z/z0dZU49IAO4zAj8G3V0PL81TI
+8DpxOSz5s5id0otWPjmfJJ4ggoTxTp/7dZ2J55UF/c+40p7KeNhzyUVyndrd9762
+REFaW5VOJ9zkMrHAcOnIz652MxtKYGFLbNCCwZfE/xQGFhWf96xBz1LKxL25BYCe
+s6zIKsUqLpW+J2O5/rkpnADKkIKDC29LfMXQGhKhmcPO8ziTfZ0o/m+0PZGsI/dc
+iCuiqIQwNVkMpzV7ydgFcGa55NZontDEuQDk7ubJ8NLA0wHuVAg2OXZ1hHrLP/5V
+x/W67zoviFIcEsYPRYFE20FYJlVeucJXhVfSrjNNs/A1eceBON1zPd6J4MBlO8Y9
+PRHMHH6/IVxX9+x0S33kJf81y1N20jGZ0QD2AbWs4HFu6/4RMnEB8FoQ4PgrRsmO
+0v6bsK/8AobLFmBTj1CICT41PkpzwQyDwPftWMU8rfKqVUMQnOAK3+y8M4NfOgtv
+oszJaUarQtthp+K84uhxiw8usDUpyCOyo1u9Khsjg8A0uVvOgFMrU3lj6Q+I5i+b
+FAy3cQfT8iA+b8JGV8ki925O2/6ZwIUoKIVd521I3devmOt2DKFB3d1hdv8XGenI
+JGePKvANqtFryGX++DBxSGPa30Gmg91D4fwJdm14Q5bdZdnOGmhlnlOzNSynu5fw
+W6VT8QjOfw28SOemJ4TjCQVaon//YskPIG0pjlkgUEzX27JTSj2D+333DSN34x1o
+BdYuVskE9bpDJ0O5kJjRyfS8ivLGFSIOS6un7J2BunmCxiHfq1AGoHJBIhtWbpSF
+lxQhyK4=
+=38Ie
 -----END PGP MESSAGE-----
 *** btrfs-progs
 :PROPERTIES:
@@ -1328,6 +1704,9 @@ app-backup/restic
 #+end_src
 
 ** System theme
+:PROPERTIES:
+:ID:       ee87b193-92cd-419f-9443-9d20a28f18c3
+:END:
 
 Unified theme, derived from my Emacs theme, everywhere.
 
@@ -1451,7 +1830,7 @@ x11-misc/lightdm
 gui-libs/display-manager-init
 #+end_src
 
-#+begin_src bash :dir / :eval yes
+#+begin_src bash :dir / :eval yes :noweb-ref sys-configure
 rc-update add dbus default
 rc-update add display-manager default
 #+end_src
@@ -1476,7 +1855,7 @@ rc-update add display-manager default
 :ID:       dcfb1f14-9ca4-4431-aaee-52fffd38859f
 :END:
 
-#+begin_src conf :tangle /sudo::/etc/lightdm/lightdm-gtk-greeter.conf :noweb yes
+#+begin_src conf :tangle /sudo::/etc/lightdm/lightdm-gtk-greeter.conf :noweb yes :mkdirp yes
   [greeter]
   background = <<get-wallpaper-path()>>
   font-name = <<system-font()>>
@@ -1782,14 +2161,13 @@ The hibernation requires superuser access and is allowed in [[id:ba3805aa-10c2-4
 #+PROPERTY: sudo-commands-list+ /usr/sbin/loginctl
 
 #+BEGIN_SRC bash :tangle /home/yantar92/.local/bin/battery_status.sh :mkdirp yes :shebang #!/bin/bash
-STATUS="$(cat /sys/class/power_supply/BAT0/uevent | grep POWER_SUPPLY_POWER_NOW | cut -d= -f2)"
-STATUS2="$(cat /sys/class/power_supply/BAT0/uevent | grep POWER_SUPPLY_POWER_STATUS | cut -d= -f2)"
+STATUS="$(cat /sys/class/power_supply/BAT*/uevent | grep POWER_SUPPLY_PRESENT | cut -d= -f2)"
+STATUS2="$(cat /sys/class/power_supply/BAT*/uevent | grep POWER_SUPPLY_STATUS | cut -d= -f2)"
 if [[ "$STATUS2" == "Charging" ]]; then
     echo 0;
 else
-    [[ "$STATUS" == "0" ]] && echo 0 || echo 1
+    [[ "$STATUS" == "1" ]] && echo 0 || echo 1
 fi
-
 #+END_SRC
 
 #+BEGIN_SRC lua :noweb yes
@@ -1803,7 +2181,7 @@ fi
 		      else
 			 baticon:set_image(beautiful.chargeicon)
 		      end
-						 end, 5, "BAT0")
+						 end, 5, "BAT1")
 
   batwidget = wibox.widget.textbox()
   vicious.register(batwidget, vicious.widgets.bat, function(widget, args)
@@ -1822,7 +2200,7 @@ fi
 		      if args[2]<4 and tonumber(file_adapter)==1 then
 			 awful.util.spawn("sudo loginctl hibernate")
 		      end
-		      return '<span font="'.. beautiful.font ..'"><span font="'.. beautiful.font ..'" color="'..textcolor..'">'..args[2]..'%</span></span>  ' end, 30, "BAT0" )
+		      return '<span font="'.. beautiful.font ..'"><span font="'.. beautiful.font ..'" color="'..textcolor..'">'..args[2]..'%</span></span>  ' end, 30, "BAT1" )
 #+END_SRC
 
 ****** Net  ssid widget 
@@ -1833,7 +2211,7 @@ fi
 We need to find the WiFi interface name:
 #+name: wifi-name
 #+begin_src bash :eval yes
-iwconfig 2>&1 | grep -oE "wlp[^ ]+"
+  for x in $(ls /sys/class/net); do [[ "$x" =~ "wlp" ]] && echo $x && break; done
 #+end_src
 
 #+begin_src lua :noweb tangle
@@ -1940,23 +2318,23 @@ memicon:set_image(beautiful.mem)
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQf/S07KGLg9U5UI6Y8p7zLjjNdqxxmMVIXAwb8jY7KuPsCV
-PZQtFiW9CKs5zQW7dbqptog5E6YOnfkd3+QRVWihlZgnWUpLf6N/rdpMZdY2Q6Qv
-V3Vo5dml1mkd543pcKg0GiVJSmUiU7qsEjLKEHcC4oWt2io4G/e9krSLCW8kVISZ
-6Y/0hUHvMhuIoCJ1k/AHX81ufaqahQ0FJ0gE1GsXIAVG3xDkN5aEUUvID4M4wJKQ
-/k1+DKSO8zwAX+fWiJh00rV/cxPnmne85FgWrKK1v0Dt3KKj57OQP7HNp7av8PZU
-slVaG2wv20UEaY23dah8XYgzjLPeBEx52oRxp3kKsdLBLAGUDaHW2B1+9YUT6R+n
-hyoAduvFvvvGCcWHBvsN03u+pLLt8D/Lz6il7PVFyskvXR93knRzcBMJnP1nzq0c
-dAjan4Gq+PwhV0U4jhJaCXln+9a7MXiQQQ37Eu9dSd7HBE8M/+1W29EeIVYbCl94
-V7lLu/T4wFwzOGBa7DvdRweuXCvuath4UfwH1rkHJbtkqfagfq1tUuXZ9jHZbCto
-TyKGJDjZkUJyuq+TDLiVzXCUvrrK4Q/HbHyCXQT/b0HIJ2yFODO1+w4qjU1XVfKn
-Vc9K9ax9/n7wErrs4unzdDozJuPSP+90l+Wx+OPlys2+XVGFOm9V9TztlVsXAmmN
-3oACicnRUMYaUXebhcNt8NU7MB0v2iKCOK3qKvvBYkTtwGtUi/FLtEwe6tG7fV/2
-4ZbdaxL+1DNschUzAbHIXl2xN+NxBAOvrFqfy8RgErMuIANu3cuz5OlH6w4qndlm
-GKnqZ001zmo9lcl1MStpZTYXJ0XgjV+4Ll8RRpI8UhLJS7HE93KZe0zexfvONNQh
-Gap0LopCi6H/98HBucy3+uvcviRnP2qUhrHxLGTutMRg5KfjTviM9yRjXLbc3X7J
-72uF7ruDiUucV4mtEKZi3394L1EvFlMDblmGByotz+wr/TN+1+L7bd2accc44A==
-=doJG
+hQEMA3SKBiQ2zhL6AQf+IHSYnvO4H/S+aTHwLtta1QyGWlZxN3zCQG2VfeHPHYdJ
+iqHGeIqq14tDAGlYGCHKpfZ3s49HQvVGNG1spEuAfLWC+5lR8pN7ijbeVoRPPjQz
+xaY6NPhZn+Gp5i0Chl3pDCOAomqCVc7QnhxMp/8b/Q27Ub0PJHTW6BNJ4IcQa0Y3
+i5zzJZv2jlVi0PT2Ps1NWnqbSA6EFMbZVsU87lvfEd66wWqTD6NmuAP7Br5k8UNr
+qzg76G3fVgGkQZK99GhcgMqKyBBA4wAmmlkn2RdoRujGXtRauVmtJIrYKNkC64mB
+jaQncsTL9OlWqjkGTtXJdYdeMwLLYQnwNqRLHdFygNLBLQGEZnJ5zNsfdzwHaJkp
+RTFSTyAcUlgRW9aq5wvEcQn2iF4yh4WnUXdOi2HE22TtgJR4s/BRzIei2MniCm6X
+gFlgAPPGSqi2iFOhdiVuGrSMFFa3Um+P/vcJOk5tJXQ+0pVsVBT9RMs8E023O7Bj
+/YVQSOSUGmd22z3iDN58Mj1Qzb/dYcYBrPb45qeBQu5E5dR3DBuhHoZNJ9uuCvJp
+CqO6whPoAkG+XVlxGW4bLbN7WrPqZiil4yxMk5s49Kn3P8xqa9rxF0vqnBGLH77u
+wLSQk7lwEOJUVS7ByJvWUg7DeBR+LrHKQp4T07thL0dGNGlOQKEtTKxZxZCHcTee
+MTYtvE9vwSm1aiRBFEP9VoXN4j8p+wMWLdel0zORnFEGg0/3prRQL+mpdUFsdKH0
+OkQ/AakDAtjH8XMaRpESc3qgki54EL3f90uDjkyylnL244Le+qc8K6MEbjDka2Nz
+diZ+2O8CmlZ0fpY7bC8Jqdd8A/hbEK3VBDinPFW2K/DSayYZRzY1iexbYZUS9nUE
+7F8TNgBEcZEXdgZ7o84ldn3jfIGjf46a6YmzYcqilFPnwEip32xE+bYWBJTJLfmw
+5lQ2hvqgmpuLZRLL/0iCklmiPyyQzpDxlxLYhfjcXaFv7EHoxOphbEfugBdvcso=
+=auD+
 -----END PGP MESSAGE-----
 
 ****** Externally controlled widgets
@@ -2333,7 +2711,8 @@ return kbdlayout
   		  end
   	       end),
      -- Standard program
-     awful.key({ modkey         }, "Return", function() awful.spawn("bash -c \"trackball-toggle.sh enable && xtrlock && trackball-toggle.sh disable\"") end),
+     -- awful.key({ modkey         }, "Return", function() awful.spawn("bash -c \"trackball-toggle.sh enable && xtrlock && trackball-toggle.sh disable\"") end),
+     awful.key({ modkey         }, "Return", function() awful.spawn("bash -c \"xtrlock\"") end),
      awful.key({ modkey},"r", function() awful.spawn("bash -c 'PATH=\"/home/yantar92/.local/bin:$PATH\" nice -n 17 emacs-helm-menu'") end),
      awful.key({ modkey},"y", function() awful.spawn("bash -c 'passmenu --type'") end),
      awful.key({ modkey},"u", function() awful.spawn("bash -c 'passmenu --type --user'") end),
@@ -2366,7 +2745,7 @@ return kbdlayout
      awful.key({ }, "XF86AudioMute", function () awful.spawn("mute.sh", false) end),
      awful.key({ }, "XF86AudioLowerVolume", function () awful.spawn("dec_volume.sh", false) end),
      awful.key({ }, "XF86AudioRaiseVolume", function () awful.spawn("inc_volume.sh", false) end),
-     awful.key({ }, "XF86Favorites", function () awful.spawn("trackball-toggle.sh") end),
+     -- awful.key({ }, "XF86Favorites", function () awful.spawn("trackball-toggle.sh") end),
      -- awful.key({ }, "Print", function () awful.spawn("sh -c '(cd ~/ && import -window root screenshot.jpg && mv screenshot.jpg screenshot.`date +%d.%m.%Y-%H.%M.%S`.jpg)'") end),
      awful.key({ }, "Print", function () awful.spawn("sh -c 'flameshot gui'") end),
      awful.key({ modkey, "Shift" }, "i", function () awful.spawn("org-clock-in-organization.sh", false) end),
@@ -3111,7 +3490,7 @@ bold_font        auto
 italic_font      auto
 bold_italic_font auto
 
-font_size 13
+font_size <<system-font-size()>>
 
 adjust_line_height  0
 adjust_column_width 0
@@ -3405,7 +3784,7 @@ map kitty_mod+delete clear_terminal reset active
 
 *** Mouse
 
-**** Disable touchpad
+**** COMMENT Disable touchpad
 :PROPERTIES:
 :ID:       c412a610-d374-499e-98d8-07d7ad1ece8b
 :END:
@@ -3420,7 +3799,7 @@ x11-apps/xinput
 xinput disable "Elan Touchpad"
 #+end_src
 
-**** Toggle trackball
+**** COMMENT Toggle trackball
 :PROPERTIES:
 :ID:       a910bb4c-f08e-4da7-8e52-cd50247022bd
 :END:
@@ -3565,7 +3944,7 @@ searchstring="tag:inbox and tag:todo"
 [[ "$1" == "--all" ]] && searchstring="tag:todo"
 
 [[ "$1" == "--newsonly" ]] && searchstring="tag:listinbox and tag:todo"
-[[ "$1" == "--inbox" || "$1" == "--newsonly" ]] && emacsclient -n -c -e "(progn (notmuch-search \"$searchstring\") (setq notmuch-frame t))" || emacsclient -n -c -e "(progn (notmuch-mua-new-mail) (setq notmuch-frame t))"
+[[ "$1" == "--inbox" || "$1" == "--newsonly" ]] && emacsclient -n -c -e "(progn (notmuch-search \"$searchstring and not tag:deleted\") (setq notmuch-frame t))" || emacsclient -n -c -e "(progn (notmuch-mua-new-mail) (setq notmuch-frame t))"
 #+end_src
 
 *** RSS reader
@@ -3617,6 +3996,7 @@ dev-libs/jemalloc
       [[ "$x" == *"Fontconfig error: Cannot load default config file: No such file: (null)"* ]] && continue
       [[ "$x" == *"handshake failed; returned -1, SSL error code 1"* ]] && continue
       [[ "$x" == *"Message 4 rejected by interface"* ]] && continue
+      [[ "$x" == *"pa_operation is nullptr"* ]] && continue
       [[ "$x" == *"Trying to Produce a Skia representation from a non-existent mailbox"* ]] && continue
       [[ "$x" == *"Message 5 rejected by interface"* ]] && continue
       [[ "$x" == *"org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files"* ]] && continue
@@ -4848,6 +5228,7 @@ config.bind('A', "jseval (function(){window.hypothesisConfig=function(){return{s
 
 #+begin_src python
 c.qt.highdpi = True
+c.zoom.default = '150%'
 #+end_src
 **** Theme
 :PROPERTIES:
@@ -6991,7 +7372,7 @@ app-eselect/eselect-repository
 
 
 Need to use =torbrowser= overlay
-#+begin_src bash :tangle no :dir /sudo::/ :eval yes
+#+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
 eselect repository enable torbrowser
 #+end_src
 
@@ -7094,7 +7475,7 @@ media-fonts/source-code-pro
 
 # Manually installed from https://dn-works.com/ufas/
 
-#+begin_src bash :tangle no :dir /sudo::/ :results output
+#+begin_src bash :tangle no :dir /sudo::/ :results output :noweb-ref sys-configure
 eselect repository enable guru
 #+end_src
 
@@ -7116,6 +7497,10 @@ media-fonts/symbola
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.license/symbola
 media-fonts/symbola UFAS
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/symbola
+media-fonts/symbola ~amd64
 #+end_src
 
 **** FontAwesome
@@ -7152,7 +7537,7 @@ media-fonts/noto-emoji
 
 [[id:21f06900e232809e79ecdd07e0d84647f30e8975][be5invis [Github] Sarasa-Gothic: Sarasa Gothic / 更纱黑体 / 更紗黑體 / 更紗ゴシック / 사라사 고딕]]
 
-#+begin_src bash :tangle no :dir /sudo::/ :results output
+#+begin_src bash :tangle no :dir /sudo::/ :results output :noweb-ref sys-configure
 eselect repository enable gentoo-zh
 #+end_src
 
@@ -7170,6 +7555,10 @@ media-fonts/sarasa-gothic::gentoo-zh
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 media-fonts/sarasa-gothic
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/sarasa-gothic
+media-fonts/sarasa-gothic ~amd64
 #+end_src
 
 **** =all-the-icons=
@@ -7349,6 +7738,10 @@ www-client/w3m
 dev-python/langdetect::guru
 #+end_src
 
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/langdetect
+dev-python/langdetect ~amd64
+#+end_src
+
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-python/langdetect
 #+end_src
@@ -7364,6 +7757,10 @@ dev-python/langdetect python3_10
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 x11-misc/xprintidle
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/xprintidle
+x11-misc/xprintidle ~amd64
 #+end_src
 
 ** Testing emacs repo
@@ -7619,9 +8016,11 @@ The idea of the script is regular reminder to not spend too much money on certai
   WEEKLY_INCOME_INVESTMENT=$(echo "$TOTAL_INVESTMENT * 0.04 * 0.80 / 52.0" | bc -l)
   # Deposits 1% inflation-adjusted (3% - 2%)
   # 1% safe rate, 20% tax, 52 weeks
-  WEEKLY_INCOME_DEPOSITS=$(echo "$TOTAL_DEPOSITS * 0.02 * 0.80 / 52.0" | bc -l)
+  # IGNORE INFLATION HERE - not consistent with other parts
+  WEEKLY_INCOME_DEPOSITS=$(echo "$TOTAL_DEPOSITS * 0.03 * 0.80 / 52.0" | bc -l)
   # -2% - inflation depreciation
-  WEEKLY_INCOME_CASH=$(echo "$TOTAL_CASH * -0.02 * 0.80 / 52.0" | bc -l)
+  # IGNORE INFLATION HERE - not consistent with other parts
+  WEEKLY_INCOME_CASH=$(echo "$TOTAL_CASH * 0.0 * 0.80 / 52.0" | bc -l)
   WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS=$(echo "$WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS_NO_INVEST + $WEEKLY_INCOME_INVESTMENT + $WEEKLY_INCOME_DEPOSITS + $WEEKLY_INCOME_CASH" | bc -l)
   WEEKLY_INCOME_AVG_NO_SALARY="$(ledger r -X <<ledger-main-currency()>> Income and not Salary and not Interest -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
   [[ -z "$WEEKLY_INCOME_AVG_NO_SALARY" ]] && WEEKLY_INCOME_AVG_NO_SALARY="0"
@@ -7773,7 +8172,7 @@ The script is ran regularly
 while true; do balance-monitor.sh; sleep 100; done &
 #+end_src
 
-*** Ludget - visualisation
+*** COMMENT Ludget - visualisation
 :PROPERTIES:
 :ID:       b4f36478-54ce-4ca1-93ae-dbd4e306bb67
 :END:
@@ -7787,7 +8186,7 @@ pip install ludget
 :ID:       e6408d25-2507-42b2-a4e4-d855eb9e6b13
 :END:
 
-[2025-05-03 Sat] For some reason, notmuch is listing delted messages after update
+[2025-05-03 Sat] For some reason, notmuch is listing deleted messages after update
 #+begin_src conf :tangle /sudo::/etc/portage/package.mask/notmuch
 =net-mail/notmuch-0.39
 #+end_src
@@ -7800,6 +8199,11 @@ net-mail/notmuch
 #+begin_src conf :tangle /sudo::/etc/portage/package.use/notmuch
 net-mail/notmuch doc python_targets_python3_12
 #+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/notmuch
+net-mail/notmuch ~amd64
+#+end_src
+
 *** Config 
 :PROPERTIES:
 :header-args+: :tangle /home/yantar92/.notmuch-config
@@ -7869,7 +8273,7 @@ The best option seems to be Davmail
 [[id:e8384cfa2557dcfe939e1cf4c3ae80d5b4ae937f][[Reddit] Anyone knows a Mailbox synchronizer supporting Microsoft Exchange protocol? : Gentoo]]
 
 It is not available in Gentoo by default, but I can use =pentoo= overlay:
-#+begin_src bash :tangle no :dir /sudo::/ :results output
+#+begin_src bash :tangle no :dir /sudo::/ :results output :noweb-ref sys-configure
 eselect repository enable pentoo
 #+end_src
 Do not enable any other packages from the overlay
@@ -7891,7 +8295,7 @@ net-mail/davmail-bin server
 net-mail/davmail-bin
 #+end_src
 
-#+begin_src bash :tangle no :dir /sudo::/
+#+begin_src bash :tangle no :dir /sudo::/ :noweb-ref sys-configure
 rc-update add davmail default
 #+end_src
 
@@ -7978,51 +8382,51 @@ Details on configuration: [[id:Davmail.Sourceforge_guessantdavmail_pop_imap_smtp
 
 -----BEGIN PGP MESSAGE-----
 
-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
-=e9MQ
+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
+=xHDb
 -----END PGP MESSAGE-----
 
 *** Certificates :ATTACH:
@@ -8399,43 +8803,43 @@ dev-python/beautifulsoup4 PYTHON_TARGETS: python3_11 python3_10
 
 -----BEGIN PGP MESSAGE-----
 
-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
-vNL+GCXUWhsQuctW133n5Nrv
-=XqNB
+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
+qdaR8F36pqE7kaf+rOxA5VM=
+=IDry
 -----END PGP MESSAGE-----
 
 ** Mail sending (msmtp)
@@ -8454,29 +8858,29 @@ mail-mta/msmtp
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQf/YvPi30Gg58WVriq8edZ80LA9KyfOcl0zk/IuSvHbBFIe
-Wy1/W0PcSxpWjbG3o7Fo8Rr6cRiATY6f7yYCUjFkt4ycUwRsKhgNZ3kMu39ZHMiW
-a+WIv4hm/MJYooweQHe+Mj13XL05xSZl9opjkWQYFwoWzBQ24XR+4FwF5cTCyQxv
-Lcut0fTRca3wsG9sDykeZ3xqdQPurLrwlUdjV+mZ9ol39mp0msvwWsLoAIUEmmJT
-eTklTHV3bRxVGZ05Y/BcOaqXPCJZznlJOXqje6Td9BTRcnUpBYN/wEOtck0glAly
-iLuzoHTQoWTJ//x6adRlefgUKAZ7kM0kAm/5R84ESNLpAUBdIPDl1XnGC43KX2VM
-bjyezDvSJ0rQBvu3PAXaFxH49kJmf9xJI4MvfFNTAny450pG8Vp7NLlNOpLjhaAf
-U6TBCjZ10sYGDSDBE3KHCfWlO8+seMO+9MiQOwHYaEK8Oo+n/IoGBpJRxGm/Wj+H
-G6GI5gCdAE7TshEyQNXUFGX0ZORUf3cOLd/iQC3xkil00tvC6Jgh3aUkqtFIiNuB
-tjdPWukYbwL9qYXlB50Z++scLHxoiH8ozKMN/y9mXuNn1MwtGlstWGMI8ZGfARFl
-Un+ibJvTCIyMjP2HWawKYVV2vyUv65bXW/2F5D5lNc2S9UlY6GWSbczYJCu69qv9
-yDpznzwv00RnbdIfyC8O+9viLGcr7pViqlmuxApCcF9atdfzTiwfx/SdvVYjcshe
-Cer1V6pzUIRcJERZ3HDvt7ZCGc29Lsfk8G7CZo7b6xSrd4nsFfV28PgiRD6msqRS
-LN0B/RKzzaTYNL58YVx3QuOQZtbDlAF+0H1YR5uArWePtkhwls73gZdVmzhQaHnN
-e5mPBvYpzxjtg9SsD9zpheReTEr48HVtdq0v+XBQzN81tIqsuVDxX4wI7ttPMZv9
-c7y//N9yevaAwRbNjJDv8wJyg5bb8xPjQKZwv4oouhNs0MTOWmONGczVoQI4xxej
-DdFaPwQSYOMBbdPf1fESM2jAN/ZXSsXBE/TaEHaclaBnDHgcOT/RWOa433zxQkht
-SYPVuLMifytR0H72n00C3XuxG/tsisJqWRvrVpRIS7QNweXjjKxtZp+PaeP1U7Il
-WBvjl/2j3wK8XokUVmKZTnP7rStt7Lkkl1/c+tguNHowMwuIUY2xe9RiR2SLau6I
-nHdwV40UzSJUG1DqjQiaCeEYB8cnAdMi6RSraK8WJQNJSveZZQjmEv29N24mW34W
-GPJRyV3TJH6QAgl1gSqCP5f1JrxkY5FcOtgjOxzQFyJmh3g7Z2ygpW5YdoljD2cx
-sQuOn8Xmay3oeG7J3zuxZWe2F9z0qYD/cIc=
-=O+de
+hQEMA3SKBiQ2zhL6AQf/WwHBb/BPLT5hyZCnsOf8yv6SKHDkLVIsxzTBhNpQc/6q
+BQN10EyBabd4Etf8cy5GZceoMvrHppQA7YsmLR+SydCEmPrhnqOXcbpaE5XDWT7T
+jkOqNEc+fROansL7jBDbHbyY8IFvoVKiEMIcV1wKjIFULhREzdyE1ILhOQrXKVSy
+R1mmEkNoNI6yMcW93e3mafVavzCn+mbIeE5y5BYrfDzT5zHU1VSTg8LVqXdOSUUH
+RrGO9ScTE9JnocAClA7agEXonpAkmC3A3BP935ZbcUii9DrgoXv7u0188H/WItBl
+duA0ZjSZt9QFxTuUC/49XeKsSiPdLkQLmdZ9kUsXydLpAanYia9avEDJa7D7abaw
+qoWRqlvA53sDC/ifUCFUt4495I3rNW1oyne5lKIhhfBEnQ+Wbm9/uJQWhJGfeGA6
+T87ar3hg3Bj/WYDV7mt8KcgvO4oj8nXFqbCkV9YxvMSdjVKd/vVnFrYf+xyObbrO
+Hk19Z7mBwAIyPCArMn1HJ6XwrZY+21Ru/qrIdQuyQ7eqTk4R4i2uCHIZd38EIthG
+2J1nAlQkVQxFokc4tlMWOy7gLs0+jJhKn0vIIUkkLzH+UbvVQBNr3FxmrknAcBZz
+N0hsK6egotV7aDzZYuYuhcJhohn5pffGdh6AyGNOb1k8T7LHUn3t7uPUHwQ2znIW
+1OVIZDu8XywARkj/xq32gqXmipTYK408tkCkaEMkwWFSNjqGQwTLxpdZN8IYwHS6
+sigbUUREQIjFGlaJg1+2CiVTRZQzc4wuMZE/atP9wcsK+fTfYiWl9ozyR3GKgAIH
+YIE1TN5uknqysf19aCyLB3sZGwjTRrRKVGZyneY4WJqZma6i8ePHu3+Cp8syzVWi
+BamSph2eYLL35jww3Sgbp7dmttWHRMaOW/fN7mewO0iyVXhb4RYLmoiX+pqJEVp4
+uKWfD/Vm1b1Vo582CvrykJplUj9PAHbgtRi8ernOYgWmpYCy7XUCPGPF2cwX0dJH
+1W5I7ja/damjh3CgWSELysPAOO3MykOZ/3bI/jE0S+m4FSvQEiUZVfzZUJZi1bg0
+GADH9i2rZ6aVHu/ffg+RRgDSOQWz7UpwwioxaVbZIfYE1q5kNokY2ZFrXAEkxMjj
+v8g+fDTmzJO/jNig/O/bvbFkuDJCBXTKtn3hEaf0hd0x6NYw5kKXfL1i5ClLonIr
+0mzlywMATqTjppiaq3cokwT2+73eg4psWLcL1iv7B/n9biQYs7sFmdSl5vvTDDSr
+gS3qg8m04WFjxpBUbgfLLp+8y92dHMOJV+k0Djqydd7hwcdyc1PR9Ea9VWm8ngF3
+rf3QHt0k+Msc5QaybP5hLcXOGlUwSK2wWkGz
+=Z52c
 -----END PGP MESSAGE-----
 
 ** Dictionary: translate-shell
@@ -8953,7 +9357,7 @@ dev-texlive/texlive-langenglish doc
  =dev-texlive/texlive-langenglish=: Info documentation (docs) for LaTeX (inspired by [[id:ML:Org-mode-<theophilusx@gmail.com>2021-re-quick-latex-77d][Tim Cross [ML:Org mode] (2021) Re: A quick LaTeX reference guide in Org]]).
 
  *Important*: I had to manually install the relevant info file:
- #+begin_src bash :tangle no :dir /sudo::/ :eval yes
+ #+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
 cd usr/share/texmf-dist/doc/info
 install-info ./latex2e.info ./dir
  #+end_src
@@ -9263,6 +9667,34 @@ net-im/zoom all-rights-reserved
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 net-im/zoom
 #+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/zoom
+net-im/zoom ~amd64
+#+end_src
+
+** Wemeet (video conference)
+:PROPERTIES:
+:ID:       7d5954f3-4ec9-4a78-9eed-e510e2b327c7
+:END:
+
+Need for work.
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/wemeet
+net-im/wemeet::gentoo-zh
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/wemeet
+net-im/wemeet ~amd64
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.license/wemeet
+net-im/wemeet wemeet_license
+#+end_src
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+net-im/wemeet
+#+end_src
+
 ** GNU Screen (for Org mode ob-screen testing)
 :PROPERTIES:
 :ID:       b819f1e0-9956-4c49-9d84-3d7dbef12935
@@ -9763,21 +10195,21 @@ backup-umount.sh
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQf/Zg/oCwC5vHX0eHMt0Z05J+zfNkTjU2bNRQy7GUsGQ0X1
-qkGtuXW1YrFHMf7De6ttjghPpOQtsvpS2uIJVTBJi1GY8JhOc1Q3VMqfFMMoQvmT
-C8hVNOafV+nmwX88SiBVEHp9XD5R+z9tU8JyNPZkcEpR3OiezBuYqpjEtu4H+MSe
-Sq4jZX/RXDXLU8uNQ2XS9OstHzxMzDHE3OMMNUhbKv55Bl8YhqGQjwuYsSdORfy5
-dBOlFKdKJZ3YjaM6K7vFhTA9f7imfxivPdN+xHu+HEgGYBgFmF8oEszoKPNC3u8K
-wwxmhtWpMveXcOyRs0ePeMcrBTa13pG/x4gU5PpAZNLArwGTn2oYdREG6irl36Lj
-SrnAULg7bkFTpdpdNIZVXtSBsDWyUTSnSvS6IOEGYq8S88B4oqj9kvcqHbwpC04v
-Dpk29hX83E7R6mbX813SYOczLGWAL6UnINLF6OrJBZ8HaAeAVxXNboDX6O5C/9RQ
-ss8y+b9rJxX5FpM5fOVjdr7SnFItkw1fOgWE6VRkCrD5HqyM5b3W8kVNRSCM29ub
-V7rrNTcXg0XCCWGB7qtM1Y2VNGM27jKiGFu8nclGHO3Xydo5nlPnGd0AZgCiMaoF
-UITWT+SffEXRUAz9VGMHLwuQxXI4woXoXPc85QHHVR0DF2ZLIFxuEw2S6mE3EJSE
-SL7r0a9vkFdu79qaneGzi9D6QGrsYspVB7NuZF9n9uof24LpHHT3Mf2ivL0eo0ze
-bgL17LjBsUi92nSuyI8GukbvDiHSl2B/aOaHWMIWLnjsFljnPq77DYQO0DywJKFW
-uQrUDzTdIDZ3g/A4Ge3FAd4=
-=Zsur
+hQEMA3SKBiQ2zhL6AQf/TpxLbykqObhnqja2M/ozIJMMZqHiJwbjUV2LHb90Wagy
+Z4xu1p2A6caaV3l6212YuLrHilQwqrkhYCT93lrhJAC67WDBmH0tb3THtXTrF29D
+lXym/zex9lWi/lN5p47ualgyLoVUL154BoJDKx+db4dJxqXj4oy//hf4iXmi7r7+
+7fsNWiPTq4AVduVSvQr9yjlGaUkJh9667wKcPXR3d4cHYHyb638y1DsIV8/GPTy/
+mwYitQ+PDFE+6EfCr2H4kClzPw6N5qP+nTvvKtptSmDB4cyfkj5smJJJXtTNDu/U
+qP22cpDWCbx0fsmswsYo2lJNMFrC6qRb5uoYb1Dbw9LAsAHQHiaauzk2K824EUPo
+WjSYv5vadTTAcvP0aVmTCSpLXHS8dcNxa/PUGLkOTMQ5iAyL6gOx3pP77teWzuyn
+ShQ6djHUiBHUqc8wLRfcrIDtpWUCqpRDULnQVtm5/XWYMj+zaflCF2CVNQXFAHeo
+D2jrpJeooHdTVCYAiQq4Zegh6uodbzYV4Rb2f6jQwAY3wIfdSQubvW+M5uHQod2f
+aya/0NpP8EogqGxnTySkeZ4hJCF+jaU61Je2ZIQxY1OlDn1kWeiBKvgcJMcZiFVJ
+bc66rjFedGMhkQgkM67vX3NAneDwL4tGSpsoJzhIJfvRpi1rV1B2wfFE4/9eKf9O
+jHeeVucs2pVEOr3moM/djuxm/CYbpTmx4in48hv3BpHLP/b+nOCir65CmTTDFjvK
+Ijghw9AS+1TxDhSEeFcIEDcQAPetonFNTOQZyJKyPuWquOP+mcAgi7R/Sv2fJVna
+vOQ48YuUjdiQp6ap5hlRXWkx
+=GzUz
 -----END PGP MESSAGE-----
 
 *** Mounting Nextcloud via davfs
@@ -9854,13 +10286,17 @@ app-text/pdftk
 sci-visualization/xyscan
 #+end_src
 
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/xyscan
+sci-visualization/xyscan ~amd64
+#+end_src
+
 ** pandoc: convert between text and document formats
 :PROPERTIES:
 :ID:       43223a1f-02b7-4ae7-a69f-281837257115
 :END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-app-text/pandoc
+app-text/pandoc-bin
 #+end_src
 
 ** =app-text/djvu= for rare cases when I need to read of convert djvu files
@@ -9934,7 +10370,7 @@ app-text/languagetool
 #+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/languagetool
 app-text/languagetool ~amd64
 #+end_src
-** =app-text/vale=: Text linter
+** COMMENT =app-text/vale=: Text linter
 :PROPERTIES:
 :ID:       8f5f44fe-1f48-4ff8-9f03-5eb3de8ac5b6
 :END:
@@ -9979,6 +10415,11 @@ media-gfx/graphviz svg doc
 app-text/diffpdf
 #+end_src
 
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/diffpdf
+=app-text/diffpdf-2.1.3-r4 ~amd64
+#+end_src
+
+
 Compare pdfs visually and/or textually
 ** =redshift=: colour adjustment according to time of day :crypt:TANGLE:
 :PROPERTIES:
@@ -9987,20 +10428,20 @@ Compare pdfs visually and/or textually
 
 -----BEGIN PGP MESSAGE-----
 
-hQEMA3SKBiQ2zhL6AQgAlD2DH7ppgjYbb3RneU6BIKLkj4MxzYtKKJDMrBg8zT4Z
-l7Y+2ShEnlo7yA3lTsBc/QRw6b4OqNt+dsIjKZr0WIrbCxEcFhna6mJkEvMCdgAq
-91UpHhK5Xc7s2/4K77R6eWNjwGyst3Gle8KdWrNwsmdl/nCA40LXPXfG9aOo2WiB
-/p/uFS4iDAr8ZmSunG1P+Z3zggzeB5VpVDWa2mOYe5bpgC3f+T9s2eoQ69YEm0+Q
-wfQXvSWUX/FnSzolTa4Gvx2Ew/qkXYgKTyl38qj6/1M/vDkv7Uiba4wZMyDAhw9Q
-aQXBtlihfmfCe9emML/8EtEIefwW5HvKtvOL0OYP5dLAngGXLzqvI19c/MEOyOFa
-QZbQJqxlzphfF6FpRq4xT92HJMshCl9d9xU7T1NTzPkloFS9yYb7T/jsveL9lyah
-M5nANkR6n7XYZa2Tn1D519OAA8Unq3jSw+9loV8+/0vriqEUbjA0GSpux1qmXw6E
-NPp/4s0+HJi/vUImy8YUkJX0cDhbUc41rFfVnvGXUdwjchuwhPWuKFgD3OGZ6ngq
-ZAy4geIzp26JKLkvpvgxj9jyVuRmsmhe9L+kq8IaEh5iM5vSFLC83eycgPk+tTL7
-ydyLRHUj9vJiTgfvHLjabQCHCBeFjMJIBbgBSxu8YJpjMyFLnqJAScaKdsfRe1Cd
-mFE6WxLENEnx9qrgNmWuFmKpdy+B8pW6reitRVsEKXDGzos/PFpP9j4tIOfqYPiw
-vzyX5cxTtXC+jm/EhQ4op8Sl0Ap9E6StxY7cq3vf83IQ1ZS4ERot4y24A++DTnWY
-=2AtZ
+hQEMA3SKBiQ2zhL6AQf/eMDDCkTlsY3xL3Tp5zNTPN3mHM6l5uMulWmPfqVy8Baa
+f4Kt9iLQ26Zilw0HLfrgxwuy5tP9KX6c/pCAZwUAW+fMmsIaSkeT3cDwYuNQP1I+
+uS2bnOTZ12M+xG4XqIOtfVmw+zK6JSh25ah2RDoPkLm5Q8kzFzneb1mzDa2R1Yn1
+ocFV7klbml20jCE9x5VZ0Z1wGiLZDEsa2WMcZ15kn8qOX3aws9EFVoctetieb+NK
+bBd8hYCsMfQ/mM8i6EFmy1tmtpn9jSjw++t9sR5oBHR+ULeOezUuqV3jIsqhO1Gh
+KrnkzhSwQ4q2LBAgp/PPgi76uH8HwksfTwYYgh7EstLAnQFXFGOJx+j8lTLR2KmI
+hzohTAezOLYFNNgoEQuoAe5sluE/rgGg6CiIbOaDG89LBZ61OoowrUE9y1MZRd8v
+eoIf9OLiasKpwzX/waxi5BgwhA/GyOCXYbhsLEnPn/j30blHQdswCrwqML7gePUB
+gFpeuyvbtAmQBp4On15CNlSHwnNxJVD1SacwUKtqMtGi3RPydCVoNHRQCXPQ7KDp
++MilSXDLVPhU2lTPcQ2rmUmqAhwBVEnam1jh0cnp0UCwPpmegv2Jn2slt0qzi3VI
+fNxBQb14qJeJRWRdOBw6BBBsVol+hAt0LovLrho+aa3J/U5hHnOWpdwj3Gj0VqJK
+gbqAJ7nhQdgYboYceTJDrVubJP4k6/32ZuyGl2ZxjAtWYvVlRnvepxOOPHsJQHOw
+zFHsJ0Ym5amRcUAISkXUrg6LmSVB0jRYUOdv3kVdPxdV+JlurkEeoJQFJkj5eks=
+=9mkJ
 -----END PGP MESSAGE-----
 
 ** =sys-fs/avfs=: browse archives
@@ -10066,7 +10507,7 @@ dev-python/uv
 
 [[id:Wiki.Gentoosteam_gentoo_wikic95][[Wiki.Gentoo] Steam - Gentoo Wiki]]
 
-#+begin_src bash :tangle no :dir /sudo::/ :results output :eval yes
+#+begin_src bash :tangle no :dir /sudo::/ :results output :eval yes :noweb-ref sys-configure
 eselect repository enable steam-overlay
 #+end_src
 
@@ -10214,6 +10655,12 @@ dev-lang/R png jpg
 dev-vcs/git-annex
 #+end_src
 
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/git-annex
+  dev-vcs/git-annex ~amd64
+  dev-haskell/aeson ~amd64
+#+end_src
+
+
 *** Maxima
 :PROPERTIES:
 :ID:       f0b5f90f-1203-40c2-89f8-b519199f1737
@@ -10238,6 +10685,11 @@ sci-mathematics/octave
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 dev-lang/julia-bin
 #+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/julia-bin
+dev-lang/julia-bin ~amd64
+#+end_src
+
 *** ESS
 :PROPERTIES:
 :ID:       f8f75a55-3943-40c0-9a17-0d72a1861822
@@ -10371,6 +10823,11 @@ sci-chemistry/vesta-bin VESTA
   sci-chemistry/vesta-bin
 #+end_src
 
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/vesta-bin
+sci-chemistry/vesta-bin ~amd64
+#+end_src
+
+
 *** Tkinter GUI
 :PROPERTIES:
 :ID:       b415b046-bc87-4f3b-8c8e-79172e7c2afe
@@ -10432,6 +10889,10 @@ dev-util/hut
 dev-util/hut::guru
 #+end_src
 
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/hut
+dev-util/hut ~amd64
+#+end_src
+
 
 ** =lynx= browser to quickly dump URLs as plain text
 :PROPERTIES:
@@ -10442,6 +10903,40 @@ dev-util/hut::guru
  www-client/lynx
 #+end_src
 
+** COMMENT =piper= text to speech neural network
+:PROPERTIES:
+:ID:       314421d3-c632-4547-8091-10407e5fa34c
+:END:
+
+For Emacs [[id:92e400ae-fe7f-4175-be8e-f844ac8b1a1d][Text to speech \\ greader + piper]].
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+ media-sound/piper
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/piper
+media-sound/piper::guru
+media-libs/sonic::guru
+sci-libs/onnxruntime::guru
+dev-cpp/safeint::guru
+sci-libs/dlpack::guru
+#+end_src
+
+** =bone= for =Bark!=
+:PROPERTIES:
+:ID:       898d050b-465f-4db6-8c45-021f71b5ef29
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+app-text/delta
+#+end_src
+
+#+begin_src conf :tangle ~/.config/bone/config.edn :mkdirp yes :comments no
+{:email        "yantar92@posteo.net"
+ :text-browser "w3m"          ;; "w3m", "lynx" or "links"
+ :diff-pager   "delta"        ;; "delta", "bat" or "diff-so-fancy"
+ }
+#+end_src
 
 * Archived
 
@@ -10641,7 +11136,7 @@ SELINUXTYPE=strict
 :ARCHIVE_ITAGS: COMMON HOLD
 :END:
 
-#+begin_src bash :tangle no :dir /sudo::/ :results output :eval yes
+#+begin_src bash :tangle no :dir /sudo::/ :results output :eval yes :noweb-ref sys-configure
 eselect repository enable src_prepare-overlay
 #+end_src
 
@@ -10899,18 +11394,3 @@ app-office/wps-office ~amd64
 app-office/wps-office WPS-EULA
 #+end_src
 
-** User-scripts :COMMON:HOLD:
-:PROPERTIES:
-:CREATED:  [2019-12-15 Sun 02:51]
-:ID:       898b5aa0-6f6e-4280-bd44-cc424436a81d
-:ARCHIVE_TIME: 2026-02-26 Thu 18:11
-:ARCHIVE_FILE: ~/Git/emacs-config/system-config.org
-:ARCHIVE_OLPATH: System: Gentoo Linux/Video/mpv/Config
-:ARCHIVE_CATEGORY: system-config
-:ARCHIVE_ITAGS: COMMON HOLD
-:END:
-*** YouTube
-:PROPERTIES:
-:CREATED:  [2019-12-15 Sun 02:51]
-:ID:       81208c2c-19ef-432e-88d4-4ab7bcc3d762
-:END:
