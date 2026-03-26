@@ -1032,103 +1032,82 @@ Must run acpid service
 rc-update add acpid default
 #+end_src
 
-**** COMMENT Default handler 
+**** Default handler 
 :PROPERTIES:
 :ID:       94815b9d-8ffb-44b9-8f71-2257299eb1af
 :END:
 
 #+begin_src bash :tangle /sudo::/etc/acpi/default.sh :shebang #!/bin/sh :mkdirp yes
-# $Header: /etc/acpi/default.sh                          Exp $
-# $Author: (c) 2012-2014 -tclover <tokiclover@dotfiles.> Exp $
-# $License: MIT (or 2-clause/new/simplified BSD)         Exp $
-# $Version: 2014/12/24 21:09:26                          Exp $
-#
- 
-log() { logger -p daemon "ACPI: $*"; }
-uhd() { log "event unhandled: $*"; }
- 
-set $*
-group=${1%/*}
-action=${1#*/}
-device=$2
-id=$3
-value=$4
- 
-[ -d /dev/snd ] && alsa=true || alsa=false
-[ -d /dev/oss ] && oss=true || oss=false
-amixer="amixer -q set Master"
-ossmix="ossmix -- vmix0-outvol"
- 
-case $group in
-    # ac_adapter)
-    # 	case $value in
-    # 		*0) log "switching to power.bat power profile"
-    # 			hprofile power.bat;;
-    # 		*1) log "switching to power.adp power profile"
-    # 			hprofile power.adp;;
-    # 		*) uhd $*;;
-    # 	esac
-    # 	;;
-    # battery)
-    # 	case $value in
-    # 		*0) log "switching to power.adp power profile"
-    # 			hprofile power.adp;;
-    # 		*1) log "switching to power.adp power profile"
-    # 			hprofile power.adp;;
-    # 		*) uhd $*;;
-    # 	esac
-    # 	;;
-    button)
-	case $action in
-	    lid)
-		case "$id" in
-		    close) loginctl suspend;;
-		    open) :;;
-		    ,*) uhd $*;;
-		esac
-		;;
-	    power) shutdown -H now;;
-	    sleep) loginctl hibernate;;
-	    #			mute) 
-	    #				$alsa && $amixer toggle;;
-	    #			volumeup) 
-	    #				$alsa && $amixer 3dB+
-	    #				$oss && $ossmix +3;;
-	    #			volumedown) 
-	    #				$alsa && $amixer 3dB-
-	    #				$oss && $ossmix -3;;
-	    ,*) uhd $*;;
-	esac
-	;;
-    # cd)
-    # 	case $action in
-    # 	    play) :;;
-    # 	    stop) :;;
-    # 	    prev) :;;
-    # 	    next) :;;
-    # 	    *) uhd $*;;
-    # 	esac
-    # 	;;
-    # jack)
-    # 	case $id in
-    # 	    *plug) :;;
-    # 	    *) uhd $*;;
-    # 	esac
-    # 	;;
-    video)
-	case $action in
-	    displayoff) :;;
-	    brightnessup) log "Increasing brightness..."
-			  /etc/acpi/actions/Fn-brightnessup.sh;;
-	    brightnessdown) log "Decreasing brightness..."
-			    /etc/acpi/actions/Fn-brightnessdown.sh;;
-	    ,*) uhd $*;;
-	esac
-	;;
-    ,*) uhd $*;;
-esac
- 
-unset alsa oss amixer ossmix group action device id
+  #!/bin/sh
+  # /etc/acpi/default.sh
+  # Default acpi script that takes an entry for all actions
+
+  set $*
+
+  group=${1%%/*}
+  action=${1#*/}
+  device=$2
+  id=$3
+  value=$4
+
+  log_unhandled() {
+      logger "ACPI event unhandled: $*"
+  }
+
+  case "$group" in
+      button)
+  	case "$action" in
+  	    power)
+  		/etc/acpi/actions/powerbtn.sh
+  		;;
+
+  	    # if your laptop doesnt turn on/off the display via hardware
+  	    # switch and instead just generates an acpi event, you can force
+  	    # X to turn off the display via dpms.  note you will have to run
+  	    # 'xhost +local:0' so root can access the X DISPLAY.
+  	    #lid)
+  	    #	xset dpms force off
+  	    #	;;
+
+  	    ,*)	log_unhandled $* ;;
+  	esac
+  	;;
+
+      ac_adapter)
+  	case "$value" in
+  	    # Add code here to handle when the system is unplugged
+  	    # (maybe change cpu scaling to powersave mode).  For
+  	    # multicore systems, make sure you set powersave mode
+  	    # for each core!
+  	    #*0)
+  	    #	cpufreq-set -g powersave
+  	    #	;;
+
+  	    # Add code here to handle when the system is plugged in
+  	    # (maybe change cpu scaling to performance mode).  For
+  	    # multicore systems, make sure you set performance mode
+  	    # for each core!
+  	    #*1)
+  	    #	cpufreq-set -g performance
+  	    #	;;
+
+  	    ,*)	log_unhandled $* ;;
+  	esac
+  	;;
+      video)
+  	case $action in
+  	    displayoff) :;;
+  	    brightnessup) log "Increasing brightness..."
+  			  /etc/acpi/actions/Fn-brightnessup.sh;;
+  	    brightnessdown) log "Decreasing brightness..."
+  			    /etc/acpi/actions/Fn-brightnessdown.sh;;
+  	    ,*) uhd $*;;
+  	esac
+  	;;
+      ,*)	log_unhandled $* ;;
+  esac
+   
+  unset alsa oss amixer ossmix group action device id
 #+end_src
 
 **** Default screen brightness (on startup)
