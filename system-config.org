@@ -163,7 +163,7 @@ I also need to make sure that =VIDEO_CARDS= is right.
   cpuid2cpuflags | cut -d: -f2-
 #+end_src
 
-#+RESULTS[b4b17b216f8769e2fb58f33ef0c4b1724e9f241c]: getcpuflags
+#+RESULTS[a0d28dfcc37fca5be894b6745ddfdcc7093ed191]: getcpuflags
 : aes avx avx2 avx_vnni bmi1 bmi2 f16c fma3 mmx mmxext pclmul popcnt rdrand sha sse sse2 sse3 sse4_1 sse4_2 ssse3 vpclmulqdq
 
 #+name: videocard
@@ -175,7 +175,7 @@ intel
   resolve-march-native
 #+end_src
 
-#+RESULTS: get-cflags
+#+RESULTS[13e1ac63766838cdef6775c9030db67bda2731cc]: get-cflags
 : -march=alderlake -mabm -mno-kl -mno-pconfig -mno-sgx -mno-widekl -mshstk --param=l1-cache-line-size=64 --param=l1-cache-size=32 --param=l2-cache-size=24576
 
 In any case, the above is not applied during the installation.
@@ -463,7 +463,6 @@ emerge --depclean --ask
 sys-block/io-scheduler-udev-rules
 #+end_src
 
-
 *** Services \ =rc-update=
 
 Normally, service management is done via =rc-update ...=
@@ -598,7 +597,6 @@ usable even during upgrades.
 (- <<numcpus()>> 2)
 #+end_src
 
-
 #+begin_src conf :tangle /sudo::/etc/portage/make.conf
   # C, C++ and FORTRAN options for GCC.
   # Also, Rust options
@@ -636,9 +634,14 @@ USE="$USE jit"
 USE="$USE elogind -consolekit -systemd"
 USE="$USE cjk"
 USE="$USE vulkan"
-# > cpuid2cpuflags
-CPU_FLAGS_X86="<<getcpuflags()>>"
 #+END_SRC
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.use/cpu_flags :noweb yes
+# > cpuid2cpuflags
+*/* cpu_flags_x86: <<getcpuflags()>>
+#+end_src
+
+
 ***** COMMENT Use binary packages unless custom use flags are selected
 :PROPERTIES:
 :ID:       1623e145-503b-4b9f-bb1a-e96167da2da3
