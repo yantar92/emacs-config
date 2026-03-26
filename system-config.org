@@ -2164,13 +2164,14 @@ The hibernation requires superuser access and is allowed in [[id:ba3805aa-10c2-4
 #+PROPERTY: sudo-commands-list+ /usr/sbin/loginctl
 
 #+BEGIN_SRC bash :tangle /home/yantar92/.local/bin/battery_status.sh :mkdirp yes :shebang #!/bin/bash
-STATUS="$(cat /sys/class/power_supply/BAT*/uevent | grep POWER_SUPPLY_PRESENT | cut -d= -f2)"
-STATUS2="$(cat /sys/class/power_supply/BAT*/uevent | grep POWER_SUPPLY_STATUS | cut -d= -f2)"
-if [[ "$STATUS2" == "Charging" ]]; then
-    echo 0;
-else
-    [[ "$STATUS" == "1" ]] && echo 0 || echo 1
-fi
+  # STATUS="$(cat /sys/class/power_supply/BAT*/uevent | grep POWER_SUPPLY_PRESENT | cut -d= -f2)"
+  STATUS2="$(cat /sys/class/power_supply/ACAD/online)"
+  if [[ "$STATUS2" == "1" ]]; then
+      echo 0;
+  else
+      # [[ "$STATUS" == "1" ]] && echo 0 || echo 1
+      echo 1
+  fi
 #+END_SRC
 
 #+BEGIN_SRC lua :noweb yes
