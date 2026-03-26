@@ -1200,6 +1200,36 @@ echo -n $ThresholdVal > /sys/class/backlight/intel_backlight/brightness
 logger "[ACPI] brightnessup |$CurrVal| |$NewVal| |$ThresholdVal|"
 #+end_src
 
+*** Power management
+
+**** Intel thermal optimizations
+:PROPERTIES:
+:ID:       b7401bd2-d1a9-49f7-bf35-1f156efe740c
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-power/thermald
+#+end_src
+
+#+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
+rc-update add thermald default
+#+end_src
+
+
+**** Laptop battery optimizations
+:PROPERTIES:
+:ID:       12bd9e51-1391-4950-89e2-1e1e7817ae21
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-power/tlp
+#+end_src
+
+#+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
+rc-update add tlp default
+#+end_src
+
+
 *** gpg
 :PROPERTIES:
 :ID:       f34430cf-bc29-43a5-bcab-6d900bfb15c5
