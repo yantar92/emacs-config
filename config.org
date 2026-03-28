@@ -269,7 +269,9 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
   			:host nil
   			:type git :repo "yantar92@git.savannah.gnu.org:/srv/git/emacs/org-mode.git"
   			:local-repo "~/Git/org-mode" :pre-build nil
-                          :fork (:host github :repo "yantar92/org" :branch "feature/org-fold-universal-core")))
+                          :fork (:host github :repo "yantar92/org"
+  				     ;; :branch "feature/org-fold-universal-core"
+  				     )))
   (straight-use-package '(org-contrib
   			:type git :repo "git@git.sr.ht:~bzg/org-contrib"
   			:local-repo "~/Git/org-contrib"))
