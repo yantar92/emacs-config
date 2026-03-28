@@ -405,7 +405,6 @@ We also need to re-install grub theme.
   grub-mkconfig -o /boot/efi/gentoo/grub.cfg
 #+end_src
 
-
 ** TODO System updates
 :PROPERTIES:
 :ID:       e5f43055-2a84-4326-8ccb-640f16abab71
@@ -10906,7 +10905,6 @@ dev-util/hut::guru
 dev-util/hut ~amd64
 #+end_src
 
-
 ** =lynx= browser to quickly dump URLs as plain text
 :PROPERTIES:
 :ID:       78c17191-8c4e-468e-ae8f-9bd02e9b011c
@@ -10949,6 +10947,15 @@ app-text/delta
  :text-browser "w3m"          ;; "w3m", "lynx" or "links"
  :diff-pager   "delta"        ;; "delta", "bat" or "diff-so-fancy"
  }
+#+end_src
+
+** powertop
+:PROPERTIES:
+:ID:       111b4351-2462-4d35-9eaa-1a3c8431c552
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-power/powertop
 #+end_src
 
 * Archived
