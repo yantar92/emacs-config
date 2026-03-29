@@ -439,6 +439,28 @@ eclean-dist
 emerge --depclean --ask
 #+end_src
 
+The updates can be rolled back with snappier. See https://wiki.gentoo.org/wiki/Snapper
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+ app-backup/snapper
+#+end_src
+
+Setup root backup
+#+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
+  snapper create-config /
+#+end_src
+
+#+begin_src bash :tangle /sudo::/etc/portage/bashrc
+  pre_pkg_setup() {
+      DESC="Installing ${CATEGORY}/${PF}"
+      NUMBER=`snapper create -t pre -p -d "${DESC}" -c number`
+  }
+
+  post_pkg_setup() {
+      DESC="Installed ${CATEGORY}/${PF}"
+      snapper create -t post --pre-number $NUMBER -d "${DESC}" -c number
+  }
+#+end_src
+
 ** Basic toolchain
 *** =fstab=
 :PROPERTIES:
