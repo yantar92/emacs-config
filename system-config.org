@@ -62,7 +62,7 @@ is physically on the same device with the laptop (and unencrypted),
 but UEFI signing and secure boot make that attack vector irrelevant.
 The upside, on the other hand, is that boot is faster compared to USB-A.
 
-For FS, I historically use BTRFS. Howadays, the default ZFS is available, which
+For FS, I historically use BTRFS. Nowadays, the default ZFS is available, which
 gives comparable feature set, but I prefer to use BTRFS to allow emerge rollbacks via
 BTRFS snapshots (via snapper).
 
@@ -405,7 +405,7 @@ We also need to re-install grub theme.
   grub-mkconfig -o /boot/efi/gentoo/grub.cfg
 #+end_src
 
-** TODO System updates
+** System updates
 :PROPERTIES:
 :ID:       e5f43055-2a84-4326-8ccb-640f16abab71
 :END:
@@ -1192,7 +1192,6 @@ sys-power/thermald
 #+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
 rc-update add thermald default
 #+end_src
-
 
 **** Laptop battery optimizations
 :PROPERTIES:
