@@ -8117,7 +8117,7 @@ When reading long and entangled public mailing list threads, many people can par
   		(propertize
                    contact-title
                    'face
-                   (modus-themes-with-colors bg-green-intense))
+                   `((t :background (modus-themes-with-colors bg-green-intense))))
   	      ;; Unknown contact
   	      (propertize "--> Unknown contact <--" 'face 'dired-flagged))
   	    "\n"
