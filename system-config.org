@@ -10798,10 +10798,35 @@ dev-java/leiningen-bin
   dev-python/pylint
 #+end_src
 
-*** Python LSP
+Disable some pylint rules
 
-Use =pyright=.
-There is no ebuild, so I have to use local =pip install=.
+#+begin_src conf :tangle /home/yantar92/.pylintrc
+  [MASTER]
+  disable=
+    flycheck-python-pylint-executable,
+    too-many-instance-attributes,
+    too-many-locals,
+    too-many-branches,
+    too-many-statements,
+    too-many-lines,
+    import-outside-toplevel,
+    line-too-long
+#+end_src
+
+#+begin_src conf :tangle /home/yantar92/.flake8
+[flake8]
+ignore = E501
+#+end_src
+
+
+*** Python LSP
+:PROPERTIES:
+:ID:       b66eff9b-1ad6-4604-8c75-60b3ac32a38f
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+  dev-python/python-lsp-server
+#+end_src
 
 *** Vesta
 :PROPERTIES:
