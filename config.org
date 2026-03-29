@@ -5477,11 +5477,16 @@ manually here (in this config) myself.
 #+end_src
 
 **** Use eglot for python
+:PROPERTIES:
+:ID:       6b083876-2d21-4d92-85a7-8a2da0ac14d0
+:END:
 
 #+begin_src emacs-lisp
   (use-package eglot
     :if init-flag
     :config
+    (add-to-list 'eglot-server-programs
+                 '((python-mode python-ts-mode) . ("uv" "run" "pylsp")))  
     (defun yant/eglot-ensure-maybe ()
       "Run eglot but only in local files."
       (when (and buffer-file-name
@@ -5530,17 +5535,6 @@ This is according to Corfu README.
       (advice-remove 'flycheck-python-find-project-root #'pet-flycheck-python-find-project-root-advice))
     (add-hook 'python-base-mode-hook #'pet-mode -10)
     (add-hook 'pet-mode-hook #'yant/disable-pet-flycheck-project-root-override))
-#+end_src
-
-***** COMMENT Add =venv= dirs to =PYTHONPATH=, so that LSP server can find their definitions
-
-#+begin_src emacs-lisp
-  (use-package python
-    :if init-flag
-    :config
-    (use-package eglot
-      :config
-      (setenv "PYTHONPATH" "./lib/python3.12/site-packages")))
 #+end_src
 
 ***** Bindings
