@@ -1228,6 +1228,15 @@ sys-power/tlp
 rc-update add tlp default
 #+end_src
 
+**** Reduce scheduling ticks on idle
+
+[[id:Kernel-no-hz-reducing-97e][[Kernel] NO_HZ: Reducing Scheduling-Clock Ticks — The Linux Kernel  documentation]]
+
+#+begin_src conf :tangle /sudo::/etc/kernel/config.d/10cpu.config :comments no :mkdirp yes
+CONFIG_NO_HZ_IDLE=y
+# CONFIG_NO_HZ_FULL is not set
+# CONFIG_TICK_CPU_ACCOUNTING is not set
+#+end_src
 
 *** gpg
 :PROPERTIES:
