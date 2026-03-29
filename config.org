@@ -3243,6 +3243,15 @@ notes: Trying out ShellCheck]] for suggestion!
   :custom
   (flycheck-emacs-lisp-load-path 'inherit))
 #+end_src
+**** Disable =org-lint= checker - too slow
+
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :if init-flag
+    :config
+    (setq-default flycheck-disabled-checkers '(org-lint)))
+#+end_src
+
 
 *** Highlight parentheses in code
 :PROPERTIES:
