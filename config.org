@@ -5704,6 +5704,19 @@ after expressions.  Disable.
   if __name__ == "__main__":
       main()
 #+end_src
+**** Documentation via =helm-dash=
+
+helm-dash is an old project, but it still works.
+
+#+begin_src emacs-lisp
+  (use-package helm-dash
+    :if init-flag
+    :custom
+    (helm-dash-common-docsets '("NumPy" "Pandas" "pymatgen")))
+#+end_src
+
+I can install custom docsets using =uvx doc2dash /path/to/html/docs=
+
 
 *** Elisp coding
 :PROPERTIES:
