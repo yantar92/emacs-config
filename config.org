@@ -10482,6 +10482,55 @@ here, so that LLM reasoning can be utilized better.
 
 #+end_src
 
+**** Code execution
+
+[[id:Email-<notifications@githubcom>2026-karthink-gptel-tool-959][Kerncos <notifications@github.com> [Email] (2026) [karthink/gptel] A tool that enables AI to execute Python code (Discussion #1299)]]
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :if init-flag
+    :config
+    (eval
+     '(defun my/gptel-execute-python-code (callback code)
+        (let* ((temp-file (make-temp-file "gptel-uvx-" nil ".py"))
+  	     (output-buffer (generate-new-buffer " *gptel-uvx-output*")))
+  	(with-temp-file temp-file
+  	  (insert code))
+  	(make-process
+  	 :name "gptel-uvx"
+  	 :buffer output-buffer
+  	 :command (list "uv" "run" temp-file)
+  	 :sentinel
+  	 (lambda (process _event)
+  	   (when (eq (process-status process) 'exit)
+  	     (let ((exit-status (process-exit-status process))
+  		   (output (with-current-buffer (process-buffer process)
+  			     (buffer-string))))
+  	       (when (file-exists-p temp-file) (delete-file temp-file))
+  	       (kill-buffer (process-buffer process))
+  	       (if (= exit-status 0)
+  		   (funcall callback output)
+  		 (funcall callback (format "Error (exit %d): %s" exit-status output)))))))))
+     'lexical)
+
+    (gptel-make-tool
+     :name "execute_python_code"
+     :function #'my/gptel-execute-python-code
+     :description "Execute Python code in a transient, isolated environment using 'uvx'. The code should
+  be self-contained and output results to stdout. IMPORTANT: To use external libraries (e.g. pandas,
+  requests), you MUST declare them using PEP 723 inline script metadata at the very top of your
+  code.\n\nExample:\n# /// script\n# dependencies = [\"requests\"]\n# ///\n\nimport requests\n# ... rest of
+  your code"
+     :args '((:name "code"
+  		  :type string
+  		  :description "The complete Python source code to execute, including PEP 723
+  metadata if dependencies are needed."))
+     :category "execute"
+     :confirm t
+     :async t)
+    (add-to-list 'gptel-tools (gptel-get-tool "execute_python_code"))))
+#+end_src
+
 **** COMMENT Running commands
 
 #+name: commands
