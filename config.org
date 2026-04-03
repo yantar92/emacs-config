@@ -5710,6 +5710,7 @@ helm-dash is an old project, but it still works.
 
 #+begin_src emacs-lisp
   (use-package helm-dash
+    :straight t
     :if init-flag
     :custom
     (helm-dash-common-docsets '("NumPy" "Pandas" "pymatgen")))
@@ -10528,7 +10529,7 @@ here, so that LLM reasoning can be utilized better.
      :category "execute"
      :confirm t
      :async t)
-    (add-to-list 'gptel-tools (gptel-get-tool "execute_python_code"))))
+    (add-to-list 'gptel-tools (gptel-get-tool "execute_python_code")))
 #+end_src
 
 **** COMMENT Running commands
