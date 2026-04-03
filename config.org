@@ -10411,6 +10411,7 @@ here, so that LLM reasoning can be utilized better.
                 (erase-buffer)
                 (insert "=== Context for clarification ===\n\n")
                 (insert context)
+  	      (fill-region (point-min) (point-max))
                 (display-buffer (current-buffer)
                                 '((display-buffer-in-side-window)
   				(window-height . 0.3) (side . bottom)))
