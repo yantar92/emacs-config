@@ -8500,6 +8500,74 @@ Even better, when we sanitize the DOM for readability
     (meta-defun meta-previous-buffer :mode eww-mode (eww-back-url))
     (meta-defun meta-next-buffer :mode eww-mode (eww-forward-url)))
 #+end_src
+*** Browse web as in Org mode with =shrface=
+
+#+begin_src emacs-lisp
+  (use-package shrface
+    :if init-flag
+    :straight t
+    :after eww
+    :config
+    (use-package eldoc-box :straight t)
+    (defvar shrface-general-rendering-functions
+      (append '((title . eww-tag-title)
+                (form . eww-tag-form)
+                (input . eww-tag-input)
+                (button . eww-form-submit)
+                (textarea . eww-tag-textarea)
+                (select . eww-tag-select)
+                (link . eww-tag-link)
+                (meta . eww-tag-meta)
+                (code . shrface-tag-code)
+                ;; (pre . shrface-shr-tag-pre-highlight)
+  	      )
+              shrface-supported-faces-alist))
+    (defun shrface-eww-setup ()
+      (unless shrface-toggle-bullets
+        (shrface-regexp)
+        (setq-local imenu-create-index-function #'shrface-imenu-get-tree)
+        (setq-local outline-search-function nil
+  		  outline-level #'outline-level))
+      ;; workaround to show annotations in eww
+      ;; (shrface-show-all-annotations)
+      )
+    ;; (defun shrface-show-all-annotations()
+    ;;   (when (bound-and-true-p paw-annotation-mode)
+    ;;     (paw-clear-annotation-overlay)
+    ;;     (paw-show-all-annotations)
+    ;;     (if paw-annotation-show-wordlists-words-p
+    ;;         (paw-focus-find-words :wordlist t))
+    ;;     (if paw-annotation-show-unknown-words-p
+    ;;         (paw-focus-find-words))))
+    (defun shrface-render-advice (orig-fun &rest args)
+      (require 'eww)
+      (let ((shrface-org nil)
+            (shr-bullet (concat (char-to-string shrface-item-bullet) " "))
+            (shr-table-vertical-line "|")
+            (shr-width 65)
+            (shr-indentation 0)
+            (shr-external-rendering-functions shrface-general-rendering-functions)
+            (shrface-toggle-bullets nil)
+            (shrface-href-versatile t)
+            (shr-use-fonts nil))
+        ;; workaround, need a delay to update the header line
+        ;; (run-with-timer 0.01 nil 'shrface-update-header-line)
+        (apply orig-fun args)))
+    (advice-add 'eww-display-html :around #'shrface-render-advice)
+    ;; (add-hook 'eww-after-render-hook #'org-indent-mode)
+    (add-hook 'eww-after-render-hook #'eldoc-mode)
+    (add-hook 'eww-after-render-hook #'eldoc-box-hover-mode)
+    (add-hook 'eww-after-render-hook #'shrface-eww-setup)
+    (define-key eww-mode-map (kbd "<tab>") 'shrface-outline-cycle)
+    (define-key eww-mode-map (kbd "<backtab>") 'shrface-outline-cycle-buffer)
+    (define-key eww-mode-map (kbd "C-t") 'shrface-toggle-bullets)
+    (meta-defun meta-down-element :mode eww-mode shrface-next-headline)
+    (meta-defun meta-up-element :mode eww-mode shrface-previous-headline)
+    ;;(define-key eww-mode-map (kbd "M-l") 'shrface-links-consult)
+    ;;(define-key eww-mode-map (kbd "M-h") 'shrface-headline-consult)
+    )
+#+end_src
+
 ** Mastodon client =mastodon.el=
 
 #+begin_src emacs-lisp
