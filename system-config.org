@@ -414,6 +414,7 @@ We also need to re-install grub theme.
   update with installkernel
 #+begin_src screen :eval (yes-or-no-p "Run Gentoo system upgrade? ") :terminal kitty :session update :cmd bash
 su
+mount /boot
 #+end_src
 
 #+begin_src screen :terminal kitty :session update :eval yes :cmd bash
