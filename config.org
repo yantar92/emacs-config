@@ -10598,6 +10598,7 @@ here, so that LLM reasoning can be utilized better.
   metadata if dependencies are needed."))
      :category "execute"
      :confirm t
+     :include t
      :async t)
     (add-to-list 'gptel-tools (gptel-get-tool "execute_python_code")))
 #+end_src
