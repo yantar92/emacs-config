@@ -7799,6 +7799,20 @@ x11-misc/xprintidle
 x11-misc/xprintidle ~amd64
 #+end_src
 
+** Bluetooth earbuds
+:PROPERTIES:
+:ID:       6142e69a-b611-4f8d-8eef-6ebb8ef3c571
+:END:
+
+#+begin_src bash :tangle /home/yantar92/.local/bin/earbuds-on.sh :shebang #!/bin/bash
+sudo /etc/init.d/bluetooth start
+sudo bluetoothctrl connect E4:58:BC:1E:56:30
+#+end_src
+
+#+begin_src bash :tangle /home/yantar92/.local/bin/earbuds-off.sh :shebang #!/bin/bash
+sudo /etc/init.d/bluetooth stop
+#+end_src
+
 ** Testing emacs repo
 :PROPERTIES:
 :ID:       bcebe59b-f13d-49fc-81aa-ba9dcfe71e5e
