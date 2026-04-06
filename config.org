@@ -4988,6 +4988,16 @@ Interactive fill/unfill paragraph at point.
     :bind ("C-c s" . scratch))
 #+end_src
 
+*** Do not delete active region on <del>
+
+This is something other editors do, but I find it
+giving more accidental deletions than non-accidental.
+Disabling.
+
+#+begin_src emacs-lisp
+(setopt delete-active-region nil)
+#+end_src
+
 ** Debugging
 :PROPERTIES:
 :ID:       749e7414-827f-45cb-9ee0-19637eb2274e
