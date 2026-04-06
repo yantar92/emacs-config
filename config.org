@@ -10641,8 +10641,18 @@ here, so that LLM reasoning can be utilized better.
      :description "Execute Python code in a transient, isolated environment using 'uvx'. The code should
   be self-contained and output results to stdout. IMPORTANT: To use external libraries (e.g. pandas,
   requests), you MUST declare them using PEP 723 inline script metadata at the very top of your
-  code.\n\nExample:\n# /// script\n# dependencies = [\"requests\"]\n# ///\n\nimport requests\n# ... rest of
-  your code"
+  code.
+
+  The dependencies will be installed automatically.
+  You do not need to worry about them being unavailable.
+
+  Example:
+  # /// script
+  # dependencies = [\"requests\"]
+  # ///
+
+  import requests
+  # ... rest of your code"
      :args '((:name "code"
   		  :type string
   		  :description "The complete Python source code to execute, including PEP 723
