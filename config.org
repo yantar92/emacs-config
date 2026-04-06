@@ -10264,6 +10264,18 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
    :category "search")
   (push (gptel-get-tool "view_buffer_or_file") gptel-tools)
 
+  (gptel-make-tool
+   :name "get_buffer_file_path"
+   :include nil
+   :confirm nil
+   :category "search"
+   :function (lambda (buf) (with-current-buffer buf (buffer-file-name)))
+   :description "Return path to file opened in Emacs buffer"
+   :args '(( :name "buffer_name"
+  	   :type string
+             :description "Buffer name")))
+  (push (gptel-get-tool "get_buffer_file_path") gptel-tools)
+
   (defun yant/search-buffer (buffer regexp-or-string &optional before-lines after-lines search-literally top-n)
     "Return a list of match objects for REGEXP-OR-STRING in BUFFER.
   Each object is a plist with keys :match-text, :start-line, :end-line, and :context.
