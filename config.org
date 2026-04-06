@@ -392,7 +392,7 @@ scheme, I ended up using a light theme I prefer.
                :repo "protesilaos/modus-themes")
     :if init-flag
     :init
-    (require 'modus-operandi-theme)
+    (require 'modus-operandi-tinted-theme)
     (setq modus-themes-headings '((t regular)))
     (setopt modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
     (setopt modus-operandi-tinted-palette-overrides
