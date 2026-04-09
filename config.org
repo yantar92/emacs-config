@@ -8810,6 +8810,21 @@ fluffy language when I make mistakes!).
      'yant/gptel-system-prompt-default-functions
      (lambda () (format "TEMPORAL CONTEXT: Today is %s" (format-time-string "%Y-%m-%d %a %H:%M %Z")))
      -1)
+    (add-hook
+     'yant/gptel-system-prompt-default-functions
+     (lambda ()
+       (format "CURRENT TASK: %s (buffer: '%s' line: '%s')"
+  	     (if (org-clocking-p)
+  		 (org-clock-get-clock-string)
+                 "No clocked in task")
+               (if (org-clocking-p)
+  		 (marker-buffer org-clock-marker)
+                 "N/A")
+               (if (org-clocking-p)
+  		 (org-with-point-at org-clock-marker
+                     (org-current-line))
+  	       "N/A")))
+     -1)
     :config
     (setf (alist-get 'default gptel-directives)
   	(lambda ()
