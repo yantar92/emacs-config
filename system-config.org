@@ -7379,7 +7379,7 @@ The script uses scripts defined in [[id:269904a8-3bb6-4e9e-a385-2e2b2c980879][Ar
   URL="$1"
 
   case "$URL" in
-      ,*ted.com/talks*|*bilibili.com*|*youtube.com*)
+      ,*ted.com/talks*|*bilibili.com*|*youtube.com*|*.webm)
   	mpv "$URL" && exit
   	;;
   esac
