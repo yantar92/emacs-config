@@ -414,6 +414,9 @@ We also need to re-install grub theme.
   update with installkernel
 #+begin_src screen :eval (yes-or-no-p "Run Gentoo system upgrade? ") :terminal kitty :session update :cmd bash
 su
+#+end_src
+
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
 mount /boot
 #+end_src
 
@@ -427,13 +430,22 @@ emerge --update --ask --deep --keep-going --newuse --backtrack=50 world
 
 #+begin_src screen :terminal kitty :session update :eval yes :cmd bash
 haskell-updater
+#+end_src
+
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
 smart-live-rebuild
 #+end_src
 
 #+begin_src screen :terminal kitty :session update :eval yes :cmd bash
-revdep-rebuild
-eclean-pkg
-eclean-dist
+  revdep-rebuild
+#+end_src
+
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
+  eclean-pkg
+#+end_src
+
+#+begin_src screen :terminal kitty :session update :eval yes :cmd bash
+  eclean-dist
 #+end_src
 
 #+begin_src screen :terminal kitty :session update :eval yes :cmd bash
@@ -906,6 +918,7 @@ dev-python/pip
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 app-admin/sysklogd
 #+end_src
+
 
 #+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
 rc-update add sysklogd default
