@@ -10681,6 +10681,8 @@ here, so that LLM reasoning can be utilized better.
   The dependencies will be installed automatically.
   You do not need to worry about them being unavailable.
 
+  DO NOT use this tool when a more specialized tool is available.
+
   Example:
   # /// script
   # dependencies = [\"requests\"]
