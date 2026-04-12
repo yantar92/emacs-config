@@ -3894,11 +3894,11 @@ x11-apps/xinput
 
   if [[ "$NEW_STATE" == "enabled" ]]; then
       rm -f /tmp/touchpad-disabled
-      xinput enable "PIXA3854:00 093A:0274 Touchpad"
+      xinput set-prop "PIXA3854:00 093A:0274 Touchpad" "libinput Send Events Mode Enabled" 0 0
       echo "mouse.coords({x=960,y=540})" | awesome-client
   else
       touch /tmp/touchpad-disabled
-      xinput disable "PIXA3854:00 093A:0274 Touchpad"
+      xinput set-prop "PIXA3854:00 093A:0274 Touchpad" "libinput Send Events Mode Enabled" 1 0
       echo "mouse.coords({x=2400,y=0})" | awesome-client
   fi
 #+end_src
