@@ -8693,54 +8693,50 @@ yant/email-whitelist
 yant/spam-keywords
 #+end_src
 
-[2020-12-24 Thu] Disabling. Too many false positives.
-****************** TODO Implement reliable debugger for spam filter
-****************** END
-
 #+begin_src bash :tangle /home/yantar92/.local/bin/notmuch-clear-spam.sh :shebang #!/bin/bash :noweb tangle
-exit
+  exit
 
-WHITE_LIST="\
-<<email-whitelist()>>"
+  WHITE_LIST="\
+  <<email-whitelist()>>"
 
-WHITE_LIST_SEARCH_STRING=$(
-    echo "$WHITE_LIST" | while read x; do
-	echo " and not from:$x";
-    done
-			)
+  WHITE_LIST_SEARCH_STRING=$(
+      echo "$WHITE_LIST" | while read x; do
+  	echo " and not from:$x";
+      done
+  			)
 
-#delete and mark as spam all the messages from senders of messages marked as spam
-# notmuch address "(tag:deleted AND tag:spam) OR (tag:spam)" | while read x; do
-#     EMAIL="$(echo $x | sed -r 's/^.*<(.*)>$/\1/')"; echo "$EMAIL"; done | sort -u | while read x; do
-#     [[ -n "$x" ]] && notmuch tag +deleted +spam -- tag:new and not tag:sent and from:$x $WHITE_LIST_SEARCH_STRING;
-# done
+  #delete and mark as spam all the messages from senders of messages marked as spam
+  # notmuch address "(tag:deleted AND tag:spam) OR (tag:spam)" | while read x; do
+  #     EMAIL="$(echo $x | sed -r 's/^.*<(.*)>$/\1/')"; echo "$EMAIL"; done | sort -u | while read x; do
+  #     [[ -n "$x" ]] && notmuch tag +deleted +spam -- tag:new and not tag:sent and from:$x $WHITE_LIST_SEARCH_STRING;
+  # done
 
-SPAM_KEYWORDS="\
-<<spam-keywords()>>"
+  SPAM_KEYWORDS="\
+  <<spam-keywords()>>"
 
-echo "$SPAM_KEYWORDS" | while read x; do
-    [[ -n "$x" ]] && notmuch tag +deleted +spam -- tag:new and not tag:sent and "$x" $WHITE_LIST_SEARCH_STRING;
-done
-# echo
+  echo "$SPAM_KEYWORDS" | while read x; do
+      [[ -n "$x" ]] && notmuch tag +deleted +spam -- tag:new and not tag:sent and "$x" $WHITE_LIST_SEARCH_STRING;
+  done
+  # echo
 
-#spam servers based on tag
-notmuch address "(tag:deleted AND tag:spam_server) OR (tag:spam_server)" | while read x; do
-    EMAIL="$(echo $x | sed -r 's/^.*<.*(@.*)>$/\1/')"; echo "$EMAIL"; done | sort -u | while read x; do
-    [[ -n "$x" ]] && notmuch tag +deleted +spam -- tag:new and not tag:sent and from:$x $WHITE_LIST_SEARCH_STRING;
-done
-# echo
+  #spam servers based on tag
+  # notmuch address "(tag:deleted AND tag:spam_server) OR (tag:spam_server)" | while read x; do
+  #     EMAIL="$(echo $x | sed -r 's/^.*<.*(@.*)>$/\1/')"; echo "$EMAIL"; done | sort -u | while read x; do
+  #     [[ -n "$x" ]] && notmuch tag +deleted +spam -- tag:new and not tag:sent and from:$x $WHITE_LIST_SEARCH_STRING;
+  # done
+  # echo
 
-# #handle server spam tags
-# notmuch search --output messages tag:new and not tag:sent | while read x; do
-#     [[ -n "$x" ]] || continue;
-#     FILE=$(notmuch search --output files $x)
-#     grep "X-Mras: PROBABLE_SPAM" $FILE >/dev/null && notmuch tag +deleted +spam -- $x $WHITE_LIST_SEARCH_STRING
-# done
+  # #handle server spam tags
+  # notmuch search --output messages tag:new and not tag:sent | while read x; do
+  #     [[ -n "$x" ]] || continue;
+  #     FILE=$(notmuch search --output files $x)
+  #     grep "X-Mras: PROBABLE_SPAM" $FILE >/dev/null && notmuch tag +deleted +spam -- $x $WHITE_LIST_SEARCH_STRING
+  # done
 
-# notmuch search --output files tag:new and not tag:sent | while read x; do
-#     ID=$(cat $x | grep "Message-ID" -A1 | tail -n1 | sed -r 's/<//; s/>//; s/[[:space:]]//g')
-#     spamassassin < $x | grep "X-Spam-Flag: YES" >/dev/null && notmuch tag +spam +spam_likely -- id:$ID
-# done
+  # notmuch search --output files tag:new and not tag:sent | while read x; do
+  #     ID=$(cat $x | grep "Message-ID" -A1 | tail -n1 | sed -r 's/<//; s/>//; s/[[:space:]]//g')
+  #     spamassassin < $x | grep "X-Spam-Flag: YES" >/dev/null && notmuch tag +spam +spam_likely -- id:$ID
+  # done
 #+end_src
 
 ** Mailing list sync (slrn - slrnpull)
