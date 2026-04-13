@@ -3722,8 +3722,10 @@ require javascript or complex rendering.
     (defun yant/browse-url (url &optional new-window)
       "Open in mpv or eaf-browser."
       (setq url (replace-regexp-in-string ".*scholar\\.google\\.com[^/]*/scholar_url\\?url=\\([^&]+\\).+" "\\1" url))
-      (if (and (string-match-p "youtube\\.com" url)
-  	     (not (string-match-p "/channel" url)))
+      (if (or (and (string-match-p "youtube\\.com" url)
+  		 (not (string-match-p "/channel" url)))
+              (string-suffix-p ".webm" url)
+              (string-suffix-p ".opus" url))
   	(browse-url-generic url new-window)
         (if (or (string-match-p "author\\.today" url)
                 (string-match-p "semanticscholar\\.org" url)
@@ -3741,7 +3743,11 @@ require javascript or complex rendering.
           (eww url))))
     :custom
     (browse-url-browser-function 'yant/browse-url)
-    (browse-url-generic-program "qutebrowser-call.sh"))
+    (browse-url-generic-program "qutebrowser-call.sh")
+    :config
+    (cl-pushnew
+     `(,(rx (or ".webm" ".opus") eos) . yant/browse-url)
+     browse-url-handlers))
 #+end_src
 
 ***** Browse mailing list archive Urls using my local notmuch archives
@@ -8507,6 +8513,7 @@ Even better, when we sanitize the DOM for readability
     ;; This is mirrowing my qutebrowser keys
     (bind-key "y y" #'eww-copy-page-url eww-mode-map)
     (bind-key "y Y" #'eww-copy-page-url eww-mode-map)
+    (bind-key "C-c C-o" #'shr-browse-url eww-mode-map)
     (meta-defun meta-previous-buffer :mode eww-mode (eww-back-url))
     (meta-defun meta-next-buffer :mode eww-mode (eww-forward-url)))
 #+end_src
