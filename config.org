@@ -10691,6 +10691,10 @@ here, so that LLM reasoning can be utilized better.
 
   DO NOT use this tool when a more specialized tool is available.
 
+  Note that you do not always need to type in the context manually
+  into the python script. When the context is coming from some
+  existing file, you can read the file in the code directly.
+
   Example:
   # /// script
   # dependencies = [\"requests\"]
