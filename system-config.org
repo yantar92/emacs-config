@@ -8694,7 +8694,7 @@ yant/spam-keywords
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/notmuch-clear-spam.sh :shebang #!/bin/bash :noweb tangle
-  exit
+  # exit
 
   WHITE_LIST="\
   <<email-whitelist()>>"
