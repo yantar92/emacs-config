@@ -10145,7 +10145,7 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
     "Read URL and return buffer & text.
   If URL contains PDF, pass it through pdftotext and return it.
   LIMIT is the maximum number of characters to return directly (not in buffer)."
-    (unless limit (setq limit (* 100 1000))) ;; avoid exceeding context length
+    (unless limit (setq limit (* 30 1000))) ;; avoid exceeding context length
     (with-current-buffer (url-retrieve-synchronously url)
       ;; 1. Skip HTTP headers
       (goto-char (point-min))
