@@ -10431,6 +10431,62 @@ stick to a package and contribute as needed.
               "[macher_placeholder]"  ; will be replaced with project name and file list
               10))
 #+end_src
+***** Add a tool to create a working copy of a file from project
+
+Useful in conjunction with python tool
+
+#+begin_src emacs-lisp
+  (use-package macher
+    :if init-flag
+    :config
+    (defun yant/macher--tool-get-file-copy (context source-path)
+      "Create a throaway copy of file within the workspace.
+
+  CONTEXT is a `macher-context' struct containing workspace information.
+
+  SOURCE-PATH is the source path relative to the workspace root.
+
+  Returns throwaway file path on success.  Signals an error if the
+  source file is not found."
+      (let* ((workspace (macher-context-workspace context))
+             (resolve-workspace-path (apply-partially #'macher--resolve-workspace-path workspace)))
+        ;; Use the helper function to move the file.
+        (macher--with-workspace-file
+         context source-path
+         (lambda (source-full-path source-new-content)
+  	 (if source-new-content
+               (let ((temp-file (make-temp-file
+  			       "macher-"
+                                 nil
+                                 (file-name-extension source-path))))
+                 (with-temp-file temp-file
+  		 (insert source-new-content))
+                 ;; Return temp file path.
+                 temp-file)
+             ;; No source file
+             (error "Source file %s does not exist" source-path)))
+         nil)))
+    (push
+     `(:name
+       "get_working_file_copy"
+       :function yant/macher--tool-get-file-copy
+       :description
+       ,(concat
+         "Get throwaway copy of a file in your workspace. File changes done during current session are reflected in the copy.\n"
+         "\n"
+         "Fails if file does not exist.\n"
+         "\n"
+         "Returns path to throwaway copy on success."
+         macher--workspace-postfix)
+       :confirm nil
+       :include nil
+       :args
+       ((:name
+         "source_path"
+         :type string
+         :description "Current path of the file to move, relative to workspace root")))
+     macher-tools))
+#+end_src
 
 **** Editing buffers
 
