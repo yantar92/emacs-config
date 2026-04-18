@@ -7820,6 +7820,7 @@ x11-misc/xprintidle ~amd64
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/earbuds-on.sh :shebang #!/bin/bash
 sudo /etc/init.d/bluetooth start
+sleep 5
 sudo bluetoothctl connect E4:58:BC:1E:56:30
 pulseaudio -k
 #+end_src
