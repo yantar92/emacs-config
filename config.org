@@ -10751,6 +10751,9 @@ here, so that LLM reasoning can be utilized better.
   into the python script. When the context is coming from some
   existing file, you can read the file in the code directly.
 
+  If the python code fails, do remember that you may have access to
+  web search to refresh your knowledge about the library APIs.
+
   Example:
   # /// script
   # dependencies = [\"requests\"]
