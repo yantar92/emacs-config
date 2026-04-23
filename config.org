@@ -10474,7 +10474,11 @@ Useful in conjunction with python tool
        :function yant/macher--tool-get-file-copy
        :description
        ,(concat
-         "Get throwaway copy of a file in your workspace. File changes done during current session are reflected in the copy.\n"
+         "Get throwaway copy of a file in your workspace. "
+         "\n"
+         "Edits made in the copy will be discarded. Use actual editing tools to perform edits in the workspace."
+         "\n"
+         "You can call the tool again if you made changes in the workspace to obtain the current state of the file again."
          "\n"
          "Fails if file does not exist.\n"
          "\n"
