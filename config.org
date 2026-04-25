@@ -10460,7 +10460,7 @@ Useful in conjunction with python tool
                (let ((temp-file (make-temp-file
   			       "macher-"
                                  nil
-                                 (file-name-extension source-path))))
+                                 (concat "." (file-name-extension source-path)))))
                  (with-temp-file temp-file
   		 (insert source-new-content))
                  ;; Return temp file path.
