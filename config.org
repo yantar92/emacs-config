@@ -4955,8 +4955,8 @@ limit in the past. Do not want to.
   :config
   (meta-defun meta-backward :mode vundo-mode vundo-backward)
   (meta-defun meta-forward :mode vundo-mode vundo-forward)
-  (meta-defun meta-down :mode vundo-mode vundo-down)
-  (meta-defun meta-up :mode vundo-mode vundo-up))
+  (meta-defun meta-down :mode vundo-mode vundo-next)
+  (meta-defun meta-up :mode vundo-mode vundo-previous))
 #+end_src
 
 *** Fill/unfill paragraph
