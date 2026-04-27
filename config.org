@@ -6836,7 +6836,7 @@ Show the key strokes.
 #+begin_src emacs-lisp
   (use-package elfeed
     :if init-flag
-    :straight t
+    :straight (:host github :repo "skeeto/elfeed" :local-repo "~/Git/elfeed")
     :bind (:map elfeed-search-mode-map
   	      ("r" . elfeed-search-update--force)
   	      ("R" . elfeed-search-fetch)
