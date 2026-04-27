@@ -8696,7 +8696,7 @@ Despite the usual big-tech concerns, it makes a decent:
     (gptel-default-mode 'org-mode)
     :config
     ;; Default model
-    (setopt gptel-model  'gpt-5-mini)
+    (setopt gptel-model  'deepseek-v4-pro)
     (setq gptel-expert-commands t)
     ;; Org mode integration
     (require 'gptel-org)
@@ -10869,14 +10869,14 @@ here, so that LLM reasoning can be utilized better.
      :api-key
      (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi-work"))))
     ;; defaults
-    ;; (plist-put minuet-openai-fim-compatible-options :end-point "https://api.deepseek.com/beta/completions")
-    ;; (plist-put minuet-openai-fim-compatible-options :model "deepseek-chat")
+    (plist-put minuet-openai-fim-compatible-options :end-point "https://api.deepseek.com/beta/completions")
+    (plist-put minuet-openai-fim-compatible-options :model "deepseek-v4-flash")
 
     ;; classic OpenAI
-    (plist-put
-     minuet-openai-options
-     :api-key
-     (lambda () (nth 0 (process-lines "pass" "show" "internet/openai-key"))))
+    ;; (plist-put
+    ;;  minuet-openai-options
+    ;;  :api-key
+    ;;  (lambda () (nth 0 (process-lines "pass" "show" "internet/openai-key"))))
 
     (defun yant/minuet-boon-not-insert-state-p ()
       "Return non-nil if Emacs is not in boon insert state."
