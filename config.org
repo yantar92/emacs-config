@@ -6160,8 +6160,8 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE 
     (meta-defun meta-scroll-down :mode pdf-view-mode (yant/pdf-view-up 20))
     ;; (meta-defun meta-scroll-down :mode pdf-view-mode pdf-view-scroll-down-or-previous-page)
     ;; (meta-defun meta-scroll-up :mode pdf-view-mode pdf-view-scroll-up-or-next-page)
-    (meta-defun meta-down :mode pdf-annot-list-mode tablist-next-line)
-    (meta-defun meta-up :mode pdf-annot-list-mode tablist-previous-line)))
+    (meta-defun meta-down :mode pdf-annot-list-mode (tablist-next-line 1))
+    (meta-defun meta-up :mode pdf-annot-list-mode (tablist-previous-line 1))))
 #+end_src
 **** Fit PDF to window
 
