@@ -8834,6 +8834,14 @@ fluffy language when I make mistakes!).
                      (org-current-line))
   	       "N/A")))
      -1)
+    ;; Expore currently visible buffers
+    (add-hook
+     'yant/gptel-system-prompt-default-functions
+     (lambda ()
+       (format "LIST OF RELEVANT EMACS BUFFERS: %s
+  These above buffers, in addition to CURRENT TASK, define current working environment."
+  	     (mapcar #'window-buffer (window-list))))
+     1)
     :config
     (setf (alist-get 'default gptel-directives)
   	(lambda ()
