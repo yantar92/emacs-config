@@ -9134,7 +9134,7 @@ For simpler tasks and lightweight models, I use a much shorter prompt.
         (setq-local gptel--system-message yant/gptel-directive-simple))))
 #+end_src
 
-**** Model self-assessment
+**** COMMENT Model self-assessment
 
 Sometimes, the model strength does not match the discussion.
 Then, I can ask the model self-assess and suggest cheaper/strong model
