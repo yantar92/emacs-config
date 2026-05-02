@@ -8690,8 +8690,6 @@ Despite the usual big-tech concerns, it makes a decent:
     :straight t
     :after boon
     :custom
-    ;; Need to be lower for non-latin queries.
-    (gptel-curl-file-size-threshold 50000)
     (gptel-api-key (lambda () (nth 0 (process-lines "pass" "show" "internet/openai-key"))))
     (gptel-default-mode 'org-mode)
     :config
