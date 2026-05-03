@@ -1162,8 +1162,9 @@ SUBSYSTEM=="backlight", ACTION=="add", KERNEL=="intel_backlight", ATTR{brightnes
 #+begin_src bash :tangle /sudo::/etc/acpi/actions/Fn-brightnessdown.sh :shebang #!/bin/bash :mkdirp yes
 # Set the static decrement value.  Keep in mind that this will 
 # be done twice. 
-DecVal=2400
-LowDecVal=64
+read -r MaxVal < "/sys/class/backlight/intel_backlight/max_brightness"
+DecVal=$(($MaxVal / 40))
+LowDecVal=$(($DecVal / 4))
  
 # Set the Minimum we will accept. 
 MinVal=0 
@@ -1171,6 +1172,7 @@ MinVal=0
 # Get the current brightness value. 
 #CurrVal=$(cat /sys/class/backlight/intel_backlight/brightness); 
 read -r CurrVal < "/sys/class/backlight/intel_backlight/brightness"
+
  
 # Set the new value minus the decrement value. 
 NewVal=$(($CurrVal<=$DecVal?($CurrVal - $LowDecVal):($CurrVal - $DecVal))); 
@@ -1189,12 +1191,12 @@ logger "[ACPI] brightnessdown |$CurrVal<nowiki>| |</nowiki>$NewVal| |$ThresholdV
 #+begin_src bash :tangle /sudo::/etc/acpi/actions/Fn-brightnessup.sh :shebang #!/bin/bash
 # Set the static increment value.  Keep in mind that this will 
 # be done twice. 
-IncVal=2400
-LowIncVal=64
- 
 # Get the Maximum value for use. 
 #MaxVal=$(cat /sys/class/backlight/intel_backlight/max_brightness); 
 read -r MaxVal < "/sys/class/backlight/intel_backlight/max_brightness"
+
+IncVal=$(($MaxVal / 40))
+LowIncVal=$(($IncVal / 4))
  
 # Get the current brightness value. 
 #CurrVal=$(cat /sys/class/backlight/intel_backlight/brightness); 
