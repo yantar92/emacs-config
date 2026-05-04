@@ -6838,7 +6838,7 @@ Show the key strokes.
     :if init-flag
     :straight (:host github :repo "skeeto/elfeed" :local-repo "~/Git/elfeed")
     :bind (:map elfeed-search-mode-map
-  	      ("r" . elfeed-search-update--force)
+  	      ("r" . revert-buffer)
   	      ("R" . elfeed-search-fetch)
   	      ("t" . elfeed-search-untag-all-unread)
   	      ("T" . elfeed-search-tag-all-unread)
