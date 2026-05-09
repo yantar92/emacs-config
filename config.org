@@ -10238,6 +10238,12 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
         (if (file-exists-p buffer-or-file)
   	  (setq buffer (find-file-noselect buffer-or-file))
           (error "%s buffer or file do not exist" buffer-or-file)))
+      (when (derived-mode-p 'pdf-view-mode)
+        (let ((text (yant/pdf-bytes-to-text (with-current-buffer buffer (buffer-string)))))
+  	(setq buffer (get-buffer-create (format " *pdf text: %s*" buffer-or-file)))
+  	(with-current-buffer buffer
+  	  (erase-buffer)
+            (insert text))))
       (with-current-buffer buffer
         (org-with-wide-buffer
          (let ((max-chars 100000))
