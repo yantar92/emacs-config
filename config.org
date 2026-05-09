@@ -10438,7 +10438,9 @@ stick to a package and contribute as needed.
   (use-package macher
     :if init-flag
     :straight t
-    :custom (macher-action-buffer-ui 'org)
+    :custom
+    (macher-action-buffer-ui 'org)
+    (macher-max-tool-output-length (* 128 1024))
     :config
     (macher-install)
     (macher-enable)
