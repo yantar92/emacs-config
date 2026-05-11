@@ -10875,8 +10875,8 @@ here, so that LLM reasoning can be utilized better.
 
     :config
     ;; You can use M-x minuet-configure-provider to interactively configure provider and model
-    (setq minuet-provider 'openai)
-    ;; (setq minuet-provider 'openai-fim-compatible)
+    ;; (setq minuet-provider 'openai)
+    (setq minuet-provider 'openai-fim-compatible)
 
     ;; Deepseek
     (plist-put
