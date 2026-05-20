@@ -8886,6 +8886,7 @@ more prompt-like.
   	 :function `(lambda () ,name-symbol)
   	 :confirm nil
   	 :name name
+           :include nil
   	 :description (concat "Thinking workflow: " description)
   	 :category "workflow")))))
 #+end_src
