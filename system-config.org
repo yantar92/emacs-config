@@ -10134,14 +10134,14 @@ x11-apps/xrandr
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/project.sh :shebang #!/bin/bash
-xrandr --output HDMI-1 --auto --right-of eDP-1
+xrandr --output DP-1 --auto --right-of eDP-1
 pgrep conky && conky-stop
 echo "true" > ~/.log/projecting
 balance-monitor.sh
 #+end_src
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/unproject.sh :shebang #!/bin/bash
-xrandr --output HDMI-1 --off
+xrandr --output DP-1 --off
 # conky-start
 echo "false" > ~/.log/projecting
 balance-monitor.sh
