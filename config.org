@@ -18140,6 +18140,14 @@ Use smaller font for inline headings without keyword
   (use-package org
     :custom (org-hide-leading-stars t))
 #+end_src
+***** Do not show blank lines in folded state
+
+#+begin_src emacs-lisp
+  (use-package org-cycle
+    :custom
+    (org-cycle-separator-lines 0))
+#+end_src
+
 **** COMMENT =org-appear=: Reveal hidden parts of links/emphasis when cursor enters them
 :PROPERTIES:
 :ID:       0db1cf24-d4f8-41bd-89e8-b91d3f869b08
