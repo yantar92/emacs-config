@@ -4156,7 +4156,7 @@ For example, debugger window may sometimes occupy too much of frame space and de
   (defun image-dired-unmark-all-thumbs-original-files ()
     "Unmark all original image files in associated dired buffer."
     (interactive)
-    (when-let ((dired-buf (image-dired-associated-dired-buffer)))
+    (when-let* ((dired-buf (image-dired-associated-dired-buffer)))
       (with-current-buffer dired-buf
 	(dired-unmark-all-marks))))
 
@@ -7758,7 +7758,7 @@ As recommended in [[https://orgmode.org/worg/org-mailing-list.html#orgf343a0f][W
       (save-excursion
         (when (and (eq major-mode 'notmuch-message-mode)
                    (message-fetch-field "To"))
-          (when-let ((new-headers (message-get-reply-headers t nil '("to" "cc"))))
+          (when-let* ((new-headers (message-get-reply-headers t nil '("to" "cc"))))
             (message-replace-header "To" (alist-get 'To new-headers))
             (message-replace-header "Cc" (alist-get 'Cc new-headers))
             (message-sort-headers)))))
@@ -11743,7 +11743,7 @@ CLOCK: [2018-07-09 Mon 21:47]--[2018-07-09 Mon 23:02] =>  1:15
   (defmacro org-with-point-at-org-buffer (&rest body)
     "If in agenda, put the point into the corresponding org buffer."
     `(cond ((eq major-mode 'org-agenda-mode)
-  	  (when-let ((marker (org-get-at-bol 'org-hd-marker))
+  	  (when-let* ((marker (org-get-at-bol 'org-hd-marker))
                        (agenda-buffer (current-buffer)))
   	    (org-with-point-at marker
   	      ,@body)))
@@ -11756,7 +11756,7 @@ CLOCK: [2018-07-09 Mon 21:47]--[2018-07-09 Mon 23:02] =>  1:15
     "If in agenda, put the point into the corresponding org buffer.
   Do not save excursion."
     `(cond ((eq major-mode 'org-agenda-mode)
-  	  (when-let ((marker (org-get-at-bol 'org-hd-marker))
+  	  (when-let* ((marker (org-get-at-bol 'org-hd-marker))
                        (agenda-buffer (current-buffer)))
   	    (org-with-point-at-drop-excursion marker
   	      ,@body)))
@@ -11865,10 +11865,10 @@ always sufficient. I sometimes want to link a file from another entry.
     "Return description of an att-id: link."
     (if (not (seq-empty-p desc))
         desc
-        (when-let ((id (nth 1 (split-string ":" link)))
+        (when-let* ((id (nth 1 (split-string ":" link)))
   		 (file (nth 2 (split-string ":" link))))
   	(org-with-point-at (org-id-find id 'marker)
-  	  (when-let ((heading (org-get-heading 'no-tags 'no-todo 'no-priority 'no-comment)))
+  	  (when-let* ((heading (org-get-heading 'no-tags 'no-todo 'no-priority 'no-comment)))
   	    (concat heading ":" file))))))
 
   (defun org-att-id-store-link ()
@@ -12236,7 +12236,7 @@ includes:
 
 (defun org-agenda-skip-before-SHOWFROMTIME-property ()
   "Skip agenda item if :SHOWFROMTIME: property is set and time of day is before it"
-  (when-let ((showfromtime (condition-case nil
+  (when-let* ((showfromtime (condition-case nil
                                (org-entry-get-with-inheritance
                                 "SHOWFROMTIME" nil
                                 (when (boundp 'org-ql--current-element)
@@ -14650,7 +14650,7 @@ instead."
             (push marker yant/helm-org-ql--refile-history)
             (setq yant/helm-org-ql--refile-history (delete-dups yant/helm-org-ql--refile-history))
             (org-with-point-at-org-buffer
-             (when-let ((org-agenda-buffer-name (and (boundp 'agenda-buffer) agenda-buffer)))
+             (when-let* ((org-agenda-buffer-name (and (boundp 'agenda-buffer) agenda-buffer)))
   	     (org-remove-subtree-entries-from-agenda))
              (org-refile nil nil rfloc))))))
     (defun yant/helm-org-ql-yank-selection ()
@@ -14668,7 +14668,7 @@ instead."
           (with-helm-buffer
             (helm-attrset
              :cleanup
-             (if-let ((cleanfunc (helm-attr :cleanup)))
+             (if-let* ((cleanfunc (helm-attr :cleanup)))
                  `(lambda ()
                     (funcall ,cleanfunc)
                     (with-current-buffer ,(marker-buffer (helm-get-selection)) (widen)))
@@ -15094,7 +15094,7 @@ Custom sorting of entries in subtrees using per-subtree/global ordering.
   	'(todo-up
             priority-down
             (:key (lambda () (if (member "FLAGGED" (org-get-tags nil 'local)) "1" "2")))
-            ( :key (lambda () (if-let ((year (org-entry-get nil "YEAR"))) (string-to-number year) 0))
+            ( :key (lambda () (if-let* ((year (org-entry-get nil "YEAR"))) (string-to-number year) 0))
   	    :cmp >)))
     (bind-key "C-c C-S-s" 'org-autosort-sort-entries-at-point org-mode-map)
     (add-to-list 'org-default-properties "SORT"))
@@ -17248,7 +17248,7 @@ Unarchive when UNARCHIVE is non-nil."
 	           (while (not (file-exists-p yant/org-archive-archive-path))
                      (unless (yes-or-no-p (format "Archive location %s does not exist. Try again? " yant/org-archive-archive-path))
                        (user-error "Archive location not present.")))
-                   (when-let ((old-dir (org-attach-dir))
+                   (when-let* ((old-dir (org-attach-dir))
                               (new-dir (if (not unarchive)
                                            (let ((org-attach-id-dir yant/org-archive-archive-path))
                                              (org-attach-dir 'create))
@@ -17658,7 +17658,7 @@ domain (and containing =Source= property with the domain URL)
         (if (and hosts (or (string-match-p "reddit" url) (string-match-p "youtube" url)))
   	  (let ((prevent-interactive-run t)) (yant/unblock-all-hosts))
           (when hosts
-            (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
+            (when-let* ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
               (setq yant/hosts-unblocked t)
               (start-process-shell-command "Send message to qutebrowser"
   				         nil
@@ -17674,7 +17674,7 @@ domain (and containing =Source= property with the domain URL)
   	(while (re-search-forward "127\\.0\\.0\\.1 \\(.+\\) *$" nil t)
             (push (match-string 1) hosts))
   	(when hosts
-            (when-let ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
+            (when-let* ((hosts-list-string (format "[%s]" (mapconcat (lambda (host) (format "\"%s\"" host)) hosts ", "))))
               (setq yant/hosts-unblocked t)
               (start-process-shell-command "Send message to qutebrowser"
   				         nil
@@ -18261,7 +18261,7 @@ the time [[id:38d9103d-a969-4c69-ae0e-a9a50912fba0][time balance multiplier]].
 
     (defun yant/get-clocked-time-today-for-agenda ()
       "Get total clocked-in time for an entry in agenda."
-      (when-let ((minutes (org-with-point-at-org-buffer
+      (when-let* ((minutes (org-with-point-at-org-buffer
     		 (org-narrow-to-subtree)
     		  (org-clock-sum-today))))
         (if (equal minutes 0) "" (concat (org-duration-from-minutes minutes 'h:mm) "/"))))
@@ -18402,10 +18402,10 @@ In addition use =:align-to= ='display= spec to align tags to right border of the
   (defun org-agenda-adaptive-fill-function ()
     "Fill to the beginning of headline in agenda."
     (save-excursion
-      (when-let ((txt (get-text-property (line-beginning-position) 'txt)))
+      (when-let* ((txt (get-text-property (line-beginning-position) 'txt)))
         (search-forward (substring txt 0 10))
         (goto-char (match-beginning 0))
-        (when-let ((re (get-text-property (line-beginning-position) 'org-todo-regexp)))
+        (when-let* ((re (get-text-property (line-beginning-position) 'org-todo-regexp)))
   	(re-search-forward re (line-end-position) 't)
           (re-search-forward org-priority-regexp (line-end-position) 't))
         (make-string (1+ (current-column)) ?\ ))))
