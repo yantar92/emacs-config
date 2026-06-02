@@ -10736,31 +10736,45 @@ here, so that LLM reasoning can be utilized better.
     :config
     (eval
      '(defun my/gptel-execute-python-code (callback code)
-        (let* ((temp-file (make-temp-file "gptel-uvx-" nil ".py"))
-  	     (output-buffer (generate-new-buffer " *gptel-uvx-output*")))
+        (let* ((temp-dir (make-temp-file "gptel-bwrap-" t))
+  	     (temp-file (expand-file-name "script.py" temp-dir))
+               (output-buffer (generate-new-buffer " *gptel-bwrap-output*")))
   	(with-temp-file temp-file
-  	  (insert code))
+            (insert code))
   	(make-process
-  	 :name "gptel-uvx"
+  	 :name "gptel-bwrap"
   	 :buffer output-buffer
-  	 :command (list "uv" "run" temp-file)
+  	 :command
+  	 (list "bwrap"
+                 "--ro-bind" "/" "/"
+                 "--proc" "/proc"
+                 "--dev" "/dev"
+  	       "--bind" temp-dir temp-dir     ;; rw access so uv can work                 "--tmpfs" "/tmp"
+                 "--unshare-pid"
+                 "--unshare-ipc"
+                 "--clearenv"
+                 "--setenv" "HOME" temp-dir
+                 "uv" "run" temp-file)
   	 :sentinel
   	 (lambda (process _event)
-  	   (when (eq (process-status process) 'exit)
-  	     (let ((exit-status (process-exit-status process))
-  		   (output (with-current-buffer (process-buffer process)
-  			     (buffer-string))))
-  	       (when (file-exists-p temp-file) (delete-file temp-file))
-  	       (kill-buffer (process-buffer process))
-  	       (if (= exit-status 0)
-  		   (funcall callback output)
-  		 (funcall callback (format "Error (exit %d): %s" exit-status output)))))))))
+             (when (eq (process-status process) 'exit)
+               (let ((exit-status (process-exit-status process))
+                     (output (with-current-buffer (process-buffer process)
+                               (buffer-string))))
+                 (when (file-exists-p temp-file) (delete-file temp-file))
+                 (kill-buffer (process-buffer process))
+                 (funcall
+  		callback
+  		(if (= exit-status 0)
+                      output
+                    (format "Error (exit %d): %s"
+  			  exit-status output)))))))))
      'lexical)
 
     (gptel-make-tool
      :name "execute_python_code"
      :function #'my/gptel-execute-python-code
-     :description "Execute Python code in a transient, isolated environment using 'uvx'. The code should
+     :description "Execute Python code in a bwrap sandbox. The code should
   be self-contained and output results to stdout. IMPORTANT: To use external libraries (e.g. pandas,
   requests), you MUST declare them using PEP 723 inline script metadata at the very top of your
   code.
@@ -10785,9 +10799,8 @@ here, so that LLM reasoning can be utilized better.
   import requests
   # ... rest of your code"
      :args '((:name "code"
-  		  :type string
-  		  :description "The complete Python source code to execute, including PEP 723
-  metadata if dependencies are needed."))
+                    :type string
+                    :description "The complete Python source code to execute, including PEP 723 metadata if dependencies are needed."))
      :category "execute"
      :confirm t
      :include t
