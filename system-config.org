@@ -10554,6 +10554,17 @@ dev-python/numpy doc
 dev-python/matplotlib
 #+end_src
 
+*** lmdb
+:PROPERTIES:
+:ID:       66db1829-dd64-4072-89b9-24e91914eaa3
+:END:
+
+Need to intsall system package for python lmdb support required for =IMDG-pymatgen=
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-db/lmdb
+#+end_src
+
 ** =uv= - new Python package manager
 :PROPERTIES:
 :ID:       19a6e0bb-36e8-4400-9b6e-9e34938e6d1b
