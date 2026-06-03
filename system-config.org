@@ -11015,6 +11015,29 @@ app-text/delta
 sys-power/powertop
 #+end_src
 
+
+** LLM
+*** Sandbox: bubblewrap
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-apps/bubblewrap
+#+end_src
+
+*** Intel XPU support
+:PROPERTIES:
+:ID:       738ae9ba-8cbc-4c9a-a02d-103f7ca09941
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-libs/intel-compute-runtime
+#+end_src
+
+#+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
+  sudo gpasswd -a yantar92 video
+  sudo gpasswd -a yantar92 render
+#+end_src
+
+
 * Archived
 
 ** COMMENT Sakaki tools for system maintenance :COMMON:
