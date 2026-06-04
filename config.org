@@ -12755,19 +12755,6 @@ CLOCK: [2018-07-09 Mon 12:40]--[2018-07-09 Mon 12:41] =>  0:01
 - State "NEXT"       from "TODO"       [2018-08-27 Mon 08:39]
 :END:
 
-****** Do not abbreviate file names (to avoid strange folders defined in [[id:9361bc68-010b-45f1-bddd-4638d6344758][org attachments]])
-:PROPERTIES:
-:CREATED:  [2018-07-25 Wed 17:28]
-:ID:       7e252121-b5ba-4f9e-ba55-6eabb75d9a47
-:END:
-:LOGBOOK:
-- Refiled on [2020-04-09 Thu 17:42]
-:END:
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'after-init-hook (lambda ()
-      (advice-add 'find-file-noselect :around #'dired-find-file@disable-abbreviate-file-name)))
-#+END_SRC
 ***** DONE Make =:ATTACH_DIR_INHERITED:= work again :NOARCHIVE:
 CLOSED: [2020-08-11 Tue 22:10]
 :PROPERTIES:
