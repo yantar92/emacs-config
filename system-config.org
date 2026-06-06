@@ -10706,6 +10706,12 @@ www-client/firefox-bin
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 media-sound/lilypond
 #+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.use/lilypond
+media-sound/lilypond python_single_target_python3_13
+#+end_src
+
+
 *** R
 :PROPERTIES:
 :ID:       8d47f144-5cf1-4109-9073-87ae043af76a
