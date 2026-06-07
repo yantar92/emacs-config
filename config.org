@@ -11026,7 +11026,8 @@ and tried in the past. Everything tailored to my personal needs.
   (setq org-element--cache-self-verify 'backtrace
         ;; record logs, but only check critical crashes
         org-element--cache-self-verify-frequency 0.000
-        org-element--cache-diagnostics-ring-size 500000)
+        org-element--cache-diagnostics-ring-size 500000
+        org-element--cache-disable-future-change-optimization t)
 #+end_src
 
 *** Workflow
