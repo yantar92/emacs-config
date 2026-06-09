@@ -460,6 +460,11 @@ The updates can be rolled back with snappier. See https://wiki.gentoo.org/wiki/S
 Setup root backup
 #+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
   snapper create-config /
+  # Enable quota-based cleanup
+  snapper setup-quota
+  snapper -c root set-config NUMBER_LIMIT="2-10" NUMBER_LIMIT_IMPORTANT="4-10"
+  snapper -c root set-config SPACE_LIMIT="0.3"
+  snapper -c root set-config TIMELINE_CREATE="no"
 #+end_src
 
 #+begin_src bash :tangle /sudo::/etc/portage/bashrc
@@ -486,6 +491,12 @@ Setup root backup
   LABEL=swap		none	swap	sw				0 0
   LABEL=home		/home	btrfs	defaults,noatime,discard	0 2
   LABEL=BOOT		/boot	vfat	noauto,noatime			1 2
+#+end_src
+
+*** BTRFS maintenance
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-fs/btrfsmaintenance
 #+end_src
 
 *** Solid state drive helpers
