@@ -18757,6 +18757,19 @@ Use UTF symbols for entities.
   (remove-hook 'org-cycle-hook #'org-cycle-optimize-window-after-visibility-change))
 #+end_src
 
+**** Fold drawers when jumping to heading from agenda
+
+#+begin_src emacs-lisp
+  (use-package org-fold
+    :if init-flag
+    :config
+    (defun yant/org-agenda-after-show-visibility ()
+      "Setup visibility when jumping to heading from agenda."
+      (org-cycle-hide-drawers 'children)
+      (recenter 1))
+    (add-hook 'org-agenda-after-show-hook #'yant/org-agenda-after-show-visibility))
+#+end_src
+
 *** Notmuch interaction
 :PROPERTIES:
 :ID:       e8fe1ace-9ddc-4bf1-8a89-a8e87c43a326
