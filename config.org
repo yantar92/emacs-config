@@ -19519,7 +19519,13 @@ inside Emacs with nicer UI.
 #+begin_src emacs-lisp
   (use-package disk-usage
     :if init-flag
-    :straight t)
+    :straight t
+    :config
+    (setopt disk-usage-du-args "-s -b --exclude=.avfs --exclude=.local/share/containers")
+    (defun yant/disk-usage-filter-avfs (name _attributes)
+      "Forbid NAME inside .avfs."
+      (not (file-in-directory-p name "~/.avfs")))
+    (setq disk-usage-default-filters (list #'yant/disk-usage-filter-avfs)))
 #+end_src
 
 ** GNU development
