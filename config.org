@@ -8723,6 +8723,7 @@ I am not limited to one provider. Can mix and match and compare.
       :key (lambda () (nth 0 (process-lines "pass" "show" "internet/deepseekapi-work"))))
 
     ;; Default model
+    (setopt gptel-backend (gptel-get-backend "DeepSeek-work"))
     (setopt gptel-model  'deepseek-v4-flash)
 
     (gptel-make-openai "Groq"               ;Any name you want
