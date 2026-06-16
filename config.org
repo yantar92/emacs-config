@@ -10327,8 +10327,8 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
              :description "Buffer name")))
   (push (gptel-get-tool "get_buffer_file_path") gptel-tools)
 
-  (defun yant/search-buffer (buffer regexp-or-string &optional before-lines after-lines search-literally top-n)
-    "Return a list of match objects for REGEXP-OR-STRING in BUFFER.
+  (defun yant/search-buffer (buffer-or-file regexp-or-string &optional before-lines after-lines search-literally top-n)
+    "Return a list of match objects for REGEXP-OR-STRING in BUFFER-OR-FILE.
   Each object is a plist with keys :match-text, :start-line, :end-line, and :context.
   If BEFORE-LINES is non-nil, show that many lines before the match.
   Same for AFTER-LINES.  When they are nil, include 1 line.
@@ -10336,37 +10336,40 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
   When TOP-N is non-nil, it should be the maximum number of results to return."
     (unless before-lines (setq before-lines 1))
     (unless after-lines (setq after-lines 1))
-    (with-current-buffer buffer
-      (let ((found nil)
-            (result nil)
-            beg)
-        (org-with-wide-buffer
-         (goto-char (point-min))
-         (while (re-search-forward
-                 (if search-literally
-                     (replace-regexp-in-string
-                      "[ \t]+" "[ \t\n]+"
-  		    (regexp-quote regexp-or-string))
-                   regexp-or-string)
-                 nil t)
-           (setq found t)
-           (goto-char (match-beginning 0))
-           (forward-line (- (or before-lines 0)))
-           (setq beg (point))
-           (goto-char (match-end 0))
-           (forward-line (if after-lines (1+ after-lines) 1))
-           (push (list :match-text (match-string 0)
-                       :start-line (org-current-line (match-beginning 0))
-                       :end-line (org-current-line (match-end 0))
-                       :context (buffer-substring-no-properties beg (point)))
-                 result)
-           (goto-char (match-end 0))))
-        (when (not found) (error "Regexp %s not found in buffer %s" regexp-or-string buffer))
-        (let ((max-results 30))
-  	(when (and (> (length result) max-results) (not top-n))
-  	  (error "The search found %d (>%d) results. That's too many and may exceed context window. Consider passing top_n argument."
-  		 (length result) max-results)))
-        (if top-n (ntake top-n (nreverse result)) (nreverse result)))))
+    (let ((buffer
+  	 (or (get-buffer buffer-or-file)
+               (find-file-noselect buffer-or-file t))))
+      (with-current-buffer buffer
+        (let ((found nil)
+              (result nil)
+              beg)
+  	(org-with-wide-buffer
+  	 (goto-char (point-min))
+  	 (while (re-search-forward
+  		 (if search-literally
+                       (replace-regexp-in-string
+                        "[ \t]+" "[ \t\n]+"
+  		      (regexp-quote regexp-or-string))
+                     regexp-or-string)
+  		 nil t)
+             (setq found t)
+             (goto-char (match-beginning 0))
+             (forward-line (- (or before-lines 0)))
+             (setq beg (point))
+             (goto-char (match-end 0))
+             (forward-line (if after-lines (1+ after-lines) 1))
+             (push (list :match-text (match-string 0)
+                         :start-line (org-current-line (match-beginning 0))
+                         :end-line (org-current-line (match-end 0))
+                         :context (buffer-substring-no-properties beg (point)))
+  		 result)
+             (goto-char (match-end 0))))
+  	(when (not found) (error "Regexp %s not found in buffer %s" regexp-or-string buffer))
+  	(let ((max-results 30))
+  	  (when (and (> (length result) max-results) (not top-n))
+  	    (error "The search found %d (>%d) results. That's too many and may exceed context window. Consider passing top_n argument."
+  		   (length result) max-results)))
+  	(if top-n (ntake top-n (nreverse result)) (nreverse result))))))
 
   (gptel-make-tool
    :name "search_in_buffer"
@@ -10374,7 +10377,7 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
    :description "Search all instances of Emacs regexp or literal string in Emacs buffer. Return a list of match objects, each with :match-text, :start-line, :end-line, and :context."
    :args '(( :name "buffer_name"
              :type string
-             :description "Name of the buffer to search")
+             :description "Name of the buffer or file to search")
            ( :name "regexp_or_string"
              :type string
              :description "Emacs regexp (default) or a string to search. Pass search_literally to treat this argument as literal string; not regexp.")
