@@ -8724,7 +8724,7 @@ I am not limited to one provider. Can mix and match and compare.
 
     ;; Default model
     (setopt gptel-backend (gptel-get-backend "DeepSeek-work"))
-    (setopt gptel-model  'deepseek-v4-flash)
+    (setopt gptel-model  'deepseek-v4-pro)
 
     (gptel-make-openai "Groq"               ;Any name you want
       :host "api.groq.com"
@@ -9134,7 +9134,8 @@ For simpler tasks and lightweight models, I use a much shorter prompt.
       "Run `gptel' setting the model to gpt-5-nano."
       (interactive)
       (with-current-buffer (call-interactively #'gptel)
-        (setq-local gptel-model 'gpt-oss-20b)
+        (setopt gptel-backend (gptel-get-backend "DeepSeek-work"))
+        (setq-local gptel-model 'deepseek-v4-flash)
         (setq-local gptel--system-message yant/gptel-directive-simple))))
 #+end_src
 
