@@ -16360,6 +16360,64 @@ A large task that needs to be studied systematically. It has to have a concrete 
                       "- [ ] headache pills"
                       "- [ ] clothes according to the plan and timing")))))
 #+end_src
+****** Journal
+
+#+begin_src emacs-lisp
+  (use-package org-capture
+    :if init-flag
+    :config
+    (setf (alist-get "g" org-capture-templates nil nil #'equal)
+  	(cdar (doct
+  	       '("Journal record (e.g. gptel chat)"
+  		 :keys "g"
+  		 :type entry
+  		 :file "~/Org/Journal.org"
+  		 :datetree t
+  		 :template
+  		 ("* %^{Topic}"
+  		  "%?"))))))
+
+  (when init-flag
+    (defun yant/journal-entry-to-inbox ()
+      "Copy current subtree to inbox.org, stripping reasoning blocks.
+  If the current buffer is Journal.org, the original entry is
+  optionally removed after copying."
+      (interactive nil 'org-mode)
+      (when-let* ((heading (org-element-lineage (org-element-at-point) 'headline t)))
+        (let* ((beg (org-element-begin heading))
+               (end (org-element-end heading))
+               (raw-text (buffer-substring-no-properties beg end))
+               (cleaned-text
+                (with-temp-buffer
+  		(org-mode)
+  		(insert raw-text)
+  		(goto-char (point-min))
+                  (while (> (org-current-level) 1)
+                    (org-promote-subtree))
+  		(while (re-search-forward
+  			"^[ \t]*#\\+begin_reasoning"
+  			nil t)
+                    (let ((el (org-element-at-point)))
+                      (when (and (org-element-type-p el 'special-block)
+  			       (equal (org-element-property :type el)
+  				      "reasoning"))
+                        (delete-region (org-element-begin el) (org-element-end el)))))
+  		(buffer-string))))
+  	;; Insert into inbox.org
+  	(with-current-buffer (find-file-noselect "~/Org/inbox.org")
+            (goto-char (point-max))
+            ;; Ensure we're at a clean position for a new top-level entry
+            (unless (bolp) (insert "\n"))
+            (insert cleaned-text)
+            ;; Add CREATED property if missing, and ensure TODO keyword
+            (org-back-to-heading t)
+            (unless (org-entry-get (point) "CREATED")
+              (org-set-property "CREATED"
+                                (format-time-string "[%Y-%m-%d %a %H:%M]")))
+            (when (org-entry-get nil "ID")
+              (org-id-get-create 'force)))
+  	(message "Journal entry copied to inbox.org")))))
+#+end_src
 
 ***** Capturing references (websites, journal papers, files, etc)
 :PROPERTIES:
