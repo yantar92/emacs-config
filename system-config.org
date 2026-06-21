@@ -11054,6 +11054,13 @@ sys-power/powertop
 #+end_src
 
 
+** GNU parallel - useful for scripting
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-process/parallel
+#+end_src
+
+
 ** LLM
 *** Sandbox: bubblewrap
 
