@@ -1489,6 +1489,7 @@ Define the most basic movement commands:
  - forward/backward :: move forward/backward by smallest possible element in the buffer
  - forward-element/backward-element :: move forward/backward by second smallest element in the buffer
  - forward-sexp/backward-sexp :: move forward/backward by an element, which typically takes less then a single line
+ - follow :: Follow link at point
 
 #+begin_src emacs-lisp
   (use-package meta-functions
@@ -1508,6 +1509,7 @@ Define the most basic movement commands:
     (meta-defun-mapc
      '((meta-down "Move down." next-logical-line)
        (meta-up "Move up." previous-logical-line)
+       (meta-follow "Follow link at point." org-open-at-point-global)
        (meta-end-of-line "Move to the end of line."
   		       (boon-end-of-line)
                          :mode org-agenda-mode
@@ -1523,7 +1525,8 @@ Define the most basic movement commands:
        (meta-split "Split element at point." split-line)
        (meta-recenter-top-bottom "Recenter text on scree." yant/recenter-top-bottom-pixel)
        (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
-       (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore))))
+       (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore)))
+    (bind-key* "C-c C-o" #'meta-follow))
 #+end_src
 
 It should be noted that the same can be done via setting the proper
@@ -8252,11 +8255,15 @@ Small package that simplifies navigating to URL of issue/pull request.
   (use-package notmuch-microdata
     :if init-flag
     :straight (microdata :host github :repo "Stebalien/microdata.el")
-    :bind
-    (:map notmuch-show-mode-map
-  	("C-c C-o" . notmuch-microdata-show-action-view)
-  	:map notmuch-search-mode-map
-  	("C-c C-o" . notmuch-microdata-search-action-view)))
+    :config
+    (meta-defun meta-follow
+      :mode notmuch-show-mode
+      :cond (notmuch-microdata-show-action-view)
+      ignore)
+    (meta-defun meta-follow
+      :mode notmuch-search-mode
+      :cond (notmuch-microdata-search-action-view)
+      ignore))
 #+end_src
 
 
@@ -8514,7 +8521,7 @@ Even better, when we sanitize the DOM for readability
     ;; This is mirrowing my qutebrowser keys
     (bind-key "y y" #'eww-copy-page-url eww-mode-map)
     (bind-key "y Y" #'eww-copy-page-url eww-mode-map)
-    (bind-key "C-c C-o" #'shr-browse-url eww-mode-map)
+    (meta-defun meta-follow :mode eww-mode shr-browse-url)
     (meta-defun meta-previous-buffer :mode eww-mode (eww-back-url))
     (meta-defun meta-next-buffer :mode eww-mode (eww-forward-url)))
 #+end_src
@@ -11628,6 +11635,16 @@ Sometimes, I can even mark sub-projects with this tag if the sub-projects are im
 :PROPERTIES:
 :ID:       7122dce7-7d3e-4167-a444-8811d588db42
 :END:
+
+Follow links
+#+begin_src emacs-lisp
+  (use-package org
+    :if init-flag
+    :config
+    (meta-defun meta-follow :mode org-mode org-open-at-point)
+    (meta-defun meta-follow :mode org-agenda-mode org-agenda-open-link))
+#+end_src
+
 ***** External
 :PROPERTIES:
 :ID:       e74697d9-3d3e-4db4-8a4c-e9cad8f73d23
