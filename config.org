@@ -8839,15 +8839,20 @@ fluffy language when I make mistakes!).
                      (org-current-line))
   	       "N/A")))
      -1)
-    ;; Expore currently visible buffers
+    ;; Include recent buffers, excluding internal (space-prefixed) ones
     (add-hook
      'yant/gptel-system-prompt-default-functions
      (lambda ()
        (format "LIST OF RELEVANT EMACS BUFFERS:\n%s
   These above buffers, in addition to CURRENT TASK, define current working environment."
   	     (mapconcat (lambda (b) (format "%S" b))
-  			(delete-dups (mapcar #'window-buffer (window-list)))
-                          "\n")))
+  			(seq-take
+                         (seq-filter
+                          (lambda (b)
+                            (not (string-prefix-p " " (buffer-name b))))
+                          (buffer-list))
+                         5)
+                        "\n")))
      1)
     :config
     (setf (alist-get 'default gptel-directives)
