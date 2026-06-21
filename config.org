@@ -16319,34 +16319,10 @@ A large task that needs to be studied systematically. It has to have a concrete 
   		      ":EMAIL: %^{Email}"
   		      ":END:")))))
 #+end_src
-****** Experimental note 
-:PROPERTIES:
-:ID:       03521b68-b564-4923-8681-7dbed09e9c17
-:END:
-****************** TODO Should be captured to current project directly
-****************** END
- 
-#+begin_src emacs-lisp
-(setf (alist-get "E" org-capture-templates nil nil #'equal)
-      (cdar  (doct '("Experiment note"
-		     :keys "X"
-		     :type entry
-		     :file "~/Org/inbox.org"
-		     :template
-		     ("* TODO %u %^{Experiment title}"
-		      ":PROPERTIES:"
-		      ":CREATED: %U"
-		      ":END:"
-                      "- [ ] copy the data to my laptop"
-                      "- [ ] update sample condition in the project notes"
-                      "%?")))))
-#+end_src
-
-Reverse the order of template to make them appear as I put them in the list above
-#+begin_src emacs-lisp
-(setq org-capture-templates (nreverse org-capture-templates))
-#+end_src
 ****** Travel
+:PROPERTIES:
+:ID:       7ebe9159-2edd-4428-906e-02c10d372b0d
+:END:
 #+begin_src emacs-lisp
 (setf (alist-get "T" org-capture-templates nil nil #'equal)
       (cdar  (doct '("Travel"
