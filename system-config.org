@@ -3946,9 +3946,28 @@ CM_LAUNCHER=rofi clipmenu -width -150 && xdotool key Shift+Insert
 
 The script is bound in [[id:23de5ad2-4320-4f72-91f0-ca909e3abbab][Awesome WM settings]].
 
+*** Mouse&keyboard macro recording: =crossmacro=
+:PROPERTIES:
+:ID:       4b8626a3-4873-410c-836a-a5ace4bb2c88
+:END:
+
+https://github.com/alper-han/CrossMacro
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-apps/flatpak
+#+end_src
+
+#+begin_src bash :tangle no :dir /sudo:yantar92:/ :eval yes :noweb-ref sys-configure
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak install --user flathub io.github.alper_han.crossmacro
+#+end_src
+
+#+begin_src bash :tangle /home/yantar92/.local/bin/macro-record.sh :shebang #!/bin/bash
+flatpak run --user io.github.alper_han.crossmacro
+#+end_src
+
 ** App wrappers
 Collection of bash script invoking default apps (with possible tweaks)
-
 *** Music player
 :PROPERTIES:
 :ID:       aabe2409-9b6d-4d26-bd8c-de9c660eff53
