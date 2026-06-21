@@ -1509,7 +1509,7 @@ Define the most basic movement commands:
     (meta-defun-mapc
      '((meta-down "Move down." next-logical-line)
        (meta-up "Move up." previous-logical-line)
-       (meta-follow "Follow link at point." org-open-at-point-global)
+       (meta-follow "Follow link at point." goto-address-at-point)
        (meta-end-of-line "Move to the end of line."
   		       (boon-end-of-line)
                          :mode org-agenda-mode
@@ -8258,12 +8258,11 @@ Small package that simplifies navigating to URL of issue/pull request.
     :config
     (meta-defun meta-follow
       :mode notmuch-show-mode
-      :cond (notmuch-microdata-show-action-view)
-      ignore)
+      :cond (microdata-email-actions-by-type "ViewAction")
+      (notmuch-microdata-show-action-view))
     (meta-defun meta-follow
       :mode notmuch-search-mode
-      :cond (notmuch-microdata-search-action-view)
-      ignore))
+      (notmuch-microdata-search-action-view)))
 #+end_src
 
 
