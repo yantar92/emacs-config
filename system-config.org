@@ -494,6 +494,9 @@ Setup root backup
 #+end_src
 
 *** BTRFS maintenance
+:PROPERTIES:
+:ID:       a40c5490-47e5-4e90-9607-7fe4185ecd24
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 sys-fs/btrfsmaintenance
@@ -11055,6 +11058,9 @@ sys-power/powertop
 
 
 ** GNU parallel - useful for scripting
+:PROPERTIES:
+:ID:       8670d179-c8a4-4ef8-832f-43f9061d8255
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 sys-process/parallel
@@ -11063,6 +11069,9 @@ sys-process/parallel
 
 ** LLM
 *** Sandbox: bubblewrap
+:PROPERTIES:
+:ID:       a952b9b2-9d0a-4174-ac4d-633258b3af8a
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 sys-apps/bubblewrap
