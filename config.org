@@ -6895,37 +6895,20 @@ Show the key strokes.
       (elfeed-search-tag-all 'opened)
       (meta-up)
       (let ((entries (elfeed-search-selected)))
-        (cl-loop for entry in entries
-  	       do (elfeed-untag entry 'unread)
-  	       when (elfeed-entry-link entry)
-  	       do (cl-letf (((symbol-function 'raise-frame) (lambda (&rest _) nil)))
-  		    (let ((yant/suppress-pop-frame t)
-  			  ;; (content (elfeed-deref (elfeed-entry-content entry)))
-  			  ;; (content-type (elfeed-entry-content-type entry))
-                            )
-  		      ;; (setq content-text (with-temp-buffer (when content
-  		      ;; 					     (if (eq content-type 'html)
-  		      ;; 						 (elfeed-insert-html content)
-  		      ;; 					       (insert content)))
-  		      ;; 					   (let ((org-babel-min-lines-for-block-output 0)) ;; handle org-mode syntax in body
-  		      ;; 					     (org-escape-code-in-region (point-min) (point-max)))
-                        ;;                                      (unless (string-empty-p (buffer-string))
-                        ;;                                        (goto-char (point-min))
-                        ;;                                        (insert "#+begin_src org\n\n")
-                        ;;                                        (goto-char (point-max))
-                        ;;                                        (insert "\n\n#+end_src"))
-  		      ;; 					   (buffer-string)))
-  		      
-  		      (org-protocol-capture (list :template "B"
-  						  :url it
-  						  :title (format "%s: %s"
-  								 (elfeed-feed-title (elfeed-entry-feed entry))
-  								 (elfeed-entry-title entry))
-                                                    :elfeed-data entry
-  						  ;; :body content-text
-                                                    )))))
-        (mapc #'elfeed-search-update-entry entries)
-        (unless (use-region-p) (forward-line))))
+        (unwind-protect
+  	  (cl-loop for entry in entries
+  		   do (elfeed-untag entry 'unread)
+  		   when (elfeed-entry-link entry)
+  		   do (cl-letf (((symbol-function 'raise-frame) (lambda (&rest _) nil)))
+  			(let ((yant/suppress-pop-frame t))
+  			  (org-protocol-capture (list :template "B"
+  						      :url it
+  						      :title (format "%s: %s"
+  								     (elfeed-feed-title (elfeed-entry-feed entry))
+  								     (elfeed-entry-title entry))
+                                                        :elfeed-data entry)))))
+  	(mapc #'elfeed-search-update-entry entries)
+  	(unless (use-region-p) (forward-line)))))
     
     (setq elfeed-sort-order 'ascending)
     (setq elfeed-search-title-max-width 150)
