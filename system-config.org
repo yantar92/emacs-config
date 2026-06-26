@@ -3949,7 +3949,7 @@ CM_LAUNCHER=rofi clipmenu -width -150 && xdotool key Shift+Insert
 
 The script is bound in [[id:23de5ad2-4320-4f72-91f0-ca909e3abbab][Awesome WM settings]].
 
-*** Mouse&keyboard macro recording: =crossmacro=
+*** mouse&keyboard macro recording: =crossmacro=
 :PROPERTIES:
 :ID:       4b8626a3-4873-410c-836a-a5ace4bb2c88
 :END:
@@ -8754,7 +8754,7 @@ yant/spam-keywords
   <<spam-keywords()>>"
 
   echo "$SPAM_KEYWORDS" | while read x; do
-      [[ -n "$x" ]] && notmuch tag +deleted +spam -- tag:new and not tag:sent and "$x" $WHITE_LIST_SEARCH_STRING;
+      [[ -n "$x" ]] && notmuch tag +deleted +spam -- tag:new and not tag:sent and "\"$x\"" $WHITE_LIST_SEARCH_STRING;
   done
   # echo
 
