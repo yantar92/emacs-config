@@ -9311,28 +9311,34 @@ that you get reminded about this problem.
 *** Prevent Org headings in responses
 
 Sometimes, the output contains Org headings, which is not ideal when
-the response creates level 1 headings while the discussion is going on inside a subtree.
-Prevent that by forcing everything to be a list.
+the response creates level 1 headings while the discussion is going on
+inside a subtree.  Prevent that by forcing everything to be
+non-heading text.
+
+[2026-07-04 Sat] I played around with demoting the headings instead,
+but LLMs are not consistent about outputting headings, so it is better
+to make everything uniform, under the same heading. Also, when I keep
+headings, my followup queries either need to be added a new headings -
+awkward, - or hide under the last heading in the response - also
+awkward.
 
 #+begin_src emacs-lisp
   (use-package gptel
     :config
-    (defun yant/fix-heading-levels (beg end)
-      "Make sure that Org headings in region BEG..END are subheadings."
+    (defun yant/remove-org-headings (beg end)
+      "Remove Org headings in region BEG..END, keeping their heading text."
       (when (derived-mode-p 'org-mode)
         (org-with-wide-buffer
          (goto-char beg)
-         (let ((level (or (org-current-level) 1)))
-  	 (when (re-search-forward org-outline-regexp-bol end t)
-             (let ((local-level (save-match-data (or (org-current-level) 0))))
-               (replace-match (concat (make-string (+ (1- level) local-level) ?*) " "))))))))
+         (while (re-search-forward org-outline-regexp-bol end t)
+           (replace-match " ")))))
     (defun yant/fix-unicode (beg end)
       "Cleanup unnatural unicode inserted by LLMs."
       (replace-string-in-region " " " " beg end)
       (replace-string-in-region "“" "\"" beg end)
       (replace-string-in-region "”" "\"" beg end)
       (replace-string-in-region "‑" "-" beg end))
-    (add-hook 'gptel-post-response-functions #'yant/fix-heading-levels)
+    (add-hook 'gptel-post-response-functions #'yant/remove-org-headings)
     (add-hook 'gptel-post-response-functions #'yant/fix-unicode))
 #+end_src
 *** Presets
