@@ -9640,9 +9640,10 @@ gets much easier - can override functions, add more small things, etc.
   - [ ] provide at end of file.
 
   Defcustom hygiene:
-  - [ ] New or changed defcustom has :type, :group, :package-version
-        (matching the next stable Org version). :version should be removed
-        in favor of :package-version.
+  - [ ] New or changed defcustom has :type, :group (unless defgroup is
+      present in the library and is implictly inherited), 
+      :package-version (matching the next stable Org version). 
+      :version should be removed in favor of :package-version.
   - [ ] :safe keyword set explicitly -- either :safe t, :safe #'some-predicate,
         or :safe nil. The default is nil, but Org convention requires it explicit.
   - [ ] :type matches actual usage in the code.
