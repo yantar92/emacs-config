@@ -11239,6 +11239,17 @@ gone a long way since then.  Now, includes elements of Zettelkasten,
 P.A.R.A., and many other task management approaches I have encountered
 and tried in the past. Everything tailored to my personal needs.
 
+*** org-inside
+
+#+begin_src emacs-lisp
+  (use-package org
+    :if init-flag
+    :config
+    (setq org-hide-emphasis-markers t)
+    (when (fboundp 'org-inside-mode)
+      (add-hook 'org-mode-hook #'org-inside-mode)))
+#+end_src
+
 *** (temporary) Debugging cache
 
 #+begin_src emacs-lisp
