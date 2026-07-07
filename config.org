@@ -20018,11 +20018,17 @@ project.
     :bind
     ("<f6>" . whisper-run)
     :config
-    (setq whisper-install-directory "~/Dist/"
-  	whisper-model "base"
-          whisper-language "en"
-          whisper-translate nil
-          whisper-use-threads (- (num-processors) 1)))
+    ;; Use local custom whisper that runs on NPU
+    (setq whisper-install-whispercpp nil)
+    (setq whisper-model "OpenVINO/whisper-large-v3-turbo-int8-ov")
+    (defun whisper-command (input-file)
+      "Use OpenVINO GenAI on NPU via uv run."
+      `("uv" "run" ,(executable-find "whisper-openvino.py")
+        "--model" ,whisper-model
+        "--device" "NPU"
+        "--language" ,whisper-language
+        ,@(when whisper-translate '("--translate"))
+        "--file" ,input-file)))
 #+end_src
 *** Mark whisper-transcribed text with =@voice=
 
