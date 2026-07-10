@@ -11083,14 +11083,99 @@ sys-apps/bubblewrap
 :ID:       738ae9ba-8cbc-4c9a-a02d-103f7ca09941
 :END:
 
+See [[id:ee57f631-c3e7-45eb-ad61-76712050d46d][Local repository]]
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-dev-libs/intel-compute-runtime
+dev-libs/intel-npu-driver
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/intel-npu-driver
+dev-util/intel-npu-driver ~amd64
 #+end_src
 
 #+begin_src bash :tangle no :dir /sudo::/ :eval yes :noweb-ref sys-configure
   sudo gpasswd -a yantar92 video
   sudo gpasswd -a yantar92 render
 #+end_src
+
+*** Running Whisper on NPU
+:PROPERTIES:
+:ID:       68a26bc5-28d4-4e81-9bba-1f8576e8de65
+:END:
+
+#+begin_src python :tangle /home/yantar92/.local/bin/whisper-openvino.py :mkdirp yes :shebang "#!/usr/bin/env python3"
+# /// script
+# dependencies = [
+#   "openvino-genai==2026.2.1.0",
+#   "soundfile",
+#   "numpy",
+#   "huggingface-hub",
+# ]
+# ///
+"""Bridge: whisper.el <-> OpenVINO GenAI on NPU/CPU.
+
+Usage (via uv run):
+    uv run whisper-openvino.py --model OpenVINO/whisper-large-v3-turbo-int8-ov --device NPU --language en --file audio.wav
+"""
+import argparse
+import os
+import sys
+
+import numpy as np
+import soundfile as sf
+
+
+def resolve_model(model: str) -> str:
+    """Return local path to model, downloading from HF if needed."""
+    if os.path.isdir(model):
+        return model
+    if "/" in model:
+        import huggingface_hub as hf_hub
+        path = hf_hub.snapshot_download(model)
+        print(f"Model cached at: {path}", file=sys.stderr)
+        return path
+    raise SystemExit(f"Model not found: {model}")
+
+
+def main() -> None:
+    p = argparse.ArgumentParser()
+    p.add_argument("--model", required=True,
+                   help="Local path or HuggingFace ID (e.g. OpenVINO/whisper-large-v3-turbo-int8-ov)")
+    p.add_argument("--file", required=True, help="16kHz mono WAV file")
+    p.add_argument("--device", default="NPU")
+    p.add_argument("--language", default="en")
+    p.add_argument("--translate", action="store_true")
+    p.add_argument("--threads", type=int)               # accepted, ignored
+    p.add_argument("--print-progress", action="store_true")  # accepted, ignored
+    args = p.parse_args()
+
+    model_dir = resolve_model(args.model)
+
+    audio, sr = sf.read(args.file, dtype="float32")
+    if sr != 16000:
+        print("Error: audio must be 16kHz mono", file=sys.stderr)
+        sys.exit(1)
+    if audio.ndim > 1:
+        audio = audio.mean(axis=1)
+
+    import openvino_genai as ov_genai
+
+    pipe = ov_genai.WhisperPipeline(
+        model_dir, args.device, STATIC_PIPELINE=True
+    )
+    config = pipe.get_generation_config()
+    if args.language != "auto":
+        config.language = f"<|{args.language}|>"
+    config.task = "translate" if args.translate else "transcribe"
+
+    result = pipe.generate(audio.tolist(), config)
+    print(str(result))
+
+
+if __name__ == "__main__":
+    main()
+#+end_src
+
+
 
 
 * Archived
