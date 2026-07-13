@@ -10297,6 +10297,468 @@ certain LLM logic when conditions are met.
   NOTES:
   - Do not perform cleanup (delete_entities / delete_relations / delete_observations) unless the user explicitly asks for corrections or removal.
 #+end_src
+***** Python coding
+
+#+begin_src emacs-lisp :var workflow=workflow-python[]
+    (use-package gptel
+      :config
+      (push
+       (yant/gptel-make-workflow
+        :name "python_skill"
+        :description "When to use: when writing python code"
+        :workflow workflow)
+       gptel-tools))
+#+end_src
+
+#+name: workflow-python
+#+begin_src org
+  ,* Python code style -- IMDgroup projects
+
+   Libraries
+
+  - *IMDgroup-pymatgen* -- pymatgen add-ons for Inverse Materials Design Group. Extends pymatgen's Structure with caching and disk-backed LMDB storage; provides IMDGVaspDir (convergence checks), IMDStandardVaspInputSet, ATAT helpers, transformations (insert_molecule, symmetry_clone), and diffusion analysis.
+  - *IMDgroup-gorun* -- SLURM job submission helpers for the group. Automates VASP job submission, directory cleanup, POTCAR generation, and sbatch script generation.
+  - *Key third-party dependencies:* pymatgen, numpy, ase, monty, termcolor (colored terminal output), alive_progress (progress bars), cachetools, lmdb, python-dateutil.
+
+  ,** File structure
+
+  Every =.py= file follows this layout:
+
+  ,#+begin_src python
+  # MIT License
+  # Copyright (c) ...
+  # ...
+  # SOFTWARE.
+
+  """Module docstring. Must exist. Any length is fine."""
+
+  import logging
+  logger = logging.getLogger(__name__)
+
+  # Imports: 3 groups, alphabetically ordered, separated by blank lines
+  import os
+  from pathlib import Path
+
+  import numpy as np
+  from pymatgen.core import Structure
+
+  from IMDgroup.common import groupby_cmp
+  ,#+end_src
+
+  - =__init__.py= files are minimal -- usually just a docstring. No re-exports.
+
+  WRONG:
+  ,#+begin_src python
+  '''Helper functions for XYZ.'''
+
+  import numpy as np
+
+  def do_stuff(x): ...
+  ,#+end_src
+
+  ,** Type annotations
+
+  | Use this                      | Not this                            |           |
+  |-------------------------------+-------------------------------------+-----------|
+  | =X \                          | None=                               | =Optional[X]= |
+  | =list[X]=, =dict[K,V]=              | =List[X]=, =Dict[K,V]=                    |           |
+  | =Self= (from =typing_extensions=) | quoting the class name              |           |
+  | =ClassVar=                      | bare class-level mutable assignment |           |
+  | =-> None= on all void functions | omitted return type                 |           |
+
+  WRONG:
+  ,#+begin_src python
+  from typing import Optional, List, Dict
+
+  def process(items: List[str]) -> Optional[Dict[str, int]]:
+      ...
+
+  def write_output(path):  # what does it return?
+      ...
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  def process(items: list[str]) -> dict[str, int] | None:
+      ...
+
+  def write_output(path: str) -> None:
+      ...
+  ,#+end_src
+
+  - Prefer =Literal['a', 'b']= for parameters with a fixed set of string values.
+  - =typing.cast()= must be preceded by =assert isinstance(...)= or equivalent. Never use =cast()= to suppress type errors without a runtime check.
+
+  ,** Docstrings (Google style)
+
+  Types are in the function signature, not repeated in =Args=.
+
+  WRONG:
+  ,#+begin_src python
+  def load(path):
+      """Load structure from file.
+
+      Args:
+          path (str): Path to file.
+      """
+      ...
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  def load(path: str) -> Structure:
+      """Load structure from file.
+
+      Args:
+          path: Path to file.
+
+      Returns:
+          Structure: The parsed structure.
+      """
+      ...
+  ,#+end_src
+
+  Sections: one-line summary, optional longer description, Args (4-space indent), Returns, Raises.
+
+  ,** Logging
+
+  - =logger.debug(...)= -- detailed trace.
+  - =logger.warning(...)= -- non-fatal issues.
+  - =logger.info(...)= -- informational messages.
+  - =%s=-style formatting: =logger.debug("Loaded cache for %s", path)=.
+  - =warnings.warn(...)= with custom warning classes for user-facing concerns.
+
+  ,** Assertions
+
+  Use =assert= for internal invariants that must never be violated. Use =raise ValueError(...)= for input validation.
+
+  WRONG:
+  ,#+begin_src python
+  assert os.path.exists(path), 'path must exist'
+  assert b != 0  # fails silently with python -O
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  assert len(structs) > 0   # internal invariant
+  assert incar is not None  # internal invariant
+
+  if not os.path.exists(path):
+      raise FileNotFoundError(f'Path does not exist: {path}')
+  if b == 0:
+      raise ValueError('b must not be zero')
+  ,#+end_src
+
+  ,** Naming
+
+  | Kind                       | Convention                | Examples                      |
+  |----------------------------+---------------------------+-------------------------------|
+  | Functions / variables      | =snake_case=                | =prepare_vasp_dir=, =last_number= |
+  | Classes                    | =PascalCase=                | =IMDStructure=, =IMDGVaspDir=     |
+  | Constants                  | =UPPER_CASE=                | =MODULE_DIR=, =MAX_CACHE_SIZE=    |
+  | Private internals          | =_= prefix                  | =_get_hash=, =_worker_wrapper=    |
+  | Boolean predicates (older) | =_p= suffix                 | =directory_queued_p=, =nebp=      |
+  | Boolean predicates (newer) | =is_= / =has_= or descriptive | =converged=, =already_matched=    |
+
+  ,** Strings
+
+  - Single quotes ='...'= by default.
+  - F-strings for interpolation.
+  - =+= for multi-line concatenation (not implicit concatenation).
+  - Triple double quotes ="""..."""= for docstrings.
+  - Double quotes when the string contains single quotes.
+
+  WRONG:
+  ,#+begin_src python
+  dirname = "output"
+  path = f"{dirname}/data.csv"
+  msg = f'Processing complete'  # f-string with no interpolation
+  msg = ('This is a very long message '
+         'that spans two lines')  # implicit concat
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  dirname = 'output'
+  path = f'{dirname}/data.csv'
+  msg = 'Processing complete'
+  msg = 'This is a very long message ' \
+      + 'that spans two lines'
+  ,#+end_src
+
+  ,** No re-exports
+
+  Each symbol has exactly one canonical import path. Do not use =__init__.py= to re-export symbols from submodules.
+
+   Line wrapping and whitespace
+
+  - ~80-100 character lines.
+  - Function signatures: each parameter on its own line, closing paren on the last parameter line.
+  - Long conditionals/expressions: =\= for line continuation.
+  - Spaces around === in keyword arguments (=tol=0.1=); no spaces in defaults (=def f(x=0)=).
+  - Two blank lines between top-level functions/classes; one blank between methods.
+
+  WRONG:
+  ,#+begin_src python
+  def structure_distance(
+          structure1: Structure,
+          structure2: Structure,
+          tol: float = 0.1,
+          match_first: bool = True
+  ) -> float:
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  def structure_distance(
+          structure1: Structure, structure2: Structure,
+          tol: float = 0.1,
+          match_first: bool = True,
+          max_dist: float | None = None) -> float:
+  ,#+end_src
+
+  ,** Error handling
+
+  - Specific exception types; never bare =except:=.
+  - =try/except= with =logger.warning()= or =logger.debug()= for graceful degradation.
+  - =# FIXME:= for known issues or upstream contributions pending (not =# TODO=).
+  - =# pylint: disable=...= for intentional rule violations.
+  - Commented-out debug logging preserved for future debugging.
+
+  WRONG:
+  ,#+begin_src python
+  try:
+      parse(file)
+  except Exception:
+      pass
+
+  # TODO: handle edge case when file is empty
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  try:
+      parse(file)
+  except ValueError as e:
+      logger.debug('Failed to parse %s: %s', file, e)
+
+  # FIXME: empty files cause silent data loss
+  ,#+end_src
+
+  ,** LBYL (Look Before You Leap)
+
+  Check preconditions explicitly. Reserve =try/except= for I/O failures, parsing untrusted data, and operations where failure is inherently unpredictable -- not for control flow.
+
+  WRONG:
+  ,#+begin_src python
+  def get_property(d, key, default=None):
+      try:
+          return d[key]
+      except KeyError:
+          return default
+
+  try:
+      obj.optional_method()
+  except AttributeError:
+      pass
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  def get_property(d, key, default=None):
+      if key in d:
+          return d[key]
+      return default
+
+  if hasattr(obj, 'optional_method'):
+      obj.optional_method()
+  ,#+end_src
+
+  Where EAFP is correct -- I/O, parsing, external state:
+  ,#+begin_src python
+  # File operations -- TOCTOU, EAFP is correct
+  try:
+      with open(path) as f:
+          data = f.read()
+  except FileNotFoundError:
+      data = None
+
+  # Parsing untrusted data -- many failure modes, EAFP cleaner
+  try:
+      obj = cls.from_file(path)
+  except Exception as e:
+      logger.debug('Failed to parse %s: %s', path, e)
+      return None
+  ,#+end_src
+
+  ,** Keyword-only arguments
+
+  Functions with 5+ parameters must use =*= to force keyword arguments for all optional parameters. Functions with 2+ parameters of the same type (especially =bool= or =float= with defaults) should use =*= even if total is below 5.
+
+  WRONG:
+  ,#+begin_src python
+  def structure_distance(
+          structure1: Structure, structure2: Structure,
+          tol: float = 0.1,
+          match_first=True,
+          max_dist=None,
+          norm=False,
+          match_species: bool = True) -> float:
+      ...
+
+  d = structure_distance(a, b, 0.2, False, None, True, False)  # unreadable
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  def structure_distance(
+          structure1: Structure,
+          structure2: Structure,
+          ,*,
+          tol: float = 0.1,
+          match_first: bool = True,
+          max_dist: float | None = None,
+          norm: bool = False,
+          match_species: bool = True) -> float:
+      ...
+
+  d = structure_distance(a, b, tol=0.2, match_species=False)  # self-documenting
+  ,#+end_src
+
+  Exception: constructors and functions mimicking an established external API may keep positional for compatibility.
+
+  ,** Caching
+
+  Essential for data that takes a long time to read and parse. The common case is a single =.pkl.gz= file in the same directory as the source data or in the working directory.
+
+  - *Content-based invalidation:* hash the source data (e.g., md5 of file modification times). Reuse cache only when the stored hash matches.
+  - *Cache location:* (1) beside source data, (2) working directory, (3) =~/.cache/=. Never =/tmp=.
+  - *Atomic writes:* write to a temp file, then =os.rename()=.
+  - *Negative caching:* cache =None= results too -- avoids re-parsing known-broken data.
+
+  WRONG:
+  ,#+begin_src python
+  cache_path = Path('/tmp/my_cache.pkl')
+  if cache_path.exists():
+      with open(cache_path, 'rb') as f:
+          return pickle.load(f)
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  cache_hash = hashlib.md5(''.join(file_mtimes).encode()).hexdigest()
+  cache_path = data_dir / f'{data_name}.pkl.gz'
+
+  if cache_path.exists():
+      with gzip.open(cache_path, 'rb') as f:
+          cached_hash, cached_data = pickle.load(f)
+      if cached_hash == cache_hash:
+          return cached_data
+
+  data = parse(data_dir)
+  with tempfile.NamedTemporaryFile(
+      mode='wb', dir=cache_path.parent, delete=False, suffix='.tmp.gz'
+  ) as tmp:
+      with gzip.open(tmp.name, 'wb') as f:
+          pickle.dump((cache_hash, data), f, protocol=pickle.HIGHEST_PROTOCOL)
+  os.rename(tmp.name, cache_path)
+  return data
+  ,#+end_src
+
+  ,** CLI and configuration
+
+  Prefer =argparse= and =os.environ= over hardcoded constants.
+
+  WRONG:
+  ,#+begin_src python
+  SERVER = 'login.cyfronet.pl'
+  QUEUE = 'plgrid-gpu-v100'
+  NODES = 2
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--server', default=os.environ.get('SERVER'))
+  parser.add_argument('--queue', default=os.environ.get('QUEUE'))
+  parser.add_argument('--nodes', type=int, default=1)
+  args = parser.parse_args()
+
+  if not args.server:
+      logger.warning('SERVER not set; see IMD Group bashrc')
+      sys.exit(1)
+  ,#+end_src
+
+  - TOML config files (=tomllib.load()=) for complex server/sbatch settings.
+  - CLI subcommands: main entry with =argparse= subparsers; each subcommand in its own module with an =add_args(parser)= function.
+
+  ,** Matplotlib
+
+  Use =IMDgroup.utils.mpl.mpl_defaults()= for publication-style defaults.
+
+  WRONG:
+  ,#+begin_src python
+  import matplotlib.pyplot as plt
+  plt.plot(x, y)
+  plt.savefig('plot.png')
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  from IMDgroup.utils.mpl import mpl_defaults, A4_WIDTH
+  import matplotlib.pyplot as plt
+
+  mpl_defaults(font_size=8, width=A4_WIDTH, ratio=1.5)
+  fig, ax = plt.subplots()
+  ax.plot(x, y)
+  fig.savefig('plot.png')
+  ,#+end_src
+
+  Configures: Times New Roman, stix math fonts, tab20c + dash style cycler, consistent rcParams.
+
+  ,** Classes
+
+  - Subclass pymatgen classes where applicable (=MSONable=, =Structure=).
+  - =ClassVar= for mutable class-level attributes.
+  - =@classmethod= for alternative constructors and shared state.
+  - =@staticmethod= for utilities that belong logically to the class.
+  - =@property= for computed attributes (=final_energy=, =converged=, =structure=).
+  - =collections.abc.Mapping= for dict-like classes.
+
+  ,** Code organization
+
+  - Declare variables close to where they are used, not at the top of a function.
+  - Avoid large blocks of variable initialization separated from the logic that consumes them.
+
+  ,** Design principles
+
+  1. *Prefer existing mature libraries over writing from scratch.*
+  2. *When working with VASP or materials science data, use IMDgroup-pymatgen over raw pymatgen.*
+  3. *Maintainability and readability over performance.* Optimize bottlenecks after profiling, not prematurely. When performance matters, use caching and mature libraries rather than hand-optimized code.
+  4. Python >=3.10 target (PEP 604 unions, PEP 585 generics, walrus operator).
+  5. =pyproject.toml= with setuptools backend, =uv= for dependency locking.
+  6. =pylint= configured with =source-roots=['./src']= in =pyproject.toml=.
+  7. *Testing:* use pytest for projects. Less critical for one-off scripts, but valuable when the script will be reused or maintained.
+
+  WRONG:
+  ,#+begin_src python
+  def find_last_number(path):
+      """Find the last numbered subdirectory."""
+      nums = []
+      for d in path.iterdir():
+          if d.is_dir() and d.name.isdigit():
+              nums.append(int(d.name))
+      return max(nums) if nums else None
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  from monty.os.path import zpath, find_exts
+  from monty.io import zopen
+  # Use monty's existing utilities for common file operations
+  ,#+end_src
+
+#+end_src
 
 **** Web tools
 :PROPERTIES:
