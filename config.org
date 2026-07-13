@@ -401,7 +401,7 @@ scheme, I ended up using a light theme I prefer.
               (fg-dim "#505050")
   	    (fg-main "#2a2a2a") ; slightly softer black to reduce strain on eyes
   	    (fg-heading-1 "#5317ac")
-  	    (bg-hl-line "#e0e0e0")
+  	    (bg-hl-line "#fff7e7")
               (fringe unspecified)
               (bg-active bg-blue-subtle)
               (bg-hover-secondary "#aae59c")))
