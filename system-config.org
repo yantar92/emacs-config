@@ -10724,13 +10724,36 @@ app-dicts/wordnet
 app-office/libreoffice-bin
 #+end_src
 
-** Firefox (needed for jitsi that does not work well with [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]])
+** Librewolf (needed for jitsi that does not work well with [[id:8f33d97b-6193-4164-b0a7-225bb7c30f75][Qutebrowser]])
 :PROPERTIES:
 :ID:       521ed8b3-7646-4b1b-95a6-5875d8ec9d1b
 :END:
 
+#+begin_src bash :tangle no :dir /sudo::/ :results output :eval yes :noweb-ref sys-configure
+eselect repository add librewolf git https://codeberg.org/librewolf/gentoo.git
+#+end_src
+
+#+RESULTS:
+: Adding librewolf to /etc/portage/repos.conf/eselect-repo.conf ...
+: Repository librewolf added
+
+Do not enable any other packages from the overlay
+#+begin_src conf :tangle /sudo::/etc/portage/package.mask/librewolf-repo
+,*/*::librewolf
+#+end_src
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.unmask/librewolf
+www-client/librewolf-bin::librewolf
+#+end_src 
+
+#+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/librewolf
+www-client/librewolf-bin ~amd64
+dev-libs/nss ~amd64
+#+end_src 
+
+
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-www-client/firefox-bin
+www-client/librewolf-bin
 #+end_src
 
 ** System packages for testing optional modules of Org
