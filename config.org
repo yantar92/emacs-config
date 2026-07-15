@@ -5501,7 +5501,7 @@ manually here (in this config) myself.
     :if init-flag
     :config
     (add-to-list 'eglot-server-programs
-                 '((python-mode python-ts-mode) . ("uv" "run" "pylsp")))  
+                 '((python-mode python-ts-mode) . ("uv" "run" "pyright-langserver" "--stdio")))  
     (defun yant/eglot-ensure-maybe ()
       "Run eglot but only in local files."
       (when (and buffer-file-name
