@@ -8813,48 +8813,99 @@ fluffy language when I make mistakes!).
     :init
     (defvar yant/gptel-system-prompt-default-functions nil
       "List of strings or functions to build default prompt.")
+
     (add-hook
      'yant/gptel-system-prompt-default-functions
      (lambda () (format "TEMPORAL CONTEXT: Today is %s" (format-time-string "%Y-%m-%d %a %H:%M %Z")))
      -1)
+
+    (defun yant/gptel--heading-body (marker)
+      "Get body text of the heading at MARKER, excluding subheadings.
+  Returns a cons (TITLE . BODY-STRING)."
+      (org-with-point-at marker
+        (org-back-to-heading t)
+        (let* ((headline (org-element-at-point))
+               (title (org-element-property :title headline))
+               (title-string (if title (org-element-interpret-data title) ""))
+               (contents-begin (org-element-contents-begin headline))
+               (contents-end (org-element-contents-end headline)))
+          (if contents-begin
+              (save-excursion
+                (goto-char contents-begin)
+                (let ((contents-end (org-element-property :contents-end headline))
+                      (body-end (or (re-search-forward org-outline-regexp-bol contents-end t)
+                                    contents-end)))
+                  (cons title-string
+                        (string-trim (buffer-substring-no-properties
+                                      contents-begin body-end)))))
+            (cons title-string "")))))
+    (defun yant/gptel--ancestor-bodies (marker)
+      "Get bodies of ancestor headings from MARKER up to top level.
+  Returns a list of (LEVEL . (TITLE . BODY-STRING)), nearest ancestor first."
+      (org-with-point-at marker
+        (org-back-to-heading t)
+        (let ((ancestors nil))
+          (while (org-up-heading-safe)
+            (let* ((heading-info (yant/gptel--heading-body (point-marker)))
+                   (headline (org-element-at-point))
+                   (level (org-element-property :level headline)))
+              (push (cons level heading-info) ancestors)))
+          ancestors)))
+
+    (defun yant/gptel-clocking-context ()
+      "Return current clocking context."
+      (if (org-clocking-p)
+          (let* ((buf (marker-buffer org-clock-marker))
+                 (line (org-with-point-at org-clock-marker (org-current-line)))
+                 (clock-str (org-clock-get-clock-string))
+                 (task (yant/gptel--heading-body org-clock-marker))
+                 (task-title (car task))
+                 (task-body (cdr task))
+                 (ancestors (yant/gptel--ancestor-bodies org-clock-marker))
+                 (result (format "CURRENT TASK: %s (buffer: '%s' line: '%s')"
+                                 clock-str buf line)))
+            (when (and task-body (not (string-empty-p task-body)))
+              (setq result (concat result "\n" task-body)))
+            (when ancestors
+              (setq result (concat result "\n\nANCESTOR CONTEXT:"))
+              (dolist (anc ancestors)
+  	      (let* ((level (car anc))
+                       (title (cadr anc))
+                       (body (cddr anc))
+                       (stars (make-string level ?*)))
+                  (setq result (concat result "\n" stars " " title))
+                  (when (and body (not (string-empty-p body)))
+                    (setq result (concat result "\n" body))))))
+            result)
+        "No clocked in task"))
+    
     (add-hook
      'yant/gptel-system-prompt-default-functions
-     (lambda ()
-       (format "CURRENT TASK: %s (buffer: '%s' line: '%s')"
-  	     (if (org-clocking-p)
-  		 (org-clock-get-clock-string)
-                 "No clocked in task")
-               (if (org-clocking-p)
-  		 (marker-buffer org-clock-marker)
-                 "N/A")
-               (if (org-clocking-p)
-  		 (org-with-point-at org-clock-marker
-                     (org-current-line))
-  	       "N/A")))
+     #'yant/gptel-clocking-context
      -1)
     ;; Include recent buffers, excluding internal (space-prefixed) ones
     (add-hook
      'yant/gptel-system-prompt-default-functions
      (lambda ()
        (format "LIST OF RELEVANT EMACS BUFFERS:\n%s
-  These above buffers, in addition to CURRENT TASK, define current working environment."
-  	     (mapconcat (lambda (b) (format "%S" b))
-  			(seq-take
-                         (seq-filter
-                          (lambda (b)
-                            (not (string-prefix-p " " (buffer-name b))))
-                          (buffer-list))
-                         5)
-                        "\n")))
+    These above buffers, in addition to CURRENT TASK, define current working environment."
+    	     (mapconcat (lambda (b) (format "%S" b))
+    			(seq-take
+                           (seq-filter
+                            (lambda (b)
+                              (not (string-prefix-p " " (buffer-name b))))
+                            (buffer-list))
+                           5)
+                          "\n")))
      1)
     :config
     (setf (alist-get 'default gptel-directives)
-  	(lambda ()
+    	(lambda ()
             "Personal profile"
-  	  (with-temp-buffer
+    	  (with-temp-buffer
               (dolist (el yant/gptel-system-prompt-default-functions)
                 (pcase el
-  		((pred functionp) (insert (funcall el)))
+    		((pred functionp) (insert (funcall el)))
                   ((pred stringp) (insert el)))
                 (insert "\n\n"))
               (buffer-string))))
