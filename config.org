@@ -11790,12 +11790,12 @@ and tried in the past. Everything tailored to my personal needs.
 *** org-inside
 
 #+begin_src emacs-lisp
-  (use-package org
+  (use-package org-inside
     :if init-flag
+    :after org
     :config
     (setq org-hide-emphasis-markers t)
-    (when (fboundp 'org-inside-mode)
-      (add-hook 'org-mode-hook #'org-inside-mode)))
+    (add-hook 'org-mode-hook #'org-inside-mode))
 #+end_src
 
 *** (temporary) Debugging cache
