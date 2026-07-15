@@ -10927,7 +10927,7 @@ Disable some pylint rules
 
 #+begin_src conf :tangle /home/yantar92/.flake8
 [flake8]
-ignore = E501
+ignore = E501, W503
 #+end_src
 
 
