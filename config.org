@@ -9382,8 +9382,30 @@ awkward.
       (replace-string-in-region "“" "\"" beg end)
       (replace-string-in-region "”" "\"" beg end)
       (replace-string-in-region "‑" "-" beg end))
+
+    (defun yant/fix-src-without-lang (beg end)
+      "Replace #+begin_src blocks without a language with #+begin_example."
+      (save-excursion
+        (save-restriction
+          (narrow-to-region beg end)
+          (while (re-search-forward "^[ \t]*#\\+begin_src")
+            (let* ((ind (current-indentation))
+  		 (src-block (org-element-at-point))
+  		 (beg (move-marker (make-marker) (org-element-post-affiliated src-block)))
+                   (end (move-marker (make-marker) (org-element-end src-block))))
+              (when (and (org-element-type-p src-block 'src-block)
+  		       (not (org-element-property :language src-block)))
+  	      (goto-char beg)
+                (delete-line)
+                (insert (make-string ind ?\s) "#+begin_example\n")
+                (goto-char end)
+                (skip-chars-backward "\n\t ")
+                (delete-line)
+                (insert (make-string ind ?\s) "#+end_example\n")))))))
+
     (add-hook 'gptel-post-response-functions #'yant/remove-org-headings)
-    (add-hook 'gptel-post-response-functions #'yant/fix-unicode))
+    (add-hook 'gptel-post-response-functions #'yant/fix-unicode)
+    (add-hook 'gptel-post-response-functions #'yant/fix-src-without-lang))
 #+end_src
 *** Presets
 
