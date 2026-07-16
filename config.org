@@ -9388,7 +9388,7 @@ awkward.
       (save-excursion
         (save-restriction
           (narrow-to-region beg end)
-          (while (re-search-forward "^[ \t]*#\\+begin_src")
+          (while (re-search-forward "^[ \t]*#\\+begin_src" nil t)
             (let* ((ind (current-indentation))
   		 (src-block (org-element-at-point))
   		 (beg (move-marker (make-marker) (org-element-post-affiliated src-block)))
