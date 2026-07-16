@@ -11878,6 +11878,14 @@ gone a long way since then.  Now, includes elements of Zettelkasten,
 P.A.R.A., and many other task management approaches I have encountered
 and tried in the past. Everything tailored to my personal needs.
 
+*** Org mode maintenance
+
+**** Org bug tracker UI
+
+#+begin_src emacs-lisp
+(use-package gnaw :straight (:type git :repo "https://codeberg.org/bzg/gnaw.el"))
+#+end_src
+
 *** org-inside
 
 #+begin_src emacs-lisp
