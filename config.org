@@ -10468,9 +10468,72 @@ certain LLM logic when conditions are met.
 
    Libraries
 
-  - *IMDgroup-pymatgen* -- pymatgen add-ons for Inverse Materials Design Group. Extends pymatgen's Structure with caching and disk-backed LMDB storage; provides IMDGVaspDir (convergence checks), IMDStandardVaspInputSet, ATAT helpers, transformations (insert_molecule, symmetry_clone), and diffusion analysis.
-  - *IMDgroup-gorun* -- SLURM job submission helpers for the group. Automates VASP job submission, directory cleanup, POTCAR generation, and sbatch script generation.
-  - *Key third-party dependencies:* pymatgen, numpy, ase, monty, termcolor (colored terminal output), alive_progress (progress bars), cachetools, lmdb, python-dateutil.
+  ,** IMDgroup-pymatgen
+
+  The primary library for all materials science work. Installed as a
+  package with submodules under ~~/Git/IMDgroup-pymatgen/~. Key modules:
+
+  - ~IMDgroup.core.structure~ :: =IMDStructure= (extends =pymatgen.core.Structure= with
+    caching, LMDB-backed disk storage, and serialization helpers).
+    This is the default structure class -- use it instead of raw
+    =Structure= in all new code.
+  - ~IMDgroup.core.vasp~ :: =IMDGVaspDir= (VASP directory wrapper with
+    convergence checks and result parsing), =IMDStandardVaspInputSet=
+    (group-standard INCAR settings), =IMDOSZICAR=, =IMDVaspDoc=,
+    =IMDOutcar=.
+  - ~IMDgroup.transformations~ :: =insert_molecule=, =symmetry_clone=,
+    =make_supercell_with_vacuum=, and other structure transformations.
+  - ~IMDgroup.diffusion~ :: =DiffusionAnalyzer= with group-specific
+    post-processing (trajectory smoothing, MSD fitting, activation
+    energy extraction).
+  - ~IMDgroup.atat~ :: ATAT helper functions for cluster expansion
+    workflows (~lat.in~ / ~str.out~ parsing, structure mapping).
+  - ~IMDgroup.common~ :: =groupby_cmp=, =chunks=, and other generic
+    utilities used across modules.
+  - ~IMDgroup.utils.mpl~ :: =mpl_defaults()= for publication-ready
+    matplotlib defaults; =A4_WIDTH=, =A4_HEIGHT= constants.
+
+  When you need to know available functions: browse the source under
+  =src/IMDgroup/=, check =__init__.py= for public API, or use
+  =help(IMDgroup.some_module)= in a Python REPL. The docstrings are
+  the primary reference.
+
+  ,** IMDgroup-gorun
+
+  SLURM job submission and management for the group's HPC workflows.
+  Key modules:
+
+  - ~IMDgroup.gorun.core~ :: =GorunJob= (wraps a single VASP job:
+    directory setup, POTCAR generation, sbatch script creation),
+    =GorunManager= (manages job queues and dependencies).
+  - ~IMDgroup.gorun.cleanup~ :: =cleanup_dir()= (removes VASP
+    output files after successful runs, keeping only essential data).
+  - ~IMDgroup.gorun.potcar~ :: POTCAR generation from pymatgen
+    =POTCAR= lookups with group-specific fallbacks.
+
+  CLI entry point is usually a script using =argparse= subcommands
+  that call gorun functions. See existing scripts in the gorun
+  repository for examples.
+
+  ,** Third-party dependencies and what they are used for
+
+  | Library          | Primary use                                        |
+  |------------------+----------------------------------------------------|
+  | =pymatgen=         | Materials analysis, VASP I/O, structure manipulation |
+  | =numpy=            | Numerical arrays, linear algebra                    |
+  | =ase=              | Alternative structure I/O, geometry optimization    |
+  | =monty=            | Serialization (=monty.json=), file I/O (=monty.io=)  |
+  | =termcolor=        | Colored terminal output for CLI scripts             |
+  | =alive_progress=   | Progress bars for long-running operations           |
+  | =cachetools=       | In-memory caching decorators (=@cached=, =@lru_cache=) |
+  | =lmdb=             | Disk-backed key-value store (IMDStructure cache)    |
+  | =python-dateutil=  | Flexible date parsing in data analysis              |
+
+  To explore any third-party library: import it and use
+  =help(library_name)= or =dir(library_name)=, or consult its online
+  documentation. The group's code follows pymatgen patterns closely --
+  when in doubt about idiom, check how pymatgen does something
+  similar.
 
   ,** File structure
 
@@ -10674,7 +10737,12 @@ certain LLM logic when conditions are met.
   - Specific exception types; never bare =except:=.
   - =try/except= with =logger.warning()= or =logger.debug()= for graceful degradation.
   - =# FIXME:= for known issues or upstream contributions pending (not =# TODO=).
-  - =# pylint: disable=...= for intentional rule violations.
+  - =# pylint: disable=...= , =# pyright: ignore[...]= and =# type:
+    ignore[...]= are *last resorts*. Prefer fixing the code --
+    restructure logic, add an =assert isinstance(...)= or runtime guard,
+    narrow types, or refactor to avoid the type mismatch. Only
+    suppress when the type checker is provably wrong and no reasonable
+    refactor avoids it.
   - Commented-out debug logging preserved for future debugging.
 
   WRONG:
