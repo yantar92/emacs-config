@@ -1716,13 +1716,13 @@ Also, need to manually install config and policy files.
 dev-ruby/rake
 #+end_src
 
-*** 7z (p7zip)
+*** 7z (7zip)
 :PROPERTIES:
 :ID:       678f1405-0f29-4886-bb4b-18559732a348
 :END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-app-arch/p7zip
+app-arch/7zip
 #+end_src
 
 *** Calculator (bc)
