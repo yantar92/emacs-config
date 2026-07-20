@@ -10931,10 +10931,45 @@ certain LLM logic when conditions are met.
   mpl_defaults(font_size=8, width=A4_WIDTH, ratio=1.5)
   fig, ax = plt.subplots()
   ax.plot(x, y)
+  # Always set title and axis labels, even if empty.
+  # Omitting them changes the axes rectangle size inside the fixed
+  # figure dimensions, making figures inconsistent.
+  ax.set_title("")
+  ax.set_xlabel("x")
+  ax.set_ylabel("y")
+  # Never use bbox_inches='tight' or fig.tight_layout() -- they
+  # change the saved figure dimensions by cropping to content.
   fig.savefig('plot.png')
   ,#+end_src
 
-  Configures: Times New Roman, stix math fonts, tab20c + dash style cycler, consistent rcParams.
+  Configures: Times New Roman, stix math fonts, tab20c + dash style cycler, consistent rcParams, and =constrained_layout=.
+
+  ,*** Consistent figure size
+
+  =mpl_defaults()= sets =figure.constrained_layout.use=True=,
+  which handles spacing automatically.  However, the axes rectangle
+  within the fixed figure size still shifts when text elements
+  (title, axis labels) appear or disappear.  The layout engine
+  allocates space only for what is present, so a figure with a title
+  has a shorter axes than one without -- even though both figures
+  have identical =figsize=.
+
+  The fix is to always include the same set of text elements:
+
+  - Always call =ax.set_title(...)=, even with an empty string =""=.
+  - Always call =ax.set_xlabel(...)= and =ax.set_ylabel(...)=.
+  - Never skip these calls conditionally.
+
+  When the same elements are always present, =constrained_layout=
+  produces identical axes rectangles.
+
+  Also avoid =bbox_inches='tight'= and =fig.tight_layout()= when
+  saving.  Both recompute layout from scratch and crop the figure
+  to content, which changes the final dimensions.  Use the default
+  save with =constrained_layout= instead.
+
+  Font sizes are already consistent via rcParams set by
+  =mpl_defaults()= and are not affected by the issues above.
 
   ,** Classes
 
