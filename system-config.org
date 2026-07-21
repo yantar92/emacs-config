@@ -10699,6 +10699,16 @@ app-portage/gentoolkit
 app-portage/eix
 #+end_src
 
+** =app-portage/pkgdev= - for overlay management
+:PROPERTIES:
+:ID:       0b0190a6-b469-45e7-8d02-81042ca66960
+:END:
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+dev-util/pkgdev
+#+end_src
+
+
 ** perf: Performance debugging
 :PROPERTIES:
 :ID:       03f7e6f3-cff0-4df8-976c-92338a9304b5
