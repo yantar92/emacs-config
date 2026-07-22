@@ -10986,6 +10986,42 @@ certain LLM logic when conditions are met.
   - Declare variables close to where they are used, not at the top of a function.
   - Avoid large blocks of variable initialization separated from the logic that consumes them.
 
+  ,** Comments
+
+  Use =#=, =##=, =###= to create a comment hierarchy.  Do not use ASCII-art
+  divider lines (=# ----...=) or triple-quoted strings as block comments
+  -- triple-quoted strings are string literals, not comments, and they
+  confuse tools that inspect docstrings or ASTs.
+
+  - =#= : inline comment or brief note.
+  - =##= : section heading (top-level grouping of functions or logic).
+  - =###= : sub-section heading (logical block within a function or
+    within a section).
+
+  WRONG:
+  ,#+begin_src python
+  # ---------------------------------------------------------------------------
+  # Band analysis helpers
+  # ---------------------------------------------------------------------------
+
+  def _band_boundaries(energies, densities, tol_state):
+      ...
+      # -- Pre-filter: DOS at Ef must be non-zero --------------------------
+      if np.abs(dos_at_ef) < tol_state:
+          ...
+  ,#+end_src
+
+  CORRECT:
+  ,#+begin_src python
+  ## Band analysis helpers
+
+  def _band_boundaries(energies, densities, tol_state):
+      ...
+      ### Pre-filter: DOS at Ef must be non-zero
+      if np.abs(dos_at_ef) < tol_state:
+          ...
+  ,#+end_src
+
   ,** Design principles
 
   1. *Prefer existing mature libraries over writing from scratch.*
