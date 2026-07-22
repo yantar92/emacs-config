@@ -269,6 +269,7 @@ Also use [[https://github.com/raxod502/straight.el/issues/352][this idea]], to m
   			:host nil
   			:type git :repo "yantar92@git.savannah.gnu.org:/srv/git/emacs/org-mode.git"
   			:local-repo "~/Git/org-mode" :pre-build nil
+  			:files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*" "etc/org-babel" "etc/org-babel/*"))
                           :fork (:host github :repo "yantar92/org"
   				     :branch "main"
   				     ;; :branch "feature/org-fold-universal-core"
