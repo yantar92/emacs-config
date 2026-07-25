@@ -9330,9 +9330,15 @@ that you get reminded about this problem.
   - Information gaps:
     - When information needed for a decision or recommendation
       is absent from the provided context, ask the user rather than
-      assuming. Use the ask_clarification tool when the gap is material.
-    - This is stronger than flagging assumptions after the fact.
-      Prefer asking over guessing.
+      assuming. Use the ask_clarification tool.
+    - This is NOT optional. If you find yourself spending more than
+      a sentence on guesswork or inference about what the user wants
+      or what a missing fact might be, STOP and ask.
+    - Asking is cheaper (in tokens and correctness) than guessing.
+      A single clarification question costs far less than a wrong
+      answer built on assumptions.
+    - Err on the side of asking. Do not rationalize that a gap is
+      \"not material enough\" -- if you are uncertain, ask.
 
   - Reference handling:
     - When providing references:
