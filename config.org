@@ -10450,6 +10450,138 @@ certain LLM logic when conditions are met.
   generate diagrams using valid graphviz syntax.
 #+end_src
 
+***** Elisp coding
+
+#+begin_src emacs-lisp :var workflow=workflow-elisp[]
+    (use-package gptel
+      :config
+      (push
+       (yant/gptel-make-workflow
+        :name "elisp_skill"
+        :description "When to use: when writing Emacs Lisp code"
+        :workflow workflow)
+       gptel-tools))
+#+end_src
+
+#+name: workflow-elisp
+#+begin_src org
+  This extends the general =programming_skill=. Follow its workflow
+  and design principles; the rules below are additional constraints
+  for Emacs Lisp code.
+
+  --------------------------------------------------------------------
+  Elisp conventions (GNU Emacs Lisp Reference Manual D.1 + D.3 + D.6)
+  --------------------------------------------------------------------
+
+  Package and naming:
+  - Global symbols must be prefixed with the package name + hyphen.
+  - Internal (non-public) symbols use two hyphens after the library
+    prefix (e.g., org--, org-element--, org-fold--).
+  - Library-specific internal prefixes (like org-element--) are valid
+    compound prefixes; the double hyphen still signals internal.
+  - Predicate functions end in -p (e.g., org-at-heading-p).
+  - Boolean variable names use -flag suffix or is- prefix, never -p.
+  - Variable holding a single function ends in -function.
+  - Variable holding a hook/list of functions ends in -hook or
+    -functions.
+  - Do not alias Emacs primitives; use standard names directly.
+  - If a compatibility alias is needed, prefix it with the package
+    name.
+  - Use file, file-name, or directory, not path. (path = search path
+    in GNU convention.)
+  - Avoid /surrounding/ variable names (no asterisks around names).
+
+  Loading and dependencies:
+  - Loading the file must not change Emacs editing behavior. The
+    loading should define the feature and its entry points; actual
+    activation happens through minor mode, major mode, or explicit
+    user commands.
+  - Use cl-lib (cl-loop, cl-mapcar, cl-pushnew, cl-remove-if, etc.),
+    not the deprecated cl.el.
+  - If file foo uses only macros from bar, use
+    (eval-when-compile (require 'bar)).
+  - Avoid loading libraries at runtime unless needed; put require
+    inside relevant functions or use autoload.
+  - End every library file with (provide 'feature-name).
+
+  Defcustom hygiene (Org-specific additions to GNU conventions):
+  - Every new or changed defcustom must have:
+    :type   -- matching actual usage in the code
+    :group  -- unless a defgroup is present in the library (then
+              inherited implicitly)
+    :package-version -- matching the next stable Org version
+    :safe   -- set explicitly: :safe t, :safe #'predicate, or :safe nil
+  - Remove :version in favor of :package-version for Emacs packages.
+  - Document what each value means in the docstring.
+
+  Docstrings (D.6):
+  - Every defun, defvar, defcustom must have a docstring.
+  - First line is a standalone sentence summarizing purpose.
+    - For functions: imperative mood, starts with capital, ends with
+      period. ("Return the cons of A and B." not "Returns the cons...")
+    - For variables: starts with "Non-nil means" (boolean) or describes
+      the value directly.
+  - First line mentions all mandatory arguments in order.
+  - Argument names are written in all-caps when describing their
+    values (e.g., "If ARG is non-nil, do X.").
+  - Symbol names are written in `quoted' form (grave accent +
+    apostrophe). t and nil are written without surrounding
+    punctuation.
+  - Key sequences use \\[...] constructs, never written directly.
+  - Docstring body uses active voice, present tense.
+  - Lines no wider than 60 chars preferred; first line under 74 chars.
+  - No indentation alignment for continuation lines in the docstring
+    body (Emacs display does not preserve alignment).
+  - No starting or ending whitespace in docstring.
+  - Avoid "iff", "e.g.", "i.e.", "cf.", "w.r.t." in docstrings.
+  - Predicate function docstrings start with "Return t if".
+  - Boolean variable docstrings start with "Non-nil means".
+  - Open-paren at start of a docstring line: consider \\( escape for
+    Emacs <27.1 compatibility.
+
+  General style:
+  - Close parens not on separate lines.
+  - Comments: ; for inline, ;; for line, ;;; for section headings.
+  - American English in comments, docstrings, and symbol names.
+  - No whitespace-only changes.
+  - Default file coding system is UTF-8.
+  - Default indentation parameters (use Emacs defaults).
+  - Do not use next-line, previous-line, beginning-of-buffer,
+    end-of-buffer, replace-string, replace-regexp, insert-file,
+    insert-buffer in non-interactive code.
+  - Error messages: start with capital letter, no period at end.
+    Optionally prepend function-name: for context.
+  - yes-or-no-p / y-or-n-p prompts: capital letter start, end with ?.
+  - Progress messages: "Operating..." then "Operating...done" (no
+    space around ellipsis, no period after done).
+  - Do not advise or redefine Emacs primitives.
+  - Do not advise functions in other Lisp packages.
+  - Avoid eval-after-load / with-eval-after-load in libraries.
+  - Avoid recursive edits unless truly necessary.
+  - Constructs defining a function/variable should be macros starting
+    with define-, receiving the name as first argument.
+  - Enable lexical binding for new code (;;; -*- lexical-binding: t;
+    -*- on first line).
+  - Use message, not princ, for echo area output.
+  - Use error/signal, not message/throw/sleep-for/beep, to report
+    errors.
+  - interactive: don't compute default values in the interactive form;
+    compute them in the function body when argument is nil.
+  - Prefer lists over vectors unless there is a specific reason (size
+    + random access, no insert/delete).
+
+  Idioms:
+  - Prefer when/unless over single-branch if.
+  - Prefer and/or for short-circuit boolean logic.
+  - Use pcase for structural pattern matching; use cond for
+    condition chains.
+  - Prefer push/nconc over reimplementing list manipulation.
+  - Use dolist/dotimes for iteration; cl-loop for complex cases.
+  - Use setf-place forms (setf, cl-incf, cl-pushnew) idiomatically.
+  - Use make-string for creating fixed strings, not concatenation in
+    a loop.
+#+end_src
+
 ***** Python coding
 
 #+begin_src emacs-lisp :var workflow=workflow-python[]
