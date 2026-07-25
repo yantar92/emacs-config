@@ -10597,6 +10597,10 @@ certain LLM logic when conditions are met.
 
 #+name: workflow-python
 #+begin_src org
+  This extends the general =programming_skill=. Follow its workflow
+  and design principles; the rules below are additional constraints
+  for Python code.
+
   ,* Python code style -- IMDgroup projects
 
    Libraries
