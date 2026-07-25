@@ -11208,7 +11208,7 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
 #+name: web_search
 #+begin_src emacs-lisp :tangle no
   (defvar brave-search-api-key
-    (lambda () (nth 0 (process-lines "pass" "show" "internet/search.brave.com-api")))
+    (lambda () (nth 0 (process-lines "pass" "show" "internet/search.brave.com-api-paid")))
     "API key for accessing the Brave Search API.")
 
   (cl-defun brave-search-query (query &optional count freshness country search-lang
