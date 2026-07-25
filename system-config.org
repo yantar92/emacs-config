@@ -8828,7 +8828,10 @@ Requires notmuch.
 [2025-12-27 Sat] Need puppeteer version to bypass aggressive crawler blocking.
 
 #+begin_src bash :tangle /home/yantar92/.config/awesome/startup :shebang #!/bin/bash
-podman run -d --name rsshub -p 1200:1200 ghcr.io/diygod/rsshub:chromium-bundled
+podman start rsshub 2>/dev/null || \
+  podman run -d --name rsshub -p 1200:1200 \
+    --env YOUTUBE_KEY=$(pass show api/youtube) \
+    ghcr.io/diygod/rsshub:chromium-bundled
 #+end_src
 
 ** Generic web-page update watcher (via diff): [[id:c711711207c4738449032aa13d464d500bc9aa95][urlwatch]]
