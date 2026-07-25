@@ -3865,6 +3865,9 @@ map kitty_mod+a>l    set_background_opacity -0.1
 map kitty_mod+a>1    set_background_opacity 1
 map kitty_mod+a>d    set_background_opacity default
 map kitty_mod+delete clear_terminal reset active
+
+# Open scrollback buffer in Emacs for navigation, copy/paste, etc.
+map kitty_mod+e launch --stdin-source=@screen_scrollback sh -c 'tmp=$(mktemp /tmp/kitty-scrollback.XXXXXX); cat > "$tmp"; emacsclient -c -nw "$tmp"'
 #+end_src
 
 *** Mouse
