@@ -10416,6 +10416,10 @@ certain LLM logic when conditions are met.
   - YAGNI (You Aren't Gonna Need It): Solve the current task. Do not
     write code for hypothetical future needs.
 
+  - Use descriptive variable names. Names should convey meaning
+    clearly. Avoid single-letter or abbreviated names except for
+    loop counters and well-known conventions (e.g., i, j, x, y).
+
   Landscape assessment
   Before making changes, evaluate the impact on adjacent systems.
   Changes in one place must not break logic elsewhere.
