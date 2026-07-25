@@ -12173,7 +12173,7 @@ and tried in the past. Everything tailored to my personal needs.
     (add-hook 'org-mode-hook #'org-inside-mode))
 #+end_src
 
-*** (temporary) Debugging cache
+*** COMMENT (temporary) Debugging cache
 
 #+begin_src emacs-lisp
   (setq org-element--cache-self-verify 'backtrace
