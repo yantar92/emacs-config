@@ -11889,9 +11889,15 @@ here, so that LLM reasoning can be utilized better.
      '(defun my/gptel-execute-python-code (callback code)
         (let* ((temp-dir (make-temp-file "gptel-bwrap-" t))
   	     (temp-file (expand-file-name "script.py" temp-dir))
-               (output-buffer (generate-new-buffer " *gptel-bwrap-output*")))
+               (output-buffer (generate-new-buffer " *gptel-bwrap-output*"))
+               (cache-dir (expand-file-name "~/.cache/gptel-bwrap-uv/"))
+               (scratch-dir (and (boundp 'yant/gptel-scratch-dir)
+                                 yant/gptel-scratch-dir
+                                 (file-directory-p yant/gptel-scratch-dir)
+                                 yant/gptel-scratch-dir)))
   	(with-temp-file temp-file
             (insert code))
+          (make-directory cache-dir t)
   	(make-process
   	 :name "gptel-bwrap"
   	 :buffer output-buffer
@@ -11900,11 +11906,17 @@ here, so that LLM reasoning can be utilized better.
                  "--ro-bind" "/" "/"
                  "--proc" "/proc"
                  "--dev" "/dev"
-  	       "--bind" temp-dir temp-dir     ;; rw access so uv can work                 "--tmpfs" "/tmp"
+                 "--tmpfs" "/tmp"
+                 "--dir" "/tmp/uv-cache"
+                 "--bind" cache-dir "/tmp/uv-cache"
+  	       "--bind" temp-dir temp-dir
+  	       "--bind" scratch-dir scratch-dir
                  "--unshare-pid"
                  "--unshare-ipc"
                  "--clearenv"
                  "--setenv" "HOME" temp-dir
+                 "--setenv" "REAL_HOME" (getenv "HOME")
+                 "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache"
                  "uv" "run" temp-file)
   	 :sentinel
   	 (lambda (process _event)
@@ -11933,6 +11945,11 @@ here, so that LLM reasoning can be utilized better.
   The dependencies will be installed automatically.
   You do not need to worry about them being unavailable.
 
+  The sandbox provides two home directories:
+  - HOME: a writable temporary directory (use for caches, configs).
+  - REAL_HOME: the user's real home directory, mounted read-only.
+    Use REAL_HOME to read files from the user's actual filesystem.
+
   DO NOT use this tool when a more specialized tool is available.
 
   Note that you do not always need to type in the context manually
@@ -11957,6 +11974,54 @@ here, so that LLM reasoning can be utilized better.
      :include t
      :async t)
     (add-to-list 'gptel-tools (gptel-get-tool "execute_python_code")))
+#+end_src
+
+**** Scratch space for LLM tools
+
+The scratch directory is a temporary directory that persists across
+tool calls within a single gptel chat session. It is bind-mounted
+into the Python bubblewrap sandbox at =/scratch=, so Python code can
+read and write files there without the sandbox restricting access.
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :if init-flag
+    :config
+    (defvar-local yant/gptel-scratch-dir nil
+      "Scratch directory for the current buffer.
+  Persists across tool calls and is cleaned up when the buffer is killed.")
+
+    (defun yant/gptel--ensure-scratch-dir ()
+      "Ensure a scratch directory exists for the current buffer.
+  Returns the directory path. Creates the directory and registers
+  a kill-buffer-hook cleanup on first creation."
+      (unless (and yant/gptel-scratch-dir
+                   (file-directory-p yant/gptel-scratch-dir))
+        (setq yant/gptel-scratch-dir
+              (make-temp-file "gptel-scratch-" t))
+        (add-hook 'kill-buffer-hook
+                  #'yant/gptel--scratch-dir-cleanup
+                  nil t))
+      yant/gptel-scratch-dir)
+
+    (defun yant/gptel--scratch-dir-cleanup ()
+      "Clean up the scratch directory for the current buffer."
+      (when (and yant/gptel-scratch-dir
+                 (file-directory-p yant/gptel-scratch-dir))
+        (delete-directory yant/gptel-scratch-dir t)
+        (setq yant/gptel-scratch-dir nil)))
+
+    (gptel-make-tool
+     :function #'yant/gptel--ensure-scratch-dir
+     :name "get_scratch_dir"
+     :description "Return the path to the scratch directory for this chat session.
+  The scratch directory is persistent across tool calls and is accessible
+  inside the Python sandbox at /scratch. Use it to store intermediate files,
+  data, and artifacts. The directory is auto-created on first call."
+     :category "files"
+     :confirm nil
+     :include t)
+    (add-to-list 'gptel-tools (gptel-get-tool "get_scratch_dir")))
 #+end_src
 
 **** COMMENT Running commands
