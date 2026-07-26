@@ -8185,6 +8185,13 @@ make things more noticeable.
                         'face
                         `((t :background ,(modus-themes-with-colors bg-blue-intense))))
                        lists))
+               (when (or (save-excursion (search-forward "gnu-prog-discuss@gnu.org" nil t))
+  		       (save-excursion (search-forward "gnu-prog-disc@gnu.org" nil t)))
+                 (push (propertize
+  		      "ML: gnu-prog-discuss"
+                        'face
+                        `((t :background ,(modus-themes-with-colors red-warmer))))
+                       lists))
                (when (save-excursion (search-forward "@debbugs.gnu.org" nil t))
                  (push (propertize
   		      "Debbugs"
