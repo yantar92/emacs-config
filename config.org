@@ -10377,6 +10377,202 @@ certain LLM logic when conditions are met.
   NOTES:
   - Do not perform cleanup (delete_entities / delete_relations / delete_observations) unless the user explicitly asks for corrections or removal.
 #+end_src
+***** Searching research paper and textbook PDFs
+
+#+begin_src emacs-lisp :var workflow=workflow-literature-search[]
+    (use-package gptel
+      :config
+      (push
+       (yant/gptel-make-workflow
+        :name "find_article_or_book_pdf"
+        :description "When to use: When we need to find a full-text PDF of a paper, textbook, lecture notes, or similar document."
+        :workflow workflow)
+       gptel-tools))
+#+end_src
+
+
+#+name: workflow-literature-search
+#+begin_src org
+   PDF-finding protocol
+
+   This protocol applies when we need to find a full-text PDF of a paper, textbook, lecture notes, or similar document.
+
+   Phase 0 -- Classify the document
+
+  Determine the document type from the query. The cascade branches by type.
+
+  | Type                              | Indicators                                                        |
+  |-----------------------------------+-------------------------------------------------------------------|
+  | /Recent paper/ (~2018+)           | Journal name, DOI, multiple authors, materials science/physics/CS |
+  | /Older paper/ (~pre-2015)         | Same as above but older; often paywalled                          |
+  | /Lecture notes / course material/ | Named handout, NIC Series, university course reference            |
+  | /Textbook/                        | Publisher, edition, ISBN, single coherent volume                  |
+  | /Guide/reference book/            | Broad audience, skill-oriented, not narrow academic               |
+
+   Phase 0.5 -- Check local cache
+
+  Search Org notes by ID pattern (author-year-keywords) and check the attachment directory. If a PDF exists, report it and skip further phases unless the user wants the cascade run anyway.
+
+   Phase 1 -- OA sources (direct PDF retrieval)
+
+  These sources return URLs that =read_url= can fetch directly. Stop when a verified PDF is found.
+
+  /1A. Papers: arXiv API/
+
+  ,#+begin_example
+  http://export.arxiv.org/api/query?search_query=ti:"EXACT TITLE"&max_results=3
+  http://export.arxiv.org/api/query?search_query=au:AUTHOR_SURNAME+AND+ti:TITLE_KEYWORD&max_results=5
+  ,#+end_example
+
+  If found, PDF at =https://arxiv.org/pdf/ID.pdf=.
+
+  /1B. Papers: Semantic Scholar API/
+
+  ,#+begin_example
+  https://api.semanticscholar.org/graph/v1/paper/search?query=TITLE&fields=title,isOpenAccess,openAccessPdf,externalIds&limit=3
+  ,#+end_example
+
+  If =isOpenAccess: true=, use =openAccessPdf.url=.
+
+  /1C. All documents: Brave Search =filetype:pdf=/
+
+  Search: ="EXACT TITLE" filetype:pdf=
+
+  This is the highest-yield Phase 1 source for lecture notes and course materials. It catches university course mirrors (=.edu.ar=, =.edu.cn=, etc.), author-posted preprints, and institutional repositories. For textbooks, it may return frontmatter only -- continue the cascade.
+
+  /1D. Papers: author homepage / institutional repository/
+
+  Search: =AUTHOR_SURNAME "TITLE KEYWORD" publications= or =homepage=
+
+  /1E. Papers: Unpaywall API (DOI required)/
+
+  ,#+begin_example
+  https://api.unpaywall.org/v2/DOI?email=ihor@radchenko.org
+  ,#+end_example
+
+  Use =best_oa_location.url= if =is_oa: true=.
+
+  /1F. Papers: other preprint servers/
+
+  For recent papers not on arXiv, check:
+
+  - =https://chemrxiv.org= (chemistry, materials science)
+  - =https://www.researchsquare.com= (cross-disciplinary)
+  - Search: =AUTHOR_SURNAME "TITLE KEYWORD" site:chemrxiv.org= or =site:researchsquare.com=
+
+  /1G. Papers: Google Scholar/
+
+  Search: =AUTHOR_SURNAME "TITLE KEYWORD"= on =scholar.google.com=. Check the result for a =[PDF]= link on the right side of the entry. Google Scholar indexes author-posted PDFs on university sites, ResearchGate, and institutional repositories that may not appear in a Brave filetype:pdf search.
+
+  /1H. Papers: publisher's Supporting Information PDF/
+
+  When the main paper is behind a paywall, the Supporting Information (SI) is often freely available. For Wiley papers, check =https://onlinelibrary.wiley.com/doi/DOI#support-information-section=; for ACS, append =?download=true= to the SI URL if visible. The SI PDF contains experimental details and figures; it is not a substitute for the full text but may provide substantial information.
+
+   Phase 2 -- Shadow library detection
+
+  These sources confirm a document exists but PDF downloads are JS-gated. The tool can /detect/ but not /retrieve/. Report the URL for manual browser download.
+
+  /2A. Papers: Sci-Hub/
+
+  ,#+begin_example
+  https://sci-hub.ee/DOI
+  ,#+end_example
+
+  If the page loads with paper metadata (not CAPTCHA, not DNS failure), the paper is available. Fallback mirrors if =.ee= fails: =.ru=, =.st=, =.ren=. If all mirrors fail, use =scholar.hedasudi.com= as a domain directory (HTML page listing current working mirrors).
+
+  /Note:/ Sci-Hub is for papers only. It does not carry textbooks or lecture notes.
+
+  /2B. Papers: Anna's Archive -- journals index/
+
+  ,#+begin_example
+  https://annas-archive.gl/search?index=journals&q=DOI_SUFFIX
+  ,#+end_example
+
+  Use the DOI suffix (e.g., =ar200329r=, not the full =10.1021/ar200329r=) for best results. The journals index (=index=journals=) is separate from the main search -- the main search will return "no files found" for papers.
+
+  /2C. Textbooks, guides, lecture notes: Anna's Archive -- main search/
+
+  ,#+begin_example
+  https://annas-archive.gl/search?q=TITLE AUTHORS
+  ,#+end_example
+
+  No =index= parameter. Covers books, textbooks, and broader collections. May return EPUB or other formats, not just PDF.
+
+  /2D. Books: Library Genesis (fallback)/
+
+  ,#+begin_example
+  https://libgen.is (or libgen.li)
+  ,#+end_example
+
+  Use when Anna's Archive main search returns nothing, or when a different format is needed.
+
+  /2E. Papers: ResearchGate/
+
+  Search: =AUTHOR_SURNAME "TITLE KEYWORD" site:researchgate.net=. If an author-uploaded PDF exists, ResearchGate shows "View full-text PDF" (not "Request full-text PDF"). The PDF download is JS-gated; report the ResearchGate URL for manual browser download. If it shows "Request full-text PDF", no author copy is available.
+
+  /2F. All documents: Document-sharing platforms (last resort)/
+
+  These are low-yield sources for detection only (JS-gated or login-walled). Check when all other sources have failed:
+
+  - =Scribd=: =site:scribd.com= or =site:scribd.com TITLE=
+  - =DocDroid=: =site:docdroid.net TITLE=
+  - =Academia.edu=: =site:academia.edu AUTHOR TITLE KEYWORD=
+  - =SlideShare=: =site:slideshare.net TITLE=
+
+  Do not exhaustively check every platform. Try a combined search: ="EXACT TITLE" docdroid OR scribd OR academia=.
+
+  /Domain volatility:/ Anna's Archive domains change. =.org= was suspended Jan 2026, =.li= went down Mar 2026. Check =annas-archive.gl= first; fall back to Wikipedia page for current domains if it fails. =scholar.hedasudi.com= is a mirror directory for Sci-Hub domains (HTML, no API).
+
+  ---
+
+   Phase 3 -- PDF verification
+
+  When a candidate PDF URL is found:
+
+  1. Fetch first page via =read_url= (limit characters if the PDF is large).
+  2. Confirm the title matches the requested document.
+  3. Confirm author list matches.
+  4. Confirm the document is complete (not just frontmatter or abstract).
+
+  If any check fails, discard and continue the cascade.
+
+  ---
+
+   Phase 4 -- Report format
+
+  | Field           | Content                                                      |
+  |-----------------+--------------------------------------------------------------|
+  | Paper           | Full citation                                                |
+  | Source          | Where the PDF was found (arXiv, author page, Sci-Hub, etc.)  |
+  | URL             | Direct PDF link or shadow library page URL                   |
+  | Access          | "Direct PDF" or "JS-gated -- open in browser" or "Not found" |
+  | Cascade path    | Sources tried, in order                                      |
+  | Summary         | Brief abstract/excerpt for relevance confirmation            |
+
+  When the result is "Not found", include a brief note explaining /why/ (e.g., "published after Sci-Hub ingestion cutoff," "no preprint posted," "author did not self-archive") and practical next steps: email corresponding authors, check institutional access, request via ResearchGate, or revisit shadow libraries after a delay.
+
+  ---
+
+   Source cascade by document type (at a glance)
+
+  /Paper (any age)/
+
+  arXiv API → Semantic Scholar → Brave =filetype:pdf= → author homepage → other preprint servers → Google Scholar → Unpaywall → publisher SI → Sci-Hub → AA journals index → ResearchGate → document-sharing platforms
+
+  /Lecture notes / course material/
+
+  Brave =filetype:pdf= → AA main search → LibGen
+
+  /Textbook/
+
+  Brave =filetype:pdf= → AA main search → LibGen
+
+  /Guide / reference book/
+
+  Brave =filetype:pdf= → AA main search → LibGen
+
+#+end_src
+
 ***** General programming
 
 #+begin_src emacs-lisp :var workflow=workflow-programming[]
