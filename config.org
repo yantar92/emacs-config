@@ -20802,6 +20802,8 @@ Work around this issue by suppressing messages coming from
                 ("Accept" . "application/json")))
              (buffer (url-retrieve-synchronously url)))
         (with-current-buffer buffer
+  	(set-buffer-multibyte t)
+  	(set-buffer-file-coding-system 'utf-8-unix)
   	(goto-char (point-min))
   	(when (search-forward-regexp "^$" nil t)
             (let ((json-data (json-read)))
@@ -20855,8 +20857,10 @@ Work around this issue by suppressing messages coming from
 
     (defun google-docs-to-plain-text (document-id)
       "Fetch Google Document with DOCUMENT-ID and return as plain text."
-      (let ((document-json (google-docs--fetch-document document-id)))
-        (google-docs--extract-plain-text document-json))))
+      (let ((plain-text (google-docs--extract-plain-text
+                         (google-docs--fetch-document document-id))))
+        ;; \v in Google Docs is "soft newline"
+        (replace-regexp-in-string "\v" "\n" plain-text))))
 #+end_src
 
 ** Disk usage
