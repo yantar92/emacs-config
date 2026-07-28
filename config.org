@@ -10650,6 +10650,11 @@ certain LLM logic when conditions are met.
     clearly. Avoid single-letter or abbreviated names except for
     loop counters and well-known conventions (e.g., i, j, x, y).
 
+  - No magic constants. Give every literal value a named constant
+    with a descriptive name, unless the value is truly
+    self-documenting in context (e.g., 0, 1, -1 as sentinels or
+    standard mathematical constants).
+
   Landscape assessment
   Before making changes, evaluate the impact on adjacent systems.
   Changes in one place must not break logic elsewhere.
