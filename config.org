@@ -9662,7 +9662,10 @@ gets much easier - can override functions, add more small things, etc.
   1. PREMISE: What is the patch supposed to do? What does the surrounding code assume?
   2. TRACE: Walk through the changed code path. What happens on nil input? On empty
      buffer? In a narrowed buffer? With argument edge cases?
-  3. CONCLUSION: Is there a problem? If yes, classify severity.
+  3. CONTEXT: Skim the whole file around the change. Are there nearby
+     functions or variables that interact with this change in ways
+     the diff doesn't show?
+  4. CONCLUSION: Is there a problem? If yes, classify severity.
 
   ## WHAT TO CHECK
 
@@ -9802,6 +9805,17 @@ gets much easier - can override functions, add more small things, etc.
         not message/throw/sleep-for/beep, to report errors.
   - [ ] interactive: don't compute default values in the interactive form;
         compute them in the function body when argument is nil.
+  - [ ] Over-engineering: Is the patch more generic than needed? Does it
+        add configurability for a problem that doesn't exist yet? Prefer solving
+        the known problem; future problems get solved once they arrive
+        and you can see their actual shape.
+  - [ ] Complexity at every level: Are individual lines clear? Are functions
+        doing one thing? Is control flow linear or deeply nested? If a
+        reviewer has to re-read a section, it is too complex.
+  - [ ] Whole-context reading: Before reviewing the diff, read the entire
+        function or defcustom being modified. A four-line addition might
+        duplicate existing logic, belong in a helper, or break an invariant
+        visible only outside the diff context.
 
   ### D. Design review (does this fit Org?)
 
@@ -9837,7 +9851,11 @@ gets much easier - can override functions, add more small things, etc.
   List things you cannot check without executing the code or accessing
   the full Org codebase.
 
-  ### 5. Suggested next steps
+  ### 5. What is well done
+  One or two things the patch does well. Helps maintain contributor
+  relationships and reinforces good patterns. Skip if nothing stands out.
+
+  ### 6. Suggested next steps
   For the maintainer: what should happen next?
 
   ## PRINCIPLES
@@ -9845,7 +9863,10 @@ gets much easier - can override functions, add more small things, etc.
   - Do not flag issues you are uncertain about as confirmed. Use
     \"CANT-TELL\" or \"Unverified: ...\".
   - Do not invent problems. If a code path is fine, say so.
-  - If the patch is clearly trivial and correct, say LGTM and stop."
+  - If the patch is clearly trivial and correct, say LGTM and stop.
+  - Review every line. If you cannot understand a section, say so --
+    that is a review signal. Do not skim over human-written code
+    assuming it is fine."
       :temperature 0.2
       :prompt-transform-functions '(yant/org-patch-review--inject-email-buffers
                                      yant/org-patch-review--inject-fsf-status)))
