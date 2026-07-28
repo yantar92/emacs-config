@@ -12135,10 +12135,9 @@ here, so that LLM reasoning can be utilized better.
   	     (temp-file (expand-file-name "script.py" temp-dir))
                (output-buffer (generate-new-buffer " *gptel-bwrap-output*"))
                (cache-dir (expand-file-name "~/.cache/gptel-bwrap-uv/"))
-               (scratch-dir (and (boundp 'yant/gptel-scratch-dir)
-                                 yant/gptel-scratch-dir
-                                 (file-directory-p yant/gptel-scratch-dir)
-                                 yant/gptel-scratch-dir)))
+               (scratch-dir (progn
+  			    (yant/gptel--ensure-scratch-dir)
+                              yant/gptel-scratch-dir)))
   	(with-temp-file temp-file
             (insert code))
           (make-directory cache-dir t)
@@ -12146,22 +12145,24 @@ here, so that LLM reasoning can be utilized better.
   	 :name "gptel-bwrap"
   	 :buffer output-buffer
   	 :command
-  	 (list "bwrap"
-                 "--ro-bind" "/" "/"
-                 "--proc" "/proc"
-                 "--dev" "/dev"
-                 "--tmpfs" "/tmp"
-                 "--dir" "/tmp/uv-cache"
-                 "--bind" cache-dir "/tmp/uv-cache"
-  	       "--bind" temp-dir temp-dir
-  	       "--bind" scratch-dir scratch-dir
-                 "--unshare-pid"
-                 "--unshare-ipc"
-                 "--clearenv"
-                 "--setenv" "HOME" temp-dir
-                 "--setenv" "REAL_HOME" (getenv "HOME")
-                 "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache"
-                 "uv" "run" temp-file)
+  	 (delq nil
+  	       (list "bwrap"
+  		     "--ro-bind" "/" "/"
+  		     "--proc" "/proc"
+  		     "--dev" "/dev"
+  		     "--tmpfs" "/tmp"
+  		     "--dir" "/tmp/uv-cache"
+  		     "--bind" cache-dir "/tmp/uv-cache"
+  		     "--bind" temp-dir temp-dir
+                       "--dir" "/tmp/scratch"
+  		     "--bind" scratch-dir "/tmp/scratch"
+  		     "--unshare-pid"
+  		     "--unshare-ipc"
+  		     "--clearenv"
+  		     "--setenv" "HOME" temp-dir
+  		     "--setenv" "REAL_HOME" (getenv "HOME")
+  		     "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache"
+  		     "uv" "run" temp-file))
   	 :sentinel
   	 (lambda (process _event)
              (when (eq (process-status process) 'exit)
@@ -12194,6 +12195,9 @@ here, so that LLM reasoning can be utilized better.
   - REAL_HOME: the user's real home directory, mounted read-only.
     Use REAL_HOME to read files from the user's actual filesystem.
 
+  The sandbox also provides /tmp/scratch that persists between
+  chat invocations during a single session.
+
   DO NOT use this tool when a more specialized tool is available.
 
   Note that you do not always need to type in the context manually
@@ -12224,7 +12228,7 @@ here, so that LLM reasoning can be utilized better.
 
 The scratch directory is a temporary directory that persists across
 tool calls within a single gptel chat session. It is bind-mounted
-into the Python bubblewrap sandbox at =/scratch=, so Python code can
+into the Python bubblewrap sandbox, so Python code can
 read and write files there without the sandbox restricting access.
 
 #+begin_src emacs-lisp
@@ -12253,19 +12257,7 @@ read and write files there without the sandbox restricting access.
       (when (and yant/gptel-scratch-dir
                  (file-directory-p yant/gptel-scratch-dir))
         (delete-directory yant/gptel-scratch-dir t)
-        (setq yant/gptel-scratch-dir nil)))
-
-    (gptel-make-tool
-     :function #'yant/gptel--ensure-scratch-dir
-     :name "get_scratch_dir"
-     :description "Return the path to the scratch directory for this chat session.
-  The scratch directory is persistent across tool calls and is accessible
-  inside the Python sandbox at /scratch. Use it to store intermediate files,
-  data, and artifacts. The directory is auto-created on first call."
-     :category "files"
-     :confirm nil
-     :include t)
-    (add-to-list 'gptel-tools (gptel-get-tool "get_scratch_dir")))
+        (setq yant/gptel-scratch-dir nil))))
 #+end_src
 
 **** COMMENT Running commands
