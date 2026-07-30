@@ -10680,9 +10680,16 @@ certain LLM logic when conditions are met.
   3. Optimization and refactoring recommendations
 
   Language-specific conventions
-  For syntax, idioms, naming, type systems, and library preferences,
-  consult the relevant language skill (e.g., Python skill). This
-  prompt covers principles that apply across languages.
+  This prompt defines high-level design principles that apply across
+  languages. For language-specific syntax, idioms, naming, type
+  systems, and library preferences, consult the relevant language
+  skill:
+
+  - Python: invoke python_skill
+  - Emacs Lisp: invoke elisp_skill
+
+  Each language skill extends the workflow and design principles
+  defined here with language-specific constraints.
 
   Diagrams
   When explaining architecture, processes, data models, or sequences,
