@@ -8117,7 +8117,7 @@ The idea of the script is regular reminder to not spend too much money on certai
   [[ -z "$WEEKLY_INCOME_AVG" ]] && WEEKLY_INCOME_AVG="0"
   WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS_NO_INVEST="$(ledger r -X <<ledger-main-currency()>> Income and not Salary and not Gifts and not Interest -W -n -A -p "${BUDGET_CUTOFF} until tomorrow" | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')" # average weekly income minus salary
   [[ -z "$WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS_NO_INVEST" ]] && WEEKLY_INCOME_AVG_NO_SALARY_NO_GIFTS_NO_INVEST="0"
-  TOTAL_INVESTMENT="$(ledger b -X <<ledger-main-currency()>> Equity | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')"
+  TOTAL_INVESTMENT="$(ledger b -X <<ledger-main-currency()>> Equity | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//' | sed -r 's/[^0-9.]+//')"
   TOTAL_DEPOSITS="$(ledger b -X <<ledger-main-currency()>> Deposits | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//' | sed -r 's/[^0-9.]+//')"
   TOTAL_CASH="$(ledger b -X <<ledger-main-currency()>> Assets and not Deposits | tail -n1 | sed -r 's/.+?<<ledger-main-currency()>>//' | sed -r 's/^-//' | sed -r 's/,//')"
   # 4% SWR, 20% tax, 52 weeks
