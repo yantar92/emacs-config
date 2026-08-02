@@ -12180,10 +12180,23 @@ here, so that LLM reasoning can be utilized better.
                  (kill-buffer (process-buffer process))
                  (funcall
   		callback
-  		(if (= exit-status 0)
-                      output
-                    (format "Error (exit %d): %s"
-  			  exit-status output)))))))))
+  		(cond
+                   ((not (= exit-status 0))
+                    (format "Error (exit %d): %s" exit-status output))
+                   ((> (length output) yant/gptel-python-max-output)
+                    (let* ((buf (generate-new-buffer
+                                 (format "*gptel-python-output: %s*"
+                                         (format-time-string "%Y-%m-%d %H:%M:%S"))
+                                 t))
+                           (limit yant/gptel-python-max-output)
+                           (truncated (substring output 0 (min limit (1- (length output))))))
+                      (with-current-buffer buf
+                        (insert output))
+                      (cons (buffer-name buf)
+                            (concat truncated
+                                    (format "\n\n[... output truncated at %d characters; full output (%d characters) saved to buffer %s. Use view_buffer_or_file or search_in_buffer to access it.]"
+                                            limit (length output) (buffer-name buf))))))
+                   (t output)))))))))
      'lexical)
 
     (gptel-make-tool
@@ -12206,6 +12219,10 @@ here, so that LLM reasoning can be utilized better.
   chat invocations during a single session.
 
   DO NOT use this tool when a more specialized tool is available.
+
+  If the output exceeds the character limit, the full output is saved
+  to a buffer and only a truncated preview is returned.  The buffer
+  can be accessed later via view_buffer_or_file or search_in_buffer.
 
   Note that you do not always need to type in the context manually
   into the python script. When the context is coming from some
@@ -12264,7 +12281,15 @@ read and write files there without the sandbox restricting access.
       (when (and yant/gptel-scratch-dir
                  (file-directory-p yant/gptel-scratch-dir))
         (delete-directory yant/gptel-scratch-dir t)
-        (setq yant/gptel-scratch-dir nil))))
+        (setq yant/gptel-scratch-dir nil)))
+
+    (defcustom yant/gptel-python-max-output (* 128 1024)
+      "Maximum output length for Python code execution tool.
+When the output exceeds this limit, the full output is saved to a
+buffer and a truncated preview is returned to the LLM.  The buffer
+can be accessed later via `view_buffer_or_file' or `search_in_buffer'."
+      :type 'integer
+      :group 'gptel))
 #+end_src
 
 **** COMMENT Running commands
