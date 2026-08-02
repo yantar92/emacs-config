@@ -10962,19 +10962,19 @@ ignore = E501, W503
 :END:
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.unmask/vesta-bin
-sci-chemistry/vesta-bin::guru
+sci-chemistry/vesta::guru
 #+end_src
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.license/vesta-bin
-sci-chemistry/vesta-bin VESTA
+sci-chemistry/vesta VESTA
 #+end_src
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
-  sci-chemistry/vesta-bin
+  sci-chemistry/vesta
 #+end_src
 
 #+begin_src conf :tangle /sudo::/etc/portage/package.accept_keywords/vesta-bin
-sci-chemistry/vesta-bin ~amd64
+sci-chemistry/vesta ~amd64
 #+end_src
 
 
