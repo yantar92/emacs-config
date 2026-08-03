@@ -10672,6 +10672,13 @@ certain LLM logic when conditions are met.
   3. Integration instructions (what to do, where to place,
      what depends on it)
 
+  Comments
+  Do not write comments in code that explain how the new version
+  differs from a previous version. Those explanations belong in
+  commit messages or the chat summary. Code comments must stay
+  focused on what the code does now -- its purpose, behavior, or
+  non-obvious choices -- not on history.
+
   Code review / analysis
 
   Code Review / Analysis: [task name]
