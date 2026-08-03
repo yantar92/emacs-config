@@ -11566,65 +11566,82 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
           (buffer-substring-no-properties (point-min) (point-max)))
          (t (format "[PDF extraction failed (pdftotext exit %d)]" exit-code))))))
 
+  (defvar yant/read-url-cache (make-hash-table :test 'equal)
+    "Cache mapping URLs to buffer names from `yant/read-url-or-pdf'.")
+
   (defun yant/read-url-or-pdf (url &optional limit query)
     "Read URL and return buffer & text.
   If QUERY is non-nil, search the full page for QUERY and return matches
   (using `yant/search-buffer' on the saved buffer).
   If URL contains PDF, pass it through pdftotext and return it.
   LIMIT is the maximum number of characters to return directly (not in buffer).
-  Ignored when QUERY is set."
+  Ignored when QUERY is set.
+  Caches fetched URLs; subsequent calls reuse the cached buffer."
     (unless limit (setq limit (* 30 1000))) ;; avoid exceeding context length
-    (with-current-buffer (url-retrieve-synchronously url)
-      ;; 1. Skip HTTP headers
-      (goto-char (point-min))
-      (unless (re-search-forward "\r?\n\r?\n" nil t)
-        (error "Malformed HTTP response"))
-      (let* ((headers (buffer-substring (point-min) (point)))
-  	   (content-type
-  	    (when (string-match "^Content-Type: \\(.*?\\)\r?$" headers)
-                (match-string 1 headers)))
-             data)
-        ;; (run-at-time 0 nil #'kill-buffer (current-buffer))
-        ;; 2. Decide how to process the body
-        (setq data
-  	    (cond
-  	     ((or (string-match-p "application/pdf" content-type)
-  		  (string-match-p "\\.pdf\\'" url)
-  		  (save-excursion (search-forward "%PDF" nil t)))
-                ;; PDF → extract text with layout & 100 KB limit
-                (set-buffer-multibyte nil)
-  	      (yant/pdf-bytes-to-text
-  	       (buffer-substring-no-properties
-  		(point) (point-max))))
-  	     (t
-                ;; Assume HTML/plain text
-                (condition-case nil
-  		  (let ((dom (libxml-parse-html-region (point) (point-max))))
-  		    (with-temp-buffer
-                        (let ((shr-external-rendering-functions
-  			     `((a .
-  				  ,(lambda (dom)
-                                       (shr-tag-a dom)
-                                       (when-let* ((url (dom-attr dom 'href)))
-                                         (insert (format " [%s]" url))))))))
-  			(shr-insert-document dom))
-  		      (buffer-substring-no-properties (point-min) (point-max))))
-  		(error
-  		 ;; If HTML parsing fails, treat as plain text
-  		 (buffer-substring-no-properties (point-min) (point-max)))))))
-        ;; Cleanup unibyte non-printable characters if any
-        (setq data (replace-regexp-in-string (rx (not (in print ?\n))) "" data))
-        (let ((buf (generate-new-buffer
-  		    (format " *read_url: %s*" url)
-                    t)))
-          (with-current-buffer buf
-            (insert data))
-          (cons (buffer-name buf)
+    (if-let ((cached-buf-name (gethash url yant/read-url-cache))
+             ((buffer-live-p (get-buffer cached-buf-name))))
+        ;; Reuse cached buffer
+        (let ((data (with-current-buffer (get-buffer cached-buf-name)
+                      (buffer-substring-no-properties (point-min) (point-max)))))
+          (cons cached-buf-name
                 (cond (query
-                       (yant/search-buffer (buffer-name buf) query 2 2 t 30))
+                       (yant/search-buffer cached-buf-name query 2 2 t 30))
                       (limit
                        (substring data 0 (min limit (1- (length data)))))
-                      (t data)))))))
+                      (t data))))
+      ;; Fetch fresh
+      (with-current-buffer (url-retrieve-synchronously url)
+        ;; 1. Skip HTTP headers
+        (goto-char (point-min))
+        (unless (re-search-forward "\r?\n\r?\n" nil t)
+          (error "Malformed HTTP response"))
+        (let* ((headers (buffer-substring (point-min) (point)))
+               (content-type
+                (when (string-match "^Content-Type: \\(.*?\\)\r?$" headers)
+                  (match-string 1 headers)))
+               data)
+          ;; (run-at-time 0 nil #'kill-buffer (current-buffer))
+          ;; 2. Decide how to process the body
+          (setq data
+                (cond
+                 ((or (string-match-p "application/pdf" content-type)
+                      (string-match-p "\\.pdf\\'" url)
+                      (save-excursion (search-forward "%PDF" nil t)))
+                  ;; PDF → extract text with layout & 100 KB limit
+                  (set-buffer-multibyte nil)
+                  (yant/pdf-bytes-to-text
+                   (buffer-substring-no-properties
+                    (point) (point-max))))
+                 (t
+                  ;; Assume HTML/plain text
+                  (condition-case nil
+                      (let ((dom (libxml-parse-html-region (point) (point-max))))
+                        (with-temp-buffer
+                          (let ((shr-external-rendering-functions
+                                 `((a .
+                                     ,(lambda (dom)
+                                        (shr-tag-a dom)
+                                        (when-let* ((url (dom-attr dom 'href)))
+                                          (insert (format " [%s]" url))))))))
+                            (shr-insert-document dom))
+                          (buffer-substring-no-properties (point-min) (point-max))))
+                    (error
+                     ;; If HTML parsing fails, treat as plain text
+                     (buffer-substring-no-properties (point-min) (point-max)))))))
+          ;; Cleanup unibyte non-printable characters if any
+          (setq data (replace-regexp-in-string (rx (not (in print ?\n))) "" data))
+          (let ((buf (generate-new-buffer
+                      (format " *read_url: %s*" url)
+                      t)))
+            (with-current-buffer buf
+              (insert data))
+            (puthash url (buffer-name buf) yant/read-url-cache)
+            (cons (buffer-name buf)
+                  (cond (query
+                         (yant/search-buffer (buffer-name buf) query 2 2 t 30))
+                        (limit
+                         (substring data 0 (min limit (1- (length data)))))
+                        (t data))))))))
 
   (push
    (gptel-make-tool
