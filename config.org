@@ -10672,6 +10672,11 @@ certain LLM logic when conditions are met.
   3. Integration instructions (what to do, where to place,
      what depends on it)
 
+  Documentation
+  When you change code, also update the corresponding
+  documentation and README files. Code and its documentation
+  must stay in sync.
+
   Comments
   Do not write comments in code that explain how the new version
   differs from a previous version. Those explanations belong in
