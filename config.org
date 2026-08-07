@@ -9640,6 +9640,40 @@ gets much easier - can override functions, add more small things, etc.
               (insert (format "--- FSF COPYRIGHT STATUS ---\nAuthor: %s\nStatus: %s\n--- END FSF STATUS ---\n\n"
                               sender fsf-status)))))))
 
+    (defun yant/org-patch-review--inject-llm-policy (prompts)
+      "Inject GNU interim policy on LLM-generated code (RMS, 2026-05-22).
+    Appends the official GNU interim moratorium and key copyright
+    concerns to help detect LLM-generated patches."
+      (unless (bolp) (insert "\n"))
+      (insert "\
+--- GNU INTERIM LLM POLICY (RMS, 2026-05-22) ---
+The FSF is evaluating copyright issues raised by LLM-generated code to
+determine when it can be considered safe, what precautions to take,
+and what records to keep.  Until the FSF states a conclusion:
+
+  DO NOT install or accept any LLM-generated code into GNU packages.
+
+If LLM-generated code has already been installed:
+  - Save full records of how the code was generated, including the
+    prompts used.
+  - Do not make further changes that would ingrain dependence on it
+    or obstruct deleting it later.
+
+Key copyright concerns:
+  - LLM output may not carry copyright in some jurisdictions,
+    undermining copyleft enforcement (GPL requires copyright).
+  - LLM training data includes copylefted code.  We think the output
+    is unlikely to escape the copyright covering the LLM's input.
+
+For reference, the GCC steering committee has formalized its own
+interpretation: decline any legally significant contributions
+(>= ~15 lines) that include or derive from LLM-generated content.
+However, this is a GCC-specific threshold, not an official GNU policy.
+
+When reviewing, examine the patch for signs it is LLM-generated.
+--- END GNU INTERIM LLM POLICY ---
+"))
+
     ;; -- Preset --
 
     (gptel-make-preset "org-patch-review"
@@ -9827,6 +9861,59 @@ gets much easier - can override functions, add more small things, etc.
   - [ ] Maintenance burden: does this add complexity that will be difficult
         to maintain?
 
+  ### E. LLM-generated code detection
+
+  GNU has a temporary moratorium on LLM-generated code.  You must flag any
+  signs the patch was produced by an LLM.  This is a CRITICAL finding if
+  confirmed for legally significant changes (>= ~15 lines).
+
+  Indicators to look for (none are definitive alone; weigh the overall pattern):
+
+  Code characteristics:
+  - [ ] Overly verbose, formulaic comments that explain what the code does
+        rather than why (e.g., \"Set the value of X to the result of Y\"
+        next to (setq X (Y ...))).
+  - [ ] Hallmark LLM phrases in comments: \"It is important to note that...\",
+        \"This function plays a crucial role in...\", \"One might consider...\",
+        \"In the context of...\".
+  - [ ] Over-documentation: every trivial line commented, including
+        self-documenting forms like variable initializations.
+  - [ ] Generic or placeholder variable names that do not match the
+        domain (e.g., \"data\", \"result\", \"temp\" where Org-specific
+        names like \"element\", \"heading\", \"node\" would be natural).
+  - [ ] Unnaturally consistent formatting: every line wrapped at the
+        same width, every docstring following exactly the same pattern,
+        spacing that looks machine-aligned rather than hand-edited.
+  - [ ] Elisp that is syntactically correct but idiomatically wrong for
+        Org/Emacs -- uses cl-loop where dolist/dotimes would be simpler,
+        avoids with- macros, reimplements standard patterns.
+  - [ ] Overly defensive nil-checking and error handling that guards
+        against cases the callers already prevent.
+  - [ ] Complete absence of personal coding style: no quirks, no
+        shortcuts, no abbreviations, no idiosyncratic formatting.
+  - [ ] Functions that are unusually monotonic in structure: similar
+        length, similar complexity, similar comment density.
+  - [ ] Docstrings that describe parameters in a mechanically exhaustive
+        way but miss domain context (e.g., \"PARAM is an integer\" without
+        saying what it represents).
+
+  Commit message and context:
+  - [ ] Commit message that reads like an AI-generated summary: generic
+        structure, over-explains the obvious, uses phrases like
+        \"This commit introduces...\", \"The proposed changes aim to...\".
+  - [ ] Mismatch between the author's apparent skill level in the email
+        (e.g., a new contributor asking basic questions) and the patch's
+        sophistication.
+  - [ ] The patch solves a problem in a way that does not match how the
+        author describes the problem in their email.
+  - [ ] Suspiciously short turnaround time: a complex patch arriving
+        minutes after a feature request or bug report.
+
+  Process indicators:
+  - [ ] Author explicitly mentions using an LLM tool.
+  - [ ] Patch submitted with an \"AI-used-for:\" or similar trailer.
+  - [ ] Commit mentions ChatGPT, Claude, Copilot, Gemini, or similar.
+
   ## OUTPUT FORMAT
 
   ### 1. Summary
@@ -9837,6 +9924,15 @@ gets much easier - can override functions, add more small things, etc.
   ### 2. Formal checks
   Checklist of convention items. Mark as PASS / FAIL / CANT-TELL.
   Only flag FAIL for clear violations.
+
+  Additionally, include an LLM detection verdict:
+  - LLM-SAFE: No indicators of LLM generation found.
+  - LLM-SUSPICIOUS: Multiple weak indicators present; recommend maintainer
+    ask the author directly.
+  - LLM-LIKELY: Strong evidence of LLM generation; flag as REJECT for
+    legally significant changes (>= ~15 lines), per GNU temporary policy.
+  - LLM-DISCLOSED: Author has explicitly stated LLM use; flag as REJECT
+    for legally significant changes.
 
   ### 3. Code review
   Per-finding: severity (CRITICAL / MODERATE / MINOR), the finding,
@@ -9869,7 +9965,8 @@ gets much easier - can override functions, add more small things, etc.
     assuming it is fine."
       :temperature 0.2
       :prompt-transform-functions '(yant/org-patch-review--inject-email-buffers
-                                     yant/org-patch-review--inject-fsf-status)))
+                                     yant/org-patch-review--inject-fsf-status
+                                     yant/org-patch-review--inject-llm-policy)))
 #+end_src
 
 *** Tools
