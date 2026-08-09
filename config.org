@@ -8166,6 +8166,57 @@ make things more noticeable.
 
     (add-hook 'notmuch-show-markup-headers-hook #'yant/notmuch-show-highlight-mailing-list))
 #+end_src
+**** Highlight explicit To/CC mentions
+
+When I am explicitly mentioned in To or Cc (not merely subscribed to
+the mailing list), the thread should be clearly distinguishable to
+avoid missing direct mentions.
+
+#+begin_src emacs-lisp
+  (use-package notmuch
+    :if init-flag
+    :init
+    (defun yant/notmuch-show-highlight-to-cc ()
+      "Highlight messages where I am explicitly in To or Cc.
+  Intended for `notmuch-show-markup-headers-hook'."
+      (goto-char (point-min))
+      (let* ((to (or (ignore-errors
+                       (or (notmuch-show-get-header :To)
+  			 (notmuch-show-get-to)))
+  		   ""))
+             (cc (or (ignore-errors
+                       (or (notmuch-show-get-header :Cc)
+  			 (notmuch-show-get-cc)))
+  		   ""))
+             (identities '("yantar92"))
+             (in-to (string-match-p (regexp-opt identities) to))
+             (in-cc (string-match-p (regexp-opt identities) cc)))
+        (when (or in-to in-cc)
+          (put-text-property
+           (point-min) (+ 1 (point-min))
+           'display
+           (concat
+            (propertize
+             (cond
+              ((and in-to in-cc) "--> To & Cc me <--")
+              (in-to "--> To me <--")
+              (t "--> Cc me <--"))
+             'face
+             `((t :background ,(modus-themes-with-colors bg-yellow-subtle))))
+            "\n"
+            (or (get-text-property (point-min) 'display)
+                (buffer-substring (point-min) (1+ (point-min)))))))))
+
+    (add-hook 'notmuch-show-hook #'yant/notmuch-show-highlight-to-cc)
+
+    (with-eval-after-load 'notmuch
+      (defface yant/notmuch-search-to-cc-face
+        `((t :background ,(modus-themes-with-colors bg-yellow-subtle)))
+        "Face for search lines where I am in To or Cc.")
+      (add-to-list 'notmuch-search-line-faces
+                   '("to:yantar92 or to:radchenko or to:ihor or cc:yantar92 or cc:radchenko or cc:ihor"
+                     . yant/notmuch-search-to-cc-face))))
+#+end_src
 **** Auto-update relevant URLs for emails from github/gitlab
 
 Small package that simplifies navigating to URL of issue/pull request.
