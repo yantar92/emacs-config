@@ -9838,11 +9838,55 @@ When reviewing, examine the patch for signs it is LLM-generated.
   - [ ] Docstrings that describe parameters in a mechanically exhaustive
         way but miss domain context (e.g., \"PARAM is an integer\" without
         saying what it represents).
+  - [ ] Comment-to-complexity mismatch: AI over-comments trivial lines
+        (e.g., a docstring explaining that (setq x y) \"sets x to y\")
+        while under-commenting tricky logic.  Human comments explain
+        WHY for non-obvious code, not WHAT for self-explanatory lines.
+  - [ ] Absence of human artifacts: no TODO comments, FIXMEs, commented-
+        out dead code, \"temporary\" workarounds, idiosyncratic abbreviations,
+        or debugging leftovers (e.g., stray (message ...) calls).  Real
+        human codebases accumulate these over time; AI output is
+        archaeological-clean.
+  - [ ] Error handling as afterthought: the happy path is clean and
+        well-structured, but error cases are handled mechanically (catching
+        overly broad conditions, printing stock messages, calling (error)
+        with generic text).  Human error handling shows signs of having
+        been tested against real failures.
+  - [ ] Codebase style mismatch: the patch uses patterns that do not match
+        the conventions of the surrounding file.  E.g., using cl-loop
+        where the rest of the file uses dolist, or pcase where the file
+        consistently uses cond.  Human contributors absorb local style;
+        LLMs apply their own defaults.
+  - [ ] Naming verbosity convergence: within a single patch, all function
+        and variable names have similar length and information density.
+        Human code varies naturally -- get_user next to
+        computeAggregateMonthlyRevenue because the author wrote them on
+        different days.  AI code shows uniform naming discipline.
+  - [ ] Hallucinated API references: the code calls functions, variables,
+        or macros that do not exist in the target codebase.  For Elisp
+        specifically: using non-existent Org functions, wrong argument
+        counts, deprecated interfaces.  Modern models make these errors
+        less often, but when present they are a strong signal.
 
   Commit message and context:
   - [ ] Commit message that reads like an AI-generated summary: generic
         structure, over-explains the obvious, uses phrases like
         \"This commit introduces...\", \"The proposed changes aim to...\".
+  - [ ] Commit message body narrates the review process in third person
+        (e.g., \"Ihor Radchenko reviewed the initial patch and found...\",
+        \"The maintainer suggested several changes...\").  Human-written
+        commit messages describe what was changed and why; LLMs tend to
+        narrate who said what in the review thread.
+  - [ ] Commit message body describes WHAT the diff changes (visible from
+        the diff itself) rather than WHY the change was made or what
+        problem it solves.  E.g., \"Added function X, modified Y, updated
+        tests for Z\" is a diff summary, not a rationale.  Human commit
+        messages explain motivation, tradeoffs, and context that the code
+        diff does not convey.
+  - [ ] Commit message body uses section-transition or process-narration
+        language: \"Let us now examine...\", \"Next, we turn to...\", \"This
+        section covers...\", \"Now we consider...\".  These are LLM
+        compositional scaffolds that structure output like a tutorial.
   - [ ] Mismatch between the author's apparent skill level in the email
         (e.g., a new contributor asking basic questions) and the patch's
         sophistication.
