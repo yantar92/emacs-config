@@ -12299,6 +12299,8 @@ here, so that LLM reasoning can be utilized better.
   (use-package gptel
     :if init-flag
     :config
+    (defcustom yant/gptel-execute-python-code-timeout 30
+      "Max time allowed to run python code.")
     (eval
      '(defun my/gptel-execute-python-code (callback code)
         (let* ((temp-dir (make-temp-file "gptel-bwrap-" t))
@@ -12307,59 +12309,71 @@ here, so that LLM reasoning can be utilized better.
                (cache-dir (expand-file-name "~/.cache/gptel-bwrap-uv/"))
                (scratch-dir (progn
   			    (yant/gptel--ensure-scratch-dir)
-                              yant/gptel-scratch-dir)))
+                              yant/gptel-scratch-dir))
+               process)
   	(with-temp-file temp-file
             (insert code))
           (make-directory cache-dir t)
-  	(make-process
-  	 :name "gptel-bwrap"
-  	 :buffer output-buffer
-  	 :command
-  	 (delq nil
-  	       (list "bwrap"
-  		     "--ro-bind" "/" "/"
-  		     "--proc" "/proc"
-  		     "--dev" "/dev"
-  		     "--tmpfs" "/tmp"
-  		     "--dir" "/tmp/uv-cache"
-  		     "--bind" cache-dir "/tmp/uv-cache"
-  		     "--bind" temp-dir temp-dir
-                       "--dir" "/tmp/scratch"
-  		     "--bind" scratch-dir "/tmp/scratch"
-  		     "--unshare-pid"
-  		     "--unshare-ipc"
-  		     "--clearenv"
-  		     "--setenv" "HOME" temp-dir
-  		     "--setenv" "REAL_HOME" (getenv "HOME")
-  		     "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache"
-  		     "uv" "run" temp-file))
-  	 :sentinel
-  	 (lambda (process _event)
-             (when (eq (process-status process) 'exit)
-               (let ((exit-status (process-exit-status process))
-                     (output (with-current-buffer (process-buffer process)
-                               (buffer-string))))
-                 (when (file-exists-p temp-file) (delete-file temp-file))
-                 (kill-buffer (process-buffer process))
-                 (funcall
-  		callback
-  		(cond
-                   ((not (= exit-status 0))
-                    (format "Error (exit %d): %s" exit-status output))
-                   ((> (length output) yant/gptel-python-max-output)
-                    (let* ((buf (generate-new-buffer
-                                 (format "*gptel-python-output: %s*"
-                                         (format-time-string "%Y-%m-%d %H:%M:%S"))
-                                 t))
-                           (limit yant/gptel-python-max-output)
-                           (truncated (substring output 0 (min limit (1- (length output))))))
-                      (with-current-buffer buf
-                        (insert output))
-                      (cons (buffer-name buf)
-                            (concat truncated
-                                    (format "\n\n[... output truncated at %d characters; full output (%d characters) saved to buffer %s. Use view_buffer_or_file or search_in_buffer to access it.]"
-                                            limit (length output) (buffer-name buf))))))
-                   (t output)))))))))
+          (setq process
+  	      (make-process
+  	       :name "gptel-bwrap"
+  	       :buffer output-buffer
+  	       :command
+  	       (delq nil
+  		     (list "bwrap"
+  			   "--ro-bind" "/" "/"
+  			   "--proc" "/proc"
+  			   "--dev" "/dev"
+  			   "--tmpfs" "/tmp"
+  			   "--dir" "/tmp/uv-cache"
+  			   "--bind" cache-dir "/tmp/uv-cache"
+  			   "--bind" temp-dir temp-dir
+  			   "--dir" "/tmp/scratch"
+  			   "--bind" scratch-dir "/tmp/scratch"
+  			   "--unshare-pid"
+  			   "--unshare-ipc"
+  			   "--clearenv"
+  			   "--setenv" "HOME" temp-dir
+  			   "--setenv" "REAL_HOME" (getenv "HOME")
+  			   "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache"
+  			   "uv" "run" temp-file))
+  	       :sentinel
+  	       (lambda (process _event)
+  		 (pcase (process-status process)
+  		   ('exit
+  		    (let ((exit-status (process-exit-status process))
+  			  (output (with-current-buffer (process-buffer process)
+  				    (buffer-string))))
+  		      (when (file-exists-p temp-file) (delete-file temp-file))
+  		      (kill-buffer (process-buffer process))
+  		      (funcall
+  		       callback
+  		       (cond
+  			((not (= exit-status 0))
+  			 (format "Error (exit %d): %s" exit-status output))
+  			((> (length output) yant/gptel-python-max-output)
+  			 (let* ((buf (generate-new-buffer
+  				      (format "*gptel-python-output: %s*"
+  					      (format-time-string "%Y-%m-%d %H:%M:%S"))
+  				      t))
+  				(limit yant/gptel-python-max-output)
+  				(truncated (substring output 0 (min limit (1- (length output))))))
+  			   (with-current-buffer buf
+  			     (insert output))
+  			   (cons (buffer-name buf)
+  				 (concat truncated
+  					 (format "\n\n[... output truncated at %d characters; full output (%d characters) saved to buffer %s. Use view_buffer_or_file or search_in_buffer to access it.]"
+  						 limit (length output) (buffer-name buf))))))
+  			(t output)))))
+  		   ('signal
+  		    (funcall callback "Process timeout"))))))
+          (run-at-time
+           yant/gptel-execute-python-code-timeout
+           nil
+           (lambda (process)
+  	   (when (process-live-p process)
+               (delete-process process)))
+           process)))
      'lexical)
 
     (gptel-make-tool
