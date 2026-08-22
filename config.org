@@ -12948,62 +12948,64 @@ Unschedule when WAITING is set."
   - FROZEN(z) :: I should have been done, but it haven't and not because of me. It might be in the future, but unlikely.
   - TICKLER(l) :: This task should appear in agenda from time to time, so that I do not forget about it. When the task state is changed TICKLER->TICKLER, it is rescheduled using spaced repetition method.
 #+begin_src emacs-lisp
-(use-package org-drill
-  :after org
-  :straight t
-  :config
-  (defun yant/org-smart-reschedule (quality)
-    "Interactively call `org-drill-smart-reschedule'."
-    (interactive "nIdea: (1) what is it? (2) need to check closely (3) real use soon (4) check when free (5) maybe: ")
-    (let ((next-days (org-drill-hypothetical-next-review-date quality)))
-      (if (= next-days 0) (setq next-days 1))
-      (if (and (< quality 4) (> next-days 40)) (setq next-days 40)) ;; Hard limit on postponing.
-      (if (and (= quality 4) (> next-days 90)) (setq next-days 90))
-      (org-drill-smart-reschedule quality next-days)))
+  (use-package org-drill
+    :after org
+    :straight t
+    :config
+    (defun yant/org-smart-reschedule (quality)
+      "Interactively call `org-drill-smart-reschedule'."
+      (interactive "nIdea: (1) what is it? (2) need to check closely (3) real use soon (4) check when free (5) maybe: ")
+      (let ((next-days (org-drill-hypothetical-next-review-date quality)))
+        (if (= next-days 0) (setq next-days 1))
+        (if (and (< quality 4) (> next-days 40)) (setq next-days 40)) ;; Hard limit on postponing.
+        (if (and (= quality 4) (> next-days 90)) (setq next-days 90))
+        (org-drill-smart-reschedule quality next-days)))
 
-  (defun yant/org-agenda-update-after-tickler-change ()
-    "Update agenda re-schedule overlay upon tickler change.
-To be used in `post-command-hook'."
-    (unwind-protect
-	(let ((marker (org-with-point-at-org-buffer (org-back-to-heading t) (point-marker)))
-	      (ts (org-with-point-at-org-buffer (org-entry-get (point) "SCHEDULED"))))
-	  (dolist (agenda-buffer (mapcar #'get-buffer
-					 (seq-filter (apply-partially  #'s-contains-p "*Org Agenda")
-						     (mapcar #'buffer-name (buffer-list)))))
-	    (when (buffer-live-p agenda-buffer)
-	      (with-current-buffer agenda-buffer
-		(save-excursion
-		  (goto-char (point-min))
-		  (while (< (point) (point-max))
-		    (when (equal marker (org-get-at-bol 'org-hd-marker))
-		      (org-agenda-show-new-time (org-get-at-bol 'org-marker) ts " S"))
-		    (beginning-of-line 2)))))))
-      (remove-hook 'post-command-hook #'yant/org-agenda-update-after-tickler-change)))
+    (defun yant/org-agenda-update-after-tickler-change ()
+      "Update agenda re-schedule overlay upon tickler change.
+  To be used in `post-command-hook'."
+      (unwind-protect
+  	(let ((marker (org-with-point-at-org-buffer (org-back-to-heading t) (point-marker)))
+  	      (ts (org-with-point-at-org-buffer (org-entry-get (point) "SCHEDULED"))))
+  	  (dolist (agenda-buffer (mapcar #'get-buffer
+  					 (seq-filter (apply-partially  #'s-contains-p "*Org Agenda")
+  						     (mapcar #'buffer-name (buffer-list)))))
+  	    (when (buffer-live-p agenda-buffer)
+  	      (with-current-buffer agenda-buffer
+  		(save-excursion
+  		  (goto-char (point-min))
+  		  (while (< (point) (point-max))
+  		    (when (equal marker (org-get-at-bol 'org-hd-marker))
+  		      (org-agenda-show-new-time (org-get-at-bol 'org-marker) ts " S"))
+  		    (beginning-of-line 2)))))))
+        (remove-hook 'post-command-hook #'yant/org-agenda-update-after-tickler-change)))
 
-  (defun org-trigger-tickler (arg)
-    "Restore TICKLER keyword after TICKLER->DONE or TICKLER->TICKLER change and handle setting TICKLER.
-^TICKLER->TICKLER: If the task is unscheduled, schedule it today.
- TICKLER->TICKLER: Reschedule the task using `org-drill-smart-reschedule'.
- TICKLER->DONE/REVIEW: Mark the task DONE."
-    (require 'org-learn)
-    (when (and (eq (plist-get arg :type) 'todo-state-change)
-	       (not (string= (plist-get arg :from) "TICKLER"))
-               (string= (plist-get arg :to) "TICKLER"))
-      (unless (org-with-point-at (plist-get arg :position) (org-element-property :scheduled (org-element-at-point)))
-        (org-schedule nil ".")))
-    (when (and (eq (plist-get arg :type) 'todo-state-change)
-	       (string= (plist-get arg :from) "TICKLER")
-               (or (string= (plist-get arg :to) "TICKLER")
-		   (member (plist-get arg :to) org-done-keywords)))
-      (let* ((pos (plist-get arg :position))
-	     (schedule-info (org-with-point-at pos (org-element-property :scheduled (org-element-at-point)))))
-        (unless schedule-info (org-schedule nil "."))
-        (if (member (plist-get arg :to) org-done-keywords)
-	    (unless (y-or-n-p (format "Trying to mark TICKLER task as %s. Proceed? " (plist-get arg :to)))
-	      (org-todo "TICKLER"))
-          (call-interactively #'yant/org-smart-reschedule)
-          (add-hook 'post-command-hook #'yant/org-agenda-update-after-tickler-change)))))
-  (add-hook 'org-trigger-hook #'org-trigger-tickler))
+    (defun org-trigger-tickler (arg)
+      "Restore TICKLER keyword after TICKLER->DONE or TICKLER->TICKLER change and handle setting TICKLER.
+  ^TICKLER->TICKLER: If the task is unscheduled, schedule it today.
+   TICKLER->TICKLER: Reschedule the task using `org-drill-smart-reschedule'.
+   TICKLER->DONE/REVIEW: Mark the task DONE."
+      (require 'org-learn)
+      (when (and (eq (plist-get arg :type) 'todo-state-change)
+  	       (not (string= (plist-get arg :from) "TICKLER"))
+                 (string= (plist-get arg :to) "TICKLER"))
+        (org-with-point-at (plist-get arg :position)
+  	(unless (org-element-property :scheduled (org-element-at-point))
+            (org-schedule nil "."))))
+      (when (and (eq (plist-get arg :type) 'todo-state-change)
+  	       (string= (plist-get arg :from) "TICKLER")
+                 (or (string= (plist-get arg :to) "TICKLER")
+  		   (member (plist-get arg :to) org-done-keywords)))
+        (let* ((pos (plist-get arg :position))
+  	     (schedule-info (org-with-point-at pos (org-element-property :scheduled (org-element-at-point)))))
+          (org-with-point-at pos
+            (unless schedule-info (org-schedule nil "."))
+            (if (member (plist-get arg :to) org-done-keywords)
+  	      (unless (y-or-n-p (format "Trying to mark TICKLER task as %s. Proceed? " (plist-get arg :to)))
+  		(org-todo "TICKLER"))
+              (call-interactively #'yant/org-smart-reschedule)
+              (add-hook 'post-command-hook #'yant/org-agenda-update-after-tickler-change))))))
+    (add-hook 'org-trigger-hook #'org-trigger-tickler))
 #+end_src    
   - SOMEDAY(s) :: This task appears to be interesting and worth doing but does not have to be done at all. The command triggers unscheduling the task if it is scheduled and clocking out.
 #+begin_src emacs-lisp
