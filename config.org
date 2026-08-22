@@ -9586,49 +9586,49 @@ gets much easier - can override functions, add more small things, etc.
   (use-package gptel
     :if init-flag
     :config
-    (defun yant/org-patch-review--get-email-buffer ()
-      "Return the first email buffer, or nil if none found."
+    (defun yant/org-patch-review--get-buffer ()
+      "Return the first email/diff buffer, or nil if none found."
       (seq-find
        (lambda (b)
          (with-current-buffer b
-           (or (derived-mode-p 'notmuch-show-mode)
-               (derived-mode-p 'message-mode)
-               (derived-mode-p 'gnus-article-mode)
-               (derived-mode-p 'rmail-mode)
-               (derived-mode-p 'rmail-summary-mode))))
+  	 (seq-some
+            (lambda (m) (derived-mode-p m))
+            '( notmuch-show-mode message-mode gnus-article-mode
+               rmail-mode rmail-summary-mode
+               magit-diff-mode magit-revision-mode diff-mode))))
        (buffer-list)))
 
     (defun yant/org-patch-review--inject-email-buffers (prompts)
       "Prepend recent email buffer contents."
-      (let ((email-buf (yant/org-patch-review--get-email-buffer)))
-        (when email-buf
+      (let ((buf (yant/org-patch-review--get-buffer)))
+        (when buf
           (let ((contents
-                 (format "--- EMAIL BUFFER: %s ---\n%s"
-                         (buffer-name email-buf)
-                         (with-current-buffer email-buf
+                 (format "--- EMAIL/PATCH BUFFER: %s ---\n%s"
+                         (buffer-name buf)
+                         (with-current-buffer buf
                            (buffer-substring-no-properties
                             (point-min) (point-max))))))
             (unless (bolp) (insert "\n"))
-            (insert (concat contents "\n\n--- END OF EMAIL CONTEXT ---\n\n"))))))
+            (insert (concat contents "\n\n--- END OF EMAIL/PATCH CONTEXT ---\n\n"))))))
 
     (defun yant/org-patch-review--inject-fsf-status (prompts)
       "Inject FSF copyright assignment status for the patch author.
-    Looks up the sender from the current email buffer and appends
-    the FSF status to the prompt."
-      (let ((email-buf (yant/org-patch-review--get-email-buffer)))
-        (when email-buf
+      Looks up the sender from the current email buffer and appends
+      the FSF status to the prompt."
+      (let ((buf (yant/org-patch-review--get-buffer)))
+        (when buf
           (let* ((sender
-                  (with-current-buffer email-buf
+                  (with-current-buffer buf
                     (condition-case nil
                         (or (notmuch-show-get-header :From)
                             (save-excursion
                               (goto-char (point-min))
                               (when (re-search-forward "^From: \\(.+\\)" nil t)
                                 (match-string 1))))
-                      (error nil))))
+                      (error "Unknown author"))))
                  (fsf-status
-                  (and sender
-                       (yant/org-devel-get-notmuch-sender-FSF-status sender))))
+                  (if sender (yant/org-devel-get-notmuch-sender-FSF-status sender)
+  		  "FSF Copyright status unknown")))
             (when fsf-status
               (unless (bolp) (insert "\n"))
               (insert (format "--- FSF COPYRIGHT STATUS ---\nAuthor: %s\nStatus: %s\n--- END FSF STATUS ---\n\n"
