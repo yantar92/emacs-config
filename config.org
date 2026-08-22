@@ -8487,6 +8487,7 @@ Even better, when we sanitize the DOM for readability
     ;; Avoid too wide images. They tend to be tall
     (shr-max-image-proportion 0.6)
     :config
+    (bind-key* "M-u" #'eww)
     ;; This is mirrowing my qutebrowser keys
     (bind-key "y y" #'eww-copy-page-url eww-mode-map)
     (bind-key "y Y" #'eww-copy-page-url eww-mode-map)
