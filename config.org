@@ -8607,7 +8607,13 @@ looks up if it is mastodon and redirects when it is.
     (add-hook 'eww-after-render-hook #'yant/open-mastodon-maybe))
 #+end_src
 
-** Reddit client =reddigg.el=
+** COMMENT Reddit client =reddigg.el=
+:PROPERTIES:
+:SUMMARY:  reddit is switching to aggressive policy against url queries - pages are no longer available easily as json or rss. reddigg now switches to using browsel - chrome browser integration. I do not use chrome, so... alas.
+:END:
+
+- Note taken on [2026-08-23 Sun 10:53] \\
+  reddit is switching to aggressive policy against url queries - pages are no longer available easily as json or rss. reddigg now switches to using browsel - chrome browser integration. I do not use chrome, so... alas.
 
 Reddit annoyingly required javascript to view comments.
 Better view things from the comfort of Emacs.
