@@ -12307,11 +12307,19 @@ here, so that LLM reasoning can be utilized better.
     :if init-flag
     :config
     (defcustom yant/gptel-execute-python-code-timeout 30
-      "Max time allowed to run python code.")
+      "Max time allowed to run sandboxed code.")
     (eval
-     '(defun my/gptel-execute-python-code (callback code)
-        (let* ((temp-dir (make-temp-file "gptel-bwrap-" t))
-  	     (temp-file (expand-file-name "script.py" temp-dir))
+     '(defun my/gptel-execute-python-code (callback code &optional language)
+        (let* ((language (or language "python"))
+               (script-name (pcase language
+                              ("bash" "script.sh")
+                              (_ "script.py")))
+               (interpreter (pcase language
+                              ("python" (list "uv" "run"))
+                              ("bash" (list "bash"))
+                              (_ (error "Unsupported language: %S" language))))
+               (temp-dir (make-temp-file "gptel-bwrap-" t))
+  	     (temp-file (expand-file-name script-name temp-dir))
                (output-buffer (generate-new-buffer " *gptel-bwrap-output*"))
                (cache-dir (expand-file-name "~/.cache/gptel-bwrap-uv/"))
                (scratch-dir (progn
@@ -12325,9 +12333,10 @@ here, so that LLM reasoning can be utilized better.
   	      (make-process
   	       :name "gptel-bwrap"
   	       :buffer output-buffer
+  	       :stderr output-buffer
   	       :command
   	       (delq nil
-  		     (list "bwrap"
+  		     (append (list "bwrap"
   			   "--ro-bind" "/" "/"
   			   "--proc" "/proc"
   			   "--dev" "/dev"
@@ -12342,8 +12351,9 @@ here, so that LLM reasoning can be utilized better.
   			   "--clearenv"
   			   "--setenv" "HOME" temp-dir
   			   "--setenv" "REAL_HOME" (getenv "HOME")
-  			   "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache"
-  			   "uv" "run" temp-file))
+  			   "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache")
+  		     interpreter
+  		     (list temp-file)))
   	       :sentinel
   	       (lambda (process _event)
   		 (pcase (process-status process)
@@ -12386,45 +12396,56 @@ here, so that LLM reasoning can be utilized better.
     (gptel-make-tool
      :name "execute_python_code"
      :function #'my/gptel-execute-python-code
-     :description "Execute Python code in a bwrap sandbox. The code should
-  be self-contained and output results to stdout. IMPORTANT: To use external libraries (e.g. pandas,
-  requests), you MUST declare them using PEP 723 inline script metadata at the very top of your
-  code.
+     :description "Execute Python or Bash code in a bwrap sandbox.
+The code should be self-contained and output results to stdout.
 
-  The dependencies will be installed automatically.
-  You do not need to worry about them being unavailable.
+Choose the interpreter with the \"language\" argument:
+- \"python\" (default)
+- \"bash\"
 
-  The sandbox provides two home directories:
-  - HOME: a writable temporary directory (use for caches, configs).
-  - REAL_HOME: the user's real home directory, mounted read-only.
-    Use REAL_HOME to read files from the user's actual filesystem.
+Python:
+To use external libraries (e.g. pandas, requests), you MUST declare them
+using PEP 723 inline script metadata at the very top of your code.
+The dependencies will be installed automatically.
 
-  The sandbox also provides /tmp/scratch that persists between
-  chat invocations during a single session.
+The sandbox provides two home directories:
+- HOME: a writable temporary directory (use for caches, configs).
+- REAL_HOME: the user's real home directory, mounted read-only.
+  Use REAL_HOME to read files from the user's actual filesystem.
 
-  DO NOT use this tool when a more specialized tool is available.
+The sandbox also provides /tmp/scratch that persists between
+chat invocations during a single session.
 
-  If the output exceeds the character limit, the full output is saved
-  to a buffer and only a truncated preview is returned.  The buffer
-  can be accessed later via view_buffer_or_file or search_in_buffer.
+DO NOT use this tool when a more specialized tool is available.
 
-  Note that you do not always need to type in the context manually
-  into the python script. When the context is coming from some
-  existing file, you can read the file in the code directly.
+If the output exceeds the character limit, the full output is saved
+to a buffer and only a truncated preview is returned.  The buffer
+can be accessed later via view_buffer_or_file or search_in_buffer.
 
-  If the python code fails, do remember that you may have access to
-  web search to refresh your knowledge about the library APIs.
+Note that you do not always need to type in the context manually
+into the script. When the context is coming from some existing file,
+you can read the file in the code directly.
 
-  Example:
-  # /// script
-  # dependencies = [\"requests\"]
-  # ///
+If the code fails, do remember that you may have access to web search
+to refresh your knowledge about the library APIs.
 
-  import requests
-  # ... rest of your code"
+Example (Python):
+# /// script
+# dependencies = [\"requests\"]
+# ///
+
+import requests
+# ... rest of your code
+
+Example (Bash):
+echo \"hello\""
      :args '((:name "code"
                     :type string
-                    :description "The complete Python source code to execute, including PEP 723 metadata if dependencies are needed."))
+                    :description "The complete source code to execute.")
+             (:name "language"
+                    :type string
+                    :description "Interpreter to run: \"python\" (default) or \"bash\"."
+                    :optional t))
      :category "execute"
      :confirm t
      :include t
