@@ -12718,6 +12718,7 @@ and tried in the past. Everything tailored to my personal needs.
     :after org
     :config
     (setq org-hide-emphasis-markers t)
+    (setopt org-inside-appearance '(:face org-inside-face))
     (add-hook 'org-mode-hook #'org-inside-mode))
 #+end_src
 
