@@ -12307,10 +12307,10 @@ here, so that LLM reasoning can be utilized better.
     (use-package gptel
       :if init-flag
       :config
-      (defcustom yant/gptel-execute-python-code-timeout 30
+      (defcustom yant/gptel-execute-code-timeout 30
         "Max time allowed to run sandboxed code.")
       (eval
-       '(defun my/gptel-execute-python-code (callback code &optional language)
+       '(defun my/gptel-execute-code (callback code &optional language)
           (let* ((language (or language "python"))
                  (script-name (pcase language
                                 ("bash" "script.sh")
@@ -12387,7 +12387,7 @@ here, so that LLM reasoning can be utilized better.
     		   ('signal
     		    (funcall callback "Process timeout"))))))
             (run-at-time
-             yant/gptel-execute-python-code-timeout
+             yant/gptel-execute-code-timeout
              nil
              (lambda (process)
     	   (when (process-live-p process)
@@ -12396,8 +12396,8 @@ here, so that LLM reasoning can be utilized better.
        'lexical)
 
       (gptel-make-tool
-       :name "execute_python_code"
-       :function #'my/gptel-execute-python-code
+       :name "execute_code"
+       :function #'my/gptel-execute-code
        :description "Execute Python or Bash code in a bwrap sandbox.
   The code should be self-contained and output results to stdout.
 
@@ -12452,7 +12452,7 @@ here, so that LLM reasoning can be utilized better.
        :confirm t
        :include t
        :async t)
-      (add-to-list 'gptel-tools (gptel-get-tool "execute_python_code")))
+      (add-to-list 'gptel-tools (gptel-get-tool "execute_code")))
 #+end_src
 
 **** Scratch space for LLM tools
