@@ -5982,7 +5982,8 @@ me informed about my budget status - [[id:4df7a164-25a1-4106-b610-155c5b34afd8][
     (use-package meta-functions
       :config
       (meta-defun meta-down-element :mode ledger-mode ledger-navigate-next-xact-or-directive)
-      (meta-defun meta-up-element :mode ledger-mode ledger-navigate-prev-xact-or-directive)))
+      (meta-defun meta-up-element :mode ledger-mode ledger-navigate-prev-xact-or-directive)
+      (meta-defun meta-follow :mode ledger-mode ledger-report)))
 #+END_SRC
 
 *** Do not end the completions with string
