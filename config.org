@@ -14587,6 +14587,7 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     	       ((org-agenda-tag-filter-preset '("-TICKLER" "-CANCELLED" "-WAITING" "-HOLD" "-SOMEDAY" "-NODEADLINE"))
     		(org-agenda-skip-function '(yant/org-agenda-skip-org-ql
     					    (quote (not (todo "TICKLER" "DOING")))))
+                    (org-agenda-start-day (1+ (org-today)))
     		(org-agenda-span 3)))
     	      ("s" nil
     	       agenda ""
