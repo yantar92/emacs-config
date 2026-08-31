@@ -12304,65 +12304,74 @@ here, so that LLM reasoning can be utilized better.
 [[id:Email-<notifications@githubcom>2026-karthink-gptel-tool-959][Kerncos <notifications@github.com> [Email] (2026) [karthink/gptel] A tool that enables AI to execute Python code (Discussion #1299)]]
 
 #+begin_src emacs-lisp
-    (use-package gptel
-      :if init-flag
-      :config
-      (defcustom yant/gptel-execute-code-timeout 30
-        "Max time allowed to run sandboxed code.")
-      (eval
-       '(defun my/gptel-execute-code (callback code &optional language)
-          (let* ((language (or language "python"))
-                 (script-name (pcase language
-                                ("bash" "script.sh")
-                                (_ "script.py")))
-                 (interpreter (pcase language
-                                ("python" (list "uv" "run"))
-                                ("bash" (list "bash"))
-                                (_ (error "Unsupported language: %S" language))))
-                 (temp-dir (make-temp-file "gptel-bwrap-" t))
+  (use-package gptel
+    :if init-flag
+    :config
+    (defcustom yant/gptel-execute-code-timeout 30
+      "Max time allowed to run sandboxed code.")
+    (eval
+     '(defun my/gptel-execute-code (callback code &optional language)
+        (let* ((language (or language "python"))
+               (script-name (pcase language
+                              ("bash" "script.sh")
+                              (_ "script.py")))
+               (interpreter (pcase language
+                              ("python" (list "uv" "run"))
+                              ("bash" (list "bash"))
+                              (_ (error "Unsupported language: %S" language))))
+               (temp-dir (make-temp-file "gptel-bwrap-" t))
     	     (temp-file (expand-file-name script-name temp-dir))
-                 (output-buffer (generate-new-buffer " *gptel-bwrap-output*"))
-                 (cache-dir (expand-file-name "~/.cache/gptel-bwrap-uv/"))
-                 (scratch-dir (progn
+               (output-buffer (generate-new-buffer " *gptel-bwrap-output*"))
+               (cache-dir (expand-file-name "~/.cache/gptel-bwrap-uv/"))
+               (scratch-dir (progn
     			    (yant/gptel--ensure-scratch-dir)
-                                yant/gptel-scratch-dir))
-                 process)
+                              yant/gptel-scratch-dir))
+               process)
     	(with-temp-file temp-file
-              (insert code))
-            (make-directory cache-dir t)
-            (setq process
+            (insert code))
+          (make-directory cache-dir t)
+          (setq process
     	      (make-process
     	       :name "gptel-bwrap"
     	       :buffer output-buffer
     	       :stderr output-buffer
     	       :command
     	       (delq nil
-    		     (append (list "bwrap"
-    			   "--ro-bind" "/" "/"
-    			   "--proc" "/proc"
-    			   "--dev" "/dev"
-    			   "--tmpfs" "/tmp"
-    			   "--dir" "/tmp/uv-cache"
-    			   "--bind" cache-dir "/tmp/uv-cache"
-    			   "--bind" temp-dir temp-dir
-    			   "--dir" "/tmp/scratch"
-    			   "--bind" scratch-dir "/tmp/scratch"
-    			   "--unshare-pid"
-    			   "--unshare-ipc"
-    			   "--clearenv"
-    			   "--setenv" "PATH" (getenv "PATH")
-    			   "--setenv" "HOME" temp-dir
-    			   "--setenv" "REAL_HOME" (getenv "HOME")
-    			   "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache")
-    		     interpreter
-    		     (list temp-file)))
+    		     (append ( list "bwrap"
+    			       "--ro-bind" "/" "/"
+    			       "--proc" "/proc"
+    			       "--dev" "/dev"
+    			       "--tmpfs" "/tmp"
+    			       "--dir" "/tmp/uv-cache"
+    			       "--bind" cache-dir "/tmp/uv-cache"
+    			       "--bind" temp-dir temp-dir
+    			       "--dir" "/tmp/scratch"
+    			       "--bind" scratch-dir "/tmp/scratch"
+    			       "--unshare-pid"
+    			       "--unshare-ipc"
+    			       "--clearenv"
+    			       "--setenv" "PATH" (getenv "PATH")
+    			       "--setenv" "HOME" temp-dir
+    			       "--setenv" "REAL_HOME" (getenv "HOME")
+    			       "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache")
+    			     interpreter
+    			     (list temp-file)))
     	       :sentinel
     	       (lambda (process _event)
     		 (pcase (process-status process)
     		   ('exit
     		    (let ((exit-status (process-exit-status process))
     			  (output (with-current-buffer (process-buffer process)
-    				    (buffer-string))))
+  				    ;; Sanitize unibyte characters.
+  				    (replace-regexp-in-string
+  				     "[\x3FFF80-\x3FFFFF]"
+  				     (lambda (c)
+  				       (let ((byte (- (string-to-char c) #x3FFF80)))
+  					 (if (= byte 0)
+  					     "\\0"
+  					   (format "\\x%02x" byte))))
+  				     (buffer-string)
+  				     t t))))
     		      (when (file-exists-p temp-file) (delete-file temp-file))
     		      (kill-buffer (process-buffer process))
     		      (funcall
