@@ -1527,6 +1527,7 @@ Define the most basic movement commands:
        (meta-recenter-top-bottom "Recenter text on scree." yant/recenter-top-bottom-pixel)
        (meta-insert-enclosure-new-line "Insert beg/end passive structure in the line below." ignore)
        (meta-insert-active-enclosure-new-line "Isert beg/end active structure in the line below." ignore)))
+    (meta-defun meta-follow :cond (get-text-property (point) 'shr-url) shr-browse-url)
     (bind-key* "C-c C-o" #'meta-follow))
 #+end_src
 
