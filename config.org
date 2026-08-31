@@ -12719,7 +12719,11 @@ and tried in the past. Everything tailored to my personal needs.
 **** Org bug tracker UI
 
 #+begin_src emacs-lisp
-(use-package gnaw :straight (:type git :repo "https://codeberg.org/bzg/gnaw.el"))
+  (use-package gnaw
+    :if init-flag
+    :straight (:type git :repo "https://codeberg.org/bzg/gnaw.el")
+    :config
+    (defalias 'org-tracker #'gnaw))
 #+end_src
 
 *** org-inside
