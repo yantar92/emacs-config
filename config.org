@@ -3847,7 +3847,7 @@ Credit: [[id:4ebf4428-3ed3-42cd-9d6c-ddc2d949dd53][nv-elisp comments on Weekly t
   :load-path "~/Org/skip-buffers-mode/"
   :config
   (setq skip-buffers-patterns
-        '("\\*helm.*\\*" "Warnings" "Calendar" " \\*Completions\\*" "\\*Bug Help\\*"))
+        '("\\*helm.*\\*" "Warnings" "Calendar" "\\*Completions\\*" "\\*Bug Help\\*"))
   (use-package meta-functions
     :config
     (meta-defun meta-next-buffer "Go forward in buffer." skip-buffers-next-buffer)
