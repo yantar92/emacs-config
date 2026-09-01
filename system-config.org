@@ -11267,6 +11267,150 @@ if __name__ == "__main__":
 
 
 
+*** Running embeddings on NPU
+:PROPERTIES:
+:ID:       9c233e79-cd7c-4490-b86b-3192756e62a9
+:END:
+
+#+begin_src python :tangle /home/yantar92/.local/bin/embed-openvino.py :mkdirp yes :shebang "#!/usr/bin/env python3"
+# /// script
+# dependencies = [
+#   "openvino-genai==2026.3.1.0",
+#   "numpy",
+#   "huggingface-hub",
+# ]
+# ///
+"""Embeddings via OpenVINO GenAI on NPU/CPU.
+
+Model: OpenVINO/Qwen3-Embedding-0.6B-int8-ov (1024-dim, LAST-token pooling).
+
+Device split:
+  - NPU: the compiler rejects batch > 1 for this model (a VCL constant-folding
+    bug that survives openvino 2026.3.1), so documents are embedded one at a
+    time. Measured ~8s vs ~14s CPU-batched on inbox.org, so NPU still wins.
+  - CPU: supports batching (--batch-size, default 8) for corpus indexing.
+
+Queries are always single items and run with a dynamic batch of 1, which the
+NPU handles fine.
+
+Usage:
+    # single query on NPU
+    uv run embed-openvino.py --model OpenVINO/Qwen3-Embedding-0.6B-int8-ov \
+        --device NPU --query "a fox jumping over a dog"
+
+    # documents on NPU (batch forced to 1)
+    printf 'doc one\ndoc two\ndoc three\n' | uv run embed-openvino.py \
+        --model OpenVINO/Qwen3-Embedding-0.6B-int8-ov --device NPU --docs-stdin
+
+    # index a corpus on CPU with batching
+    uv run embed-openvino.py --model OpenVINO/Qwen3-Embedding-0.6B-int8-ov \
+        --device CPU --batch-size 8 --docs-stdin < docs.txt
+"""
+import argparse
+import json
+import os
+import sys
+
+import numpy as np
+import openvino_genai as ov_genai
+
+
+def resolve_model(model: str) -> str:
+    if os.path.isdir(model):
+        return model
+    if "/" in model:
+        import huggingface_hub as hf_hub
+        return hf_hub.snapshot_download(model)
+    raise SystemExit(f"Model not found: {model}")
+
+
+def build_config(args, batch_size):
+    cfg = ov_genai.TextEmbeddingPipeline.Config()
+    cfg.pooling_type = ov_genai.TextEmbeddingPipeline.PoolingType.LAST_TOKEN
+    cfg.normalize = True
+    cfg.max_length = args.max_length
+    cfg.pad_to_max_length = True
+    if batch_size:
+        cfg.batch_size = batch_size
+    return cfg
+
+
+def resolve_batch_size(device, batch_size):
+    """Return the effective document batch size for the device.
+
+    The NPU compiler rejects batch > 1 for Qwen3-Embedding-0.6B (constant-fold
+    bug), so NPU is locked to 1. CPU supports batching and defaults to 8.
+    """
+    if device.upper() == "NPU":
+        if batch_size not in (None, 1):
+            print(f"warning: NPU cannot batch this model (compiler bug); "
+                  f"ignoring --batch-size {batch_size}, using 1",
+                  file=sys.stderr)
+        return 1
+    return batch_size or 8
+
+
+def embed_documents(pipe, docs, batch_size):
+    """Embed docs in fixed-size batches; pad and trim the final partial batch."""
+    if not docs:
+        return np.empty((0, 0))
+    results = []
+    i = 0
+    while i < len(docs):
+        chunk = docs[i:i + batch_size]
+        actual = len(chunk)
+        if actual < batch_size:
+            chunk = chunk + [chunk[-1]] * (batch_size - actual)
+        emb = np.asarray(pipe.embed_documents(chunk))
+        results.append(emb[:actual])
+        i += actual
+    return np.vstack(results)
+
+
+def main() -> None:
+    p = argparse.ArgumentParser()
+    p.add_argument("--model", required=True)
+    p.add_argument("--device", default="NPU")
+    p.add_argument("--max-length", type=int, default=512)
+    p.add_argument("--batch-size", type=int,
+                   help="document batch size (ignored on NPU, which is 1; "
+                        "default 8 on CPU)")
+    p.add_argument("--query", help="single query text")
+    p.add_argument("--docs", nargs="*", help="document texts")
+    p.add_argument("--docs-stdin", action="store_true",
+                   help="read documents from stdin, one per line")
+    args = p.parse_args()
+
+    model_dir = resolve_model(args.model)
+    batch_size = resolve_batch_size(args.device, args.batch_size)
+
+    docs = []
+    if args.docs_stdin:
+        docs = [line.rstrip("\n") for line in sys.stdin if line.strip()]
+    elif args.docs:
+        docs = args.docs
+
+    out = {}
+
+    if docs:
+        pipe = ov_genai.TextEmbeddingPipeline(model_dir, args.device,
+                                              build_config(args, batch_size))
+        out["docs"] = embed_documents(pipe, docs, batch_size).tolist()
+
+    if args.query:
+        # Queries are single items; dynamic batch=1 works on the NPU.
+        query_pipe = ov_genai.TextEmbeddingPipeline(model_dir, args.device,
+                                                    build_config(args, None))
+        out["query"] = np.asarray(query_pipe.embed_query(args.query)).tolist()
+
+    json.dump(out, sys.stdout)
+    sys.stdout.write("\n")
+
+
+if __name__ == "__main__":
+    main()
+
+#+end_src
 
 * Archived
 
