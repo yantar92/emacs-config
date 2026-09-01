@@ -12342,6 +12342,7 @@ here, so that LLM reasoning can be utilized better.
     			       "--ro-bind" "/" "/"
     			       "--proc" "/proc"
     			       "--dev" "/dev"
+    			       "--dev-bind-try" "/dev/accel" "/dev/accel"
     			       "--tmpfs" "/tmp"
     			       "--dir" "/tmp/uv-cache"
     			       "--bind" cache-dir "/tmp/uv-cache"
