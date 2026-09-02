@@ -11617,6 +11617,427 @@ if __name__ == "__main__":
 
 #+end_src
 
+*** Running summarization locally on GPU
+:PROPERTIES:
+:ID:       a8fc66b5-ebb5-4e29-84be-daad88db4b85
+:END:
+
+#+begin_src python :tangle /home/yantar92/.local/bin/summarize-openvino.py :mkdirp yes :shebang "#!/bin/env python"
+# /// script
+# dependencies = [
+#   "openvino-genai==2026.3.1.0",
+#   "huggingface-hub",
+#   "openvino",
+#   "numpy",
+#   "pillow",
+# ]
+# ///
+"""Summarize text, images, or video with a local model via OpenVINO GenAI.
+
+Default model: OpenVINO/gemma-3-4b-it-int4-ov (multimodal).
+Other useful models:
+1. OpenVINO/Phi-4-mini-instruct-int4-ov (text only)
+2. CelesteImperia/MiniCPM-V-2.6-OpenVINO-INT4 (image description; unlike gemma, focus on visual details/photo)
+
+Text is chunked by *token* count (not characters) so a prompt never exceeds the
+model's context window. The token budget is derived from the model's
+max_position_embeddings, capped by DEFAULT_MAX_CONTEXT (2048) because the
+default int4 Phi-4-mini export is unreliable beyond ~2k tokens despite
+advertising 4096 (its LongRoPE extension does not activate correctly). Raise
+the ceiling for models with larger, actually-usable windows via --max-context.
+
+Multimodal models (e.g. OpenVINO/gemma-3-4b-it-int4-ov) are auto-detected and
+run through VLMPipeline; text-only models use LLMPipeline. Pass --image/--video
+to summarize media (requires a multimodal model).
+
+Usage (via uv run):
+    echo "text" | uv run summarize-openvino.py --stdin
+    uv run summarize-openvino.py --file notes.txt
+    uv run summarize-openvino.py "text"
+    uv run summarize-openvino.py --image photo.jpg
+    uv run summarize-openvino.py --image photo.jpg "what is in this picture?"
+    uv run summarize-openvino.py --video clip.mp4
+    uv run summarize-openvino.py --model OpenVINO/gemma-3-4b-it-int4-ov --image a.png b.png
+    uv run summarize-openvino.py --device CPU --file notes.txt
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+import numpy as np
+import openvino_genai as ov_genai
+from openvino import Tensor
+from PIL import Image
+
+
+# DEFAULT_MODEL = "OpenVINO/Phi-4-mini-instruct-int4-ov"
+DEFAULT_MODEL = "OpenVINO/gemma-3-4b-it-int4-ov"
+DEFAULT_DEVICE = "GPU"
+
+# Conservative ceiling: see module docstring. Raise with --max-context.
+DEFAULT_MAX_CONTEXT = 2048
+# Reserve for chat-template overhead (special tokens, role markers) on top of
+# the system prompt, user text, and max_new_tokens.
+SAFETY_MARGIN = 128
+
+DEFAULT_SYSTEM = (
+    "You are a concise summarization assistant. Summarize the user's text in "
+    "a few sentences, preserving key facts, decisions, and constraints. Do not "
+    "add information that is not present in the text."
+)
+
+# Vision-language model architectures that are not accompanied by the usual
+# preprocessor files; used only as a fallback signal for multimodal detection.
+_VLM_MODEL_TYPES = {
+    "llava", "llava_next", "llava_next_video", "nano_llava",
+    "minicpmv", "minicpmo", "phi3_v", "phi4_multimodal",
+    "qwen2_vl", "qwen2_5_vl", "qwen3_vl", "gemma3", "gemma3n", "gemma4",
+    "internvl", "paligemma", "llama_vision", "muse", "deepseek_ocr",
+}
+
+_SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
+_IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".webp"}
+
+
+def resolve_model(model: str) -> str:
+    if os.path.isdir(model):
+        return model
+    if "/" in model:
+        import huggingface_hub as hf_hub
+        return hf_hub.snapshot_download(model)
+    raise SystemExit(f"Model not found: {model}")
+
+
+def read_json_file(model_dir: str, name: str) -> dict:
+    path = Path(model_dir) / name
+    if not path.is_file():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def model_context_limit(model_dir: str) -> int | None:
+    """Return the model's advertised context window, or None if unknown."""
+    cfg = read_json_file(model_dir, "config.json")
+    for key in ("max_position_embeddings", "max_sequence_length"):
+        val = cfg.get(key)
+        if isinstance(val, int) and val > 0:
+            return val
+    tok = read_json_file(model_dir, "tokenizer_config.json")
+    for key in ("model_max_length", "max_position_embeddings"):
+        val = tok.get(key)
+        if isinstance(val, int) and val > 0:
+            return val
+    return None
+
+
+def detect_multimodal(model_dir: str) -> bool:
+    """Heuristically decide whether the exported model is a VLM."""
+    root = Path(model_dir)
+
+    # 1. Vision tower exported by optimum/openvino.
+    for name in (
+        "openvino_embedding_model.xml",
+        "openvino_vision_embeddings_model.xml",
+        "openvino_video_model.xml",
+    ):
+        if (root / name).is_file():
+            return True
+
+    # 2. Image/video preprocessor config.
+    for name in ("preprocessor_config.json", "processor_config.json"):
+        data = read_json_file(model_dir, name)
+        if any(k in data for k in (
+            "image_processor_type", "image_mean", "image_std",
+            "do_normalize", "vision_config", "video_processor_type",
+        )):
+            return True
+
+    # 3. Known VLM model_type in config.json.
+    cfg = read_json_file(model_dir, "config.json")
+    if cfg.get("model_type", "").lower() in _VLM_MODEL_TYPES:
+        return True
+    if any(k in cfg for k in ("vision_config", "text_config")):
+        return True
+
+    return False
+
+
+def get_tokenizer(pipe, model_dir: str):
+    try:
+        return pipe.get_tokenizer()
+    except Exception:
+        return ov_genai.Tokenizer(model_dir)
+
+
+def count_tokens(tokenizer, text: str) -> int:
+    if not text:
+        return 0
+    encoded = tokenizer.encode(text)
+    ids = encoded.input_ids
+    shape = getattr(ids, "shape", None)
+    if shape is not None and len(shape) > 0:
+        return int(shape[-1])
+    data = getattr(ids, "data", None)
+    if data is not None:
+        return int(np.asarray(data).size)
+    # Last-resort character estimate; should never be reached.
+    return max(1, len(text) // 4)
+
+
+def _split_paragraph(tokenizer, para: str, max_tokens: int) -> list[str]:
+    if count_tokens(tokenizer, para) <= max_tokens:
+        return [para]
+    sentences = [s.strip() for s in _SENTENCE_RE.split(para) if s.strip()]
+    if len(sentences) > 1:
+        out = []
+        for s in sentences:
+            out.extend(_split_paragraph(tokenizer, s, max_tokens))
+        return out
+    return _split_words(tokenizer, para, max_tokens)
+
+
+def _split_words(tokenizer, text: str, max_tokens: int) -> list[str]:
+    words = text.split()
+    if len(words) <= 1:
+        return [text]  # a single token/long run; nothing sensible to do
+    out, buf, n = [], [], 0
+    for w in words:
+        wt = count_tokens(tokenizer, w)
+        if buf and n + wt > max_tokens:
+            out.append(" ".join(buf))
+            buf, n = [], 0
+        buf.append(w)
+        n += wt
+    if buf:
+        out.append(" ".join(buf))
+    return out
+
+
+def split_text_by_tokens(tokenizer, text: str, max_tokens: int) -> list[str]:
+    """Split into chunks, each under max_tokens (measured, not estimated)."""
+    chunks, buf, buf_tokens = [], [], 0
+    for para in text.split("\n\n"):
+        para = para.strip()
+        if not para:
+            continue
+        for piece in _split_paragraph(tokenizer, para, max_tokens):
+            pt = count_tokens(tokenizer, piece)
+            if buf and buf_tokens + pt > max_tokens:
+                chunks.append("\n\n".join(buf))
+                buf, buf_tokens = [], 0
+            buf.append(piece)
+            buf_tokens += pt
+    if buf:
+        chunks.append("\n\n".join(buf))
+    return chunks
+
+
+def load_images(paths: list[str]) -> list:
+    """Load image files (or directories of images) into a list of ov.Tensor."""
+    tensors = []
+    for p in paths:
+        entry = Path(p)
+        files = sorted(entry.iterdir()) if entry.is_dir() else [entry]
+        for f in files:
+            if f.suffix.lower() not in _IMAGE_EXTS:
+                continue
+            with Image.open(f) as im:
+                rgb = np.array(im.convert("RGB"))
+            tensors.append(Tensor(rgb[None]))  # [1, H, W, C]
+    if not tensors:
+        raise SystemExit("No readable images found in: " + ", ".join(paths))
+    return tensors
+
+
+def load_videos(paths: list[str], num_frames: int) -> list:
+    """Decode videos into [Frame, H, W, C] tensors, sampling num_frames."""
+    try:
+        import cv2
+    except ImportError as exc:
+        raise SystemExit(
+            "Video input requires the 'opencv-python-headless' package. "
+            "Install it (e.g. uv run --with opencv-python-headless ...) or "
+            "pass extracted frames via --image DIR instead."
+        ) from exc
+
+    videos = []
+    for p in paths:
+        path = str(p)
+        cap = cv2.VideoCapture(path)
+        if not cap.isOpened():
+            raise SystemExit(f"Cannot open video: {path}")
+        total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        if total <= 0:
+            cap.release()
+            raise SystemExit(f"Cannot determine frame count for: {path}")
+        indices = np.unique(np.linspace(0, total - 1, num_frames).astype(int))
+        frames = []
+        for i in indices:
+            cap.set(cv2.CAP_PROP_POS_FRAMES, int(i))
+            ret, frame = cap.read()
+            if ret:
+                frames.append(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        cap.release()
+        if not frames:
+            raise SystemExit(f"No frames decoded from: {path}")
+        videos.append(Tensor(np.array(frames)))  # [Frame, H, W, C]
+    return videos
+
+
+def build_pipeline(model_dir, device, is_multimodal,
+                   max_prompt_len, min_response_len):
+    device = device.upper()
+    if is_multimodal:
+        return ov_genai.VLMPipeline(model_dir, device)
+    if device == "NPU":
+        return ov_genai.LLMPipeline(
+            model_dir, device,
+            MAX_PROMPT_LEN=max_prompt_len,
+            MIN_RESPONSE_LEN=min_response_len,
+        )
+    return ov_genai.LLMPipeline(model_dir, device)
+
+
+def _extract_text(result) -> str:
+    if isinstance(result, str):
+        return result
+    if hasattr(result, "texts") and result.texts:
+        return result.texts[0]
+    if isinstance(result, (list, tuple)) and result:
+        return result[0]
+    return str(result)
+
+
+def generate(pipe, config, system, text, is_multimodal,
+             images=None, videos=None) -> str:
+    chat = ov_genai.ChatHistory()
+    chat.append({"role": "system", "content": system})
+    chat.append({"role": "user", "content": text})
+    kwargs = {"generation_config": config}
+    if is_multimodal:
+        if images:
+            kwargs["images"] = images
+        if videos:
+            kwargs["videos"] = videos
+    return _extract_text(pipe.generate(chat, **kwargs))
+
+
+def summarize_text(pipe, config, system, text, tokenizer,
+                   max_tokens, is_multimodal) -> str:
+    if count_tokens(tokenizer, text) <= max_tokens:
+        return generate(pipe, config, system, text, is_multimodal)
+    parts = [
+        generate(pipe, config, system, chunk, is_multimodal)
+        for chunk in split_text_by_tokens(tokenizer, text, max_tokens)
+    ]
+    return summarize_text(pipe, config, system, "\n\n".join(parts),
+                          tokenizer, max_tokens, is_multimodal)
+
+
+def read_text(args) -> str:
+    if args.file:
+        with open(args.file, "r", encoding="utf-8") as fh:
+            return fh.read()
+    if args.stdin:
+        return sys.stdin.read()
+    if args.text:
+        return " ".join(args.text)
+    return ""
+
+
+def main() -> None:
+    p = argparse.ArgumentParser()
+    p.add_argument("--model", default=DEFAULT_MODEL)
+    p.add_argument("--device", default=DEFAULT_DEVICE)
+    p.add_argument("--file", help="path to a text file to summarize")
+    p.add_argument("--stdin", action="store_true", help="read text from stdin")
+    p.add_argument("text", nargs="*", help="text to summarize (joined)")
+    p.add_argument("--image", action="append", default=[],
+                   help="image file or directory to summarize (repeatable)")
+    p.add_argument("--video", action="append", default=[],
+                   help="video file to summarize (repeatable)")
+    p.add_argument("--video-frames", type=int, default=16,
+                   help="number of frames to sample per video")
+    p.add_argument("--system", default=DEFAULT_SYSTEM)
+    p.add_argument("--max-new-tokens", type=int, default=256)
+    p.add_argument("--max-context", type=int, default=None,
+                   help="assume this many total context tokens "
+                        "(default: model limit capped at 2048)")
+    p.add_argument("--repetition-penalty", type=float, default=1.0)
+    # NPU-only static-shape knobs; ignored on CPU/GPU.
+    p.add_argument("--max-prompt-len", type=int, default=2048)
+    p.add_argument("--min-response-len", type=int, default=512)
+    args = p.parse_args()
+
+    model_dir = resolve_model(args.model)
+    is_multimodal = detect_multimodal(model_dir)
+
+    images = load_images(args.image) if args.image else []
+    videos = load_videos(args.video, args.video_frames) if args.video else []
+
+    if (images or videos) and not is_multimodal:
+        raise SystemExit(
+            "--image/--video requires a multimodal (VLM) model; "
+            f"'{args.model}' looks text-only."
+        )
+
+    pipe = build_pipeline(model_dir, args.device, is_multimodal,
+                          args.max_prompt_len, args.min_response_len)
+    config = pipe.get_generation_config()
+    config.max_new_tokens = args.max_new_tokens
+    config.do_sample = False
+    if args.repetition_penalty != 1.0:
+        config.repetition_penalty = args.repetition_penalty
+    tokenizer = get_tokenizer(pipe, model_dir)
+
+    # Media path: single-shot VLM summary, no chunking.
+    if images or videos:
+        prompt = read_text(args).strip() or "Summarize the input."
+        print(generate(pipe, config, args.system, prompt, True, images, videos))
+        return
+
+    text = read_text(args).strip()
+    if not text:
+        raise SystemExit("Empty input. Pass text, or use --image/--video.")
+
+    model_limit = model_context_limit(model_dir)
+    if args.max_context:
+        context_limit = args.max_context
+    elif model_limit:
+        context_limit = min(model_limit, DEFAULT_MAX_CONTEXT)
+    else:
+        context_limit = DEFAULT_MAX_CONTEXT
+
+    system_tokens = count_tokens(tokenizer, args.system)
+    budget = context_limit - system_tokens - args.max_new_tokens - SAFETY_MARGIN
+    if args.device.upper() == "NPU":
+        # NPU static prompt buffer is separate from the model context window.
+        budget = min(budget, args.max_prompt_len - system_tokens - SAFETY_MARGIN)
+    if budget < 64:
+        raise SystemExit(
+            f"Effective context too small for chunking (limit={context_limit}, "
+            f"system={system_tokens}, max_new_tokens={args.max_new_tokens}). "
+            "Raise --max-context or lower --max-new-tokens."
+        )
+
+    print(f"[context={context_limit} prompt_token_budget={budget}]",
+          file=sys.stderr)
+    print(summarize_text(pipe, config, args.system, text, tokenizer,
+                         budget, is_multimodal))
+
+
+if __name__ == "__main__":
+    main()
+#+end_src
+
 * Archived
 
 ** COMMENT Sakaki tools for system maintenance :COMMON:
