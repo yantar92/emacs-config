@@ -11267,6 +11267,211 @@ if __name__ == "__main__":
 
 
 
+*** Running Kokoro TTS (server) on CPU (GPU is slower for this)
+:PROPERTIES:
+:ID:       bfac7772-dd28-4a77-b1d8-3dddf66c2783
+:END:
+
+See [[id:4c2a5d05-f147-4dab-b863-650d03a6af55][Text-to-speech \\ Kokoro TTS]] (Emacs config).
+
+#+begin_src python :tangle /home/yantar92/.local/bin/kokoro-server.py :mkdirp yes
+# /// script
+# dependencies = [
+#   "openvino-genai==2026.3.1.0",
+#   "numpy",
+#   "huggingface-hub",
+# ]
+# ///
+"""Kokoro TTS server on NPU/CPU, compatible with emacs-tts.
+
+Replaces the Kokoro-FastAPI podman container that emacs-tts normally talks to.
+Exposes the two endpoints emacs-tts uses:
+
+    GET  /health
+    POST /v1/audio/speech   (JSON body, returns raw WAV bytes)
+
+Usage (via uv run):
+    uv run kokoro-server.py --model OpenVINO/Kokoro-82M-int8-ov --device CPU --port 8880
+
+Then run `tts-read` in Emacs without starting the podman container: emacs-tts
+already POSTs to http://localhost:8880/v1/audio/speech.
+
+Device notes:
+  - NPU support for Kokoro via Text2SpeechPipeline is not yet listed in the
+    OpenVINO release notes (Kokoro-82M is "early release on CPU and GPU").
+    Try NPU first; if compilation fails, rerun with --device CPU.
+  - espeak-ng (app-accessibility/espeak-ng on Gentoo) is required for
+    non-English languages and used as a fallback for English unknown words.
+  - ja and zh are not yet supported end-to-end by Text2SpeechPipeline.
+"""
+import argparse
+import io
+import json
+import os
+import sys
+import threading
+import wave
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+import numpy as np
+
+# emacs-tts sends lang_code = first letter of the voice name.
+LANG_MAP = {
+    "a": "en-us",
+    "b": "en-gb",
+    "j": "ja",      # not yet supported end-to-end by Text2SpeechPipeline
+    "z": "zh",      # not yet supported end-to-end by Text2SpeechPipeline
+    "e": "es",
+    "f": "fr-fr",
+    "h": "hi",
+    "i": "it",
+    "p": "pt-br",
+}
+
+
+def resolve_model(model: str) -> str:
+    """Return local path to model, downloading from HF if needed."""
+    if os.path.isdir(model):
+        return model
+    if "/" in model:
+        import huggingface_hub as hf_hub
+        path = hf_hub.snapshot_download(model)
+        print(f"Model cached at: {path}", file=sys.stderr)
+        return path
+    raise SystemExit(f"Model not found: {model}")
+
+
+class KokoroEngine:
+    def __init__(self, model_dir: str, device: str):
+        import openvino as ov
+        import openvino_genai as ov_genai
+        self._ov = ov
+        self.pipe = ov_genai.Text2SpeechPipeline(model_dir, device)
+        self.shape = tuple(self.pipe.get_speaker_embedding_shape())
+        self.voices_dir = os.path.join(model_dir, "voices")
+        self._emb_cache = {}
+        self._lock = threading.Lock()
+
+    def synthesize(self, text, voice, lang_code, speed):
+        emb = self._load_embedding(voice)
+        language = LANG_MAP.get(lang_code, "en-us")
+        with self._lock:
+            result = self.pipe.generate(
+                text, emb, language=language, speed=speed
+            )
+        speech = result.speeches[0]
+        samples = np.array(speech.data).reshape(-1).astype(np.float32)
+        return samples, result.output_sample_rate
+
+    def _load_embedding(self, voice):
+        t = self._emb_cache.get(voice)
+        if t is None:
+            path = os.path.join(self.voices_dir, f"{voice}.bin")
+            if not os.path.exists(path):
+                raise FileNotFoundError(
+                    f"Unknown voice '{voice}': {path} not found"
+                )
+            data = np.fromfile(path, dtype=np.float32)
+            t = self._ov.Tensor(data.reshape(self.shape))
+            self._emb_cache[voice] = t
+        return t
+
+
+def _to_wav(samples: np.ndarray, sample_rate: int) -> bytes:
+    pcm = (np.clip(samples, -1.0, 1.0) * 32767).astype(np.int16)
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(sample_rate)
+        w.writeframes(pcm.tobytes())
+    return buf.getvalue()
+
+
+def make_handler(engine):
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, fmt, *args):  # silence request logging
+            pass
+
+        def do_GET(self):
+            if self.path.split("?")[0] == "/health":
+                self.send_response(200)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"OK")
+            else:
+                self.send_error(404)
+
+        def do_POST(self):
+            if self.path.split("?")[0] != "/v1/audio/speech":
+                self.send_error(404)
+                return
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                req = json.loads(self.rfile.read(length).decode("utf-8"))
+                text = (req.get("input") or "").strip()
+                if not text:
+                    self._json_error(400, "input must not be empty")
+                    return
+                voice = req.get("voice") or "af_heart"
+                lang_code = req.get("lang_code") or voice[0]
+                speed = float(req.get("speed", 1.0))
+                fmt = req.get("response_format", "wav")
+                if fmt != "wav":
+                    self._json_error(
+                        400, f"response_format '{fmt}' not supported (only wav)"
+                    )
+                    return
+                samples, sr = engine.synthesize(text, voice, lang_code, speed)
+                audio = _to_wav(samples, sr)
+                self.send_response(200)
+                self.send_header("Content-Type", "audio/wav")
+                self.send_header("Content-Length", str(len(audio)))
+                self.end_headers()
+                self.wfile.write(audio)
+            except FileNotFoundError as e:
+                self._json_error(400, str(e))
+            except Exception as e:  # noqa: BLE001
+                self._json_error(500, f"{type(e).__name__}: {e}")
+
+        def _json_error(self, code, msg):
+            body = json.dumps({"error": msg}).encode("utf-8")
+            self.send_response(code)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+    return Handler
+
+
+def main() -> None:
+    p = argparse.ArgumentParser()
+    p.add_argument("--model", default="OpenVINO/Kokoro-82M-int8-ov")
+    p.add_argument("--device", default="NPU")
+    p.add_argument("--host", default="127.0.0.1")
+    p.add_argument("--port", type=int, default=8880)
+    args = p.parse_args()
+
+    model_dir = resolve_model(args.model)
+    engine = KokoroEngine(model_dir, args.device)
+    server = ThreadingHTTPServer(
+        (args.host, args.port), make_handler(engine)
+    )
+    print(
+        f"Serving Kokoro ({args.device}) on http://{args.host}:{args.port}",
+        file=sys.stderr,
+    )
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == "__main__":
+    main()
+#+end_src
+
 *** Running embeddings on NPU
 :PROPERTIES:
 :ID:       9c233e79-cd7c-4490-b86b-3192756e62a9

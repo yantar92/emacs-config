@@ -21557,6 +21557,39 @@ sent to LLM chat.
     (add-hook 'whisper-after-insert-hook #'yant/whisper-send-llm-after-insert-maybe))
 #+end_src
 
+** Text-to-speech \\ Kokoro TTS
+:PROPERTIES:
+:ID:       4c2a5d05-f147-4dab-b863-650d03a6af55
+:END:
+
+See [[id:bfac7772-dd28-4a77-b1d8-3dddf66c2783][Running Kokoro TTS (server) on CPU (GPU is slower for this)]].
+
+#+begin_src emacs-lisp
+  (use-package tts
+    :straight (:host github :repo "DiogoDoreto/emacs-tts")
+    :config
+    (defun tts-kokoro-start-server ()
+      (interactive)
+      (make-process
+       :name "kokoro-server"
+       :command (list "uv" "run" (expand-file-name "~/kokoro-server.py")
+                      "--device" "CPU" "--port" (number-to-string tts-kokoro-port))
+       :noquery t
+       :buffer (get-buffer-create "*tts-log*")
+       :filter #'tts--logger-insertion-filter))
+    (defun yant/tts-remove-metadata (text)
+      "Remove Org metadata."
+      (thread-last
+        text
+        (replace-regexp-in-string
+         (rx bol (0+ space) "#+") "")))
+    (add-hook 'tts-preprocessing-functions #'yant/tts-remove-metadata)
+    (defun yant/tts-merge-lines (text)
+      "Merge lines inside paragraphs to avoid extra pause on newline."
+      (replace-regexp-in-string "\n\\([^\n]\\)" " \\1" text))
+    (add-hook 'tts-preprocessing-functions #'yant/tts-merge-lines))
+#+end_src
+
 ** Sensitive info :NOEXPORT:
 :PROPERTIES:
 :ID:       83801f6a-daf5-4738-a15e-2d20c2b4551c
