@@ -3841,65 +3841,17 @@ The definition of previous/next buffer may depend on the major mode though.
 
 ***** Skip some uninteresting buffers when switching to next/previous buffer
 
-Credit: [[id:4ebf4428-3ed3-42cd-9d6c-ddc2d949dd53][nv-elisp comments on Weekly tips/trick/etc/ thread]]
-
 #+begin_src emacs-lisp
-(load-file "~/Git/skip-buffers-mode/skip-buffers-mode.el")
-(use-package skip-buffers-mode
-  :if init-flag
-  :load-path "~/Org/skip-buffers-mode/"
-  :config
-  (setq skip-buffers-patterns
-        '("\\*helm.*\\*" "Warnings" "Calendar" "\\*Completions\\*" "\\*Bug Help\\*"))
-  (use-package meta-functions
+  (use-package emacs
+    :if init-flag
     :config
-    (meta-defun meta-next-buffer "Go forward in buffer." skip-buffers-next-buffer)
-    (meta-defun meta-previous-buffer "Go backward in buffer." skip-buffers-previous-buffer)))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/Git/skip-buffers-mode/skip-buffers-mode.el :mkdirp yes :comments no
-;;  -*- lexical-binding: nil; -*-
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/Git/skip-buffers-mode/skip-buffers-mode.el :mkdirp yes
-(defvar skip-buffers-patterns
-  '("*helm.**")
-  "List of patterns that match buffers to ignore in next/previous-buffer")
-
-(defun skip-buffers--change-buffer (change-buffer)
-  "Call CHANGE-BUFFER until current buffer is not in `skip-buffers-patterns'"
-  (let ((initial (current-buffer)))
-    (funcall change-buffer)
-    (let ((first-change (current-buffer)))
-      (catch 'loop
-        (while (cl-some (lambda (pattern) (string-match-p pattern (buffer-name)))
-                        skip-buffers-patterns)
-          (funcall change-buffer)
-          (when (eq (current-buffer) first-change)
-            (switch-to-buffer initial)
-            (throw 'loop t)))))))
-
-(defun skip-buffers-next-buffer ()
-  "Variant of `next-buffer' that skips buffers matching `skip-buffers-patterns'"
-  (interactive)
-  (skip-buffers--change-buffer 'next-buffer))
-
-(defun skip-buffers-previous-buffer ()
-  "Variant of `previous-buffer' that skips buffers matching `skip-buffers-patterns'"
-  (interactive)
-  (skip-buffers--change-buffer 'previous-buffer))
-
-;;;###autoload
-(define-minor-mode skip-buffers-mode
-  "Skip buffers you don't want to see."
-  :global t
-  :lighter " skp"
-  :keymap (let ((map (make-sparse-keymap)))
-            (define-key map [remap next-buffer] 'skip-buffers-next-buffer)
-            (define-key map [remap previous-buffer] 'skip-buffers-previous-buffer)
-            map))
-
-(provide 'skip-buffers-mode)
+    (setq switch-to-prev-buffer-skip-regexp
+          '("\\*helm.*\\*" "Warnings" "Calendar" "\\*Completions\\*" "\\*Bug Help\\*")
+  	switch-to-prev-buffer-skip 'this)
+    (use-package meta-functions
+      :config
+      (meta-defun meta-next-buffer "Go forward in buffer." switch-to-next-buffer)
+      (meta-defun meta-previous-buffer "Go backward in buffer." switch-to-prev-buffer)))
 #+end_src
 
 **** Go to scratch key binding
