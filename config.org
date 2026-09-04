@@ -21470,7 +21470,8 @@ project.
     :config
     ;; Use local custom whisper that runs on NPU
     (setq whisper-install-whispercpp nil)
-    (setq whisper-model "OpenVINO/whisper-large-v3-turbo-int8-ov")
+    ;; (setq whisper-model "OpenVINO/whisper-large-v3-turbo-int8-ov")
+    (setq whisper-model "OpenVINO/whisper-large-v3-turbo-int4-ov")
     (defun whisper-command (input-file)
       "Use OpenVINO GenAI on NPU via uv run."
       `("uv" "run" ,(executable-find "whisper-openvino.py")
