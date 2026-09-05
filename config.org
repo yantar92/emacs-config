@@ -3846,7 +3846,7 @@ The definition of previous/next buffer may depend on the major mode though.
     :if init-flag
     :config
     (setq switch-to-prev-buffer-skip-regexp
-          '("\\*helm.*\\*" "Warnings" "Calendar" "\\*Completions\\*" "\\*Bug Help\\*")
+          '("\\*helm.*\\*" "Warnings" "Calendar" "\\*Completions\\*" "\\*Bug Help\\*" "\\*Backtrace\\*")
   	switch-to-prev-buffer-skip 'this)
     (use-package meta-functions
       :config
