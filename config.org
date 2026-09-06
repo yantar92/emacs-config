@@ -450,6 +450,17 @@ Credit: https://www.reddit.com/r/emacs/comments/fgbnfv/is_there_a_fixed_width_fo
         '(?⏩ ?⛔ ?⌛ ?👨 ?🔗 ?💡 ?🔁 ?🧠)))
   #+end_src
 
+*** Use common fonts in rendered HTML (via shr)
+
+[[https://protesilaos.com/codelog/2026-04-30-emacs-decent-default-sacha-chua/]]
+#+begin_src emacs-lisp
+  (use-package shr
+    :defer t
+    :init
+    (setq shr-use-fonts nil
+  	shr-use-colors nil))
+#+end_src
+
 *** Icons
 
 For =all-the-icons= it is important to install the fonts via [[elisp:all-the-icons-install-fonts]]
