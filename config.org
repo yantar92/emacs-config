@@ -6861,6 +6861,8 @@ Sort entries by Gnus-like score
     :config
     ;; See https://github.com/sp1ff/elfeed-score/issues/38
     (setopt elfeed-score-rule-stats-dirty-threshold 5000)
+    (setopt elfeed-score-serde-score-mark -10)
+    (setopt elfeed-score-maint-default-scope-to-feed 'yes)
     (elfeed-score-enable nil)
     (define-key elfeed-search-mode-map "=" elfeed-score-map))
 #+end_src
