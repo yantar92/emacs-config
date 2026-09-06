@@ -11638,6 +11638,8 @@ Default model: OpenVINO/gemma-3-4b-it-int4-ov (multimodal).
 Other useful models:
 1. OpenVINO/Phi-4-mini-instruct-int4-ov (text only)
 2. CelesteImperia/MiniCPM-V-2.6-OpenVINO-INT4 (image description; unlike gemma, focus on visual details/photo)
+3. Qwen2.5-VL-7B-Instruct (int4) is more useful for research figures
+4. llmware/Qwen2.5-VL-3B-Instruct-ov-int4-npu faster, better for research figures
 
 Text is chunked by *token* count (not characters) so a prompt never exceeds the
 model's context window. The token budget is derived from the model's
