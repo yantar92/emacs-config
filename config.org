@@ -8654,6 +8654,34 @@ Despite the usual big-tech concerns, it makes a decent:
     (bind-key "C-l" #'gptel-send boon-command-map))
 #+end_src
 
+*** Avoid silently sending multiple requests from the same buffer
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :if init-flag
+    :config
+    ;; Avoid sending multiple requests from the same buffer (gptel #15)
+    (defun yant/gptel-active-request-p (&optional buffer)
+      "Return non-nil if BUFFER has an active gptel request.
+  BUFFER defaults to the current buffer."
+      (let ((buf (or buffer (current-buffer))))
+        (cl-find-if (lambda (entry)
+                      (eq (plist-get (gptel-fsm-info (cadr entry)) :buffer)
+                          buf))
+                    gptel--request-alist)))
+
+    (defun yant/gptel-throttle-request (orig-fn &rest args)
+      "Confirm before sending a gptel request in a busy buffer."
+      (if (yant/gptel-active-request-p)
+          (if (y-or-n-p (format "Active gptel request in %s; send another? "
+                                (buffer-name)))
+              (apply orig-fn args)
+            (message "gptel request cancelled"))
+        (apply orig-fn args)))
+
+    (advice-add 'gptel-request :around #'yant/gptel-throttle-request))
+#+end_src
+
 *** Models
 
 I am not limited to one provider. Can mix and match and compare.
