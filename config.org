@@ -3338,9 +3338,10 @@ Emacs regex escaping in string is often confusing.
 Highlight text matching =isearch=.
 
 #+begin_src emacs-lisp
-(when init-flag
-  (setf search-highlight t)
-  (setf query-replace-highlight t))
+  (when init-flag
+    (setf search-highlight t)
+    (setf query-replace-highlight t)
+    (setf isearch-lazy-count t))
 #+end_src
 
 *** #goggles Highlight recent changes\actions
