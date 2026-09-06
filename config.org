@@ -12876,14 +12876,15 @@ and tried in the past. Everything tailored to my personal needs.
     (add-hook 'org-mode-hook #'org-inside-mode))
 #+end_src
 
-*** COMMENT (temporary) Debugging cache
+*** (temporary) Debugging cache
 
 #+begin_src emacs-lisp
   (setq org-element--cache-self-verify 'backtrace
         ;; record logs, but only check critical crashes
         org-element--cache-self-verify-frequency 0.000
         org-element--cache-diagnostics-ring-size 500000
-        org-element--cache-disable-future-change-optimization t)
+        org-element--cache-disable-future-change-optimization t
+        org-element--cache-self-verify-before-persisting t)
 #+end_src
 
 *** Workflow
