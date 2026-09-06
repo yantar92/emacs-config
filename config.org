@@ -10052,26 +10052,33 @@ certain LLM logic when conditions are met.
     (push
      (yant/gptel-make-workflow
       :name "clarification_serious"
-      :description "Use by default EXCEPT when *all* of the following are true:
-   1. *The question is a simple lookup or narrow technical how‑to*
-      - Single fact / value / definition  
-        /or/  
-      - A concrete “how do I do X?” for a specific technical operation
-        (e.g. one pandas/bash/Emacs action).
+      :description "Run the protocol when *any* of the following is true:
 
-   2. *No structural or long‑term impact is implied*
-      - Not about the key personal priorities
+   1. *The answer will be acted on, not just read*
+      - It affects a decision, plan, design, code change, config, or
+        document that will be kept or used.
 
-   3. *No real tradeoffs or major assumptions are required*
-      - The answer doesn’t require choosing between priorities or
-        inventing missing constraints.
+   2. *There is a real choice, tradeoff, or missing constraint*
+      - Choosing between priorities, or the question assumes details
+        that are not given.
 
-   4. *User hasn’t explicitly requested the protocol*
-      - If the user says “treat this as structural/serious”, “use
-        clarification protocol”, or “help me think this through”, *do*
-        run the protocol even if the question looks simple.
+   3. *Facts may be outdated, version-specific, or recent*
+      - Software versions, APIs, current events, prices, or anything
+        that may have changed after your training data.
 
-   If any of the above are not satisfied → *run the full clarification protocol.*
+   4. *The query is ambiguous, contradictory, or rests on a shaky fact*
+      - Unclear scope or intent, a logical contradiction, or a premise
+        you cannot verify.
+
+   5. *The user wants reasoning, advice, or evaluation, not a lookup*
+      - They are asking for a judgment rather than a single value or fact.
+
+   6. *The user explicitly requested the protocol*
+      - \"treat this as structural/serious\", \"use clarification protocol\",
+        or \"help me think this through\".
+
+   Skip the protocol only when the query is a pure fact/value/definition
+   lookup and none of the above applies. When in doubt, run the protocol.
   "
       :workflow workflow)
      gptel-tools))
@@ -10082,16 +10089,19 @@ certain LLM logic when conditions are met.
 #+begin_src org
   ,*Before responding to query, follow this workflow:*
 
-    1. *Check for ambiguities, inconsistencies or lack of clarity* in the query.
-       - Consider scope, intended use, missing details, logical contradictions, potentially false facts, and ambiguous phrasing.
+    1. *Check for ambiguities, inconsistencies, missing constraints, or lack of clarity* in the query.
+       - Consider scope, intended use, missing details, missing constraints, logical contradictions, potentially false facts, and ambiguous phrasing.
+       - If the answer will be acted on (a decision, plan, design, code change, or config), make sure scope and intended use are clear before answering.
+       - If the query involves a choice between options or priorities, identify which options and what the decision depends on; ask when any of it is unspecified.
        - Pay extra attention to queries about software versions, APIs, current events, or anything that might depend on recent developments.
        - If you notice the question concerns information that may postdate your knowledge cutoff, flag this explicitly.
        - If you notice logical contraditions, flag them explicitly
        - If you notice potentially incorrect facts in the query, make sure to ask for confirmation about these facts
-    2. *If ambiguities OR contradictions OR potentially false facts OR possible knowledge limitations exist,* do all of the following:
+    2. *If ambiguities OR contradictions OR potentially false facts OR possible knowledge limitations OR missing constraints/choices exist,* do all of the following:
        - List clear, specific clarification questions or requests for more information.
        - If a more up-to-date answer or real-time info is needed, recommend the use of the appropriate tool(s), e.g., internet search, URL fetching, etc.
        - If a potentially false fact is detected, request explicit confirmation to use that fact or to provide a correction
+       - If scope, intended use, or the choice between options is unclear, ask for the missing constraints before answering.
        - Do NOT answer any part of the original question, and do NOT guess or assume outdated information is still correct.
        - Wait for user clarification, tool results, or user direction before proceeding.
        - If user ignores any of the questions asked, ask the missed questions again, clearly indicating the missed questions.
