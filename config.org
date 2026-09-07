@@ -21721,7 +21721,7 @@ See [[id:bfac7772-dd28-4a77-b1d8-3dddf66c2783][Running Kokoro TTS (server) on CP
       (interactive)
       (make-process
        :name "kokoro-server"
-       :command (list "uv" "run" (expand-file-name "~/kokoro-server.py")
+       :command (list "uv" "run" (expand-file-name "~/.local/bin/kokoro-server.py")
                       "--device" "CPU" "--port" (number-to-string tts-kokoro-port))
        :noquery t
        :buffer (get-buffer-create "*tts-log*")
