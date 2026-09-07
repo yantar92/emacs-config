@@ -8650,8 +8650,16 @@ Despite the usual big-tech concerns, it makes a decent:
     (require 'gptel-org)
     (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "# LLM\n")
     (setf (alist-get 'org-mode gptel-response-prefix-alist) "# LLM response\n")
-    (bind-key "C-l" #'gptel-send boon-insert-map)
-    (bind-key "C-l" #'gptel-send boon-command-map))
+
+    (defun yant/gptel-send (&optional arg)
+      "Like `gptel-send', but C-- redirects to `gptel-abort'."
+      (interactive "P")
+      (pcase arg
+        (`- (gptel-abort (current-buffer)))
+        (arg (gptel-send arg))))
+    
+    (bind-key "C-l" #'yant/gptel-send boon-insert-map)
+    (bind-key "C-l" #'yant/gptel-send boon-command-map))
 #+end_src
 
 *** Avoid silently sending multiple requests from the same buffer
