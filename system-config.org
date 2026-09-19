@@ -8574,8 +8574,6 @@ while true; do mail-monitor.sh; sleep 100; done &
       [[ "$x" == *"expunged"* ]] && continue
       [[ "$x" == *"Maildir notice: sleeping due to recent directory modification"* ]] && continue
       [[ "$x" == *"No working address found"* ]] && continue
-      [[ "$x" == *"gpg: decryption failed: Bad session key"* ]] && continue
-      [[ "$x" == *"PassCmd exited with status 2"* ]] && continue
       [[ "$x" == *"Error: Cannot resolve server"* ]] && continue
       [[ "$x" == *"fetchmail: timeout after 300 seconds waiting to connect to server fencepost.gnu.org"* ]] && continue
       [[ "$x" == *"not flushed"* ]] && continue
