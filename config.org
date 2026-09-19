@@ -14894,7 +14894,6 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     							(quote
     							 (and (todo "NEXT")
                                                                   (not (tags-local "SKIP"))
-                                                                  (not (ts-active))
     							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA" "DEFAULT"))
     							      (not (habit))
                                                                   (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
@@ -15081,7 +15080,6 @@ I use different skip functions here in agenda to filter the agenda. Some of them
     							(quote
     							 (and (todo "NEXT")
                                                                   (not (tags-local "SKIP"))
-                                                                  (not (ts-active))
     							      (not (tags "CANCELLED" "HOLD" "WAITING" "NODEADLINE" "SOMEDAY" "AREA" "DEFAULT"))
     							      (not (habit))
                                                                   (or (not (property "SHOWFROMDATE")) ;; non-inheriting property search can be cached efficiently. Hence do it first
