@@ -12428,7 +12428,7 @@ here, so that LLM reasoning can be utilized better.
     (gptel-make-tool
      :name "ask_clarification"
      :function #'yant/gptel-tool-ask-clarification
-     :description "Ask the user for clarification during reasoning. Supports multiple question types."
+     :description "Ask the user for clarification during reasoning. Prefer asking over independent assessment: whenever a needed fact, the user's intent, or a constraint is missing or ambiguous, ask the user directly instead of guessing or inferring. Asking is cheaper than a wrong assumption. Supports question types: 'choice', 'multiple', 'text', 'yesno'."
      :args
      (list '(:name "question"
                    :type string
