@@ -1647,6 +1647,20 @@ I currently do not use hydras often.
   (unbind-key "M-j" global-map))
 #+END_SRC
 
+**** Disable mouse taps
+
+#+begin_src emacs-lisp
+  (bind-key* "<mouse-1>" #'ignore)
+  (bind-key* "<mouse-2>" #'ignore)
+  (bind-key* "<mouse-3>" #'ignore)
+  (bind-key* "<left-margin> <mouse-1>" #'ignore)
+  (bind-key* "<left-margin> <mouse-2>" #'ignore)
+  (bind-key* "<left-margin> <mouse-3>" #'ignore)
+  (bind-key* "<right-margin> <mouse-1>" #'ignore)
+  (bind-key* "<right-margin> <mouse-2>" #'ignore)
+  (bind-key* "<right-margin> <mouse-3>" #'ignore)
+#+end_src
+
 **** Quitting minibuffer when point is in another window
 :PROPERTIES:
 :CREATED:  [2020-07-25 Sat 20:45]
