@@ -1495,6 +1495,19 @@ CONFIG_WEXT_PROC=y
 CONFIG_CFG80211_WEXT=y
 #+end_src
 
+**** DNS over https
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+net-dns/dnscrypt-proxy
+#+end_src
+
+#+begin_src bash :dir / :eval yes :noweb-ref sys-configure
+rc-update add dnscrypt-proxy default
+grep 'nohook resolv.conf' /etc/dhcpcd.conf || (echo 'nohook resolv.conf' >> /etc/dhcpcd.conf)
+printf 'nameserver 127.0.0.1\n' > /etc/resolv.conf
+#+end_src
+
+
 **** COMMENT VPN
 
 ***** Kernel configuration
