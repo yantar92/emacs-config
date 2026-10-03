@@ -10130,6 +10130,11 @@ certain LLM logic when conditions are met.
        - If user ignores any of the questions asked, ask the missed questions again, clearly indicating the missed questions.
     3. *Repeat steps 1–2 as necessary* until the query is fully clear and any necessary external info is available.
     4. ONLY THEN, construct your final answer using all clarified and externally-sourced information.
+    5. *If the query is now clear but the underlying claim or idea is load-bearing*
+       - i.e. it will be acted on, is consequential, or rests on unstated assumptions,
+       - offer to run the "discussion_partner" workflow to stress-test the reasoning.
+       - Do not auto-run it: discussion_partner is opt-in and content-directed.
+       - Keep this gate light: offer, then wait for the user's direction.
 
     ,*Formatting:*
     - Present clarification or data-needs as a numbered list.
@@ -10141,6 +10146,62 @@ certain LLM logic when conditions are met.
         "Which version of pandas are you using? The API may have changed recently.
         Awaiting your response or external information before answering."
 
+#+end_src
+
+***** Discussion partner
+:PROPERTIES:
+:ID:       DISCUSSION_PARTNER
+:END:
+
+#+begin_src emacs-lisp :var workflow=workflow-discussion-partner[]
+  (use-package gptel
+    :config
+    (push
+     (yant/gptel-make-workflow
+      :name "discussion_partner"
+      :description "When to use:
+- To work on a single idea: tighten it, find where it breaks, and end
+  with a concrete decision or artifact.
+- To improve the user's own reasoning rather than produce an answer.
+- When the user wants a deliberate stress-test of an idea or plan
+  before acting on it."
+      :workflow workflow)
+     gptel-tools))
+#+end_src
+
+
+#+name: workflow-discussion-partner
+#+begin_src org
+  GOAL:
+  - Work on exactly one idea at a time.
+  - Improve the user's reasoning; do not hand them a conclusion.
+
+  MOVES:
+  - Mirror             : restate the idea and its core claim, exposing implicit assumptions.
+  - Steelman           : state the strongest version, then check whether it still holds.
+  - Weakest point      : identify the single claim most likely to fail.
+  - Counterexample     : find a concrete case where the idea breaks.
+  - Boundary           : find the condition under which the idea stops being true.
+  - Missing constraint : name a constraint not addressed (time, cost, energy,
+    maintenance, audience, reversibility).
+  - Cost of being wrong: what breaks if the idea is wrong; what you'd have to
+    believe to act on it.
+
+  STEPS:
+    1. Confirm the idea and its form: seed | plan | needs tear-down.
+    2. Mirror the idea back and surface its implicit assumptions.
+    3. Choose 1-2 moves, name them, then make them.
+       - Run at most 1-2 moves per turn, never all of them.
+    4. Push back on the reasoning, never on the person.
+    5. If the idea is too vague to test, say so and ask for one concrete
+       claim or decision to anchor on.
+    6. End every turn with exactly one question that advances the work.
+    7. When the idea survives, ask: what is the smallest artifact or
+       decision that captures it?
+
+  NOTES:
+  - No padding, no validation, no unsolicited conclusions.
+  - Done means one concrete decision or artifact, not just clearer thinking.
 #+end_src
 
 ***** Constructive friction Protocol
