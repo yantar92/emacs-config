@@ -7232,7 +7232,7 @@ the notmuch-tree buffer if it appears after closing the message."
 
     (defvar yant/mml-do-not-sign-accounts-list
       '("ihor_radchenko@alumni.sutd.edu.sg" "yantar92@gmail.com" "yantar92@posteo.net"
-        "ihor.radchenko@ensemble3.eu" "yantar92@gnu.org")
+        "ihor.radchenko@ensemble3.eu")
       "List of accounts, where the messaged should not be signed.")
 
     (defun yant/mml-secure-message-sign-pgpmime-maybe ()
