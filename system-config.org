@@ -1496,6 +1496,9 @@ CONFIG_CFG80211_WEXT=y
 #+end_src
 
 **** DNS over https
+:PROPERTIES:
+:ID:       abf941b7-0bd4-42d5-a8ba-933e15ff8a68
+:END:
 
 #+begin_src conf :tangle /sudo::/var/lib/portage/world
 net-dns/dnscrypt-proxy
@@ -7444,7 +7447,33 @@ Use [[id:db6f9fac-dc50-4668-a0c4-e5ff185ec436][mpv]] for videos or [[id:269904a8
 The script uses scripts defined in [[id:269904a8-3bb6-4e9e-a385-2e2b2c980879][Archivebox]].
 
 #+begin_src bash :tangle /home/yantar92/.local/bin/qutebrowser-call.sh :shebang #!/bin/bash
+  profile="auto"
+  if [[ "${1:-}" == "--profile" ]]; then
+      profile="${2:-}"
+      if [[ -z "$profile" ]]; then
+          echo "qutebrowser-call.sh: --profile requires a name" >&2
+          exit 2
+      fi
+      shift 2
+  fi
+
+  if [[ "$profile" == "no" ]]; then
+      profile=""
+  fi
+
   URL="$1"
+
+  if [[ "$profile" == "auto" ]]; then
+      # Derive a per-site profile name from the URL's hostname.
+      profile="${URL#*://}"      # strip scheme
+      profile="${profile%%/*}"   # strip path, query, fragment
+      profile="${profile##*@}"   # strip userinfo
+      profile="${profile%:*}"    # strip port
+      if [[ ! "$profile" =~ ^[A-Za-z0-9.-]+$ ]]; then
+          echo "qutebrowser-call.sh: cannot derive a profile from URL '$URL'" >&2
+          exit 2
+      fi
+  fi
 
   case "$URL" in
       ,*ted.com/talks*|*bilibili.com*|*youtube.com*|*.webm)
@@ -7466,7 +7495,28 @@ The script uses scripts defined in [[id:269904a8-3bb6-4e9e-a385-2e2b2c980879][Ar
   #from https://github.com/qutebrowser/qutebrowser/blob/master/scripts/open_url_in_instance.sh
   _url="$URL"
 
-  qutebrowser ":open -t ${_url}"
+  if [[ -n "$profile" ]]; then
+      profiles_root="${QUTEBROWSER_PROFILES_DIR:-$HOME/.local/share/qutebrowser-profiles}"
+      base="$profiles_root/$profile"
+      history_src="${XDG_DATA_HOME:-$HOME/.local/share}/qutebrowser/history.sqlite"
+
+      mkdir -p "$base/data"
+      history_dst="$base/data/history.sqlite"
+      # Share history with the main profile; cookies/site data stay isolated in data/webengine/.
+      # Sequential use only: concurrent instances writing one SQLite DB can drop history.
+      if [[ -L "$history_dst" ]]; then
+          :
+      elif [[ -e "$history_dst" ]]; then
+          rm -f "$history_dst"
+      fi
+      if [[ ! -L "$history_dst" ]]; then
+          ln -s "$history_src" "$history_dst"
+      fi
+
+      qutebrowser --basedir "$base" ":open -t ${_url}"
+  else
+      qutebrowser ":open -t ${_url}"
+  fi
 
   # emacsclient -c -e "(eaf-open-browser \"$URL\")"
 #+end_src
