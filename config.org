@@ -12569,8 +12569,9 @@ here, so that LLM reasoning can be utilized better.
     (defcustom yant/gptel-execute-code-timeout 30
       "Max time allowed to run sandboxed code.")
     (eval
-     '(defun my/gptel-execute-code (callback code &optional language)
+     '(defun my/gptel-execute-code (callback code &optional language timeout)
         (let* ((language (or language "python"))
+               (timeout (or timeout yant/gptel-execute-code-timeout))
                (script-name (pcase language
                               ("bash" "script.sh")
                               (_ "script.py")))
@@ -12658,7 +12659,7 @@ here, so that LLM reasoning can be utilized better.
     		    (funcall callback "Process timeout"))))))
           (set-process-query-on-exit-flag process nil)
           (run-at-time
-           yant/gptel-execute-code-timeout
+           timeout
            nil
            (lambda (process)
     	   (when (process-live-p process)
@@ -12702,6 +12703,9 @@ here, so that LLM reasoning can be utilized better.
   If the code fails, do remember that you may have access to web search
   to refresh your knowledge about the library APIs.
 
+  The optional \"timeout\" argument (seconds) raises the default timeout
+  for long-running code.
+
   Example (Python):
   # /// script
   # dependencies = [\"requests\"]
@@ -12718,6 +12722,10 @@ here, so that LLM reasoning can be utilized better.
              (:name "language"
                     :type string
                     :description "Interpreter to run: \"python\" (default) or \"bash\"."
+                    :optional t)
+             (:name "timeout"
+                    :type number
+                    :description "Timeout in seconds. Defaults to the configured value (30 seconds); pass a larger value for long-running code."
                     :optional t))
      :category "execute"
      :confirm t
