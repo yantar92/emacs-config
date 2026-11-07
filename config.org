@@ -12555,6 +12555,9 @@ here, so that LLM reasoning can be utilized better.
 #+end_src
 
 **** Code execution
+:PROPERTIES:
+:ID:       35e38b2f-651c-451f-94d5-73513193421e
+:END:
 
 [[id:Email-<notifications@githubcom>2026-karthink-gptel-tool-959][Kerncos <notifications@github.com> [Email] (2026) [karthink/gptel] A tool that enables AI to execute Python code (Discussion #1299)]]
 
@@ -12629,7 +12632,8 @@ here, so that LLM reasoning can be utilized better.
   				     (buffer-string)
   				     t t))))
     		      (when (file-exists-p temp-file) (delete-file temp-file))
-    		      (kill-buffer (process-buffer process))
+                        (let ((kill-buffer-query-functions nil))
+    			(kill-buffer (process-buffer process)))
     		      (funcall
     		       callback
     		       (cond
@@ -12651,19 +12655,20 @@ here, so that LLM reasoning can be utilized better.
     			(t output)))))
     		   ('signal
     		    (funcall callback "Process timeout"))))))
-            (run-at-time
-             yant/gptel-execute-code-timeout
-             nil
-             (lambda (process)
+          (set-process-query-on-exit-flag process nil)
+          (run-at-time
+           yant/gptel-execute-code-timeout
+           nil
+           (lambda (process)
     	   (when (process-live-p process)
-                 (delete-process process)))
-             process)))
-       'lexical)
+               (delete-process process)))
+           process)))
+     'lexical)
 
-      (gptel-make-tool
-       :name "execute_code"
-       :function #'my/gptel-execute-code
-       :description "Execute Python or Bash code in a bwrap sandbox.
+    (gptel-make-tool
+     :name "execute_code"
+     :function #'my/gptel-execute-code
+     :description "Execute Python or Bash code in a bwrap sandbox.
   The code should be self-contained and output results to stdout.
 
   Choose the interpreter with the \"language\" argument:
@@ -12706,18 +12711,18 @@ here, so that LLM reasoning can be utilized better.
 
   Example (Bash):
   echo \"hello\""
-       :args '((:name "code"
-                      :type string
-                      :description "The complete source code to execute.")
-               (:name "language"
-                      :type string
-                      :description "Interpreter to run: \"python\" (default) or \"bash\"."
-                      :optional t))
-       :category "execute"
-       :confirm t
-       :include t
-       :async t)
-      (add-to-list 'gptel-tools (gptel-get-tool "execute_code")))
+     :args '((:name "code"
+                    :type string
+                    :description "The complete source code to execute.")
+             (:name "language"
+                    :type string
+                    :description "Interpreter to run: \"python\" (default) or \"bash\"."
+                    :optional t))
+     :category "execute"
+     :confirm t
+     :include t
+     :async t)
+    (add-to-list 'gptel-tools (gptel-get-tool "execute_code")))
 #+end_src
 
 **** Scratch space for LLM tools
