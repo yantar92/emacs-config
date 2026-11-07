@@ -12331,6 +12331,10 @@ stick to a package and contribute as needed.
     :config
     (macher-install)
     (macher-enable)
+    ;; The default is -e, which is less powerful and not what LLM expects.
+    (setf (alist-get 'grep2 xref-search-program-alist)
+  	"xargs -0 grep <C> --null -snHE -E <R>")
+    (setopt xref-search-program 'grep2)
     (add-hook 'yant/gptel-system-prompt-default-functions
               "[macher_placeholder]"  ; will be replaced with project name and file list
               10))
