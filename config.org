@@ -3781,6 +3781,7 @@ require javascript or complex rendering.
         (eww url)))
     :custom
     (browse-url-browser-function 'yant/browse-url)
+    (browse-url-secondary-browser-function 'browse-url-generic)
     (browse-url-generic-program "qutebrowser-call.sh")
     :config
     (cl-pushnew
