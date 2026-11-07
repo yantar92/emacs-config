@@ -2827,7 +2827,7 @@ return kbdlayout
      awful.key({ modkey, "Control" }, "g", function () awful.spawn("notmuch-emacs-start.sh --inbox") end),
      awful.key({ modkey, "Control", "Shift" }, "g", function () awful.spawn("notmuch-emacs-start.sh --newsonly") end),
      awful.key({ modkey }, "e", function () awful.spawn("emacs-start.sh") end),
-     awful.key({ modkey }, "i", function () awful.spawn("qutebrowser-start.sh") end),
+     -- awful.key({ modkey }, "i", function () awful.spawn("qutebrowser-start.sh") end),
      awful.key({ modkey }, "v", function () awful.spawn("clipmenu.sh") end),
      -- awful.key({ modkey, "Control" }, "u", function () awful.spawn("urxvt -e rtorrent-start.sh") end),
      -- awful.key({ modkey, "Control" }, "b", function () awful.spawn("urxvt -e start_bc") end),
