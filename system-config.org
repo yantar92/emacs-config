@@ -5692,7 +5692,7 @@ c.zoom.default = '150%'
       background-color: <<get-color("bg-main")>> !important;
       color: <<get-color("fg-main")>> !important;
   }
-  html {
+  html, .pageheader, .pageheader-wrapper, .sidebar {
       background-color: <<get-color("bg-main")>> !important;
   }
   input,
