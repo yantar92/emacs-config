@@ -8765,12 +8765,12 @@ I am not limited to one provider. Can mix and match and compare.
       :stream t
       :key (lambda () (nth 0 (process-lines "pass" "show" "internet/groq-api")))
       :models
-      '((qwen/qwen3-32b
-         :description "Qwen 3 32B is the latest generation of large language models in the Qwen series"
+      '((qwen/qwen3.8-27b
+         :description "Qwen 3.8 27B"
          :capabilities (tool-use json reasoning)
          :context-window 128
-         :input-cost 0.29
-         :output-cost 0.59)
+         :input-cost 0.80
+         :output-cost 4.00)
         (moonshotai/kimi-k2-instruct
          :description "Mixture-of-Experts (MoE) language model with 1 trillion total parameters and 32 billion activated parameters"
          :capabilities (tool-use json)
