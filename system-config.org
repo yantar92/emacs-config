@@ -9058,6 +9058,15 @@ HlBh0og21HI2KdTydiZRC5s9X68FtmjL6jNnKsN0tkybXdV1yqtcDFe6pqmNng+F
 k2dpNC1oMFhpMb1F7g00N39+dFxhbMcGvFc=
 =B8US
 -----END PGP MESSAGE-----
+*** Cron job
+:PROPERTIES:
+:ID:       6a07f1f9-5c64-4a51-b525-709318bae816
+:END:
+
+#+begin_src bash :tangle /sudo::/var/spool/cron/crontabs/yantar92
+# check pages daily at 06:30; email reporter does the notification
+30 6 * * * /usr/bin/urlwatch >/dev/null 2>&1
+#+end_src
 
 ** Mail sending (msmtp)
 :PROPERTIES:
