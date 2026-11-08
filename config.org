@@ -2159,7 +2159,8 @@ This requires some customized key bindings.
                     (first-completion)
                     (mct-choose-completion-exit))))
      	(minibuffer-complete-and-exit))))
-       (bind-key "<RET>" #'yant/complete-minibuffer-selection minibuffer-local-must-match-map))
+       (bind-key "<RET>" #'yant/complete-minibuffer-selection minibuffer-local-must-match-map)
+       (bind-key "C-<return>" #'exit-minibuffer mct-minibuffer-local-completion-map))
    #+end_src
 
 3. Insert selected completion candidate into minibuffer
