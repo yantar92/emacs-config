@@ -19206,7 +19206,7 @@ files.
   			      (prog1
   				  (or
                                      (member (directory-files (buffer-local-value 'default-directory dired-buf)) '(nil ("." ".." "singlepage.html") ("." "..")))
-  			           (yes-or-no-p (format "%s: Delete all attachments? "
+  			           (y-or-n-p (format "%s: Delete all attachments? "
   							heading)))
   				(kill-buffer dired-buf)))))
   		      org-attach-archive-delete))
