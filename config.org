@@ -5575,11 +5575,17 @@ This is according to Corfu README.
 **** Use eglot diagnostics in flycheck
 
 #+begin_src emacs-lisp
-  (use-package flycheck-eglot
-    :straight t
-    :after (flycheck eglot)
+  (use-package flycheck
     :config
-    (global-flycheck-eglot-mode 1))
+    (global-flycheck-eglot-mode +1)
+    (global-flycheck-annotate-mode +1)
+    (setq flycheck-annotate-background t))
+
+  ;; (use-package flycheck-eglot
+  ;;   :straight t
+  ;;   :after (flycheck eglot)
+  ;;   :config
+  ;;   (global-flycheck-eglot-mode 1))
 #+end_src
 
 **** Disable =aggressive-indent-mode= in Python buffers
