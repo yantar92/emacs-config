@@ -4791,6 +4791,17 @@ c.tabs.tabs_are_windows=False
 c.url.default_page = 'http://127.0.0.1:8384/'
 c.url.start_pages = 'http://127.0.0.1:8384/'
 #+END_SRC
+**** Downloads location
+:PROPERTIES:
+:ID:       f43284a2-e66c-416a-83e8-ccaf20e460db
+:END:
+
+#+begin_src python
+import pathlib
+import os
+c.downloads.location.directory = str(pathlib.Path(os.environ['HOME']) / "Downloads")
+#+end_src
+
 **** Session
 :PROPERTIES:
 :ID:       d491d178-efc8-4a6d-a638-64c257cefaf1
