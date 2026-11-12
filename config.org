@@ -17692,10 +17692,11 @@ than work certain number of hours every workday.
   (define-advice org-todo (:around (OLDFUN &optional arg) yant/org-increment-weighted-time)
     "Probably add the current item time bonus to `org-time-balance'."
     (unless org-time-balance
-      (setq org-time-balance (org-get-total-weighted-time))
+      (save-excursion
+        (setq org-time-balance (org-get-total-weighted-time)))
       (org-time-balance-update-lossage))
     (org-with-point-at-org-buffer
-     (let ((old-time-at-point (org-accumulate-weighted-time 'return))
+     (let ((old-time-at-point (save-excursion (org-accumulate-weighted-time 'return)))
   	 (old-org-time-balance org-time-balance))
        (when (and (string= (org-entry-get (point) "STYLE") "habit")
   		(string= (format "%s" arg) (org-entry-get (point) "REPEAT_TO_STATE"))
