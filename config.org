@@ -8833,6 +8833,27 @@ I am not limited to one provider. Can mix and match and compare.
          :output-cost 0.34))))
 #+end_src
 
+*** Models (extra) :crypt:
+
+-----BEGIN PGP MESSAGE-----
+
+hQEMA3SKBiQ2zhL6AQgAqCEzucNgfYSfHF/u4iVw3EKBOxhska8Z8AuEAxt50yS9
+z/MDi+GiaT/KtQSO4h7aund1OkFMUz5l6uAsUZLUCwfe8D89JTtiowVnsenGkUOT
+vS2dAjL/JGtHmeIsTbRK42uV62fio/hxB4lZ+mDmUepiBYGN7Pt9skB+RaWP5GsB
+XNqe98Q2r7HDnNXLg7xxNjrAaxJl/zi9FFTUA5worFK5qGJVZtGiviRJNpnTx/5U
++9zeiARntHKzGHgnF3ccKULve51OM8105aoeF2m9KZ6mY2MzvvJgJVL4K9FmJ8xe
+6zlbkO6EPLnwKb4/vh0FsI6Cqm9iUvwyFxF1jmAPt9LAswHHW7t+scWYpwQWGheU
+B77Hb1ki54roaGFS4g9ahfmAHORYfFVia6RXHP2NL8RsCbI/AImDsF3U/ijvENU4
+o/tD3JeeDibjsdS8JUbZoMmGUkFIxm758fCGB2C9+N2soa9sRro14Z5uV/WSOtxs
++RkkEKHf4TJ0Bzo5SYdgnmNyTtCKmWu9uXRcGq24B91YwaNiGEYiLisgVfAj65tD
+DdEiMTP4VnPF6NdywDCJ5Z7I3uDf9Slaot+YqFNaQ10RNmfvRTqlDGu4JhhWoDSY
+CzK53t9kxQaWdasR6rq1P8J2twP3tYHcb8qHapSdKE8EWF6KVrnSrK3QKH3TxKpI
+EBKDe3C8eQiUSOPnSLy1Z4AX5O3nwFr0mJ26r/Y21fKZ5QuLhJWGYrtqeS+ZRG29
+zbe923wFhH6TOhIwRVj9HDWlo72QB4dLgjGKCoqrXiAYGIcge7JZAfGG3cGS0rmC
+5Kva6F5ndRLRrBj5IHepVvYO0mCW
+=ZvaH
+-----END PGP MESSAGE-----
+
 *** System prompt
 :PROPERTIES:
 :ID:       b5a5fd31-9618-4406-9de6-f39daa7d8871
