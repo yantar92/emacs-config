@@ -12597,16 +12597,11 @@ here, so that LLM reasoning can be utilized better.
     (defcustom yant/gptel-execute-code-timeout 30
       "Max time allowed to run sandboxed code.")
     (eval
-     '(defun my/gptel-execute-code (callback code &optional language timeout)
-        (let* ((language (or language "python"))
-               (timeout (or timeout yant/gptel-execute-code-timeout))
-               (script-name (pcase language
-                              ("bash" "script.sh")
-                              (_ "script.py")))
-               (interpreter (pcase language
-                              ("python" (list "uv" "run"))
-                              ("bash" (list "bash"))
-                              (_ (error "Unsupported language: %S" language))))
+     '(defun my/gptel-run-sandboxed (callback code script-name interpreter &optional timeout)
+        "Run CODE in a bwrap sandbox and call CALLBACK with the result.
+SCRIPT-NAME is the file name to write CODE to.
+INTERPRETER is the command list used to run the script."
+        (let* ((timeout (or timeout yant/gptel-execute-code-timeout))
                (temp-dir (make-temp-file "gptel-bwrap-" t))
     	     (temp-file (expand-file-name script-name temp-dir))
                (output-buffer (generate-new-buffer " *gptel-bwrap-output*"))
@@ -12630,7 +12625,9 @@ here, so that LLM reasoning can be utilized better.
     			       "--proc" "/proc"
     			       "--dev" "/dev"
     			       "--dev-bind-try" "/dev/accel" "/dev/accel"
-    			       "--tmpfs" "/tmp"
+    			       "--bind" scratch-dir "/tmp"
+                               ;; Prevent socket connections.
+                               "--tmpfs" "/run"
     			       "--dir" "/tmp/uv-cache"
     			       "--bind" cache-dir "/tmp/uv-cache"
     			       "--bind" temp-dir temp-dir
@@ -12695,17 +12692,18 @@ here, so that LLM reasoning can be utilized better.
            process)))
      'lexical)
 
+    (defun my/gptel-execute-python (callback code &optional timeout)
+      (my/gptel-run-sandboxed callback code "script.py" (list "uv" "run") timeout))
+
+    (defun my/gptel-execute-bash (callback code &optional timeout)
+      (my/gptel-run-sandboxed callback code "script.sh" (list "bash") timeout))
+
     (gptel-make-tool
-     :name "execute_code"
-     :function #'my/gptel-execute-code
-     :description "Execute Python or Bash code in a bwrap sandbox.
+     :name "execute_python"
+     :function #'my/gptel-execute-python
+     :description "Execute Python code in a bwrap sandbox.
   The code should be self-contained and output results to stdout.
 
-  Choose the interpreter with the \"language\" argument:
-  - \"python\" (default)
-  - \"bash\"
-
-  Python:
   To use external libraries (e.g. pandas, requests), you MUST declare them
   using PEP 723 inline script metadata at the very top of your code.
   The dependencies will be installed automatically.
@@ -12715,10 +12713,10 @@ here, so that LLM reasoning can be utilized better.
   - REAL_HOME: the user's real home directory, mounted read-only.
     Use REAL_HOME to read files from the user's actual filesystem.
 
-  The sandbox also provides /tmp/scratch that persists between
-  chat invocations during a single session.
-
-  DO NOT use this tool when a more specialized tool is available.
+  The sandbox provides a writable /tmp that persists between tool
+  calls within the same chat buffer and is removed when that buffer
+  is killed. /tmp/scratch is a compatibility alias for the same
+  directory. Different chat buffers have separate /tmp directories.
 
   If the output exceeds the character limit, the full output is saved
   to a buffer and only a truncated preview is returned.  The buffer
@@ -12734,23 +12732,16 @@ here, so that LLM reasoning can be utilized better.
   The optional \"timeout\" argument (seconds) raises the default timeout
   for long-running code.
 
-  Example (Python):
+  Example:
   # /// script
   # dependencies = [\"requests\"]
   # ///
 
   import requests
-  # ... rest of your code
-
-  Example (Bash):
-  echo \"hello\""
+  # ... rest of your code"
      :args '((:name "code"
                     :type string
-                    :description "The complete source code to execute.")
-             (:name "language"
-                    :type string
-                    :description "Interpreter to run: \"python\" (default) or \"bash\"."
-                    :optional t)
+                    :description "The complete Python source code to execute.")
              (:name "timeout"
                     :type number
                     :description "Timeout in seconds. Defaults to the configured value (30 seconds); pass a larger value for long-running code."
@@ -12759,23 +12750,73 @@ here, so that LLM reasoning can be utilized better.
      :confirm t
      :include t
      :async t)
-    (add-to-list 'gptel-tools (gptel-get-tool "execute_code")))
+
+    (gptel-make-tool
+     :name "execute_bash"
+     :function #'my/gptel-execute-bash
+     :description "Execute Bash code in a bwrap sandbox.
+  The code should be self-contained and output results to stdout.
+
+  The sandbox provides two home directories:
+  - HOME: a writable temporary directory (use for caches, configs).
+  - REAL_HOME: the user's real home directory, mounted read-only.
+    Use REAL_HOME to read files from the user's actual filesystem.
+
+  The sandbox provides a writable /tmp that persists between tool
+  calls within the same chat buffer and is removed when that buffer
+  is killed. /tmp/scratch is a compatibility alias for the same
+  directory. Different chat buffers have separate /tmp directories.
+
+  If the output exceeds the character limit, the full output is saved
+  to a buffer and only a truncated preview is returned.  The buffer
+  can be accessed later via view_buffer_or_file or search_in_buffer.
+
+  Note that you do not always need to type in the context manually
+  into the script. When the context is coming from some existing file,
+  you can read the file in the code directly.
+
+  The optional \"timeout\" argument (seconds) raises the default timeout
+  for long-running code.
+
+  Example:
+  echo \"hello\""
+     :args '((:name "code"
+                    :type string
+                    :description "The complete Bash source code to execute.")
+             (:name "timeout"
+                    :type number
+                    :description "Timeout in seconds. Defaults to the configured value (30 seconds); pass a larger value for long-running code."
+                    :optional t))
+     :category "execute"
+     :confirm t
+     :include t
+     :async t)
+
+    (add-to-list 'gptel-tools (gptel-get-tool "execute_python"))
+    (add-to-list 'gptel-tools (gptel-get-tool "execute_bash")))
 #+end_src
 
 **** Scratch space for LLM tools
 
-The scratch directory is a temporary directory that persists across
-tool calls within a single gptel chat session. It is bind-mounted
-into the Python bubblewrap sandbox, so Python code can
-read and write files there without the sandbox restricting access.
+Each chat buffer owns a temporary directory that is bind-mounted at
+=/tmp= in both the Python and Bash bubblewrap sandboxes. Files anywhere
+under =/tmp= persist across tool calls in that buffer; different buffers
+have separate directories. Killing the buffer removes its directory.
+The host's =/tmp= is not exposed through this mount.
+
+=/tmp/scratch= is a compatibility alias for the same directory.
+The per-invocation =HOME= and the shared uv cache remain separate
+mounts; their contents are not part of the chat's persistent scratch
+files.
 
 #+begin_src emacs-lisp
   (use-package gptel
     :if init-flag
     :config
     (defvar-local yant/gptel-scratch-dir nil
-      "Scratch directory for the current buffer.
-  Persists across tool calls and is cleaned up when the buffer is killed.")
+      "Directory backing the current buffer's sandbox /tmp.
+  Both execution tools also mount it at /tmp/scratch.
+  Persist across tool calls; remove when the buffer is killed.")
 
     (defun yant/gptel--ensure-scratch-dir ()
       "Ensure a scratch directory exists for the current buffer.
