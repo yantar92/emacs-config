@@ -11238,6 +11238,14 @@ sys-process/parallel
 #+end_src
 
 
+** dust - a better du
+
+The UI is actually useful to hunt for big files and folders.
+
+#+begin_src conf :tangle /sudo::/var/lib/portage/world
+sys-block/dust
+#+end_src
+
 ** LLM
 *** Sandbox: bubblewrap
 :PROPERTIES:
