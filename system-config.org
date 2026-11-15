@@ -1804,6 +1804,15 @@ sys-fs/btrfs-progs
 app-backup/restic
 #+end_src
 
+*** Logging via metalog
+:PROPERTIES:
+:ID:       9f2a185f-dfc0-4d8d-920b-ed1b81dc42ea
+:END:
+
+#+begin_src bash :dir / :eval yes :noweb-ref sys-configure
+rc-update add metalog default
+#+end_src
+
 ** System theme
 :PROPERTIES:
 :ID:       ee87b193-92cd-419f-9443-9d20a28f18c3
