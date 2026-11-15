@@ -9074,9 +9074,8 @@ k2dpNC1oMFhpMb1F7g00N39+dFxhbMcGvFc=
 :ID:       6a07f1f9-5c64-4a51-b525-709318bae816
 :END:
 
-#+begin_src bash :tangle /sudo::/var/spool/cron/crontabs/yantar92
-# check pages daily at 06:30; email reporter does the notification
-30 6 * * * /usr/bin/urlwatch >/dev/null 2>&1
+#+begin_src bash :tangle /sudo::/etc/cron.daily/urlwatch  :shebang #!/bin/bash :noweb tangle
+sudo -u yantar92 /usr/bin/urlwatch
 #+end_src
 
 ** Mail sending (msmtp)
