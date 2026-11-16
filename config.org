@@ -12183,6 +12183,8 @@ https://github.com/gregoryg/emacs-gregoryg/blob/99d31373993cdc4dfafa9b4fe8a1eba3
   When TOP-N is non-nil, it should be the maximum number of results to return."
     (unless before-lines (setq before-lines 1))
     (unless after-lines (setq after-lines 1))
+    (unless (org-string-nw-p regexp-or-string)
+      (error "Passed empty regexp/search string: '%s'" regexp-or-string))
     (let ((buffer
   	 (or (get-buffer buffer-or-file)
                (find-file-noselect buffer-or-file t))))
