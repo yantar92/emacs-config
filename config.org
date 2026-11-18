@@ -12730,50 +12730,20 @@ INTERPRETER is the command list used to run the script."
     (gptel-make-tool
      :name "execute_python"
      :function #'my/gptel-execute-python
-     :description "Execute Python code in a bwrap sandbox.
-  The code should be self-contained and output results to stdout.
-
-  To use external libraries (e.g. pandas, requests), you MUST declare them
-  using PEP 723 inline script metadata at the very top of your code.
-  The dependencies will be installed automatically.
-
-  The sandbox provides two home directories:
-  - HOME: a writable temporary directory (use for caches, configs).
-  - REAL_HOME: the user's real home directory, mounted read-only.
-    Use REAL_HOME to read files from the user's actual filesystem.
-
-  The sandbox provides a writable /tmp that persists between tool
-  calls within the same chat buffer and is removed when that buffer
-  is killed. /tmp/scratch is a compatibility alias for the same
-  directory. Different chat buffers have separate /tmp directories.
-
-  If the output exceeds the character limit, the full output is saved
-  to a buffer and only a truncated preview is returned.  The buffer
-  can be accessed later via view_buffer_or_file or search_in_buffer.
-
-  Note that you do not always need to type in the context manually
-  into the script. When the context is coming from some existing file,
-  you can read the file in the code directly.
-
-  If the code fails, do remember that you may have access to web search
-  to refresh your knowledge about the library APIs.
-
-  The optional \"timeout\" argument (seconds) raises the default timeout
-  for long-running code.
-
-  Example:
-  # /// script
-  # dependencies = [\"requests\"]
-  # ///
-
-  import requests
-  # ... rest of your code"
+     :description "Execute Python code in a bwrap sandbox; stdout is returned.
+  Declare non-stdlib dependencies with PEP 723 metadata at the top of the code;
+  uv installs them.
+  Sandbox: HOME and /tmp are writable and persist for the chat buffer (/tmp is
+  removed with it), REAL_HOME is read-only and holds the user's real files.
+  Long output is truncated, with the full text saved to a buffer named in the
+  result.
+  The optional timeout raises the default for long-running code."
      :args '((:name "code"
                     :type string
                     :description "The complete Python source code to execute.")
              (:name "timeout"
                     :type number
-                    :description "Timeout in seconds. Defaults to the configured value (30 seconds); pass a larger value for long-running code."
+                    :description "Timeout in seconds; default 30."
                     :optional t))
      :category "execute"
      :confirm t
@@ -12783,38 +12753,17 @@ INTERPRETER is the command list used to run the script."
     (gptel-make-tool
      :name "execute_bash"
      :function #'my/gptel-execute-bash
-     :description "Execute Bash code in a bwrap sandbox.
-  The code should be self-contained and output results to stdout.
-
-  The sandbox provides two home directories:
-  - HOME: a writable temporary directory (use for caches, configs).
-  - REAL_HOME: the user's real home directory, mounted read-only.
-    Use REAL_HOME to read files from the user's actual filesystem.
-
-  The sandbox provides a writable /tmp that persists between tool
-  calls within the same chat buffer and is removed when that buffer
-  is killed. /tmp/scratch is a compatibility alias for the same
-  directory. Different chat buffers have separate /tmp directories.
-
-  If the output exceeds the character limit, the full output is saved
-  to a buffer and only a truncated preview is returned.  The buffer
-  can be accessed later via view_buffer_or_file or search_in_buffer.
-
-  Note that you do not always need to type in the context manually
-  into the script. When the context is coming from some existing file,
-  you can read the file in the code directly.
-
-  The optional \"timeout\" argument (seconds) raises the default timeout
-  for long-running code.
-
-  Example:
-  echo \"hello\""
+     :description "Execute Bash in the same bwrap sandbox as execute_python: HOME and /tmp are
+  writable and persist for the chat buffer, REAL_HOME is read-only.
+  Long output is truncated, with the full text saved to a buffer named in the
+  result.
+  The optional timeout raises the default for long-running code."
      :args '((:name "code"
                     :type string
                     :description "The complete Bash source code to execute.")
              (:name "timeout"
                     :type number
-                    :description "Timeout in seconds. Defaults to the configured value (30 seconds); pass a larger value for long-running code."
+                    :description "Timeout in seconds; default 30."
                     :optional t))
      :category "execute"
      :confirm t
