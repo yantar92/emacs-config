@@ -12838,6 +12838,73 @@ INTERPRETER is the command list used to run the script."
     (add-to-list 'gptel-tools (gptel-get-tool "execute_bash")))
 #+end_src
 
+**** Replay context policy
+:PROPERTIES:
+:ID:       c41d7f52-9a0e-4b9f-8e55-7a2c6d1b3f10
+:END:
+
+Large tool results are replayed on every turn, so they should not sit
+in the conversation after the model has finished with them.  Which
+results are elided is decided per tool by its =:include= slot, through
+`gptel-include-tool-results' set to =auto=:
+
+- =:include t= keeps the result on replay.  Every workflow tool is
+  created that way by `yant/gptel-make-workflow', so protocols and
+  skills always stay in context.
+- =:include 'call= stores the call and puts a placeholder in place of
+  the result.  File reads, searches and shell output use this.
+- =:include nil= stores neither.
+
+`gptel-tool-result-placeholder' receives the tool name, its arguments
+and the result, so the placeholder can keep the text somewhere
+retrievable and return a short pointer.  Nothing here inspects
+tool-specific arguments: the elision decision lives in =:include=, and
+the recovery path is the buffer named in the pointer.
+
+macher sets `gptel-include-tool-results' buffer-locally from
+`macher-include-tool-results', which the macher block above sets to
+=auto=, and its tools are marked =:include 'call= there so that their
+results become pointers instead of disappearing from the conversation.
+
+#+begin_src emacs-lisp
+  (use-package gptel
+    :if init-flag
+    :config
+    (defvar yant/gptel-tool-result-count 0
+      "Counter used to name tool result buffers.")
+
+    (defcustom yant/gptel-tool-result-min-elision 500
+      "Results shorter than this many characters are kept verbatim.
+
+Moving a short result to a buffer costs more in pointer text than the
+result itself, so such results stay in the conversation."
+      :type 'integer
+      :group 'gptel)
+
+    (defun yant/gptel-tool-result-placeholder (name _args result)
+      "Store RESULT of tool NAME in a buffer and return a pointer to it.
+
+RESULT is a string.  Results shorter than
+`yant/gptel-tool-result-min-elision' are returned unchanged.  The
+pointer names the buffer holding the full text, which
+`view_buffer_or_file' and `search_in_buffer' can read."
+      (if (or (not (stringp result))
+              (< (length result) yant/gptel-tool-result-min-elision))
+          result
+        (let ((buffer (generate-new-buffer
+                       (format " *gptel-result %d: %s*"
+                               (cl-incf yant/gptel-tool-result-count)
+                               name))))
+          (with-current-buffer buffer
+            (insert result)
+            (goto-char (point-min)))
+          (format "[result elided from replay: %d characters of %s saved to buffer %S.  Read it with view_buffer_or_file or search_in_buffer.]"
+                  (length result) name (buffer-name buffer)))))
+
+    (setq gptel-tool-result-placeholder
+          #'yant/gptel-tool-result-placeholder))
+#+end_src
+
 **** Scratch space for LLM tools
 
 Each chat buffer owns a temporary directory that is bind-mounted at
