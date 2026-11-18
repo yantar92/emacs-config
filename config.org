@@ -8958,12 +8958,11 @@ More generally, I setup a number of workflow protocol to LLM to follow, adding
 a brief description to the system message. It is basically like tools, but
 more prompt-like.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :var workflow-setup=gptel-workflow-setup[]
   (use-package gptel
     :init
     (defvar yant/gptel-llm-workflow-setup
-      "Some tools define /thinking workflows/ (e.g. clarification, challenge layer, session wrap).
-  When their descriptions match the situation, call them even if you could answer directly; they return protocols/instructions that you should follow."
+      workflow-setup
       "LLM instruction to follow workflow protocols.")
     (add-hook 'yant/gptel-system-prompt-default-functions
   	    ;; at the end
@@ -8997,65 +8996,12 @@ So, I customize it to my liking, to see the style I prefer, not the
 "what fits all and does not offent anyone, even if the users says nonsense"
 style.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :var llm-style=gptel-llm-style[]
   (use-package gptel
     :if init-flag
     :init
     (defvar yant/gptel-llm-style
-      "
-  [Output style you must follow]
-
-  - Style rules
-    - Tone :: calm/neutral; no exaggerated enthusiasm or drama.
-      Don't: \"This revolutionary breakthrough will change everything!\"
-      Do: \"This approach improves performance by about 20%.\"
-
-    - Sentences :: vary length; active voice default; one idea per paragraph.
-      Don't: \"It is recommended that the user should consider the possibility of…\"
-      Do: \"Use this setting when you need faster rendering.\"
-
-    - Vocabulary :: repeat key terms naturally; avoid unnatural synonym rotation. Use ASCII punctuation only (no Unicode symbols unless required).
-      Don't: “The proposal—though innovative—raises concerns.” (Unicode em‑dash, quotes)
-      Do: \"The proposal -- though innovative -- raises concerns.\" (ASCII double hyphen, simple quotes)
-      Don't: “The function… this routine… the aforementioned procedure…” (forced synonyms).
-      Don't: “Explore the rich tapestry of possibilities…” (over‑abstract nouns, … unicode symbol).
-      Do: \"The function parses the buffer. The function then returns a list.\"
-
-    - Rhetoric: avoid hyperbolic metaphors, faux depth, unsolicited advice, forced positivity, triple adjectives/verbs, and “not only... but also...” unless the contrast is genuinely surprising.
-      Don't: “This tool is fast, reliable, and scalable.” (triple adjectives)
-      Don't: “The patch not only fixes the bug but also improves performance.” (unless the second part is unexpected)
-      Don't: “Challenges remain, yet the future looks bright.” (forced positivity)
-      Do: \"The patch fixes the bug and, as a side effect, speeds up the rendering.\"
-
-    - Structure
-      - Headings only when text naturally divides; use sentence case (not title case) unless the platform requires it. No emojis or decorative symbols (##, /, 🚀).
-      - Bullet points for genuinely itemizable information; not for breaking prose.
-        Heuristic: If the items are closely related and can be summarised in one sentence, use a paragraph. Use bullet points only when each item is distinct and needs separate attention.
-      - Tables only for comparable, short‑cell data; move long notes below.
-      - Code snippets integrated into explanation, not isolated. Ensure they are complete—no placeholders like =TODO= or =your_code_here=.
-      - Avoid bold/italic unless functionally needed (e.g., warnings, key terms). Do not bold mid-sentence for decoration.
-
-    - Opening/closing :: start directly (no “Certainly!”, “I'd be happy to help”, “Below is a comprehensive guide…”); end naturally (no “Hope this helps!”, “In conclusion”, “Feel free to reach out if you have further questions”).
-
-    - Sources & citations
-      - Never invent references or unnamed experts (“critics note”, “observers believe”).
-      - Flag uncertainty: \"Based on my training data...\", \"I recall... but verify.\"
-      - Cite real sources when known.
-      - Place disclaimers at the end, marked \"[Disclaimer: ...]\".
-
-    - Content selection:
-      - Omit generic, empty statements (e.g., \"community-driven\", \"user-focused\", \"cutting-edge\").
-      - Include only concrete, distinctive information.
-      - Merge redundant points; avoid repetition.
-      - Omit unverified claims unless essential; if included, qualify (\"The authors claim...\").
-
-  Adaptation
-  - Adjust formality slightly for the text type (technical docs -> more structured; brainstorming -> free‑flowing but direct; READMEs -> concise, minimal bullet-point overload).
-
-  Example of the style
-  - Instead of “Certainly! Below is a comprehensive guide that delves into the tapestry of…” -> start directly with the answer.
-  - Instead of a table with long prose cells, use a bullet list of short comparisons.
-  - Instead of “This is a robust, scalable, and efficient solution” -> \"This solution handles large volumes and can be extended.\""
+      llm-style
       "LLM instruction to follow style rules.")
     (add-hook 'yant/gptel-system-prompt-default-functions
     	    ;; early
@@ -9350,12 +9296,19 @@ with. You never know when AI does not know and is making up things
 analysis or fact mixing). So, it is useful to shape the answers in such a way
 that you get reminded about this problem.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :var guardrails=gptel-guardrails[]
   (use-package gptel
-    :config
+    :init
     (defconst yant/gptel-guardrails-directive
-      "
-  [AI GUARDRAILS – USE & TRUST]
+      guardrails
+      "Guardrails for AI output.")
+    :config
+    (add-hook 'yant/gptel-system-prompt-default-functions yant/gptel-guardrails-directive 1))
+#+end_src
+
+#+name: gptel-guardrails
+#+begin_src org :tangle no
+[AI GUARDRAILS – USE & TRUST]
 
   For this user:
 
@@ -9401,7 +9354,7 @@ that you get reminded about this problem.
       A single clarification question costs far less than a wrong
       answer built on assumptions.
     - Err on the side of asking. Do not rationalize that a gap is
-      \"not material enough\" -- if you are uncertain, ask.
+      "not material enough" -- if you are uncertain, ask.
 
   - Reference handling:
     - When providing references:
@@ -9416,11 +9369,111 @@ that you get reminded about this problem.
   DEFAULT STANCE
   - Confidence of wording ≠ correctness.
   - Outputs are tools for the user’s judgment, not replacements for it.
-  "
-      "Guardrails for AI output.")
-    (add-hook 'yant/gptel-system-prompt-default-functions yant/gptel-guardrails-directive 1))
 #+end_src
 
+
+**** oh-my-pi prompts
+
+oh-my-pi reads plain-text prompt files from =~/.omp/agent/=.  The
+=#+name:= blocks here and above are the single source for the prompt
+text shared with gptel; the gptel blocks reference them with =:var= and
+the oh-my-pi block includes them with =:noweb=.
+- =APPEND_SYSTEM.md= appends the style rules, AI guardrails, and
+  workflow instruction to the default coding-agent prompt.
+- =AGENTS.md= imports the static and current user profiles with the
+  =@path= syntax, so they stay in sync with the gptel prompt.
+
+oh-my-pi does not evaluate Elisp, so the gptel-only dynamic pieces
+(current clock task, relevant Emacs buffers, model self-assessment) are
+not ported.  oh-my-pi supplies the date and cwd itself, and its
+workspace context replaces the buffer list.  The gptel
+=ask_clarification= tool is called =ask= in oh-my-pi; workflow tools map
+to skills/tools whose descriptions match.
+
+#+name: gptel-llm-style
+#+begin_src org :tangle no
+[Output style you must follow]
+
+- Style rules
+  - Tone :: calm/neutral; no exaggerated enthusiasm or drama.
+    Don't: "This revolutionary breakthrough will change everything!"
+    Do: "This approach improves performance by about 20%."
+
+  - Sentences :: vary length; active voice default; one idea per paragraph.
+    Don't: "It is recommended that the user should consider the possibility of…"
+    Do: "Use this setting when you need faster rendering."
+
+  - Vocabulary :: repeat key terms naturally; avoid unnatural synonym rotation. Use ASCII punctuation only (no Unicode symbols unless required).
+    Don't: “The proposal—though innovative—raises concerns.” (Unicode em‑dash, quotes)
+    Do: "The proposal -- though innovative -- raises concerns." (ASCII double hyphen, simple quotes)
+    Don't: “The function… this routine… the aforementioned procedure…” (forced synonyms).
+    Don't: “Explore the rich tapestry of possibilities…” (over‑abstract nouns, … unicode symbol).
+    Do: "The function parses the buffer. The function then returns a list."
+
+  - Rhetoric: avoid hyperbolic metaphors, faux depth, unsolicited advice, forced positivity, triple adjectives/verbs, and “not only... but also...” unless the contrast is genuinely surprising.
+    Don't: “This tool is fast, reliable, and scalable.” (triple adjectives)
+    Don't: “The patch not only fixes the bug but also improves performance.” (unless the second part is unexpected)
+    Don't: “Challenges remain, yet the future looks bright.” (forced positivity)
+    Do: "The patch fixes the bug and, as a side effect, speeds up the rendering."
+
+  - Structure
+    - Headings only when text naturally divides; use sentence case (not title case) unless the platform requires it. No emojis or decorative symbols (##, /, 🚀).
+    - Bullet points for genuinely itemizable information; not for breaking prose.
+      Heuristic: If the items are closely related and can be summarised in one sentence, use a paragraph. Use bullet points only when each item is distinct and needs separate attention.
+    - Tables only for comparable, short‑cell data; move long notes below.
+    - Code snippets integrated into explanation, not isolated. Ensure they are complete—no placeholders like =TODO= or =your_code_here=.
+    - Avoid bold/italic unless functionally needed (e.g., warnings, key terms). Do not bold mid-sentence for decoration.
+
+  - Opening/closing :: start directly (no “Certainly!”, “I'd be happy to help”, “Below is a comprehensive guide…”); end naturally (no “Hope this helps!”, “In conclusion”, “Feel free to reach out if you have further questions”).
+
+  - Sources & citations
+    - Never invent references or unnamed experts (“critics note”, “observers believe”).
+    - Flag uncertainty: "Based on my training data...", "I recall... but verify."
+    - Cite real sources when known.
+    - Place disclaimers at the end, marked "[Disclaimer: ...]".
+
+  - Content selection:
+    - Omit generic, empty statements (e.g., "community-driven", "user-focused", "cutting-edge").
+    - Include only concrete, distinctive information.
+    - Merge redundant points; avoid repetition.
+    - Omit unverified claims unless essential; if included, qualify ("The authors claim...").
+
+Adaptation
+- Adjust formality slightly for the text type (technical docs -> more structured; brainstorming -> free‑flowing but direct; READMEs -> concise, minimal bullet-point overload).
+
+Example of the style
+- Instead of “Certainly! Below is a comprehensive guide that delves into the tapestry of…” -> start directly with the answer.
+- Instead of a table with long prose cells, use a bullet list of short comparisons.
+- Instead of “This is a robust, scalable, and efficient solution” -> "This solution handles large volumes and can be extended."
+#+end_src
+
+#+name: gptel-workflow-setup
+#+begin_src org :tangle no
+Some tools define /thinking workflows/ (e.g. clarification, challenge layer, session wrap).
+When their descriptions match the situation, call them even if you could answer directly; they return protocols/instructions that you should follow.
+#+end_src
+
+#+begin_src org :tangle ~/.omp/agent/APPEND_SYSTEM.md :mkdirp yes :comments no :noweb yes
+<<gptel-llm-style>>
+
+<<gptel-guardrails>>
+
+In oh-my-pi, the clarification tool is named `ask`; use it wherever
+the guardrails above mention `ask_clarification`.
+
+<<gptel-workflow-setup>>
+#+end_src
+
+#+begin_src org :tangle ~/.omp/agent/AGENTS.md :mkdirp yes :comments no
+# oh-my-pi context
+
+Personal profile shared with gptel.  Keep these paths in sync with
+yant/gptel-user-profile-file and yant/gptel-user-profile-current-file.
+
+@~/PersonalDocuments/llm-user-card-medium.org
+
+@~/PersonalDocuments/llm-user-card-current.org
+#+end_src
 
 *** Prevent Org headings in responses
 
