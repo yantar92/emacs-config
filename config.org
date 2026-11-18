@@ -12389,9 +12389,19 @@ stick to a package and contribute as needed.
     :custom
     (macher-action-buffer-ui 'org)
     (macher-max-tool-output-length (* 128 1024))
+    (macher-include-tool-results 'auto)
     :config
     (macher-install)
     (macher-enable)
+    ;; Let the per-tool :include slot decide what is replayed, and keep
+    ;; workspace results as a call plus the placeholder from
+    ;; `gptel-tool-result-placeholder'.  macher's own tools default to
+    ;; :include nil, which would drop the call from the conversation.
+    (dolist (entry (alist-get macher-tool-category
+                              gptel--known-tools nil nil #'equal))
+      (let ((tool (if (consp entry) (cdr entry) entry)))
+        (when (gptel-tool-p tool)
+          (setf (gptel-tool-include tool) 'call))))
     ;; The default is -e, which is less powerful and not what LLM expects.
     (setf (alist-get 'grep2 xref-search-program-alist)
   	"xargs -0 grep <C> --null -snHE -E <R>")
