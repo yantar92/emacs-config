@@ -12809,7 +12809,7 @@ results become pointers instead of disappearing from the conversation.
     (defvar yant/gptel-tool-result-count 0
       "Counter used to name tool result buffers.")
 
-    (defcustom yant/gptel-tool-result-min-elision 500
+    (defcustom yant/gptel-tool-result-min-elision 20000
       "Results shorter than this many characters are kept verbatim.
 
 Moving a short result to a buffer costs more in pointer text than the
