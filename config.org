@@ -12375,7 +12375,7 @@ stick to a package and contribute as needed.
     :straight t
     :custom
     (macher-action-buffer-ui 'org)
-    (macher-max-tool-output-length (* 128 1024))
+    (macher-tool-output-max-length (* 128 1024))
     (macher-include-tool-results 'auto)
     :config
     (macher-install)
