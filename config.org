@@ -12790,7 +12790,7 @@ INTERPRETER is the command list used to run the script."
                     :optional t))
      :category "execute"
      :confirm t
-     :include t
+     :include 'call
      :async t)
 
     (gptel-make-tool
@@ -12831,7 +12831,7 @@ INTERPRETER is the command list used to run the script."
                     :optional t))
      :category "execute"
      :confirm t
-     :include t
+     :include 'call
      :async t)
 
     (add-to-list 'gptel-tools (gptel-get-tool "execute_python"))
