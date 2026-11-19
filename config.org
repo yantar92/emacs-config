@@ -12628,97 +12628,99 @@ here, so that LLM reasoning can be utilized better.
     (eval
      '(defun my/gptel-run-sandboxed (callback code script-name interpreter &optional timeout)
         "Run CODE in a bwrap sandbox and call CALLBACK with the result.
-SCRIPT-NAME is the file name to write CODE to.
-INTERPRETER is the command list used to run the script."
+  SCRIPT-NAME is the file name to write CODE to.
+  INTERPRETER is the command list used to run the script."
+        (unless (stringp code)
+  	(funcall callback (format "Error: CODE is not a string '%s'" code)))
         (let* ((timeout (or timeout yant/gptel-execute-code-timeout))
                (temp-dir (make-temp-file "gptel-bwrap-" t))
-    	     (temp-file (expand-file-name script-name temp-dir))
+      	     (temp-file (expand-file-name script-name temp-dir))
                (output-buffer (generate-new-buffer " *gptel-bwrap-output*"))
                (cache-dir (expand-file-name "~/.cache/gptel-bwrap-uv/"))
                (scratch-dir (progn
-    			    (yant/gptel--ensure-scratch-dir)
+      			    (yant/gptel--ensure-scratch-dir)
                               yant/gptel-scratch-dir))
                process)
-    	(with-temp-file temp-file
-            (insert code))
-          (make-directory cache-dir t)
-          (setq process
-    	      (make-process
-    	       :name "gptel-bwrap"
-    	       :buffer output-buffer
-    	       :stderr output-buffer
-    	       :command
-    	       (delq nil
-    		     (append ( list "bwrap"
-    			       "--ro-bind" "/" "/"
-    			       "--proc" "/proc"
-    			       "--dev" "/dev"
-    			       "--dev-bind-try" "/dev/accel" "/dev/accel"
-    			       "--bind" scratch-dir "/tmp"
-                               ;; Prevent socket connections.
-                               "--tmpfs" "/run"
-    			       "--dir" "/tmp/uv-cache"
-    			       "--bind" cache-dir "/tmp/uv-cache"
-    			       "--bind" temp-dir temp-dir
-    			       "--dir" "/tmp/scratch"
-    			       "--bind" scratch-dir "/tmp/scratch"
-    			       "--unshare-pid"
-    			       "--unshare-ipc"
-    			       "--clearenv"
-    			       "--setenv" "PATH" (getenv "PATH")
-    			       "--setenv" "HOME" temp-dir
-    			       "--setenv" "REAL_HOME" (getenv "HOME")
-    			       "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache")
-    			     interpreter
-    			     (list temp-file)))
-    	       :sentinel
-    	       (lambda (process _event)
-    		 (pcase (process-status process)
-    		   ('exit
-    		    (let ((exit-status (process-exit-status process))
-    			  (output (with-current-buffer (process-buffer process)
-  				    ;; Sanitize unibyte characters.
-  				    (replace-regexp-in-string
-  				     "[\x3FFF80-\x3FFFFF]"
-  				     (lambda (c)
-  				       (let ((byte (- (string-to-char c) #x3FFF80)))
-  					 (if (= byte 0)
-  					     "\\0"
-  					   (format "\\x%02x" byte))))
-  				     (buffer-string)
-  				     t t))))
-    		      (when (file-exists-p temp-file) (delete-file temp-file))
+  	(with-temp-file temp-file
+  	  (insert code))
+  	(make-directory cache-dir t)
+  	(setq process
+      	      (make-process
+      	       :name "gptel-bwrap"
+      	       :buffer output-buffer
+      	       :stderr output-buffer
+      	       :command
+      	       (delq nil
+      		     (append ( list "bwrap"
+      			       "--ro-bind" "/" "/"
+      			       "--proc" "/proc"
+      			       "--dev" "/dev"
+      			       "--dev-bind-try" "/dev/accel" "/dev/accel"
+      			       "--bind" scratch-dir "/tmp"
+                                 ;; Prevent socket connections.
+                                 "--tmpfs" "/run"
+      			       "--dir" "/tmp/uv-cache"
+      			       "--bind" cache-dir "/tmp/uv-cache"
+      			       "--bind" temp-dir temp-dir
+      			       "--dir" "/tmp/scratch"
+      			       "--bind" scratch-dir "/tmp/scratch"
+      			       "--unshare-pid"
+      			       "--unshare-ipc"
+      			       "--clearenv"
+      			       "--setenv" "PATH" (getenv "PATH")
+      			       "--setenv" "HOME" temp-dir
+      			       "--setenv" "REAL_HOME" (getenv "HOME")
+      			       "--setenv" "UV_CACHE_DIR" "/tmp/uv-cache")
+      			     interpreter
+      			     (list temp-file)))
+      	       :sentinel
+      	       (lambda (process _event)
+      		 (pcase (process-status process)
+      		   ('exit
+      		    (let ((exit-status (process-exit-status process))
+      			  (output (with-current-buffer (process-buffer process)
+    				    ;; Sanitize unibyte characters.
+    				    (replace-regexp-in-string
+    				     "[\x3FFF80-\x3FFFFF]"
+    				     (lambda (c)
+    				       (let ((byte (- (string-to-char c) #x3FFF80)))
+    					 (if (= byte 0)
+    					     "\\0"
+    					   (format "\\x%02x" byte))))
+    				     (buffer-string)
+    				     t t))))
+      		      (when (file-exists-p temp-file) (delete-file temp-file))
                         (let ((kill-buffer-query-functions nil))
-    			(kill-buffer (process-buffer process)))
-    		      (funcall
-    		       callback
-    		       (cond
-    			((not (= exit-status 0))
-    			 (format "Error (exit %d): %s" exit-status output))
-    			((> (length output) yant/gptel-python-max-output)
-    			 (let* ((buf (generate-new-buffer
-    				      (format "*gptel-python-output: %s*"
-    					      (format-time-string "%Y-%m-%d %H:%M:%S"))
-    				      t))
-    				(limit yant/gptel-python-max-output)
-    				(truncated (substring output 0 (min limit (1- (length output))))))
-    			   (with-current-buffer buf
-    			     (insert output))
-    			   (cons (buffer-name buf)
-    				 (concat truncated
-    					 (format "\n\n[... output truncated at %d characters; full output (%d characters) saved to buffer %s. Use view_buffer_or_file or search_in_buffer to access it.]"
-    						 limit (length output) (buffer-name buf))))))
-    			(t output)))))
-    		   ('signal
-    		    (funcall callback "Process timeout"))))))
-          (set-process-query-on-exit-flag process nil)
-          (run-at-time
-           timeout
-           nil
-           (lambda (process)
-    	   (when (process-live-p process)
+      			(kill-buffer (process-buffer process)))
+      		      (funcall
+      		       callback
+      		       (cond
+      			((not (= exit-status 0))
+      			 (format "Error (exit %d): %s" exit-status output))
+      			((> (length output) yant/gptel-python-max-output)
+      			 (let* ((buf (generate-new-buffer
+      				      (format "*gptel-python-output: %s*"
+      					      (format-time-string "%Y-%m-%d %H:%M:%S"))
+      				      t))
+      				(limit yant/gptel-python-max-output)
+      				(truncated (substring output 0 (min limit (1- (length output))))))
+      			   (with-current-buffer buf
+      			     (insert output))
+      			   (cons (buffer-name buf)
+      				 (concat truncated
+      					 (format "\n\n[... output truncated at %d characters; full output (%d characters) saved to buffer %s. Use view_buffer_or_file or search_in_buffer to access it.]"
+      						 limit (length output) (buffer-name buf))))))
+      			(t output)))))
+      		   ('signal
+      		    (funcall callback "Process timeout"))))))
+  	(set-process-query-on-exit-flag process nil)
+  	(run-at-time
+  	 timeout
+  	 nil
+  	 (lambda (process)
+      	   (when (process-live-p process)
                (delete-process process)))
-           process)))
+  	 process)))
      'lexical)
 
     (defun my/gptel-execute-python (callback code &optional timeout)
@@ -12731,13 +12733,13 @@ INTERPRETER is the command list used to run the script."
      :name "execute_python"
      :function #'my/gptel-execute-python
      :description "Execute Python code in a bwrap sandbox; stdout is returned.
-  Declare non-stdlib dependencies with PEP 723 metadata at the top of the code;
-  uv installs them.
-  Sandbox: HOME and /tmp are writable and persist for the chat buffer (/tmp is
-  removed with it), REAL_HOME is read-only and holds the user's real files.
-  Long output is truncated, with the full text saved to a buffer named in the
-  result.
-  The optional timeout raises the default for long-running code."
+    Declare non-stdlib dependencies with PEP 723 metadata at the top of the code;
+    uv installs them.
+    Sandbox: HOME and /tmp are writable and persist for the chat buffer (/tmp is
+    removed with it), REAL_HOME is read-only and holds the user's real files.
+    Long output is truncated, with the full text saved to a buffer named in the
+    result.
+    The optional timeout raises the default for long-running code."
      :args '((:name "code"
                     :type string
                     :description "The complete Python source code to execute.")
@@ -12754,10 +12756,10 @@ INTERPRETER is the command list used to run the script."
      :name "execute_bash"
      :function #'my/gptel-execute-bash
      :description "Execute Bash in the same bwrap sandbox as execute_python: HOME and /tmp are
-  writable and persist for the chat buffer, REAL_HOME is read-only.
-  Long output is truncated, with the full text saved to a buffer named in the
-  result.
-  The optional timeout raises the default for long-running code."
+    writable and persist for the chat buffer, REAL_HOME is read-only.
+    Long output is truncated, with the full text saved to a buffer named in the
+    result.
+    The optional timeout raises the default for long-running code."
      :args '((:name "code"
                     :type string
                     :description "The complete Bash source code to execute.")
