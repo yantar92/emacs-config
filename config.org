@@ -12951,6 +12951,19 @@ can be accessed later via `view_buffer_or_file' or `search_in_buffer'."
    :confirm t
    :include t)
 #+end_src
+*** Notify when done
+
+#+begin_src emacs-lisp
+  (use-package gptel
+   :config
+   (defun yant/gptel-notify-finish (_beg _end)
+     "Notify when gptel request is done."
+     (notifications-notify
+      :title "gptel"
+      :body (format "Finished request in %s" (current-buffer))))
+   (push #'yant/gptel-notify-finish gptel-post-response-functions))
+#+end_src
+
 
 ** LLM completions \\ minuet-ai
 
